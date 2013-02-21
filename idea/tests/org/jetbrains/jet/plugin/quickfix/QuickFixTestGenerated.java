@@ -316,6 +316,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/expressions"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeDanglingFunctionLiteralArgument.kt")
+        public void testDanglingFunctionLiteralArgument() throws Exception {
+            doTest("idea/testData/quickfix/expressions/beforeDanglingFunctionLiteralArgument.kt");
+        }
+        
         @TestMetadata("beforeUnnecessaryNonNullAssertion1.kt")
         public void testUnnecessaryNonNullAssertion1() throws Exception {
             doTest("idea/testData/quickfix/expressions/beforeUnnecessaryNonNullAssertion1.kt");

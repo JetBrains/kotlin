@@ -73,6 +73,14 @@ public class JetPsiFactory {
         return property.getNode().findChildByType(JetTokens.COLON);
     }
 
+    @NotNull
+    public static PsiElement createSemicolon(Project project) {
+        JetProperty property = createProperty(project, "val x: Int;");
+        PsiElement semicolon = property.findElementAt(10);
+        assert semicolon != null;
+        return semicolon;
+    }
+
     public static PsiElement createWhiteSpace(Project project) {
         return createWhiteSpace(project, " ");
     }
