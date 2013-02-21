@@ -9,7 +9,7 @@ import java.util.List
 
 class M {
     trait A {
-        val l<caret>: jet.List<Int>
+        val l: jet.List<Int><caret>
     }
 }
 }

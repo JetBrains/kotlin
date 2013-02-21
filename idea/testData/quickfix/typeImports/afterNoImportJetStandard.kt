@@ -3,6 +3,6 @@ package a
 
 class M {
     trait A {
-        abstract val i<caret>: Int
+        abstract val i: Int<caret>
     }
 }

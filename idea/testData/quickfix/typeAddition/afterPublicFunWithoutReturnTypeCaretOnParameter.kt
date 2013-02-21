@@ -2,5 +2,5 @@
 package a
 
 class A() {
-    public fun foo(<caret>p: String): String = "a"
+    public fun foo(p: String): String<caret> = "a"
 }

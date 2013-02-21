@@ -3,6 +3,6 @@ package a
 
 class M {
     trait A {
-        abstract val e<caret>: Exception
+        abstract val e: Exception<caret>
     }
 }

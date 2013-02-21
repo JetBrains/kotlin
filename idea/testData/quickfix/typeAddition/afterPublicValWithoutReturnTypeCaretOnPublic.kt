@@ -1,4 +1,4 @@
 // "Specify type explicitly" "true"
 package a
 
-<caret>public val l: List<Int> = java.util.Collections.emptyList<Int>()
+public val l: List<Int><caret> = java.util.Collections.emptyList<Int>()

@@ -2,5 +2,5 @@
 package a
 
 class A() {
-    protected fun <caret>foo(): Int = 1
+    protected fun foo(): Int<caret> = 1
 }

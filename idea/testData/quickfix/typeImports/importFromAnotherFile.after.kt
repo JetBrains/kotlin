@@ -6,5 +6,5 @@ package a
 import b.B
 
 class A() {
-    public val <caret>a: B = b.foo()
+    public val a: B<caret> = b.foo()
 }

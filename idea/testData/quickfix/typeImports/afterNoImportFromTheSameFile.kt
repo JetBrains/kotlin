@@ -3,5 +3,5 @@
 class A() {}
 
 class B() {
-    public val <caret>a: A = A()
+    public val a: A<caret> = A()
 }
