@@ -54,10 +54,6 @@ public class TopDownAnalyzer {
     @NotNull
     private TopDownAnalysisContext context;
     @NotNull
-    private BindingTrace trace;
-    @NotNull
-    private ModuleSourcesManager moduleManager;
-    @NotNull
     private BodyResolver bodyResolver;
 
     @Inject
@@ -86,18 +82,8 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
-    }
-
-    @Inject
-    public void setModuleManager(@NotNull ModuleSourcesManager moduleManager) {
-        this.moduleManager = moduleManager;
     }
 
     @Inject
