@@ -39,7 +39,7 @@ public class CallChainExpression extends Expression {
 
     @Override
     public boolean isNullable() {
-        return myIdentifier.isNullable();
+        return myExpression.isNullable() || myIdentifier.isNullable();
     }
 
     @NotNull

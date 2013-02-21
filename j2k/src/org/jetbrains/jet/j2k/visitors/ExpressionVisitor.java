@@ -21,6 +21,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.ConverterUtil;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
@@ -345,7 +346,8 @@ public class ExpressionVisitor extends StatementVisitor {
         final boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
         final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
         final boolean isThis = isThisExpression(expression);
-        final boolean isNullable = getConverter().typeToType(expression.getType()).isNullable();
+        final boolean notNull = isResolvedToNotNull(expression);
+        final boolean isNullable = getConverter().typeToType(expression.getType(), notNull).isNullable();
         final String className = getClassNameWithConstructor(expression);
 
         Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);
@@ -362,6 +364,17 @@ public class ExpressionVisitor extends StatementVisitor {
                 getConverter().expressionToExpression(expression.getQualifierExpression()),
                 identifier // TODO: if type exists so identifier is nullable
         );
+    }
+
+    private static boolean isResolvedToNotNull(PsiReference expression) {
+        PsiElement target = expression.resolve();
+        if (target instanceof PsiEnumConstant) {
+            return true;
+        }
+        if (target instanceof PsiModifierListOwner) {
+            return ConverterUtil.isAnnotatedAsNotNull(((PsiModifierListOwner) target).getModifierList());
+        }
+        return false;
     }
 
     @NotNull
