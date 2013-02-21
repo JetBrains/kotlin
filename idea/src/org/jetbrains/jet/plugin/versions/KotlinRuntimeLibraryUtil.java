@@ -20,7 +20,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import com.intellij.facet.impl.DefaultFacetsProvider;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -28,10 +27,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -46,13 +42,13 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
-import com.intellij.util.text.UniqueNameGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -61,8 +57,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-
-import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 
 public class KotlinRuntimeLibraryUtil {
     public static final String LIBRARY_NAME = "KotlinRuntime";
@@ -138,7 +132,7 @@ public class KotlinRuntimeLibraryUtil {
     }
 
     public static boolean isModuleAlreadyConfigured(Module module) {
-        return isMavenModule(module) || isJsModule(module) || isWithJavaModule(module);
+        return isMavenModule(module) || KotlinFrameworkDetector.isJsModule(module) || KotlinFrameworkDetector.isJavaModule(module);
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
@@ -147,15 +141,8 @@ public class KotlinRuntimeLibraryUtil {
         return "true".equals(module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule"));
     }
 
-    private static boolean isWithJavaModule(Module module) {
-        // Can find a reference to kotlin class in module scope
-        GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-
-        return getKotlinRuntimeMarkerClass(scope) != null;
-    }
-
     @Nullable
-    private static PsiClass getKotlinRuntimeMarkerClass(@NotNull GlobalSearchScope scope) {
+    public static PsiClass getKotlinRuntimeMarkerClass(@NotNull GlobalSearchScope scope) {
         FqName kotlinPackageFqName = FqName.topLevel(Name.identifier("kotlin"));
         String kotlinPackageClassFqName = PackageClassUtils.getPackageClassFqName(kotlinPackageFqName).getFqName();
 
@@ -174,29 +161,6 @@ public class KotlinRuntimeLibraryUtil {
             }
         }
         return null;
-    }
-
-    public static boolean isLibraryCanBeUsedAsJavaRuntime(@Nullable Library library) {
-        if (library == null) {
-            return false;
-        }
-
-        for (VirtualFile root : library.getFiles(OrderRootType.CLASSES)) {
-            if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static String getUniqueLibraryName(final String baseName, final LibraryTable.ModifiableModel model) {
-        return UniqueNameGenerator.generateUniqueName(baseName, "", "", " (", ")", new Condition<String>() {
-            @Override
-            public boolean value(String s) {
-                return model.getLibraryByName(s) == null;
-            }
-        });
     }
 
     public static void updateRuntime(

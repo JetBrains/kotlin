@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.compiler.runner.*;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.project.JsModuleDetector;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class JetCompiler implements TranslatingCompiler {
             return false;
         }
         Module module = compileContext.getModuleByFile(virtualFile);
-        if (module != null && JsModuleDetector.isJsModule(module)) {
+        if (module != null && KotlinFrameworkDetector.isJsModule(module)) {
             return false;
         }
         return true;

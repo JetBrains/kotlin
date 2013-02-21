@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
 public final class AnalyzerFacadeProvider {
 
@@ -54,7 +55,7 @@ public final class AnalyzerFacadeProvider {
 
     @NotNull
     private static AnalyzerFacade getAnalyzerFacadeForModule(@NotNull Module module) {
-        if (JsModuleDetector.isJsModule(module)) {
+        if (KotlinFrameworkDetector.isJsModule(module)) {
             return JSAnalyzerFacadeForIDEA.INSTANCE;
         }
         return AnalyzerFacadeForJVM.INSTANCE;

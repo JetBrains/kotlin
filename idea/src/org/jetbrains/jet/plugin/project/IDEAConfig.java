@@ -21,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
-import static org.jetbrains.jet.plugin.project.JsModuleDetector.getLibLocationAndTargetForProject;
+import java.util.ArrayList;
 
 public final class IDEAConfig extends LibrarySourcesConfig {
     public IDEAConfig(@NotNull Project project) {
-        super(project, "default", getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion());
+        super(project, "default", new ArrayList<String>(), EcmaVersion.defaultVersion());
     }
 }
