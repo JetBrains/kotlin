@@ -21,12 +21,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 
 import java.util.List;
 
@@ -46,6 +50,24 @@ public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDele
     @Override
     public String getFamilyName() {
         return JetBundle.message("change.to.constructor.invocation");
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        JetTypeReference typeReference = element.getTypeReference();
+        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
+        JetType supertype = context.get(BindingContext.TYPE, typeReference);
+        if (supertype == null) return false;
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
+        if (classDescriptor == null) return false;
+        for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
+            boolean needsParametersPassed = false;
+            for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+                needsParametersPassed |= !parameter.hasDefaultValue() && parameter.getVarargElementType() == null;
+            }
+            if (!needsParametersPassed) return true;
+        }
+        return false;
     }
 
     @Override

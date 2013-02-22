@@ -131,7 +131,7 @@ public class QuickFixes {
         factories.put(USELESS_SIMPLE_IMPORT, removeImportFixFactory);
         factories.put(USELESS_HIDDEN_IMPORT, removeImportFixFactory);
 
-        factories.put(SUPERTYPE_NOT_INITIALIZED_DEFAULT, ChangeToConstructorInvocationFix.createFactory());
+        factories.put(SUPERTYPE_NOT_INITIALIZED, ChangeToConstructorInvocationFix.createFactory());
         factories.put(FUNCTION_CALL_EXPECTED, ChangeToFunctionInvocationFix.createFactory());
         
         factories.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
