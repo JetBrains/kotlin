@@ -86,7 +86,7 @@
             <classpath refid="classpath"/>
         </javac>
         <copy todir="${output}/classes/generators">
-          <fileset dir="compiler/frontend/src" includes="**/*.jet"/>
+            <fileset dir="compiler/frontend/src" includes="**/*.jet"/>
         </copy>
     </target>
 
@@ -128,7 +128,7 @@
                     </manifest>
                 </jar>
 
-                <delete dir="${output}/kotlin-compiler-javadoc" failonerror="false" />
+                <delete dir="${output}/kotlin-compiler-javadoc" failonerror="false"/>
                 <javadoc destdir="${output}/kotlin-compiler-javadoc"
                          sourcepathref="compilerSources.path"
                          classpathref="classpath"
@@ -150,59 +150,58 @@
         </if>
     </target>
 
-  <target name="jslib">
-    <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
-      <fileset dir="${basedir}/js/js.libraries/src">
-        <include name="core/**"/>
-        <include name="jquery/**"/>
-        <include name="dom/**"/>
-        <include name="html5/**"/>
-        <include name="stdlib/TuplesCode.kt"/>
-      </fileset>
-      <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-    </jar>
-    <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
-      <classpath>
-        <pathelement location="${basedir}\js\js.tests\testLib\closure-compiler.jar"/>
-      </classpath>
-      <arg value="--formatting"/>
-      <arg value="PRETTY_PRINT"/>
-      <arg value="--language_in"/>
-      <arg value="ECMASCRIPT5_STRICT"/>
-      <arg value="--compilation_level"/>
-      <arg value="SIMPLE_OPTIMIZATIONS"/>
-      <arg value="--js"/>
-      <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma5.js"/>
-      <arg value="--js"/>
-      <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
-      <arg value="--js"/>
-      <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
-      <arg value="--js_output_file"/>
-      <arg value="${kotlin-home}/lib/kotlinEcma5.js"/>
-    </java>
-    <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
-      <classpath>
-        <pathelement location="${basedir}/js/js.tests/testLib/closure-compiler.jar"/>
-      </classpath>
-      <arg value="--formatting"/>
-      <arg value="PRETTY_PRINT"/>
-      <arg value="--language_in"/>
-      <arg value="ECMASCRIPT3"/>
-      <arg value="--compilation_level"/>
-      <arg value="SIMPLE_OPTIMIZATIONS"/>
-      <arg value="--js"/>
-      <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma3.js"/>
-      <arg value="--js"/>
-      <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
-      <arg value="--js"/>
-      <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
-      <arg value="--js_output_file"/>
-      <arg value="${kotlin-home}/lib/kotlinEcma3.js"/>
-    </java>
-  </target>
+    <target name="jslib">
+        <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
+            <fileset dir="${basedir}/js/js.libraries/src">
+                <include name="core/**"/>
+                <include name="jquery/**"/>
+                <include name="dom/**"/>
+                <include name="html5/**"/>
+                <include name="stdlib/TuplesCode.kt"/>
+            </fileset>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+        </jar>
+        <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
+            <classpath>
+                <pathelement location="${basedir}\js\js.tests\testLib\closure-compiler.jar"/>
+            </classpath>
+            <arg value="--formatting"/>
+            <arg value="PRETTY_PRINT"/>
+            <arg value="--language_in"/>
+            <arg value="ECMASCRIPT5_STRICT"/>
+            <arg value="--compilation_level"/>
+            <arg value="SIMPLE_OPTIMIZATIONS"/>
+            <arg value="--js"/>
+            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma5.js"/>
+            <arg value="--js"/>
+            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
+            <arg value="--js"/>
+            <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
+            <arg value="--js_output_file"/>
+            <arg value="${kotlin-home}/lib/kotlinEcma5.js"/>
+        </java>
+        <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
+            <classpath>
+                <pathelement location="${basedir}/js/js.tests/testLib/closure-compiler.jar"/>
+            </classpath>
+            <arg value="--formatting"/>
+            <arg value="PRETTY_PRINT"/>
+            <arg value="--language_in"/>
+            <arg value="ECMASCRIPT3"/>
+            <arg value="--compilation_level"/>
+            <arg value="SIMPLE_OPTIMIZATIONS"/>
+            <arg value="--js"/>
+            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma3.js"/>
+            <arg value="--js"/>
+            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
+            <arg value="--js"/>
+            <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
+            <arg value="--js_output_file"/>
+            <arg value="${kotlin-home}/lib/kotlinEcma3.js"/>
+        </java>
+    </target>
 
     <target name="compiler">
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
@@ -212,24 +211,28 @@
             <classpath refid="classpath"/>
         </javac>
 
-        <jar jarfile="${output}/kotlin-compiler-before-jarjar.jar">
-          <fileset dir="${output}/classes/compiler"/>
-          <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
+        <jar jarfile="${output}/kotlin-compiler-before-shrink.jar">
+            <fileset dir="${output}/classes/compiler"/>
+            <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
 
-          <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-          <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar"/>
-          <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
-          <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
-          <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
-          <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
-          <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-util-4.0.jar"/>
-          <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
+            <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
+            <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
+            <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
+            <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
+            <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
+            <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
+            <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+
+                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+            </manifest>
         </jar>
-
-        <jarjar-for-kotlin inputJar="${output}/kotlin-compiler-before-jarjar.jar"
-                           outputJar="${output}/kotlin-compiler-jarjar.jar"
-                           jarDescription="Kotlin Compiler"
-                           mainClass="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
 
         <delete file="${kotlin-home}/lib/kotlin-compiler.jar" failonerror="false"/>
 
@@ -237,36 +240,36 @@
             <isfalse value="${shrink}"/>
 
             <then>
-                <copy file="${output}/kotlin-compiler-jarjar.jar"
+                <copy file="${output}/kotlin-compiler-before-shrink.jar"
                       tofile="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </then>
 
             <else>
-                <cleandir dir="${output}/kotlin-compiler.exploded"/>
-                <unzip src="${output}/kotlin-compiler-jarjar.jar" dest="${output}/kotlin-compiler.exploded"/>
-
-                <!-- Clean JarJar result -->
-                <jar jarfile="${output}/kotlin-compiler-before-proguard.jar"
-                     manifest="${output}/kotlin-compiler.exploded/META-INF/MANIFEST.MF">
-
-                    <fileset dir="${output}/kotlin-compiler.exploded">
-                        <include name="**/*.class"/>
-                        <include name="**/*.properties"/>
-                        <include name="**/*.jet"/>
-                        <include name="**/*.kt"/>
-                        <include name="META-INF/services/**"/>
-                        <include name="META-INF/native/**"/>
-                        <include name="messages/**"/>
-                    </fileset>
-                    <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-                </jar>
-                <delete dir="${output}/kotlin-compiler.exploded"/>
-
                 <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar"/>
                 <available property="rtjar" value="${java.home}/../Classes/classes.jar" file="${java.home}/../Classes/classes.jar"/>
 
                 <proguard><![CDATA[
-                    -injars '${output}/kotlin-compiler-before-proguard.jar'
+                    -injars '${output}/kotlin-compiler-before-shrink.jar'(
+                    !com/thoughtworks/xstream/converters/extended/ISO8601**,
+                    !com/thoughtworks/xstream/converters/reflection/CGLIBEnhancedConverter**,
+                    !com/thoughtworks/xstream/io/xml/Dom4J**,
+                    !com/thoughtworks/xstream/io/xml/Xom**,
+                    !com/thoughtworks/xstream/io/xml/Wstx**,
+                    !com/thoughtworks/xstream/io/xml/KXml2**,
+                    !com/thoughtworks/xstream/io/xml/BEAStax**,
+                    !com/thoughtworks/xstream/io/json/Jettison**,
+                    !com/thoughtworks/xstream/mapper/CGLIBMapper**,
+                    !org/apache/log4j/jmx/Agent*,
+                    !org/apache/log4j/net/JMS*,
+                    !org/apache/log4j/net/SMTP*,
+                    !org/apache/log4j/or/jms/MessageRenderer*,
+                    !org/jdom/xpath/Jaxen*,
+                    !org/mozilla/javascript/xml/impl/xmlbeans/**,
+                    !META-INF/maven**,
+                    **.class,**.properties,**.jet,**.kt,
+                    META-INF/services/**,META-INF/native/**,META-INF/MANIFEST.MF,
+                    messages/**)
+
                     -outjars '${kotlin-home}/lib/kotlin-compiler.jar'
 
                     -dontwarn com.intellij.util.ui.IsRetina*
@@ -410,92 +413,30 @@
         </jar>
     </target>
 
-  <target name="j2kConverter">
-    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+    <target name="j2kConverter">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
-    <cleandir dir="${output}/classes/j2k"/>
+        <cleandir dir="${output}/classes/j2k"/>
 
-    <javac destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-      <src path="${basedir}/j2k/src"/>
-      <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-    </javac>
+        <javac destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <src path="${basedir}/j2k/src"/>
+            <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+        </javac>
 
-    <jar jarfile="${output}/j2k-before-jarjar.jar">
-      <fileset dir="${output}/classes/j2k" includes="org/jetbrains/jet/j2k/**"/>
-    </jar>
+        <jar jarfile="${kotlin-home}/lib/tools/j2k.jar">
+            <fileset dir="${output}/classes/j2k" includes="org/jetbrains/jet/j2k/**"/>
 
-    <jarjar-for-kotlin inputJar="${output}/j2k-before-jarjar.jar"
-                       outputJar="${kotlin-home}/lib/tools/j2k.jar"
-                       jarDescription="Java to Kotlin Converter"
-                       mainClass="org.jetbrains.jet.j2k.JavaToKotlinTranslator"/>
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
 
-  </target>
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Java to Kotlin Converter"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
 
-  <macrodef name="jarjar-for-kotlin">
-    <attribute name="inputJar"/>
-    <attribute name="outputJar"/>
-    <attribute name="jarDescription"/>
-    <attribute name="mainClass"/>
-
-    <sequential>
-      <!-- JarJar Kotlin compiler & dependencies -->
-      <jarjar jarfile="@{outputJar}">
-        <zipfileset src="@{inputJar}"/>
-
-        <zap pattern="com.thoughtworks.xstream.converters.extended.ISO8601*"/>
-        <zap pattern="com.thoughtworks.xstream.converters.reflection.CGLIBEnhancedConverter*"/>
-        <zap pattern="com.thoughtworks.xstream.io.xml.Dom4J*"/>
-        <zap pattern="com.thoughtworks.xstream.io.xml.Xom*"/>
-        <zap pattern="com.thoughtworks.xstream.mapper.CGLIBMapper*"/>
-        <zap pattern="com.thoughtworks.xstream.io.json.Jettison*"/>
-        <zap pattern="com.thoughtworks.xstream.io.xml.Wstx*"/>
-        <zap pattern="com.thoughtworks.xstream.io.xml.KXml2*"/>
-        <zap pattern="com.thoughtworks.xstream.io.xml.BEAStax*"/>
-
-        <zap pattern="org.apache.log4j.jmx.Agent"/>
-        <zap pattern="org.apache.log4j.net.JMS*"/>
-        <zap pattern="org.apache.log4j.net.SMTP*"/>
-        <zap pattern="org.apache.log4j.or.jms.MessageRenderer"/>
-
-        <zap pattern="org.jdom.xpath.Jaxen*"/>
-
-        <zap pattern="org.mozilla.javascript.xml.impl.xmlbeans.**"/>
-
-        <!--
-        <rule pattern="com.intellij.**" result="org.jetbrains.jet.internal.com.intellij.@1"/>
-        <rule pattern="com.sun.jna.**" result="org.jetbrains.jet.internal.com.sun.jna.@1"/>
-        <rule pattern="org.apache.log4j.**" result="org.jetbrains.jet.internal.org.apache.log4j.@1"/>
-        <rule pattern="org.jdom.**" result="org.jetbrains.jet.internal.org.jdom.@1"/>
-        <rule pattern="JDOMAbout**" result="org.jetbrains.jet.internal.org.jdom.JDOMAbout@1"/>
-        <rule pattern="org.intellij.lang.annotations.**" result="org.jetbrains.jet.internal.org.intellij.lang.annotations.@1"/>
-        <rule pattern="com.google.**" result="org.jetbrains.jet.internal.com.google.@1"/>
-        <rule pattern="org.objectweb.asm.**" result="org.jetbrains.jet.internal.org.objectweb.asm.@1"/>
-        <rule pattern="com.sampullara.cli.**" result="org.jetbrains.jet.internal.com.sampullara.cli.@1"/>
-        <rule pattern="org.picocontainer.**" result="org.jetbrains.jet.internal.org.picocontainer.@1"/>
-        <rule pattern="gnu.trove.**" result="org.jetbrains.jet.internal.gnu.trove.@1"/>
-        <rule pattern="javax.inject.**" result="org.jetbrains.jet.internal.javax.inject.@1"/>
-        <rule pattern="com.thoughtworks.xstream.**" result="org.jetbrains.jet.internal.com.thoughtworks.xstream.@1"/>
-        <rule pattern="org.json.**" result="org.jetbrains.jet.internal.org.json.@1"/>
-        <rule pattern="org.mozilla.**" result="org.jetbrains.jet.internal.org.mozilla.@1"/>
-        <rule pattern="org.xmlpull.**" result="org.jetbrains.jet.internal.org.xmlpull.@1"/>
-        <rule pattern="org.kohsuke.args4j.**" result="org.jetbrains.jet.internal.org.kohsuke.args4j.@1"/>
-        -->
-
-        <manifest>
-          <attribute name="Built-By" value="JetBrains"/>
-
-          <attribute name="Implementation-Vendor" value="JetBrains"/>
-          <attribute name="Implementation-Title" value="@{jarDescription}"/>
-          <attribute name="Implementation-Version" value="${build.number}"/>
-
-          <attribute name="Main-Class" value="@{mainClass}"/>
-        </manifest>
-      </jarjar>
-
-      <delete file="@{inputJar}" failonerror="false"/>
-    </sequential>
-  </macrodef>
+                <attribute name="Main-Class" value="org.jetbrains.jet.j2k.JavaToKotlinTranslator"/>
+            </manifest>
+        </jar>
+    </target>
 
     <target name="dist"
             depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,runtime,jslib,j2kConverter"/>
