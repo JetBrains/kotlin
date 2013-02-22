@@ -102,32 +102,32 @@
     </target>
 
     <target name="compilerSources">
+        <jar jarfile="${output}/kotlin-compiler-sources.jar">
+            <!-- TODO How to convert it from pathset or dirset ? -->
+            <fileset dir="compiler/frontend/src"/>
+            <fileset dir="compiler/frontend.java/src"/>
+            <fileset dir="compiler/backend/src"/>
+            <fileset dir="compiler/cli/src"/>
+            <fileset dir="j2k/src"/>
+            <fileset dir="compiler/util/src"/>
+            <fileset dir="compiler/jet.as.java.psi/src"/>
+            <fileset dir="runtime/src"/>
+            <fileset dir="js/js.translator/src"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler Sources"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
+
         <if>
             <istrue value="${generate.javadoc}"/>
 
             <then>
-                <jar jarfile="${output}/kotlin-compiler-sources.jar">
-                    <!-- TODO How to convert it from pathset or dirset ? -->
-                    <fileset dir="compiler/frontend/src"/>
-                    <fileset dir="compiler/frontend.java/src"/>
-                    <fileset dir="compiler/backend/src"/>
-                    <fileset dir="compiler/cli/src"/>
-                    <fileset dir="j2k/src"/>
-                    <fileset dir="compiler/util/src"/>
-                    <fileset dir="compiler/jet.as.java.psi/src"/>
-                    <fileset dir="runtime/src"/>
-                    <fileset dir="js/js.translator/src"/>
-                    <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-                    <manifest>
-                        <attribute name="Built-By" value="JetBrains"/>
-
-                        <attribute name="Implementation-Vendor" value="JetBrains"/>
-                        <attribute name="Implementation-Title" value="Kotlin Compiler Sources"/>
-                        <attribute name="Implementation-Version" value="${build.number}"/>
-                    </manifest>
-                </jar>
-
                 <delete dir="${output}/kotlin-compiler-javadoc" failonerror="false"/>
                 <javadoc destdir="${output}/kotlin-compiler-javadoc"
                          sourcepathref="compilerSources.path"
@@ -147,6 +147,18 @@
                     </manifest>
                 </jar>
             </then>
+
+            <else>
+                <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
+                    <manifest>
+                        <attribute name="Built-By" value="JetBrains"/>
+
+                        <attribute name="Implementation-Vendor" value="JetBrains"/>
+                        <attribute name="Implementation-Title" value="Kotlin Compiler Javadoc"/>
+                        <attribute name="Implementation-Version" value="${build.number}"/>
+                    </manifest>
+                </jar>
+            </else>
         </if>
     </target>
 
@@ -449,4 +461,4 @@
     </target>
 </project>
 
-<!-- vim: set ts=4 sw=4 et nowrap: -->
+    <!-- vim: set ts=4 sw=4 et nowrap: -->
