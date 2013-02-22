@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
@@ -241,20 +242,45 @@ public class PositioningStrategies {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetModifierListOwner element) {
-            List<JetKeywordToken> visibilityTokens = Lists
-                .newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD);
+            List<JetKeywordToken> visibilityTokens = Lists.newArrayList(
+                    JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD);
             List<TextRange> result = Lists.newArrayList();
             for (JetKeywordToken token : visibilityTokens) {
                 if (element.hasModifier(token)) {
+                    //noinspection ConstantConditions
                     result.add(element.getModifierList().getModifierNode(token).getTextRange());
                 }
             }
-            if (result.isEmpty()) {
-                if (element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
-                    result.add(element.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD).getTextRange());
+
+            if (!result.isEmpty()) return result;
+
+            // Try to resolve situation when there's no visibility modifiers written before element
+
+            if (element instanceof PsiNameIdentifierOwner) {
+                PsiElement nameIdentifier = ((PsiNameIdentifierOwner) element).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return ImmutableList.of(nameIdentifier.getTextRange());
                 }
             }
-            return result;
+
+            if (element instanceof JetPropertyAccessor) {
+                return ImmutableList.of(((JetPropertyAccessor) element).getNamePlaceholder().getTextRange());
+            }
+
+            if (element instanceof JetClassInitializer) {
+                return ImmutableList.of(element.getTextRange());
+            }
+
+            if (element instanceof JetClassObject) {
+                JetObjectDeclaration objectDeclaration = ((JetClassObject) element).getObjectDeclaration();
+                if (objectDeclaration != null) {
+                    return ImmutableList.of(objectDeclaration.getObjectKeyword().getTextRange());
+                }
+            }
+
+            throw new IllegalArgumentException(
+                    String.format("Can't find text range for element '%s' with the text '%s'",
+                                  element.getClass().getCanonicalName(), element.getText()));
         }
     };
 

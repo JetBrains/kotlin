@@ -61,6 +61,19 @@ public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
         });
     }
 
+    public void testVisibilityError() {
+        doTest(new Function1<MessageChecker, Void>() {
+            @Override
+            public Void invoke(MessageChecker checker) {
+                checker
+                        .expect(error().text("'f' hides member of supertype 'TestTrait' and needs 'override' modifier").at("test.kt", 6, 5))
+                        .expect(error().text("Cannot weaken access privilege 'public' for 'f' in 'TestTrait'").at("test.kt", 6, 9))
+                ;
+                return null;
+            }
+        });
+    }
+
     private void doTest(@NotNull Function1<MessageChecker, Void> whatToExpect) {
         performTest(whatToExpect, getCompiler(JetCompiler.class), TEST_DATA_PATH);
     }

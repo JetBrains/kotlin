@@ -91,9 +91,9 @@ public final class Message {
 
     public void check(@NotNull Message other) {
         checkMessages(other);
-        Assert.assertEquals(other.category, this.category);
-        Assert.assertEquals(other.line, this.line);
-        Assert.assertEquals(other.column, this.column);
+        Assert.assertEquals("Error category for message " + this, this.category, other.category);
+        Assert.assertEquals("Invalid position (different line) for message:\n" + this + "\n", this.line, other.line);
+        Assert.assertEquals("Invalid position (different column) for message:\n" + this + "\n", this.column, other.column);
         if (this.url != null) {
             Assert.assertTrue(other.url.endsWith(this.url));
         }
