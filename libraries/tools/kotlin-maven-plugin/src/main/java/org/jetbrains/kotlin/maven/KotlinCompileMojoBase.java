@@ -23,10 +23,14 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.jet.cli.common.CompilerVersion;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
@@ -153,14 +157,33 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
 
         final CompilerArguments arguments = createCompilerArguments();
-
         configureCompilerArguments(arguments);
 
         final CLICompiler compiler = createCompiler();
-
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        final ExitCode exitCode = compiler.exec(System.err, arguments);
+        final Log log = getLog();
+        MessageCollector messageCollector = new MessageCollector() {
+            @Override
+            public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
+                String path = location.getPath();
+                String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
+
+                String text = position + message;
+
+                if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
+                    log.debug(text);
+                } else if (CompilerMessageSeverity.ERRORS.contains(severity)) {
+                    log.error(text);
+                } else if (severity == CompilerMessageSeverity.INFO) {
+                    log.info(text);
+                } else {
+                    log.warn(text);
+                }
+            }
+        };
+
+        final ExitCode exitCode = compiler.exec(messageCollector, arguments);
 
         switch (exitCode) {
             case COMPILATION_ERROR:
