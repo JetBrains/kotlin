@@ -10,6 +10,25 @@
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/config" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/system" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/system-idea" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/docs/apidoc/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/docs/website/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/examples/browser-example/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/examples/js-example/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/examples/kotlin-java-example/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin-jdbc/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/kotlin-swing/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/kunit/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kdoc-maven-plugin/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kdoc/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-js-library/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-js-tests-junit/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-js-tests/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-maven-plugin/local-repo" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-maven-plugin/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/kotlin-stdlib-gen/target" />
+      <excludeFolder url="file://$MODULE_DIR$/libraries/tools/runtime/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
