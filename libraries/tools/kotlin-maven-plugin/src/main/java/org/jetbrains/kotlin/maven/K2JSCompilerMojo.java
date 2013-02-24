@@ -156,7 +156,6 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
         if (arguments instanceof K2JSCompilerArguments) {
             K2JSCompilerArguments k2jsArgs = (K2JSCompilerArguments)arguments;
             k2jsArgs.outputFile = outputFile;
-            k2jsArgs.verbose = true;
             if (getLog().isDebugEnabled()) {
                 k2jsArgs.verbose = true;
             }
