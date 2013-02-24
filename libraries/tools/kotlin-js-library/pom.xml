@@ -27,6 +27,10 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
+                                <delete dir="${project.build.directory}/classes" failonerror="false" />
+                                <delete dir="${project.build.directory}/generated-js-library" failonerror="false" />
+                                <delete dir="${project.build.directory}/generated-js-definitions" failonerror="false" />
+
                                 <mkdir dir="${basedir}/target/generated-js-library"/>
                                 <mkdir dir="${basedir}/target/generated-js-definitions"/>
                                 <copy todir="${basedir}/target/generated-js-definitions">
