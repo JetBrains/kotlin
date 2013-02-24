@@ -15,14 +15,6 @@
     <artifactId>kotlin-js-tests</artifactId>
     <packaging>jar</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-js-library</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <sourceDirectory>${basedir}/target/tests</sourceDirectory>
 
@@ -37,6 +29,7 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
+                                <delete dir="${basedir}/target/tests" failonerror="false"/>
                                 <mkdir dir="${basedir}/target/tests"/>
                                 <copy todir="${basedir}/target/tests">
                                     <fileset dir="${basedir}/../../stdlib/test/js">
