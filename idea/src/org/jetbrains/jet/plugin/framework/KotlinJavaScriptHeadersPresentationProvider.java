@@ -22,12 +22,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.util.List;
 
 public class KotlinJavaScriptHeadersPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
+    public static KotlinJavaScriptHeadersPresentationProvider getInstance() {
+        return LibraryPresentationProvider.EP_NAME.findExtension(KotlinJavaScriptHeadersPresentationProvider.class);
+    }
+
     protected KotlinJavaScriptHeadersPresentationProvider() {
         super(JetJavaScriptLibraryDescription.KOTLIN_JAVASCRIPT_KIND);
     }

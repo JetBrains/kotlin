@@ -17,9 +17,7 @@
 package org.jetbrains.jet.plugin.framework;
 
 import com.intellij.framework.library.LibraryVersionProperties;
-import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
-import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +28,10 @@ import javax.swing.*;
 import java.util.List;
 
 public class KotlinJavaRuntimePresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
+    public static KotlinJavaRuntimePresentationProvider getInstance() {
+        return LibraryPresentationProvider.EP_NAME.findExtension(KotlinJavaRuntimePresentationProvider.class);
+    }
+
     protected KotlinJavaRuntimePresentationProvider() {
         super(JetJavaRuntimeLibraryDescription.KOTLIN_JAVA_RUNTIME_KIND);
     }

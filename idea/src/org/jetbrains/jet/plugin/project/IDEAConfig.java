@@ -18,13 +18,12 @@ package org.jetbrains.jet.plugin.project;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
-import java.util.ArrayList;
-
 public final class IDEAConfig extends LibrarySourcesConfig {
     public IDEAConfig(@NotNull Project project) {
-        super(project, "default", new ArrayList<String>(), EcmaVersion.defaultVersion());
+        super(project, "default", KotlinFrameworkDetector.getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion());
     }
 }
