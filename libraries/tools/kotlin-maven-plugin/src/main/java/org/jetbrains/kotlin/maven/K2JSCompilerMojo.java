@@ -78,14 +78,6 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
      */
     private Boolean appendLibraryJS;
 
-    /**
-     * Whether verbose logging is enabled or not.
-     *
-     * @parameter default-value="false"
-     * @parameter expression="${verbose}"
-     */
-    private Boolean verbose;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
@@ -164,8 +156,9 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
         if (arguments instanceof K2JSCompilerArguments) {
             K2JSCompilerArguments k2jsArgs = (K2JSCompilerArguments)arguments;
             k2jsArgs.outputFile = outputFile;
-            if (verbose != null) {
-                k2jsArgs.verbose = verbose;
+            k2jsArgs.verbose = true;
+            if (getLog().isDebugEnabled()) {
+                k2jsArgs.verbose = true;
             }
             List<String> sources = getSources();
             if (sources.size() > 0) {
