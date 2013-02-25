@@ -29,7 +29,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
-import org.jetbrains.jet.plugin.framework.ui.FrameworkSourcePanel;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -44,13 +43,6 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
 
     private static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";
 
-    @Nullable
-    private FrameworkSourcePanel frameworkSourcePanel;
-
-    public void setFrameworkSourcePanel(@Nullable FrameworkSourcePanel frameworkSourcePanel) {
-        this.frameworkSourcePanel = frameworkSourcePanel;
-    }
-
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {
@@ -60,12 +52,7 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        if (frameworkSourcePanel == null || frameworkSourcePanel.isConfigureFromBundled()) {
-            return createFromPlugin(parentComponent, contextDirectory);
-        }
-        else {
-            throw new InvalidOpenTypeException("Isn't supported yet");
-        }
+        return createFromPlugin(parentComponent, contextDirectory);
     }
 
     private NewLibraryConfiguration createFromPlugin(JComponent parentComponent, VirtualFile contextDirectory) {

@@ -29,7 +29,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
-import org.jetbrains.jet.plugin.framework.ui.FrameworkSourcePanel;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -42,13 +41,6 @@ public class JSLibraryDescription extends CustomLibraryDescription {
 
     private static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
 
-    @Nullable
-    private FrameworkSourcePanel configurationPanel;
-
-    public void setConfigurationPanel(@Nullable FrameworkSourcePanel configurationPanel) {
-        this.configurationPanel = configurationPanel;
-    }
-
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {
@@ -58,13 +50,8 @@ public class JSLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        if (configurationPanel == null || configurationPanel.isConfigureFromBundled()) {
-            return createFromPlugin(parentComponent, contextDirectory);
-        }
-        else {
-            throw new IllegalStateException("Feature isn't ready yet");
-        }
-   }
+        return createFromPlugin(parentComponent, contextDirectory);
+    }
 
     private NewLibraryConfiguration createFromPlugin(JComponent parentComponent, VirtualFile contextDirectory) {
         File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJarPath();

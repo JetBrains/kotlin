@@ -28,7 +28,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.framework.ui.FrameworkSourcePanel;
 
 import javax.swing.*;
 
@@ -43,30 +42,21 @@ public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvid
     @Override
     public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull FrameworkSupportModel model) {
         return new FrameworkSupportInModuleConfigurable() {
-            public FrameworkSourcePanel panel = null;
-
             @Nullable
             @Override
             public CustomLibraryDescription createLibraryDescription() {
-                JavaRuntimeLibraryDescription description = new JavaRuntimeLibraryDescription();
-                description.setFrameworkSourcePanel(getConfigurationPanel());
-                return description;
+                return new JavaRuntimeLibraryDescription();
             }
 
             @Nullable
             @Override
             public JComponent createComponent() {
-                return getConfigurationPanel().getPanel();
+                return null;
             }
 
             @Override
             public boolean isOnlyLibraryAdded() {
                 return true;
-            }
-
-            @Override
-            public void onFrameworkSelectionChanged(boolean selected) {
-                getConfigurationPanel().onFrameworkSelectionChanged(selected);
             }
 
             @Override
@@ -78,13 +68,6 @@ public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvid
                         rootModel,
                         new JSLibraryDescription(),
                         JSFrameworkType.getInstance());
-            }
-
-            private FrameworkSourcePanel getConfigurationPanel() {
-                if (panel == null) {
-                    panel = new FrameworkSourcePanel();
-                }
-                return panel;
             }
         };
     }

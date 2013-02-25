@@ -28,7 +28,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.framework.ui.FrameworkSourcePanel;
 
 import javax.swing.*;
 
@@ -43,25 +42,16 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
     @Override
     public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull FrameworkSupportModel model) {
         return new FrameworkSupportInModuleConfigurable() {
-            private FrameworkSourcePanel sourcePanel = null;
-
             @Nullable
             @Override
             public CustomLibraryDescription createLibraryDescription() {
-                JSLibraryDescription description = new JSLibraryDescription();
-                description.setConfigurationPanel(getConfigurationPanel());
-                return description;
+                return new JSLibraryDescription();
             }
 
             @Nullable
             @Override
             public JComponent createComponent() {
-                return getConfigurationPanel().getPanel();
-            }
-
-            @Override
-            public void onFrameworkSelectionChanged(boolean selected) {
-                getConfigurationPanel().onFrameworkSelectionChanged(selected);
+                return null;
             }
 
             @Override
@@ -73,13 +63,6 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
                         rootModel,
                         new JavaRuntimeLibraryDescription(),
                         JavaFrameworkType.getInstance());
-            }
-
-            private FrameworkSourcePanel getConfigurationPanel() {
-                if (sourcePanel == null) {
-                    sourcePanel = new FrameworkSourcePanel();
-                }
-                return sourcePanel;
             }
         };
     }
