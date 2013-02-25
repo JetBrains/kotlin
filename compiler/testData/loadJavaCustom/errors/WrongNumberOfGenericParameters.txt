@@ -1,0 +1,17 @@
+package test
+
+public trait WrongNumberOfGenericParameters : java.lang.Object {
+    public abstract fun o0() : test.WrongNumberOfGenericParameters.One<out jet.Any?>?
+    public abstract fun o2() : test.WrongNumberOfGenericParameters.One<[ERROR : T]>?
+    public abstract fun t1() : test.WrongNumberOfGenericParameters.Two<out jet.Any?, out jet.Any?>?
+    public abstract fun z() : test.WrongNumberOfGenericParameters.Zero?
+    
+    public trait One</*0*/ T> : java.lang.Object {
+    }
+    
+    public trait Two</*0*/ P, /*1*/ Q> : java.lang.Object {
+    }
+    
+    public trait Zero : java.lang.Object {
+    }
+}

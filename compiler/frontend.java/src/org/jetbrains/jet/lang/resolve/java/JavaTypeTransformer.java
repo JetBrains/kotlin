@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -38,6 +39,8 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
 
 public class JavaTypeTransformer {
+
+    private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
     private JavaSemanticServices javaSemanticServices;
     private JavaDescriptorResolver resolver;
@@ -175,25 +178,30 @@ public class JavaTypeTransformer {
                         PsiType[] psiArguments = classType.getParameters();
                         
                         if (parameters.size() != psiArguments.length) {
-                            throw new IllegalStateException(
-                                    "parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length
-                                            + " in " + classType.getPresentableText() + "\n PsiClass: \n" + psiClass.getText());
-                        }
-                        
-                        for (int i = 0; i < parameters.size(); i++) {
-                            PsiType psiArgument = psiArguments[i];
-                            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+                            // Most of the time this means there is an error in the Java code
+                            LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length +
+                                     " in " + classType.getPresentableText() + "\n PsiClass: \n" + psiClass.getText());
 
-                            TypeUsage howTheProjectionIsUsed = howThisTypeIsUsed == SUPERTYPE ? SUPERTYPE_ARGUMENT : TYPE_ARGUMENT;
-                            TypeProjection typeProjection = transformToTypeProjection(
-                                    psiArgument, typeParameterDescriptor, typeVariableResolver, howTheProjectionIsUsed);
-
-                            if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
-                                // remove redundant 'out' and 'in'
-                                arguments.add(new TypeProjection(Variance.INVARIANT, typeProjection.getType()));
+                            for (TypeParameterDescriptor parameter : parameters) {
+                                arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().getName())));
                             }
-                            else {
-                                arguments.add(typeProjection);
+                        }
+                        else {
+                            for (int i = 0; i < parameters.size(); i++) {
+                                PsiType psiArgument = psiArguments[i];
+                                TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+
+                                TypeUsage howTheProjectionIsUsed = howThisTypeIsUsed == SUPERTYPE ? SUPERTYPE_ARGUMENT : TYPE_ARGUMENT;
+                                TypeProjection typeProjection = transformToTypeProjection(
+                                        psiArgument, typeParameterDescriptor, typeVariableResolver, howTheProjectionIsUsed);
+
+                                if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
+                                    // remove redundant 'out' and 'in'
+                                    arguments.add(new TypeProjection(Variance.INVARIANT, typeProjection.getType()));
+                                }
+                                else {
+                                    arguments.add(typeProjection);
+                                }
                             }
                         }
                     }
