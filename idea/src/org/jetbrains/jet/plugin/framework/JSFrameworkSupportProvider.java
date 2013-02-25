@@ -55,6 +55,11 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
             }
 
             @Override
+            public boolean isOnlyLibraryAdded() {
+                return true;
+            }
+
+            @Override
             public void addSupport(
                     @NotNull Module module,
                     @NotNull ModifiableRootModel rootModel,
