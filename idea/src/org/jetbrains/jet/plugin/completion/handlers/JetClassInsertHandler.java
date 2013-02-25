@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.framework.FrameworkDetector;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 public class JetClassInsertHandler implements InsertHandler<LookupElement> {
@@ -60,7 +60,7 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
                             if (targetElement != null) {
                                 ImportInsertHelper.addImportDirectiveOrChangeToFqName(fqn, jetFile, context.getStartOffset(), targetElement);
                             }
-                            else if (KotlinFrameworkDetector.isJsModule(jetFile)) {
+                            else if (FrameworkDetector.isJsModule(jetFile)) {
                                 ImportInsertHelper.addImportDirective(fqn, jetFile);
                             }
                         }

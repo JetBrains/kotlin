@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.framework.FrameworkDetector;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil;
 
@@ -162,7 +162,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull KotlinCodeAnalyzer analyzer) {
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
-        if (!KotlinFrameworkDetector.isJsModule(file)) {
+        if (!FrameworkDetector.isJsModule(file)) {
             possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
         }
         else {
@@ -199,7 +199,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     }
 
     private static PsiShortNamesCache getShortNamesCache(@NotNull JetFile jetFile) {
-        if (KotlinFrameworkDetector.isJsModule(jetFile)) {
+        if (FrameworkDetector.isJsModule(jetFile)) {
             return JetShortNamesCache.getKotlinInstance(jetFile.getProject());
         }
 

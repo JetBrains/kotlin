@@ -22,17 +22,18 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 
 import javax.swing.*;
 import java.util.List;
 
-public class KotlinJavaScriptHeadersPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
-    public static KotlinJavaScriptHeadersPresentationProvider getInstance() {
-        return LibraryPresentationProvider.EP_NAME.findExtension(KotlinJavaScriptHeadersPresentationProvider.class);
+public class JavaRuntimePresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
+    public static JavaRuntimePresentationProvider getInstance() {
+        return LibraryPresentationProvider.EP_NAME.findExtension(JavaRuntimePresentationProvider.class);
     }
 
-    protected KotlinJavaScriptHeadersPresentationProvider() {
-        super(JetJavaScriptLibraryDescription.KOTLIN_JAVASCRIPT_KIND);
+    protected JavaRuntimePresentationProvider() {
+        super(JavaRuntimeLibraryDescription.KOTLIN_JAVA_RUNTIME_KIND);
     }
 
     @Nullable
@@ -44,9 +45,11 @@ public class KotlinJavaScriptHeadersPresentationProvider extends LibraryPresenta
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
-        // TODO: Ask for better api of library detection
-        if (classesRoots.isEmpty()) {
-            return new LibraryVersionProperties("Unknown");
+        for (VirtualFile root : classesRoots) {
+            if (root.getName().equals(KotlinRuntimeLibraryUtil.KOTLIN_RUNTIME_JAR)) {
+                // TODO: Detect library version
+                return new LibraryVersionProperties("Unknown");
+            }
         }
 
         return null;

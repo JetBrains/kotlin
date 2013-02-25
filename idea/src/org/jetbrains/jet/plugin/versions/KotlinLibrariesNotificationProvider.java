@@ -37,9 +37,9 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.framework.JetJavaFrameworkSupportProvider;
-import org.jetbrains.jet.plugin.framework.JetJavaScriptFrameworkSupportProvider;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.framework.FrameworkDetector;
+import org.jetbrains.jet.plugin.framework.JSFrameworkSupportProvider;
+import org.jetbrains.jet.plugin.framework.JavaFrameworkSupportProvider;
 import org.jetbrains.jet.plugin.framework.ui.AddSupportForSingleFrameworkDialogFixed;
 
 public class KotlinLibrariesNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
@@ -105,7 +105,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
     }
 
     public static boolean isModuleAlreadyConfigured(Module module) {
-        return isMavenModule(module) || KotlinFrameworkDetector.isJsModule(module) || KotlinFrameworkDetector.isJavaModule(module);
+        return isMavenModule(module) || FrameworkDetector.isJsModule(module) || FrameworkDetector.isJavaModule(module);
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
@@ -123,7 +123,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
             @Override
             public void run() {
                 DialogWrapper dialog = AddSupportForSingleFrameworkDialogFixed.createDialog(
-                        module, new JetJavaFrameworkSupportProvider());
+                        module, new JavaFrameworkSupportProvider());
                 if (dialog != null) {
                     dialog.show();
                 }
@@ -134,7 +134,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
             @Override
             public void run() {
                 DialogWrapper dialog = AddSupportForSingleFrameworkDialogFixed.createDialog(
-                        module, new JetJavaScriptFrameworkSupportProvider());
+                        module, new JSFrameworkSupportProvider());
                 if (dialog != null) {
                     dialog.show();
                 }

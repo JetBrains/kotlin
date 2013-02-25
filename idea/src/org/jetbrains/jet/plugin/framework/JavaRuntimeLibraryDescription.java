@@ -39,7 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
+public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
 
     private static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";

@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.framework.FrameworkDetector;
 import org.jetbrains.jet.plugin.libraries.DecompiledDataFactory;
 
 public class JetTypesCompletionHelper {
@@ -45,7 +45,7 @@ public class JetTypesCompletionHelper {
         jetCompletionResult.addAllElements(namesCache.getJetClassesDescriptors(
                 jetCompletionResult.getShortNameFilter(), jetCompletionResult.getResolveSession()));
 
-        if (!KotlinFrameworkDetector.isJsModule((JetFile) parameters.getOriginalFile())) {
+        if (!FrameworkDetector.isJsModule((JetFile) parameters.getOriginalFile())) {
             addAdaptedJavaCompletion(parameters,jetCompletionResult);
         }
     }

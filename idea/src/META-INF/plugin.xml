@@ -214,10 +214,10 @@
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
     <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>
 
-    <framework.type implementation="org.jetbrains.jet.plugin.framework.JetJavaFrameworkType"/>
-    <framework.type implementation="org.jetbrains.jet.plugin.framework.JavaScriptFrameworkType"/>
-    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.KotlinJavaRuntimePresentationProvider"/>
-    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.KotlinJavaScriptHeadersPresentationProvider"/>
+    <framework.type implementation="org.jetbrains.jet.plugin.framework.JavaFrameworkType"/>
+    <framework.type implementation="org.jetbrains.jet.plugin.framework.JSFrameworkType"/>
+    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider"/>
+    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JSHeadersPresentationProvider"/>
 
     <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>

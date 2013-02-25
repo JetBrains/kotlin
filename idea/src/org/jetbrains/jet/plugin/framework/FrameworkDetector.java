@@ -30,11 +30,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class KotlinFrameworkDetector {
+public class FrameworkDetector {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JAVA_MODULE = Key.create("IS_KOTLIN_JAVA_MODULE");
 
-    private KotlinFrameworkDetector() {
+    private FrameworkDetector() {
     }
 
     public static boolean isJsModule(@NotNull JetFile file) {
@@ -87,7 +87,7 @@ public class KotlinFrameworkDetector {
                 ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
                     @Override
                     public boolean process(Library library) {
-                        if (KotlinJavaScriptHeadersPresentationProvider.getInstance().detect(
+                        if (JSHeadersPresentationProvider.getInstance().detect(
                                 Arrays.asList(library.getFiles(OrderRootType.CLASSES))) != null) {
                             headersLibraries.add(library);
                         }

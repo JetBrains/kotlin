@@ -32,24 +32,24 @@ import org.jetbrains.jet.plugin.framework.ui.FrameworkSourcePanel;
 
 import javax.swing.*;
 
-public class JetJavaScriptFrameworkSupportProvider extends FrameworkSupportInModuleProvider {
+public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvider {
     @NotNull
     @Override
     public FrameworkTypeEx getFrameworkType() {
-        return JavaScriptFrameworkType.getInstance();
+        return JavaFrameworkType.getInstance();
     }
 
     @NotNull
     @Override
     public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull FrameworkSupportModel model) {
         return new FrameworkSupportInModuleConfigurable() {
-            private FrameworkSourcePanel sourcePanel = null;
+            public FrameworkSourcePanel panel = null;
 
             @Nullable
             @Override
             public CustomLibraryDescription createLibraryDescription() {
-                JetJavaScriptLibraryDescription description = new JetJavaScriptLibraryDescription();
-                description.setConfigurationPanel(getConfigurationPanel());
+                JavaRuntimeLibraryDescription description = new JavaRuntimeLibraryDescription();
+                description.setFrameworkSourcePanel(getConfigurationPanel());
                 return description;
             }
 
@@ -57,6 +57,11 @@ public class JetJavaScriptFrameworkSupportProvider extends FrameworkSupportInMod
             @Override
             public JComponent createComponent() {
                 return getConfigurationPanel().getPanel();
+            }
+
+            @Override
+            public boolean isOnlyLibraryAdded() {
+                return true;
             }
 
             @Override
@@ -71,15 +76,15 @@ public class JetJavaScriptFrameworkSupportProvider extends FrameworkSupportInMod
                     @NotNull ModifiableModelsProvider modifiableModelsProvider) {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
-                        new JetJavaRuntimeLibraryDescription(),
-                        JetJavaFrameworkType.getInstance());
+                        new JSLibraryDescription(),
+                        JSFrameworkType.getInstance());
             }
 
             private FrameworkSourcePanel getConfigurationPanel() {
-                if (sourcePanel == null) {
-                    sourcePanel = new FrameworkSourcePanel();
+                if (panel == null) {
+                    panel = new FrameworkSourcePanel();
                 }
-                return sourcePanel;
+                return panel;
             }
         };
     }

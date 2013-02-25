@@ -37,7 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class JetJavaScriptLibraryDescription extends CustomLibraryDescription {
+public class JSLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
 
     private static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
