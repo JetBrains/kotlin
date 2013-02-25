@@ -30,6 +30,7 @@ public class PathUtil {
     public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
     public static final String JS_LIB_JS_NAME = "kotlinEcma3.js";
     public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
+    public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
 
     private static final File NO_PATH = new File("<no_path>");
 

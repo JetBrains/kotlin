@@ -29,7 +29,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
-import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -39,6 +38,7 @@ import java.util.Set;
 
 public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
+    public static final String LIBRARY_NAME = "KotlinJavaRuntime";
 
     private static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";
 
@@ -79,8 +79,7 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
             return null;
         }
 
-        return new NewLibraryConfiguration(
-                KotlinRuntimeLibraryUtil.LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+        return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
                 editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.CLASSES);

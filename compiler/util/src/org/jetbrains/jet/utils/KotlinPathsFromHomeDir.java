@@ -43,7 +43,7 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
     @Override
     @NotNull
     public File getRuntimePath() {
-        return getLibraryFile("kotlin-runtime.jar");
+        return getLibraryFile(PathUtil.KOTLIN_JAVA_RUNTIME_JAR);
     }
 
     @Override

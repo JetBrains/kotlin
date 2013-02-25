@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.util.List;
@@ -46,7 +46,7 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
         for (VirtualFile root : classesRoots) {
-            if (root.getName().equals(KotlinRuntimeLibraryUtil.KOTLIN_RUNTIME_JAR)) {
+            if (root.getName().equals(PathUtil.KOTLIN_JAVA_RUNTIME_JAR)) {
                 // TODO: Detect library version
                 return new LibraryVersionProperties("Unknown");
             }

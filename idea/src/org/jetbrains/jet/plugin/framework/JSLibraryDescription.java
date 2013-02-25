@@ -38,6 +38,7 @@ import java.util.Set;
 
 public class JSLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
+    public static final String LIBRARY_NAME = "KotlinJavaScript";
 
     private static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
 
@@ -78,7 +79,7 @@ public class JSLibraryDescription extends CustomLibraryDescription {
             return null;
         }
 
-        return new NewLibraryConfiguration(PathUtil.JS_LIB_JAR_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+        return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
                 editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.SOURCES);

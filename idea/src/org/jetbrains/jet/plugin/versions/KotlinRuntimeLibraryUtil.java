@@ -58,8 +58,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
 public class KotlinRuntimeLibraryUtil {
-    public static final String LIBRARY_NAME = "KotlinRuntime";
-    public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
     public static final String UNKNOWN_VERSION = "UNKNOWN";
 
     private KotlinRuntimeLibraryUtil() {}
