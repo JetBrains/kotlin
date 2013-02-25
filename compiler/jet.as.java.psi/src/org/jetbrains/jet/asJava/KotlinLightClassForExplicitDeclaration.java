@@ -128,7 +128,9 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             PsiClass psiClass = LightClassUtil.findClass(classFqName, javaFileStub);
             if (psiClass == null) {
                 JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
-                throw new IllegalStateException("Class was not found " + classFqName + " in " + outermostClassOrObject.getText());
+                throw new IllegalStateException("Class was not found " + classFqName + "\n" +
+                                                "in " + outermostClassOrObject.getContainingFile().getText() + "\n" +
+                                                "stub: \n" + javaFileStub.getPsi().getText());
             }
             delegate = psiClass;
         }
