@@ -9,6 +9,4 @@ return color
 {
 color = _color
 }
-public fun name() : String { return "" }
-public fun order() : Int { return 0 }
 }
