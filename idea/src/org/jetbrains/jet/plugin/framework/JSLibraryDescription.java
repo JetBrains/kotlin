@@ -24,6 +24,8 @@ import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +76,7 @@ public class JSLibraryDescription extends CustomLibraryDescription {
         final File targetFile;
         try {
             targetFile = FileUIUtils.copyWithOverwriteDialog(directoryPath, runtimePath);
+            copyJsRuntimeFile(directoryPath);
         }
         catch (IOException e) {
             Messages.showErrorDialog("Error during file copy", JAVA_SCRIPT_LIBRARY_CREATION);
@@ -86,5 +89,20 @@ public class JSLibraryDescription extends CustomLibraryDescription {
                 editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.SOURCES);
             }
         };
+    }
+
+    private static void copyJsRuntimeFile(@NotNull String directoryPath) {
+        File file = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJsPath();
+
+        File folder = new File(directoryPath);
+        File targetFile = new File(folder, file.getName());
+
+        try {
+            FileUtil.copy(file, targetFile);
+            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
+        }
+        catch (IOException e) {
+            // Don't do nothing. This is temp code and should be removed.
+        }
     }
 }

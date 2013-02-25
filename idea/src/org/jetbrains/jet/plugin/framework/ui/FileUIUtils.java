@@ -38,8 +38,9 @@ public class FileUIUtils {
         File folder = new File(destinationFolder);
         File targetFile = new File(folder, file.getName());
 
-        // TODO: create folder if it is not present yet
-        assert folder.exists();
+        if (!folder.exists()) {
+            throw new IllegalArgumentException(String.format("Destination folder '%s' should exist", folder));
+        }
 
         if (!targetFile.exists()) {
             FileUtil.copy(file, targetFile);
