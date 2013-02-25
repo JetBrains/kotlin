@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -79,7 +80,7 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
             return null;
         }
 
-        return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+        return new NewLibraryConfiguration(LIBRARY_NAME + "-" + JetPluginUtil.getPluginVersion(), getDownloadableLibraryType(), new LibraryVersionProperties()) {
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
                 editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.CLASSES);
