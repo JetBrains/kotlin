@@ -24,22 +24,23 @@ import com.intellij.openapi.fileChooser.FileTextField;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import org.jdesktop.swingx.VerticalLayout;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 class ChoosePathDialog extends DialogWrapper {
     private final Project myProject;
     private final String defaultPath;
+    private final String description;
     private TextFieldWithBrowseButton myPathField;
 
-    public ChoosePathDialog(
-            Project project,
-            String title,
-            String defaultPath) {
+    public ChoosePathDialog(@Nullable Project project, @NotNull String title, @NotNull String defaultPath, @Nullable String description) {
         super(project);
         myProject = project;
         this.defaultPath = defaultPath;
+        this.description = description;
 
         setTitle(title);
         init();
@@ -47,6 +48,15 @@ class ChoosePathDialog extends DialogWrapper {
 
     @Override
     protected JComponent createCenterPanel() {
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setGap(3);
+
+        JPanel panel = new JPanel(verticalLayout);
+
+        if (description != null) {
+            panel.add(new JLabel(description));
+        }
+
         FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
         FileTextField field = FileChooserFactory.getInstance().createFileTextField(descriptor, myDisposable);
         field.getField().setColumns(25);
@@ -55,7 +65,9 @@ class ChoosePathDialog extends DialogWrapper {
         myPathField.addBrowseFolderListener("Choose Destination Folder", "Choose folder", myProject, descriptor);
         myPathField.setText(defaultPath);
 
-        return myPathField;
+        panel.add(myPathField);
+
+        return panel;
     }
 
     @Override

@@ -50,10 +50,10 @@ public class JSLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        return createFromPlugin(parentComponent, contextDirectory);
+        return createFromPlugin(contextDirectory);
     }
 
-    private NewLibraryConfiguration createFromPlugin(JComponent parentComponent, VirtualFile contextDirectory) {
+    private NewLibraryConfiguration createFromPlugin(VirtualFile contextDirectory) {
         File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJarPath();
 
         if (!runtimePath.exists()) {
@@ -62,17 +62,16 @@ public class JSLibraryDescription extends CustomLibraryDescription {
             return null;
         }
 
-        final VirtualFile directory = FileUIUtils.selectCopyToDirectory(
-                "Select folder where Kotlin JavaScript header should be copied",
-                parentComponent, contextDirectory);
+        String directoryPath = FileUIUtils.selectDestinationFolderDialog(
+                null, contextDirectory, "Select folder where Kotlin JavaScript header should be copied");
 
-        if (directory == null) {
+        if (directoryPath == null) {
             return null;
         }
 
         final File targetFile;
         try {
-            targetFile = FileUIUtils.copyWithOverwriteDialog(directory, runtimePath);
+            targetFile = FileUIUtils.copyWithOverwriteDialog(directoryPath, runtimePath);
         }
         catch (IOException e) {
             Messages.showErrorDialog("Error during file copy", JAVA_SCRIPT_LIBRARY_CREATION);

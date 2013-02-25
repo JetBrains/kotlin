@@ -32,7 +32,6 @@ import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
-import javax.management.openmbean.InvalidOpenTypeException;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -52,10 +51,10 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        return createFromPlugin(parentComponent, contextDirectory);
+        return createFromPlugin(contextDirectory);
     }
 
-    private NewLibraryConfiguration createFromPlugin(JComponent parentComponent, VirtualFile contextDirectory) {
+    private NewLibraryConfiguration createFromPlugin(VirtualFile contextDirectory) {
         File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
 
         if (!runtimePath.exists()) {
@@ -64,17 +63,16 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
             return null;
         }
 
-        final VirtualFile directory = FileUIUtils.selectCopyToDirectory(
-                "Select folder where bundled Kotlin java runtime library should be copied",
-                parentComponent, contextDirectory);
+        String directoryPath = FileUIUtils.selectDestinationFolderDialog(
+                null, contextDirectory, "Select folder where bundled Kotlin java runtime library should be copied");
 
-        if (directory == null) {
+        if (directoryPath == null) {
             return null;
         }
 
         final File targetFile;
         try {
-            targetFile = FileUIUtils.copyWithOverwriteDialog(directory, runtimePath);
+            targetFile = FileUIUtils.copyWithOverwriteDialog(directoryPath, runtimePath);
         }
         catch (IOException e) {
             Messages.showErrorDialog("Error during file copy", JAVA_RUNTIME_LIBRARY_CREATION);

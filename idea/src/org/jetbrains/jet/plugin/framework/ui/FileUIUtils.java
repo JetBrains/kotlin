@@ -16,8 +16,7 @@
 
 package org.jetbrains.jet.plugin.framework.ui;
 
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -61,33 +60,34 @@ public class FileUIUtils {
         return targetFile;
     }
 
-    public static File copyWithOverwriteDialog(@NotNull VirtualFile directory, @NotNull File path) throws IOException {
-        String localPath = PathUtil.getLocalPath(directory);
-        assert localPath != null;
-
-        return copyWithOverwriteDialog(localPath, path);
-    }
-
     @Nullable
-    public static VirtualFile selectCopyToDirectory(
-            @NotNull String description,
-            @Nullable JComponent parentComponent,
-            @Nullable VirtualFile contextDirectory) {
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
+    public static String selectDestinationFolderDialog(
+            @Nullable Project project,
+            @Nullable VirtualFile contextDirectory,
+            @Nullable String description) {
+        String path = null;
+        if (contextDirectory != null) {
+            path = PathUtil.getLocalPath(contextDirectory);
 
-        descriptor.setTitle("Select Folder");
-        descriptor.setDescription(description);
-
-        final VirtualFile[] files = FileChooser.chooseFiles(descriptor, parentComponent, null, contextDirectory);
-        if (files.length == 0) {
-            return null;
+        }
+        else if (project != null) {
+            path = PathUtil.getLocalPath(project.getBaseDir());
         }
 
-        assert files.length == 1: "Only one folder is expected";
+        if (path != null) {
+            path = new File(path, "lib").getAbsolutePath();
+        }
+        else {
+            path = "";
+        }
 
-        final VirtualFile directory = files[0];
-        assert directory.isDirectory();
+        ChoosePathDialog dialog = new ChoosePathDialog(project, "Copy Bundled Library", path, description);
+        dialog.show();
 
-        return directory;
+        if (dialog.isOK()) {
+            return dialog.getPath();
+        }
+
+        return null;
     }
 }

@@ -168,6 +168,7 @@ public class AddSupportForSingleFrameworkDialogFixed extends DialogWrapper {
                 return false;
             }
         }
+
         return true;
     }
 }
