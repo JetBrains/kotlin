@@ -34,10 +34,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.framework.JetJavaFrameworkSupportProvider;
 import org.jetbrains.jet.plugin.framework.JetJavaScriptFrameworkSupportProvider;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.framework.ui.AddSupportForSingleFrameworkDialogFixed;
 
 public class KotlinLibrariesNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
@@ -86,7 +88,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
             Module module = ModuleUtilCore.findModuleForFile(file, myProject);
             if (module == null) return null;
 
-            if (!KotlinRuntimeLibraryUtil.isModuleAlreadyConfigured(module)) {
+            if (!isModuleAlreadyConfigured(module)) {
                 return createFrameworkConfigurationNotificationPanel(module);
             }
 
@@ -101,6 +103,17 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
 
         return null;
     }
+
+    public static boolean isModuleAlreadyConfigured(Module module) {
+        return isMavenModule(module) || KotlinFrameworkDetector.isJsModule(module) || KotlinFrameworkDetector.isJavaModule(module);
+    }
+
+    private static boolean isMavenModule(@NotNull Module module) {
+        // This constant could be acquired from MavenProjectsManager, but we don't want to depend on the Maven plugin...
+        // See MavenProjectsManager.isMavenizedModule()
+        return "true".equals(module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule"));
+    }
+
 
     private static EditorNotificationPanel createFrameworkConfigurationNotificationPanel(final Module module) {
         EditorNotificationPanel answer = new EditorNotificationPanel();
@@ -130,8 +143,6 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
 
         return answer;
     }
-
-
 
     private void updateNotifications() {
         ApplicationManager.getApplication().invokeLater(new Runnable() {

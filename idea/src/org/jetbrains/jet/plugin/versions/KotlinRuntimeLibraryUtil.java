@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -129,16 +128,6 @@ public class KotlinRuntimeLibraryUtil {
                                             return PathUtil.JDK_ANNOTATIONS_JAR.equals(file.getName());
                                         }
                                     });
-    }
-
-    public static boolean isModuleAlreadyConfigured(Module module) {
-        return isMavenModule(module) || KotlinFrameworkDetector.isJsModule(module) || KotlinFrameworkDetector.isJavaModule(module);
-    }
-
-    private static boolean isMavenModule(@NotNull Module module) {
-        // This constant could be acquired from MavenProjectsManager, but we don't want to depend on the Maven plugin...
-        // See MavenProjectsManager.isMavenizedModule()
-        return "true".equals(module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule"));
     }
 
     @Nullable
