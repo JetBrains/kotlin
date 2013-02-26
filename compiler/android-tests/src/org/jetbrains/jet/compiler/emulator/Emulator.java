@@ -19,6 +19,7 @@ package org.jetbrains.jet.compiler.emulator;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.OutputUtils;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.compiler.ThreadUtils;
@@ -83,20 +84,17 @@ public class Emulator {
         return commandLine;
     }
 
+    @Nullable
     private GeneralCommandLine getStopCommand() {
-        GeneralCommandLine commandLine = new GeneralCommandLine();
         if (SystemInfo.isWindows) {
+            GeneralCommandLine commandLine = new GeneralCommandLine();
             commandLine.setExePath("taskkill");
             commandLine.addParameter("/F");
             commandLine.addParameter("/IM");
             commandLine.addParameter("emulator-arm.exe");
+            return commandLine;
         }
-        else {
-            commandLine.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/adb");
-            commandLine.addParameter("emu");
-            commandLine.addParameter("kill");
-        }
-        return commandLine;
+        return null;
     }
 
     public void createEmulator() {
@@ -118,7 +116,9 @@ public class Emulator {
 
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
-        OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
+        if (SystemInfo.isWindows) {
+            OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
+        }
         finishProcess("emulator-arm");
     }
 
