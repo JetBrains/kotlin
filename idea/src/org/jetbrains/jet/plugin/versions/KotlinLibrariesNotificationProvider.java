@@ -20,10 +20,6 @@ import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.fileChooser.FileTextField;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
@@ -34,10 +30,6 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -52,12 +44,10 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.quickfix.JsModuleSetUp;
+import org.jetbrains.jet.plugin.framework.JetFrameworkConfigurator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
 
@@ -135,29 +125,22 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
             @Override
             public void run() {
-                setUpJavaModule(module);
+                if (JetFrameworkConfigurator.configureAsJavaModule(module)) {
+                    updateNotifications();
+                }
             }
         });
 
         answer.createActionLabel("Set up module '" + module.getName() + "' as JavaScript Kotlin module", new Runnable() {
             @Override
             public void run() {
-                setUpJSModule(module);
+                if (JetFrameworkConfigurator.configureAsJavaScriptModule(module)) {
+                    updateNotifications();
+                }
             }
         });
 
         return answer;
-    }
-
-    private void setUpJavaModule(Module module) {
-        Library library = KotlinRuntimeLibraryUtil.findOrCreateRuntimeLibrary(myProject, new UiFindRuntimeLibraryHandler());
-        if (library == null) return;
-
-        KotlinRuntimeLibraryUtil.setUpKotlinRuntimeLibrary(module, library, updateNotifications);
-    }
-
-    private void setUpJSModule(@NotNull Module module) {
-        JsModuleSetUp.doSetUpModule(module, updateNotifications);
     }
 
     private EditorNotificationPanel createUnsupportedAbiVersionNotificationPanel(Collection<VirtualFile> badRoots) {
@@ -229,63 +212,6 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
                 EditorNotifications.getInstance(myProject).updateAllNotifications();
             }
         });
-    }
-
-    private static class ChoosePathDialog extends DialogWrapper {
-        private final Project myProject;
-        private TextFieldWithBrowseButton myPathField;
-
-        protected ChoosePathDialog(Project project) {
-            super(project);
-            myProject = project;
-
-            setTitle("Local Kotlin Runtime Path");
-            init();
-        }
-
-        @Override
-        protected JComponent createCenterPanel() {
-            FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-            FileTextField field = FileChooserFactory.getInstance().createFileTextField(descriptor, myDisposable);
-            field.getField().setColumns(25);
-            myPathField = new TextFieldWithBrowseButton(field.getField());
-            myPathField.addBrowseFolderListener("Choose Destination Folder", "Choose folder for file", myProject, descriptor);
-
-            VirtualFile baseDir = myProject.getBaseDir();
-            if (baseDir != null) {
-                myPathField.setText(baseDir.getPath().replace('/', File.separatorChar) + File.separatorChar + "lib");
-            }
-
-            return myPathField;
-        }
-
-        public String getPath() {
-            return myPathField.getText();
-        }
-    }
-
-    private class UiFindRuntimeLibraryHandler extends KotlinRuntimeLibraryUtil.FindRuntimeLibraryHandler {
-        @Override
-        public void runtimePathDoesNotExist(@NotNull File path) {
-            Messages.showErrorDialog(myProject,
-                                     "kotlin-runtime.jar is not found at " + path + ". Make sure plugin is properly installed.",
-                                     "No Runtime Found");
-        }
-
-        @Override
-        public File getRuntimeJarPath() {
-            ChoosePathDialog dlg = new ChoosePathDialog(myProject);
-            dlg.show();
-            if (!dlg.isOK()) return null;
-            String path = dlg.getPath();
-            return new File(path, "kotlin-runtime.jar");
-        }
-
-        @Override
-        public void ioExceptionOnCopyingJar(@NotNull IOException e) {
-            Messages.showErrorDialog(myProject, "Error copying jar: " + e.getLocalizedMessage(), "Error Copying File");
-        }
-
     }
 
     private static void navigateToLibraryRoot(Project project, @NotNull VirtualFile root) {

@@ -24,6 +24,8 @@ import javax.swing.*;
 public interface JetIcons {
     Icon SMALL_LOGO = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin.png");
 
+    Icon SMALL_LOGO_13 = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_13.png");
+
     Icon CLASS = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/class_kotlin.png");
     Icon ENUM = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/enum_kotlin.png");
     Icon FILE = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_file.png");
