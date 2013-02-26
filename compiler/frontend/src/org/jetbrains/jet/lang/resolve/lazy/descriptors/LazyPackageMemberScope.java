@@ -16,17 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -34,51 +31,34 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.Collection;
 import java.util.Set;
 
-public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, PackageMemberDeclarationProvider> {
+public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider> {
 
-    private final MemoizedFunctionToNullable<Name, NamespaceDescriptor> packageDescriptors;
-
-    public LazyPackageMemberScope(@NotNull ResolveSession resolveSession,
-            @NotNull PackageMemberDeclarationProvider declarationProvider,
-            @NotNull NamespaceDescriptor thisPackage) {
-        super(resolveSession, declarationProvider, thisPackage);
-
-        this.packageDescriptors = resolveSession.getStorageManager().createMemoizedFunctionWithNullableValues(
-                new Function<Name, NamespaceDescriptor>() {
-                    @Override
-                    public NamespaceDescriptor fun(Name name) {
-                        return createPackageDescriptor(name);
-                    }
-                }, StorageManager.ReferenceKind.STRONG);
+    public LazyPackageMemberScope(
+            @NotNull LazyCodeAnalyzer analyzer,
+            @NotNull PackageFragmentDescriptor thisPackageFragment,
+            @NotNull PackageMemberDeclarationProvider declarationProvider
+    ) {
+        super(analyzer, declarationProvider, thisPackageFragment);
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return packageDescriptors.fun(name);
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
+        // Packages are never children of package fragments
+        return null;
     }
 
     @Nullable
-    public NamespaceDescriptor createPackageDescriptor(@NotNull Name name) {
-        if (!declarationProvider.isPackageDeclared(name)) return null;
-
-        PackageMemberDeclarationProvider packageMemberDeclarationProvider = resolveSession.getDeclarationProviderFactory().getPackageMemberDeclarationProvider(
-                DescriptorUtils.getFQName(thisDescriptor).child(name).toSafe());
-        assert packageMemberDeclarationProvider != null : "Package is declared, but declaration provider is not found: " + name;
-
-        return new LazyPackageDescriptor(thisDescriptor, name, resolveSession, packageMemberDeclarationProvider);
-    }
-
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         // TODO: creating an FqName every time may be a performance problem
-        Name actualName = resolveSession.resolveClassifierAlias(DescriptorUtils.getFQName(thisDescriptor).toSafe(), name);
+        Name actualName = analyzer.resolveClassifierAlias(DescriptorUtils.getFQName(thisDescriptor).toSafe(), name);
         return super.getClassifier(actualName);
     }
 
     @NotNull
     @Override
     protected JetScope getScopeForMemberDeclarationResolution(JetDeclaration declaration) {
-        return resolveSession.getInjector().getScopeProvider().getFileScope((JetFile) declaration.getContainingFile());
+        return analyzer.getInjector().getScopeProvider().getFileScope((JetFile) declaration.getContainingFile());
     }
 
     @Override
@@ -99,7 +79,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
     @Override
     protected void addExtraDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
         for (FqName packageFqName : declarationProvider.getAllDeclaredPackages()) {
-            result.add(getNamespace(packageFqName.shortName()));
+            result.add(getPackage(packageFqName.shortName()));
         }
     }
 

@@ -36,59 +36,75 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
 
 public class LazyImportScope implements JetScope {
-    private static class ImportResolveStatus {
-        private final LookupMode lookupMode;
-        private final JetScope scope;
 
-        ImportResolveStatus(LookupMode lookupMode, JetScope scope) {
-            this.lookupMode = lookupMode;
-            this.scope = scope;
-        }
-    }
-
-    private final ResolveSession resolveSession;
-    private final NamespaceDescriptor packageDescriptor;
-    private final ImportsProvider importsProvider;
-    private final JetScope rootScope;
-    private final BindingTrace traceForImportResolve;
-    private final String debugName;
-
-    private final Map<JetImportDirective, ImportResolveStatus> importedScopes = Maps.newHashMap();
-    private JetImportDirective directiveUnderResolve = null;
-
-    public LazyImportScope(
-            @NotNull ResolveSession resolveSession,
-            @NotNull NamespaceDescriptor packageDescriptor,
-            @NotNull List<JetImportDirective> imports,
-            @NotNull BindingTrace traceForImportResolve,
-            @NotNull String debugName
-    ) {
-        this.resolveSession = resolveSession;
-        this.packageDescriptor = packageDescriptor;
-        this.importsProvider = new ImportsProvider(imports);
-        this.traceForImportResolve = traceForImportResolve;
-        this.debugName = debugName;
-
-        NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
-        if (rootPackageDescriptor == null) {
-            throw new IllegalStateException("Root package not found");
-        }
-        rootScope = rootPackageDescriptor.getMemberScope();
-    }
-
+    @NotNull
     public static LazyImportScope createImportScopeForFile(
-            @NotNull ResolveSession resolveSession,
-            @NotNull NamespaceDescriptor packageDescriptor,
+            @NotNull LazyCodeAnalyzer analyzer,
+            @NotNull SubModuleDescriptor subModule,
+            @NotNull PackageViewDescriptor packageDescriptor,
             @NotNull JetFile jetFile,
             @NotNull BindingTrace traceForImportResolve,
             @NotNull String debugName
     ) {
-        return new LazyImportScope(
-                resolveSession,
+        return createImportScope(
+                analyzer,
+                subModule,
                 packageDescriptor,
-                Lists.reverse(jetFile.getImportDirectives()),
+                jetFile.getImportDirectives(),
                 traceForImportResolve,
                 debugName);
+    }
+
+    @NotNull
+    public static LazyImportScope createImportScope(
+            @NotNull LazyCodeAnalyzer analyzer,
+            @NotNull SubModuleDescriptor subModule,
+            @NotNull PackageViewDescriptor packageDescriptor,
+            @NotNull List<JetImportDirective> importDirectives,
+            @NotNull BindingTrace traceForImportResolve,
+            @NotNull String debugName
+    ) {
+        return new LazyImportScope(
+                analyzer,
+                subModule,
+                packageDescriptor,
+                Lists.reverse(importDirectives),
+                traceForImportResolve,
+                debugName);
+    }
+
+    private final LazyCodeAnalyzer analyzer;
+    private final SubModuleDescriptor subModule;
+    private final PackageViewDescriptor packageDescriptor;
+    private final ImportsProvider importsProvider;
+    private final JetScope rootScope;
+    private final BindingTrace traceForImportResolve;
+
+    private final String debugName;
+    private final Map<JetImportDirective, ImportResolveStatus> importedScopes = Maps.newHashMap();
+
+    private JetImportDirective directiveUnderResolve = null;
+
+    private LazyImportScope(
+            @NotNull LazyCodeAnalyzer analyzer,
+            @NotNull SubModuleDescriptor subModule,
+            @NotNull PackageViewDescriptor packageDescriptor,
+            @NotNull List<JetImportDirective> imports,
+            @NotNull BindingTrace traceForImportResolve,
+            @NotNull String debugName
+    ) {
+        this.analyzer = analyzer;
+        this.packageDescriptor = packageDescriptor;
+        this.subModule = subModule;
+        this.importsProvider = new ImportsProvider(imports);
+        this.traceForImportResolve = traceForImportResolve;
+        this.debugName = debugName;
+
+        PackageViewDescriptor rootPackageDescriptor = subModule.getPackageView(FqName.ROOT);
+        if (rootPackageDescriptor == null) {
+            throw new IllegalStateException("Root package not found");
+        }
+        rootScope = rootPackageDescriptor.getMemberScope();
     }
 
     @Nullable
@@ -165,13 +181,13 @@ public class LazyImportScope implements JetScope {
         directiveUnderResolve = directive;
 
         try {
-            resolveSession.getInjector().getQualifiedExpressionResolver().processImportReference(
+            analyzer.getInjector().getQualifiedExpressionResolver().processImportReference(
                     directive,
                     rootScope,
                     packageDescriptor.getMemberScope(),
                     importer,
                     traceForImportResolve,
-                    resolveSession.getModuleConfiguration(),
+                    subModule.getContainingDeclaration().getPlatformToKotlinClassMap(),
                     lookupMode);
         }
         finally {
@@ -203,8 +219,8 @@ public class LazyImportScope implements JetScope {
 
     @Nullable
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return selectFirstFromImports(name, LookupMode.ONLY_CLASSES, JetScopeSelectorUtil.NAMESPACE_SCOPE_SELECTOR);
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
+        return selectFirstFromImports(name, LookupMode.ONLY_CLASSES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR);
     }
 
     @NotNull
@@ -264,5 +280,15 @@ public class LazyImportScope implements JetScope {
     @Override
     public String toString() {
         return "LazyImportScope: " + debugName;
+    }
+
+    private static class ImportResolveStatus {
+        private final LookupMode lookupMode;
+        private final JetScope scope;
+
+        ImportResolveStatus(LookupMode lookupMode, JetScope scope) {
+            this.lookupMode = lookupMode;
+            this.scope = scope;
+        }
     }
 }

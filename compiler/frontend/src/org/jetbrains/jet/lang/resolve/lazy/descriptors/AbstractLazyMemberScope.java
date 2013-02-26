@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
@@ -44,7 +44,7 @@ import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameFo
 import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> implements JetScope {
-    protected final ResolveSession resolveSession;
+    protected final LazyCodeAnalyzer analyzer;
     protected final DP declarationProvider;
     protected final D thisDescriptor;
 
@@ -62,15 +62,15 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     private final NotNullLazyValue<AllDescriptors> allDescriptors;
 
     protected AbstractLazyMemberScope(
-            @NotNull ResolveSession resolveSession,
+            @NotNull LazyCodeAnalyzer analyzer,
             @NotNull DP declarationProvider,
             @NotNull D thisDescriptor
     ) {
-        this.resolveSession = resolveSession;
+        this.analyzer = analyzer;
         this.declarationProvider = declarationProvider;
         this.thisDescriptor = thisDescriptor;
 
-        StorageManager storageManager = resolveSession.getStorageManager();
+        StorageManager storageManager = analyzer.getStorageManager();
         this.classDescriptors = storageManager.createMemoizedFunction(new Function<Name, List<ClassDescriptor>>() {
             @Override
             public List<ClassDescriptor> fun(Name name) {
@@ -114,7 +114,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             public ClassDescriptor fun(JetClassOrObject classOrObject) {
                 if (object != declaresObjectOrEnumConstant(classOrObject)) return null;
 
-                return new LazyClassDescriptor(resolveSession, thisDescriptor, name,
+                return new LazyClassDescriptor(analyzer, thisDescriptor, name,
                                                JetClassInfoUtil.createClassLikeInfo(classOrObject));
             }
         }));
@@ -152,9 +152,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         Collection<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
         for (JetNamedFunction functionDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration);
-            result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptor(thisDescriptor, resolutionScope,
+            result.add(analyzer.getInjector().getDescriptorResolver().resolveFunctionDescriptor(thisDescriptor, resolutionScope,
                                                                                                       functionDeclaration,
-                                                                                                      resolveSession.getTrace()));
+                                                                                                      analyzer.getTrace()));
         }
 
         getNonDeclaredFunctions(name, result);
@@ -180,9 +180,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         Collection<JetProperty> declarations = declarationProvider.getPropertyDeclarations(name);
         for (JetProperty propertyDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration);
-            result.add(resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,
+            result.add(analyzer.getInjector().getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,
                                                                                                       propertyDeclaration,
-                                                                                                      resolveSession.getTrace()));
+                                                                                                      analyzer.getTrace()));
         }
 
         // Objects are also properties
@@ -193,8 +193,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 if (classifier == null) {
                     throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
                 }
-                VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                        .resolveObjectDeclaration(thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
+                VariableDescriptor propertyDescriptor = analyzer.getInjector().getDescriptorResolver()
+                        .resolveObjectDeclaration(thisDescriptor, classOrObjectDeclaration, classifier, analyzer.getTrace());
                 result.add(propertyDescriptor);
             }
         }

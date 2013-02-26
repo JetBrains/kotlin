@@ -26,9 +26,9 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyDescriptor {
-    private final ResolveSession resolveSession;
+    private final LazyCodeAnalyzer analyzer;
 
     private final JetTypeParameter jetTypeParameter;
     private final Variance variance;
@@ -60,11 +60,11 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     private final NotNullLazyValue<JetType> upperBoundsAsType;
 
     public LazyTypeParameterDescriptor(
-            @NotNull ResolveSession resolveSession,
+            @NotNull LazyCodeAnalyzer analyzer,
             @NotNull LazyClassDescriptor containingDeclaration,
             @NotNull JetTypeParameter jetTypeParameter,
             int index) {
-        this.resolveSession = resolveSession;
+        this.analyzer = analyzer;
         this.jetTypeParameter = jetTypeParameter;
         this.variance = jetTypeParameter.getVariance();
         this.containingDeclaration = containingDeclaration;
@@ -72,7 +72,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
         this.name = jetTypeParameter.getNameAsName();
         this.reified = jetTypeParameter.hasModifier(JetTokens.REIFIED_KEYWORD);
 
-        StorageManager storageManager = resolveSession.getStorageManager();
+        StorageManager storageManager = analyzer.getStorageManager();
         this.typeConstructor = storageManager.createLazyValue(new Computable<TypeConstructor>() {
             @Override
             public TypeConstructor compute() {
@@ -158,9 +158,9 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     }
 
     private JetType resolveBoundType(@NotNull JetTypeReference boundTypeReference) {
-        return resolveSession.getInjector().getTypeResolver()
+        return analyzer.getInjector().getTypeResolver()
                     .resolveType(containingDeclaration.getScopeForClassHeaderResolution(), boundTypeReference,
-                                 resolveSession.getTrace(), false);
+                                 analyzer.getTrace(), false);
     }
 
     @NotNull

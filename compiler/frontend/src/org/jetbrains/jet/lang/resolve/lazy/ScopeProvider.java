@@ -17,18 +17,18 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import com.intellij.util.NotNullFunction;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
@@ -37,31 +37,33 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.WEAK;
 
 public class ScopeProvider {
-    private final ResolveSession resolveSession;
+    private final LazyCodeAnalyzer analyzer;
 
     private final MemoizedFunctionToNotNull<JetFile, JetScope> fileScopes;
 
-    private final NotNullLazyValue<JetScope> defaultImportsScope;
+    private final MemoizedFunctionToNotNull<SubModuleDescriptor, JetScope> defaultImportsScope;
 
-    public ScopeProvider(@NotNull ResolveSession resolveSession) {
-        this.resolveSession = resolveSession;
+    public ScopeProvider(@NotNull LazyCodeAnalyzer analyzer) {
+        this.analyzer = analyzer;
 
-        this.fileScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function<JetFile, JetScope>() {
+        this.fileScopes = analyzer.getStorageManager().createMemoizedFunction(new Function<JetFile, JetScope>() {
             @Override
             public JetScope fun(@NotNull JetFile file) {
                 return createFileScope(file);
             }
         }, WEAK);
 
-        this.defaultImportsScope = resolveSession.getStorageManager().createLazyValue(new Computable<JetScope>() {
+        this.defaultImportsScope = analyzer.getStorageManager().createMemoizedFunction(new NotNullFunction<SubModuleDescriptor, JetScope>() {
+            @NotNull
             @Override
-            public JetScope compute() {
-                return createScopeWithDefaultImports();
+            public JetScope fun(SubModuleDescriptor subModuleDescriptor) {
+                return createScopeWithDefaultImports(subModuleDescriptor);
             }
-        });
+        }, STRONG);
     }
 
     @NotNull
@@ -70,18 +72,21 @@ public class ScopeProvider {
     }
 
     private JetScope createFileScope(JetFile file) {
-        NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+        SubModuleDescriptor subModule = analyzer.getSubModuleForFile(file);
+
+        PackageViewDescriptor rootPackageDescriptor = subModule.getPackageView(FqName.ROOT);
         if (rootPackageDescriptor == null) {
             throw new IllegalStateException("Root package not found");
         }
 
-        NamespaceDescriptor packageDescriptor = getFilePackageDescriptor(file);
+        PackageViewDescriptor packageDescriptor = getFilePackageDescriptor(file);
 
         JetScope importsScope = LazyImportScope.createImportScopeForFile(
-                resolveSession,
+                analyzer,
+                subModule,
                 packageDescriptor,
                 file,
-                resolveSession.getTrace(),
+                analyzer.getTrace(),
                 "Lazy Imports Scope for file " + file.getName());
 
         return new ChainedScope(packageDescriptor,
@@ -89,37 +94,38 @@ public class ScopeProvider {
                                 rootPackageDescriptor.getMemberScope(),
                                 packageDescriptor.getMemberScope(),
                                 importsScope,
-                                defaultImportsScope.compute());
+                                defaultImportsScope.fun(subModule));
     }
 
-    private JetScope createScopeWithDefaultImports() {
-        NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+    private JetScope createScopeWithDefaultImports(@NotNull SubModuleDescriptor subModuleDescriptor) {
+        PackageViewDescriptor rootPackageDescriptor = subModuleDescriptor.getPackageView(FqName.ROOT);
         if (rootPackageDescriptor == null) {
             throw new IllegalStateException("Root package not found");
         }
 
-        JetImportsFactory importsFactory = resolveSession.getInjector().getJetImportsFactory();
-        List<ImportPath> defaultImports = resolveSession.getModuleConfiguration().getDefaultImports();
+        JetImportsFactory importsFactory = analyzer.getInjector().getJetImportsFactory();
+        List<ImportPath> defaultImports = subModuleDescriptor.getDefaultImports();
 
         Collection<JetImportDirective> defaultImportDirectives = importsFactory.createImportDirectives(defaultImports);
 
-        return new LazyImportScope(
-                resolveSession,
+        return LazyImportScope.createImportScope(
+                analyzer,
+                subModuleDescriptor,
                 rootPackageDescriptor,
-                Lists.reverse(Lists.newArrayList(defaultImportDirectives)),
-                TemporaryBindingTrace.create(resolveSession.getTrace(), "Transient trace for default imports lazy resolve"),
+                Lists.newArrayList(defaultImportDirectives),
+                TemporaryBindingTrace.create(analyzer.getTrace(), "Transient trace for default imports lazy resolve"),
                 "Lazy default imports scope");
     }
 
     @NotNull
-    private NamespaceDescriptor getFilePackageDescriptor(JetFile file) {
+    private PackageViewDescriptor getFilePackageDescriptor(@NotNull JetFile file) {
         JetNamespaceHeader header = file.getNamespaceHeader();
         if (header == null) {
             throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
         }
 
         FqName fqName = new FqName(header.getQualifiedName());
-        NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
+        PackageViewDescriptor packageDescriptor = analyzer.getSubModuleForFile(file).getPackageView(fqName);
 
         if (packageDescriptor == null) {
             throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());
@@ -144,7 +150,7 @@ public class ScopeProvider {
 
         if (parentDeclaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
-            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) resolveSession.getClassDescriptor(classOrObject);
+            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) analyzer.getDescriptor(classOrObject);
             if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
                 return classDescriptor.getScopeForPropertyInitializerResolution();
             }
@@ -159,7 +165,7 @@ public class ScopeProvider {
 
             JetClassObject classObject = (JetClassObject) parentDeclaration;
             LazyClassDescriptor classObjectDescriptor =
-                    (LazyClassDescriptor) resolveSession.getClassObjectDescriptor(classObject).getContainingDeclaration();
+                    (LazyClassDescriptor) analyzer.getClassObjectDescriptor(classObject).getContainingDeclaration();
 
             // During class object header resolve there should be no resolution for parent class generic params
             return new InnerClassesScopeWrapper(classObjectDescriptor.getScopeForMemberDeclarationResolution());

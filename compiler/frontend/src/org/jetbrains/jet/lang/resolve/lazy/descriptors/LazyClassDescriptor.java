@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
+import org.jetbrains.jet.lang.resolve.lazy.*;
 import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -66,7 +63,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             return TypeUtils.getClassDescriptor(type) != null;
         }
     };
-    private final ResolveSession resolveSession;
+    private final LazyCodeAnalyzer analyzer;
     private final JetClassLikeInfo originalClassInfo;
     private final ClassMemberDeclarationProvider declarationProvider;
 
@@ -91,24 +88,24 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
 
     public LazyClassDescriptor(
-            @NotNull ResolveSession resolveSession,
+            @NotNull LazyCodeAnalyzer analyzer,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
-        this.resolveSession = resolveSession;
+        this.analyzer = analyzer;
         this.name = name;
 
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
-            this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
+            this.analyzer.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
         }
 
         this.originalClassInfo = classLikeInfo;
         JetClassLikeInfo classLikeInfoForMembers =
                 classLikeInfo.getClassKind() != ClassKind.ENUM_CLASS ? classLikeInfo : noEnumEntries(classLikeInfo);
-        this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
+        this.declarationProvider = analyzer.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
         this.containingDeclaration = containingDeclaration;
-        this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
+        this.unsubstitutedMemberScope = new LazyClassMemberScope(analyzer, declarationProvider, this);
         this.unsubstitutedInnerClassesScope = new InnerClassesScopeWrapper(unsubstitutedMemberScope);
 
         this.typeConstructor = new LazyClassTypeConstructor();
@@ -125,7 +122,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         this.visibility = resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
         this.isInner = isInnerClass(modifierList);
 
-        StorageManager storageManager = resolveSession.getStorageManager();
+        StorageManager storageManager = analyzer.getStorageManager();
         this.thisAsReceiverParameter = storageManager.createLazyValue(new Computable<ReceiverParameterDescriptor>() {
             @Override
             public ReceiverParameterDescriptor compute() {
@@ -291,7 +288,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
         JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
         if (classObjectInfo != null) {
-            return new LazyClassDescriptor(resolveSession, this, getClassObjectName(getName()), classObjectInfo);
+            return new LazyClassDescriptor(analyzer, this, getClassObjectName(getName()), classObjectInfo);
         }
         return null;
     }
@@ -355,9 +352,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
         JetModifierList modifierList = classInfo.getModifierList();
         if (modifierList != null) {
-            AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
+            AnnotationResolver annotationResolver = analyzer.getInjector().getAnnotationResolver();
             JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
-            return annotationResolver.resolveAnnotations(scopeForDeclaration, modifierList, resolveSession.getTrace());
+            return annotationResolver.resolveAnnotations(scopeForDeclaration, modifierList, analyzer.getTrace());
         }
         else {
             return Collections.emptyList();
@@ -399,11 +396,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     private class LazyClassTypeConstructor implements LazyDescriptor, TypeConstructor {
-        private final NotNullLazyValue<Collection<JetType>> supertypes = resolveSession.getStorageManager().createLazyValueWithPostCompute(
+        private final NotNullLazyValue<Collection<JetType>> supertypes = analyzer.getStorageManager().createLazyValueWithPostCompute(
                 new Computable<Collection<JetType>>() {
                     @Override
                     public Collection<JetType> compute() {
-                        if (resolveSession.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
+                        if (analyzer.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
                             return Collections.emptyList();
                         }
                         else {
@@ -412,10 +409,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                                 return Collections.emptyList();
                             }
                             else {
-                                List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
+                                List<JetType> allSupertypes = analyzer.getInjector().getDescriptorResolver()
                                         .resolveSupertypes(getScopeForClassHeaderResolution(),
                                                            LazyClassDescriptor.this, classOrObject,
-                                                           resolveSession.getTrace());
+                                                           analyzer.getTrace());
 
                                 return Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
                             }
@@ -429,7 +426,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                     }
                 });
 
-        private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = resolveSession.getStorageManager().createLazyValue(new Computable<List<TypeParameterDescriptor>>() {
+        private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = analyzer.getStorageManager().createLazyValue(new Computable<List<TypeParameterDescriptor>>() {
             @Override
             public List<TypeParameterDescriptor> compute() {
                 JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
@@ -437,7 +434,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
                 List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
                 for (int i = 0; i < typeParameters.size(); i++) {
-                    parameters.add(new LazyTypeParameterDescriptor(resolveSession, LazyClassDescriptor.this, typeParameters.get(i), i));
+                    parameters.add(new LazyTypeParameterDescriptor(analyzer, LazyClassDescriptor.this, typeParameters.get(i), i));
                 }
 
                 return parameters;
@@ -508,11 +505,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     private JetClassLikeInfo noEnumEntries(JetClassLikeInfo classLikeInfo) {
-        return new FilteringClassLikeInfo(resolveSession.getStorageManager(), classLikeInfo, Predicates.not(ONLY_ENUM_ENTRIES));
+        return new FilteringClassLikeInfo(analyzer.getStorageManager(), classLikeInfo, Predicates.not(ONLY_ENUM_ENTRIES));
     }
 
     private JetClassLikeInfo enumClassObjectInfo(JetClassLikeInfo classLikeInfo) {
-        return new FilteringClassLikeInfo(resolveSession.getStorageManager(), classLikeInfo, ONLY_ENUM_ENTRIES) {
+        return new FilteringClassLikeInfo(analyzer.getStorageManager(), classLikeInfo, ONLY_ENUM_ENTRIES) {
             @Override
             public JetClassOrObject getCorrespondingClassOrObject() {
                 return null;
@@ -539,7 +536,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     private ScopeProvider getScopeProvider() {
-        return resolveSession.getInjector().getScopeProvider();
+        return analyzer.getInjector().getScopeProvider();
     }
 
 }

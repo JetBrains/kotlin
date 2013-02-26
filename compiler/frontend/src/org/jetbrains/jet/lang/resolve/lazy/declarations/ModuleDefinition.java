@@ -14,31 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-public interface KotlinCodeAnalyzer {
+public interface ModuleDefinition {
+    @NotNull
+    Name getName();
 
     @NotNull
-    Collection<ModuleDescriptor> getModules();
+    Collection<SubModuleDefinition> getSubModules();
 
     @NotNull
-    DeclarationDescriptor getDescriptor(@NotNull JetDeclaration declaration);
-
-    @NotNull
-    BindingContext getBindingContext();
-
-    /**
-     * Forces all descriptors to be resolved.
-     *
-     * Use this method when laziness plays against you, e.g. when lazy descriptors may be accessed in a multi-threaded setting
-     */
-    void forceResolveAll();
+    PlatformToKotlinClassMap getPlatformToKotlinClassMap();
 }
