@@ -55,7 +55,7 @@ public abstract class JetScopeImpl implements JetScope {
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
         return null;
     }
 

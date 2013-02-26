@@ -493,4 +493,17 @@ public class DescriptorUtils {
         return null;
     }
 
+    @NotNull
+    public static List<PackageFragmentDescriptor> getPackageFragmentsIncludingDependencies(
+            @NotNull SubModuleDescriptor subModule,
+            @NotNull FqName fqName
+    ) {
+        List<PackageFragmentDescriptor> fragments = Lists.newArrayList();
+        fragments.addAll(subModule.getPackageFragments(fqName));
+
+        for (SubModuleDescriptor dependency : subModule.getDependencies()) {
+            fragments.addAll(dependency.getPackageFragments(fqName));
+        }
+        return fragments;
+    }
 }

@@ -308,8 +308,8 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public NamespaceDescriptor getBuiltInsPackage() {
-        NamespaceDescriptor namespace = getBuiltInsModule().getRootNamespace().getMemberScope().getNamespace(BUILT_INS_PACKAGE_NAME);
+    public PackageViewDescriptor getBuiltInsPackage() {
+        PackageViewDescriptor namespace = getBuiltInsModule().getRootNamespace().getMemberScope().getPackage(BUILT_INS_PACKAGE_NAME);
         assert namespace != null : "Built ins namespace not found: " + BUILT_INS_PACKAGE_NAME;
         return namespace;
     }

@@ -47,7 +47,6 @@ import java.util.Collections;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
-
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallExpressionResolver {
@@ -126,7 +125,7 @@ public class CallExpressionResolver {
     @Nullable
     private NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull ResolutionContext context) {
         Name name = expression.getReferencedNameAsName();
-        NamespaceDescriptor namespace = context.scope.getNamespace(name);
+        PackageViewDescriptor namespace = context.scope.getPackage(name);
         if (namespace == null) {
             return null;
         }

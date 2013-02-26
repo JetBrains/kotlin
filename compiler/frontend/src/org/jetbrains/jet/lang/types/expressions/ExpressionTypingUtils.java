@@ -191,7 +191,7 @@ public class ExpressionTypingUtils {
         JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN.getFqName());
 
         Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver()
-                .analyseImportReference(importDirective, scope, new BindingTraceContext(), moduleConfiguration);
+                .analyseImportReference(importDirective, scope, new BindingTraceContext(), moduleConfiguration.getPlatformToKotlinClassMap());
 
         List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
         ReceiverValue receiverValue = new ExpressionReceiver(receiverExpression, receiverType);

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public interface ModuleConfiguration {
     ModuleConfiguration EMPTY = new ModuleConfiguration() {
         @Override

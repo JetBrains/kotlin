@@ -52,7 +52,7 @@ public interface JetScope {
     Collection<ClassDescriptor> getObjectDescriptors();
 
     @Nullable
-    NamespaceDescriptor getNamespace(@NotNull Name name);
+    PackageViewDescriptor getPackage(@NotNull Name name);
 
     @NotNull
     Collection<VariableDescriptor> getProperties(@NotNull Name name);

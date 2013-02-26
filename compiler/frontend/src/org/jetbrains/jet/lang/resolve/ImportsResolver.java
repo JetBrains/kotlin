@@ -120,7 +120,7 @@ public class ImportsResolver {
 
             JetImportDirective defaultImportDirective = importsFactory.createImportDirective(defaultImportPath);
             qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter,
-                                                               temporaryTrace, configuration, lookupMode);
+                                                               temporaryTrace, configuration.getPlatformToKotlinClassMap(), lookupMode);
         }
 
         Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
@@ -128,7 +128,7 @@ public class ImportsResolver {
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
                 qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter,
-                                                                   trace, configuration, lookupMode);
+                                                                   trace, configuration.getPlatformToKotlinClassMap(), lookupMode);
             if (descriptors.size() == 1) {
                 resolvedDirectives.put(importDirective, descriptors.iterator().next());
             }
@@ -187,7 +187,7 @@ public class ImportsResolver {
             isResolved = namespaceScope.getLocalVariable(aliasName);
         }
         else if (wasResolved instanceof NamespaceDescriptor) {
-            isResolved = namespaceScope.getNamespace(aliasName);
+            isResolved = namespaceScope.getPackage(aliasName);
         }
         if (isResolved != null && isResolved != wasResolved) {
             trace.report(USELESS_HIDDEN_IMPORT.on(importedReference));

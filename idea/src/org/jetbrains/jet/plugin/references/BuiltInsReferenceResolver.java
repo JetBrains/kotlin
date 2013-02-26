@@ -81,7 +81,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         assert bindingContext == null : "Attempt to initialize twice";
 
         BindingTraceContext context = new BindingTraceContext();
-        MutableModuleDescriptor module = new MutableModuleDescriptor(Name.special("<fake module>"));
+        MutableModuleDescriptor module = new MutableModuleDescriptor(Name.special("<fake module>"), map);
         this.moduleDescriptor = module;
         MutablePackageFragmentDescriptor jetPackageFragment = module.addSubModule(Name.identifier("src"))
                 .addPackageFragment(PackageFragmentKind.SOURCE, KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());

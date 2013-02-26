@@ -121,7 +121,6 @@ public class InjectorForTopDownAnalyzerBasic {
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.topDownAnalyzer.setTrace(bindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
 
         this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);

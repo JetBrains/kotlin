@@ -84,7 +84,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
                 }
                 if (declaringElement instanceof JetNamedFunction) {
                     JetNamedFunction jetNamedFunction = (JetNamedFunction) declaringElement;
-                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(jetNamedFunction);
+                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.getDescriptor(jetNamedFunction);
                     addCorrespondingParameterDescriptor(functionDescriptor, parameter);
                 }
                 else if (declaringElement instanceof JetClass) {
@@ -109,7 +109,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
             @Override
             public void visitPropertyAccessor(JetPropertyAccessor accessor) {
                 JetProperty parent = (JetProperty) accessor.getParent();
-                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(parent);
+                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) resolveSession.getDescriptor(parent);
                 if (accessor.isGetter()) {
                     descriptors.add(propertyDescriptor.getGetter());
                 }
@@ -120,7 +120,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
 
             @Override
             public void visitDeclaration(JetDeclaration element) {
-                DeclarationDescriptor descriptor = resolveSession.resolveToDescriptor(element);
+                DeclarationDescriptor descriptor = resolveSession.getDescriptor(element);
                 descriptors.add(descriptor);
                 if (descriptor instanceof ClassDescriptor) {
                     descriptors.addAll(((ClassDescriptor) descriptor).getConstructors());

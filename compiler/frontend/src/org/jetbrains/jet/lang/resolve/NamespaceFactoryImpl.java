@@ -163,7 +163,7 @@ class NamespaceFactoryImpl1 implements NamespaceFactory {
         FqName ownerFqName = DescriptorUtils.getFQName(owner).toSafe();
         FqName fqName = ownerFqName.child(name);
         // !!!
-        NamespaceDescriptorImpl namespaceDescriptor = (NamespaceDescriptorImpl) owner.getMemberScope().getDeclaredNamespace(name);
+        NamespaceDescriptorImpl namespaceDescriptor = null;//(NamespaceDescriptorImpl) owner.getMemberScope().getDeclaredNamespace(name);
 
         if (namespaceDescriptor == null) {
             namespaceDescriptor = createNewNamespaceDescriptor(owner, name, expression, handler, fqName);

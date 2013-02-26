@@ -106,16 +106,16 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @Nullable
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
         checkMayRead();
 
-        NamespaceDescriptor namespace = writableWorker.getNamespace(name);
+        PackageViewDescriptor namespace = writableWorker.getPackage(name);
         if (namespace != null) return namespace;
 
-        namespace = getWorkerScope().getNamespace(name);
+        namespace = getWorkerScope().getPackage(name);
         if (namespace != null) return namespace;
 
-        return super.getNamespace(name); // Imports
+        return super.getPackage(name); // Imports
     }
 
     @Override
@@ -214,10 +214,10 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void addNamespaceAlias(@NotNull Name name, @NotNull NamespaceDescriptor namespaceDescriptor) {
+    public void addPackageAlias(@NotNull Name name, @NotNull PackageViewDescriptor packageViewDescriptor) {
         checkMayWrite();
 
-        writableWorker.addNamespaceAlias(name, namespaceDescriptor);
+        writableWorker.addPackageAlias(name, packageViewDescriptor);
     }
 
     @Override
@@ -232,21 +232,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
         checkMayWrite();
 
         writableWorker.addFunctionAlias(name, functionDescriptor);
-    }
-
-    @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        checkMayWrite();
-
-        writableWorker.addNamespace(namespaceDescriptor);
-    }
-
-    @Override
-    @Nullable
-    public NamespaceDescriptor getDeclaredNamespace(@NotNull Name name) {
-        checkMayRead();
-
-        return writableWorker.getDeclaredNamespace(name);
     }
 
     @NotNull

@@ -217,7 +217,7 @@ public class JetSourceNavigationHelper {
 
         for (JetNamedDeclaration candidate : candidates) {
             //noinspection unchecked
-            CallableDescriptor candidateDescriptor = (CallableDescriptor) analyzer.resolveToDescriptor(candidate);
+            CallableDescriptor candidateDescriptor = (CallableDescriptor) analyzer.getDescriptor(candidate);
             if (receiversMatch(decompiledDeclaration, candidateDescriptor)
                     && valueParametersTypesMatch(decompiledDeclaration, candidateDescriptor)
                     && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {

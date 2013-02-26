@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -47,16 +46,11 @@ public interface WritableScope extends JetScope {
 
     void addClassifierAlias(@NotNull Name name, @NotNull ClassifierDescriptor classifierDescriptor);
 
-    void addNamespaceAlias(@NotNull Name name, @NotNull NamespaceDescriptor namespaceDescriptor);
+    void addPackageAlias(@NotNull Name name, @NotNull PackageViewDescriptor packageViewDescriptor);
     
     void addFunctionAlias(@NotNull Name name, @NotNull FunctionDescriptor functionDescriptor);
     
     void addVariableAlias(@NotNull Name name, @NotNull VariableDescriptor variableDescriptor);
-
-    void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
-
-    @Nullable
-    NamespaceDescriptor getDeclaredNamespace(@NotNull Name name);
 
     @NotNull Multimap<Name, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName();
 
@@ -66,7 +60,7 @@ public interface WritableScope extends JetScope {
 
     void importClassifierAlias(@NotNull Name importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor);
 
-    void importNamespaceAlias(@NotNull Name aliasName, @NotNull NamespaceDescriptor namespaceDescriptor);
+    void importPackageAlias(@NotNull Name aliasName, @NotNull PackageViewDescriptor packageViewDescriptor);
     
     void importFunctionAlias(@NotNull Name aliasName, @NotNull FunctionDescriptor functionDescriptor);
     

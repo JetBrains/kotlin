@@ -50,7 +50,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private SetMultimap<Name, VariableDescriptor> propertyGroups;
 
     @Nullable
-    private Map<Name, NamespaceDescriptor> namespaceAliases;
+    private Map<Name, PackageViewDescriptor> packageAliases;
 
     @Nullable
     private Map<LabelName, List<DeclarationDescriptor>> labelsToDescriptors;
@@ -88,11 +88,11 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void importNamespaceAlias(@NotNull Name aliasName, @NotNull NamespaceDescriptor namespaceDescriptor) {
+    public void importPackageAlias(@NotNull Name aliasName, @NotNull PackageViewDescriptor packageViewDescriptor) {
         checkMayWrite();
 
-        allDescriptors.add(namespaceDescriptor);
-        super.importNamespaceAlias(aliasName, namespaceDescriptor);
+        allDescriptors.add(packageViewDescriptor);
+        super.importPackageAlias(aliasName, packageViewDescriptor);
     }
 
     @Override
@@ -194,11 +194,11 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @NotNull
-    private Map<Name, NamespaceDescriptor> getNamespaceAliases() {
-        if (namespaceAliases == null) {
-            namespaceAliases = Maps.newHashMap();
+    private Map<Name, PackageViewDescriptor> getPackageAliases() {
+        if (packageAliases == null) {
+            packageAliases = Maps.newHashMap();
         }
-        return namespaceAliases;
+        return packageAliases;
     }
 
     @Override
@@ -338,13 +338,13 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void addNamespaceAlias(@NotNull Name name, @NotNull NamespaceDescriptor namespaceDescriptor) {
+    public void addPackageAlias(@NotNull Name name, @NotNull PackageViewDescriptor packageViewDescriptor) {
         checkMayWrite();
 
-        checkForRedeclaration(name, namespaceDescriptor);
-        getNamespaceAliases().put(name, namespaceDescriptor);
-        allDescriptors.add(namespaceDescriptor);
-        addToDeclared(namespaceDescriptor);
+        checkForRedeclaration(name, packageViewDescriptor);
+        getPackageAliases().put(name, packageViewDescriptor);
+        allDescriptors.add(packageViewDescriptor);
+        addToDeclared(packageViewDescriptor);
     }
 
     @Override
@@ -411,41 +411,15 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        checkMayWrite();
-
-        Map<Name, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
-        DeclarationDescriptor oldValue = variableClassOrNamespaceDescriptors.put(namespaceDescriptor.getName(), namespaceDescriptor);
-        if (oldValue != null) {
-            redeclarationHandler.handleRedeclaration(oldValue, namespaceDescriptor);
-        }
-        allDescriptors.add(namespaceDescriptor);
-        addToDeclared(namespaceDescriptor);
-    }
-
-    @Override
-    public NamespaceDescriptor getDeclaredNamespace(@NotNull Name name) {
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
         checkMayRead();
 
-        Map<Name, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
-        DeclarationDescriptor namespaceDescriptor = variableClassOrNamespaceDescriptors.get(name);
-        if (namespaceDescriptor instanceof NamespaceDescriptor) return (NamespaceDescriptor) namespaceDescriptor;
-        return null;
-    }
-
-    @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        checkMayRead();
-
-        NamespaceDescriptor declaredNamespace = getDeclaredNamespace(name);
-        if (declaredNamespace != null) return declaredNamespace;
-
-        NamespaceDescriptor aliased = getNamespaceAliases().get(name);
+        PackageViewDescriptor aliased = getPackageAliases().get(name);
         if (aliased != null) return aliased;
 
-        NamespaceDescriptor namespace = getWorkerScope().getNamespace(name);
-        if (namespace != null) return namespace;
-        return super.getNamespace(name);
+        PackageViewDescriptor packageViewDescriptor = getWorkerScope().getPackage(name);
+        if (packageViewDescriptor != null) return packageViewDescriptor;
+        return super.getPackage(name);
     }
 
     @Override
