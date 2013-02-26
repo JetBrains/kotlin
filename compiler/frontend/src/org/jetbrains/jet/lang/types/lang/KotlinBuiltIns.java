@@ -25,27 +25,29 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.*;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -136,7 +138,7 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final KotlinCodeAnalyzer analyzer;
-    private final OldModuleDescriptor builtInsModule;
+    private final SubModuleDescriptor builtInsSubModule;
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
@@ -171,8 +173,9 @@ public class KotlinBuiltIns {
 
     private KotlinBuiltIns(@NotNull Project project) {
         try {
-            this.builtInsModule = new OldModuleDescriptor(Name.special("<built-ins lazy module>"));
-            this.analyzer = createLazyResolveSession(project);
+            this.analyzer = createLazyAnalyzer(project);
+            ModuleDescriptor module = analyzer.getModules().iterator().next();
+            this.builtInsSubModule = module.getSubModules().iterator().next();
 
             this.functionClassesSet = computeIndexedClasses("Function", getFunctionTraitCount());
             this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", getFunctionTraitCount());
@@ -221,15 +224,23 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    private KotlinCodeAnalyzer createLazyResolveSession(@NotNull Project project) throws IOException {
+    private static KotlinCodeAnalyzer createLazyAnalyzer(@NotNull Project project) throws IOException {
         List<JetFile> files = loadResourcesAsJetFiles(project, LIBRARY_FILES);
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
-        return new ResolveSession(
+
+        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files);
+
+        final MutableModuleDefinition moduleDefinition =
+                new MutableModuleDefinition(Name.special("<built-ins lazy module>"), PlatformToKotlinClassMap.EMPTY);
+
+        final SubModuleDefinition subModuleDefinition = new BuiltInsSubModuleDefinition(declarationProviderFactory);
+        moduleDefinition.addSubModuleDefinition(subModuleDefinition);
+
+        return new LazyCodeAnalyzer(
                 project,
                 storageManager,
-                builtInsModule,
-                new SpecialModuleConfiguration(),
-                new FileBasedDeclarationProviderFactory(storageManager, files),
+                createRootProvider(moduleDefinition, subModuleDefinition),
+                declarationProviderFactory,
                 new Function<FqName, Name>() {
                     @Override
                     public Name fun(FqName name) {
@@ -238,6 +249,25 @@ public class KotlinBuiltIns {
                 },
                 Predicates.in(Sets.newHashSet(new FqNameUnsafe("jet.Any"), new FqNameUnsafe("jet.Nothing"))),
                 new BindingTraceContext());
+    }
+
+    private static RootDeclarationProvider createRootProvider(
+            final MutableModuleDefinition moduleDefinition,
+            final SubModuleDefinition subModuleDefinition
+    ) {
+        return new RootDeclarationProvider() {
+            @NotNull
+            @Override
+            public Collection<ModuleDefinition> getModuleDefinitions() {
+                return Collections.<ModuleDefinition>singletonList(moduleDefinition);
+            }
+
+            @Nullable
+            @Override
+            public SubModuleDefinition getSubModuleDefinitionForFile(@NotNull PsiFile file) {
+                return subModuleDefinition;
+            }
+        };
     }
 
     @NotNull
@@ -261,27 +291,44 @@ public class KotlinBuiltIns {
         return files;
     }
 
-    private static class SpecialModuleConfiguration implements ModuleConfiguration {
+    private static class BuiltInsSubModuleDefinition extends SubModuleDefinitionImpl {
+        private final FileBasedDeclarationProviderFactory declarationProviderFactory;
 
-        private SpecialModuleConfiguration() {
-        }
-
-        @Override
-        public List<ImportPath> getDefaultImports() {
-            return DefaultModuleConfiguration.DEFAULT_JET_IMPORTS;
-        }
-
-        @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace,
-                @NotNull NamespaceDescriptor namespaceDescriptor,
-                @NotNull WritableScope namespaceMemberScope) {
-            // DO nothing
+        public BuiltInsSubModuleDefinition(FileBasedDeclarationProviderFactory declarationProviderFactory) {
+            super(Name.special("<built-ins lazy submodule>"));
+            this.declarationProviderFactory = declarationProviderFactory;
         }
 
         @NotNull
         @Override
-        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-            return PlatformToKotlinClassMap.EMPTY;
+        public List<PackageFragmentDescriptor> getPackageFragmentsLoadedExternally(
+                @NotNull FqName fqName, @NotNull SubModuleDescriptor targetSubModule
+        ) {
+            return Collections.emptyList();
+        }
+
+        @Nullable
+        @Override
+        public PackageMemberDeclarationProvider getPackageMembersFromSourceFiles(@NotNull FqName fqName) {
+            if (BUILT_INS_PACKAGE_FQ_NAME.equals(fqName)) {
+                return declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
+            }
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public Collection<FqName> getAllSubPackages(@NotNull FqName parentFqName) {
+            if (parentFqName.isRoot()) {
+                return Collections.singletonList(BUILT_INS_PACKAGE_FQ_NAME);
+            }
+            return Collections.emptyList();
+        }
+
+        @NotNull
+        @Override
+        public List<ImportPath> getDefaultImports() {
+            return DefaultModuleConfiguration.DEFAULT_JET_IMPORTS;
         }
     }
 
@@ -303,15 +350,15 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    public OldModuleDescriptor getBuiltInsModule() {
-        return builtInsModule;
+    public SubModuleDescriptor getBuiltInsSubModule() {
+        return builtInsSubModule;
     }
 
     @NotNull
     public PackageViewDescriptor getBuiltInsPackage() {
-        PackageViewDescriptor namespace = getBuiltInsModule().getRootNamespace().getMemberScope().getPackage(BUILT_INS_PACKAGE_NAME);
-        assert namespace != null : "Built ins namespace not found: " + BUILT_INS_PACKAGE_NAME;
-        return namespace;
+        PackageViewDescriptor packageView = getBuiltInsSubModule().getPackageView(BUILT_INS_PACKAGE_FQ_NAME);
+        assert packageView != null : "Built-ins package not found: " + BUILT_INS_PACKAGE_FQ_NAME;
+        return packageView;
     }
 
     @NotNull

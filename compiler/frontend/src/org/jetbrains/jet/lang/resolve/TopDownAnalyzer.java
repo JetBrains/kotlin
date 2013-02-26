@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -142,7 +141,7 @@ public class TopDownAnalyzer {
                 Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
-                KotlinBuiltIns.getInstance().getBuiltInsModule(), ModuleConfiguration.EMPTY);
+                ModuleConfiguration.EMPTY);
 
         injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryPackageFragment, files);
     }
@@ -174,7 +173,7 @@ public class TopDownAnalyzer {
                 false, true, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(trace), moduleDescriptor,
+                project, topDownAnalysisParameters, new ObservableBindingTrace(trace),
                 ModuleConfiguration.EMPTY);
 
         injector.getTopDownAnalyzer().doProcess(outerScope, new NamespaceLikeBuilder() {
