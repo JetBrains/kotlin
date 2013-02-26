@@ -21,17 +21,23 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.io.URLUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 
-/*
- * This code is essentially copied from IntelliJ IDEA's VfsUtil, and slightly restructured
- */
 public class KotlinVfsUtil {
     private static final String FILE = "file";
     private static final String JAR = "jar";
     private static final String PROTOCOL_DELIMITER = ":";
 
+    /*
+     * This code is essentially copied from IntelliJ IDEA's VfsUtil, and slightly restructured
+     */
     @NotNull
     public static String convertFromUrl(@NotNull URL url) throws MalformedURLException {
         String protocol = url.getProtocol();
@@ -54,6 +60,17 @@ public class KotlinVfsUtil {
         path = URLUtil.unescapePercentSequences(path);
         return protocol + "://" + path;
     }
+
+    public static List<File> getFilesInDirectoryByPattern(@NotNull File dir, @NotNull final Pattern pattern) {
+        File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(@NotNull File dir, @NotNull String name) {
+                return pattern.matcher(name).matches();
+            }
+        });
+        return files != null ? Arrays.asList(files) : Collections.<File>emptyList();
+    }
+
 
     private KotlinVfsUtil() {}
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.framework.ui;
 
+import com.intellij.ide.util.projectWizard.ProjectWizardUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -33,39 +35,50 @@ public class FileUIUtils {
     private FileUIUtils() {
     }
 
-    @NotNull
-    public static File copyWithOverwriteDialog(@NotNull String destinationFolder, @NotNull File file) throws IOException {
+    @Nullable
+    public static File copyWithOverwriteDialog(
+            @NotNull Component parent,
+            @NotNull String destinationFolder,
+            @NotNull File file,
+            @NotNull String messagesTitle) {
+        if (!ProjectWizardUtil.createDirectoryIfNotExists("Destination folder", destinationFolder, false)) {
+            Messages.showErrorDialog(String.format("Error during folder creating '%s'", destinationFolder), messagesTitle + ". Error");
+            return null;
+        }
+
         File folder = new File(destinationFolder);
         File targetFile = new File(folder, file.getName());
 
-        if (!folder.exists()) {
-            throw new IllegalArgumentException(String.format("Destination folder '%s' should exist", folder));
-        }
+        assert folder.exists();
 
-        if (!targetFile.exists()) {
-            FileUtil.copy(file, targetFile);
-        }
-        else {
-            int replaceIfExist = Messages.showYesNoDialog(
-                    String.format("File \"%s\" is already exist in %s.\nDo you want to rewrite it?", targetFile.getName(),
-                                  folder.getAbsolutePath()),
-                    "Replace File", Messages.getWarningIcon());
-
-            if (replaceIfExist == JOptionPane.YES_OPTION) {
+        try {
+            if (!targetFile.exists()) {
                 FileUtil.copy(file, targetFile);
             }
+            else {
+                int replaceIfExist = Messages.showYesNoDialog(
+                        parent,
+                        String.format("File \"%s\" is already exist in %s.\nDo you want to rewrite it?", targetFile.getName(), folder.getAbsolutePath()),
+                        messagesTitle + ". Replace File",
+                        Messages.getWarningIcon());
+
+                if (replaceIfExist == JOptionPane.YES_OPTION) {
+                    FileUtil.copy(file, targetFile);
+                }
+            }
+
+            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
+
+            return targetFile;
         }
-
-        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
-
-        return targetFile;
+        catch (IOException e) {
+            Messages.showErrorDialog("Error during file copy", messagesTitle + ". Error");
+            return null;
+        }
     }
 
-    @Nullable
-    public static String selectDestinationFolderDialog(
-            @Nullable Project project,
-            @Nullable VirtualFile contextDirectory,
-            @Nullable String description) {
+    @NotNull
+    public static String getDefaultLibraryFolder(@Nullable Project project, @Nullable VirtualFile contextDirectory) {
         String path = null;
         if (contextDirectory != null) {
             path = PathUtil.getLocalPath(contextDirectory);
@@ -81,14 +94,6 @@ public class FileUIUtils {
         else {
             path = "";
         }
-
-        ChoosePathDialog dialog = new ChoosePathDialog(project, "Copy Bundled Library", path, description);
-        dialog.show();
-
-        if (dialog.isOK()) {
-            return dialog.getPath();
-        }
-
-        return null;
+        return path;
     }
 }

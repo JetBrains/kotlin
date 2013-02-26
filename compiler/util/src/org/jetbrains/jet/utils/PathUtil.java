@@ -21,9 +21,12 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class PathUtil {
 
@@ -31,8 +34,51 @@ public class PathUtil {
     public static final String JS_LIB_JS_NAME = "kotlinEcma3.js";
     public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
     public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
+    public static final String BUILD_VERSION_NAME = "build.txt";
+    public static final String HOME_FOLDER_NAME = "kotlinc";
 
     private static final File NO_PATH = new File("<no_path>");
+
+    public static final Function<String, File> KOTLIN_HOME_DIRECTORY_ADAPTER = new Function<String, File>() {
+        private final Pattern homeDirPattern = Pattern.compile(HOME_FOLDER_NAME);
+        private final Pattern buildFilePattern = Pattern.compile(BUILD_VERSION_NAME);
+
+        @Override
+        public File fun(String path) {
+            if (path == null) {
+                return null;
+            }
+
+            File directory = new File(path);
+            if (!(directory.exists() || directory.isDirectory())) {
+                return null;
+            }
+
+            if (checkIsHomeDirectory(directory)) {
+                return directory;
+            }
+
+            List<File> homeSubfolders = KotlinVfsUtil.getFilesInDirectoryByPattern(directory, homeDirPattern);
+            if (!homeSubfolders.isEmpty()) {
+                assert homeSubfolders.size() == 1;
+                File homeNamedDir = homeSubfolders.get(0);
+                if (checkIsHomeDirectory(homeNamedDir)) {
+                    return homeNamedDir;
+                }
+            }
+
+            File parentDirectory = directory.getParentFile();
+            if (parentDirectory != null && checkIsHomeDirectory(parentDirectory)) {
+                return parentDirectory;
+            }
+
+            return null;
+        }
+
+        private boolean checkIsHomeDirectory(File dir) {
+            return dir.getName().equals(HOME_FOLDER_NAME) && !KotlinVfsUtil.getFilesInDirectoryByPattern(dir, buildFilePattern).isEmpty();
+        }
+    };
 
     private PathUtil() {}
 
@@ -65,7 +111,17 @@ public class PathUtil {
 
     @NotNull
     public static KotlinPaths getKotlinPathsForDistDirectory() {
-        return new KotlinPathsFromHomeDir(new File("dist/kotlinc"));
+        return new KotlinPathsFromHomeDir(new File("dist", HOME_FOLDER_NAME));
+    }
+
+    @NotNull
+    public static KotlinPaths getKotlinStandaloneCompilerPaths(@NotNull String path) {
+        File homePath = KOTLIN_HOME_DIRECTORY_ADAPTER.fun(path);
+        if (homePath == null) {
+            throw new IllegalArgumentException(String.format("Can't get home path from '%s'", path));
+        }
+
+        return new KotlinPathsFromHomeDir(homePath);
     }
 
     @NotNull
@@ -90,7 +146,7 @@ public class PathUtil {
 
         if (jar.getName().equals("kotlin-jps-plugin.jar")) {
             File pluginHome = jar.getParentFile().getParentFile().getParentFile();
-            return new File(pluginHome, "kotlinc");
+            return new File(pluginHome, HOME_FOLDER_NAME);
         }
 
         return NO_PATH;
@@ -106,7 +162,7 @@ public class PathUtil {
             File lib = jar.getParentFile();
             File pluginHome = lib.getParentFile();
 
-            return new File(pluginHome, "kotlinc");
+            return new File(pluginHome, HOME_FOLDER_NAME);
         }
 
         return NO_PATH;

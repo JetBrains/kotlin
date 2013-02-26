@@ -34,6 +34,12 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
         return homePath;
     }
 
+    @NotNull
+    @Override
+    public File getBuildVersionFile() {
+        return new File(homePath, PathUtil.BUILD_VERSION_NAME);
+    }
+
     @Override
     @NotNull
     public File getLibPath() {

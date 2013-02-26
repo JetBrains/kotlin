@@ -31,7 +31,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.ui.CreateLibrarySourceDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
+import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -54,41 +56,42 @@ public class JSLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        return createFromPlugin(contextDirectory);
-    }
+        CreateLibrarySourceDialog dialog = new CreateLibrarySourceDialog(null, "Create Kotlin JavaScript Library", contextDirectory);
+        dialog.show();
 
-    private NewLibraryConfiguration createFromPlugin(VirtualFile contextDirectory) {
-        File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJarPath();
+        if (dialog.isOK()) {
+            String standaloneCompilerPath = dialog.getStandaloneCompilerPath();
+            KotlinPaths paths = standaloneCompilerPath == null ?
+                                PathUtil.getKotlinPathsForIdeaPlugin() :
+                                PathUtil.getKotlinStandaloneCompilerPaths(standaloneCompilerPath);
 
-        if (!runtimePath.exists()) {
-            Messages.showErrorDialog("JavaScript standard library was not found. Make sure plugin is installed properly.",
-                                     JAVA_SCRIPT_LIBRARY_CREATION);
-            return null;
-        }
-
-        String directoryPath = FileUIUtils.selectDestinationFolderDialog(
-                null, contextDirectory, "Select folder where Kotlin JavaScript header should be copied");
-
-        if (directoryPath == null) {
-            return null;
-        }
-
-        final File targetFile;
-        try {
-            targetFile = FileUIUtils.copyWithOverwriteDialog(directoryPath, runtimePath);
-            copyJsRuntimeFile(directoryPath);
-        }
-        catch (IOException e) {
-            Messages.showErrorDialog("Error during file copy", JAVA_SCRIPT_LIBRARY_CREATION);
-            return null;
-        }
-
-        return new NewLibraryConfiguration(LIBRARY_NAME + "-" + JetPluginUtil.getPluginVersion(), getDownloadableLibraryType(), new LibraryVersionProperties()) {
-            @Override
-            public void addRoots(@NotNull LibraryEditor editor) {
-                editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.SOURCES);
+            File libraryFile = paths.getJsLibJarPath();
+            if (!libraryFile.exists()) {
+                Messages.showErrorDialog(String.format("JavaScript standard library was not found in %s", paths.getLibPath()),
+                                         JAVA_SCRIPT_LIBRARY_CREATION);
+                return null;
             }
-        };
+
+            String copyIntoPath = dialog.getCopyIntoPath();
+            if (copyIntoPath != null) {
+                libraryFile = FileUIUtils.copyWithOverwriteDialog(parentComponent, copyIntoPath, libraryFile, JAVA_SCRIPT_LIBRARY_CREATION);
+                if (libraryFile == null) {
+                    return null;
+                }
+
+                copyJsRuntimeFile(copyIntoPath);
+            }
+
+            final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
+            return new NewLibraryConfiguration(LIBRARY_NAME + "-" +  dialog.getVersion(), getDownloadableLibraryType(), new LibraryVersionProperties()) {
+                @Override
+                public void addRoots(@NotNull LibraryEditor editor) {
+                    editor.addRoot(libraryFileUrl, OrderRootType.SOURCES);
+                }
+            };
+        }
+
+        return null;
     }
 
     private static void copyJsRuntimeFile(@NotNull String directoryPath) {
@@ -102,7 +105,7 @@ public class JSLibraryDescription extends CustomLibraryDescription {
             LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
         }
         catch (IOException e) {
-            // Don't do nothing. This is temp code and should be removed.
+            // Do nothing. This is a very temp code and should be removed.
         }
     }
 }

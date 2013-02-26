@@ -28,13 +28,13 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.ui.CreateLibrarySourceDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
+import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
 public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
@@ -52,40 +52,42 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        return createFromPlugin(contextDirectory);
-    }
+        CreateLibrarySourceDialog dialog = new CreateLibrarySourceDialog(null, "Create Kotlin Java Runtime Library", contextDirectory);
+        dialog.show();
 
-    private NewLibraryConfiguration createFromPlugin(VirtualFile contextDirectory) {
-        File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
+        if (dialog.isOK()) {
+            String standaloneCompilerPath = dialog.getStandaloneCompilerPath();
+            KotlinPaths paths = standaloneCompilerPath == null ?
+                                      PathUtil.getKotlinPathsForIdeaPlugin() :
+                                      PathUtil.getKotlinStandaloneCompilerPaths(standaloneCompilerPath);
 
-        if (!runtimePath.exists()) {
-            Messages.showErrorDialog("Java Runtime library was not found. Make sure plugin is installed properly.",
-                                     JAVA_RUNTIME_LIBRARY_CREATION);
-            return null;
-        }
-
-        String directoryPath = FileUIUtils.selectDestinationFolderDialog(
-                null, contextDirectory, "Select folder where bundled Kotlin java runtime library should be copied");
-
-        if (directoryPath == null) {
-            return null;
-        }
-
-        final File targetFile;
-        try {
-            targetFile = FileUIUtils.copyWithOverwriteDialog(directoryPath, runtimePath);
-        }
-        catch (IOException e) {
-            Messages.showErrorDialog("Error during file copy", JAVA_RUNTIME_LIBRARY_CREATION);
-            return null;
-        }
-
-        return new NewLibraryConfiguration(LIBRARY_NAME + "-" + JetPluginUtil.getPluginVersion(), getDownloadableLibraryType(), new LibraryVersionProperties()) {
-            @Override
-            public void addRoots(@NotNull LibraryEditor editor) {
-                editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.CLASSES);
-                editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile) + "src", OrderRootType.SOURCES);
+            File libraryFile = paths.getRuntimePath();
+            if (!libraryFile.exists()) {
+                Messages.showErrorDialog(
+                        parentComponent,
+                        String.format("Java Runtime library was not found in '%s'." , paths.getLibPath()),
+                        JAVA_RUNTIME_LIBRARY_CREATION);
+                return null;
             }
-        };
+
+            String copyIntoPath = dialog.getCopyIntoPath();
+            if (copyIntoPath != null) {
+                libraryFile = FileUIUtils.copyWithOverwriteDialog(parentComponent, copyIntoPath, libraryFile, JAVA_RUNTIME_LIBRARY_CREATION);
+                if (libraryFile == null) {
+                    return null;
+                }
+            }
+
+            final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
+            return new NewLibraryConfiguration(LIBRARY_NAME + "-" + dialog.getVersion(), getDownloadableLibraryType(), new LibraryVersionProperties()) {
+                @Override
+                public void addRoots(@NotNull LibraryEditor editor) {
+                    editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
+                    editor.addRoot(libraryFileUrl + "src", OrderRootType.SOURCES);
+                }
+            };
+        }
+
+        return null;
     }
 }
