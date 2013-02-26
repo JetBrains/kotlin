@@ -30,6 +30,7 @@ import java.util.zip.ZipInputStream;
 
 public class SDKDownloader {
     private final String platformZipPath;
+    private final String systemImages;
     private final String platformToolsZipPath;
     private final String toolsZipPath;
     private final String antZipPath;
@@ -39,25 +40,30 @@ public class SDKDownloader {
     public SDKDownloader(PathManager pathManager) {
         this.pathManager = pathManager;
         platformZipPath = pathManager.getRootForDownload() + "/platforms.zip";
+        systemImages = pathManager.getRootForDownload() + "/system-images.zip";
         platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools.zip";
         toolsZipPath = pathManager.getRootForDownload() + "/tools.zip";
         antZipPath = pathManager.getRootForDownload() + "/apache-ant-1.8.0.zip";
     }
 
     public void downloadPlatform() {
-        download("https://dl-ssl.google.com/android/repository/android-2.3.3_r02-linux.zip", platformZipPath);  //Same for all platforms
+        download("http://dl-ssl.google.com/android/repository/android-16_r04.zip", platformZipPath);  //Same for all platforms
+    }
+
+    private void downloadAbi() {
+        download("http://dl.google.com/android/repository/sysimg_armv7a-16_r03.zip", systemImages);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
         String downloadURL;
         if (SystemInfo.isWindows) {
-            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r11-windows.zip";
+            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r16-windows.zip";
         }
         else if (SystemInfo.isMac) {
-            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r11-macosx.zip";
+            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r16-macosx.zip";
         }
         else if (SystemInfo.isUnix) {
-            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r11-linux.zip";
+            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r16-linux.zip";
         }
         else {
             throw new IllegalStateException("Your operating system doesn't supported yet.");
@@ -68,13 +74,13 @@ public class SDKDownloader {
     public void downloadTools() {
         String downloadURL;
         if (SystemInfo.isWindows) {
-            downloadURL = "http://dl.google.com/android/repository/tools_r19-windows.zip";
+            downloadURL = "http://dl.google.com/android/repository/tools_r16-windows.zip";
         }
         else if (SystemInfo.isMac) {
-            downloadURL = "http://dl.google.com/android/repository/tools_r19-macosx.zip";
+            downloadURL = "http://dl.google.com/android/repository/tools_r16-macosx.zip";
         }
         else if (SystemInfo.isUnix) {
-            downloadURL = "http://dl.google.com/android/repository/tools_r19-linux.zip";
+            downloadURL = "http://dl.google.com/android/repository/tools_r16-linux.zip";
         }
         else {
             throw new IllegalStateException("Your operating system doesn't supported yet.");
@@ -88,13 +94,16 @@ public class SDKDownloader {
 
     public void downloadAll() {
         downloadTools();
+        downloadAbi();
         downloadPlatform();
         downloadPlatformTools();
         downloadAnt();
     }
 
+
     public void unzipAll() {
         unzip(platformZipPath, pathManager.getPlatformFolderInAndroidSdk());
+        unzip(systemImages, pathManager.getAndroidSdkRoot() + "/system-images/android-16/");
         unzip(platformToolsZipPath, pathManager.getAndroidSdkRoot());
         unzip(toolsZipPath, pathManager.getAndroidSdkRoot());
         unzip(antZipPath, pathManager.getDependenciesRoot());
