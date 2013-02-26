@@ -711,6 +711,31 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/override/beforeNothingToOverride.kt");
         }
         
+        @TestMetadata("beforeOverriddingMultipleFinalMethods.kt")
+        public void testOverriddingMultipleFinalMethods() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeOverriddingMultipleFinalMethods.kt");
+        }
+        
+        @TestMetadata("beforeOverridingFinalJavaMethod.kt")
+        public void testOverridingFinalJavaMethod() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeOverridingFinalJavaMethod.kt");
+        }
+        
+        @TestMetadata("beforeOverridingFinalMethod.kt")
+        public void testOverridingFinalMethod() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeOverridingFinalMethod.kt");
+        }
+        
+        @TestMetadata("beforeOverridingFinalProperty.kt")
+        public void testOverridingFinalProperty() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeOverridingFinalProperty.kt");
+        }
+        
+        @TestMetadata("beforeOverridingWritableAndNotWritableFinalMembers.kt")
+        public void testOverridingWritableAndNotWritableFinalMembers() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeOverridingWritableAndNotWritableFinalMembers.kt");
+        }
+        
         @TestMetadata("beforeParameterNameChangedAmbiguousRename.kt")
         public void testParameterNameChangedAmbiguousRename() throws Exception {
             doTest("idea/testData/quickfix/override/beforeParameterNameChangedAmbiguousRename.kt");
