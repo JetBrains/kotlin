@@ -22,24 +22,28 @@ import com.intellij.testFramework.PsiTestUtil;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.LocalFileSystemUtils;
 
-public class FinalJavaSupertypeTest extends AbstractQuickFixMultiFileTest {
+public class AddOpenToClassDeclarationTest extends AbstractQuickFixMultiFileTest {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
         LocalFileSystemUtils.refreshPath(getTestDataPath());
-    }
-
-    public void testFinalJavaSupertype() throws Exception {
         String path = getTestDataPath() + "javaCode/";
         final VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false);
         addSourceContentToRoots(myModule, rootDir);
         PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-        doTestWithoutExtraFile(getTestName(false) + ".before.kt");
+    }
+
+    public void testFinalJavaSupertype() throws Exception {
+        doTestWithoutExtraFile("FinalJavaSupertype.before.kt");
+    }
+
+    public void testFinalJavaUpperBound() throws Exception {
+        doTestWithoutExtraFile("FinalJavaUpperBound.before.kt");
     }
 
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/quickfix/modifiers/finalSupertype/" + getTestName(true) + "/";
+        return PluginTestCaseBase.getTestDataPathBase() + "/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/";
     }
 }

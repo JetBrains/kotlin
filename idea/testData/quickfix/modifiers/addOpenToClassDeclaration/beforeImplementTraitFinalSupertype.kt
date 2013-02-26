@@ -1,4 +1,4 @@
-// "Add 'open' modifier to supertype" "true"
+// "Make A open" "true"
 trait X {}
 trait Y {}
 

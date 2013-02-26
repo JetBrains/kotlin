@@ -77,7 +77,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Add modifier";
+        return JetBundle.message("add.modifier.family");
     }
 
     @Override
@@ -135,6 +135,11 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
             }
         }
         return newElement;
+    }
+
+    @NotNull
+    /*package*/ static JetModifierListOwner addModifierWithDefaultReplacement(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @NotNull Project project, boolean toBeginning) {
+        return addModifier(element, modifier, MODIFIERS_THAT_CAN_BE_REPLACED.get(modifier), project, toBeginning);
     }
 
     @Override
