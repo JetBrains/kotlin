@@ -1,4 +1,4 @@
-// "Add 'open' modifier to supertype" "false"
+// "Make JavaClass open" "false"
 // ERROR: This type is final, so it cannot be inherited from
 import testPackage.*
 
