@@ -1344,7 +1344,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
             if (at(COLON)) {
                 advance(); // COLON
-                myJetParsing.parseTypeRef();
+                myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
             }
             parameter.done(LOOP_PARAMETER);
         }
