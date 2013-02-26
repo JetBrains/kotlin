@@ -120,31 +120,31 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     }
     
     @TestMetadata("idea/testData/quickfix/modifiers")
-    @InnerTestClasses({Modifiers.FinalSupertype.class})
+    @InnerTestClasses({Modifiers.AddOpenToClassDeclaration.class})
     public static class Modifiers extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInModifiers() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
         
-        @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype")
-        @InnerTestClasses({FinalSupertype.FinalJavaSupertype.class})
-        public static class FinalSupertype extends AbstractQuickFixMultiFileTest {
-            public void testAllFilesPresentInFinalSupertype() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
+        @InnerTestClasses({AddOpenToClassDeclaration.FinalJavaClass.class})
+        public static class AddOpenToClassDeclaration extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInAddOpenToClassDeclaration() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
             }
             
-            @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype")
-            @InnerTestClasses({FinalJavaSupertype.JavaCode.class})
-            public static class FinalJavaSupertype extends AbstractQuickFixMultiFileTest {
-                public void testAllFilesPresentInFinalJavaSupertype() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass")
+            @InnerTestClasses({FinalJavaClass.JavaCode.class})
+            public static class FinalJavaClass extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInFinalJavaClass() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
                 }
                 
-                @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype/javaCode")
+                @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode")
                 @InnerTestClasses({})
                 public static class JavaCode extends AbstractQuickFixMultiFileTest {
                     public void testAllFilesPresentInJavaCode() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype/javaCode"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
                     }
                     
                     public static Test innerSuite() {
@@ -155,17 +155,17 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
                 
                 public static Test innerSuite() {
-                    TestSuite suite = new TestSuite("FinalJavaSupertype");
-                    suite.addTestSuite(FinalJavaSupertype.class);
+                    TestSuite suite = new TestSuite("FinalJavaClass");
+                    suite.addTestSuite(FinalJavaClass.class);
                     suite.addTest(JavaCode.innerSuite());
                     return suite;
                 }
             }
             
             public static Test innerSuite() {
-                TestSuite suite = new TestSuite("FinalSupertype");
-                suite.addTestSuite(FinalSupertype.class);
-                suite.addTest(FinalJavaSupertype.innerSuite());
+                TestSuite suite = new TestSuite("AddOpenToClassDeclaration");
+                suite.addTestSuite(AddOpenToClassDeclaration.class);
+                suite.addTest(FinalJavaClass.innerSuite());
                 return suite;
             }
         }
@@ -173,7 +173,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Modifiers");
             suite.addTestSuite(Modifiers.class);
-            suite.addTest(FinalSupertype.innerSuite());
+            suite.addTest(AddOpenToClassDeclaration.innerSuite());
             return suite;
         }
     }

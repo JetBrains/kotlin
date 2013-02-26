@@ -182,8 +182,10 @@ public class QuickFixes {
         factories.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, AddStarProjectionsFix.createFactoryForJavaClass());
 
         factories.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, AddModifierFix.createFactory(INNER_KEYWORD, JetClass.class));
-        
-        factories.put(FINAL_SUPERTYPE, FinalSupertypeFix.createFactory());
+
+        JetIntentionActionFactory addOpenModifierToClassDeclarationFix = AddOpenModifierToClassDeclarationFix.createFactory();
+        factories.put(FINAL_SUPERTYPE, addOpenModifierToClassDeclarationFix);
+        factories.put(FINAL_UPPER_BOUND, addOpenModifierToClassDeclarationFix);
 
         factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
 

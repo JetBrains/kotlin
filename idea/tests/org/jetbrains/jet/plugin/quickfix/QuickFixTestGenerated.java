@@ -415,7 +415,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/modifiers")
-    @InnerTestClasses({Modifiers.FinalSupertype.class})
+    @InnerTestClasses({Modifiers.AddOpenToClassDeclaration.class})
     public static class Modifiers extends AbstractQuickFixTest {
         @TestMetadata("beforeAddInnerModifier.kt")
         public void testAddInnerModifier() throws Exception {
@@ -506,50 +506,70 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/modifiers/beforeVisibilityModiferParameter.kt");
         }
         
-        @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype")
-        @InnerTestClasses({FinalSupertype.FinalJavaSupertype.class})
-        public static class FinalSupertype extends AbstractQuickFixTest {
-            public void testAllFilesPresentInFinalSupertype() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
+        @InnerTestClasses({AddOpenToClassDeclaration.FinalJavaClass.class})
+        public static class AddOpenToClassDeclaration extends AbstractQuickFixTest {
+            public void testAllFilesPresentInAddOpenToClassDeclaration() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
             @TestMetadata("beforeEnumSupertype.kt")
             public void testEnumSupertype() throws Exception {
-                doTest("idea/testData/quickfix/modifiers/finalSupertype/beforeEnumSupertype.kt");
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeEnumSupertype.kt");
+            }
+            
+            @TestMetadata("beforeEnumUpperBound.kt")
+            public void testEnumUpperBound() throws Exception {
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeEnumUpperBound.kt");
             }
             
             @TestMetadata("beforeExplicitlyFinalSupertype.kt")
             public void testExplicitlyFinalSupertype() throws Exception {
-                doTest("idea/testData/quickfix/modifiers/finalSupertype/beforeExplicitlyFinalSupertype.kt");
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeExplicitlyFinalSupertype.kt");
+            }
+            
+            @TestMetadata("beforeExplicitlyFinalUpperBound.kt")
+            public void testExplicitlyFinalUpperBound() throws Exception {
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeExplicitlyFinalUpperBound.kt");
             }
             
             @TestMetadata("beforeFinalLibrarySupertype.kt")
             public void testFinalLibrarySupertype() throws Exception {
-                doTest("idea/testData/quickfix/modifiers/finalSupertype/beforeFinalLibrarySupertype.kt");
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeFinalLibrarySupertype.kt");
+            }
+            
+            @TestMetadata("beforeFinalLibraryUpperBound.kt")
+            public void testFinalLibraryUpperBound() throws Exception {
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeFinalLibraryUpperBound.kt");
             }
             
             @TestMetadata("beforeFinalSupertype.kt")
             public void testFinalSupertype() throws Exception {
-                doTest("idea/testData/quickfix/modifiers/finalSupertype/beforeFinalSupertype.kt");
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeFinalSupertype.kt");
+            }
+            
+            @TestMetadata("beforeFinalUpperBound.kt")
+            public void testFinalUpperBound() throws Exception {
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeFinalUpperBound.kt");
             }
             
             @TestMetadata("beforeImplementTraitFinalSupertype.kt")
             public void testImplementTraitFinalSupertype() throws Exception {
-                doTest("idea/testData/quickfix/modifiers/finalSupertype/beforeImplementTraitFinalSupertype.kt");
+                doTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/beforeImplementTraitFinalSupertype.kt");
             }
             
-            @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype")
-            @InnerTestClasses({FinalJavaSupertype.JavaCode.class})
-            public static class FinalJavaSupertype extends AbstractQuickFixTest {
-                public void testAllFilesPresentInFinalJavaSupertype() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass")
+            @InnerTestClasses({FinalJavaClass.JavaCode.class})
+            public static class FinalJavaClass extends AbstractQuickFixTest {
+                public void testAllFilesPresentInFinalJavaClass() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass"), Pattern.compile("^before(\\w+)\\.kt$"), true);
                 }
                 
-                @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype/javaCode")
+                @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode")
                 @InnerTestClasses({})
                 public static class JavaCode extends AbstractQuickFixTest {
                     public void testAllFilesPresentInJavaCode() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype/javaCode"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass/javaCode"), Pattern.compile("^before(\\w+)\\.kt$"), true);
                     }
                     
                     public static Test innerSuite() {
@@ -560,17 +580,17 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
                 
                 public static Test innerSuite() {
-                    TestSuite suite = new TestSuite("FinalJavaSupertype");
-                    suite.addTestSuite(FinalJavaSupertype.class);
+                    TestSuite suite = new TestSuite("FinalJavaClass");
+                    suite.addTestSuite(FinalJavaClass.class);
                     suite.addTest(JavaCode.innerSuite());
                     return suite;
                 }
             }
             
             public static Test innerSuite() {
-                TestSuite suite = new TestSuite("FinalSupertype");
-                suite.addTestSuite(FinalSupertype.class);
-                suite.addTest(FinalJavaSupertype.innerSuite());
+                TestSuite suite = new TestSuite("AddOpenToClassDeclaration");
+                suite.addTestSuite(AddOpenToClassDeclaration.class);
+                suite.addTest(FinalJavaClass.innerSuite());
                 return suite;
             }
         }
@@ -578,7 +598,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Modifiers");
             suite.addTestSuite(Modifiers.class);
-            suite.addTest(FinalSupertype.innerSuite());
+            suite.addTest(AddOpenToClassDeclaration.innerSuite());
             return suite;
         }
     }
