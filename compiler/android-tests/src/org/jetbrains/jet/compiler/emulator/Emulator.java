@@ -99,7 +99,7 @@ public class Emulator {
 
     public void createEmulator() {
         System.out.println("Creating emulator...");
-        OutputUtils.checkResult(RunUtils.execute(getCreateCommand(), "no"));
+        OutputUtils.checkResult(RunUtils.execute(new RunUtils.RunSettings(getCreateCommand(), "no", true, null, false)));
     }
 
     public void startServer() {
@@ -114,7 +114,7 @@ public class Emulator {
     public void startEmulator() {
         startServer();
         System.out.println("Starting emulator...");
-        OutputUtils.checkResult(RunUtils.executeOnSeparateThread(getStartCommand(), false));
+        RunUtils.executeOnSeparateThread(new RunUtils.RunSettings(getStartCommand(), null, false, "START: ", true));
         printLog();
     }
 
@@ -126,7 +126,7 @@ public class Emulator {
         commandLine.addParameter("-v");
         commandLine.addParameter("time");
         commandLine.addParameter("*:I");
-        OutputUtils.checkResult(RunUtils.executeOnSeparateThread(new RunUtils.RunSettings(commandLine, null, false, "LOGCAT: ", true)));
+        RunUtils.executeOnSeparateThread(new RunUtils.RunSettings(commandLine, null, false, "LOGCAT: ", true));
     }
 
     public void waitEmulatorStart() {
@@ -223,5 +223,4 @@ public class Emulator {
         }
         OutputUtils.checkResult(RunUtils.execute(commandLineForListOfDevices));
     }
-
 }

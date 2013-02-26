@@ -23,10 +23,10 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.OutputUtils;
 import org.jetbrains.jet.compiler.ThreadUtils;
@@ -42,48 +42,76 @@ public class RunUtils {
     private RunUtils() {
     }
 
-    public static RunResult execute(final GeneralCommandLine commandLine) {
-        return run(commandLine, null);
+    public static class RunSettings {
+        public final GeneralCommandLine commandLine;
+        public final String input;
+        public final boolean waitForEnd;
+        public final String outputPrefix;
+        public final boolean printOutputAtAppearance;
+
+        public RunSettings(
+                GeneralCommandLine commandLine,
+                @Nullable String input,
+                boolean waitForEnd,
+                @Nullable String outputPrefix,
+                boolean printOutputAtAppearance
+        ) {
+            this.commandLine = commandLine;
+            this.input = input;
+            this.waitForEnd = waitForEnd;
+            this.outputPrefix = outputPrefix;
+            this.printOutputAtAppearance = printOutputAtAppearance;
+        }
+
+        public RunSettings(GeneralCommandLine commandLine) {
+            this.commandLine = commandLine;
+            this.input = null;
+            this.waitForEnd = true;
+            this.outputPrefix = null;
+            this.printOutputAtAppearance = false;
+        }
+
+        @Override
+        public String toString() {
+            return "commandLine=" + commandLine.getCommandLineString() + " " +
+                   "input=" + input + " " +
+                   "waitForEnd=" + waitForEnd + " " +
+                   "outputPrefix=" + outputPrefix + " " +
+                   "printOutputAtAppearance=" + printOutputAtAppearance + " ";
+        }
     }
 
-    public static RunResult execute(final GeneralCommandLine commandLine, @Nullable String input) {
-        return run(commandLine, input);
+    public static RunResult execute(@NotNull GeneralCommandLine commandLine) {
+        return run(new RunSettings(commandLine));
     }
 
-    public static RunResult executeOnSeparateThread(final GeneralCommandLine commandLine, boolean waitForEnd) {
-        return executeOnSeparateThread(commandLine, waitForEnd, null);
+    public static RunResult execute(@NotNull RunSettings settings) {
+        assert settings.waitForEnd == true : "Use executeOnSeparateThread() instead";
+        return run(settings);
     }
 
-    public static RunResult executeOnSeparateThread(final GeneralCommandLine commandLine,
-            boolean waitForEnd,
-            @Nullable final String input) {
-        final Ref<RunResult> resultRef = new Ref<RunResult>();
+    public static void executeOnSeparateThread(@NotNull final RunSettings settings) {
+        assert settings.waitForEnd == false : "Use execute() instead";
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                resultRef.set(RunUtils.run(commandLine, input));
+                RunUtils.run(settings);
             }
         });
 
         t.start();
-
-        if (waitForEnd) {
-            ThreadUtils.wait(t, 600);
-            return resultRef.get();
-        }
-        return new RunResult(true, "OK");
     }
 
-    private static RunResult run(final GeneralCommandLine commandLine, @Nullable final String input) {
-        System.out.println("RUN COMMAND: " + commandLine.getCommandLineString());
+    private static RunResult run(final RunSettings settings) {
+        System.out.println("RUN COMMAND: " + settings);
         final StringBuilder stdOut = new StringBuilder();
         final StringBuilder stdErr = new StringBuilder();
 
         final OSProcessHandler handler;
         try {
-            handler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString(), Charsets.UTF_8);
-            if (input != null) {
-                handler.getProcessInput().write(input.getBytes());
+            handler = new OSProcessHandler(settings.commandLine.createProcess(), settings.commandLine.getCommandLineString(), Charsets.UTF_8);
+            if (settings.input != null) {
+                handler.getProcessInput().write(settings.input.getBytes());
             }
             close(handler.getProcessInput());
         }
@@ -96,6 +124,12 @@ public class RunUtils {
 
         handler.addProcessListener(new ProcessAdapter() {
             @Override
+            public void processTerminated(ProcessEvent event) {
+                System.out.println("TERMINATED: " + settings.commandLine);
+                super.processTerminated(event);
+            }
+
+            @Override
             public void onTextAvailable(ProcessEvent event, Key outputType) {
                 String str = event.getText();
                 if (outputType == ProcessOutputTypes.STDOUT || outputType == ProcessOutputTypes.SYSTEM) {
@@ -107,22 +141,36 @@ public class RunUtils {
             }
 
             private synchronized void appendToContent(StringBuilder content, String line) {
-                content.append(StringUtil.trimTrailing(line));
-                content.append("\n");
+                if (settings.printOutputAtAppearance) {
+                    System.out.println(getPrefixString() + StringUtil.trimTrailing(line));
+                    System.out.flush();
+                }
+                else {
+                    content.append(getPrefixString());
+                    content.append(StringUtil.trimTrailing(line));
+                    content.append("\n");
+                }
+            }
+
+            private String getPrefixString() {
+                return (settings.outputPrefix != null) ? settings.outputPrefix + " " : "";
             }
         });
 
         handler.startNotify();
 
-        try {
-            handler.waitFor(300000);
-        }
-        catch (ProcessCanceledException e) {
-            return new RunResult(false, getStackTrace(e));
-        }
+        if (settings.waitForEnd) {
+            handler.waitFor(400000);
 
-        if (!handler.isProcessTerminated()) {
-            return new RunResult(false, "Timeout exception: execution was terminated after 5 min.");
+            if (!handler.isProcessTerminated()) {
+                System.out.println("Output before handler.isProcessTerminated() " + settings.commandLine);
+                System.out.println(stdOut);
+                System.err.println(stdErr);
+                return new RunResult(false, "Timeout exception: execution was terminated after ~7 min.");
+            }
+        }
+        else {
+            handler.waitFor();
         }
 
         int exitCode = handler.getProcess().exitValue();
@@ -135,7 +183,7 @@ public class RunUtils {
             if (OutputUtils.isBuildFailed(output)) {
                 return new RunResult(false, output);
             }
-            if (!commandLine.getCommandLineString().contains("install")) {
+            if (!settings.commandLine.getCommandLineString().contains("install")) {
                 System.out.print(output);
             }
             return new RunResult(true, output);
