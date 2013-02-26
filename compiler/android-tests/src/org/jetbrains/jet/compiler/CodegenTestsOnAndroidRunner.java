@@ -204,15 +204,19 @@ public class CodegenTestsOnAndroidRunner {
             }
             catch (RuntimeException e) {
                 e.printStackTrace();
+                throw e;
             }
             finally {
                 emulator.stopEmulator();
             }
         }
+        catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
+        }
         finally {
             emulator.finishEmulatorProcesses();
         }
-        return null;
     }
 
     private static class Statistics {
