@@ -73,6 +73,13 @@ public class CreateLibrarySourceDialog extends DialogWrapper {
         copyIntoDirectoryField.addBrowseFolderListener(
                 "Copy Into...", "Choose folder where files will be copied", project,
                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
+        copyIntoDirectoryField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(final DocumentEvent e) {
+                updateComponentVersion();
+            }
+        });
+
         copyIntoDirectoryField.getTextField().setText(FileUIUtils.getDefaultLibraryFolder(project, contextDirectory));
 
         copyLibraryCheckbox.addActionListener(new ActionListener() {
@@ -142,23 +149,30 @@ public class CreateLibrarySourceDialog extends DialogWrapper {
     }
 
     private void updateComponentVersion() {
+        boolean isError = false;
+
+        useStandaloneKotlinRadioButton.setForeground(Color.BLACK);
+        useStandaloneKotlinRadioButton.setText(initialStandaloneLabelText);
         if (useStandaloneKotlinRadioButton.isSelected()) {
             if (version != null) {
-                useStandaloneKotlinRadioButton.setForeground(Color.BLACK);
                 useStandaloneKotlinRadioButton.setText(initialStandaloneLabelText + " - " + version);
-                setOKActionEnabled(true);
             }
             else {
                 useStandaloneKotlinRadioButton.setForeground(Color.RED);
                 useStandaloneKotlinRadioButton.setText(initialStandaloneLabelText + " - " + "Invalid Version");
-                setOKActionEnabled(false);
+                isError = true;
             }
         }
-        else {
-            useStandaloneKotlinRadioButton.setForeground(Color.BLACK);
-            useStandaloneKotlinRadioButton.setText(initialStandaloneLabelText);
-            setOKActionEnabled(true);
+
+        copyLibraryCheckbox.setForeground(Color.BLACK);
+        if (copyLibraryCheckbox.isSelected()) {
+            if (copyIntoDirectoryField.getText().trim().isEmpty()) {
+                copyLibraryCheckbox.setForeground(Color.RED);
+                isError = true;
+            }
         }
+
+        setOKActionEnabled(!isError);
     }
 
     private void updateComponents() {
