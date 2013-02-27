@@ -2007,6 +2007,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/namedFun.kt");
                 }
                 
+                @TestMetadata("noTypeParamsInReturnType.kt")
+                public void testNoTypeParamsInReturnType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/noTypeParamsInReturnType.kt");
+                }
+                
                 @TestMetadata("typeReferenceError.kt")
                 public void testTypeReferenceError() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/typeReferenceError.kt");
@@ -2166,6 +2171,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             public static class Regressions extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInRegressions() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("compareBy.kt")
+                public void testCompareBy() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/regressions/compareBy.kt");
                 }
                 
                 @TestMetadata("kt1029.kt")

@@ -106,7 +106,9 @@ public class CallResolverUtil {
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
     }
 
-    public static <D extends CallableDescriptor> boolean hasReturnTypeDependentOnNotInferredParams(@NotNull ResolvedCall<D> resolvedCall) {
+    public static <D extends CallableDescriptor> boolean hasReturnTypeDependentOnNotInferredParams(
+            @NotNull ResolvedCallImpl<D> resolvedCall
+    ) {
         //todo[ResolvedCallImpl]
         if (!(resolvedCall instanceof ResolvedCallImpl)) return false;
         ResolvedCallImpl call = (ResolvedCallImpl) resolvedCall;

@@ -307,11 +307,10 @@ public class CallResolver {
             @NotNull OverloadResolutionResults<D> results,
             @NotNull TracingStrategy tracing
     ) {
-        if (results.getResultCode() != OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) return;
-
-        //todo[ResolvedCallImpl] get rid of instanceof & cast
-        if (!results.isSingleResult() || !(results.getResultingCall() instanceof ResolvedCallImpl)) {
-            argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
+        if (!results.isSingleResult()) {
+            if (results.getResultCode() == OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) {
+                argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
+            }
             return;
         }
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(

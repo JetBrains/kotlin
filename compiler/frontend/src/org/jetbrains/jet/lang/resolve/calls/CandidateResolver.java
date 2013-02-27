@@ -197,9 +197,8 @@ public class CandidateResolver {
             CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
-        assert resolvedCall.hasIncompleteTypeParameters();
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
-        assert constraintSystem != null;
+        if (!resolvedCall.hasIncompleteTypeParameters() || constraintSystem == null) return;
 
         // constraints for function literals
         // Value parameters
@@ -237,11 +236,10 @@ public class CandidateResolver {
             List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace,
                                                                   RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
-            context.tracing.typeInferenceFailed(context.trace,
-                                                InferenceErrorData
-                                                        .create(descriptor, constraintSystem, argumentTypes, receiverType,
-                                                                context.expectedType),
-                                                constraintSystemWithoutExpectedTypeConstraint);
+            InferenceErrorData.ExtendedInferenceErrorData errorData = InferenceErrorData
+                    .create(descriptor, constraintSystem, argumentTypes, receiverType, context.expectedType);
+
+            context.tracing.typeInferenceFailed(context.trace, errorData, constraintSystemWithoutExpectedTypeConstraint);
             resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
             return;
         }

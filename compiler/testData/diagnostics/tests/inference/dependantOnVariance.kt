@@ -28,7 +28,7 @@ fun test1(int: Int, any: Any) {
     val a7 : MyList<in Any> = getMyList(int)
 
     val a8 : MyList<in Any> = <!TYPE_MISMATCH!>getMyListToReadFrom<Int>(int)<!>
-    val a9 : MyList<in Any> = <!TYPE_MISMATCH!>getMyListToReadFrom(int)<!>
+    val a9 : MyList<in Any> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToReadFrom<!>(int)
 
     val a10 : MyList<out Int> = <!TYPE_MISMATCH!>getMyList<Any>(any)<!>
     val a11 : MyList<out Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList<!>(any)
@@ -58,9 +58,9 @@ fun test1(int: Int, any: Any) {
     writeToMyList(getMyListToWriteTo(any), int)
     <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>writeToMyList<!>(getMyListToWriteTo(int), any)
 
-    readFromMyList(<!TYPE_MISMATCH!>getMyListToWriteTo(any)<!>, any)
+    readFromMyList(getMyListToWriteTo(any), any)
 
-    writeToMyList(<!TYPE_MISMATCH!>getMyListToReadFrom(any)<!>, any)
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>writeToMyList<!>(getMyListToReadFrom(any), any)
 
     use(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13)
 }

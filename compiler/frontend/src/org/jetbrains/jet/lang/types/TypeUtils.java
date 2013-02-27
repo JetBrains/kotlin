@@ -465,7 +465,7 @@ public class TypeUtils {
     }
 
     public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
-        return dependsOnTypeParameterConstructors(type, Collections2
+        return dependsOnTypeConstructors(type, Collections2
                 .transform(typeParameters, new Function<TypeParameterDescriptor, TypeConstructor>() {
                     @Override
                     public TypeConstructor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
@@ -475,10 +475,10 @@ public class TypeUtils {
                 }));
     }
 
-    public static boolean dependsOnTypeParameterConstructors(@NotNull JetType type, @NotNull Collection<TypeConstructor> typeParameterConstructors) {
+    public static boolean dependsOnTypeConstructors(@NotNull JetType type, @NotNull Collection<TypeConstructor> typeParameterConstructors) {
         if (typeParameterConstructors.contains(type.getConstructor())) return true;
         for (TypeProjection typeProjection : type.getArguments()) {
-            if (dependsOnTypeParameterConstructors(typeProjection.getType(), typeParameterConstructors)) {
+            if (dependsOnTypeConstructors(typeProjection.getType(), typeParameterConstructors)) {
                 return true;
             }
         }

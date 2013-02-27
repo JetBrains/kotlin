@@ -22,27 +22,37 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
-import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind;
+import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind.*;
-import static org.jetbrains.jet.lang.types.Variance.*;
+import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
+import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind.*;
 
 public class ConstraintSystemImpl implements ConstraintSystem {
+
+    public static enum ConstraintKind {
+        SUB_TYPE, EQUAL
+    }
 
     private final Map<TypeParameterDescriptor, TypeConstraintsImpl> typeParameterConstraints = Maps.newLinkedHashMap();
     private final Set<ConstraintPosition> errorConstraintPositions = Sets.newHashSet();
     private final TypeSubstitutor resultingSubstitutor;
     private final TypeSubstitutor currentSubstitutor;
     private boolean hasErrorInConstrainingTypes;
+    private boolean hasExpectedTypeMismatch;
 
     public ConstraintSystemImpl() {
         this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(CANT_INFER));
@@ -58,7 +68,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                     JetType value = ConstraintsUtil.getValue(getTypeConstraints(descriptor));
-                    if (value != null && !TypeUtils.dependsOnTypeParameterConstructors(value, Collections.singleton(
+                    if (value != null && !TypeUtils.dependsOnTypeConstructors(value, Collections.singleton(
                             DONT_CARE.getConstructor()))) {
                         return new TypeProjection(value);
                     }
@@ -93,7 +103,12 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @Override
     public boolean hasExpectedTypeMismatch() {
-        return errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION);
+        return hasExpectedTypeMismatch
+               || (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION));
+    }
+
+    public void setHasExpectedTypeMismatch() {
+        hasExpectedTypeMismatch = true;
     }
 
     @Override
@@ -142,7 +157,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull JetType subjectType,
             @NotNull ConstraintPosition constraintPosition
     ) {
-        addConstraint(SUPER_TYPE, subjectType, constrainingType, constraintPosition);
+        addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
     @Override
@@ -151,34 +166,82 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull JetType subjectType,
             @NotNull ConstraintPosition constraintPosition
     ) {
-        addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);
+        addConstraint(SUB_TYPE, constrainingType, subjectType, constraintPosition);
     }
 
-    private void addConstraint(@NotNull ConstraintKind constraintKind,
-            @NotNull JetType subjectType,
-            @Nullable JetType constrainingType,
-            @NotNull ConstraintPosition constraintPosition) {
+    private void addConstraint(
+            @NotNull ConstraintKind constraintKind,
+            @Nullable JetType subType,
+            @Nullable JetType superType,
+            @NotNull final ConstraintPosition constraintPosition
+    ) {
+        TypeCheckingProcedure typeCheckingProcedure = new TypeCheckingProcedure(new TypingConstraints() {
+            @Override
+            public boolean assertEqualTypes(
+                    @NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure
+            ) {
+                doAddConstraint(EQUAL, a, b, constraintPosition, typeCheckingProcedure);
+                return true;
 
-        if (constrainingType == TypeUtils.NO_EXPECTED_TYPE
-            || constrainingType == DONT_CARE
-            || constrainingType == CANT_INFER) {
-            return;
+            }
+
+            @Override
+            public boolean assertEqualTypeConstructors(
+                    @NotNull TypeConstructor a, @NotNull TypeConstructor b
+            ) {
+                throw new IllegalStateException("'assertEqualTypeConstructors' shouldn't be invoked inside 'isSubtypeOf'");
+            }
+
+            @Override
+            public boolean assertSubtype(
+                    @NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure
+            ) {
+                doAddConstraint(SUB_TYPE, subtype, supertype, constraintPosition, typeCheckingProcedure);
+                return true;
+            }
+
+            @Override
+            public boolean noCorrespondingSupertype(
+                    @NotNull JetType subtype, @NotNull JetType supertype
+            ) {
+                errorConstraintPositions.add(constraintPosition);
+                return true;
+            }
+        });
+        doAddConstraint(constraintKind, subType, superType, constraintPosition, typeCheckingProcedure);
+    }
+
+    private boolean isErrorOrSpecialType(@Nullable JetType type) {
+        if (type == TypeUtils.NO_EXPECTED_TYPE
+            || type == DONT_CARE
+            || type == CANT_INFER) {
+            return true;
         }
 
-        if (constrainingType == null || (ErrorUtils.isErrorType(constrainingType) && constrainingType != PLACEHOLDER_FUNCTION_TYPE)) {
+        if (type == null || ((ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE))) {
             hasErrorInConstrainingTypes = true;
-            return;
+            return true;
         }
+        return false;
+    }
 
-        assert subjectType != TypeUtils.NO_EXPECTED_TYPE : "Subject type shouldn't be NO_EXPECTED_TYPE (in position " + constraintPosition + " )";
-        if (ErrorUtils.isErrorType(subjectType)) return;
+    private void doAddConstraint(
+            @NotNull ConstraintKind constraintKind,
+            @Nullable JetType subType,
+            @Nullable JetType superType,
+            @NotNull ConstraintPosition constraintPosition,
+            @NotNull TypeCheckingProcedure typeCheckingProcedure
+    ) {
 
-        DeclarationDescriptor subjectTypeDescriptor = subjectType.getConstructor().getDeclarationDescriptor();
+        if (isErrorOrSpecialType(subType) || isErrorOrSpecialType(superType)) return;
+        assert subType != null && superType != null;
+
+        assert superType != PLACEHOLDER_FUNCTION_TYPE : "The type for " + constraintPosition + " shouldn't be a placeholder for function type";
 
         KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
-        if (constrainingType == PLACEHOLDER_FUNCTION_TYPE) {
-            if (!kotlinBuiltIns.isFunctionOrExtensionFunctionType(subjectType)) {
-                if (subjectTypeDescriptor instanceof TypeParameterDescriptor && typeParameterConstraints.get(subjectTypeDescriptor) != null) {
+        if (subType == PLACEHOLDER_FUNCTION_TYPE) {
+            if (!kotlinBuiltIns.isFunctionOrExtensionFunctionType(superType)) {
+                if (isMyTypeVariable(superType)) {
                     // a constraint binds type parameter and any function type, so there is no new info and no error
                     return;
                 }
@@ -191,159 +254,44 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         // function literal without declaring receiver type { x -> ... }
         // can be considered as extension function if one is expected
         // (special type constructor for function/ extension function should be introduced like PLACEHOLDER_FUNCTION_TYPE)
-        if (constraintKind == SUB_TYPE && kotlinBuiltIns.isFunctionType(constrainingType) && kotlinBuiltIns.isExtensionFunctionType(subjectType)) {
-            constrainingType = createCorrespondingExtensionFunctionType(constrainingType, DONT_CARE);
+        if (constraintKind == SUB_TYPE && kotlinBuiltIns.isFunctionType(subType) && kotlinBuiltIns.isExtensionFunctionType(superType)) {
+            subType = createCorrespondingExtensionFunctionType(subType, DONT_CARE);
         }
 
-        DeclarationDescriptor constrainingTypeDescriptor = constrainingType.getConstructor().getDeclarationDescriptor();
+        // can be equal for the recursive invocations:
+        // fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
+        if (subType == superType) return;
 
-        if (subjectTypeDescriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) subjectTypeDescriptor;
-            TypeConstraintsImpl typeConstraints = typeParameterConstraints.get(typeParameter);
-            if (typeConstraints != null) {
-                if (TypeUtils.dependsOnTypeParameterConstructors(constrainingType, Collections.singleton(DONT_CARE.getConstructor()))) {
-                    return;
-                }
-                if (subjectType.isNullable() && constrainingType.isNullable()) {
-                    constrainingType = TypeUtils.makeNotNullable(constrainingType);
-                }
-                typeConstraints.addBound(constraintKind, constrainingType);
-                return;
-            }
-        }
-        if (constrainingTypeDescriptor instanceof TypeParameterDescriptor) {
-            assert typeParameterConstraints.get(constrainingTypeDescriptor) == null : "Constraining type contains type variable " + constrainingTypeDescriptor.getName();
-        }
-        if (constraintKind == SUB_TYPE && kotlinBuiltIns.isNothingOrNullableNothing(constrainingType)) {
-            // following constraints are always true:
-            // 'Nothing' is a subtype of any type
-            if (!constrainingType.isNullable()) return;
-            // 'Nothing?' is a subtype of nullable type
-            if (subjectType.isNullable()) return;
-        }
-        if (!(constrainingTypeDescriptor instanceof ClassDescriptor) || !(subjectTypeDescriptor instanceof ClassDescriptor)) {
-            errorConstraintPositions.add(constraintPosition);
+        assert !isMyTypeVariable(subType) || !isMyTypeVariable(superType) :
+                "The constraint shouldn't contain different type variables on both sides: " + subType + " <: " + superType;
+
+
+        if (isMyTypeVariable(subType)) {
+            generateTypeParameterConstraint(subType, superType, constraintKind == SUB_TYPE ? UPPER_BOUND : EXACT_BOUND);
             return;
         }
-        switch (constraintKind) {
-            case SUB_TYPE: {
-                if (kotlinBuiltIns.isNothingOrNullableNothing(constrainingType)) break;
-                JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
-                if (correspondingSupertype != null) {
-                    constrainingType = correspondingSupertype;
-                }
-                break;
-            }
-            case SUPER_TYPE: {
-                if (kotlinBuiltIns.isNothingOrNullableNothing(subjectType)) break;
-                JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
-                if (correspondingSupertype != null) {
-                    subjectType = correspondingSupertype;
-                }
-            }
-            case EQUAL: //nothing
-        }
-        if (constrainingType.getConstructor() != subjectType.getConstructor()) {
-            errorConstraintPositions.add(constraintPosition);
+        if (isMyTypeVariable(superType)) {
+            generateTypeParameterConstraint(superType, subType, constraintKind == SUB_TYPE ? LOWER_BOUND : EXACT_BOUND);
             return;
         }
-        TypeConstructor typeConstructor = subjectType.getConstructor();
-        List<TypeProjection> subjectArguments = subjectType.getArguments();
-        List<TypeProjection> constrainingArguments = constrainingType.getArguments();
-        List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
-        for (int i = 0; i < subjectArguments.size(); i++) {
-            Variance typeParameterVariance = parameters.get(i).getVariance();
-            TypeProjection subjectArgument = subjectArguments.get(i);
-            TypeProjection constrainingArgument = constrainingArguments.get(i);
-
-            ConstraintKind typeParameterConstraintKind = getTypeParameterConstraintKind(typeParameterVariance,
-                subjectArgument, constrainingArgument, constraintKind);
-
-            addConstraint(typeParameterConstraintKind, subjectArgument.getType(), constrainingArgument.getType(), constraintPosition);
-        }
+        // if superType is nullable and subType is not nullable, unsafe call error will be generated later,
+        // but constraint system should be solved anyway
+        typeCheckingProcedure.isSubtypeOf(TypeUtils.makeNotNullable(subType), TypeUtils.makeNotNullable(superType));
     }
 
-    /**
-     * Determines what constraint (supertype, subtype or equal) should be generated for type parameter {@code T} in a constraint like (in this example subtype one): <br/>
-     * {@code MyClass<in/out/- A> <: MyClass<in/out/- B>}, where {@code MyClass<in/out/- T>} is declared. <br/>
-     *
-     * The parameters description is given according to the example above.
-     * @param typeParameterVariance declared variance of T
-     * @param subjectTypeProjection {@code in/out/- A}
-     * @param constrainingTypeProjection {@code in/out/- B}
-     * @param upperConstraintKind kind of the constraint {@code MyClass<...A>  <: MyClass<...B>} (subtype in this example).
-     * @return kind of constraint to be generated: {@code A <: B} (subtype), {@code A >: B} (supertype) or {@code A = B} (equal).
-     */
-    @NotNull
-    private static ConstraintKind getTypeParameterConstraintKind(
-            @NotNull Variance typeParameterVariance,
-            @NotNull TypeProjection subjectTypeProjection,
-            @NotNull TypeProjection constrainingTypeProjection,
-            @NotNull ConstraintKind upperConstraintKind
+    private void generateTypeParameterConstraint(
+            @NotNull JetType parameterType,
+            @NotNull JetType constrainingType,
+            @NotNull BoundKind boundKind
     ) {
-        // If variance of type parameter is non-trivial, it should be taken into consideration to infer result constraint type.
-        // Otherwise when type parameter declared as INVARIANT, there might be non-trivial use-site variance of a supertype.
-        //
-        // Example: Let class MyClass<T> is declared.
-        //
-        // If super type has 'out' projection:
-        // MyClass<A> <: MyClass<out B>,
-        // then constraint A <: B can be generated.
-        //
-        // If super type has 'in' projection:
-        // MyClass<A> <: MyClass<in B>,
-        // then constraint A >: B can be generated.
-        //
-        // Otherwise constraint A = B should be generated.
+        TypeConstraintsImpl typeConstraints = getTypeConstraints(parameterType);
+        assert typeConstraints != null : "constraint should be generated only for type variables";
 
-        Variance varianceForTypeParameter;
-        if (typeParameterVariance != INVARIANT) {
-            varianceForTypeParameter = typeParameterVariance;
+        if (parameterType.isNullable()) {
+            // For parameter type T constraint T? <: Int? should transform to T <: Int
+            constrainingType = TypeUtils.makeNotNullable(constrainingType);
         }
-        else if (upperConstraintKind == SUPER_TYPE) {
-            varianceForTypeParameter = constrainingTypeProjection.getProjectionKind();
-        }
-        else if (upperConstraintKind == SUB_TYPE) {
-            varianceForTypeParameter = subjectTypeProjection.getProjectionKind();
-        }
-        else {
-            varianceForTypeParameter = INVARIANT;
-        }
-
-        return getTypeParameterConstraintKind(varianceForTypeParameter, upperConstraintKind);
-    }
-
-    /**
-     * Let class {@code MyClass<T, out R, in S>} is declared.<br/><br/>
-     *
-     * If upperConstraintKind is SUPER_TYPE:
-     * {@code MyClass<A, B, C> <: MyClass<D, E, F>}, <br/>
-     * then constraints {@code A = D, B <: E, C >: F} are generated. <br/><br/>
-     *
-     * If upperConstraintKind is SUB_TYPE:
-     * {@code MyClass<A, B, C> >: MyClass<D, E, F>}, <br/>
-     * then constraints {@code A = D, B >: E, C <: F} are generated. <br/><br/>
-     *
-     * If upperConstraintKind is EQUAL:
-     * {@code MyClass<A, B, C> = MyClass<D, E, F>}, <br/>
-     * then equality constraints {@code A = D, B = E, C = F} are generated. <br/><br/>
-     *
-     * Method getTypeParameterConstraintKind gets upperConstraintKind and variance of type parameter
-     * (INVARIANT for T, OUT_VARIANCE for R in example above) and returns kind of constraint for corresponding type parameter.
-     */
-    @NotNull
-    private static ConstraintKind getTypeParameterConstraintKind(
-            @NotNull Variance typeParameterVariance,
-            @NotNull ConstraintKind upperConstraintKind
-    ) {
-        if (upperConstraintKind == EQUAL || typeParameterVariance == INVARIANT) {
-            return EQUAL;
-        }
-        if ((upperConstraintKind == SUB_TYPE && typeParameterVariance == OUT_VARIANCE) ||
-            (upperConstraintKind == SUPER_TYPE && typeParameterVariance == IN_VARIANCE)) {
-            return SUB_TYPE;
-        }
-        return SUPER_TYPE;
+        typeConstraints.addBound(boundKind, constrainingType);
     }
 
     public void processDeclaredBoundConstraints() {
@@ -369,6 +317,20 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @Nullable
     public TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeVariable) {
         return typeParameterConstraints.get(typeVariable);
+    }
+
+    @Nullable
+    private TypeConstraintsImpl getTypeConstraints(@NotNull JetType type) {
+        ClassifierDescriptor parameterDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if (parameterDescriptor instanceof TypeParameterDescriptor) {
+            return typeParameterConstraints.get(parameterDescriptor);
+        }
+        return null;
+    }
+
+    private boolean isMyTypeVariable(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return descriptor instanceof TypeParameterDescriptor && typeParameterConstraints.get(descriptor) != null;
     }
 
     @Override

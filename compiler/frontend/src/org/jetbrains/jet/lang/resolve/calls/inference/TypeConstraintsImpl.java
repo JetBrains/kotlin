@@ -39,15 +39,15 @@ public class TypeConstraintsImpl implements TypeConstraints {
         return varianceOfPosition;
     }
 
-    public void addBound(@NotNull ConstraintKind constraintKind, @NotNull JetType type) {
-        switch (constraintKind) {
-            case SUB_TYPE:
+    public void addBound(@NotNull BoundKind boundKind, @NotNull JetType type) {
+        switch (boundKind) {
+            case LOWER_BOUND:
                 lowerBounds.add(type);
                 break;
-            case SUPER_TYPE:
+            case UPPER_BOUND:
                 upperBounds.add(type);
                 break;
-            case EQUAL:
+            case EXACT_BOUND:
                 exactBounds.add(type);
         }
     }
@@ -89,7 +89,7 @@ public class TypeConstraintsImpl implements TypeConstraints {
         return typeConstraints;
     }
 
-    public static enum ConstraintKind {
-        SUPER_TYPE, SUB_TYPE, EQUAL
+    public static enum BoundKind {
+        LOWER_BOUND, UPPER_BOUND, EXACT_BOUND
     }
 }

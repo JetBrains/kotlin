@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -221,6 +222,10 @@ public class TracingStrategyImpl implements TracingStrategy {
             }
             assert data.expectedType != null;
             trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, returnType, data.expectedType));
+            //todo[ConstraintSystemImpl]
+            if (constraintSystem instanceof ConstraintSystemImpl) {
+                ((ConstraintSystemImpl) constraintSystem).setHasExpectedTypeMismatch();
+            }
         }
         else if (constraintSystem.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
