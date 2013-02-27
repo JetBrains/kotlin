@@ -8,9 +8,7 @@ class Item(val name: String, val rating: Int): Comparable<Item> {
     fun toString() = "Item($name, $rating)"
 
     public override fun compareTo(other: Item): Int {
-        var x : Comparable<Nothing> = rating
-
-        return compareBy<Item>(this, other, { rating }, { name })
+        return compareBy(this, other, { rating }, { name })
     }
 }
 
@@ -24,17 +22,17 @@ class CompareTest {
     }
 
     Test fun compareByNameFirst() {
-        val diff = compareBy<Item>(v1, v2, { name }, { rating })
+        val diff = compareBy(v1, v2, { name }, { rating })
         assertTrue(diff > 0)
     }
 
     Test fun compareByRatingFirst() {
-        val diff = compareBy<Item>(v1, v2, { rating }, { name })
+        val diff = compareBy(v1, v2, { rating }, { name })
         assertTrue(diff < 0)
     }
 
     Test fun compareSameObjectsByRatingFirst() {
-        val diff = compareBy<Item>(v1, v1, { rating }, { name })
+        val diff = compareBy(v1, v1, { rating }, { name })
         assertTrue(diff == 0)
     }
 
@@ -52,7 +50,7 @@ class CompareTest {
     Test fun sortUsingCustomComparator() {
         val c = object : Comparator<Item>{
             override fun compare(o1: Item, o2: Item): Int {
-                return compareBy<Item>(o1, o2, { name }, { rating })
+                return compareBy(o1, o2, { name }, { rating })
             }
             override fun equals(obj: Any?): Boolean {
                 return this == obj
