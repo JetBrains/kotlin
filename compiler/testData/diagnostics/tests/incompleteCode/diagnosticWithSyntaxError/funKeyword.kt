@@ -1,1 +1,1 @@
-fun<!SYNTAX, SYNTAX, SYNTAX, SYNTAX, SYNTAX!><!>
+fun<!SYNTAX, SYNTAX!><!>

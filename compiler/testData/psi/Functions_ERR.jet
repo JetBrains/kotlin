@@ -1,5 +1,4 @@
 fun foo)
-fun [a] f foo()
 fun [a] T.foo(a : ) : bar
 fun [a()] T.foo<>(a : foo) : bar
 fun [a()] T.foo<T, , T>(a : foo) : bar
