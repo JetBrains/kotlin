@@ -372,7 +372,7 @@ public class CodegenBinding {
 
         String baseName = getJvmInternalName(bindingTrace, container).getInternalName();
         if (!baseName.isEmpty()) {
-            return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
+            return baseName + (container instanceof PackageViewDescriptor ? "/" : "$") + name.getIdentifier();
         }
 
         return name.getIdentifier();

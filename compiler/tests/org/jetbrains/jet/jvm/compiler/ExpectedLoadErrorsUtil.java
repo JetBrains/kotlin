@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.io.File;
 import java.util.*;
 
 import static com.intellij.testFramework.UsefulTestCase.assertNotNull;
@@ -38,7 +37,7 @@ public class ExpectedLoadErrorsUtil {
     public static final String ANNOTATION_CLASS_NAME = ExpectLoadError.class.getName();
 
     public static void checkForLoadErrors(
-            @NotNull NamespaceDescriptor namespaceFromJava,
+            @NotNull PackageViewDescriptor namespaceFromJava,
             @NotNull BindingContext bindingContext
     ) {
         Map<DeclarationDescriptor, List<String>> expectedErrors = getExpectedLoadErrors(namespaceFromJava);
@@ -56,12 +55,12 @@ public class ExpectedLoadErrorsUtil {
         }
     }
 
-    private static Map<DeclarationDescriptor, List<String>> getExpectedLoadErrors(@NotNull NamespaceDescriptor namespaceFromJava) {
+    private static Map<DeclarationDescriptor, List<String>> getExpectedLoadErrors(@NotNull PackageViewDescriptor namespaceFromJava) {
         final Map<DeclarationDescriptor, List<String>> map = new HashMap<DeclarationDescriptor, List<String>>();
 
         namespaceFromJava.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
             @Override
-            public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+            public Void visitNamespaceDescriptor(PackageViewDescriptor descriptor, Void data) {
                 return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
             }
 

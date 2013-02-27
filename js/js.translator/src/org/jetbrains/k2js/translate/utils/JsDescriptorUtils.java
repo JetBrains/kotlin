@@ -150,7 +150,7 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean isStandardDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        NamespaceDescriptor namespace = getContainingNamespace(descriptor);
+        PackageViewDescriptor namespace = getContainingNamespace(descriptor);
         if (namespace == null) {
             return false;
         }
@@ -158,8 +158,8 @@ public final class JsDescriptorUtils {
     }
 
     @Nullable
-    public static NamespaceDescriptor getContainingNamespace(@NotNull DeclarationDescriptor descriptor) {
-        return DescriptorUtils.getParentOfType(descriptor, NamespaceDescriptor.class);
+    public static PackageViewDescriptor getContainingNamespace(@NotNull DeclarationDescriptor descriptor) {
+        return DescriptorUtils.getParentOfType(descriptor, PackageViewDescriptor.class);
     }
 
     @Nullable

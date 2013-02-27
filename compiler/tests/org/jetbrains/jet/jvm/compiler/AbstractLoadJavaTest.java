@@ -20,7 +20,7 @@ import com.intellij.openapi.util.Pair;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
@@ -44,18 +44,18 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
-        NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+        PackageViewDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
                 Arrays.asList(javaFile),
                 tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext);
     }
 
     private static void checkForLoadErrorsAndCompare(
-            @NotNull Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext,
+            @NotNull Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext,
             @NotNull Runnable compareNamespacesRunnable
     ) {
-        NamespaceDescriptor javaNamespace = javaNamespaceAndContext.first;
+        PackageViewDescriptor javaNamespace = javaNamespaceAndContext.first;
 
         boolean fail = false;
         try {
@@ -81,8 +81,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     public static void checkLoadedNamespaces(
             final File txtFile,
-            final NamespaceDescriptor kotlinNamespace,
-            final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
+            final PackageViewDescriptor kotlinNamespace,
+            final Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext
     ) {
         checkForLoadErrorsAndCompare(javaNamespaceAndContext, new Runnable() {
             @Override
@@ -94,7 +94,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     public static void checkJavaNamespace(
             final File txtFile,
-            final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
+            final Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext
     ) {
         checkForLoadErrorsAndCompare(javaNamespaceAndContext, new Runnable() {
             @Override

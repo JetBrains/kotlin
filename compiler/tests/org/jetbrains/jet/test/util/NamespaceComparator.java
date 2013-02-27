@@ -89,8 +89,8 @@ public class NamespaceComparator {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
                 appendSubDescriptors(klass.getDefaultType().getMemberScope(), getConstructorsAndClassObject(klass), printer);
             }
-            else if (descriptor instanceof NamespaceDescriptor) {
-                appendSubDescriptors(((NamespaceDescriptor) descriptor).getMemberScope(),
+            else if (descriptor instanceof PackageViewDescriptor) {
+                appendSubDescriptors(((PackageViewDescriptor) descriptor).getMemberScope(),
                                      Collections.<DeclarationDescriptor>emptyList(), printer);
             }
 
@@ -117,7 +117,7 @@ public class NamespaceComparator {
                 && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().getName())
                 && !conf.includeMethodsOfJavaObject
             ||
-                subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor));
+                subDescriptor instanceof PackageViewDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor));
     }
 
     private void appendSubDescriptors(
@@ -141,7 +141,7 @@ public class NamespaceComparator {
     }
 
     public static void compareNamespaceWithFile(
-            @NotNull NamespaceDescriptor actualNamespace,
+            @NotNull PackageViewDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @NotNull File txtFile
     ) {
@@ -149,8 +149,8 @@ public class NamespaceComparator {
     }
 
     public static void compareNamespaces(
-            @NotNull NamespaceDescriptor expectedNamespace,
-            @NotNull NamespaceDescriptor actualNamespace,
+            @NotNull PackageViewDescriptor expectedNamespace,
+            @NotNull PackageViewDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {
@@ -162,8 +162,8 @@ public class NamespaceComparator {
     }
 
     private static void doCompareNamespaces(
-            @Nullable NamespaceDescriptor expectedNamespace,
-            @NotNull NamespaceDescriptor actualNamespace,
+            @Nullable PackageViewDescriptor expectedNamespace,
+            @NotNull PackageViewDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {

@@ -113,7 +113,7 @@ public class DescriptorUtils {
         }
 
         if (containingDeclaration == null) {
-            if (descriptor instanceof NamespaceDescriptor) {
+            if (descriptor instanceof PackageViewDescriptor) {
                 // TODO: namespace must always have parent
                 if (descriptor.getName().equals(Name.identifier("jet"))) {
                     return FqNameUnsafe.topLevel(Name.identifier("jet"));
@@ -135,12 +135,12 @@ public class DescriptorUtils {
     }
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+        return descriptor.getContainingDeclaration() instanceof PackageViewDescriptor;
     }
 
     public static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        NamespaceDescriptor whatPackage = DescriptorUtils.getParentOfType(first, NamespaceDescriptor.class, false);
-        NamespaceDescriptor fromPackage = DescriptorUtils.getParentOfType(second, NamespaceDescriptor.class, false);
+        PackageViewDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageViewDescriptor.class, false);
+        PackageViewDescriptor fromPackage = DescriptorUtils.getParentOfType(second, PackageViewDescriptor.class, false);
         return fromPackage != null && whatPackage != null && whatPackage.equals(fromPackage);
     }
 
@@ -236,8 +236,8 @@ public class DescriptorUtils {
         }
     }
 
-    public static boolean isRootNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        return namespaceDescriptor.getContainingDeclaration() instanceof OldModuleDescriptor;
+    public static boolean isRootNamespace(@NotNull PackageViewDescriptor packageViewDescriptor) {
+        return packageViewDescriptor.getContainingDeclaration() instanceof OldModuleDescriptor;
     }
 
     @NotNull
@@ -245,7 +245,7 @@ public class DescriptorUtils {
         List<DeclarationDescriptor> path = Lists.newArrayList();
         DeclarationDescriptor current = descriptor;
         while (true) {
-            if (current instanceof NamespaceDescriptor && isRootNamespace((NamespaceDescriptor) current)) {
+            if (current instanceof PackageViewDescriptor && isRootNamespace((PackageViewDescriptor) current)) {
                 return Lists.reverse(path);
             }
             path.add(current);
@@ -301,7 +301,7 @@ public class DescriptorUtils {
 
     public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
+        if (containingDeclaration instanceof PackageViewDescriptor) {
             return true;
         }
         if (containingDeclaration instanceof ClassDescriptor) {
@@ -467,20 +467,20 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static ClassDescriptor getClassForCorrespondingJavaNamespace(@NotNull NamespaceDescriptor correspondingNamespace) {
+    public static ClassDescriptor getClassForCorrespondingJavaNamespace(@NotNull PackageViewDescriptor correspondingNamespace) {
         NamespaceDescriptorParent containingDeclaration = correspondingNamespace.getContainingDeclaration();
-        if (!(containingDeclaration instanceof NamespaceDescriptor)) {
+        if (!(containingDeclaration instanceof PackageViewDescriptor)) {
             return null;
         }
 
-        NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
+        PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
 
-        ClassifierDescriptor classDescriptor = namespaceDescriptor.getMemberScope().getClassifier(correspondingNamespace.getName());
+        ClassifierDescriptor classDescriptor = packageViewDescriptor.getMemberScope().getClassifier(correspondingNamespace.getName());
         if (classDescriptor != null && classDescriptor instanceof ClassDescriptor) {
             return (ClassDescriptor) classDescriptor;
         }
 
-        ClassDescriptor classDescriptorForOuterClass = getClassForCorrespondingJavaNamespace(namespaceDescriptor);
+        ClassDescriptor classDescriptorForOuterClass = getClassForCorrespondingJavaNamespace(packageViewDescriptor);
         if (classDescriptorForOuterClass == null) {
             return null;
         }

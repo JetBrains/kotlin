@@ -19,7 +19,7 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -34,8 +34,8 @@ import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 
 public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private final Iterable<JetFile> files;
-    private final Map<NamespaceDescriptor,NamespaceTranslator> descriptorToTranslator =
-            new LinkedHashMap<NamespaceDescriptor, NamespaceTranslator>();
+    private final Map<PackageViewDescriptor,NamespaceTranslator> descriptorToTranslator =
+            new LinkedHashMap<PackageViewDescriptor, NamespaceTranslator>();
 
     public static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
         return new NamespaceDeclarationTranslator(files, context).translate();
@@ -50,12 +50,12 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private List<JsStatement> translate() {
         // predictable order
-        Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation = new THashMap<NamespaceDescriptor, List<JsExpression>>();
+        Map<PackageViewDescriptor, List<JsExpression>> descriptorToDefineInvocation = new THashMap<PackageViewDescriptor, List<JsExpression>>();
         JsObjectLiteral rootNamespaceDefinition = null;
 
         ClassDeclarationTranslator classDeclarationTranslator = new ClassDeclarationTranslator(context());
         for (JetFile file : files) {
-            NamespaceDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+            PackageViewDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
             assert descriptor != null;
             NamespaceTranslator translator = descriptorToTranslator.get(descriptor);
             if (translator == null) {
@@ -94,11 +94,11 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         return result;
     }
 
-    private JsObjectLiteral getRootPackage(Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
-            NamespaceDescriptor descriptor) {
-        NamespaceDescriptor rootNamespace = descriptor;
+    private JsObjectLiteral getRootPackage(Map<PackageViewDescriptor, List<JsExpression>> descriptorToDefineInvocation,
+            PackageViewDescriptor descriptor) {
+        PackageViewDescriptor rootNamespace = descriptor;
         while (DescriptorUtils.isTopLevelDeclaration(rootNamespace)) {
-            rootNamespace = (NamespaceDescriptor) rootNamespace.getContainingDeclaration();
+            rootNamespace = (PackageViewDescriptor) rootNamespace.getContainingDeclaration();
         }
 
         List<JsExpression> args;

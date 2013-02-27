@@ -259,9 +259,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitNamedFunction(function);
             nameStack.pop();
         }
-        else if (containingDeclaration instanceof NamespaceDescriptor) {
+        else if (containingDeclaration instanceof PackageViewDescriptor) {
             String peek = peekFromStack(nameStack);
-            FqName qualifiedName = ((NamespaceDescriptor) containingDeclaration).getFqName();
+            FqName qualifiedName = ((PackageViewDescriptor) containingDeclaration).getFqName();
             String packageClassName = PackageClassUtils.getPackageClassName(qualifiedName);
             if (peek.isEmpty()) {
                 peek = packageClassName;

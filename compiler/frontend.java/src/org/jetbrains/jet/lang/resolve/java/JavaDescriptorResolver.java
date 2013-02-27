@@ -79,8 +79,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             // protected static function or property
             else {
                 DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
-                assert whatDeclarationDescriptor instanceof NamespaceDescriptor : "Only static declarations can have protected_static visibility";
-                whatClass = DescriptorUtils.getClassForCorrespondingJavaNamespace((NamespaceDescriptor) whatDeclarationDescriptor);
+                assert whatDeclarationDescriptor instanceof PackageViewDescriptor : "Only static declarations can have protected_static visibility";
+                whatClass = DescriptorUtils.getClassForCorrespondingJavaNamespace((PackageViewDescriptor) whatDeclarationDescriptor);
             }
 
             assert whatClass != null : "Couldn't find ClassDescriptor for protected static member " + what;
@@ -197,18 +197,18 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
+    public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
     }
 
     @Override
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
+    public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
         return namespaceResolver.resolveNamespace(qualifiedName);
     }
 
     @Nullable
-    public JetScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(namespaceDescriptor);
+    public JetScope getJavaPackageScope(@NotNull PackageViewDescriptor packageViewDescriptor) {
+        return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(packageViewDescriptor);
     }
 
     @NotNull

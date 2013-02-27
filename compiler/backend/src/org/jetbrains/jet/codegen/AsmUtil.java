@@ -263,7 +263,7 @@ public class AsmUtil {
                 return ACC_PROTECTED;
             }
         }
-        if (containingDeclaration instanceof NamespaceDescriptor) {
+        if (containingDeclaration instanceof PackageViewDescriptor) {
             return ACC_PUBLIC;
         }
         return null;

@@ -27,7 +27,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -67,10 +67,10 @@ public abstract class AbstractCompileKotlinAgainstCustomJavaTest extends TestCas
                 project, jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
                 Predicates.<PsiFile>alwaysTrue()).getBindingContext();
 
-        NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceFqn);
-        assertNotNull("Failed to find namespace: " + namespaceFqn, namespaceDescriptor);
+        PackageViewDescriptor packageViewDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceFqn);
+        assertNotNull("Failed to find namespace: " + namespaceFqn, packageViewDescriptor);
 
-        compareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
+        compareNamespaceWithFile(packageViewDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
     }
 
     private JetCoreEnvironment getEnvironment(File ktFile) {

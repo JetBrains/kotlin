@@ -18,10 +18,10 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 
 public interface NamespaceDescriptorParent extends DeclarationDescriptor {
 
-    void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
+    void addNamespace(@NotNull PackageViewDescriptor packageViewDescriptor);
 
 }

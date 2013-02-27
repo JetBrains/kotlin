@@ -41,7 +41,7 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
@@ -83,10 +83,10 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             public void generate(GenerationState state) {
 
                 NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(packageFqName, state.getFiles());
-                NamespaceDescriptor namespaceDescriptor =
+                PackageViewDescriptor packageViewDescriptor =
                         state.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, packageFqName);
-                assert namespaceDescriptor != null : "No package descriptor for " + packageFqName + " for class " + classOrObject.getText();
-                namespaceCodegen.generateClassOrObject(namespaceDescriptor, classOrObject);
+                assert packageViewDescriptor != null : "No package descriptor for " + packageFqName + " for class " + classOrObject.getText();
+                namespaceCodegen.generateClassOrObject(packageViewDescriptor, classOrObject);
 
                 state.getFactory().files();
             }

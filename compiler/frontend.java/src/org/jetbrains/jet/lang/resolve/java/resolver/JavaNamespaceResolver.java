@@ -23,7 +23,7 @@ import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -75,11 +75,11 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
+    public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         // First, let's check that there is no Kotlin package:
-        NamespaceDescriptor kotlinNamespaceDescriptor = javaSemanticServices.getKotlinNamespaceDescriptor(qualifiedName);
-        if (kotlinNamespaceDescriptor != null) {
-            return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
+        PackageViewDescriptor kotlinPackageViewDescriptor = javaSemanticServices.getKotlinNamespaceDescriptor(qualifiedName);
+        if (kotlinPackageViewDescriptor != null) {
+            return searchRule.processFoundInKotlin(kotlinPackageViewDescriptor);
         }
 
         if (unresolvedCache.contains(qualifiedName)) {
@@ -87,7 +87,7 @@ public final class JavaNamespaceResolver {
         }
         JavaBaseScope scope = resolvedNamespaceCache.get(qualifiedName);
         if (scope != null) {
-            return (NamespaceDescriptor) scope.getContainingDeclaration();
+            return (PackageViewDescriptor) scope.getContainingDeclaration();
         }
 
         NamespaceDescriptorParent parentNs = resolveParentNamespace(qualifiedName);
@@ -114,7 +114,7 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
+    public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
         return resolveNamespace(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
@@ -131,9 +131,9 @@ public final class JavaNamespaceResolver {
     @Nullable
     private JavaBaseScope createNamespaceScope(
             @NotNull FqName fqName,
-            @NotNull NamespaceDescriptor namespaceDescriptor
+            @NotNull PackageViewDescriptor packageViewDescriptor
     ) {
-        JavaBaseScope namespaceScope = doCreateNamespaceScope(fqName, namespaceDescriptor);
+        JavaBaseScope namespaceScope = doCreateNamespaceScope(fqName, packageViewDescriptor);
         cache(fqName, namespaceScope);
         return namespaceScope;
     }
@@ -141,22 +141,22 @@ public final class JavaNamespaceResolver {
     @Nullable
     private JavaBaseScope doCreateNamespaceScope(
             @NotNull FqName fqName,
-            @NotNull NamespaceDescriptor namespaceDescriptor
+            @NotNull PackageViewDescriptor packageViewDescriptor
     ) {
         PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
         if (psiPackage != null) {
             PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
-            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
+            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, packageViewDescriptor, JavaNamespaceKind.PROPER);
             if (psiClass == null) {
                 return new JavaPackageScopeWithoutMembers(
-                        namespaceDescriptor,
+                        packageViewDescriptor,
                         javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
                         fqName, javaSemanticServices);
             }
 
             AbiVersionUtil.checkAbiVersion(psiClass, JetPackageClassAnnotation.get(psiClass), trace);
             return new JavaScopeForKotlinNamespace(
-                    namespaceDescriptor,
+                    packageViewDescriptor,
                     javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),
                     fqName, javaSemanticServices);
         }
@@ -170,9 +170,9 @@ public final class JavaNamespaceResolver {
             // static members of enum class into class object descriptor
             return null;
         }
-        trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
+        trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, packageViewDescriptor, JavaNamespaceKind.CLASS_STATICS);
         return new JavaClassStaticMembersScope(
-                namespaceDescriptor,
+                packageViewDescriptor,
                 javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
                 fqName, javaSemanticServices);
     }
@@ -189,8 +189,8 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    public JavaBaseScope getJavaPackageScopeForExistingNamespaceDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
+    public JavaBaseScope getJavaPackageScopeForExistingNamespaceDescriptor(@NotNull PackageViewDescriptor packageViewDescriptor) {
+        FqName fqName = DescriptorUtils.getFQName(packageViewDescriptor).toSafe();
         if (unresolvedCache.contains(fqName)) {
             throw new IllegalStateException(
                     "This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin: " +
@@ -200,7 +200,7 @@ public final class JavaNamespaceResolver {
         if (alreadyResolvedScope != null) {
             return alreadyResolvedScope;
         }
-        return createNamespaceScope(fqName, namespaceDescriptor);
+        return createNamespaceScope(fqName, packageViewDescriptor);
     }
 
     @Nullable

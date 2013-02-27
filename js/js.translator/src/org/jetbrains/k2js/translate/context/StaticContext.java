@@ -189,7 +189,7 @@ public final class StaticContext {
                 @Override
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof NamespaceDescriptor)) {
+                    if (!(descriptor instanceof PackageViewDescriptor)) {
                         return null;
                     }
 
@@ -349,7 +349,7 @@ public final class StaticContext {
             Rule<JsScope> generateNewScopesForNamespaceDescriptors = new Rule<JsScope>() {
                 @Override
                 public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof NamespaceDescriptor)) {
+                    if (!(descriptor instanceof PackageViewDescriptor)) {
                         return null;
                     }
                     return getRootScope().innerScope("Namespace " + descriptor.getName());
@@ -409,18 +409,18 @@ public final class StaticContext {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
                     DeclarationDescriptor containingDescriptor = getContainingDeclaration(descriptor);
-                    if (!(containingDescriptor instanceof NamespaceDescriptor)) {
+                    if (!(containingDescriptor instanceof PackageViewDescriptor)) {
                         return null;
                     }
 
                     final JsNameRef result = new JsNameRef(getNameForDescriptor(containingDescriptor));
-                    if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) containingDescriptor)) {
+                    if (DescriptorUtils.isRootNamespace((PackageViewDescriptor) containingDescriptor)) {
                         return result;
                     }
 
                     JsNameRef qualifier = result;
-                    while ((containingDescriptor = getContainingDeclaration(containingDescriptor)) instanceof NamespaceDescriptor &&
-                           !DescriptorUtils.isRootNamespace((NamespaceDescriptor) containingDescriptor)) {
+                    while ((containingDescriptor = getContainingDeclaration(containingDescriptor)) instanceof PackageViewDescriptor &&
+                           !DescriptorUtils.isRootNamespace((PackageViewDescriptor) containingDescriptor)) {
                         JsNameRef ref = getNameForDescriptor(containingDescriptor).makeRef();
                         qualifier.setQualifier(ref);
                         qualifier = ref;
@@ -506,7 +506,7 @@ public final class StaticContext {
             Rule<Boolean> topLevelNamespaceHaveNoQualifier = new Rule<Boolean>() {
                 @Override
                 public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
+                    if (descriptor instanceof PackageViewDescriptor && DescriptorUtils.isRootNamespace((PackageViewDescriptor) descriptor)) {
                         return true;
                     }
                     return null;

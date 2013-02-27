@@ -20,7 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -43,13 +43,13 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescrip
 
 final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
-    private final NamespaceDescriptor descriptor;
+    private final PackageViewDescriptor descriptor;
     @NotNull
     private final ClassDeclarationTranslator classDeclarationTranslator;
 
     private final FileDeclarationVisitor visitor;
 
-    NamespaceTranslator(@NotNull NamespaceDescriptor descriptor,
+    NamespaceTranslator(@NotNull PackageViewDescriptor descriptor,
             @NotNull ClassDeclarationTranslator classDeclarationTranslator,
             @NotNull TranslationContext context) {
         super(context.newDeclaration(descriptor));
@@ -67,7 +67,7 @@ final class NamespaceTranslator extends AbstractTranslator {
         }
     }
 
-    public void add(@NotNull Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
+    public void add(@NotNull Map<PackageViewDescriptor, List<JsExpression>> descriptorToDefineInvocation,
             @NotNull List<JsStatement> initializers) {
         JsExpression initializer;
         if (visitor.initializerStatements.isEmpty()) {
@@ -85,7 +85,7 @@ final class NamespaceTranslator extends AbstractTranslator {
         if (defineInvocation == null) {
             defineInvocation = createDefineInvocation(initializer, new JsObjectLiteral(visitor.getResult(), true));
             descriptorToDefineInvocation.put(descriptor, defineInvocation);
-            addToParent((NamespaceDescriptor) descriptor.getContainingDeclaration(), getEntry(descriptor, defineInvocation),
+            addToParent((PackageViewDescriptor) descriptor.getContainingDeclaration(), getEntry(descriptor, defineInvocation),
                         descriptorToDefineInvocation);
         }
         else {
@@ -106,14 +106,14 @@ final class NamespaceTranslator extends AbstractTranslator {
         }
     }
 
-    private JsPropertyInitializer getEntry(@NotNull NamespaceDescriptor descriptor, List<JsExpression> defineInvocation) {
+    private JsPropertyInitializer getEntry(@NotNull PackageViewDescriptor descriptor, List<JsExpression> defineInvocation) {
         return new JsPropertyInitializer(context().getNameForDescriptor(descriptor).makeRef(),
                                          new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation));
     }
 
-    private boolean addEntryIfParentExists(NamespaceDescriptor parentDescriptor,
+    private boolean addEntryIfParentExists(PackageViewDescriptor parentDescriptor,
             JsPropertyInitializer entry,
-            Map<NamespaceDescriptor, List<JsExpression>> descriptorToDeclarationPlace) {
+            Map<PackageViewDescriptor, List<JsExpression>> descriptorToDeclarationPlace) {
         List<JsExpression> parentDefineInvocation = descriptorToDeclarationPlace.get(parentDescriptor);
         if (parentDefineInvocation != null) {
             ((JsObjectLiteral) parentDefineInvocation.get(context().isEcma5() ? 1 : 0)).getPropertyInitializers().add(entry);
@@ -122,16 +122,16 @@ final class NamespaceTranslator extends AbstractTranslator {
         return false;
     }
 
-    private void addToParent(NamespaceDescriptor parentDescriptor,
+    private void addToParent(PackageViewDescriptor parentDescriptor,
             JsPropertyInitializer entry,
-            Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation) {
+            Map<PackageViewDescriptor, List<JsExpression>> descriptorToDefineInvocation) {
         while (!addEntryIfParentExists(parentDescriptor, entry, descriptorToDefineInvocation)) {
             List<JsExpression> defineInvocation =
                     createDefineInvocation(null, new JsObjectLiteral(new SmartList<JsPropertyInitializer>(entry), true));
             entry = getEntry(parentDescriptor, defineInvocation);
 
             descriptorToDefineInvocation.put(parentDescriptor, defineInvocation);
-            parentDescriptor = (NamespaceDescriptor) parentDescriptor.getContainingDeclaration();
+            parentDescriptor = (PackageViewDescriptor) parentDescriptor.getContainingDeclaration();
         }
     }
 

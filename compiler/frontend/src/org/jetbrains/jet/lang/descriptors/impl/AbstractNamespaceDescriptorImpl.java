@@ -19,14 +19,14 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
-public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorNonRootImpl implements NamespaceDescriptor {
+public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorNonRootImpl implements PackageViewDescriptor {
     public AbstractNamespaceDescriptorImpl(
             @NotNull NamespaceDescriptorParent containingDeclaration,
             List<AnnotationDescriptor> annotations,
@@ -47,13 +47,13 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
     }
 
     @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+    public void addNamespace(@NotNull PackageViewDescriptor packageViewDescriptor) {
         throw new IllegalStateException("immutable");
     }
 
     @NotNull
     @Override
-    public NamespaceDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
+    public PackageViewDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException("This operation does not make sense for a namespace");
     }
 

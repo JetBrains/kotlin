@@ -90,7 +90,7 @@ public abstract class CodegenContext {
         while (true) {
             assert c != null;
             DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
-            if (!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof NamespaceDescriptor)) {
+            if (!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof PackageViewDescriptor)) {
                 c = c.getParentContext();
             }
             else {
@@ -135,11 +135,11 @@ public abstract class CodegenContext {
         return contextKind;
     }
 
-    public CodegenContext intoNamespace(@NotNull NamespaceDescriptor descriptor) {
+    public CodegenContext intoNamespace(@NotNull PackageViewDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, OwnerKind.NAMESPACE);
     }
 
-    public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
+    public CodegenContext intoNamespacePart(String delegateTo, PackageViewDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 

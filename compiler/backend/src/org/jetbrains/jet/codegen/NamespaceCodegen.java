@@ -29,7 +29,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
@@ -118,7 +118,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private void generate(JetFile file, boolean multiFile) {
-        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+        PackageViewDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
         assert descriptor != null : "No namespace found for file " + file + " declared package: " + file.getPackageName();
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
@@ -185,7 +185,7 @@ public class NamespaceCodegen extends MemberCodegen {
         }
     }
 
-    public void generateClassOrObject(@NotNull NamespaceDescriptor descriptor, @NotNull JetClassOrObject classOrObject) {
+    public void generateClassOrObject(@NotNull PackageViewDescriptor descriptor, @NotNull JetClassOrObject classOrObject) {
         CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
         genClassOrObject(context, classOrObject);
     }

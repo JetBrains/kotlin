@@ -39,7 +39,7 @@ public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements Declaratio
     }
 
     @Override
-    public R visitNamespaceDescriptor(NamespaceDescriptor descriptor, D data) {
+    public R visitNamespaceDescriptor(PackageViewDescriptor descriptor, D data) {
         return visitDeclarationDescriptor(descriptor, data);
     }
 

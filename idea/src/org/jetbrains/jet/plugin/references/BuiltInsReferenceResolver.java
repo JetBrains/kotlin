@@ -228,8 +228,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         if (parent instanceof ClassDescriptor) {
             return ((ClassDescriptor) parent).getDefaultType().getMemberScope();
         }
-        else if (parent instanceof NamespaceDescriptor) {
-            return ((NamespaceDescriptor)parent).getMemberScope();
+        else if (parent instanceof PackageViewDescriptor) {
+            return ((PackageViewDescriptor)parent).getMemberScope();
         }
         else {
             return null;

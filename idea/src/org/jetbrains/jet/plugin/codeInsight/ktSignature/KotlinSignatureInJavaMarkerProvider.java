@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
@@ -150,7 +150,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull PsiMember member
     ) {
         if (member.hasModifierProperty(PsiModifier.STATIC)) {
-            NamespaceDescriptor packageDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
+            PackageViewDescriptor packageDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
             if (packageDescriptor == null) {
                 return null;
             }

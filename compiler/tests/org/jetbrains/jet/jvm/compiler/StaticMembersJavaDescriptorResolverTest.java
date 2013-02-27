@@ -18,7 +18,7 @@ package org.jetbrains.jet.jvm.compiler;
 
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.File;
@@ -57,11 +57,11 @@ public final class StaticMembersJavaDescriptorResolverTest extends AbstractJavaR
     private void doTest() throws IOException {
         String name = getTestName(false);
         compileJavaFile(name + ".java");
-        NamespaceDescriptor namespaceWithClass = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE));
+        PackageViewDescriptor namespaceWithClass = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE));
         Assert.assertNotNull(namespaceWithClass);
         compareNamespaceWithFile(namespaceWithClass, DONT_INCLUDE_METHODS_OF_OBJECT, new File(PATH + name + "_non_static.txt"));
 
-        NamespaceDescriptor namespaceWithStaticMembers = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE + "." + name));
+        PackageViewDescriptor namespaceWithStaticMembers = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE + "." + name));
         File fileWithStaticMembers = new File(PATH + name + "_static.txt");
         if (namespaceWithStaticMembers == null) {
             Assert.assertTrue(!fileWithStaticMembers.exists());

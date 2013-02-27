@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
@@ -203,22 +203,23 @@ class NamespaceFactoryImpl1 implements NamespaceFactory {
 
     private void storeBindingForFileAndExpression(@Nullable JetFile file,
                                                   @Nullable JetReferenceExpression expression,
-                                                  @NotNull NamespaceDescriptor namespaceDescriptor) {
+                                                  @NotNull PackageViewDescriptor packageViewDescriptor
+    ) {
         if (expression != null) {
-            trace.record(REFERENCE_TARGET, expression, namespaceDescriptor);
+            trace.record(REFERENCE_TARGET, expression, packageViewDescriptor);
         }
 
         if (file != null) {
-            //trace.record(BindingContext.FILE_TO_NAMESPACE, file, namespaceDescriptor);
+            //trace.record(BindingContext.FILE_TO_NAMESPACE, file, packageViewDescriptor);
 
             // Register files corresponding to this namespace
             // The trace currently does not support bi-di multimaps that would handle this task nicer
-            //Collection<JetFile> files = trace.get(NAMESPACE_TO_FILES, namespaceDescriptor);
+            //Collection<JetFile> files = trace.get(NAMESPACE_TO_FILES, packageViewDescriptor);
             //if (files == null) {
                 //files = Sets.newIdentityHashSet();
             //}
             //files.add(file);
-            //trace.record(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor, files);
+            //trace.record(BindingContext.NAMESPACE_TO_FILES, packageViewDescriptor, files);
         }
     }
 }

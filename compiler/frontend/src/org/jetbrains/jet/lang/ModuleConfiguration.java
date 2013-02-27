@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -34,7 +34,7 @@ public interface ModuleConfiguration {
         }
 
         @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
+        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull PackageViewDescriptor packageViewDescriptor, @NotNull WritableScope namespaceMemberScope) {
         }
 
         @NotNull
@@ -56,7 +56,7 @@ public interface ModuleConfiguration {
      * Java package with a Kotlin one
      */
     @Deprecated
-    void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
+    void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull PackageViewDescriptor packageViewDescriptor, @NotNull WritableScope namespaceMemberScope);
 
     @NotNull
     PlatformToKotlinClassMap getPlatformToKotlinClassMap();

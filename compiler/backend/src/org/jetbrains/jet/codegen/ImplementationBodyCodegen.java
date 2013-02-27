@@ -192,7 +192,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isObjectLiteral = descriptor.getName().isSpecial() && descriptor.getKind() == ClassKind.OBJECT;
 
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
-                                          !(parentDescriptor instanceof NamespaceDescriptor || parentDescriptor instanceof ClassDescriptor);
+                                          !(parentDescriptor instanceof PackageViewDescriptor || parentDescriptor instanceof ClassDescriptor);
         if (isLocalOrAnonymousClass) {
             String outerClassName = getOuterClassName(descriptor, typeMapper, bindingContext, state);
             FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
@@ -222,9 +222,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return typeMapper.mapType(container.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
         }
         else {
-            NamespaceDescriptor namespaceDescriptor = DescriptorUtils.getParentOfType(classDescriptor, NamespaceDescriptor.class);
-            assert namespaceDescriptor != null : "Namespace descriptor should be present: " + classDescriptor.getName();
-            FqName namespaceQN = namespaceDescriptor.getFqName();
+            PackageViewDescriptor packageViewDescriptor = DescriptorUtils.getParentOfType(classDescriptor, PackageViewDescriptor.class);
+            assert packageViewDescriptor != null : "Namespace descriptor should be present: " + classDescriptor.getName();
+            FqName namespaceQN = packageViewDescriptor.getFqName();
             boolean isMultiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), namespaceQN);
             return isMultiFile
                    ? NamespaceCodegen.getNamespacePartInternalName(

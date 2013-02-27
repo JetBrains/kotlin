@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
@@ -177,7 +177,7 @@ public final class TipsManager {
         return Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
             @Override
             public boolean apply(DeclarationDescriptor declarationDescriptor) {
-                return declarationDescriptor instanceof NamespaceDescriptor;
+                return declarationDescriptor instanceof PackageViewDescriptor;
             }
         });
     }

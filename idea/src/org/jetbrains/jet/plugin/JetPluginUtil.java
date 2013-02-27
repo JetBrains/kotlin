@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -69,11 +69,11 @@ public class JetPluginUtil {
         if (ErrorUtils.isError(declaration)) {
             return false;
         }
-        while (!(declaration instanceof NamespaceDescriptor)) {
+        while (!(declaration instanceof PackageViewDescriptor)) {
             declaration = declaration.getContainingDeclaration();
             assert declaration != null;
         }
-        return libraryScope == ((NamespaceDescriptor) declaration).getMemberScope();
+        return libraryScope == ((PackageViewDescriptor) declaration).getMemberScope();
     }
 
     @NotNull

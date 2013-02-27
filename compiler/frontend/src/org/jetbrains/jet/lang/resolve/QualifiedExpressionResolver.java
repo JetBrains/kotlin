@@ -138,7 +138,7 @@ public class QualifiedExpressionResolver {
     ) {
 
         assert lookupMode == LookupMode.EVERYTHING;
-        if (descriptor instanceof NamespaceDescriptor) {
+        if (descriptor instanceof PackageViewDescriptor) {
             return true;
         }
         if (descriptor instanceof ClassDescriptor && !((ClassDescriptor)descriptor).getKind().isObject()) {
@@ -205,8 +205,8 @@ public class QualifiedExpressionResolver {
 
         Set<SuccessfulLookupResult> results = Sets.newHashSet();
         for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
-            if (declarationDescriptor instanceof NamespaceDescriptor) {
-                addResult(results, lookupSimpleNameReference(selector, ((NamespaceDescriptor)declarationDescriptor).getMemberScope(),
+            if (declarationDescriptor instanceof PackageViewDescriptor) {
+                addResult(results, lookupSimpleNameReference(selector, ((PackageViewDescriptor)declarationDescriptor).getMemberScope(),
                                                              lookupMode, true));
             }
             if (declarationDescriptor instanceof ClassDescriptor) {
@@ -250,9 +250,9 @@ public class QualifiedExpressionResolver {
         Name referencedName = referenceExpression.getReferencedNameAsName();
 
         Set<DeclarationDescriptor> descriptors = Sets.newHashSet();
-        PackageViewDescriptor namespaceDescriptor = outerScope.getPackage(referencedName);
-        if (namespaceDescriptor != null) {
-            descriptors.add(namespaceDescriptor);
+        PackageViewDescriptor packageViewDescriptor = outerScope.getPackage(referencedName);
+        if (packageViewDescriptor != null) {
+            descriptors.add(packageViewDescriptor);
         }
 
         ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName);
@@ -309,7 +309,7 @@ public class QualifiedExpressionResolver {
                 @Override
                 public boolean apply(@Nullable DeclarationDescriptor descriptor) {
                     return (descriptor instanceof ClassifierDescriptor) ||
-                           (descriptor instanceof NamespaceDescriptor);
+                           (descriptor instanceof PackageViewDescriptor);
                 }
             });
         }
@@ -324,7 +324,7 @@ public class QualifiedExpressionResolver {
                 filteredDescriptors.addAll(Collections2.filter(lookupResult.descriptors, new Predicate<DeclarationDescriptor>() {
                     @Override
                     public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                        return (descriptor instanceof NamespaceDescriptor) ||
+                        return (descriptor instanceof PackageViewDescriptor) ||
                                (descriptor instanceof ClassifierDescriptor) ||
                                ((descriptor instanceof PropertyDescriptor) &&
                                 (trace.get(BindingContext.OBJECT_DECLARATION_CLASS, ((PropertyDescriptor) descriptor)) != null));
@@ -403,20 +403,20 @@ public class QualifiedExpressionResolver {
         @NotNull JetScope scopeToCheckVisibility) {
 
         if (filteredDescriptors.size() == 2) {
-            NamespaceDescriptor namespaceDescriptor = null;
+            PackageViewDescriptor packageViewDescriptor = null;
             ClassDescriptor classDescriptor = null;
 
             for (DeclarationDescriptor filteredDescriptor : filteredDescriptors) {
-                if (filteredDescriptor instanceof NamespaceDescriptor) {
-                    namespaceDescriptor = (NamespaceDescriptor)filteredDescriptor;
+                if (filteredDescriptor instanceof PackageViewDescriptor) {
+                    packageViewDescriptor = (PackageViewDescriptor)filteredDescriptor;
                 }
                 else if (filteredDescriptor instanceof ClassDescriptor) {
                     classDescriptor = (ClassDescriptor)filteredDescriptor;
                 }
             }
 
-            if (namespaceDescriptor != null && classDescriptor != null) {
-                if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(DescriptorUtils.getFQName(classDescriptor))) {
+            if (packageViewDescriptor != null && classDescriptor != null) {
+                if (DescriptorUtils.getFQName(packageViewDescriptor).equalsTo(DescriptorUtils.getFQName(classDescriptor))) {
                     trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classDescriptor);
                     trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
                     checkVisibility(classDescriptor, trace, referenceExpression, scopeToCheckVisibility);

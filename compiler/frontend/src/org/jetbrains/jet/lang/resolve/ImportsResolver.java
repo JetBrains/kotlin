@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -186,7 +186,7 @@ public class ImportsResolver {
         else if (wasResolved instanceof VariableDescriptor) {
             isResolved = namespaceScope.getLocalVariable(aliasName);
         }
-        else if (wasResolved instanceof NamespaceDescriptor) {
+        else if (wasResolved instanceof PackageViewDescriptor) {
             isResolved = namespaceScope.getPackage(aliasName);
         }
         if (isResolved != null && isResolved != wasResolved) {

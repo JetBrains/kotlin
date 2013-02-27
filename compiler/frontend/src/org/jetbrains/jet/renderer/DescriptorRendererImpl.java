@@ -638,7 +638,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(moduleOrScript, builder);
     }
 
-    private void renderNamespace(@NotNull NamespaceDescriptor namespace, @NotNull StringBuilder builder) {
+    private void renderNamespace(@NotNull PackageViewDescriptor namespace, @NotNull StringBuilder builder) {
         builder.append(renderKeyword(JetTokens.PACKAGE_KEYWORD.getValue())).append(" ");
         renderName(namespace, builder);
     }
@@ -688,8 +688,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         @Override
-        public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
-            renderNamespace(namespaceDescriptor, builder);
+        public Void visitNamespaceDescriptor(PackageViewDescriptor packageViewDescriptor, StringBuilder builder) {
+            renderNamespace(packageViewDescriptor, builder);
             return null;
         }
 

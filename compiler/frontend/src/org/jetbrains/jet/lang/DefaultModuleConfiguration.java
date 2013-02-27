@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang;
 
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -46,8 +46,8 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     }
 
     @Override
-    public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName())) {
+    public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull PackageViewDescriptor packageViewDescriptor, @NotNull WritableScope namespaceMemberScope) {
+        if (DescriptorUtils.getFQName(packageViewDescriptor).equalsTo(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName())) {
             namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
         }
     }

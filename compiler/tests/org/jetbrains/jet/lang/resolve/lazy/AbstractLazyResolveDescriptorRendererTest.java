@@ -65,7 +65,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
             public void visitJetFile(JetFile file) {
                 String qualifiedName = file.getNamespaceHeader().getQualifiedName();
                 if (!qualifiedName.isEmpty()) {
-                    NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(new FqName(qualifiedName));
+                    PackageViewDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(new FqName(qualifiedName));
                     descriptors.add(packageDescriptor);
                 }
                 file.acceptChildren(this);

@@ -74,8 +74,8 @@ public class OverloadResolver {
             super(namespace, name);
         }
         
-        Key(NamespaceDescriptor namespaceDescriptor, Name name) {
-            this(DescriptorUtils.getFQName(namespaceDescriptor).getFqName(), name);
+        Key(PackageViewDescriptor packageViewDescriptor, Name name) {
+            this(DescriptorUtils.getFQName(packageViewDescriptor).getFqName(), name);
         }
 
         public String getNamespace() {
@@ -97,9 +97,9 @@ public class OverloadResolver {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             MutableClassDescriptor klass = entry.getValue();
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
-            if (containingDeclaration instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-                inNamespaces.put(new Key(namespaceDescriptor, klass.getName()), klass.getConstructors());
+            if (containingDeclaration instanceof PackageViewDescriptor) {
+                PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
+                inNamespaces.put(new Key(packageViewDescriptor, klass.getName()), klass.getConstructors());
             }
             else if (containingDeclaration instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -119,17 +119,17 @@ public class OverloadResolver {
 
         for (SimpleFunctionDescriptor function : context.getFunctions().values()) {
             DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
-            if (containingDeclaration instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-                functionsByName.putValue(new Key(namespaceDescriptor, function.getName()), function);
+            if (containingDeclaration instanceof PackageViewDescriptor) {
+                PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
+                functionsByName.putValue(new Key(packageViewDescriptor, function.getName()), function);
             }
         }
         
         for (PropertyDescriptor property : context.getProperties().values()) {
             DeclarationDescriptor containingDeclaration = property.getContainingDeclaration();
-            if (containingDeclaration instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-                functionsByName.putValue(new Key(namespaceDescriptor, property.getName()), property);
+            if (containingDeclaration instanceof PackageViewDescriptor) {
+                PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
+                functionsByName.putValue(new Key(packageViewDescriptor, property.getName()), property);
             }
         }
         

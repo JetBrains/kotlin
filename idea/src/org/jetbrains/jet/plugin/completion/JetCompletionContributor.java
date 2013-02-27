@@ -212,7 +212,7 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         public static boolean isPartOfTypeDeclaration(@NotNull DeclarationDescriptor descriptor) {
-            if (descriptor instanceof NamespaceDescriptor || descriptor instanceof TypeParameterDescriptor) {
+            if (descriptor instanceof PackageViewDescriptor || descriptor instanceof TypeParameterDescriptor) {
                 return true;
             }
 

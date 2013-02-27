@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -111,7 +111,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @Override
             public void extendNamespaceScope(
                     @NotNull BindingTrace trace,
-                    @NotNull NamespaceDescriptor namespaceDescriptor,
+                    @NotNull PackageViewDescriptor namespaceDescriptor,
                     @NotNull WritableScope namespaceMemberScope
             ) {
                 FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();

@@ -21,8 +21,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ResolveTestCase;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -78,7 +78,7 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
     public void testAllReferencesResolved() {
         BuiltInsReferenceResolver referenceResolver = getProject().getComponent(BuiltInsReferenceResolver.class);
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackage())) {
-            if (descriptor instanceof NamespaceDescriptor && "jet".equals(descriptor.getName().getName())) continue;
+            if (descriptor instanceof PackageViewDescriptor && "jet".equals(descriptor.getName().getName())) continue;
             assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveStandardLibrarySymbol(descriptor));
         }
     }
@@ -100,7 +100,7 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
             }
 
             @Override
-            public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+            public Void visitNamespaceDescriptor(PackageViewDescriptor descriptor, Void data) {
                 descriptors.add(descriptor);
                 return visitDescriptors(descriptor.getMemberScope().getAllDescriptors());
             }

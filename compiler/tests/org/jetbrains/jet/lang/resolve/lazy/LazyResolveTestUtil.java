@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -116,7 +116,7 @@ public class LazyResolveTestUtil {
             @Override
             public void extendNamespaceScope(
                     @NotNull BindingTrace trace,
-                    @NotNull NamespaceDescriptor namespaceDescriptor,
+                    @NotNull PackageViewDescriptor namespaceDescriptor,
                     @NotNull WritableScope namespaceMemberScope
             ) {
                 FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();

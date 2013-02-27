@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -61,18 +61,18 @@ public class JsConfiguration implements ModuleConfiguration {
     }
 
     @Override
-    public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
+    public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull PackageViewDescriptor packageViewDescriptor,
             @NotNull WritableScope namespaceMemberScope) {
         DefaultModuleConfiguration.createStandardConfiguration()
-                .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+                .extendNamespaceScope(trace, packageViewDescriptor, namespaceMemberScope);
 
         // Extend root namespace with standard classes
-        if (namespaceDescriptor.getFqName().shortNameOrSpecial().equals(FqNameUnsafe.ROOT_NAME)) {
+        if (packageViewDescriptor.getFqName().shortNameOrSpecial().equals(FqNameUnsafe.ROOT_NAME)) {
             namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
         }
 
         if (hasPreanalyzedContextForTests()) {
-            extendScopeWithPreAnalyzedContextForTests(namespaceDescriptor, namespaceMemberScope);
+            extendScopeWithPreAnalyzedContextForTests(packageViewDescriptor, namespaceMemberScope);
         }
     }
 
@@ -82,18 +82,18 @@ public class JsConfiguration implements ModuleConfiguration {
 
     /*NOTE: this code is wrong. Check it if you have tests failing for frontend reasons*/
     @SuppressWarnings("ConstantConditions")
-    private void extendScopeWithPreAnalyzedContextForTests(@NotNull NamespaceDescriptor namespaceDescriptor,
+    private void extendScopeWithPreAnalyzedContextForTests(@NotNull PackageViewDescriptor packageViewDescriptor,
             @NotNull WritableScope namespaceMemberScope) {
-        if (isNamespaceImportedByDefault(namespaceDescriptor) || isRootNamespace(namespaceDescriptor)) {
-            FqName descriptorName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-            NamespaceDescriptor alreadyAnalyzedNamespace = preanalyzedContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, descriptorName);
+        if (isNamespaceImportedByDefault(packageViewDescriptor) || isRootNamespace(packageViewDescriptor)) {
+            FqName descriptorName = DescriptorUtils.getFQName(packageViewDescriptor).toSafe();
+            PackageViewDescriptor alreadyAnalyzedNamespace = preanalyzedContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, descriptorName);
             namespaceMemberScope.importScope(alreadyAnalyzedNamespace.getMemberScope());
         }
     }
 
-    private static boolean isNamespaceImportedByDefault(@NotNull NamespaceDescriptor namespaceDescriptor) {
+    private static boolean isNamespaceImportedByDefault(@NotNull PackageViewDescriptor packageViewDescriptor) {
         for (ImportPath path : DEFAULT_IMPORT_PATHS) {
-            if (path.fqnPart().equals(DescriptorUtils.getFQName(namespaceDescriptor).toSafe())) {
+            if (path.fqnPart().equals(DescriptorUtils.getFQName(packageViewDescriptor).toSafe())) {
                 return true;
             }
         }

@@ -29,7 +29,7 @@ import java.util.Collections;
 
 @Deprecated
 public class OldModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
-    private NamespaceDescriptor rootNamepsace;
+    private PackageViewDescriptor rootNamepsace;
 
     public OldModuleDescriptor(@NotNull Name name) {
         super(Collections.<AnnotationDescriptor>emptyList(), name);
@@ -38,7 +38,7 @@ public class OldModuleDescriptor extends DeclarationDescriptorImpl implements Cl
         }
     }
 
-    public void setRootNamespace(@NotNull NamespaceDescriptor rootNs) {
+    public void setRootNamespace(@NotNull PackageViewDescriptor rootNs) {
         if (this.rootNamepsace != null) {
             throw new IllegalStateException("setRootNamespace() is called twice");
         }
@@ -51,7 +51,7 @@ public class OldModuleDescriptor extends DeclarationDescriptorImpl implements Cl
         return null;
     }
 
-    public NamespaceDescriptor getRootNamespace() {
+    public PackageViewDescriptor getRootNamespace() {
         return rootNamepsace;
     }
 
@@ -72,11 +72,11 @@ public class OldModuleDescriptor extends DeclarationDescriptorImpl implements Cl
 
 
     @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        if (namespaceDescriptor.getContainingDeclaration() != this) {
+    public void addNamespace(@NotNull PackageViewDescriptor packageViewDescriptor) {
+        if (packageViewDescriptor.getContainingDeclaration() != this) {
             throw new IllegalStateException();
         }
-        setRootNamespace(namespaceDescriptor);
+        setRootNamespace(packageViewDescriptor);
     }
 
 }

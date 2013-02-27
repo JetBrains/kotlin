@@ -100,7 +100,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
                     ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
-                    NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
+                    PackageViewDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
                     if (topLevelClass == null) {
                         continue;
                     }
@@ -174,7 +174,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         }
 
         @Override
-        public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+        public Void visitNamespaceDescriptor(PackageViewDescriptor descriptor, Void data) {
             return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
         }
 

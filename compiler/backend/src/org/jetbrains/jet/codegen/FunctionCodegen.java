@@ -557,7 +557,7 @@ public class FunctionCodegen extends GenerationStateAware {
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
         JvmClassName ownerInternalName;
-        if (contextClass instanceof NamespaceDescriptor) {
+        if (contextClass instanceof PackageViewDescriptor) {
             ownerInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(DescriptorUtils.getFQName(contextClass).toSafe());
         }
         else {

@@ -28,7 +28,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -621,7 +621,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        NamespaceDescriptor testData = moduleDescriptor.getRootNamespace().getMemberScope().getPackage(Name.identifier("testData"));
+        PackageViewDescriptor testData = moduleDescriptor.getRootNamespace().getMemberScope().getPackage(Name.identifier("testData"));
         return addImports(testData.getMemberScope());
     }
 

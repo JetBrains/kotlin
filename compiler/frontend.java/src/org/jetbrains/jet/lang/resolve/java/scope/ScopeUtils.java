@@ -24,7 +24,7 @@ import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -45,7 +45,7 @@ public final class ScopeUtils {
         final JavaDescriptorResolver descriptorResolver = javaSemanticServices.getDescriptorResolver();
 
         for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
-            NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(
+            PackageViewDescriptor childNs = descriptorResolver.resolveNamespace(
                     new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
             if (childNs != null) {
                 result.add(childNs);

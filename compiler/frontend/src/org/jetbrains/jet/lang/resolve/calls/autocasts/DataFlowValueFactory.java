@@ -130,7 +130,7 @@ public class DataFlowValueFactory {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 return Pair.create((Object) declarationDescriptor, isStableVariable((VariableDescriptor) declarationDescriptor));
             }
-            if (declarationDescriptor instanceof NamespaceDescriptor) {
+            if (declarationDescriptor instanceof PackageViewDescriptor) {
                 return Pair.create((Object) declarationDescriptor, allowNamespaces);
             }
             if (declarationDescriptor instanceof ClassDescriptor) {

@@ -33,7 +33,7 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -59,7 +59,7 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor compileKotlinAndLoadTestNamespaceDescriptorFromBinary(
+    public static PackageViewDescriptor compileKotlinAndLoadTestNamespaceDescriptorFromBinary(
             @NotNull File kotlinFile,
             @NotNull File outDir,
             @NotNull Disposable disposable,
@@ -86,7 +86,7 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static Pair<NamespaceDescriptor, BindingContext> loadTestNamespaceAndBindingContextFromJavaRoot(
+    public static Pair<PackageViewDescriptor, BindingContext> loadTestNamespaceAndBindingContextFromJavaRoot(
             @NotNull File javaRoot,
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
@@ -102,14 +102,14 @@ public final class LoadDescriptorUtil {
         JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        NamespaceDescriptor namespaceDescriptor =
+        PackageViewDescriptor packageViewDescriptor =
                 javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-        assert namespaceDescriptor != null;
-        return Pair.create(namespaceDescriptor, injector.getBindingTrace().getBindingContext());
+        assert packageViewDescriptor != null;
+        return Pair.create(packageViewDescriptor, injector.getBindingTrace().getBindingContext());
     }
 
     @NotNull
-    public static Pair<NamespaceDescriptor, BindingContext> compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+    public static Pair<PackageViewDescriptor, BindingContext> compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
             @NotNull Collection<File> javaFiles,
             @NotNull File outDir,
             @NotNull Disposable disposable,
@@ -130,9 +130,9 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) throws Exception {
+    public static PackageViewDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) throws Exception {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable, configurationKind);
-        NamespaceDescriptor namespace =
+        PackageViewDescriptor namespace =
                 fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
         assert namespace != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
         return namespace;

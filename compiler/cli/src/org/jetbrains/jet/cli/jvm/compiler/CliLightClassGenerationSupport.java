@@ -32,7 +32,7 @@ import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -119,9 +119,9 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
-        NamespaceDescriptor namespaceDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
-        if (namespaceDescriptor != null) {
-            Collection<JetFile> files = getTrace().get(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor);
+        PackageViewDescriptor packageViewDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
+        if (packageViewDescriptor != null) {
+            Collection<JetFile> files = getTrace().get(BindingContext.NAMESPACE_TO_FILES, packageViewDescriptor);
             if (files != null) {
                 return Collections2.filter(files, new Predicate<JetFile>() {
                     @Override
@@ -161,14 +161,14 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        NamespaceDescriptor namespaceDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqn);
-        if (namespaceDescriptor == null) return Collections.emptyList();
+        PackageViewDescriptor packageViewDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqn);
+        if (packageViewDescriptor == null) return Collections.emptyList();
 
-        Collection<DeclarationDescriptor> allDescriptors = namespaceDescriptor.getMemberScope().getAllDescriptors();
+        Collection<DeclarationDescriptor> allDescriptors = packageViewDescriptor.getMemberScope().getAllDescriptors();
         return ContainerUtil.mapNotNull(allDescriptors, new Function<DeclarationDescriptor, FqName>() {
             @Override
             public FqName fun(DeclarationDescriptor input) {
-                if (input instanceof NamespaceDescriptor) {
+                if (input instanceof PackageViewDescriptor) {
                     return DescriptorUtils.getFQName(input).toSafe();
                 }
                 return null;

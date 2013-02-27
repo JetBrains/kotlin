@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -29,7 +29,7 @@ public class JavaBindingContext {
     /**
      * @see BindingContext#NAMESPACE_IS_SRC
      */
-    public static final WritableSlice<NamespaceDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND =
+    public static final WritableSlice<PackageViewDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND =
             Slices.createSimpleSlice();
 
     private JavaBindingContext() {

@@ -33,7 +33,7 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -75,7 +75,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         File expectedFile = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expectedFile.getName());
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndBindingContext
                 = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
                                                                              ConfigurationKind.JDK_ONLY);
 
@@ -85,7 +85,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
     private void doTestNoCompile(@NotNull String expectedFileName, @NotNull String javaRoot) throws Exception {
         File expectedFile = new File(expectedFileName);
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndBindingContext
                 = loadTestNamespaceAndBindingContextFromJavaRoot(new File(javaRoot), getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         AbstractLoadJavaTest.checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
@@ -247,14 +247,14 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
             injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
             JavaDescriptorResolver javaDescriptorResolver = injectorForJava.getJavaDescriptorResolver();
-            NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(
+            PackageViewDescriptor packageViewDescriptor = javaDescriptorResolver.resolveNamespace(
                     LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
-            assert namespaceDescriptor != null;
+            assert packageViewDescriptor != null;
 
-            compareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
+            compareNamespaceWithFile(packageViewDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
                                      new File(dir, "expected.txt"));
 
-            ExpectedLoadErrorsUtil.checkForLoadErrors(namespaceDescriptor, trace.getBindingContext());
+            ExpectedLoadErrorsUtil.checkForLoadErrors(packageViewDescriptor, trace.getBindingContext());
         }
     }
 }

@@ -107,11 +107,11 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
                variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
     }
 
-    // differs from DescriptorUtils - fails if reach NamespaceDescriptor
+    // differs from DescriptorUtils - fails if reach PackageViewDescriptor
     public static boolean isAncestor(@NotNull DeclarationDescriptor ancestor,
             @NotNull DeclarationDescriptor declarationDescriptor) {
         DeclarationDescriptor descriptor = declarationDescriptor.getContainingDeclaration();
-        while (descriptor != null && !(descriptor instanceof NamespaceDescriptor)) {
+        while (descriptor != null && !(descriptor instanceof PackageViewDescriptor)) {
             if (ancestor == descriptor) {
                 return true;
             }

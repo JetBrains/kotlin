@@ -84,11 +84,11 @@ public class DecompiledDataFactory {
         PsiClass psiClass = clsFile.getClasses()[0];
 
         if (isKotlinNamespaceClass(psiClass)) {
-            NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(new FqName(packageName), DescriptorSearchRule.INCLUDE_KOTLIN);
+            PackageViewDescriptor nd = javaDescriptorResolver.resolveNamespace(new FqName(packageName), DescriptorSearchRule.INCLUDE_KOTLIN);
 
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
-                    if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor
+                    if (member instanceof ClassDescriptor || member instanceof PackageViewDescriptor
                         || isNamedObjectProperty(member, bindingContext)) {
                         continue;
                     }
