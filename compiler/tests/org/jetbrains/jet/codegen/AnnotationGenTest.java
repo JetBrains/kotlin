@@ -17,7 +17,11 @@
 package org.jetbrains.jet.codegen;
 
 import jet.JetObject;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Constructor;
@@ -32,41 +36,65 @@ public class AnnotationGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 
-    public void testPropField() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("[Deprecated] var x = 0");
-        Class aClass = generateNamespaceClass();
-        assertNull(aClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
-        assertNull(aClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
-        assertNotNull(aClass.getDeclaredField("x").getAnnotation(Deprecated.class));
+    private ClassLoader loadFileGetClassLoader(@NotNull String text) {
+        loadText(text);
+        ClassFileFactory state = generateClassesInFile();
+        return createClassLoader(state);
     }
 
-    public void testPropGetter() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("var x = 0\n" +
+    private Class getPackageClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
+        return loader.loadClass(PackageClassUtils.getPackageClassName(JetPsiUtil.getFQName(myFiles.getPsiFile())));
+    }
+
+    private Class getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
+        return loader.loadClass(NamespaceCodegen.getNamespacePartInternalName(myFiles.getPsiFile()));
+    }
+
+    public void testPropField() throws Exception {
+        ClassLoader loader = loadFileGetClassLoader("[Deprecated] var x = 0");
+        Class packageClass = getPackageClass(loader);
+        assertNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
+        assertNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
+        Class srcClass = getPackageSrcClass(loader);
+        assertNull(srcClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
+        assertNull(srcClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
+        assertNotNull(srcClass.getDeclaredField("x").getAnnotation(Deprecated.class));
+    }
+
+    public void testPropGetter() throws Exception {
+        ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
                  "[Deprecated] get");
-
-        Class aClass = generateNamespaceClass();
-        assertNotNull(aClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
-        assertNull(aClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
-        assertNull(aClass.getDeclaredField("x").getAnnotation(Deprecated.class));
+        Class packageClass = getPackageClass(loader);
+        assertNotNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
+        assertNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
+        Class srcClass = getPackageSrcClass(loader);
+        assertNotNull(srcClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
+        assertNull(srcClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
+        assertNull(srcClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
-    public void testPropSetter() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("var x = 0\n" +
+    public void testPropSetter() throws Exception {
+        ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
                  "[Deprecated] set");
-        Class aClass = generateNamespaceClass();
-        assertNull(aClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
-        assertNotNull(aClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
-        assertNull(aClass.getDeclaredField("x").getAnnotation(Deprecated.class));
+        Class packageClass = getPackageClass(loader);
+        assertNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
+        assertNotNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
+        Class scrClass = getPackageSrcClass(loader);
+        assertNull(scrClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
+        assertNotNull(scrClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
+        assertNull(scrClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
-    public void testAnnotationForParamInGlobalFunction() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("fun x([Deprecated] i: Int) {}");
-        Class aClass = generateNamespaceClass();
-        Method x = aClass.getMethod("x", int.class);
-        assertNotNull(x);
-        // Get annotations for first parameter
-        Annotation[] annotations = x.getParameterAnnotations()[0];
-        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+    public void testAnnotationForParamInGlobalFunction() throws Exception {
+        ClassLoader loader = loadFileGetClassLoader("fun x([Deprecated] i: Int) {}");
+        Class packageClass = getPackageClass(loader);
+        Method packageClassMethod = packageClass.getMethod("x", int.class);
+        assertNotNull(packageClassMethod);
+        assertNotNull(getDeprecatedAnnotationFromList(packageClassMethod.getParameterAnnotations()[0]));
+        Class srcClass = getPackageSrcClass(loader);
+        Method srcClassMethod = srcClass.getMethod("x", int.class);
+        assertNotNull(srcClassMethod);
+        assertNotNull(getDeprecatedAnnotationFromList(srcClassMethod.getParameterAnnotations()[0]));
     }
 
     public void testAnnotationForParamInLocalFunction() throws NoSuchFieldException, NoSuchMethodException {
@@ -102,23 +130,29 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(aClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
     
-    public void testAnnotationWithParamForParamInFunction() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("import java.lang.annotation.*\n" +
+    public void testAnnotationWithParamForParamInFunction() throws Exception {
+        ClassLoader loader = loadFileGetClassLoader("import java.lang.annotation.*\n" +
                  "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
                  "fun x(A(\"239\") i: Int) {}");
-        Class aClass = generateNamespaceClass();
-        Method x = aClass.getMethod("x", int.class);
-        assertNotNull(x);
-        // Get annotations for first parameter
-        Annotation[] annotations = x.getParameterAnnotations()[0];
-        Annotation resultAnnotation = null;
+        Class packageClass = getPackageSrcClass(loader);
+        Method packageClassMethod = packageClass.getMethod("x", int.class);
+        assertNotNull(packageClassMethod);
+        assertNotNull(getAnnotationByName(packageClassMethod.getParameterAnnotations()[0], "A"));
+
+        Class srcClass = getPackageSrcClass(loader);
+        Method srcClassMethod = srcClass.getMethod("x", int.class);
+        assertNotNull(srcClassMethod);
+        assertNotNull(getAnnotationByName(srcClassMethod.getParameterAnnotations()[0], "A"));
+    }
+
+    @Nullable
+    private Annotation getAnnotationByName(@NotNull Annotation[] annotations, @NotNull String name) {
         for (Annotation annotation : annotations) {
-            if (annotation.annotationType().getCanonicalName().equals("A")) {
-                resultAnnotation = annotation;
-                break;
+            if (annotation.annotationType().getCanonicalName().equals(name)) {
+                return annotation;
             }
         }
-        assertNotNull(resultAnnotation);
+        return null;
     }
 
     private Deprecated getDeprecatedAnnotationFromList(Annotation[] annotations) {
@@ -138,12 +172,17 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(annotation);
     }
 
-    public void testMethod() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("[Deprecated] fun x () {}");
-        Class aClass = generateNamespaceClass();
-        Method x = aClass.getDeclaredMethod("x");
-        Deprecated annotation = (Deprecated) x.getAnnotation(Deprecated.class);
-        assertNotNull(annotation);
+    public void testMethod() throws Exception {
+        ClassLoader loader = loadFileGetClassLoader("[Deprecated] fun x () {}");
+
+        Class packageClass = getPackageClass(loader);
+        Method packageClassMethod = packageClass.getDeclaredMethod("x");
+        assertNotNull(packageClassMethod.getAnnotation(Deprecated.class));
+
+        Class srcClass = getPackageSrcClass(loader);
+        Method srcClassMethod = srcClass.getDeclaredMethod("x");
+        assertNotNull(srcClassMethod.getAnnotation(Deprecated.class));
+
     }
 
     public void testClass() throws NoSuchFieldException, NoSuchMethodException {

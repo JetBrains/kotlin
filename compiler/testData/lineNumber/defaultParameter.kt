@@ -1,2 +1,4 @@
-fun foo(param: Int = test.lineNumber()) {
+class A {
+    fun foo(param: Int = test.lineNumber()) {
+    }
 }

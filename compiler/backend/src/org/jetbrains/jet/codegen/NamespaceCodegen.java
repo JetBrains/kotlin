@@ -84,8 +84,6 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     public void generate(CompilationErrorHandler errorHandler) {
-        boolean multiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), name);
-
         if (shouldGenerateNSClass(files)) {
             AnnotationVisitor packageClassAnnotation = v.getClassBuilder().newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
             packageClassAnnotation.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
@@ -95,7 +93,7 @@ public class NamespaceCodegen extends MemberCodegen {
         for (JetFile file : files) {
             VirtualFile vFile = file.getVirtualFile();
             try {
-                generate(file, multiFile);
+                generate(file);
             }
             catch (ProcessCanceledException e) {
                 throw e;
@@ -117,19 +115,17 @@ public class NamespaceCodegen extends MemberCodegen {
         }
     }
 
-    private void generate(JetFile file, boolean multiFile) {
+    private void generate(JetFile file) {
         NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
         assert descriptor != null : "No namespace found for file " + file + " declared package: " + file.getPackageName();
+        int countOfDeclarationsInSrcClass = 0;
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
                 genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
             }
             else if (declaration instanceof JetNamedFunction) {
-                if (!multiFile) {
-                    final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                    genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
-                }
+                countOfDeclarationsInSrcClass++;
             }
             else if (declaration instanceof JetClassOrObject) {
                 if (state.isGenerateDeclaredClasses()) {
@@ -141,47 +137,38 @@ public class NamespaceCodegen extends MemberCodegen {
             }
         }
 
-        if (multiFile) {
-            int k = 0;
+        if (countOfDeclarationsInSrcClass > 0) {
+            String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(
+                                                PackageClassUtils.getPackageClassFqName(name)).getInternalName();
+            String className = getMultiFileNamespaceInternalName(namespaceInternalName, file);
+            ClassBuilder builder = state.getFactory().forNamespacepart(className, file);
+
+            builder.defineClass(file, V1_6,
+                                ACC_PUBLIC | ACC_FINAL,
+                                className,
+                                null,
+                                //"jet/lang/Namespace",
+                                "java/lang/Object",
+                                new String[0]
+            );
+            builder.visitSource(file.getName(), null);
+
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetNamedFunction) {
-                    k++;
-                }
-            }
-
-            if (k > 0) {
-                String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(
-                                                    PackageClassUtils.getPackageClassFqName(name)).getInternalName();
-                String className = getMultiFileNamespaceInternalName(namespaceInternalName, file);
-                ClassBuilder builder = state.getFactory().forNamespacepart(className, file);
-
-                builder.defineClass(file, V1_6,
-                                    ACC_PUBLIC | ACC_FINAL,
-                                    className,
-                                    null,
-                                    //"jet/lang/Namespace",
-                                    "java/lang/Object",
-                                    new String[0]
-                );
-                builder.visitSource(file.getName(), null);
-
-                for (JetDeclaration declaration : file.getDeclarations()) {
-                    if (declaration instanceof JetNamedFunction) {
-                        {
-                            final CodegenContext context =
-                                    CodegenContext.STATIC.intoNamespace(descriptor);
-                            genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, builder);
-                        }
-                        {
-                            final CodegenContext context =
-                                    CodegenContext.STATIC.intoNamespacePart(className, descriptor);
-                            genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
-                        }
+                    {
+                        final CodegenContext context =
+                                CodegenContext.STATIC.intoNamespace(descriptor);
+                        genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, builder);
+                    }
+                    {
+                        final CodegenContext context =
+                                CodegenContext.STATIC.intoNamespacePart(className, descriptor);
+                        genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                     }
                 }
-
-                builder.done();
             }
+
+            builder.done();
         }
     }
 

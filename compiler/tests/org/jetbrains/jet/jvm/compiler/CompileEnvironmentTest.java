@@ -58,7 +58,7 @@ public class CompileEnvironmentTest extends TestCase {
                 try {
                     final List<String> entries = listEntries(is);
                     assertTrue(entries.contains("Smoke/" + PackageClassUtils.getPackageClassName(new FqName("Smoke")) + ".class"));
-                    assertEquals(1, entries.size());
+                    assertEquals(2, entries.size());
                 }
                 finally {
                     is.close();
@@ -88,7 +88,7 @@ public class CompileEnvironmentTest extends TestCase {
                           "-annotations", jdkAnnotations.getAbsolutePath());
             Assert.assertEquals(ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
-            assertEquals(1, out.listFiles()[0].listFiles().length);
+            assertEquals(2, out.listFiles()[0].listFiles().length);
         } finally {
             FileUtil.delete(tempDir);
         }

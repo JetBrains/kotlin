@@ -141,6 +141,12 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
+    protected Class<?> generateNamespaceSrcClass() {
+        String name = NamespaceCodegen.getNamespacePartInternalName(myFiles.getPsiFile());
+        return generateClass(name);
+    }
+
+    @NotNull
     protected Class generateClass(@NotNull String name) {
         try {
             return createClassLoader(generateClassesInFile()).loadClass(name);

@@ -144,7 +144,7 @@ public final class LoadDescriptorUtil {
         public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind)
                 throws IOException {
             JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            JetFile jetFile = createFile(jetCoreEnvironment.getProject(), kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true));
+            JetFile jetFile = JetTestUtils.createFile(kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), jetCoreEnvironment.getProject());
             AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                     jetFile, Collections.<AnalyzerScriptParameter>emptyList());
             return new JetFileAndExhaust(jetFile, exhaust);
