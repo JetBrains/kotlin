@@ -39,7 +39,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
-    public static Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
+    public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return DescriptorUtils.isInSameNamespace(what, from);
