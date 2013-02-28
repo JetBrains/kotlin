@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,12 +33,12 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.HashMap;
 
 public class MutableModuleSourcesManager implements ModuleSourcesManager {
 
     private final Project project;
-    private final Map<VirtualFile, RootData> roots = Maps.newHashMap();
+    private final RootBasedFileMap<RootData> roots = new RootBasedFileMap<RootData>(new HashMap<VirtualFile, RootData>());
     private final Multimap<PackageFragmentDescriptor, JetFile> sourceFiles = LinkedHashMultimap.create();
 
     public MutableModuleSourcesManager(@NotNull Project project) {
@@ -68,19 +67,15 @@ public class MutableModuleSourcesManager implements ModuleSourcesManager {
     private RootData getRootForFile(@NotNull PsiFile file) {
         VirtualFile virtualFile = file.getVirtualFile();
         assert virtualFile != null : "No virtual file for " + file;
-        while (virtualFile != null) {
-            RootData rootData = roots.get(virtualFile);
-            if (rootData != null) return rootData;
-
-            virtualFile = virtualFile.getParent();
-        }
-        throw new IllegalStateException("File " + file + " not found ");
+        RootData root = roots.getDataForFile(virtualFile);
+        assert root != null : "File " + file + " not found ";
+        return root;
     }
 
     public void registerRoot(@NotNull MutableSubModuleDescriptor subModule, @NotNull PackageFragmentKind kind, @NotNull VirtualFile root) {
-        RootData rootData = roots.get(root);
+        RootData rootData = roots.getDataForRoot(root);
         if (rootData == null) {
-            roots.put(root, new RootData(root, subModule, kind));
+            roots.putDataForRoot(root, new RootData(root, subModule, kind));
             PsiManager psiManager = PsiManager.getInstance(project);
             PsiDirectory directory = psiManager.findDirectory(root);
             if (directory != null) {
