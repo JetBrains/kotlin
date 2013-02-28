@@ -16,14 +16,11 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -37,19 +34,19 @@ import java.util.Set;
 
 public class MutableSubModuleDescriptor extends AbstractSubModuleDescriptor {
 
-    private final Multimap<FqName, MutablePackageFragmentDescriptor> packageFragments = HashMultimap.create();
+    private final MutablePackageFragmentProvider packageFragmentProvider;
     private final Set<SubModuleDescriptor> dependencies = Sets.newLinkedHashSet();
     private final List<ImportPath> defaultImports = Lists.newArrayList();
 
     public MutableSubModuleDescriptor(@NotNull MutableModuleDescriptor module, @NotNull Name name) {
         super(module, name);
+        this.packageFragmentProvider = new MutablePackageFragmentProvider(this);
     }
 
     @NotNull
     @Override
     public Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-        //noinspection unchecked
-        return (Collection) packageFragments.get(fqName);
+        return packageFragmentProvider.getPackageFragments(fqName);
     }
 
     @Nullable
@@ -88,17 +85,8 @@ public class MutableSubModuleDescriptor extends AbstractSubModuleDescriptor {
     }
 
     @NotNull
-    public MutablePackageFragmentDescriptor addPackageFragment(@NotNull PackageFragmentKind kind, @NotNull FqName fqName) {
-        // We use one fragment per kind
-        Collection<MutablePackageFragmentDescriptor> fragments = packageFragments.get(fqName);
-        for (MutablePackageFragmentDescriptor fragment : fragments) {
-            if (kind.equals(fragment.getKind())) return fragment;
-        }
-
-        MutablePackageFragmentDescriptor result = new MutablePackageFragmentDescriptor(this, kind, fqName);
-        packageFragments.put(fqName, result);
-
-        return result;
+    public MutablePackageFragmentProvider getPackageFragmentProvider() {
+        return packageFragmentProvider;
     }
 
     @NotNull

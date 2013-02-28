@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Submodules roughly correspond to root types, i.e. 'src" and 'test'
  */
-public interface SubModuleDescriptor extends DeclarationDescriptor {
+public interface SubModuleDescriptor extends DeclarationDescriptor, PackageFragmentProvider {
 
     @NotNull
     @Override
@@ -36,6 +36,7 @@ public interface SubModuleDescriptor extends DeclarationDescriptor {
     /**
      * @return package fragments for the given fqName as declared in this submodule
      */
+    @Override
     @NotNull
     Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
 

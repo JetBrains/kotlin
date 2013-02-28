@@ -477,7 +477,7 @@ public class TypeHierarchyResolver {
         public void visitJetFile(JetFile file) {
             MutableSubModuleDescriptor subModule = moduleManager.getSubModuleForFile(file);
             PackageFragmentKind kind = moduleManager.getPackageFragmentKindForFile(file);
-            MutablePackageFragmentDescriptor fragmentDescriptor = subModule.addPackageFragment(kind, JetPsiUtil.getFQName(file));
+            MutablePackageFragmentDescriptor fragmentDescriptor = subModule.getPackageFragmentProvider().addPackageFragment(kind, JetPsiUtil.getFQName(file));
             context.getPackageFragmentDescriptors().put(file, fragmentDescriptor);
 
             WriteThroughScope fileScope = new WriteThroughScope(outerScope, fragmentDescriptor.getMemberScope(),

@@ -121,7 +121,7 @@ public class MutableModuleSourcesManager implements ModuleSourcesManager {
         JetFile jetFile = (JetFile) file;
         FqName fqName = JetPsiUtil.getFQName(jetFile);
 
-        MutablePackageFragmentDescriptor fragment = subModule.addPackageFragment(kind, fqName);
+        MutablePackageFragmentDescriptor fragment = subModule.getPackageFragmentProvider().addPackageFragment(kind, fqName);
         sourceFiles.put(fragment, jetFile);
     }
 
