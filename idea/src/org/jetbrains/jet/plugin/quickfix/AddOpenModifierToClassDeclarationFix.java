@@ -24,27 +24,22 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 
-import static org.jetbrains.jet.lexer.JetTokens.FINAL_KEYWORD;
-import static org.jetbrains.jet.lexer.JetTokens.OPEN_KEYWORD;
+public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<JetTypeReference> {
+    private JetClass classDeclaration;
 
-public class FinalSupertypeFix extends JetIntentionAction<JetClass> {
-    private final JetClass childClass;
-    private JetClass superClass;
-
-    public FinalSupertypeFix(@NotNull JetClass childClass) {
-        super(childClass);
-        this.childClass = childClass;
+    public AddOpenModifierToClassDeclarationFix(@NotNull JetTypeReference typeReference) {
+        super(typeReference);
     }
 
     @Override
@@ -54,43 +49,32 @@ public class FinalSupertypeFix extends JetIntentionAction<JetClass> {
         }
 
         BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
-        ClassDescriptor childClassDescriptor = context.get(BindingContext.CLASS, childClass);
-        if (childClassDescriptor == null) {
-            return false;
+        JetType type = context.get(BindingContext.TYPE, element);
+        if (type == null) return false;
+        DeclarationDescriptor typeDeclarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if (typeDeclarationDescriptor == null) return false;
+        PsiElement typeDeclaration = BindingContextUtils.descriptorToDeclaration(context, typeDeclarationDescriptor);
+        if (typeDeclaration instanceof JetClass && typeDeclaration.isWritable()) {
+            this.classDeclaration = (JetClass) typeDeclaration;
         }
-        for (JetType supertype: childClassDescriptor.getTypeConstructor().getSupertypes()) {
-            ClassDescriptor superClassDescriptor = (ClassDescriptor) supertype.getConstructor().getDeclarationDescriptor();
-            if (superClassDescriptor == null) {
-                continue;
-            }
-            PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, superClassDescriptor);
-            if (declaration instanceof JetClass) {
-                superClass = (JetClass) declaration;
-                if (!superClass.isTrait() && !superClass.isEnum() && superClass.getContainingFile().isWritable()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return classDeclaration != null && !classDeclaration.isEnum() && !classDeclaration.isTrait();
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("add.supertype.modifier", "open");
+        return JetBundle.message("make.element.modifier", classDeclaration.getName(), "open");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("add.supertype.modifier.family");
+        return JetBundle.message("add.modifier.family");
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        assert superClass != null;
-        JetToken[] modifiersThanCanBeReplaced = new JetKeywordToken[] { FINAL_KEYWORD };
-        superClass.replace(AddModifierFix.addModifier(superClass, OPEN_KEYWORD, modifiersThanCanBeReplaced, project, false));
+        classDeclaration.replace(AddModifierFix.addModifierWithDefaultReplacement(classDeclaration, JetTokens.OPEN_KEYWORD, project, false));
     }
 
     @NotNull
@@ -99,10 +83,9 @@ public class FinalSupertypeFix extends JetIntentionAction<JetClass> {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetClass childClass = QuickFixUtil.getParentElementOfType(diagnostic, JetClass.class);
-                return childClass == null ? null : new FinalSupertypeFix(childClass);
+                JetTypeReference typeReference = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeReference.class);
+                return typeReference == null ? null : new AddOpenModifierToClassDeclarationFix(typeReference);
             }
         };
     }
 }
-
