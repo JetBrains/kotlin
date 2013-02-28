@@ -1024,7 +1024,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (captureReceiver != null) {
                 iv.load(0, OBJECT_TYPE);
                 final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.IMPL);
-                iv.load(1, asmType);
+                iv.load(k, asmType);
                 iv.putfield(internalName, CAPTURED_RECEIVER_FIELD, asmType.getDescriptor());
                 k += asmType.getSize();
             }
