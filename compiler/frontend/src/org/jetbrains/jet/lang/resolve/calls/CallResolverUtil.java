@@ -107,15 +107,12 @@ public class CallResolverUtil {
     }
 
     public static <D extends CallableDescriptor> boolean hasReturnTypeDependentOnNotInferredParams(
-            @NotNull ResolvedCallImpl<D> resolvedCall
+            @NotNull ResolvedCallImpl<D> callToComplete
     ) {
-        //todo[ResolvedCallImpl]
-        if (!(resolvedCall instanceof ResolvedCallImpl)) return false;
-        ResolvedCallImpl call = (ResolvedCallImpl) resolvedCall;
-        ConstraintSystem constraintSystem = call.getConstraintSystem();
+        ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
         if (constraintSystem == null) return false;
 
-        CallableDescriptor candidateDescriptor = call.getCandidateDescriptor();
+        CallableDescriptor candidateDescriptor = callToComplete.getCandidateDescriptor();
         JetType returnType = candidateDescriptor.getReturnType();
         if (returnType == null) return false;
 

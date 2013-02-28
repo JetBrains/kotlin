@@ -22,10 +22,12 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
+
+import static org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext.createForCallBeingAnalyzed;
 
 public class TypeInfoForCall {
 
@@ -43,22 +45,16 @@ public class TypeInfoForCall {
     public static TypeInfoForCall create(
             @Nullable JetType type,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ResolvedCall<FunctionDescriptor> resolvedCall,
+            @NotNull ResolvedCallWithTrace<FunctionDescriptor> resolvedCall,
             @NotNull Call call,
             @NotNull ResolutionContext context,
             @NotNull ResolveMode resolveMode
     ) {
         JetTypeInfo typeInfo = JetTypeInfo.create(type, dataFlowInfo);
-        CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext;
-        if (resolvedCall instanceof ResolvedCallImpl) {
-            //todo[ResolvedCallImpl]
-            callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                    (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, context.replaceBindingTrace(TraceUtil.TRACE_STUB),
-                    call, resolveMode, ((ResolvedCallImpl<FunctionDescriptor>) resolvedCall).getTracing());
-        }
-        else {
-            callCandidateResolutionContext = null;
-        }
+        ResolvedCallImpl<FunctionDescriptor> resolvedCallToComplete = resolvedCall.getCallToCompleteTypeArgumentInference();
+        CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext = createForCallBeingAnalyzed(
+                resolvedCallToComplete, context.replaceBindingTrace(TraceUtil.TRACE_STUB),
+                call, resolveMode, resolvedCallToComplete.getTracing());
         return new TypeInfoForCall(typeInfo, callCandidateResolutionContext);
 
     }

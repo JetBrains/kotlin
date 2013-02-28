@@ -269,4 +269,10 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         assert dataFlowInfo != null;
         dataFlowInfo = dataFlowInfo.and(info);
     }
+
+    @NotNull
+    @Override
+    public ResolvedCallImpl<D> getCallToCompleteTypeArgumentInference() {
+        return this;
+    }
 }

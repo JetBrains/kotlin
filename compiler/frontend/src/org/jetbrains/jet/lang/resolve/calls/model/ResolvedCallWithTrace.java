@@ -37,4 +37,12 @@ public interface ResolvedCallWithTrace<D extends CallableDescriptor> extends Res
     boolean isDirty();
 
     DelegatingBindingTrace getTrace();
+
+    /**
+     * //todo get rid of Impl class in the interface
+     * If the call has incomplete type parameters, it should be completed after resolution process is finished.
+     * Returns this for normal call and function call for VariableAsFunctionCall.
+     */
+    @NotNull
+    ResolvedCallImpl<D> getCallToCompleteTypeArgumentInference();
 }

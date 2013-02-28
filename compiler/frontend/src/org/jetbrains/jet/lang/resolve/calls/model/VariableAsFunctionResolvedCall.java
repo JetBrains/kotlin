@@ -132,4 +132,10 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     public boolean hasIncompleteTypeParameters() {
         return variableCall.hasIncompleteTypeParameters();
     }
+
+    @NotNull
+    @Override
+    public ResolvedCallImpl<FunctionDescriptor> getCallToCompleteTypeArgumentInference() {
+        return functionCall.getCallToCompleteTypeArgumentInference();
+    }
 }

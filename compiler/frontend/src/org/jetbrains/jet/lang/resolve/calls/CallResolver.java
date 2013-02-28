@@ -133,7 +133,7 @@ public class CallResolver {
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
+    /*package*/ OverloadResolutionResultsImpl<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
 
         ProgressIndicatorProvider.checkCanceled();
 
@@ -260,19 +260,19 @@ public class CallResolver {
                                                CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
     }
 
-    private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> doResolveCallOrGetCachedResults(
-            @NotNull WritableSlice<CallKey, OverloadResolutionResults<F>> resolutionResultsSlice,
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallOrGetCachedResults(
+            @NotNull WritableSlice<CallKey, OverloadResolutionResultsImpl<F>> resolutionResultsSlice,
             @NotNull final BasicCallResolutionContext context,
             @NotNull final List<ResolutionTask<D, F>> prioritizedTasks,
             @NotNull CallTransformer<D, F> callTransformer,
             @NotNull final JetReferenceExpression reference
     ) {
         PsiElement element = context.call.getCallElement();
-        OverloadResolutionResults<F> results = null;
+        OverloadResolutionResultsImpl<F> results = null;
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", context.call);
         if (element instanceof JetExpression) {
             CallKey key = CallKey.create(context.call.getCallType(), (JetExpression) element);
-            OverloadResolutionResults<F> cachedResults = context.trace.get(resolutionResultsSlice, key);
+            OverloadResolutionResultsImpl<F> cachedResults = context.trace.get(resolutionResultsSlice, key);
             if (cachedResults != null) {
                 DelegatingBindingTrace deltasTraceForResolve = context.trace.get(TRACE_DELTAS_CACHE, (JetExpression) element);
                 assert deltasTraceForResolve != null;
@@ -283,7 +283,6 @@ public class CallResolver {
         if (results == null) {
             BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
             results = doResolveCall(newContext, prioritizedTasks, callTransformer, reference);
-            assert results instanceof OverloadResolutionResultsImpl;
             DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
             if (deltasTraceForTypeInference != null) {
                 deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
@@ -304,7 +303,7 @@ public class CallResolver {
 
     private <D extends CallableDescriptor> void completeTypeInferenceDependentOnFunctionLiterals(
             @NotNull BasicCallResolutionContext context,
-            @NotNull OverloadResolutionResults<D> results,
+            @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
         if (!results.isSingleResult()) {
@@ -314,13 +313,13 @@ public class CallResolver {
             return;
         }
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                (ResolvedCallImpl<D>) results.getResultingCall(), context, tracing);
+                results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
         candidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> completeTypeInferenceDependentOnExpectedType(
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> completeTypeInferenceDependentOnExpectedType(
             @NotNull BasicCallResolutionContext context,
-            @NotNull OverloadResolutionResults<D> results,
+            @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
         if (results.isSingleResult()) {
@@ -332,16 +331,15 @@ public class CallResolver {
 
         if (!results.isSingleResult()) return results;
 
-        ResolvedCallWithTrace<D> resolvedCall = (ResolvedCallWithTrace<D>) results.getResultingCall();
-        //todo[ResolvedCallImpl]
-        if (!(resolvedCall instanceof ResolvedCallImpl)) return results;
+        ResolvedCallImpl<D> resolvedCall = results.getResultingCall().getCallToCompleteTypeArgumentInference();
+
         if (!resolvedCall.hasIncompleteTypeParameters()) {
             CallCandidateResolutionContext<D> callCandidateResolutionContext =
-                    CallCandidateResolutionContext.createForCallBeingAnalyzed((ResolvedCallImpl<D>) resolvedCall, context, tracing);
+                    CallCandidateResolutionContext.createForCallBeingAnalyzed(resolvedCall, context, tracing);
             candidateResolver.completeNestedCallsInference(callCandidateResolutionContext);
             return results;
         }
-        ResolvedCallImpl<D> copy = CallResolverUtil.copy((ResolvedCallImpl<D>) resolvedCall, context);
+        ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall, context);
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
                 CallCandidateResolutionContext.createForCallBeingAnalyzed(copy, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
@@ -352,8 +350,8 @@ public class CallResolver {
         return OverloadResolutionResultsImpl.incompleteTypeInference(copy);
     }
 
-    private <F extends CallableDescriptor> void cacheResults(@NotNull WritableSlice<CallKey, OverloadResolutionResults<F>> resolutionResultsSlice,
-            @NotNull BasicCallResolutionContext context, @NotNull OverloadResolutionResults<F> results,
+    private <F extends CallableDescriptor> void cacheResults(@NotNull WritableSlice<CallKey, OverloadResolutionResultsImpl<F>> resolutionResultsSlice,
+            @NotNull BasicCallResolutionContext context, @NotNull OverloadResolutionResultsImpl<F> results,
             @NotNull DelegatingBindingTrace traceToResolveCall) {
         //boolean canBeCached = true;
         //for (ResolvedCall<? extends CallableDescriptor> call : results.getResultingCalls()) {
@@ -370,17 +368,17 @@ public class CallResolver {
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
 
 
-        context.trace.record(resolutionResultsSlice, CallKey.create(context.call.getCallType(), (JetExpression)callElement), results);
+        context.trace.record(resolutionResultsSlice, CallKey.create(context.call.getCallType(), (JetExpression) callElement), results);
         context.trace.record(TRACE_DELTAS_CACHE, (JetExpression) callElement, deltasTraceToCacheResolve);
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> checkArgumentTypesAndFail(BasicCallResolutionContext context) {
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> checkArgumentTypesAndFail(BasicCallResolutionContext context) {
         argumentTypeResolver.checkTypesWithNoCallee(context);
         return OverloadResolutionResultsImpl.nameNotFound();
     }
 
     @NotNull
-    private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> doResolveCall(
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCall(
             @NotNull final BasicCallResolutionContext context,
             @NotNull final List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
             @NotNull CallTransformer<D, F> callTransformer,

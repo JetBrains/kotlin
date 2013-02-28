@@ -28,9 +28,11 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -148,18 +150,18 @@ public class CallExpressionResolver {
     }
 
     @Nullable
-    private ResolvedCall<FunctionDescriptor> getResolvedCallForFunction(
+    private ResolvedCallWithTrace<FunctionDescriptor> getResolvedCallForFunction(
             @NotNull Call call, @NotNull JetExpression callExpression, @NotNull ReceiverValue receiver,
             @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode, @NotNull boolean[] result
     ) {
         CallResolver callResolver = expressionTypingServices.getCallResolver();
-        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
+        OverloadResolutionResultsImpl<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                 BasicCallResolutionContext.create(context, call, resolveMode));
         if (!results.isNothing()) {
             checkSuper(receiver, results, context.trace, callExpression);
             result[0] = true;
             if (results.isSingleResult() && resolveMode == ResolveMode.TOP_LEVEL_CALL) {
-                ResolvedCallImpl<FunctionDescriptor> callToComplete = results.getResultingCall().getResolvedCallToComplete();
+                ResolvedCallImpl<FunctionDescriptor> callToComplete = results.getResultingCall().getCallToCompleteTypeArgumentInference();
                 if (CallResolverUtil.hasReturnTypeDependentOnNotInferredParams(callToComplete)) return null;
 
                 // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
@@ -271,7 +273,7 @@ public class CallExpressionResolver {
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
 
         TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call", callExpression);
-        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
+        ResolvedCallWithTrace<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
                 call, callExpression, receiver, context.replaceBindingTrace(traceForFunction), resolveMode, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
