@@ -35,7 +35,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     private Map<Name, ClassDescriptor> innerClassesMap = null;
 
     protected JavaClassMembersScope(
-            @NotNull ClassOrNamespaceDescriptor descriptor,
+            @NotNull ClassOrPackageDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
             @NotNull JavaSemanticServices semanticServices
     ) {

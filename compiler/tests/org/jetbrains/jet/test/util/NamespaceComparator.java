@@ -69,14 +69,14 @@ public class NamespaceComparator {
     }
 
     private void appendDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull Printer printer, boolean topLevel) {
-        if (descriptor instanceof ClassOrNamespaceDescriptor && !topLevel) {
+        if (descriptor instanceof ClassOrPackageDescriptor && !topLevel) {
             printer.println();
         }
 
         boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
         printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", RENDERER.render(descriptor));
 
-        if (descriptor instanceof ClassOrNamespaceDescriptor) {
+        if (descriptor instanceof ClassOrPackageDescriptor) {
             if (!topLevel) {
                 printer.printlnWithNoIndent(" {").pushIndent();
             }

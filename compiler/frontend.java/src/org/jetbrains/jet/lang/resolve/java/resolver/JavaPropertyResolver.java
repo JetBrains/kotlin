@@ -80,7 +80,7 @@ public final class JavaPropertyResolver {
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name fieldName,
             @NotNull PsiDeclarationProvider scopeData,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
         NamedMembers namedMembers = scopeData.getMembersCache().get(fieldName);
         if (namedMembers == null) {
@@ -93,7 +93,7 @@ public final class JavaPropertyResolver {
 
     @NotNull
     private Set<VariableDescriptor> resolveNamedGroupProperties(
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull ClassOrPackageDescriptor ownerDescriptor,
             @NotNull PsiDeclarationProvider scopeData,
             @NotNull NamedMembers namedMembers,
             @NotNull Name propertyName,
@@ -129,7 +129,7 @@ public final class JavaPropertyResolver {
     }
 
     private static void generateOverrides(
-            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull ClassOrPackageDescriptor owner,
             @NotNull Name propertyName,
             @NotNull Set<PropertyDescriptor> propertiesFromCurrent,
             @NotNull Set<PropertyDescriptor> propertiesFromSupertypes,
@@ -160,7 +160,7 @@ public final class JavaPropertyResolver {
 
     @NotNull
     private PropertyDescriptor resolveProperty(
-            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull ClassOrPackageDescriptor owner,
             @NotNull PsiDeclarationProvider scopeData,
             @NotNull Name propertyName,
             @NotNull String context,
@@ -424,7 +424,7 @@ public final class JavaPropertyResolver {
 
     @NotNull
     private static Set<PropertyDescriptor> getPropertiesFromSupertypes(
-            @NotNull Name propertyName, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull Name propertyName, @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
         Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
         for (JetType supertype : DescriptorResolverUtils.getSupertypes(ownerDescriptor)) {

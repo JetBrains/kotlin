@@ -197,7 +197,7 @@ public final class JavaClassResolver {
         checkFqNamesAreConsistent(psiClass, fqName);
         DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
-        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
+        ClassOrPackageDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         // class may be resolved during resolution of parent
         ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(fqName));
         if (cachedDescriptor != null) {
@@ -214,7 +214,7 @@ public final class JavaClassResolver {
             @NotNull FqName fqName,
             @NotNull PsiClass psiClass,
             @NotNull PostponedTasks taskList,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration
+            @NotNull ClassOrPackageDescriptor containingDeclaration
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         AbiVersionUtil.checkAbiVersion(psiClass, jetClassAnnotation, trace);
@@ -304,7 +304,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
+    private ClassOrPackageDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
         if (isContainedInClass(psiClass)) {
             return resolveParentClass(psiClass);
         }
@@ -346,7 +346,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassOrNamespaceDescriptor resolveParentClass(@NotNull PsiClass psiClass) {
+    private ClassOrPackageDescriptor resolveParentClass(@NotNull PsiClass psiClass) {
         PsiClass containingClass = psiClass.getContainingClass();
         assert containingClass != null;
         FqName containerFqName = getFqName(containingClass);
@@ -359,7 +359,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassOrNamespaceDescriptor resolveParentNamespace(@NotNull PsiClass psiClass) {
+    private ClassOrPackageDescriptor resolveParentNamespace(@NotNull PsiClass psiClass) {
         FqName namespaceFqName = getFqName(psiClass).parent();
         PackageViewDescriptor parentNamespace = namespaceResolver.resolveNamespace(namespaceFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
         if (parentNamespace == null) {

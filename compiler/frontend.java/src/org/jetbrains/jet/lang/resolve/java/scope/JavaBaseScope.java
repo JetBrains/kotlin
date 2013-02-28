@@ -51,13 +51,13 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @Nullable
     private Collection<DeclarationDescriptor> allDescriptors = null;
     @NotNull
-    protected final ClassOrNamespaceDescriptor descriptor;
+    protected final ClassOrPackageDescriptor descriptor;
 
     private Collection<ClassDescriptor> innerClasses = null;
 
 
     protected JavaBaseScope(
-            @NotNull ClassOrNamespaceDescriptor descriptor,
+            @NotNull ClassOrPackageDescriptor descriptor,
             @NotNull JavaSemanticServices semanticServices,
             @NotNull PsiDeclarationProvider declarationProvider
     ) {

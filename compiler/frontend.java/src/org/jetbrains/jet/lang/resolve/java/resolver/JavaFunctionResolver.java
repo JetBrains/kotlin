@@ -92,7 +92,7 @@ public final class JavaFunctionResolver {
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
-            @NotNull PsiDeclarationProvider scopeData, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull PsiDeclarationProvider scopeData, @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
         PsiType returnPsiType = method.getReturnType();
         if (returnPsiType == null) {
@@ -255,7 +255,7 @@ public final class JavaFunctionResolver {
 
     @NotNull
     private Set<FunctionDescriptor> resolveNamedGroupFunctions(
-            @NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass,
+            @NotNull ClassOrPackageDescriptor owner, @NotNull PsiClass psiClass,
             NamedMembers namedMembers, Name methodName, PsiDeclarationProvider scopeData
     ) {
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
@@ -311,7 +311,7 @@ public final class JavaFunctionResolver {
     public Set<FunctionDescriptor> resolveFunctionGroup(
             @NotNull Name methodName,
             @NotNull ClassPsiDeclarationProvider scopeData,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
 
         NamedMembers namedMembers = scopeData.getMembersCache().get(methodName);
@@ -350,10 +350,10 @@ public final class JavaFunctionResolver {
 
     @NotNull
     private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
-            @NotNull Name methodName, @NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor
+            @NotNull Name methodName, @NotNull ClassOrPackageDescriptor classOrPackageDescriptor
     ) {
         Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(classOrNamespaceDescriptor)) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(classOrPackageDescriptor)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
                 r.add((SimpleFunctionDescriptor) function);
             }

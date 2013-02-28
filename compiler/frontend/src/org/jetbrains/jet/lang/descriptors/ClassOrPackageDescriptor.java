@@ -16,5 +16,5 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-public interface ClassOrNamespaceDescriptor extends DeclarationDescriptorNonRoot {
+public interface ClassOrPackageDescriptor extends DeclarationDescriptorNonRoot {
 }

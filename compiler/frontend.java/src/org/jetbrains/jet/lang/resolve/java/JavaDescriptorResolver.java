@@ -215,7 +215,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name name,
             @NotNull PsiDeclarationProvider data,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
         return propertiesResolver.resolveFieldGroupByName(name, data, ownerDescriptor);
     }
@@ -249,7 +249,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public Set<FunctionDescriptor> resolveFunctionGroup(
             @NotNull Name methodName,
             @NotNull ClassPsiDeclarationProvider scopeData,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
         return functionResolver.resolveFunctionGroup(methodName, scopeData, ownerDescriptor);
     }

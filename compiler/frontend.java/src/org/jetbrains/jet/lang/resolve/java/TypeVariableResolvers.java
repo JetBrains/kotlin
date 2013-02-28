@@ -25,7 +25,7 @@ import java.util.List;
 public class TypeVariableResolvers {
 
     @NotNull
-    public static List<TypeParameterDescriptor> getTypeParameterDescriptors(@NotNull ClassOrNamespaceDescriptor clazz) {
+    public static List<TypeParameterDescriptor> getTypeParameterDescriptors(@NotNull ClassOrPackageDescriptor clazz) {
         if (clazz instanceof ClassDescriptor) {
             return ((ClassDescriptor) clazz).getTypeConstructor().getParameters();
         }
@@ -35,7 +35,7 @@ public class TypeVariableResolvers {
     }
 
     @NotNull
-    public static TypeVariableResolver classTypeVariableResolver(@NotNull ClassOrNamespaceDescriptor clazz, @NotNull String context) {
+    public static TypeVariableResolver classTypeVariableResolver(@NotNull ClassOrPackageDescriptor clazz, @NotNull String context) {
         return typeVariableResolverFromTypeParameters(getTypeParameterDescriptors(clazz), clazz, context);
     }
 

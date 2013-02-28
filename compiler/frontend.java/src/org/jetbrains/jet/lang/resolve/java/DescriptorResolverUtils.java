@@ -51,9 +51,9 @@ public final class DescriptorResolverUtils {
     }
 
     @NotNull
-    public static Collection<JetType> getSupertypes(@NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor) {
-        if (classOrNamespaceDescriptor instanceof ClassDescriptor) {
-            return ((ClassDescriptor) classOrNamespaceDescriptor).getTypeConstructor().getSupertypes();
+    public static Collection<JetType> getSupertypes(@NotNull ClassOrPackageDescriptor classOrPackageDescriptor) {
+        if (classOrPackageDescriptor instanceof ClassDescriptor) {
+            return ((ClassDescriptor) classOrPackageDescriptor).getTypeConstructor().getSupertypes();
         }
         return Collections.emptyList();
     }
