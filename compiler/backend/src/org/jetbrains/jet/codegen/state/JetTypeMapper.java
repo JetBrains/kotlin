@@ -29,6 +29,7 @@ import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -66,7 +67,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
-            return jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration);
+            return jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration, descriptor);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -121,7 +122,7 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    private JvmClassName jvmClassNameForNamespace(@NotNull NamespaceDescriptor namespace) {
+    private JvmClassName jvmClassNameForNamespace(@NotNull NamespaceDescriptor namespace, @NotNull DeclarationDescriptor descriptor) {
 
         StringBuilder r = new StringBuilder();
 
@@ -145,7 +146,20 @@ public class JetTypeMapper extends BindingTraceAware {
             if (r.length() > 0) {
                 r.append("/");
             }
-            r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
+
+            if (descriptor instanceof PropertyDescriptor) {
+                JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
+                if (file != null) {
+                    String internalName = NamespaceCodegen.getNamespacePartInternalName(file);
+                    r.append(internalName.substring(r.length()));
+                }
+                else {
+                    r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
+                }
+            }
+            else {
+                r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
+            }
         }
 
         if (r.length() == 0) {
@@ -450,7 +464,7 @@ public class JetTypeMapper extends BindingTraceAware {
         JvmClassName thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent);
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent, functionDescriptor);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;

@@ -314,7 +314,7 @@ public class FunctionCodegen extends GenerationStateAware {
         }
     }
 
-    private void generateStaticDelegateMethodBody(
+    public static void generateStaticDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
             @NotNull OwnerKind.StaticDelegateKind dk

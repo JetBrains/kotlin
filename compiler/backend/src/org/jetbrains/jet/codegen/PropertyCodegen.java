@@ -66,10 +66,10 @@ public class PropertyCodegen extends GenerationStateAware {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        assert kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
+        assert kind instanceof OwnerKind.StaticDelegateKind || kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        if (kind != OwnerKind.TRAIT_IMPL) {
+        if (kind != OwnerKind.TRAIT_IMPL && !(kind instanceof OwnerKind.StaticDelegateKind)) {
             generateBackingField(p, propertyDescriptor);
         }
         generateGetter(p, propertyDescriptor);
@@ -166,7 +166,7 @@ public class PropertyCodegen extends GenerationStateAware {
             return;
         }
 
-        if (kind == OwnerKind.NAMESPACE) {
+        if (kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind) {
             flags |= ACC_STATIC;
         }
 
@@ -199,6 +199,9 @@ public class PropertyCodegen extends GenerationStateAware {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     genStubThrow(mv);
+                }
+                else if (kind instanceof OwnerKind.StaticDelegateKind) {
+                    FunctionCodegen.generateStaticDelegateMethodBody(mv, jvmMethodSignature.getAsmMethod(), (OwnerKind.StaticDelegateKind) kind);
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
@@ -246,7 +249,7 @@ public class PropertyCodegen extends GenerationStateAware {
             return;
         }
 
-        if (kind == OwnerKind.NAMESPACE) {
+        if (kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind) {
             flags |= ACC_STATIC;
         }
 
@@ -275,6 +278,9 @@ public class PropertyCodegen extends GenerationStateAware {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     genStubThrow(mv);
+                }
+                else if (kind instanceof OwnerKind.StaticDelegateKind) {
+                    FunctionCodegen.generateStaticDelegateMethodBody(mv, jvmMethodSignature.getAsmMethod(), (OwnerKind.StaticDelegateKind) kind);
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
