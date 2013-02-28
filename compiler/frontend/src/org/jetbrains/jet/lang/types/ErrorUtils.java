@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
@@ -31,7 +32,7 @@ import java.util.*;
 
 public class ErrorUtils {
 
-    private static final OldModuleDescriptor ERROR_MODULE = new OldModuleDescriptor(Name.special("<ERROR MODULE>"));
+    private static final ModuleDescriptor ERROR_MODULE = new MutableModuleDescriptor(Name.special("<ERROR MODULE>"), PlatformToKotlinClassMap.EMPTY);
 
 
     public static class ErrorScope implements JetScope {

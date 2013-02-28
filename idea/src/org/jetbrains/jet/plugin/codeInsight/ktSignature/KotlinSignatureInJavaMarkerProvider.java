@@ -37,8 +37,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -91,7 +91,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         BindingContext bindingContext = declarationsCache.getBindingContext();
         DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(bindingContext, "wrapped context of declarations cache");
 
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, bindingTrace, new OldModuleDescriptor(Name.special("<fake>")));
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, bindingTrace, new ModuleDescriptor(Name.special("<fake>")));
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         for (PsiElement element : elements) {

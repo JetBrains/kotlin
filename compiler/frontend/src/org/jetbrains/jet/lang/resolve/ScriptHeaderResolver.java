@@ -21,7 +21,8 @@ import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
@@ -46,7 +47,7 @@ public class ScriptHeaderResolver {
     public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");
 
     @NotNull
-    private NamespaceFactory namespaceFactory;
+    private MutableSubModuleDescriptor subModule;
     @NotNull
     private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
     @NotNull
@@ -57,8 +58,8 @@ public class ScriptHeaderResolver {
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
     @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactory namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setSubModule(@NotNull MutableSubModuleDescriptor subModule) {
+        this.subModule = subModule;
     }
 
     @Inject
@@ -115,14 +116,14 @@ public class ScriptHeaderResolver {
         JetFile file = (JetFile) script.getContainingFile();
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
         FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
-        NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(fqName);
+        MutablePackageFragmentDescriptor packageFragment = subModule.addPackageFragment(PackageFragmentKind.SOURCE, fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);
         if (priority == null) {
             priority = 0;
         }
 
-        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority, script, outerScope);
+        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(packageFragment, priority, script, outerScope);
         //WriteThroughScope scriptScope = new WriteThroughScope(
         //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");

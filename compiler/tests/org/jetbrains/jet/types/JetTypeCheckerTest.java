@@ -27,7 +27,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
@@ -616,7 +616,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     private WritableScope getDeclarationsScope(String path) throws IOException {
-        OldModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolveEagerly(
+        ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolveEagerly(
                 Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path))),
                 getEnvironment()
         );

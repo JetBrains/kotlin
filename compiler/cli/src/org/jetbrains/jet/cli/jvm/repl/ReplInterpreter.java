@@ -40,8 +40,7 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -82,13 +81,13 @@ public class ReplInterpreter {
     @NotNull
     private final BindingTraceContext trace;
     @NotNull
-    private final OldModuleDescriptor module;
+    private final ModuleDescriptor module;
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
         jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
-        module = new OldModuleDescriptor(Name.special("<repl>"));
+        module = new ModuleDescriptor(Name.special("<repl>"));
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(),
                 false,

@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -108,7 +107,7 @@ public class DescriptorUtils {
     public static FqNameUnsafe getFQName(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
-        if (descriptor instanceof OldModuleDescriptor || containingDeclaration instanceof OldModuleDescriptor) {
+        if (descriptor instanceof ModuleDescriptor || containingDeclaration instanceof ModuleDescriptor) {
             return FqName.ROOT.toUnsafe();
         }
 
@@ -237,7 +236,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isRootNamespace(@NotNull PackageViewDescriptor packageViewDescriptor) {
-        return packageViewDescriptor.getContainingDeclaration() instanceof OldModuleDescriptor;
+        return packageViewDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
     }
 
     @NotNull
@@ -468,12 +467,10 @@ public class DescriptorUtils {
 
     @Nullable
     public static ClassDescriptor getClassForCorrespondingJavaNamespace(@NotNull PackageViewDescriptor correspondingNamespace) {
-        NamespaceDescriptorParent containingDeclaration = correspondingNamespace.getContainingDeclaration();
-        if (!(containingDeclaration instanceof PackageViewDescriptor)) {
+        PackageViewDescriptor packageViewDescriptor = correspondingNamespace.getContainingDeclaration();
+        if (packageViewDescriptor == null) {
             return null;
         }
-
-        PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
 
         ClassifierDescriptor classDescriptor = packageViewDescriptor.getMemberScope().getClassifier(correspondingNamespace.getName());
         if (classDescriptor != null && classDescriptor instanceof ClassDescriptor) {

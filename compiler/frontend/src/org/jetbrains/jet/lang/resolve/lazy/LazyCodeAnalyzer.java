@@ -402,7 +402,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
                 }
 
                 @Override
-                public Void visitModuleDeclaration(OldModuleDescriptor descriptor, Void data) {
+                public Void visitModuleDeclaration(ModuleDescriptor descriptor, Void data) {
                     ForceResolveUtil.forceResolveAllContents(descriptor);
                     return null;
                 }

@@ -20,7 +20,7 @@ import com.google.common.base.Predicate;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -39,8 +39,8 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
     @Override
     protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files) {
         List<JetFile> jetFiles = getJetFiles(files);
-        OldModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, getEnvironment());
-        OldModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, getEnvironment());
+        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
 
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
         PackageViewDescriptor expected = eagerModule.getRootNamespace();

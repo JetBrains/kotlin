@@ -23,7 +23,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.di.*;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
@@ -109,7 +109,7 @@ public class GenerateInjectors {
         // Parameters
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(BindingTrace.class);
-        generator.addPublicParameter(OldModuleDescriptor.class);
+        generator.addPublicParameter(ModuleDescriptor.class);
 
         // Fields
         generator.addField(JavaBridgeConfiguration.class);
@@ -134,7 +134,7 @@ public class GenerateInjectors {
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(BindingTrace.class);
-        generator.addParameter(OldModuleDescriptor.class);
+        generator.addParameter(ModuleDescriptor.class);
     }
 
     private static void generateMacroInjector() throws IOException {
@@ -177,8 +177,8 @@ public class GenerateInjectors {
                            new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
         generator.addField(JavaBridgeConfiguration.class);
         generator.addPublicField(PsiClassFinderImpl.class);
-        generator.addField(false, OldModuleDescriptor.class, null,
-                           new GivenExpression("new org.jetbrains.jet.lang.descriptors.OldModuleDescriptor(" +
+        generator.addField(false, ModuleDescriptor.class, null,
+                           new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(" +
                                                "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
 
         // Parameters

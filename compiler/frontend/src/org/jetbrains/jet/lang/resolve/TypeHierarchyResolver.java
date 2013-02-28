@@ -157,7 +157,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private JetScope getStaticScope(PsiElement declarationElement, @NotNull NamespaceLikeBuilder owner) {
         DeclarationDescriptor ownerDescriptor = owner.getOwnerForChildren();
-        if (ownerDescriptor instanceof NamespaceDescriptorImpl) {
+        if (ownerDescriptor instanceof PackageFragmentDescriptor) {
             return context.getFileScopes().get(declarationElement.getContainingFile());
         }
 
@@ -168,8 +168,8 @@ public class TypeHierarchyResolver {
             }
 
             DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
-            if (declaration instanceof NamespaceDescriptorImpl) {
-                return getStaticScope(declarationElement, ((NamespaceDescriptorImpl) declaration).getBuilder());
+            if (declaration instanceof MutablePackageFragmentDescriptor) {
+                return getStaticScope(declarationElement, ((MutablePackageFragmentDescriptor) declaration).getBuilder());
             }
 
             if (declaration instanceof MutableClassDescriptorLite) {

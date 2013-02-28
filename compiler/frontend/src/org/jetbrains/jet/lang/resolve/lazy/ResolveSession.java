@@ -57,7 +57,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     private final StorageManager storageManager;
 
-    private final OldModuleDescriptor module;
+    private final ModuleDescriptor module;
     private final LazyPackageDescriptor rootPackage;
 
     private final BindingTrace trace;
@@ -74,7 +74,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public ResolveSession(
         @NotNull Project project,
         @NotNull StorageManager storageManager,
-        @NotNull OldModuleDescriptor rootDescriptor,
+        @NotNull ModuleDescriptor rootDescriptor,
         @NotNull ModuleConfiguration moduleConfiguration,
         @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
@@ -86,7 +86,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public ResolveSession(
             @NotNull Project project,
             @NotNull StorageManager storageManager,
-            @NotNull OldModuleDescriptor rootDescriptor,
+            @NotNull ModuleDescriptor rootDescriptor,
             @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
@@ -105,7 +105,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public ResolveSession(
             @NotNull Project project,
             @NotNull StorageManager storageManager,
-            @NotNull OldModuleDescriptor rootDescriptor,
+            @NotNull ModuleDescriptor rootDescriptor,
             @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
@@ -137,7 +137,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     //@Override
-    public OldModuleDescriptor getRootModuleDescriptor() {
+    public ModuleDescriptor getRootModuleDescriptor() {
         return module;
     }
 
@@ -363,7 +363,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
-            public Void visitModuleDeclaration(OldModuleDescriptor descriptor, Void data) {
+            public Void visitModuleDeclaration(ModuleDescriptor descriptor, Void data) {
                 ForceResolveUtil.forceResolveAllContents(descriptor);
                 return null;
             }

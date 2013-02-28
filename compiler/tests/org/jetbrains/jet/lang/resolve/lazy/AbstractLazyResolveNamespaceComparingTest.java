@@ -21,7 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -59,8 +59,8 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
                                      }
                                  });
 
-        OldModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
-        OldModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
+        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
 
         Name test = Name.identifier("test");
         PackageViewDescriptor actual = lazyModule.getRootNamespace().getMemberScope().getPackage(test);

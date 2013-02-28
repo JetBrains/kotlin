@@ -23,7 +23,7 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -41,7 +41,7 @@ public class JetPluginUtil {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
 
         LinkedList<String> fullName = Lists.newLinkedList();
-        while (declarationDescriptor != null && !(declarationDescriptor instanceof OldModuleDescriptor)) {
+        while (declarationDescriptor != null && !(declarationDescriptor instanceof ModuleDescriptor)) {
             fullName.addFirst(declarationDescriptor.getName().getName());
             declarationDescriptor = declarationDescriptor.getContainingDeclaration();
         }

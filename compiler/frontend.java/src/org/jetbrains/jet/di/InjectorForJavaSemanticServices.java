@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.di;
 
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -48,7 +48,7 @@ public class InjectorForJavaSemanticServices {
     private BindingTrace bindingTrace;
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private PsiClassFinderImpl psiClassFinder;
-    private OldModuleDescriptor moduleDescriptor;
+    private ModuleDescriptor moduleDescriptor;
     private final Project project;
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
     private JavaTypeTransformer javaTypeTransformer;
@@ -73,7 +73,7 @@ public class InjectorForJavaSemanticServices {
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinder = new PsiClassFinderImpl();
-        this.moduleDescriptor = new OldModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"));
+        this.moduleDescriptor = new ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"));
         this.project = project;
         this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
         this.javaTypeTransformer = new JavaTypeTransformer();

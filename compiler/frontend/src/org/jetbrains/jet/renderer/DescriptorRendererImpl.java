@@ -278,7 +278,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     /* METHODS FOR ALL KINDS OF DESCRIPTORS */
     private void appendDefinedIn(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
-        if (descriptor instanceof OldModuleDescriptor) {
+        if (descriptor instanceof ModuleDescriptor) {
             builder.append(" is a module");
             return;
         }
@@ -694,7 +694,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         @Override
-        public Void visitModuleDeclaration(OldModuleDescriptor descriptor, StringBuilder builder) {
+        public Void visitModuleDeclaration(ModuleDescriptor descriptor, StringBuilder builder) {
             renderModuleOrScript(descriptor, builder);
             return null;
         }
