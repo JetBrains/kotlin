@@ -12,8 +12,9 @@ import java.net.URL
  */
 public fun File.recurse(block: (File) -> Unit): Unit {
     block(this)
-    if (this.isDirectory()) {
-        for (child in this.listFiles()!!) {
+    val children = this.listFiles()
+    if (children != null) {
+        for (child in children) {
             child.recurse(block)
         }
     }

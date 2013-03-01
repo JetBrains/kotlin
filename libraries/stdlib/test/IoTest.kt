@@ -110,4 +110,29 @@ class IoTest(){
         assertEquals("", file1.relativePath(file1))
         assertEquals(file3.canonicalPath, file1.relativePath(file3))
     }
+
+    test fun listFiles() {
+        val dir = File.createTempFile("temp", System.nanoTime().toString())
+        dir.delete()
+        dir.mkdir()
+
+        File.createTempFile("temp", "1.kt", dir)
+        File.createTempFile("temp", "2.java", dir)
+
+        val subdir = File(dir, "subdir")
+        subdir.mkdir()
+
+        File(subdir, "3.txt").createNewFile()
+
+        var totalFiles = 0
+        dir.recurse { totalFiles++ }
+
+        assertEquals(5, totalFiles)
+
+        subdir.setReadable(false)
+
+        var totalFilesWithUnReadableDir = 0
+        dir.recurse { totalFilesWithUnReadableDir++ }
+        assertEquals(4, totalFilesWithUnReadableDir)
+    }
 }
