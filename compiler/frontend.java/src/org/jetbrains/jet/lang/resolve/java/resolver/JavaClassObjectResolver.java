@@ -53,6 +53,7 @@ public final class JavaClassObjectResolver {
     private BindingTrace trace;
     private JavaSemanticServices semanticServices;
     private JavaSupertypeResolver supertypesResolver;
+    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
 
     @Inject
     public void setSupertypesResolver(JavaSupertypeResolver supertypesResolver) {
@@ -69,19 +70,20 @@ public final class JavaClassObjectResolver {
         this.semanticServices = semanticServices;
     }
 
+    @Inject
+    public void setPsiDeclarationProviderFactory(PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
+        this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
+    }
+
     @Nullable
-    public ClassDescriptorFromJvmBytecode createClassObjectDescriptor(
+    public Result createClassObjectDescriptor(
             @NotNull ClassDescriptor containing,
             @NotNull PsiClass psiClass
     ) {
         DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
         if (psiClass.isEnum()) {
-            return createClassObjectDescriptorForEnum(containing, psiClass);
-        }
-
-        if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
-            return null;
+            return new Result(createClassObjectDescriptorForEnum(containing, psiClass), null);
         }
 
         PsiClass classObjectPsiClass = getClassObjectPsiClass(psiClass);
@@ -93,14 +95,14 @@ public final class JavaClassObjectResolver {
     }
 
     @NotNull
-    private ClassDescriptorFromJvmBytecode createClassObjectFromPsi(
+    public Result createClassObjectFromPsi(
             @NotNull ClassDescriptor containing,
             @NotNull PsiClass classObjectPsiClass
     ) {
         String qualifiedName = classObjectPsiClass.getQualifiedName();
         assert qualifiedName != null;
         FqName fqName = new FqName(qualifiedName);
-        ClassPsiDeclarationProvider classObjectData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(classObjectPsiClass);
+        ClassPsiDeclarationProvider classObjectData = psiDeclarationProviderFactory.createBinaryClassData(classObjectPsiClass);
         ClassDescriptorFromJvmBytecode classObjectDescriptor
                 = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
         classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(classObjectDescriptor,
@@ -108,7 +110,7 @@ public final class JavaClassObjectResolver {
                                                                              classObjectData,
                                                                              Collections.<TypeParameterDescriptor>emptyList()));
         setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, classObjectData, getClassObjectName(containing.getName()));
-        return classObjectDescriptor;
+        return new Result(classObjectDescriptor, classObjectPsiClass);
     }
 
     @NotNull
@@ -132,7 +134,7 @@ public final class JavaClassObjectResolver {
         FqNameUnsafe fqName = DescriptorResolverUtils.getFqNameForClassObject(psiClass);
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
                 new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
-        ClassPsiDeclarationProvider data = semanticServices.getPsiDeclarationProviderFactory().createSyntheticClassObjectClassData(psiClass);
+        ClassPsiDeclarationProvider data = psiDeclarationProviderFactory.createSyntheticClassObjectClassData(psiClass);
         setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().getName()));
         return classObjectDescriptor;
     }
@@ -160,11 +162,35 @@ public final class JavaClassObjectResolver {
 
     @Nullable
     private static PsiClass getClassObjectPsiClass(@NotNull PsiClass ownerClass) {
+        if (!DescriptorResolverUtils.isKotlinClass(ownerClass)) {
+            return null;
+        }
+
         for (PsiClass inner : ownerClass.getInnerClasses()) {
             if (JetClassObjectAnnotation.get(inner).isDefined()) {
                 return inner;
             }
         }
         return null;
+    }
+
+    public static final class Result {
+        private final ClassDescriptorFromJvmBytecode classObjectDescriptor;
+        private final PsiClass classObjectPsiClass;
+
+        public Result(@NotNull ClassDescriptorFromJvmBytecode classObjectDescriptor, @Nullable PsiClass classObjectPsiClass) {
+            this.classObjectDescriptor = classObjectDescriptor;
+            this.classObjectPsiClass = classObjectPsiClass;
+        }
+
+        @NotNull
+        public ClassDescriptorFromJvmBytecode getClassObjectDescriptor() {
+            return classObjectDescriptor;
+        }
+
+        @Nullable
+        public PsiClass getClassObjectPsiClass() {
+            return classObjectPsiClass;
+        }
     }
 }
