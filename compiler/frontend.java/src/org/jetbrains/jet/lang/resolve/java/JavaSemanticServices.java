@@ -16,83 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 
-import javax.inject.Inject;
-
-public class JavaSemanticServices {
+public interface JavaSemanticServices {
     @NotNull
-    private JavaTypeTransformer typeTransformer;
-    @NotNull
-    private JavaDescriptorResolver descriptorResolver;
-    @NotNull
-    private PsiClassFinder psiClassFinder;
-    @NotNull
-    private BindingTrace trace;
-    @NotNull
-    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
-
-    @Inject
-    public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
-        this.typeTransformer = typeTransformer;
-    }
-
-    @Inject
-    public void setDescriptorResolver(@NotNull JavaDescriptorResolver descriptorResolver) {
-        this.descriptorResolver = descriptorResolver;
-    }
-
-    @Inject
-    public void setPsiClassFinder(@NotNull PsiClassFinder psiClassFinder) {
-        this.psiClassFinder = psiClassFinder;
-    }
-
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
+    DiagnosticHolder getDiagnosticHolder();
 
     @NotNull
-    public JavaTypeTransformer getTypeTransformer() {
-        return typeTransformer;
-    }
-
-    @Inject
-    public void setPsiDeclarationProviderFactory(PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
-        this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
-    }
-
-    @NotNull
-    public JavaDescriptorResolver getDescriptorResolver() {
-        return descriptorResolver;
-    }
-
-    @Nullable
-    public ClassDescriptor getKotlinClassDescriptor(@NotNull FqName qualifiedName) {
-        return trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
-    }
-
-    @NotNull
-    public PsiClassFinder getPsiClassFinder() {
-        return psiClassFinder;
-    }
-
-    @NotNull
-    public PsiDeclarationProviderFactory getPsiDeclarationProviderFactory() {
-        return psiDeclarationProviderFactory;
-    }
-
-    @Nullable
-    public PackageViewDescriptor getKotlinNamespaceDescriptor(@NotNull FqName qualifiedName) {
-        return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
-    }
+    ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass);
 }
