@@ -29,6 +29,7 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -83,7 +84,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
 
     /**
     * Returns full qualified name for function "package_fqn.function_name"
-    * Not null for top level functions.
+    * Not null for top level functions unless syntax errors are present.
     * @return
     */
     @Nullable
@@ -101,7 +102,10 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
             }
             JetFile jetFile = (JetFile) parent;
             final FqName fileFQN = JetPsiUtil.getFQName(jetFile);
-            return fileFQN.child(getNameAsName());
+            Name nameAsName = getNameAsName();
+            if (nameAsName != null) {
+                return fileFQN.child(nameAsName);
+            }
         }
 
         return null;
