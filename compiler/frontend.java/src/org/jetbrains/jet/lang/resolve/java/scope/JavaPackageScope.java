@@ -37,7 +37,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     private final FqName packageFQN;
 
     protected JavaPackageScope(
-            @NotNull PackageViewDescriptor descriptor,
+            @NotNull PackageFragmentDescriptor descriptor,
             @NotNull PackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices

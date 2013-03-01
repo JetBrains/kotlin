@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 public final class JavaPackageScopeWithoutMembers extends JavaPackageScope {
     public JavaPackageScopeWithoutMembers(
-            @NotNull PackageViewDescriptor descriptor,
+            @NotNull PackageFragmentDescriptor descriptor,
             @NotNull PackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -26,20 +27,20 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @NotNull
-    private final FqName packageFQN;
+    private final FqName classFqName;
 
     public JavaClassStaticMembersScope(
-            @NotNull PackageViewDescriptor descriptor,
+            @NotNull PackageFragmentDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
-            @NotNull FqName packageFQN,
+            @NotNull FqName classFqName,
             @NotNull JavaSemanticServices semanticServices
     ) {
         super(descriptor, declarationProvider, semanticServices);
-        this.packageFQN = packageFQN;
+        this.classFqName = classFqName;
     }
 
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
-        return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return getResolver().resolveNamespace(classFqName.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 }
