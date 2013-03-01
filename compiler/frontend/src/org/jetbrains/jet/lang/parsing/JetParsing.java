@@ -1042,7 +1042,12 @@ public class JetParsing extends AbstractJetParsing {
             typeParameterListOccurred = true;
         }
 
-        parseValueParameterList(false, valueParametersFollow);
+        if (at(LPAR)) {
+            parseValueParameterList(false, valueParametersFollow);
+        }
+        else {
+            error("Expecting '('");
+        }
 
         if (at(COLON)) {
             advance(); // COLON
@@ -1648,10 +1653,11 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
+        assert _at(LPAR);
         PsiBuilder.Marker parameters = mark();
 
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting '(", recoverySet);
+        advance(); // LPAR
 
         if (!parseIdeTemplate()) {
             if (!at(RPAR) && !atSet(recoverySet)) {
