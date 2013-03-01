@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +123,9 @@ public class BindingContextUtils {
         PsiElement declaration = descriptorToDeclaration(context, descriptor);
         if (declaration == null) return null;
 
-        return (JetFile) declaration.getContainingFile();
+        PsiFile containingFile = declaration.getContainingFile();
+        if (!(containingFile instanceof JetFile)) return null;
+        return (JetFile) containingFile;
     }
 
     // TODO these helper methods are added as a workaround to some compiler bugs in Kotlin...
