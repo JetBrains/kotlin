@@ -214,8 +214,16 @@ public final class JavaFunctionResolver {
             FunctionDescriptor functionDescriptor
     ) {
         for (FunctionDescriptor superFunction : superFunctions) {
-            TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(
-                    ((ClassDescriptor) functionDescriptor.getContainingDeclaration()).getDefaultType());
+            ClassDescriptor klass = (ClassDescriptor) functionDescriptor.getContainingDeclaration();
+            List<TypeSubstitution> substitutions = Lists.newArrayList();
+            while (true) {
+                substitutions.add(SubstitutionUtils.buildDeepSubstitutor(klass.getDefaultType()).getSubstitution());
+                if (!klass.isInner()) {
+                    break;
+                }
+                klass = (ClassDescriptor) klass.getContainingDeclaration();
+            }
+            TypeSubstitutor substitutor = TypeSubstitutor.create(substitutions.toArray(new TypeSubstitution[substitutions.size()]));
             FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
 
             assert superFunctionSubstituted != null :
