@@ -26,7 +26,7 @@ inline val File.directory: File
 get() = if (this.isDirectory()) this else this.getParentFile()!!
 
 /**
- * Returns the canoncial path of the file
+ * Returns the canonical path of the file
  */
 inline val File.canonicalPath: String
 get() = getCanonicalPath()
