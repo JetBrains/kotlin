@@ -145,13 +145,16 @@ public final class AnalyzerWithCompilerReport {
         assert analyzeExhaust != null;
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
-        Collection<PsiClass> psiClasses = bindingContext.getKeys(AbiVersionUtil.ABI_VERSION_ERRORS);
-        for (PsiClass psiClass : psiClasses) {
-            Integer abiVersion = bindingContext.get(AbiVersionUtil.ABI_VERSION_ERRORS, psiClass);
-            messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           "Class '" + psiClass.getQualifiedName() + "' was compiled with an incompatible version of Kotlin. " +
-                                           "Its ABI version is " + abiVersion + ", expected ABI version is " + JvmAbi.VERSION,
-                                           MessageUtil.psiElementToMessageLocation(psiClass));
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+            if (diagnostic.getFactory() == AbiVersionUtil.INCOMPATIBLE_ABI_VERSION) {
+                //noinspection unchecked
+                DiagnosticWithParameters1<PsiClass, Integer> abiVersionDiagnostic = (DiagnosticWithParameters1<PsiClass, Integer>) diagnostic;
+                PsiClass psiClass = abiVersionDiagnostic.getPsiElement();
+                messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
+                                               "Class '" + psiClass.getQualifiedName() + "' was compiled with an incompatible version of Kotlin. " +
+                                               "Its ABI version is " + abiVersionDiagnostic.getA() + ", expected ABI version is " + JvmAbi.VERSION,
+                                               MessageUtil.psiElementToMessageLocation(psiClass));
+            }
         }
     }
 

@@ -18,15 +18,14 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithAbiVersion;
-import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
-import org.jetbrains.jet.util.slicedmap.Slices;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 public class AbiVersionUtil {
-    public static final WritableSlice<PsiClass, Integer> ABI_VERSION_ERRORS =
-            new BasicWritableSlice<PsiClass, Integer>(Slices.ONLY_REWRITE_TO_EQUAL, true);
+    public static final DiagnosticFactory1<PsiClass, Integer> INCOMPATIBLE_ABI_VERSION = DiagnosticFactory1.create(Severity.ERROR);
+
     public static final int INVALID_VERSION = -1;
 
     public static boolean isAbiVersionCompatible(int abiVersion) {
@@ -36,12 +35,12 @@ public class AbiVersionUtil {
     public static void checkAbiVersion(
             @NotNull PsiClass psiClass,
             @NotNull PsiAnnotationWithAbiVersion versionAnnotation,
-            @NotNull BindingTrace trace) {
+            @NotNull DiagnosticHolder diagnosticHolder) {
         if (!versionAnnotation.isDefined()) return;
 
         int abiVersion = versionAnnotation.getAbiVersion();
         if (isAbiVersionCompatible(abiVersion)) return;
 
-        trace.record(ABI_VERSION_ERRORS, psiClass, abiVersion);
+        diagnosticHolder.report(INCOMPATIBLE_ABI_VERSION.on(psiClass, abiVersion));
     }
 }
