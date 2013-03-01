@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.jet.plugin.framework.ui.ChooseCompilerSourcePanel">
+  <grid id="27dc6" binding="contentPane" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="416" height="156"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="e6e7d" class="javax.swing.JRadioButton" binding="useBundledKotlinRadioButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text value="Use compiler &amp;bundled in plugin"/>
+        </properties>
+      </component>
+      <vspacer id="150a1">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="7c565" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="kotlinStandalonePathField">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="3" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="4b0f" class="javax.swing.JRadioButton" binding="useStandaloneKotlinRadioButton">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="false"/>
+          <text value="Use standalone Kotlin compiler &amp;installation"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="sourceGroup">
+      <member id="e6e7d"/>
+      <member id="4b0f"/>
+    </group>
+  </buttonGroups>
+</form>

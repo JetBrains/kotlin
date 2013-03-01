@@ -1,13 +1,28 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.plugin.framework.ui;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
@@ -21,27 +36,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class CreateLibrarySourceDialog extends DialogWrapper {
-    private JPanel contentPane;
-    private JRadioButton useStandaloneKotlinRadioButton;
+public class ChooseCompilerSourcePanel {
     private JRadioButton useBundledKotlinRadioButton;
-    private JCheckBox copyLibraryCheckbox;
-    private TextFieldWithBrowseButton copyIntoDirectoryField;
+    private JRadioButton useStandaloneKotlinRadioButton;
     private TextFieldWithBrowseButton kotlinStandalonePathField;
+    private JPanel contentPane;
 
+    private final EventDispatcher<ValidityListener> validityDispatcher = EventDispatcher.create(ValidityListener.class);
+
+    private boolean hasErrorsState = false;
     private String version = null;
-
     private final String initialStandaloneLabelText;
 
-    public CreateLibrarySourceDialog(@Nullable Project project, @NotNull String title, VirtualFile contextDirectory) {
-        super(project);
-
-        setTitle(title);
-
-        init();
-
-        contentPane.setMinimumSize(new Dimension(380, 180));
-
+    public ChooseCompilerSourcePanel(@Nullable Project project) {
         useBundledKotlinRadioButton.setText(useBundledKotlinRadioButton.getText() + " - " + JetPluginUtil.getPluginVersion());
 
         initialStandaloneLabelText = useStandaloneKotlinRadioButton.getText();
@@ -64,30 +71,10 @@ public class CreateLibrarySourceDialog extends DialogWrapper {
             @Override
             protected void textChanged(final DocumentEvent e) {
                 updateStandaloneVersion();
-                updateComponentVersion();
-            }
-        });
-
-        updateStandaloneVersion();
-
-        copyIntoDirectoryField.addBrowseFolderListener(
-                "Copy Into...", "Choose folder where files will be copied", project,
-                FileChooserDescriptorFactory.createSingleFolderDescriptor());
-        copyIntoDirectoryField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(final DocumentEvent e) {
-                updateComponentVersion();
-            }
-        });
-
-        copyIntoDirectoryField.getTextField().setText(FileUIUtils.getDefaultLibraryFolder(project, contextDirectory));
-
-        copyLibraryCheckbox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
                 updateComponents();
             }
         });
+
         useStandaloneKotlinRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(@NotNull ActionEvent e) {
@@ -101,22 +88,22 @@ public class CreateLibrarySourceDialog extends DialogWrapper {
             }
         });
 
+        updateStandaloneVersion();
         updateComponents();
+    }
+
+    public void addValidityListener(ValidityListener listener) {
+        validityDispatcher.addListener(listener);
+    }
+
+    public boolean hasErrors() {
+        return hasErrorsState;
     }
 
     @Nullable
     public String getStandaloneCompilerPath() {
         if (useStandaloneKotlinRadioButton.isSelected()) {
             return kotlinStandalonePathField.getText().trim();
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public String getCopyIntoPath() {
-        if (copyLibraryCheckbox.isSelected()) {
-            return copyIntoDirectoryField.getText().trim();
         }
 
         return null;
@@ -133,23 +120,14 @@ public class CreateLibrarySourceDialog extends DialogWrapper {
         }
     }
 
-    private void updateStandaloneVersion() {
-        if (useStandaloneKotlinRadioButton.isSelected()) {
-            KotlinPaths paths = PathUtil.getKotlinStandaloneCompilerPaths(kotlinStandalonePathField.getTextField().getText().trim());
-            try {
-                version = FileUtilRt.loadFile(paths.getBuildVersionFile());
-                return;
-            }
-            catch (IOException e) {
-                // Do nothing. Version will be set to null.
-            }
-        }
-
-        version = null;
+    public JPanel getContentPane() {
+        return contentPane;
     }
 
-    private void updateComponentVersion() {
+    private void updateComponents() {
         boolean isError = false;
+
+        kotlinStandalonePathField.setEnabled(useStandaloneKotlinRadioButton.isSelected());
 
         useStandaloneKotlinRadioButton.setForeground(Color.BLACK);
         useStandaloneKotlinRadioButton.setText(initialStandaloneLabelText);
@@ -164,26 +142,24 @@ public class CreateLibrarySourceDialog extends DialogWrapper {
             }
         }
 
-        copyLibraryCheckbox.setForeground(Color.BLACK);
-        if (copyLibraryCheckbox.isSelected()) {
-            if (copyIntoDirectoryField.getText().trim().isEmpty()) {
-                copyLibraryCheckbox.setForeground(Color.RED);
-                isError = true;
+        if (hasErrorsState != isError) {
+            hasErrorsState = isError;
+            validityDispatcher.getMulticaster().validityChanged(isError);
+        }
+    }
+
+    private void updateStandaloneVersion() {
+        if (useStandaloneKotlinRadioButton.isSelected()) {
+            KotlinPaths paths = PathUtil.getKotlinStandaloneCompilerPaths(kotlinStandalonePathField.getTextField().getText().trim());
+            try {
+                version = FileUtilRt.loadFile(paths.getBuildVersionFile());
+                return;
+            }
+            catch (IOException e) {
+                // Do nothing. Version will be set to null.
             }
         }
 
-        setOKActionEnabled(!isError);
-    }
-
-    private void updateComponents() {
-        kotlinStandalonePathField.setEnabled(useStandaloneKotlinRadioButton.isSelected());
-        copyIntoDirectoryField.setEnabled(copyLibraryCheckbox.isSelected());
-        updateComponentVersion();
-    }
-
-    @Nullable
-    @Override
-    protected JComponent createCenterPanel() {
-        return contentPane;
+        version = null;
     }
 }

@@ -16,10 +16,14 @@
 
 package org.jetbrains.jet.plugin.framework.ui;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.intellij.ide.util.projectWizard.ProjectWizardUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -30,6 +34,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public class FileUIUtils {
     private FileUIUtils() {
@@ -38,43 +44,84 @@ public class FileUIUtils {
     @Nullable
     public static File copyWithOverwriteDialog(
             @NotNull Component parent,
+            @NotNull String messagesTitle,
             @NotNull String destinationFolder,
-            @NotNull File file,
-            @NotNull String messagesTitle) {
+            @NotNull File file) {
+        Map<File, File> copiedFiles = copyWithOverwriteDialog(parent, messagesTitle, destinationFolder, ImmutableList.of(file));
+        if (copiedFiles == null) {
+            return null;
+        }
+
+        File copy = copiedFiles.get(file);
+        assert copy != null;
+
+        return copy;
+    }
+
+    @Nullable
+    public static Map<File, File> copyWithOverwriteDialog(
+            @NotNull Component parent,
+            @NotNull String messagesTitle,
+            @NotNull String destinationFolder,
+            @NotNull List<File> files
+    ) {
         if (!ProjectWizardUtil.createDirectoryIfNotExists("Destination folder", destinationFolder, false)) {
             Messages.showErrorDialog(String.format("Error during folder creating '%s'", destinationFolder), messagesTitle + ". Error");
             return null;
         }
-
+        
         File folder = new File(destinationFolder);
-        File targetFile = new File(folder, file.getName());
 
-        assert folder.exists();
+        Set<String> fileNames = new HashSet<String>();
+        Map<File, File> targetFiles = new LinkedHashMap<File, File>(files.size());
+        for (File file : files) {
+            String fileName = file.getName();
 
-        try {
-            if (!targetFile.exists()) {
-                FileUtil.copy(file, targetFile);
-            }
-            else {
-                int replaceIfExist = Messages.showYesNoDialog(
-                        parent,
-                        String.format("File \"%s\" is already exist in %s.\nDo you want to rewrite it?", targetFile.getName(), folder.getAbsolutePath()),
-                        messagesTitle + ". Replace File",
-                        Messages.getWarningIcon());
-
-                if (replaceIfExist == JOptionPane.YES_OPTION) {
-                    FileUtil.copy(file, targetFile);
-                }
+            if (!fileNames.add(fileName)) {
+                throw new IllegalArgumentException("There are several files with the same name: " + fileName);
             }
 
-            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
+            targetFiles.put(file, new File(folder, fileName));
+        }
 
-            return targetFile;
+        Collection<File> existentFiles = Collections2.filter(targetFiles.values(), new Predicate<File>() {
+            @Override
+            public boolean apply(@Nullable File file) {
+                assert file != null;
+                return file.exists();
+            }
+        });
+
+        if (!existentFiles.isEmpty()) {
+            String message = existentFiles.size() == 1 ?
+                String.format("File \"%s\" is already exist in %s.\nDo you want to overwrite it?", existentFiles.iterator().next().getName(), folder.getAbsolutePath()) :
+                String.format("Several files are already exist in %s:\n%s\nDo you want to overwrite them?", folder.getAbsolutePath(), StringUtil.join(existentFiles, "\n"));
+
+            int replaceIfExist = Messages.showYesNoDialog(
+                    null,
+                    message,
+                    messagesTitle + ". Replace File",
+                    "Overwrite",
+                    "Cancel",
+                    Messages.getWarningIcon());
+
+            if (replaceIfExist != JOptionPane.YES_OPTION) {
+                return null;
+            }
         }
-        catch (IOException e) {
-            Messages.showErrorDialog("Error during file copy", messagesTitle + ". Error");
-            return null;
+
+        for (Map.Entry<File, File> sourceToTarget : targetFiles.entrySet()) {
+            try {
+                FileUtil.copy(sourceToTarget.getKey(), sourceToTarget.getValue());
+                LocalFileSystem.getInstance().refreshAndFindFileByIoFile(sourceToTarget.getValue());
+            }
+            catch (IOException e) {
+                Messages.showErrorDialog(parent, "Error with copy file " + sourceToTarget.getKey().getName(), messagesTitle + ". Error");
+                return null;
+            }
         }
+
+        return targetFiles;
     }
 
     @NotNull

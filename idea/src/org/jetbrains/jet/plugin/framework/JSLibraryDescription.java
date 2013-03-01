@@ -24,21 +24,20 @@ import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.framework.ui.CreateLibrarySourceDialog;
+import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class JSLibraryDescription extends CustomLibraryDescription {
@@ -56,7 +55,7 @@ public class JSLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        CreateLibrarySourceDialog dialog = new CreateLibrarySourceDialog(null, "Create Kotlin JavaScript Library", contextDirectory);
+        CreateJavaScriptLibraryDialog dialog = new CreateJavaScriptLibraryDialog(null, "Create Kotlin JavaScript Library", contextDirectory);
         dialog.show();
 
         if (dialog.isOK()) {
@@ -74,12 +73,20 @@ public class JSLibraryDescription extends CustomLibraryDescription {
 
             String copyIntoPath = dialog.getCopyIntoPath();
             if (copyIntoPath != null) {
-                libraryFile = FileUIUtils.copyWithOverwriteDialog(parentComponent, copyIntoPath, libraryFile, JAVA_SCRIPT_LIBRARY_CREATION);
-                if (libraryFile == null) {
+                List<File> copyFiles = new ArrayList<File>();
+
+                if (dialog.isCopyLibraryFiles()) copyFiles.add(libraryFile);
+                if (dialog.isCopyECMA3()) copyFiles.add(paths.getJsLibJsPath());
+
+                Map<File,File> copiedFiles =
+                        FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_SCRIPT_LIBRARY_CREATION, copyIntoPath, copyFiles);
+                if (copiedFiles == null) {
                     return null;
                 }
 
-                copyJsRuntimeFile(copyIntoPath);
+                if (dialog.isCopyLibraryFiles()) {
+                    libraryFile = copiedFiles.get(libraryFile);
+                }
             }
 
             final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
@@ -92,20 +99,5 @@ public class JSLibraryDescription extends CustomLibraryDescription {
         }
 
         return null;
-    }
-
-    private static void copyJsRuntimeFile(@NotNull String directoryPath) {
-        File file = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJsPath();
-
-        File folder = new File(directoryPath);
-        File targetFile = new File(folder, file.getName());
-
-        try {
-            FileUtil.copy(file, targetFile);
-            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
-        }
-        catch (IOException e) {
-            // Do nothing. This is a very temp code and should be removed.
-        }
     }
 }
