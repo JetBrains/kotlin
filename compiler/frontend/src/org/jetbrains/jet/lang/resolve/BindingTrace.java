@@ -18,13 +18,46 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public interface BindingTrace extends DiagnosticHolder {
+
+    BindingTrace EMPTY = new BindingTrace() {
+        @Override
+        public BindingContext getBindingContext() {
+            return BindingContext.EMPTY;
+        }
+
+        @Override
+        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+        }
+
+        @Override
+        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
+        }
+
+        @Nullable
+        @Override
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            return getBindingContext().get(slice, key);
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void report(@NotNull Diagnostic diagnostic) {
+        }
+    };
 
     BindingContext getBindingContext();
     

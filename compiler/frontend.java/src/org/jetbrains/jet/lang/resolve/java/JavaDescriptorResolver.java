@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
@@ -217,11 +218,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
         return propertiesResolver.resolveFieldGroupByName(name, data, ownerDescriptor);
-    }
-
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull FqName name, @NotNull DescriptorSearchRule searchRule, @NotNull PostponedTasks tasks) {
-        return classResolver.resolveClass(name, searchRule, tasks);
     }
 
     public static class ValueParameterDescriptors {

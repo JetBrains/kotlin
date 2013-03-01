@@ -125,18 +125,9 @@ public final class JavaClassResolver {
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        PostponedTasks postponedTasks = new PostponedTasks();
-        ClassDescriptor classDescriptor = resolveClass(qualifiedName, searchRule, postponedTasks);
-        postponedTasks.performTasks();
-        return classDescriptor;
-    }
-
-    @Nullable
     public ClassDescriptor resolveClass(
             @NotNull FqName qualifiedName,
-            @NotNull DescriptorSearchRule searchRule,
-            @NotNull PostponedTasks tasks
+            @NotNull DescriptorSearchRule searchRule
     ) {
         if (isTraitImplementation(qualifiedName)) {
             return null;
@@ -164,17 +155,17 @@ public final class JavaClassResolver {
             return null;
         }
 
-        return doResolveClass(qualifiedName, tasks);
+        return doResolveClass(qualifiedName);
     }
 
     @Nullable
-    private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
+    private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName) {
         PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
         if (psiClass == null) {
             cacheNegativeValue(javaClassToKotlinFqName(qualifiedName));
             return null;
         }
-        return createJavaClassDescriptor(qualifiedName, psiClass, tasks);
+        return createJavaClassDescriptor(qualifiedName, psiClass);
     }
 
     private void cacheNegativeValue(@NotNull FqNameBase qualifiedName) {
@@ -191,8 +182,7 @@ public final class JavaClassResolver {
 
     @NotNull
     private ClassDescriptor createJavaClassDescriptor(
-            @NotNull FqName fqName, @NotNull final PsiClass psiClass,
-            @NotNull PostponedTasks taskList
+            @NotNull FqName fqName, @NotNull final PsiClass psiClass
     ) {
 
         checkFqNamesAreConsistent(psiClass, fqName);
@@ -207,14 +197,13 @@ public final class JavaClassResolver {
 
         assert (!unresolvedCache.contains(fqName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
-        return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);
+        return doCreateClassDescriptor(fqName, psiClass, containingDeclaration);
     }
 
     @NotNull
     private ClassDescriptorFromJvmBytecode doCreateClassDescriptor(
             @NotNull FqName fqName,
             @NotNull PsiClass psiClass,
-            @NotNull PostponedTasks taskList,
             @NotNull ClassOrPackageDescriptor containingDeclaration
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
@@ -254,7 +243,7 @@ public final class JavaClassResolver {
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
 
-        classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(psiClass, taskList));
+        classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(psiClass));
 
         trace.record(BindingContext.CLASS, psiClass, classDescriptor);
 
