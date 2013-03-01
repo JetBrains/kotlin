@@ -39,7 +39,7 @@ public class PathUtil {
 
     private static final File NO_PATH = new File("<no_path>");
 
-    public static final Function<String, File> KOTLIN_HOME_DIRECTORY_ADAPTER = new Function<String, File>() {
+    public static final Function<String, File> KOTLIN_HOME_DIRECTORY_FINDER = new Function<String, File>() {
         private final Pattern homeDirPattern = Pattern.compile(HOME_FOLDER_NAME);
         private final Pattern buildFilePattern = Pattern.compile(BUILD_VERSION_NAME);
 
@@ -116,7 +116,7 @@ public class PathUtil {
 
     @NotNull
     public static KotlinPaths getKotlinStandaloneCompilerPaths(@NotNull String path) {
-        File homePath = KOTLIN_HOME_DIRECTORY_ADAPTER.fun(path);
+        File homePath = KOTLIN_HOME_DIRECTORY_FINDER.fun(path);
         if (homePath == null) {
             throw new IllegalArgumentException(String.format("Can't get home path from '%s'", path));
         }

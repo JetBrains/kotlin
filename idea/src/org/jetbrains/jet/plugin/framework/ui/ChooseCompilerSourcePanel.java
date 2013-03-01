@@ -63,7 +63,7 @@ public class ChooseCompilerSourcePanel {
                             return false;
                         }
 
-                        return PathUtil.KOTLIN_HOME_DIRECTORY_ADAPTER.fun(com.intellij.util.PathUtil.getLocalPath(file)) != null;
+                        return PathUtil.KOTLIN_HOME_DIRECTORY_FINDER.fun(com.intellij.util.PathUtil.getLocalPath(file)) != null;
                     }
                 });
 
