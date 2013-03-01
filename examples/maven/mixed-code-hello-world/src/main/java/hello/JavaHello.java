@@ -4,11 +4,11 @@ public class JavaHello {
   public static String JavaHelloString = "Hello from Java!";
 
   public static String getHelloStringFromKotlin() {
-    return namespace.KotlinHelloString;
+    return HelloPackage.KotlinHelloString;
   }
 
   public static void main(String[] args) {
     System.out.println(getHelloStringFromKotlin());
-    System.out.println(namespace.getHelloStringFromJava());
+    System.out.println(HelloPackage.getHelloStringFromJava());
   }
 }

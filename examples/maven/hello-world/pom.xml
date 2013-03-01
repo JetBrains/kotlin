@@ -72,7 +72,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>hello.namespace</mainClass>
+					<mainClass>hello.HelloPackage</mainClass>
 				</configuration>
 			</plugin>
         </plugins>
