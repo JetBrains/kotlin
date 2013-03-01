@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-public interface PackageFragmentDescriptor extends FqNamed, DeclarationDescriptor {
+public interface PackageFragmentDescriptor extends FqNamed, ClassOrPackageDescriptor {
     @NotNull
     @Override
     SubModuleDescriptor getContainingDeclaration();
