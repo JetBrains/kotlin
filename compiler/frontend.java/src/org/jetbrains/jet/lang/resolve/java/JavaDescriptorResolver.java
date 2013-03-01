@@ -201,7 +201,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
     }
 
-    @Override
     public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
         return namespaceResolver.resolveNamespace(qualifiedName);
     }
