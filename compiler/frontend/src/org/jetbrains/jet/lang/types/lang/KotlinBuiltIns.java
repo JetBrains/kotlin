@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -377,8 +378,17 @@ public class KotlinBuiltIns {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    @Nullable
+    public ClassDescriptor getBuiltInClassByFqName(@NotNull FqName fqName) {
+        if (!QualifiedNamesUtil.isSubpackageOf(fqName, BUILT_INS_PACKAGE_FQ_NAME)) return null;
+
+        if (!fqName.parent().isRoot()) return null;
+
+        return getBuiltInClassByShortName(fqName.shortName());
+    }
+
     @NotNull
-    public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
+    public ClassDescriptor getBuiltInClassByShortName(@NotNull Name simpleName) {
         ClassifierDescriptor classifier = getBuiltInsScope().getClassifier(simpleName);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -386,7 +396,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
-        return getBuiltInClassByName(Name.identifier(simpleName));
+        return getBuiltInClassByShortName(Name.identifier(simpleName));
     }
 
     // Special

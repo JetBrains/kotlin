@@ -92,16 +92,6 @@ public class JavaSemanticServices {
     }
 
     @Nullable
-    public ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
-        if (qualifiedName.firstSegmentIs(Name.identifier("jet")) && qualifiedName.pathSegments().size() == 2) {
-            return (ClassDescriptor) KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(qualifiedName.pathSegments().get(1));
-        }
-        else {
-            return null;
-        }
-    }
-
-    @Nullable
     public PackageViewDescriptor getKotlinNamespaceDescriptor(@NotNull FqName qualifiedName) {
         return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
     }

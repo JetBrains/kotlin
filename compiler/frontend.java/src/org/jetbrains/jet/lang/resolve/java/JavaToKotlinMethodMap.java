@@ -116,12 +116,12 @@ public class JavaToKotlinMethodMap {
             String[] kotlinNames = kotlinQualifiedName.split("\\.");
             assert kotlinNames.length == 2 : "unexpected qualified name " + kotlinQualifiedName;
 
-            ClassDescriptor outerClass = KotlinBuiltIns.getInstance().getBuiltInClassByName(Name.identifier(kotlinNames[0]));
+            ClassDescriptor outerClass = KotlinBuiltIns.getInstance().getBuiltInClassByShortName(Name.identifier(kotlinNames[0]));
             kotlinClass = DescriptorUtils.getInnerClassByName(outerClass, kotlinNames[1]);
             assert kotlinClass != null : "Class not found: " + kotlinQualifiedName;
         }
         else {
-            kotlinClass = KotlinBuiltIns.getInstance().getBuiltInClassByName(Name.identifier(kotlinQualifiedName));
+            kotlinClass = KotlinBuiltIns.getInstance().getBuiltInClassByShortName(Name.identifier(kotlinQualifiedName));
         }
 
         builder.put(javaFqName, new ClassData(kotlinClass, methods2FunctionsMap));

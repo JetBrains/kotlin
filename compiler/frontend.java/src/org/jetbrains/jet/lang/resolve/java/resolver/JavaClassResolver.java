@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -141,7 +142,7 @@ public final class JavaClassResolver {
             return null;
         }
 
-        ClassDescriptor builtinClassDescriptor = semanticServices.getKotlinBuiltinClassDescriptor(qualifiedName);
+        ClassDescriptor builtinClassDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByFqName(qualifiedName);
         if (builtinClassDescriptor != null) {
             return builtinClassDescriptor;
         }
