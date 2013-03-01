@@ -33,27 +33,22 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 
 public class PsiClassFinderImpl implements PsiClassFinder {
 
-    @NotNull
-    private Project project;
+    private final GlobalSearchScope javaSearchScope;
+    private final JavaPsiFacadeKotlinHacks javaFacade;
 
-    private GlobalSearchScope javaSearchScope;
-    private JavaPsiFacadeKotlinHacks javaFacade;
-
-    @Inject
-    public void setProject(@NotNull Project project) {
-        this.project = project;
+    public PsiClassFinderImpl(@NotNull Project project, @NotNull GlobalSearchScope javaSearchScope) {
+        this.javaSearchScope = fileBasedOrdering(javaSearchScope);
+        this.javaFacade = new JavaPsiFacadeKotlinHacks(project);
     }
 
-    @PostConstruct
-    public void initialize() {
-        javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+    @NotNull
+    private static GlobalSearchScope fileBasedOrdering(@NotNull GlobalSearchScope javaSearchScope) {
+        return new DelegatingGlobalSearchScope(javaSearchScope) {
             @Override
             public boolean contains(VirtualFile file) {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
@@ -76,9 +71,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
                 return compare;
             }
         };
-        javaFacade = new JavaPsiFacadeKotlinHacks(project);
     }
-
 
     @Override
     @Nullable
