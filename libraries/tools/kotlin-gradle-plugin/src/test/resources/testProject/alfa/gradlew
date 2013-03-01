@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ##############################################################################
 ##
@@ -61,9 +61,9 @@ while [ -h "$PRG" ] ; do
     fi
 done
 SAVED="`pwd`"
-cd "`dirname \"$PRG\"`/"
+cd "`dirname \"$PRG\"`/" >&-
 APP_HOME="`pwd -P`"
-cd "$SAVED"
+cd "$SAVED" >&-
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
@@ -101,7 +101,7 @@ if [ "$cygwin" = "false" -a "$darwin" = "false" ] ; then
             warn "Could not set maximum file descriptor limit: $MAX_FD"
         fi
     else
-        warn "Could not query businessSystem maximum file descriptor limit: $MAX_FD_LIMIT"
+        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
     fi
 fi
 
