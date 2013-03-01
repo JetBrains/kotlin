@@ -57,7 +57,7 @@ public final class ScopeUtils {
                 continue;
             }
 
-            if (psiClass instanceof JetJavaMirrorMarker) {
+            if (DescriptorResolverUtils.isKotlinLightClass(psiClass)) {
                 continue;
             }
 

@@ -127,9 +127,13 @@ public final class DescriptorResolverUtils {
     }
 
     public static void checkPsiClassIsNotJet(@Nullable PsiClass psiClass) {
-        if (psiClass instanceof JetJavaMirrorMarker) {
+        if (isKotlinLightClass(psiClass)) {
             throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
         }
+    }
+
+    public static boolean isKotlinLightClass(@Nullable PsiClass psiClass) {
+        return psiClass instanceof JetJavaMirrorMarker;
     }
 
     @NotNull

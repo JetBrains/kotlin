@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
@@ -86,7 +85,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
             }
         }
 
-        if (original instanceof JetJavaMirrorMarker) {
+        if (DescriptorResolverUtils.isKotlinLightClass(original)) {
             throw new IllegalStateException("JetJavaMirrorMaker is not possible in resolve.java, resolving: " + qualifiedName);
         }
 
@@ -95,10 +94,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         }
 
         if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            PsiAnnotation assertInvisibleAnnotation = JavaAnnotationResolver.findOwnAnnotation(
-                    original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
-
-            if (assertInvisibleAnnotation != null) {
+            if (isInvisibleRuntimeClass(original)) {
                 if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
                     return null;
                 }
@@ -114,6 +110,10 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         }
 
         return original;
+    }
+
+    private static boolean isInvisibleRuntimeClass(@NotNull PsiClass psiClass) {
+        return JavaAnnotationResolver.findOwnAnnotation(psiClass, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName()) != null;
     }
 
     @Override
