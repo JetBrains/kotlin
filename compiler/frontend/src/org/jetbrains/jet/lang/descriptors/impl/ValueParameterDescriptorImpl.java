@@ -111,6 +111,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     }
 
     @Nullable
+    @Override
     public JetType getVarargElementType() {
         return varargElementType;
     }
@@ -139,8 +140,8 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @NotNull
     @Override
-    public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), getType(), hasDefaultValue, varargElementType);
+    public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner, @NotNull Name newName) {
+        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), newName, getType(), declaresDefaultValue(), varargElementType);
     }
 
     @NotNull
