@@ -240,22 +240,10 @@ public class OverrideResolver {
     ) {
         Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
         while (!fromSuperQueue.isEmpty()) {
-            CallableMemberDescriptor notOverriddenFromSuper = findMemberWithMaxVisibility(fromSuperQueue);
+            CallableMemberDescriptor notOverriddenFromSuper = VisibilityUtil.findMemberWithMaxVisibility(fromSuperQueue);
             Collection<CallableMemberDescriptor> overridables = extractMembersOverridableBy(notOverriddenFromSuper, fromSuperQueue, sink);
             createAndBindFakeOverride(notOverriddenFromSuper, overridables, current, sink);
         }
-    }
-
-    @NotNull
-    private static CallableMemberDescriptor findMemberWithMaxVisibility(@NotNull Queue<CallableMemberDescriptor> descriptors) {
-        CallableMemberDescriptor descriptor = descriptors.element();
-        for (CallableMemberDescriptor candidate : descriptors) {
-            Integer result = Visibilities.compare(descriptor.getVisibility(), candidate.getVisibility());
-            if (result != null && result < 0) {
-                descriptor = candidate;
-            }
-        }
-        return descriptor;
     }
 
     private static void createAndBindFakeOverride(
