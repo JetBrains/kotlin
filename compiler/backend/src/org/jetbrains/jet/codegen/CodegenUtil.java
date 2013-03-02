@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -290,5 +291,48 @@ public class CodegenUtil {
             return TypeUtils.hasNullableSuperType(type);
         }
         return false;
+    }
+
+    /**
+     * Returns function's copy with new parameter list. Note that parameters may belong to other methods or have incorrect "index" property
+     * -- it will be fixed by this function.
+     */
+    @NotNull
+    public static SimpleFunctionDescriptor replaceFunctionParameters(
+            @NotNull SimpleFunctionDescriptor function,
+            @NotNull List<ValueParameterDescriptor> newParameters
+    ) {
+        SimpleFunctionDescriptorImpl descriptor = new SimpleFunctionDescriptorImpl(
+                function.getContainingDeclaration(),
+                function.getAnnotations(),
+                function.getName(),
+                function.getKind());
+        List<ValueParameterDescriptor> parameters = new ArrayList<ValueParameterDescriptor>(newParameters.size());
+        int idx = 0;
+        for (ValueParameterDescriptor parameter : newParameters) {
+            JetType returnType = parameter.getReturnType();
+            assert returnType != null;
+            parameters.add(new ValueParameterDescriptorImpl(
+                    descriptor,
+                    idx,
+                    parameter.getAnnotations(),
+                    parameter.getName(),
+                    returnType,
+                    parameter.declaresDefaultValue(),
+                    parameter.getVarargElementType())
+            );
+            idx++;
+        }
+        ReceiverParameterDescriptor receiver = function.getReceiverParameter();
+        descriptor.initialize(
+                receiver == null ? null : receiver.getType(),
+                function.getExpectedThisObject(),
+                function.getTypeParameters(),
+                parameters,
+                function.getReturnType(),
+                function.getModality(),
+                function.getVisibility(),
+                function.isInline());
+        return descriptor;
     }
 }
