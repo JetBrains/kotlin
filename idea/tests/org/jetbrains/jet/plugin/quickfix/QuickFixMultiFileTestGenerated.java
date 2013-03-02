@@ -193,15 +193,29 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     }
     
     @TestMetadata("idea/testData/quickfix/override")
-    @InnerTestClasses({})
+    @InnerTestClasses({Override.NothingToOverride.class})
     public static class Override extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInOverride() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
         
+        @TestMetadata("idea/testData/quickfix/override/nothingToOverride")
+        public static class NothingToOverride extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInNothingToOverride() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+            
+            @TestMetadata("twoPackages.before.Main.kt")
+            public void testTwoPackages() throws Exception {
+                doTestWithExtraFile("idea/testData/quickfix/override/nothingToOverride/twoPackages.before.Main.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Override");
             suite.addTestSuite(Override.class);
+            suite.addTestSuite(NothingToOverride.class);
             return suite;
         }
     }
