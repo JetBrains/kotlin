@@ -34,11 +34,11 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.VisibilityUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetChangeFunctionSignatureAction;
@@ -187,7 +187,13 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                 @NotNull ValueParameterDescriptor parameter,
                 @NotNull ValueParameterDescriptor superParameter
         ) {
-            return JetTypeChecker.INSTANCE.equalTypes(parameter.getType(), superParameter.getType()) ? parameter : null;
+            // TODO: support for generic functions
+            if (JetTypeChecker.INSTANCE.equalTypes(parameter.getType(), superParameter.getType())) {
+                return superParameter.copy(parameter.getContainingDeclaration(), parameter.getName());
+            }
+            else {
+                return null;
+            }
         }
     };
 
@@ -235,8 +241,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
         Name name = functionDescriptor.getName();
-        for (ClassDescriptor superclass : DescriptorUtils.getAllSuperClasses(classDescriptor)) {
-            JetType type = superclass.getDefaultType();
+        for (JetType type : TypeUtils.getAllSupertypes(classDescriptor.getDefaultType())) {
             JetScope scope = type.getMemberScope();
             for (FunctionDescriptor function : scope.getFunctions(name)) {
                 if (!function.getKind().isReal()) continue;
