@@ -194,6 +194,8 @@ public class QuickFixes {
         factories.put(FINAL_SUPERTYPE, addOpenModifierToClassDeclarationFix);
         factories.put(FINAL_UPPER_BOUND, addOpenModifierToClassDeclarationFix);
 
+        factories.put(OVERRIDING_FINAL_MEMBER, MakeOverriddenMemberOpenFix.createFactory());
+
         factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
 
         factories.put(OPEN_MODIFIER_IN_ENUM, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD));
