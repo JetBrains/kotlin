@@ -174,6 +174,26 @@ public class CliTest {
     }
 
     @Test
+    public void nonExistingClassPathAndAnnotationsPath() {
+        String[] args = {
+                "-src", "compiler/testData/cli/simple.kt",
+                "-classpath", "not/existing/path",
+                "-annotations", "yet/another/not/existing/path",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutput(args);
+
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
+    }
+
+    @Test
+    public void nonExistingSourcePath() {
+        String[] args = {
+                "-src", "not/existing/path",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutput(args);
+    }
+
+    @Test
     public void testScript() {
         LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
         AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
