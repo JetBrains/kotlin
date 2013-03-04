@@ -17,10 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.NullableFunction;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeDescriptorBase;
 import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaScopeForKotlinNamespace;
@@ -40,7 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.jet.lang.resolve.java.PsiClassFinder.*;
+import static org.jetbrains.jet.lang.resolve.java.PsiClassFinder.RuntimeClassesHandleMode;
 
 public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
@@ -54,6 +53,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     private final JavaSemanticServices javaSemanticServices;
     private final PsiDeclarationProviderFactory declarationProviderFactory;
     private final PsiClassFinder psiClassFinder;
+    private final JavaClassResolver javaClassResolver;
     private final SubModuleDescriptor subModule;
     private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
@@ -61,10 +61,12 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
             @NotNull JavaSemanticServices javaSemanticServices,
             @NotNull StorageManager storageManager,
             @NotNull PsiDeclarationProviderFactory declarationProviderFactory,
+            @NotNull JavaClassResolver javaClassResolver,
             @NotNull PsiClassFinder psiClassFinder,
             @NotNull SubModuleDescriptor subModule
     ) {
         this.javaSemanticServices = javaSemanticServices;
+        this.javaClassResolver = javaClassResolver;
         this.packageFragments = storageManager.createMemoizedFunctionWithNullableValues(
                 new NullableFunction<FqName, PackageFragmentDescriptor>() {
                     @Nullable
@@ -88,7 +90,10 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     public ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass) {
         assertInMyScope(psiClass);
 
-        psiClass.getContainingFile().
+        ClassDescriptor classDescriptor = javaClassResolver.resolveClass(psiClass);
+        assert classDescriptor != null : "Could not resolve " + psiClass.getText();
+
+        return classDescriptor;
     }
 
     protected void assertInMyScope(@NotNull PsiClass psiClass) {
