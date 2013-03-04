@@ -90,9 +90,11 @@ public final class JavaAnnotationResolver {
         if (mappedClassDescriptor != null) {
             return mappedClassDescriptor;
         }
+        PsiClass annotationPsiClass = getAnnotationPsiClass(psiAnnotation);
+        if (annotationPsiClass == null) return null;
 
         final ClassDescriptor annotationClass =
-                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+                classResolver.resolveClass(annotationPsiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
         if (annotationClass == null) {
             return null;
         }
@@ -124,6 +126,17 @@ public final class JavaAnnotationResolver {
         }
 
         return annotation;
+    }
+
+    @Nullable
+    private static PsiClass getAnnotationPsiClass(@NotNull PsiAnnotation psiAnnotation) {
+        PsiJavaCodeReferenceElement nameReferenceElement = psiAnnotation.getNameReferenceElement();
+        if (nameReferenceElement == null) return null;
+        PsiElement annotationResolvedTo = nameReferenceElement.resolve();
+        if (annotationResolvedTo == null) return null;
+        assert annotationResolvedTo instanceof PsiClass : "Annotation " + psiAnnotation.getText() +
+                                                        " resolved to something other than a class: " + annotationResolvedTo.getText();
+        return (PsiClass) annotationResolvedTo;
     }
 
     @NotNull
