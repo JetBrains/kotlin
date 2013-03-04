@@ -19,13 +19,15 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -55,7 +57,7 @@ public final class JavaCompileTimeConstResolver {
 
     @Nullable
     public CompileTimeConstant<?> getCompileTimeConstFromExpression(
-            FqName annotationFqName, Name parameterName,
+            PsiClass annotationPsiClass, Name parameterName,
             PsiAnnotationMemberValue value
     ) {
         if (value instanceof PsiLiteralExpression) {
@@ -67,8 +69,7 @@ public final class JavaCompileTimeConstResolver {
         }
         // Array
         else if (value instanceof PsiArrayInitializerMemberValue) {
-            return getCompileTimeConstFromArrayExpression(annotationFqName, parameterName, (PsiArrayInitializerMemberValue) value
-            );
+            return getCompileTimeConstFromArrayExpression(annotationPsiClass, parameterName, (PsiArrayInitializerMemberValue) value);
         }
         // Annotation
         else if (value instanceof PsiAnnotation) {
@@ -88,14 +89,14 @@ public final class JavaCompileTimeConstResolver {
 
     @Nullable
     private CompileTimeConstant<?> getCompileTimeConstFromArrayExpression(
-            FqName annotationFqName,
+            PsiClass annotationPsiClass,
             Name valueName, PsiArrayInitializerMemberValue value
     ) {
         PsiAnnotationMemberValue[] initializers = value.getInitializers();
-        List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, initializers);
+        List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationPsiClass, valueName, initializers);
 
         ClassDescriptor classDescriptor =
-                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+                classResolver.resolveClass(annotationPsiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
 
         //TODO: nullability issues
         ValueParameterDescriptor valueParameterDescriptor =
@@ -108,14 +109,14 @@ public final class JavaCompileTimeConstResolver {
     }
 
     private List<CompileTimeConstant<?>> getCompileTimeConstantForArrayValues(
-            FqName annotationQualifiedName,
+            PsiClass annotationPsiClass,
             Name valueName,
             PsiAnnotationMemberValue[] initializers
     ) {
         List<CompileTimeConstant<?>> values = new ArrayList<CompileTimeConstant<?>>();
         for (PsiAnnotationMemberValue initializer : initializers) {
             CompileTimeConstant<?> compileTimeConstant =
-                    getCompileTimeConstFromExpression(annotationQualifiedName, valueName, initializer);
+                    getCompileTimeConstFromExpression(annotationPsiClass, valueName, initializer);
             if (compileTimeConstant == null) {
                 compileTimeConstant = NullValue.NULL;
             }
@@ -131,13 +132,8 @@ public final class JavaCompileTimeConstResolver {
             PsiElement psiElement = resolveElement.getParent();
             if (psiElement instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) psiElement;
-                String fqName = psiClass.getQualifiedName();
-                if (fqName == null) {
-                    return null;
-                }
 
-                JetScope scope;
-                ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN);
+                ClassDescriptor classDescriptor = classResolver.resolveClass(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
                 if (classDescriptor == null) {
                     return null;
                 }
@@ -145,7 +141,7 @@ public final class JavaCompileTimeConstResolver {
                 if (classObjectDescriptor == null) {
                     return null;
                 }
-                scope = classObjectDescriptor.getMemberScope(Lists.<TypeProjection>newArrayList());
+                JetScope scope = classObjectDescriptor.getMemberScope(Lists.<TypeProjection>newArrayList());
 
                 Name identifier = Name.identifier(((PsiEnumConstant) resolveElement).getName());
                 Collection<VariableDescriptor> properties = scope.getProperties(identifier);

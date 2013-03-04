@@ -115,7 +115,7 @@ public final class JavaAnnotationResolver {
 
             assert value != null;
             CompileTimeConstant compileTimeConst =
-                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value);
+                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationPsiClass, identifier, value);
             if (compileTimeConst != null) {
                 ValueParameterDescriptor valueParameterDescriptor =
                         DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(identifier, annotationClass);
