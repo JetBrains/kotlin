@@ -76,6 +76,7 @@ public class FunctionCodegen extends GenerationStateAware {
                         functionDescriptor,
                         false,
                         isCallInsideSameClassAsDeclared(functionDescriptor, owner),
+                        isCallInsideSameModuleAsDeclared(functionDescriptor, owner),
                         owner.getContextKind()).getSignature();
         generateMethod(f, method, true, null, functionDescriptor);
     }
@@ -345,7 +346,7 @@ public class FunctionCodegen extends GenerationStateAware {
             MethodVisitor mv
     ) {
         if (jvmSignature == null) {
-            jvmSignature = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, false, OwnerKind.IMPLEMENTATION).getSignature();
+            jvmSignature = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, false, false, OwnerKind.IMPLEMENTATION).getSignature();
         }
 
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();

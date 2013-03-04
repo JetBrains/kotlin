@@ -38,14 +38,14 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         countAndCompareActualOccurrences(expected);
     }
 
-    private void countAndCompareActualOccurrences(@NotNull List<OccurrenceInfo> expectedOccurrences) {
+    protected void countAndCompareActualOccurrences(@NotNull List<OccurrenceInfo> expectedOccurrences) {
         StringBuilder expected = new StringBuilder();
         StringBuilder actual = new StringBuilder();
 
         String text = generateToText();
         for (OccurrenceInfo info : expectedOccurrences) {
             expected.append(info.numberOfOccurrences).append(" ").append(info.needle).append("\n");
-            int actualCount = StringUtil.getOccurrenceCount(text, info.needle);
+            int actualCount = StringUtil.findMatches(text, Pattern.compile("(" + info.needle + ")")).size();
             actual.append(actualCount).append(" ").append(info.needle).append("\n");
         }
 
@@ -59,7 +59,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
     }
 
     @NotNull
-    private List<OccurrenceInfo> readExpectedOccurrences(@NotNull String filename) throws Exception {
+    protected List<OccurrenceInfo> readExpectedOccurrences(@NotNull String filename) throws Exception {
         List<OccurrenceInfo> result = new ArrayList<OccurrenceInfo>();
         String[] lines = FileUtil.loadFile(new File(filename), true).split("\n");
 
@@ -75,7 +75,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         return result;
     }
 
-    private static class OccurrenceInfo {
+    protected static class OccurrenceInfo {
         private final int numberOfOccurrences;
         private final String needle;
 

@@ -212,7 +212,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
                     iv.visitFieldInsn(
                             kind == OwnerKind.NAMESPACE ? GETSTATIC : GETFIELD,
-                            typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
+                            typeMapper.getOwner(propertyDescriptor, kind, isCallInsideSameModuleAsDeclared(propertyDescriptor, context)).getInternalName(),
                             propertyDescriptor.getName().getName(),
                             type.getDescriptor());
                     iv.areturn(type);
@@ -296,7 +296,7 @@ public class PropertyCodegen extends GenerationStateAware {
                     }
                     iv.load(paramCode, type);
                     iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? PUTSTATIC : PUTFIELD,
-                                      typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
+                                      typeMapper.getOwner(propertyDescriptor, kind, isCallInsideSameModuleAsDeclared(propertyDescriptor, context)).getInternalName(),
                                       propertyDescriptor.getName().getName(),
                                       type.getDescriptor());
 

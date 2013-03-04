@@ -791,7 +791,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                     typeMapper.mapSignature(original.getName(), original).getAsmMethod();
             Type[] argTypes = method.getArgumentTypes();
 
-            String owner = typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName();
+            String owner = typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isCallInsideSameModuleAsDeclared(original, context)).getInternalName();
             MethodVisitor mv = v.newMethod(null, ACC_BRIDGE | ACC_SYNTHETIC | ACC_STATIC, bridge.getName().getName(),
                                            method.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
@@ -849,12 +849,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     iv.load(0, OBJECT_TYPE);
                     boolean hasBackingField = Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, original));
+                    boolean isInsideModule = isCallInsideSameModuleAsDeclared(original, context);
                     if (original.getVisibility() == Visibilities.PRIVATE && hasBackingField) {
-                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), original.getName().getName(),
+                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(), original.getName().getName(),
                                     originalMethod.getReturnType().getDescriptor());
                     }
                     else {
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(),
+                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(),
                                          originalMethod.getName(), originalMethod.getDescriptor());
                     }
 
@@ -891,12 +892,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         //noinspection AssignmentToForLoopParameter
                         reg += argType.getSize();
                     }
+                    boolean isInsideModule = isCallInsideSameModuleAsDeclared(original, context);
                     if (original.getVisibility() == Visibilities.PRIVATE && original.getModality() == Modality.FINAL) {
-                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), original.getName().getName(),
+                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(), original.getName().getName(),
                                     originalMethod.getArgumentTypes()[0].getDescriptor());
                     }
                     else {
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(),
+                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(),
                                          originalMethod.getName(), originalMethod.getDescriptor());
                     }
 
@@ -1354,6 +1356,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         inheritedFun,
                         false,
                         isCallInsideSameClassAsDeclared(inheritedFun, context),
+                        isCallInsideSameModuleAsDeclared(inheritedFun, context),
                         OwnerKind.IMPLEMENTATION).getSignature();
                 JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
                 int kotlinFlags = getFlagsForVisibility(fun.getVisibility());
@@ -1588,7 +1591,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
-                        JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                        JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION, isCallInsideSameModuleAsDeclared(propertyDescriptor, codegen.context));
                         Type propType = typeMapper.mapType(jetType);
                         StackValue.property(propertyDescriptor, owner, owner,
                                             propType, false, false, false, null, null, 0, 0, state).store(propType, iv);

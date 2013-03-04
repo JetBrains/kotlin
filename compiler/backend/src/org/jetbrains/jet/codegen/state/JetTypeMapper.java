@@ -62,12 +62,12 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public JvmClassName getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
+    public JvmClassName getOwner(DeclarationDescriptor descriptor, OwnerKind kind, boolean isInsideModule) {
         JetTypeMapperMode mapTypeMode = ownerKindToMapTypeMode(kind);
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
-            return jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration, descriptor);
+            return jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration, descriptor, isInsideModule);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -122,7 +122,11 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    private JvmClassName jvmClassNameForNamespace(@NotNull NamespaceDescriptor namespace, @NotNull DeclarationDescriptor descriptor) {
+    private JvmClassName jvmClassNameForNamespace(
+            @NotNull NamespaceDescriptor namespace,
+            @NotNull DeclarationDescriptor descriptor,
+            boolean insideModule
+    ) {
 
         StringBuilder r = new StringBuilder();
 
@@ -147,15 +151,10 @@ public class JetTypeMapper extends BindingTraceAware {
                 r.append("/");
             }
 
-            if (descriptor instanceof PropertyDescriptor) {
-                JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
-                if (file != null) {
-                    String internalName = NamespaceCodegen.getNamespacePartInternalName(file);
-                    r.append(internalName.substring(r.length()));
-                }
-                else {
-                    r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
-                }
+            JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
+            if (insideModule && file != null) {
+                String internalName = NamespaceCodegen.getNamespacePartInternalName(file);
+                r.append(internalName.substring(r.length()));
             }
             else {
                 r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
@@ -450,6 +449,7 @@ public class JetTypeMapper extends BindingTraceAware {
             @NotNull FunctionDescriptor functionDescriptor,
             boolean superCall,
             boolean isInsideClass,
+            boolean isInsideModule,
             OwnerKind kind
     ) {
         final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
@@ -464,7 +464,7 @@ public class JetTypeMapper extends BindingTraceAware {
         JvmClassName thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent, functionDescriptor);
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent, functionDescriptor, isInsideModule);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;

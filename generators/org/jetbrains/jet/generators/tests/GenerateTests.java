@@ -22,6 +22,7 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
 import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
+import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
@@ -103,6 +104,13 @@ public class GenerateTests {
                 "BytecodeTextTestGenerated",
                 AbstractBytecodeTextTest.class,
                 testModel("compiler/testData/codegen/bytecodeText")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "TopLevelMembersInvocationTestGenerated",
+                AbstractTopLevelMembersInvocationTest.class,
+                new SimpleTestClassModel(new File("compiler/testData/codegen/topLevelMemberInvocation"), false, Pattern.compile("^(.+)$"), "doTest")
         );
 
         generateTest(

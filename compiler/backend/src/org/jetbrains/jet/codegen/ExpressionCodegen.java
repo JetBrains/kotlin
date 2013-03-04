@@ -1721,6 +1721,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         PropertyDescriptor initialDescriptor = propertyDescriptor;
         propertyDescriptor = initialDescriptor.getOriginal();
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
+        boolean isInsideModule = isCallInsideSameModuleAsDeclared(propertyDescriptor, context);
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
         Method getter = null;
         Method setter = null;
@@ -1794,7 +1795,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isInterface;
         if (isStatic) {
             isInterface = overridesTrait;
-            owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind());
+            owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind(), isInsideModule);
 
             getterInvokeOpcode = INVOKESTATIC;
             setterInvokeOpcode = INVOKESTATIC;
@@ -1807,7 +1808,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 getterInvokeOpcode = getOpcodeForPropertyDescriptorWithoutAccessor(propertyDescriptor);
             }
             else {
-                callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper, isInsideClass, contextKind());
+                callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper, isInsideClass, isInsideModule, contextKind());
                 getterInvokeOpcode = callableGetter.getInvokeOpcode();
             }
 
@@ -1815,13 +1816,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 setterInvokeOpcode = getOpcodeForPropertyDescriptorWithoutAccessor(propertyDescriptor);
             }
             else {
-                callableSetter = typeMapper.mapToCallableMethod(propertyDescriptor.getSetter(), isSuper, isInsideClass, contextKind());
+                callableSetter = typeMapper.mapToCallableMethod(propertyDescriptor.getSetter(), isSuper, isInsideClass, isInsideModule, contextKind());
                 setterInvokeOpcode = callableSetter.getInvokeOpcode();
             }
 
             CallableMethod callableMethod = callableGetter != null ? callableGetter : callableSetter;
             if (callableMethod == null) {
-                owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind());
+                owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind(), isInsideModule);
             }
             else {
                 owner = isFakeOverride && !overridesTrait && !isInterface(initialDescriptor.getContainingDeclaration())
@@ -2034,7 +2035,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             callableMethod = typeMapper.asCallableMethod(invoke);
         }
         else {
-            callableMethod = typeMapper.mapToCallableMethod(fd, superCall, isCallInsideSameClassAsDeclared(fd, context), OwnerKind.IMPLEMENTATION);
+            callableMethod = typeMapper.mapToCallableMethod(fd, superCall,
+                                                            isCallInsideSameClassAsDeclared(fd, context),
+                                                            isCallInsideSameModuleAsDeclared(fd, context),
+                                                            OwnerKind.IMPLEMENTATION);
         }
         return callableMethod;
     }
@@ -3105,6 +3109,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 descriptor,
                 false,
                 isCallInsideSameClassAsDeclared(descriptor, context),
+                isCallInsideSameModuleAsDeclared(descriptor, context),
                 OwnerKind.IMPLEMENTATION);
         invokeMethodWithArguments(callableMethod, expression, StackValue.none());
         return type;
@@ -3207,6 +3212,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     operationDescriptor,
                     false,
                     isCallInsideSameClassAsDeclared(operationDescriptor, context),
+                    isCallInsideSameModuleAsDeclared(operationDescriptor, context),
                     OwnerKind.IMPLEMENTATION);
 
             boolean isGetter = accessor.getSignature().getAsmMethod().getName().equals("get");

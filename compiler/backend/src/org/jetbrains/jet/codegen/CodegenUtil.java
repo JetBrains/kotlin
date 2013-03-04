@@ -270,6 +270,14 @@ public class CodegenUtil {
                 && context.getContextKind() != OwnerKind.TRAIT_IMPL);
     }
 
+    public static boolean isCallInsideSameModuleAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {
+        if (context == CodegenContext.STATIC) {
+            return true;
+        }
+        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
+        return DescriptorUtils.isInSameModule(declarationDescriptor, contextDescriptor);
+    }
+
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
         return ContainerUtil.exists(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
                 new Condition<DeclarationDescriptor>() {
