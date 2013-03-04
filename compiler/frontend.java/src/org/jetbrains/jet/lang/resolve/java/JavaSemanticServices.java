@@ -20,7 +20,6 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 
 public interface JavaSemanticServices {
@@ -32,10 +31,4 @@ public interface JavaSemanticServices {
 
     @NotNull
     ClassDescriptor getDescriptorByKotlinLightClass(@NotNull PsiClass aClass);
-
-    /**
-     * @param psiClass must be a top-level class
-     */
-    @NotNull
-    PackageFragmentDescriptor getParentPackageFragmentDescriptor(@NotNull PsiClass psiClass);
 }
