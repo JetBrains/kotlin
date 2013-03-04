@@ -40,6 +40,8 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.Collection;
 import java.util.Collections;
 
+import static org.jetbrains.jet.lang.resolve.java.PsiClassFinder.*;
+
 public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     public static final PackageFragmentKind JAVA = new PackageFragmentKind() {
@@ -51,7 +53,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     private final JavaSemanticServices javaSemanticServices;
     private final PsiDeclarationProviderFactory declarationProviderFactory;
-    private final GlobalSearchScope definingSearchScope;
+    private final PsiClassFinder psiClassFinder;
     private final SubModuleDescriptor subModule;
     private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
@@ -59,7 +61,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
             @NotNull JavaSemanticServices javaSemanticServices,
             @NotNull StorageManager storageManager,
             @NotNull PsiDeclarationProviderFactory declarationProviderFactory,
-            @NotNull GlobalSearchScope definingSearchScope,
+            @NotNull PsiClassFinder psiClassFinder,
             @NotNull SubModuleDescriptor subModule
     ) {
         this.javaSemanticServices = javaSemanticServices;
@@ -74,13 +76,12 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                 StorageManager.ReferenceKind.STRONG
         );
         this.declarationProviderFactory = declarationProviderFactory;
-        this.definingSearchScope = definingSearchScope;
+        this.psiClassFinder = psiClassFinder;
         this.subModule = subModule;
     }
 
-    @NotNull
-    public GlobalSearchScope getDefiningSearchScope() {
-        return definingSearchScope;
+    public boolean isResponsibleFor(@NotNull VirtualFile virtualFile) {
+        return psiClassFinder.getDefiningSearchScope().contains(virtualFile);
     }
 
     @NotNull
@@ -93,7 +94,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     protected void assertInMyScope(@NotNull PsiClass psiClass) {
         VirtualFile file = psiClass.getContainingFile().getVirtualFile();
         assert file != null : "No virtual file for psiClass: " + psiClass.getText();
-        assert definingSearchScope.contains(file) : "Not in scope\n psiClass " + psiClass.getText() + "\nscope: " + definingSearchScope;
+        assert isResponsibleFor(file) : "Not in scope\n psiClass " + psiClass.getText() + "\nscope: " + psiClassFinder;
     }
 
     @NotNull
@@ -114,9 +115,9 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     @Nullable
     private PackageFragmentDescriptor createPackageFragment(@NotNull FqName fqName) {
-        JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(definingSearchScope.getProject());
+        //JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(psiClassFinder.getProject());
 
-        final PsiClass staticClass = javaPsiFacade.findClass(fqName.getFqName(), definingSearchScope);
+        final PsiClass staticClass = psiClassFinder.findPsiClass(fqName, RuntimeClassesHandleMode.THROW);
         if (staticClass != null) {
             if (staticClass.isEnum()) {
                 // TODO: this is a bug. but reproduces the existing behavior
@@ -131,13 +132,13 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
             return createPackageFragmentForStaticClass(fqName, staticClass);
         }
 
-        final PsiPackage psiPackage = javaPsiFacade.findPackage(fqName.getFqName());
+        final PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
         if (psiPackage == null) return null;
 
-        PsiClass[] classes = psiPackage.getClasses(definingSearchScope);
+        PsiClass[] classes = psiPackage.getClasses(psiClassFinder.getDefiningSearchScope());
         if (classes.length == 0) return null;
 
-        final PsiClass packageClass = javaPsiFacade.findClass(PackageClassUtils.getPackageClassFqName(fqName).getFqName(), definingSearchScope);
+        final PsiClass packageClass = psiClassFinder.findPsiClass(PackageClassUtils.getPackageClassFqName(fqName), RuntimeClassesHandleMode.THROW);
 
         if (packageClass == null) {
             return createPackageFragmentForPackageWithoutMembers(fqName, psiPackage);

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -29,6 +30,9 @@ public interface PsiClassFinder {
         THROW,
         IGNORE,
     }
+
+    @NotNull
+    GlobalSearchScope getDefiningSearchScope();
 
     @Nullable
     PsiClass findPsiClass(@NotNull FqName fqName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode);

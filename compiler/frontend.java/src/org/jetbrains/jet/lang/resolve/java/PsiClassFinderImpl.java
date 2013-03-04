@@ -72,6 +72,12 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         };
     }
 
+    @NotNull
+    @Override
+    public GlobalSearchScope getDefiningSearchScope() {
+        return javaSearchScope;
+    }
+
     @Override
     @Nullable
     public PsiClass findPsiClass(@NotNull FqName qualifiedName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode) {

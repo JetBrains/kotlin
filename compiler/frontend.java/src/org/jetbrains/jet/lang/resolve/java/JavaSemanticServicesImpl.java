@@ -107,7 +107,7 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
 
         // NOTE: This may become slow if we have too many providers
         for (JavaPackageFragmentProvider provider : providers) {
-            if (provider.getDefiningSearchScope().contains(virtualFile)) {
+            if (provider.isResponsibleFor(virtualFile)) {
                 return provider.getClassDescriptor(psiClass);
             }
         }
