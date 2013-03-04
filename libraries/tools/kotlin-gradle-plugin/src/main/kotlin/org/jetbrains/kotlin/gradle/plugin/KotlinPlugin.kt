@@ -25,33 +25,28 @@ import org.gradle.api.Action
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.util.Arrays
 
-
-/**
- * Created by Nikita.Skvortsov
- * Date: 2/21/13, 5:55 PM
- */
-
-open class KotlinPlugin : Plugin<Project> {
+open class KotlinPlugin: Plugin<Project> {
 
     public override fun apply(project: Project) {
-        val javaBasePlugin = project.getPlugins()?.apply(javaClass<JavaBasePlugin>())!!
-        val javaPluginConvention = project.getConvention()?.getPlugin(javaClass<JavaPluginConvention>())!!
+        val javaBasePlugin = project.getPlugins().apply(javaClass<JavaBasePlugin>())
+        val javaPluginConvention = project.getConvention().getPlugin(javaClass<JavaPluginConvention>())
 
-        project.getPlugins()?.apply(javaClass<JavaPlugin>())
+        project.getPlugins().apply(javaClass<JavaPlugin>())
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
         configureKDoc(project, javaPluginConvention)
     }
 
 
-    private fun configureSourceSetDefaults( project: ProjectInternal,
-                                            javaBasePlugin: JavaBasePlugin,
-                                            javaPluginConvention: JavaPluginConvention) {
+    private fun configureSourceSetDefaults(project: ProjectInternal,
+                                           javaBasePlugin: JavaBasePlugin,
+                                           javaPluginConvention: JavaPluginConvention) {
         javaPluginConvention.getSourceSets()?.all(object : Action<SourceSet> {
-            override fun execute(sourceSet : SourceSet?) {
+            override fun execute(sourceSet: SourceSet?) {
                 if (sourceSet is HasConvention) {
                     val sourceSetName = sourceSet.getName()
                     val kotlinSourceSet = KotlinSourceSetImpl(sourceSetName, project.getFileResolver())
+
                     val kotlinDirSet = kotlinSourceSet.getKotlin()
                     kotlinDirSet.srcDir(project.file("src/${sourceSetName}/kotlin"))
 
@@ -59,22 +54,22 @@ open class KotlinPlugin : Plugin<Project> {
                     sourceSet.getAllSource()?.source(kotlinDirSet)
                     sourceSet.getConvention().getPlugins().put("kotlin", kotlinSourceSet)
 
-                    sourceSet.getResources()?.getFilter()?.exclude(KSpec({ (elem: FileTreeElement) ->
+                    sourceSet.getResources()?.getFilter()?.exclude(KSpec({ elem ->
                         kotlinDirSet.contains(elem.getFile())
                     }))
 
                     val kotlinTaskName = sourceSet.getCompileTaskName("kotlin")
-                    val kotlinTask : KotlinCompile = project.getTasks()?.add(kotlinTaskName , javaClass<KotlinCompile>())!!
+                    val kotlinTask: KotlinCompile = project.getTasks().add(kotlinTaskName, javaClass<KotlinCompile>())!!
 
                     javaBasePlugin.configureForSourceSet(sourceSet, kotlinTask)
 
-                    kotlinTask setDescription "Compiles the $sourceSet.kotlin."
-                    kotlinTask source kotlinDirSet
+                    kotlinTask.setDescription("Compiles the $sourceSet.kotlin.")
+                    kotlinTask.source(kotlinDirSet)
 
-                    val javaTask = project.getTasks()?.findByName(sourceSet.getCompileJavaTaskName()) as AbstractCompile?
+                    val javaTask = project.getTasks().findByName(sourceSet.getCompileJavaTaskName()) as AbstractCompile?
                     javaTask?.dependsOn(kotlinTaskName)
 
-                    val sourceSetCompileConfigurationName = if (sourceSetName.equals("main")) {
+                    val sourceSetCompileConfigurationName = if (sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
                         "compile"
                     } else {
                         "${sourceSetName}Compile"
@@ -83,21 +78,21 @@ open class KotlinPlugin : Plugin<Project> {
                     project.getDependencies()?.add(sourceSetCompileConfigurationName, project.files(kotlinTask.getDestinationDir()))
                 }
             }
-        });
+        })
     }
 
     private fun configureKDoc(project: Project, javaPluginConvention: JavaPluginConvention) {
-        val mainSourceSet : HasConvention = javaPluginConvention.getSourceSets()?.getByName(SourceSet.MAIN_SOURCE_SET_NAME)!! as HasConvention
+        val mainSourceSet = javaPluginConvention.getSourceSets()?.getByName(SourceSet.MAIN_SOURCE_SET_NAME)!! as HasConvention
 
-        val kdoc : KDoc = project.getTasks()?.add(KDOC_TASK_NAME, javaClass<KDoc>())!!
+        val kdoc = project.getTasks()?.add(KDOC_TASK_NAME, javaClass<KDoc>())!!
         kdoc.setDescription("Generates KDoc API documentation for the main source code.")
         kdoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP)
         kdoc.setSource(mainSourceSet.getConvention().getExtensionsAsDynamicObject().getProperty("kotlin"))
 
         project.getTasks()?.withType(javaClass<KDoc>(), object : Action<KDoc> {
-            override fun execute(param : KDoc?) {
+            override fun execute(param: KDoc?) {
                 param?.getConventionMapping()?.map("destinationDir", object : Callable<Any> {
-                    override fun call() : Any {
+                    override fun call(): Any {
                         return File(javaPluginConvention.getDocsDir(), "kdoc");
                     }
                 })
@@ -105,11 +100,11 @@ open class KotlinPlugin : Plugin<Project> {
         })
     }
 
-    public val KDOC_TASK_NAME : String = "kdoc"
+    public val KDOC_TASK_NAME: String = "kdoc"
 }
 
 
-open class KSpec<T : Any?>(val predicate : (T) -> Boolean) : Spec<T> {
+open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {
     public override fun isSatisfiedBy(p0: T?): Boolean {
         return p0 != null && predicate(p0)
     }

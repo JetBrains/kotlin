@@ -21,15 +21,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>gradle-api</artifactId>
-            <version>1.4</version>
-            <scope>provided</scope>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.directory.studio</groupId>
+            <artifactId>org.apache.commons.io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>gradle-api</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -43,14 +54,8 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-runtime</artifactId>
+            <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>6.8</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -94,6 +99,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- Invoker plugin maintains local maven repository in local-repo for gradle integration tests -->
                 <artifactId>maven-invoker-plugin</artifactId>
                 <version>1.8</version>
                 <configuration>
@@ -125,4 +131,11 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>jetbrains-utils</id>
+            <url>http://repository.jetbrains.com/utils</url>
+        </repository>
+    </repositories>
 </project>

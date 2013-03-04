@@ -5,8 +5,6 @@
         </annotation>
     </item>
     <item name='org.gradle.api.internal.AbstractTask org.gradle.api.logging.Logger getLogger()'>
-        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun getLogger() : Logger?&quot;"/>
-        </annotation>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

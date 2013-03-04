@@ -10,4 +10,13 @@
             <val name="value" val="&quot;fun getExtensionsAsDynamicObject() : DynamicObject&quot;"/>
         </annotation>
     </item>
+    <item name='org.gradle.api.plugins.PluginContainer org.gradle.api.Plugin apply(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.gradle.api.plugins.PluginContainer T apply(java.lang.Class&lt;T&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.gradle.api.plugins.Convention T getPlugin(java.lang.Class&lt;T&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>
