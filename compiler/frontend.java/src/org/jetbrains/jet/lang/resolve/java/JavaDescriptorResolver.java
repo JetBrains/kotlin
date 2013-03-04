@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -181,13 +182,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        return classResolver.resolveClass(qualifiedName, searchRule);
+    public ClassDescriptor resolveClass(@NotNull PsiClass psiClass, @NotNull DescriptorSearchRule searchRule) {
+        return classResolver.resolveClass(psiClass, searchRule);
     }
 
     @Override
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return classResolver.resolveClass(qualifiedName);
+    public ClassDescriptor resolveClass(@NotNull PsiClass psiClass) {
+        return classResolver.resolveClass(psiClass);
     }
 
     @NotNull

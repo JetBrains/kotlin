@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.lang.types;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface DependencyClassByQualifiedNameResolver {
 
     @Nullable
-    ClassDescriptor resolveClass(@NotNull FqName qualifiedName);
+    ClassDescriptor resolveClass(@NotNull PsiClass psiClass);
 
 }

@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.types;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class DependencyClassByQualifiedNameResolverDummyImpl implements DependencyClassByQualifiedNameResolver {
     @Override
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
+    public ClassDescriptor resolveClass(@NotNull PsiClass psiClass) {
         return null;
     }
 }

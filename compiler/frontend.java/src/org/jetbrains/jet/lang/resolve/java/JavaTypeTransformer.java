@@ -154,7 +154,7 @@ public class JavaTypeTransformer {
                                                                                                     howThisTypeIsUsed);
 
                     if (classData == null) {
-                        classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+                        classData = resolver.resolveClass(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
                     }
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
