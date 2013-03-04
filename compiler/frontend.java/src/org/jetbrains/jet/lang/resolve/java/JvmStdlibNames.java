@@ -70,6 +70,8 @@ public class JvmStdlibNames {
 
     public static final JvmClassName JET_CLASS = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetClass");
 
+    public static final JvmClassName JET_CLASS_OBJECT = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetClassObject");
+
     public static final JvmClassName JET_PACKAGE_CLASS = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetPackageClass");
 
     public static final String ABI_VERSION_NAME = "abiVersion";

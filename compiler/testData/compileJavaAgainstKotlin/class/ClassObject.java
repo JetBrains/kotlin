@@ -1,17 +1,17 @@
 class ClassObject {
     void accessToClassObject() {
-        WithClassObject.object.$instance.foo();
-        WithClassObject.object.$instance.getValue();
-        WithClassObject.object.$instance.getValueWithGetter();
-        WithClassObject.object.$instance.getVariable();
-        WithClassObject.object.$instance.setVariable(0);
-        WithClassObject.object.$instance.getVariableWithAccessors();
-        WithClassObject.object.$instance.setVariableWithAccessors(0);
+        WithClassObject.object$.foo();
+        WithClassObject.object$.getValue();
+        WithClassObject.object$.getValueWithGetter();
+        WithClassObject.object$.getVariable();
+        WithClassObject.object$.setVariable(0);
+        WithClassObject.object$.getVariableWithAccessors();
+        WithClassObject.object$.setVariableWithAccessors(0);
     }
 
     void accessToPackageObject() {
-        PackageInner.$instance.foo();
-        PackageInner.$instance.getValue();
+        PackageInner.instance$.foo();
+        PackageInner.instance$.getValue();
     }
 
     void accessToInnerClass() {

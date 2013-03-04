@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassObjectAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -65,7 +66,7 @@ public final class JavaInnerClassResolver {
     }
 
     private static boolean shouldBeIgnored(PsiClass innerPsiClass) {
-        return innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME);
+        return JetClassObjectAnnotation.get(innerPsiClass).isDefined();
     }
 
     @NotNull

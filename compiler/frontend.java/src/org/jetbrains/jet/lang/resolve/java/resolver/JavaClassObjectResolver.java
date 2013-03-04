@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassObjectAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
@@ -160,7 +161,7 @@ public final class JavaClassObjectResolver {
     @Nullable
     private static PsiClass getClassObjectPsiClass(@NotNull PsiClass ownerClass) {
         for (PsiClass inner : ownerClass.getInnerClasses()) {
-            if (inner.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
+            if (JetClassObjectAnnotation.get(inner).isDefined()) {
                 return inner;
             }
         }

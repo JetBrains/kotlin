@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -25,7 +27,7 @@ public class JvmAbi {
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
      */
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;
@@ -37,7 +39,8 @@ public class JvmAbi {
     public static final String CLASS_OBJECT_CLASS_NAME = "object";
     public static final String CLASS_OBJECT_SUFFIX = "$" + CLASS_OBJECT_CLASS_NAME;
 
-    public static final String INSTANCE_FIELD = "$instance";
+    public static final String INSTANCE_FIELD = "instance$";
+    public static final String CLASS_OBJECT_FIELD = "object$";
     public static final String RECEIVER_PARAMETER = "$receiver";
 
     public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION =

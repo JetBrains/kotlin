@@ -128,7 +128,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         assertEquals("foo.TheClass.object", classObjectClass.getQualifiedName());
         assertTrue(classObjectClass.hasModifierProperty(PsiModifier.STATIC));
 
-        final PsiField instance = classObjectClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
+        final PsiField instance = theClass.findFieldByName(JvmAbi.CLASS_OBJECT_FIELD, false);
         assertNotNull(instance);
         assertEquals("foo.TheClass.object", instance.getType().getCanonicalText());
         assertTrue(instance.hasModifierProperty(PsiModifier.PUBLIC));

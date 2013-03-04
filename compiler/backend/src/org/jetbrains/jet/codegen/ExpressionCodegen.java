@@ -2126,7 +2126,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.load(0, OBJECT_TYPE);
                 }
                 else {
-                    v.getstatic(exprType.getInternalName(), JvmAbi.INSTANCE_FIELD, exprType.getDescriptor());
+                    FieldInfo info = FieldInfo.createForSingleton(classReceiverDeclarationDescriptor, typeMapper);
+                    v.getstatic(info.getOwnerInternalName(), info.getFieldName(), info.getFieldType().getDescriptor());
                 }
                 StackValue.onStack(exprType).put(type, v);
             }

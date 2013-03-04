@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -312,10 +313,18 @@ public class AsmUtil {
     }
 
     public static void genInitSingletonField(Type classAsmType, InstructionAdapter iv) {
-        iv.anew(classAsmType);
+        genInitSingletonField(classAsmType, JvmAbi.INSTANCE_FIELD, classAsmType, iv);
+    }
+
+    public static void genInitSingletonField(FieldInfo info, InstructionAdapter iv) {
+        genInitSingletonField(info.getOwnerType(), info.getFieldName(), info.getFieldType(), iv);
+    }
+
+    public static void genInitSingletonField(Type fieldOwnerType, String fieldName, Type fieldAsmType, InstructionAdapter iv) {
+        iv.anew(fieldAsmType);
         iv.dup();
-        iv.invokespecial(classAsmType.getInternalName(), "<init>", "()V");
-        iv.putstatic(classAsmType.getInternalName(), JvmAbi.INSTANCE_FIELD, classAsmType.getDescriptor());
+        iv.invokespecial(fieldAsmType.getInternalName(), "<init>", "()V");
+        iv.putstatic(fieldOwnerType.getInternalName(), fieldName, fieldAsmType.getDescriptor());
     }
 
     public static void genStringBuilderConstructor(InstructionAdapter v) {

@@ -23,14 +23,12 @@ import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -130,7 +128,8 @@ public abstract class StackValue {
         return new CollectionElement(type, getter, setter, codegen, state);
     }
 
-    public static StackValue field(Type type, JvmClassName owner, String name, boolean isStatic) {
+    @NotNull
+    public static StackValue field(@NotNull Type type, @NotNull JvmClassName owner, @NotNull String name, boolean isStatic) {
         return new Field(type, owner, name, isStatic);
     }
 
@@ -340,20 +339,8 @@ public abstract class StackValue {
     }
 
     public static StackValue singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        final Type type = typeMapper.mapType(classDescriptor.getDefaultType());
-
-        final ClassKind kind = classDescriptor.getKind();
-        if (kind == ClassKind.CLASS_OBJECT || kind == ClassKind.OBJECT) {
-            return field(type, JvmClassName.byInternalName(type.getInternalName()), JvmAbi.INSTANCE_FIELD, true);
-        }
-        else if (kind == ClassKind.ENUM_ENTRY) {
-            final JvmClassName owner = typeMapper.getBindingContext()
-                    .get(CodegenBinding.FQN, classDescriptor.getContainingDeclaration().getContainingDeclaration());
-            return field(type, owner, classDescriptor.getName().getName(), true);
-        }
-        else {
-            throw new UnsupportedOperationException();
-        }
+        FieldInfo info = FieldInfo.createForSingleton(classDescriptor, typeMapper);
+        return field(info.getFieldType(), JvmClassName.byInternalName(info.getOwnerInternalName()), info.getFieldName(), true);
     }
 
     private static class None extends StackValue {

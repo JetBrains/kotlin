@@ -283,6 +283,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         annotationVisitor.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
         annotationVisitor.visitEnd();
+
+        if (descriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            AnnotationVisitor classObjectVisitor = v.newAnnotation(JvmStdlibNames.JET_CLASS_OBJECT.getDescriptor(), true);
+            classObjectVisitor.visitEnd();
+        }
     }
 
     private JvmClassSignature signature() {
@@ -912,14 +917,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (!(isNonLiteralObject(myClass) || descriptor.getKind() == ClassKind.CLASS_OBJECT)) return;
+        boolean hasClassObject = descriptor.getClassObjectDescriptor() != null;
+        boolean isEnumClass = DescriptorUtils.isEnumClass(descriptor);
 
-        v.newField(myClass, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, classAsmType.getDescriptor(), null, null);
+        if (!(isNonLiteralObject(myClass) || hasClassObject) || isEnumClass) return;
+
+        ClassDescriptor fieldTypeDescriptor = hasClassObject ? descriptor.getClassObjectDescriptor() : descriptor;
+        assert fieldTypeDescriptor != null;
+        final FieldInfo info = FieldInfo.createForSingleton(fieldTypeDescriptor, typeMapper);
+        JetClassOrObject original = hasClassObject ? ((JetClass)myClass).getClassObject().getObjectDeclaration() : myClass;
+
+        v.newField(original, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, info.getFieldName(), info.getFieldType().getDescriptor(), null, null);
 
         staticInitializerChunks.add(new CodeChunk() {
             @Override
             public void generate(InstructionAdapter iv) {
-                genInitSingletonField(classAsmType, iv);
+                genInitSingletonField(info, iv);
             }
         });
     }
