@@ -22,7 +22,9 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.NotNullFunction;
+import com.intellij.util.NullableFunction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeDescriptorBase;
 import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
@@ -30,6 +32,8 @@ import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactor
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaScopeForKotlinNamespace;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -49,14 +53,26 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     private final PsiDeclarationProviderFactory declarationProviderFactory;
     private final GlobalSearchScope definingSearchScope;
     private final SubModuleDescriptor subModule;
+    private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
     protected JavaPackageFragmentProvider(
             @NotNull JavaSemanticServices javaSemanticServices,
+            @NotNull StorageManager storageManager,
             @NotNull PsiDeclarationProviderFactory declarationProviderFactory,
             @NotNull GlobalSearchScope definingSearchScope,
             @NotNull SubModuleDescriptor subModule
     ) {
         this.javaSemanticServices = javaSemanticServices;
+        this.packageFragments = storageManager.createMemoizedFunctionWithNullableValues(
+                new NullableFunction<FqName, PackageFragmentDescriptor>() {
+                    @Nullable
+                    @Override
+                    public PackageFragmentDescriptor fun(FqName fqName) {
+                        return createPackageFragment(fqName);
+                    }
+                },
+                StorageManager.ReferenceKind.STRONG
+        );
         this.declarationProviderFactory = declarationProviderFactory;
         this.definingSearchScope = definingSearchScope;
         this.subModule = subModule;
@@ -83,6 +99,21 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     @NotNull
     @Override
     public Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull final FqName fqName) {
+        PackageFragmentDescriptor fragment = getPackageFragment(fqName);
+        if (fragment == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(fragment);
+    }
+
+    // This particular provider creates no more than one fragment per package
+    @Nullable
+    public PackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName) {
+        return packageFragments.fun(fqName);
+    }
+
+    @Nullable
+    private PackageFragmentDescriptor createPackageFragment(@NotNull FqName fqName) {
         JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(definingSearchScope.getProject());
 
         final PsiClass staticClass = javaPsiFacade.findClass(fqName.getFqName(), definingSearchScope);
@@ -94,26 +125,26 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                 // old comment:
                 // NOTE: we don't want to create namespace for enum classes because we put
                 // static members of enum class into class object descriptor
-                return Collections.emptyList();
+                return null;
             }
 
-            return Collections.singletonList(createPackageFragmentForStaticClass(fqName, staticClass));
+            return createPackageFragmentForStaticClass(fqName, staticClass);
         }
 
         final PsiPackage psiPackage = javaPsiFacade.findPackage(fqName.getFqName());
-        if (psiPackage == null) return Collections.emptyList();
+        if (psiPackage == null) return null;
 
         PsiClass[] classes = psiPackage.getClasses(definingSearchScope);
-        if (classes.length == 0) return Collections.emptyList();
+        if (classes.length == 0) return null;
 
         final PsiClass packageClass = javaPsiFacade.findClass(PackageClassUtils.getPackageClassFqName(fqName).getFqName(), definingSearchScope);
 
         if (packageClass == null) {
-            return Collections.singletonList(createPackageFragmentForPackageWithoutMembers(fqName, psiPackage));
+            return createPackageFragmentForPackageWithoutMembers(fqName, psiPackage);
         }
 
         AbiVersionUtil.checkAbiVersion(packageClass, JetPackageClassAnnotation.get(packageClass), javaSemanticServices.getDiagnosticHolder());
-        return Collections.singletonList(createPackageFragmentForPackageWithMembers(fqName, psiPackage, packageClass));
+        return createPackageFragmentForPackageWithMembers(fqName, psiPackage, packageClass);
     }
 
     private PackageFragmentDescriptor createPackageFragmentForStaticClass(final FqName fqName, final PsiClass staticClass) {

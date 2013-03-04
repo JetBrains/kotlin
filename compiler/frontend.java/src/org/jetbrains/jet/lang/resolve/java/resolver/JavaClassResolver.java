@@ -47,6 +47,7 @@ public final class JavaClassResolver {
     private BindingTrace trace;
     private JavaSignatureResolver signatureResolver;
     private JavaSemanticServices semanticServices;
+    private JavaPackageFragmentProvider packageFragmentProvider;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassObjectResolver classObjectResolver;
     private JavaSupertypeResolver supertypesResolver;
@@ -88,6 +89,11 @@ public final class JavaClassResolver {
     @Inject
     public void setPsiDeclarationProviderFactory(PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
         this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
+    }
+
+    @Inject
+    public void setPackageFragmentProvider(JavaPackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Nullable
@@ -239,7 +245,7 @@ public final class JavaClassResolver {
             return resolveParentClass(psiClass);
         }
         else {
-            return semanticServices.getParentPackageFragmentDescriptor(psiClass);
+            return packageFragmentProvider.getPackageFragment(getFqName(psiClass).parent());
         }
     }
 
