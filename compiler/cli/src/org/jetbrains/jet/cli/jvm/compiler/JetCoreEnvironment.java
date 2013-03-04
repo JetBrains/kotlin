@@ -72,8 +72,6 @@ public class JetCoreEnvironment {
 
     private final CompilerConfiguration configuration;
 
-    private boolean initialized = false;
-
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
         this.configuration = configuration.copy();
         this.configuration.setReadOnly(true);
@@ -128,7 +126,6 @@ public class JetCoreEnvironment {
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
         KotlinBuiltIns.initialize(project);
-        initialized = true;
     }
 
     public CompilerConfiguration getConfiguration() {
@@ -191,10 +188,7 @@ public class JetCoreEnvironment {
         addSources(new File(path));
     }
 
-    public void addToClasspath(File path) {
-        if (initialized) {
-            throw new IllegalStateException("Cannot add class path when JetCoreEnvironment is already initialized");
-        }
+    private void addToClasspath(File path) {
         if (path.isFile()) {
             VirtualFile jarFile = applicationEnvironment.getJarFileSystem().findFileByPath(path + "!/");
             if (jarFile == null) {
