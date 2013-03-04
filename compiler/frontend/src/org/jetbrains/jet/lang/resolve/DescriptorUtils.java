@@ -144,6 +144,13 @@ public class DescriptorUtils {
         return fromPackage != null && whatPackage != null && whatPackage.equals(fromPackage);
     }
 
+    public static boolean isInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
+        ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(first, ModuleDescriptor.class, false);
+        ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(second, ModuleDescriptor.class, false);
+        assert parentModule != null && fromModule != null;
+        return parentModule.equals(fromModule);
+    }
+
     @Nullable
     public static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
         DeclarationDescriptor descriptor = declarationDescriptor;
