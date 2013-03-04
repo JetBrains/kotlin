@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -195,16 +196,16 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private String renderTypeWithoutEscape(@NotNull JetType type) {
-        if (type == ExpressionTypingUtils.CANNOT_BE_INFERRED) {
+        if (type == ExpressionTypingUtils.CANNOT_BE_INFERRED || type == CallResolverUtil.CANT_INFER) {
             return "???";
         }
-        else if (ErrorUtils.isErrorType(type)) {
+        if (ErrorUtils.isErrorType(type)) {
             return type.toString();
         }
-        else if (KotlinBuiltIns.getInstance().isUnit(type)) {
+        if (KotlinBuiltIns.getInstance().isUnit(type)) {
             return KotlinBuiltIns.UNIT_ALIAS + (type.isNullable() ? "?" : "");
         }
-        else if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type)) {
+        if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type)) {
             return renderFunctionType(type);
         }
         return renderDefaultType(type);
