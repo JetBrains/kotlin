@@ -119,7 +119,7 @@ public class JetCoreEnvironment {
             addToClasspath(path);
         }
         for (File path : configuration.getList(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
-            addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
+            addExternalAnnotationsRoot(path);
         }
         for (String path : configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
             addSources(path);
@@ -145,8 +145,12 @@ public class JetCoreEnvironment {
         return projectEnvironment.getProject();
     }
 
-    private void addExternalAnnotationsRoot(VirtualFile root) {
-        annotationsManager.addExternalAnnotationsRoot(root);
+    private void addExternalAnnotationsRoot(File path) {
+        if (!path.exists()) {
+            report(WARNING, "Annotations path entry points to a non-existent location: " + path);
+            return;
+        }
+        annotationsManager.addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
     }
 
     private void addSources(File file) {
