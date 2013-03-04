@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
+import com.intellij.psi.search.GlobalSearchScope;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -151,7 +153,7 @@ public final class JavaSupertypeResolver {
             result.add(KotlinBuiltIns.getInstance().getAnyType());
         }
         else {
-            ClassDescriptor object = resolveJavaLangObject();
+            ClassDescriptor object = resolveJavaLangObject(psiClass.getPsiClass().getResolveScope());
             if (object != null) {
                 result.add(object.getDefaultType());
             }
@@ -198,9 +200,12 @@ public final class JavaSupertypeResolver {
 
 
     @Nullable
-    private ClassDescriptor resolveJavaLangObject() {
-        ClassDescriptor clazz = classResolver.resolveClass(DescriptorResolverUtils.OBJECT_FQ_NAME,
-                                                           DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+    private ClassDescriptor resolveJavaLangObject(@NotNull GlobalSearchScope scope) {
+        JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(scope.getProject());
+        PsiClass psiClass = javaPsiFacade.findClass(DescriptorResolverUtils.OBJECT_FQ_NAME.getFqName(), scope);
+        if (psiClass == null) return null;
+
+        ClassDescriptor clazz = classResolver.resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (clazz == null) {
             // TODO: warning
         }
