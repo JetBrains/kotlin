@@ -46,10 +46,16 @@ public final class JavaSignatureResolver {
 
     @NotNull
     private JavaSemanticServices semanticServices;
+    private JavaTypeTransformer typeTransformer;
 
     @Inject
     public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
         this.semanticServices = javaSemanticServices;
+    }
+
+    @Inject
+    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
     }
 
     private static boolean isJavaLangObject(@NotNull JetType type) {
@@ -293,11 +299,11 @@ public final class JavaSignatureResolver {
                 typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
             }
             else if (referencedTypes.length == 1) {
-                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0], TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
+                typeParameterDescriptor.addUpperBound(typeTransformer.transformToType(referencedTypes[0], TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
             }
             else {
                 for (PsiClassType referencedType : referencedTypes) {
-                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
+                    typeParameterDescriptor.addUpperBound(typeTransformer.transformToType(referencedType, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
                 }
             }
         }

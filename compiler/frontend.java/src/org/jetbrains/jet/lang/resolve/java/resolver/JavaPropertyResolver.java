@@ -48,17 +48,12 @@ import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAV
 
 public final class JavaPropertyResolver {
 
-    private JavaSemanticServices semanticServices;
     private JavaSignatureResolver javaSignatureResolver;
     private BindingTrace trace;
     private JavaAnnotationResolver annotationResolver;
+    private JavaTypeTransformer typeTransformer;
 
     public JavaPropertyResolver() {
-    }
-
-    @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
     }
 
     @Inject
@@ -74,6 +69,11 @@ public final class JavaPropertyResolver {
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
     }
 
     @NotNull
@@ -375,10 +375,10 @@ public final class JavaPropertyResolver {
             TypeVariableResolver typeVariableResolverForPropertyInternals
     ) {
         if (!characteristicMember.getType().getTypeString().isEmpty()) {
-            return semanticServices.getTypeTransformer().transformToType(
+            return typeTransformer.transformToType(
                     characteristicMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
         }
-        JetType propertyType = semanticServices.getTypeTransformer().transformToType(
+        JetType propertyType = typeTransformer.transformToType(
                 characteristicMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
 
         boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
@@ -400,9 +400,9 @@ public final class JavaPropertyResolver {
             return null;
         }
         if (!characteristicMember.getReceiverType().getTypeString().isEmpty()) {
-            return semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
+            return typeTransformer.transformToType(characteristicMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
         }
-        return semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
+        return typeTransformer.transformToType(characteristicMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
     }
 
     private static int getNumberOfNonExtensionProperties(@NotNull Collection<PropertyPsiData> propertyPsiDataCollection) {
