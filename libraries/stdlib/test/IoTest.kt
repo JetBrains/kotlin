@@ -129,10 +129,12 @@ class IoTest(){
 
         assertEquals(5, totalFiles)
 
-        subdir.setReadable(false)
+        if (subdir.setReadable(false)) {
+            // On Windows, we can't make directory not readable, and setReadable() will return false
 
-        var totalFilesWithUnReadableDir = 0
-        dir.recurse { totalFilesWithUnReadableDir++ }
-        assertEquals(4, totalFilesWithUnReadableDir)
+            var totalFilesWithUnReadableDir = 0
+            dir.recurse { totalFilesWithUnReadableDir++ }
+            assertEquals(4, totalFilesWithUnReadableDir)
+        }
     }
 }
