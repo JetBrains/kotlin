@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
 
+@Deprecated
 public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private JetScope memberScope;
     private final FqName qualifiedName;

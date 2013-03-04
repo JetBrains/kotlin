@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = ImmutableList.of(new ImportPath("java.lang.*"));
