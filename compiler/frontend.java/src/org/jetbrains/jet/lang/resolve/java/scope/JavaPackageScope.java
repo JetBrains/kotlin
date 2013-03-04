@@ -52,8 +52,10 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassDescriptor classDescriptor =
-                getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        PsiClass psiClass = declarationProvider.getPsiClass(name);
+        if (psiClass == null) return null;
+
+        ClassDescriptor classDescriptor = getResolver().resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor == null || classDescriptor.getKind().isObject()) {
             return null;
         }
@@ -62,8 +64,10 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        ClassDescriptor classDescriptor =
-                getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        PsiClass psiClass = declarationProvider.getPsiClass(name);
+        if (psiClass == null) return null;
+
+        ClassDescriptor classDescriptor = getResolver().resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor != null && classDescriptor.getKind().isObject()) {
             return classDescriptor;
         }
@@ -80,7 +84,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = Sets.newLinkedHashSet(super.computeAllDescriptors());
 
-        for (PsiClass psiClass : declarationProvider.getPsiClasses()) {
+        for (PsiClass psiClass : declarationProvider.getAllPsiClasses()) {
             if (PackageClassUtils.isPackageClass(psiClass)) {
                 continue;
             }

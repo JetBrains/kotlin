@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
@@ -28,5 +30,8 @@ public interface PackagePsiDeclarationProvider extends PsiDeclarationProvider {
     PsiPackage getPsiPackage();
 
     @NotNull
-    Collection<PsiClass> getPsiClasses();
+    Collection<PsiClass> getAllPsiClasses();
+
+    @Nullable
+    PsiClass getPsiClass(@NotNull Name name);
 }
