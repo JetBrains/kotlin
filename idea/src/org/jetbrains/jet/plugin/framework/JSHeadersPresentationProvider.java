@@ -22,6 +22,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.util.List;
@@ -44,9 +46,15 @@ public class JSHeadersPresentationProvider extends LibraryPresentationProvider<L
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
-        // TODO: Ask for better api of library detection
         if (classesRoots.isEmpty()) {
-            return new LibraryVersionProperties("Unknown");
+            // TODO: Deprecated - remove after some iterations
+            return new LibraryVersionProperties(null);
+        }
+
+        for (VirtualFile root : classesRoots) {
+            if (root.getName().equals(PathUtil.JS_LIB_JAR_NAME)) {
+                return new LibraryVersionProperties(KotlinRuntimeLibraryUtil.getLibraryVersion(root));
+            }
         }
 
         return null;

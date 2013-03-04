@@ -32,6 +32,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.impl.elements.ManifestFileUtil;
 import com.intellij.psi.JavaPsiFacade;
@@ -178,15 +179,30 @@ public class KotlinRuntimeLibraryUtil {
 
     @Nullable
     public static String getRuntimeVersion(@NotNull Project project) {
-        VirtualFile kotlinRuntimeJar = getKotlinRuntimeJar(project);
-        if (kotlinRuntimeJar == null) return null;
-        VirtualFile manifestFile = kotlinRuntimeJar.findFileByRelativePath(JarFile.MANIFEST_NAME);
+        return getLibraryVersion(getKotlinRuntimeJar(project));
+    }
+
+    @Nullable
+    public static String getLibraryVersion(@Nullable VirtualFile kotlinStdJar) {
+        if (kotlinStdJar == null) return null;
+        VirtualFile manifestFile = kotlinStdJar.findFileByRelativePath(JarFile.MANIFEST_NAME);
         if (manifestFile != null) {
             Attributes attributes = ManifestFileUtil.readManifest(manifestFile).getMainAttributes();
             if (attributes.containsKey(Attributes.Name.IMPLEMENTATION_VERSION)) {
                 return attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
             }
         }
+
+        VirtualFile buildVersionFile = kotlinStdJar.findFileByRelativePath("META-INF/build.txt");
+        if (buildVersionFile != null) {
+            try {
+                return VfsUtilCore.loadText(buildVersionFile);
+            }
+            catch (IOException e) {
+                // Fall to default return
+            }
+        }
+
         return UNKNOWN_VERSION;
     }
 

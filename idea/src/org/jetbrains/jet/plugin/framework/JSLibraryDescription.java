@@ -94,6 +94,7 @@ public class JSLibraryDescription extends CustomLibraryDescription {
             return new NewLibraryConfiguration(libraryName, getDownloadableLibraryType(), new LibraryVersionProperties()) {
                 @Override
                 public void addRoots(@NotNull LibraryEditor editor) {
+                    editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
                     editor.addRoot(libraryFileUrl, OrderRootType.SOURCES);
                 }
             };
