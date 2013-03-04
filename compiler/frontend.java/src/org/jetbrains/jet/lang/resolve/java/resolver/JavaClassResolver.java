@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
@@ -35,12 +33,10 @@ import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactor
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +48,6 @@ public final class JavaClassResolver {
     private JavaSignatureResolver signatureResolver;
     private JavaSemanticServices semanticServices;
     private JavaAnnotationResolver annotationResolver;
-    private PsiClassFinder psiClassFinder;
-    private JavaNamespaceResolver namespaceResolver;
     private JavaClassObjectResolver classObjectResolver;
     private JavaSupertypeResolver supertypesResolver;
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
@@ -84,16 +78,6 @@ public final class JavaClassResolver {
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
-    }
-
-    @Inject
-    public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
-        this.psiClassFinder = psiClassFinder;
-    }
-
-    @Inject
-    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
-        this.namespaceResolver = namespaceResolver;
     }
 
     @Inject
@@ -264,23 +248,6 @@ public final class JavaClassResolver {
         final String qualifiedName = psiClass.getQualifiedName();
         assert qualifiedName != null;
         return new FqName(qualifiedName);
-    }
-
-    // This method replaces "object" segments of FQ name to "<class-object-for-...>"
-    @NotNull
-    private static FqNameUnsafe javaClassToKotlinFqName(@NotNull FqName rawFqName) {
-        List<Name> correctedSegments = new ArrayList<Name>();
-        for (Name segment : rawFqName.pathSegments()) {
-            if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.getName())) {
-                assert !correctedSegments.isEmpty();
-                Name previous = correctedSegments.get(correctedSegments.size() - 1);
-                correctedSegments.add(DescriptorUtils.getClassObjectName(previous));
-            }
-            else {
-                correctedSegments.add(segment);
-            }
-        }
-        return new FqNameUnsafe(StringUtil.join(correctedSegments, "."));
     }
 
     private static boolean isContainedInClass(@NotNull PsiClass psiClass) {
