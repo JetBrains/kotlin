@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreateJavaScriptLibraryDialog extends DialogWrapper {
-    private final ChooseCompilerSourcePanel compilerSourcePanel;
     private final CopyIntoPanel copyIntoPanel;
 
     private JPanel contentPane;
@@ -28,13 +27,7 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
 
         init();
 
-        compilerSourcePanel = new ChooseCompilerSourcePanel(project);
-        compilerSourcePanel.addValidityListener(new ValidityListener() {
-            @Override
-            public void validityChanged(boolean isValid) {
-                updateComponents();
-            }
-        });
+        ChooseCompilerSourcePanel compilerSourcePanel = new ChooseCompilerSourcePanel();
         compilerSourcePanelPlace.add(compilerSourcePanel.getContentPane(), BorderLayout.CENTER);
 
         copyIntoPanel = new CopyIntoPanel(project, contextDirectory);
@@ -45,8 +38,6 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
             }
         });
         copyIntoPanelPlace.add(copyIntoPanel.getContentPane(), BorderLayout.CENTER);
-
-        contentPane.setMinimumSize(new Dimension(380, 180));
 
         ActionListener updateComponentsListener = new ActionListener() {
             @Override
@@ -62,11 +53,6 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
     }
 
     @Nullable
-    public String getStandaloneCompilerPath() {
-        return compilerSourcePanel.getStandaloneCompilerPath();
-    }
-
-    @Nullable
     public String getCopyIntoPath() {
         return copyIntoPanel.getPath();
     }
@@ -79,16 +65,11 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
         return ECMAScript3JavaScriptRuntimeCheckBox.isSelected();
     }
 
-    @NotNull
-    public String getVersion() {
-        return compilerSourcePanel.getVersion();
-    }
-
     private void updateComponents() {
         copyIntoPanel.setEnabled(copyLibraryCheckbox.isSelected() ||
                                  ECMAScript3JavaScriptRuntimeCheckBox.isSelected());
 
-        setOKActionEnabled(!(compilerSourcePanel.hasErrors() || copyIntoPanel.hasErrors()));
+        setOKActionEnabled(!copyIntoPanel.hasErrors());
     }
 
     @Nullable

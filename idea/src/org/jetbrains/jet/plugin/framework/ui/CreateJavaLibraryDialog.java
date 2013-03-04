@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreateJavaLibraryDialog extends DialogWrapper {
-    private final ChooseCompilerSourcePanel compilerSourcePanel;
     private final CopyIntoPanel copyIntoPanel;
 
     private JPanel contentPane;
@@ -43,13 +42,7 @@ public class CreateJavaLibraryDialog extends DialogWrapper {
 
         init();
 
-        compilerSourcePanel = new ChooseCompilerSourcePanel(project);
-        compilerSourcePanel.addValidityListener(new ValidityListener() {
-            @Override
-            public void validityChanged(boolean isValid) {
-                updateComponents();
-            }
-        });
+        ChooseCompilerSourcePanel compilerSourcePanel = new ChooseCompilerSourcePanel();
         compilerSourcePanelPlace.add(compilerSourcePanel.getContentPane(), BorderLayout.CENTER, 0);
 
         copyIntoPanel = new CopyIntoPanel(project, contextDirectory);
@@ -60,8 +53,6 @@ public class CreateJavaLibraryDialog extends DialogWrapper {
             }
         });
         copyIntoPanelPlace.add(copyIntoPanel.getContentPane(), BorderLayout.CENTER);
-
-        contentPane.setMinimumSize(new Dimension(380, 180));
 
         copyLibraryCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -74,23 +65,13 @@ public class CreateJavaLibraryDialog extends DialogWrapper {
     }
 
     @Nullable
-    public String getStandaloneCompilerPath() {
-        return compilerSourcePanel.getStandaloneCompilerPath();
-    }
-
-    @Nullable
     public String getCopyIntoPath() {
         return copyIntoPanel.getPath();
     }
 
-    @NotNull
-    public String getVersion() {
-        return compilerSourcePanel.getVersion();
-    }
-
     private void updateComponents() {
         copyIntoPanel.setEnabled(copyLibraryCheckbox.isSelected());
-        setOKActionEnabled(!(compilerSourcePanel.hasErrors() || copyIntoPanel.hasErrors()));
+        setOKActionEnabled(!copyIntoPanel.hasErrors());
     }
 
     @Nullable

@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -56,10 +57,7 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
         dialog.show();
 
         if (dialog.isOK()) {
-            String standaloneCompilerPath = dialog.getStandaloneCompilerPath();
-            KotlinPaths paths = standaloneCompilerPath == null ?
-                                      PathUtil.getKotlinPathsForIdeaPlugin() :
-                                      PathUtil.getKotlinStandaloneCompilerPaths(standaloneCompilerPath);
+            KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
 
             File libraryFile = paths.getRuntimePath();
             if (!libraryFile.exists()) {
@@ -70,16 +68,20 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
                 return null;
             }
 
+            String libraryName = LIBRARY_NAME;
+
             String copyIntoPath = dialog.getCopyIntoPath();
             if (copyIntoPath != null) {
                 libraryFile = FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_RUNTIME_LIBRARY_CREATION, copyIntoPath, libraryFile);
                 if (libraryFile == null) {
                     return null;
                 }
+
+                libraryName = LIBRARY_NAME + "-" + JetPluginUtil.getPluginVersion();
             }
 
             final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
-            return new NewLibraryConfiguration(LIBRARY_NAME + "-" + dialog.getVersion(), getDownloadableLibraryType(), new LibraryVersionProperties()) {
+            return new NewLibraryConfiguration(libraryName, getDownloadableLibraryType(), new LibraryVersionProperties()) {
                 @Override
                 public void addRoots(@NotNull LibraryEditor editor) {
                     editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);

@@ -26,7 +26,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Copy library &amp;files into project"/>
+              <text value="Make local copy of library (could be stored in VCS) "/>
             </properties>
           </component>
           <grid id="e47d8" binding="copyIntoPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
