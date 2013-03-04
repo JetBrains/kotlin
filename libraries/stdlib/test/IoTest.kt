@@ -13,7 +13,7 @@ class IoTest(){
         val reader = sample().buffered()
         try {
             val list = reader.lineIterator().toArrayList()
-            assertEquals(arrayList("Hello", "World"), list)
+            assertEquals(arrayListOf("Hello", "World"), list)
         } finally {
             reader.close()
         }
@@ -29,8 +29,8 @@ class IoTest(){
         val list1 = sample().useLines{ it.toArrayList() }
         val list2 = sample().useLines<ArrayList<String>>{ it.toArrayList() }
 
-        assertEquals(arrayList("Hello", "World"), list1)
-        assertEquals(arrayList("Hello", "World"), list2)
+        assertEquals(arrayListOf("Hello", "World"), list1)
+        assertEquals(arrayListOf("Hello", "World"), list2)
     }
 
     test fun testForEach() {
@@ -47,7 +47,7 @@ class IoTest(){
             }
         }
 
-        assertEquals(arrayList("Hello", "World"), list)
+        assertEquals(arrayListOf("Hello", "World"), list)
     }
 
     test fun testForEachLine() {
@@ -69,7 +69,7 @@ class IoTest(){
             list.add(it)
         }
 
-        assertEquals(arrayList("Hello", "World"), list)
+        assertEquals(arrayListOf("Hello", "World"), list)
     }
 
     test fun testForEachLineFile() {
@@ -82,7 +82,7 @@ class IoTest(){
             list.add(it)
         }
 
-        assertEquals(arrayList("Hello", "World"), list)
+        assertEquals(arrayListOf("Hello", "World"), list)
         file.deleteOnExit()
     }
 
