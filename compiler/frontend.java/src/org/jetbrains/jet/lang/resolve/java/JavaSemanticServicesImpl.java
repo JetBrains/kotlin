@@ -40,13 +40,7 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
     @NotNull
     private JavaTypeTransformer typeTransformer;
     @NotNull
-    private JavaDescriptorResolver descriptorResolver;
-    @NotNull
-    private PsiClassFinder psiClassFinder;
-    @NotNull
     private BindingTrace trace;
-    @NotNull
-    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
 
     @Inject
     public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
@@ -76,11 +70,6 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
     @Inject
     public void setPsiDeclarationProviderFactory(PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
         this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
-    }
-
-    @NotNull
-    public JavaDescriptorResolver getDescriptorResolver() {
-        return descriptorResolver;
     }
 
     @Override
@@ -113,25 +102,5 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
         }
 
         throw new IllegalArgumentException("Not in scope: " + psiClass + " from " + virtualFile);
-    }
-
-    @Nullable
-    public ClassDescriptor getKotlinClassDescriptor(@NotNull FqName qualifiedName) {
-        return trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
-    }
-
-    @NotNull
-    public PsiClassFinder getPsiClassFinder() {
-        return psiClassFinder;
-    }
-
-    @NotNull
-    public PsiDeclarationProviderFactory getPsiDeclarationProviderFactory() {
-        return psiDeclarationProviderFactory;
-    }
-
-    @Nullable
-    public PackageViewDescriptor getKotlinNamespaceDescriptor(@NotNull FqName qualifiedName) {
-        return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
     }
 }
