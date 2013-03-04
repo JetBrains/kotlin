@@ -21,19 +21,27 @@ import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
+import java.util.Collection;
+
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
-public final class KotlinNamespacePsiDeclarationProvider extends ClassPsiDeclarationProviderImpl implements PackagePsiDeclarationProvider {
+public final class KotlinPackagePsiDeclarationProvider extends ClassPsiDeclarationProviderImpl implements PackagePsiDeclarationProvider {
     @NotNull
     private final PsiPackage psiPackage;
 
-    public KotlinNamespacePsiDeclarationProvider(
+    public KotlinPackagePsiDeclarationProvider(
             @NotNull PsiPackage psiPackage,
             @NotNull PsiClass psiClass,
             @NotNull PsiClassFinder psiClassFinder
     ) {
         super(psiClass, true, psiClassFinder);
         this.psiPackage = psiPackage;
+    }
+
+    @NotNull
+    @Override
+    public Collection<PsiClass> getPsiClasses() {
+        return psiClassFinder.findPsiClasses(psiPackage);
     }
 
     @NotNull

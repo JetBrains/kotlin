@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.KotlinNamespacePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.KotlinPackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -30,11 +30,11 @@ import java.util.Set;
 
 public final class JavaScopeForKotlinNamespace extends JavaPackageScope {
     @NotNull
-    private final KotlinNamespacePsiDeclarationProvider declarationProvider;
+    private final KotlinPackagePsiDeclarationProvider declarationProvider;
 
     public JavaScopeForKotlinNamespace(
             @NotNull PackageFragmentDescriptor descriptor,
-            @NotNull KotlinNamespacePsiDeclarationProvider declarationProvider,
+            @NotNull KotlinPackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices
     ) {

@@ -16,11 +16,17 @@
 
 package org.jetbrains.jet.lang.resolve.java.provider;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public interface PackagePsiDeclarationProvider extends PsiDeclarationProvider {
 
     @NotNull
     PsiPackage getPsiPackage();
+
+    @NotNull
+    Collection<PsiClass> getPsiClasses();
 }

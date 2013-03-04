@@ -100,7 +100,7 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
     }
 
     @Override
-    @NotNull
+    @Nullable
     public ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = psiClass.getContainingFile().getVirtualFile();
         assert virtualFile != null : "No virtual file for psiClass: " + psiClass.getText();

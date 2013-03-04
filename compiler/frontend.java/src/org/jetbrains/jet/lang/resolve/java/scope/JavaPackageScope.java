@@ -16,18 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.google.common.collect.Sets;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
-
-import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllPackageDeclarations;
 
 public abstract class JavaPackageScope extends JavaBaseScope {
 
@@ -75,10 +78,26 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
-        Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
-        result.addAll(computeAllPackageDeclarations(declarationProvider.getPsiPackage(),
-                                                    semanticServices,
-                                                    DescriptorUtils.getFQName(descriptor).toSafe()));
+        Collection<DeclarationDescriptor> result = Sets.newLinkedHashSet(super.computeAllDescriptors());
+
+        for (PsiClass psiClass : declarationProvider.getPsiClasses()) {
+            if (PackageClassUtils.isPackageClass(psiClass)) {
+                continue;
+            }
+
+            if (DescriptorResolverUtils.isKotlinLightClass(psiClass)) {
+                continue;
+            }
+
+            if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
+                ProgressIndicatorProvider.checkCanceled();
+                ClassDescriptor classDescriptor = semanticServices.getClassDescriptor(psiClass);
+                if (classDescriptor != null) {
+                    result.add(classDescriptor);
+                }
+            }
+        }
+
         return result;
     }
 }

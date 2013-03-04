@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.provider;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
+
+import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
@@ -43,6 +46,12 @@ public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProvi
     @Override
     public PsiPackage getPsiPackage() {
         return psiPackage;
+    }
+
+    @NotNull
+    @Override
+    public Collection<PsiClass> getPsiClasses() {
+        return psiClassFinder.findPsiClasses(psiPackage);
     }
 
     @NotNull

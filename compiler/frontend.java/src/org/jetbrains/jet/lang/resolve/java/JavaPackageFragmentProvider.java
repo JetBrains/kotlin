@@ -86,14 +86,10 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         return psiClassFinder.getDefiningSearchScope().contains(virtualFile);
     }
 
-    @NotNull
+    @Nullable
     public ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass) {
         assertInMyScope(psiClass);
-
-        ClassDescriptor classDescriptor = javaClassResolver.resolveClass(psiClass);
-        assert classDescriptor != null : "Could not resolve " + psiClass.getText();
-
-        return classDescriptor;
+        return javaClassResolver.resolveClass(psiClass);
     }
 
     protected void assertInMyScope(@NotNull PsiClass psiClass) {

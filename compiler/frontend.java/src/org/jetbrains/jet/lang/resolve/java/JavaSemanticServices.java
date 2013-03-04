@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
@@ -26,7 +27,7 @@ public interface JavaSemanticServices {
     @NotNull
     DiagnosticHolder getDiagnosticHolder();
 
-    @NotNull
+    @Nullable
     ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass);
 
     @NotNull
