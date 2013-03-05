@@ -469,6 +469,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/TypeInference.kt");
         }
         
+        @TestMetadata("TypeMismatchOnOverrideWithSyntaxErrors.kt")
+        public void testTypeMismatchOnOverrideWithSyntaxErrors() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/TypeMismatchOnOverrideWithSyntaxErrors.kt");
+        }
+        
         @TestMetadata("UninitializedOrReassignedVariables.kt")
         public void testUninitializedOrReassignedVariables() throws Exception {
             doTest("compiler/testData/diagnostics/tests/UninitializedOrReassignedVariables.kt");
