@@ -139,7 +139,7 @@ public class PositioningStrategies {
         }
         @Override
         public boolean isValid(@NotNull PsiNameIdentifierOwner element) {
-            return element.getNameIdentifier() != null;
+            return element.getNameIdentifier() != null && super.isValid(element);
         }
     };
 
@@ -299,6 +299,8 @@ public class PositioningStrategies {
 
         @Override
         public boolean isValid(@NotNull JetDeclarationWithBody element) {
+            if (!super.isValid(element)) return false;
+
             JetExpression bodyExpression = element.getBodyExpression();
             if (!(bodyExpression instanceof JetBlockExpression)) return false;
             if (((JetBlockExpression) bodyExpression).getLastBracketRange() == null) return false;

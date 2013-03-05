@@ -71,20 +71,7 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     @Override
     public boolean isValid() {
         if (!getFactory().isValid(this)) return false;
-        if (hasSyntaxErrors(psiElement)) return false;
         if (psiElement.getNode().findChildByType(JetNodeTypes.IDE_TEMPLATE_EXPRESSION) != null) return false;
         return true;
-    }
-
-    private static boolean hasSyntaxErrors(@NotNull PsiElement psiElement) {
-        if (psiElement instanceof PsiErrorElement) return true;
-
-        PsiElement lastChild = psiElement.getLastChild();
-        if (lastChild != null && hasSyntaxErrors(lastChild)) return true;
-
-        PsiElement[] children = psiElement.getChildren();
-        if (children.length > 0 && hasSyntaxErrors(children[children.length - 1])) return true;
-
-        return false;
     }
 }
