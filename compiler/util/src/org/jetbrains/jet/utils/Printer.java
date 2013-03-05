@@ -18,23 +18,36 @@ package org.jetbrains.jet.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+
 public class Printer {
     private static final String INDENTATION_UNIT = "    ";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    private final StringBuilder out;
+    private final Appendable out;
     private final int maxBlankLines;
 
     private String indent = "";
     private int blankLineCountIncludingCurrent = 0;
 
-    public Printer(@NotNull StringBuilder out) {
+    public Printer(@NotNull Appendable out) {
         this(out, Integer.MAX_VALUE);
     }
 
-    public Printer(@NotNull StringBuilder out, int maxBlankLines) {
+    public Printer(@NotNull Appendable out, int maxBlankLines) {
         this.out = out;
         this.maxBlankLines = maxBlankLines;
+    }
+
+    private void append(Object o) {
+        try {
+            out.append(o.toString());
+        }
+        catch (IOException e) {
+            // Do nothing
+        }
     }
 
     @NotNull
@@ -48,13 +61,13 @@ public class Printer {
     private void printLineSeparator() {
         if (blankLineCountIncludingCurrent <= maxBlankLines) {
             blankLineCountIncludingCurrent++;
-            out.append(LINE_SEPARATOR);
+            append(LINE_SEPARATOR);
         }
     }
 
     @NotNull
     public Printer print(Object... objects) {
-        out.append(indent);
+        append(indent);
         printWithNoIndent(objects);
 
         return this;
@@ -64,7 +77,7 @@ public class Printer {
     public Printer printWithNoIndent(Object... objects) {
         for (Object object : objects) {
             blankLineCountIncludingCurrent = 0;
-            out.append(object);
+            append(object);
         }
 
         return this;
@@ -93,6 +106,28 @@ public class Printer {
 
         indent = indent.substring(INDENTATION_UNIT.length());
 
+        return this;
+    }
+
+    @NotNull
+    public Printer separated(Object separator, Object... items) {
+        for (int i = 0; i < items.length; i++) {
+            if (i > 0) {
+                printlnWithNoIndent(separator);
+            }
+            printlnWithNoIndent(items[i]);
+        }
+        return this;
+    }
+
+    @NotNull
+    public Printer separated(Object separator, Collection<?> items) {
+        for (Iterator<?> iterator = items.iterator(); iterator.hasNext(); ) {
+            printlnWithNoIndent(iterator.next());
+            if (iterator.hasNext()) {
+                printlnWithNoIndent(separator);
+            }
+        }
         return this;
     }
 }
