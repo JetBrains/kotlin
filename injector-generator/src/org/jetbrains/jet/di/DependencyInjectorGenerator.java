@@ -19,23 +19,19 @@ package org.jetbrains.jet.di;
 import com.google.common.collect.*;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.Printer;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.*;
+
+import static org.jetbrains.jet.di.InjectorGeneratorUtil.var;
 
 public class DependencyInjectorGenerator {
 
@@ -294,13 +290,8 @@ public class DependencyInjectorGenerator {
     private void generateFields(PrintStream out) {
         for (Field field : fields) {
             String _final = backsParameter.contains(field) ? "final " : "";
-            out.println("    private " + _final + getEffectiveFieldType(field).getSimpleName() + " " + field.getName() + ";");
+            out.println("    private " + _final + InjectorGeneratorUtil.getEffectiveFieldType(field).getSimpleName() + " " + field.getName() + ";");
         }
-    }
-
-    private static DiType getEffectiveFieldType(Field field) {
-        DiType implType = field.getInitialization().getType();
-        return implType == null ? field.getType() : implType;
     }
 
     private void generateConstructor(String injectorClassName, PrintStream out) {
@@ -345,33 +336,13 @@ public class DependencyInjectorGenerator {
         p.println("}");
     }
 
-    private static List<Method> getPostConstructMethods(Class<?> clazz) {
-        return getInjectSpecialMethods(clazz, PostConstruct.class);
-    }
-
-    private static List<Method> getPreDestroyMethods(Class<?> clazz) {
-        return getInjectSpecialMethods(clazz, PreDestroy.class);
-    }
-
-    private static List<Method> getInjectSpecialMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
-        List<Method> r = Lists.newArrayList();
-        for (Method method : clazz.getMethods()) {
-            if (method.getAnnotation(annotationClass) != null) {
-                if (method.getParameterTypes().length != 0) {
-                    throw new IllegalStateException("@PostConstruct method must have no arguments: " + method);
-                }
-                r.add(method);
-            }
-        }
-        return r;
-    }
-
     private void generateDestroy(@NotNull String injectorClassName, @NotNull PrintStream out) {
         out.println("    @PreDestroy");
         out.println("    public void destroy() {");
         for (Field field : fields) {
             // TODO: type of field may be different from type of object
-            List<Method> preDestroyMethods = getPreDestroyMethods(getEffectiveFieldType(field).getClazz());
+            List<Method> preDestroyMethods = InjectorGeneratorUtil
+                    .getPreDestroyMethods(InjectorGeneratorUtil.getEffectiveFieldType(field).getClazz());
             for (Method preDestroy : preDestroyMethods) {
                 out.println("        " + field.getName() + "." + preDestroy.getName() + "();");
             }
@@ -484,225 +455,6 @@ public class DependencyInjectorGenerator {
 
     private String type(DiType type) {
         return type.getSimpleName();
-    }
-
-    private static class Dependencies {
-
-        private final Set<Field> allFields = Sets.newLinkedHashSet();
-        private final Set<Field> satisfied = Sets.newHashSet();
-        private final Multimap<DiType, Field> typeToFields = HashMultimap.create();
-
-        private final Set<Field> newFields = Sets.newLinkedHashSet();
-
-        public void addField(@NotNull Field field) {
-            allFields.add(field);
-            typeToFields.put(field.getType(), field);
-        }
-
-        public void addSatisfiedField(@NotNull Field field) {
-            addField(field);
-            satisfied.add(field);
-        }
-
-        public Field addNewField(@NotNull DiType type) {
-            Field field = Field.create(false, type, var(type), null);
-            addField(field);
-            newFields.add(field);
-            return field;
-        }
-
-        private void satisfyDependenciesFor(Field field, Field neededFor) {
-            if (!satisfied.add(field)) return;
-
-            Expression initialization = field.getInitialization();
-            if (initialization instanceof InstantiateType) {
-                initializeByConstructorCall(field, neededFor);
-            }
-            DiType typeToInitialize = getEffectiveFieldType(field);
-
-            // Sort setters in order to get deterministic behavior
-            List<Method> declaredMethods = Lists.newArrayList(typeToInitialize.getClazz().getDeclaredMethods());
-            Collections.sort(declaredMethods, new Comparator<Method>() {
-                @Override
-                public int compare(Method o1, Method o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            });
-            for (Method method : declaredMethods) {
-                if (method.getAnnotation(javax.inject.Inject.class) == null
-                    || !method.getName().startsWith("set")
-                    || method.getParameterTypes().length != 1) continue;
-
-                Type parameterType = method.getGenericParameterTypes()[0];
-
-
-                Field dependency = findDependencyOfType(DiType.fromReflectionType(parameterType), field + ": " + method + ": " + allFields, field);
-
-                field.getDependencies().add(new SetterDependency(field, method.getName(), dependency));
-            }
-        }
-
-        private Field findDependencyOfType(DiType parameterType, String errorMessage, Field neededFor) {
-            List<Field> fields = Lists.newArrayList();
-            for (Map.Entry<DiType, Field> entry : typeToFields.entries()) {
-                if (parameterType.isAssignableFrom(entry.getKey())) {
-                    fields.add(entry.getValue());
-                }
-            }
-
-            if (fields.isEmpty()) {
-
-                if (parameterType.getClazz().isPrimitive() || parameterType.getClazz().getPackage().getName().equals("java.lang")) {
-                    throw new IllegalArgumentException(
-                            "cannot declare magic field of type " + parameterType + ": " + errorMessage);
-                }
-
-                Field dependency = addNewField(parameterType);
-                satisfyDependenciesFor(dependency, neededFor);
-                return dependency;
-            }
-            else if (fields.size() == 1) {
-                return fields.iterator().next();
-            }
-            else {
-                throw new IllegalArgumentException("Ambiguous dependency: " + errorMessage + " needed for " + neededFor);
-            }
-        }
-
-        private void initializeByConstructorCall(Field field, Field neededFor) {
-            Expression initialization = field.getInitialization();
-            DiType type = ((InstantiateType) initialization).getType();
-
-            if (type.getClazz().isInterface()) {
-                throw new IllegalArgumentException("cannot instantiate interface: " + type.getClazz().getName() + " needed for " + neededFor);
-            }
-            if (Modifier.isAbstract(type.getClazz().getModifiers())) {
-                throw new IllegalArgumentException("cannot instantiate abstract class: " + type.getClazz().getName() + " needed for " + neededFor);
-            }
-
-            // Note: projections are not computed here
-
-            // Look for constructor
-            Constructor<?>[] constructors = type.getClazz().getConstructors();
-            if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
-                throw new IllegalArgumentException("No constructor: " + type.getClazz().getName() + " needed for " + neededFor);
-            }
-            if (constructors.length > 1) {
-                throw new IllegalArgumentException("Too many constructors in " + type.getClazz().getName() + " needed for " + neededFor);
-            }
-            Constructor<?> constructor = constructors[0];
-
-            // Find arguments
-            ConstructorCall dependency = new ConstructorCall(constructor);
-            Type[] parameterTypes = constructor.getGenericParameterTypes();
-            for (Type parameterType : parameterTypes) {
-                Field fieldForParameter = findDependencyOfType(DiType.fromReflectionType(parameterType), "constructor: " + constructor + ", parameter: " + parameterType, field);
-                dependency.getConstructorArguments().add(fieldForParameter);
-            }
-
-            field.setInitialization(dependency);
-        }
-
-        public Collection<Field> satisfyDependencies() {
-            for (Field field : Lists.newArrayList(allFields)) {
-                satisfyDependenciesFor(field, field);
-            }
-            return newFields;
-        }
-
-        public Set<Field> getNewFields() {
-            return newFields;
-        }
-    }
-
-    private static abstract class InjectionLogicGenerator {
-
-        public static final InjectionLogicGenerator FIELDS = new InjectionLogicGenerator() {
-            @Override
-            public String prefixForPostConstructorCall(Field field) {
-                return "";
-            }
-
-            @Override
-            public String prefixForSetterCall(Field field) {
-                return field.isPublic() ? "this." : "";
-            }
-
-            @Override
-            public String prefixForInitialization(Field field) {
-                return "this.";
-            }
-        };
-
-        public static final InjectionLogicGenerator LOCAL_VARIABLES = new InjectionLogicGenerator() {
-            @Override
-            public String prefixForPostConstructorCall(Field field) {
-                return "";
-            }
-
-            @Override
-            public String prefixForSetterCall(Field field) {
-                return "";
-            }
-
-            @Override
-            public String prefixForInitialization(Field field) {
-                return field.getType() + " ";
-            }
-        };
-
-        public final void generate(@NotNull Printer p, @NotNull Collection<Field> fields) {
-            // Initialize fields
-            for (Field field : fields) {
-                //if (!backsParameter.contains(field) || field.isPublic()) {
-                p.println(prefixForInitialization(field), field.getName(), " = ", field.getInitialization().renderAsCode(), ";");
-                //}
-            }
-            p.printlnWithNoIndent();
-
-            // Call setters
-            for (Field field : fields) {
-                for (SetterDependency dependency : field.getDependencies()) {
-                    String prefix = prefixForSetterCall(field);
-                    String dependencyName = dependency.getDependency().getName();
-                    String dependentName = dependency.getDependent().getName();
-                    p.println(prefix, dependentName, ".", dependency.getSetterName(), "(", dependencyName, ");");
-                }
-                if (!field.getDependencies().isEmpty()) {
-                    p.printlnWithNoIndent();
-                }
-            }
-
-            // call @PostConstruct
-            for (Field field : fields) {
-                // TODO: type of field may be different from type of object
-                List<Method> postConstructMethods = getPostConstructMethods(getEffectiveFieldType(field).getClazz());
-                for (Method postConstruct : postConstructMethods) {
-                    p.println(prefixForPostConstructorCall(field), field.getName(), ".", postConstruct.getName(), "();");
-                }
-                if (postConstructMethods.size() > 0) {
-                    p.printlnWithNoIndent();
-                }
-            }
-        }
-
-        protected abstract String prefixForInitialization(Field field);
-
-        protected abstract String prefixForSetterCall(Field field);
-
-        protected abstract String prefixForPostConstructorCall(Field field);
-    }
-
-    private static String var(@NotNull DiType type) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(StringUtil.decapitalize(type.getClazz().getSimpleName().replaceFirst("(?<=.)Impl$", "")));
-        if (type.getTypeParameters().size() > 0) {
-            sb.append("Of");
-        }
-        for (DiType parameter : type.getTypeParameters()) {
-            sb.append(StringUtil.capitalize(var(parameter)));
-        }
-        return sb.toString();
     }
 
     private void generateMakeFunction(PrintStream out) {
