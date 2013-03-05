@@ -111,7 +111,8 @@ public class GenerateRangesCodegenTestData {
 
     public static void main(String[] args) {
         try {
-            FileUtil.delete(TEST_DATA_DIR);
+            FileUtil.delete(AS_LITERAL_DIR);
+            FileUtil.delete(AS_EXPRESSION_DIR);
             //noinspection ResultOfMethodCallIgnored
             AS_LITERAL_DIR.mkdirs();
             //noinspection ResultOfMethodCallIgnored
