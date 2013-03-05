@@ -196,7 +196,7 @@ public class GenerateInjectors {
 
         // Parameters
         generator.addPublicParameter(JetTypeMapper.class);
-        generator.addPublicParameter(DiType.listOf(JetFile.class));
+        generator.addParameter(DiType.listOf(JetFile.class));
         generator.addParameter(BuiltinToJavaTypesMapping.class);
         generator.addPublicParameter(GenerationState.class);
         generator.addParameter(ClassBuilderFactory.class);
