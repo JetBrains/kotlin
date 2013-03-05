@@ -1,5 +1,5 @@
-namespace test
+package test
 
-public final class test.ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?><init>(): test.ClassWithTypePRefSelfAndClass<P>
+public final class ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?> : java.lang.Object {
+    public constructor ClassWithTypePRefSelfAndClass</*0*/ P : test.ClassWithTypePRefSelfAndClass<P>?>()
 }
