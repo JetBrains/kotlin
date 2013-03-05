@@ -23,43 +23,51 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
-abstract class InjectionLogicGenerator {
+public abstract class InjectionLogicGenerator {
 
-    public static final InjectionLogicGenerator FIELDS = new InjectionLogicGenerator() {
-        @Override
-        public String prefixForPostConstructorCall(Field field) {
-            return "";
-        }
+    public static void generateForFields(@NotNull Printer p, @NotNull Collection<Field> fields) {
+        new InjectionLogicGenerator() {
+            @Override
+            public String prefixForPostConstructorCall(Field field) {
+                return "";
+            }
 
-        @Override
-        public String prefixForSetterCall(Field field) {
-            return field.isPublic() ? "this." : "";
-        }
+            @Override
+            public String prefixForSetterCall(Field field) {
+                return field.isPublic() ? "this." : "";
+            }
 
-        @Override
-        public String prefixForInitialization(Field field) {
-            return "this.";
-        }
-    };
+            @Override
+            public String prefixForInitialization(Field field) {
+                return "this.";
+            }
+        }.generate(p, fields);
+    }
 
-    public static final InjectionLogicGenerator LOCAL_VARIABLES = new InjectionLogicGenerator() {
-        @Override
-        public String prefixForPostConstructorCall(Field field) {
-            return "";
-        }
+    public static void generateForLocalVariables(
+            @NotNull final ImportManager importManager,
+            @NotNull Printer p,
+            @NotNull Collection<Field> fields
+    ) {
+        new InjectionLogicGenerator() {
+            @Override
+            public String prefixForPostConstructorCall(Field field) {
+                return "";
+            }
 
-        @Override
-        public String prefixForSetterCall(Field field) {
-            return "";
-        }
+            @Override
+            public String prefixForSetterCall(Field field) {
+                return "";
+            }
 
-        @Override
-        public String prefixForInitialization(Field field) {
-            return field.getType() + " ";
-        }
-    };
+            @Override
+            public String prefixForInitialization(Field field) {
+                return importManager.render(field.getType()) + " ";
+            }
+        }.generate(p, fields);
+    }
 
-    public final void generate(@NotNull Printer p, @NotNull Collection<Field> fields) {
+    protected void generate(@NotNull Printer p, @NotNull Collection<Field> fields) {
         // Initialize fields
         for (Field field : fields) {
             //if (!backsParameter.contains(field) || field.isPublic()) {

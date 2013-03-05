@@ -21,9 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class DiType {
@@ -62,25 +60,6 @@ public class DiType {
         // TODO: following code incorrectly assumes that each type parameter
         // is projected into type parameter in the same position
         return this.typeParameters.equals(that.typeParameters);
-    }
-
-    @NotNull
-    public String getSimpleName() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(clazz.getSimpleName());
-        Iterator<DiType> typeParameterIterator = typeParameters.iterator();
-        if (typeParameterIterator.hasNext()) {
-            sb.append("<");
-            if (typeParameterIterator.hasNext()) {
-                sb.append(typeParameterIterator.next().getSimpleName());
-            }
-            while (typeParameterIterator.hasNext()) {
-                sb.append(", ");
-                sb.append(typeParameterIterator.next().getSimpleName());
-            }
-            sb.append(">");
-        }
-        return sb.toString();
     }
 
     @Override

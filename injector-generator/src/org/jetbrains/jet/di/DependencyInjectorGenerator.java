@@ -16,14 +16,15 @@
 
 package org.jetbrains.jet.di;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.Printer;
 
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,14 +40,13 @@ public class DependencyInjectorGenerator {
 
     private final Set<Field> fields = Sets.newLinkedHashSet();
     private final Set<Parameter> parameters = Sets.newLinkedHashSet();
+    private final Set<Field> backsParameter = Sets.newHashSet();
     private final Set<FactoryMethod> factoryMethods = Sets.newLinkedHashSet();
+    private final List<Class<?>> implementsList = Lists.newArrayList();
 
     private final Dependencies dependencies = new Dependencies();
 
-    private final Set<Field> backsParameter = Sets.newHashSet();
-
-    private final List<Class<?>> implementsList = Lists.newArrayList();
-    private final Collection<Class<?>> imports = Sets.newHashSet();
+    private final ImportManager importManager = new ImportManager();
 
     public DependencyInjectorGenerator() {
     }
@@ -74,6 +74,7 @@ public class DependencyInjectorGenerator {
 
         FileOutputStream fileOutputStream = new FileOutputStream(tmpfile);
         System.out.println("File opened: " + tmpfile.getAbsolutePath());
+
 
         PrintStream out = new PrintStream(fileOutputStream);
         try {
@@ -129,7 +130,7 @@ public class DependencyInjectorGenerator {
                 if (!superInterface.isInterface()) {
                     throw new IllegalArgumentException("Only interfaces are supported as supertypes");
                 }
-                out.print(superInterface.getSimpleName());
+                out.print(type(superInterface));
                 if (iterator.hasNext()) {
                     out.print(", ");
                 }
@@ -230,58 +231,25 @@ public class DependencyInjectorGenerator {
         for (DiType type : parameterTypes) {
             parameters.add(new Parameter(type, var(type), null, false));
         }
-        factoryMethods.add(new FactoryMethod("create" + returnType.getSimpleName(), returnType, parameters));
+        factoryMethods.add(new FactoryMethod("create" + type(returnType), returnType, parameters));
     }
 
     private void generateImports(PrintStream out, String injectorPackageName) {
-        for (Field field : fields) {
-            generateImportDirectives(out, field.getType(), injectorPackageName);
-
-            DiType implType = field.getInitialization().getType();
-            if (implType != null) {
-                generateImportDirectives(out, implType, injectorPackageName);
+        for (Class<?> importedClass : importManager.getImportedClasses()) {
+            if (importedClass.isPrimitive()) continue;
+            String importedPackageName = importedClass.getPackage().getName();
+            if ("java.lang".equals(importedPackageName)
+                || injectorPackageName.equals(importedPackageName)) {
+                continue;
             }
-            for (DiType typeToImport : field.getInitialization().getTypesToImport()) {
-                generateImportDirective(out, typeToImport.getClazz(), injectorPackageName);
-            }
+            out.println("import " + importedClass.getCanonicalName() + ";");
         }
-        for (Class<?> superInterface : implementsList) {
-            generateImportDirective(out, superInterface, injectorPackageName);
-        }
-        for (Parameter parameter : parameters) {
-            generateImportDirectives(out, parameter.getType(), injectorPackageName);
-        }
-        for (Parameter parameter : parameters) {
-            if (parameter.isRequired()) {
-                generateImportDirective(out, NotNull.class, injectorPackageName);
-                break;
-            }
-        }
-        generateImportDirective(out, PreDestroy.class, injectorPackageName);
-    }
-
-    private void generateImportDirectives(PrintStream out, DiType type, String injectorPackageName) {
-        generateImportDirective(out, type.getClazz(), injectorPackageName);
-        for (DiType typeParameter : type.getTypeParameters()) {
-            generateImportDirectives(out, typeParameter, injectorPackageName);
-        }
-    }
-
-    private void generateImportDirective(PrintStream out, Class<?> type, String injectorPackageName) {
-        if (type.isPrimitive()) return;
-        String importedPackageName = type.getPackage().getName();
-        if ("java.lang".equals(importedPackageName)
-            || injectorPackageName.equals(importedPackageName)
-            || !imports.add(type)) {
-            return;
-        }
-        out.println("import " + type.getCanonicalName() + ";");
     }
 
     private void generateFields(PrintStream out) {
         for (Field field : fields) {
             String _final = backsParameter.contains(field) ? "final " : "";
-            out.println("    private " + _final + InjectorGeneratorUtil.getEffectiveFieldType(field).getSimpleName() + " " + field.getName() + ";");
+            out.println("    private " + _final + type(InjectorGeneratorUtil.getEffectiveFieldType(field)) + " " + field.getName() + ";");
         }
     }
 
@@ -302,7 +270,7 @@ public class DependencyInjectorGenerator {
                 if (parameter.isRequired()) {
                     p.printWithNoIndent("@NotNull ");
                 }
-                p.printWithNoIndent(parameter.getType().getSimpleName(), " ", parameter.getName());
+                p.printWithNoIndent(type(parameter.getType()), " ", parameter.getName());
                 if (iterator.hasNext()) {
                     p.printlnWithNoIndent(",");
                 }
@@ -314,7 +282,7 @@ public class DependencyInjectorGenerator {
 
         p.pushIndent();
 
-        InjectionLogicGenerator.FIELDS.generate(p, fields);
+        InjectionLogicGenerator.generateForFields(p, fields);
 
         p.popIndent();
         p.println("}");
@@ -343,7 +311,7 @@ public class DependencyInjectorGenerator {
         for (Field field : fields) {
             if (!field.isPublic()) continue;
             String visibility = field.isPublic() ? "public" : "private";
-            out.println(indent0 + visibility + " " + field.getTypeName() + " " + field.getGetterName() + "() {");
+            out.println(indent0 + visibility + " " + type(field.getType()) + " " + field.getGetterName() + "() {");
 
             out.println(indent1 + "return this." + field.getName() + ";");
             out.println(indent0 + "}");
@@ -393,7 +361,7 @@ public class DependencyInjectorGenerator {
         p.println(") {");
         p.pushIndent();
 
-        InjectionLogicGenerator.LOCAL_VARIABLES.generate(p, fields);
+        InjectionLogicGenerator.generateForLocalVariables(importManager, p, fields);
 
         p.println("return ", resultField.getName(), ";");
 
@@ -401,7 +369,11 @@ public class DependencyInjectorGenerator {
         p.println("}");
     }
 
-    private String type(DiType type) {
-        return type.getSimpleName();
+    private CharSequence type(DiType type) {
+        return importManager.render(type);
+    }
+
+    private CharSequence type(Class<?> type) {
+        return type(DiType.fromReflectionType(type));
     }
 }
