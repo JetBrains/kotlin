@@ -45,6 +45,7 @@ public class DependencyInjectorGenerator {
     private final boolean lazy;
     private final Set<Field> fields = Sets.newLinkedHashSet();
     private final Set<Parameter> parameters = Sets.newLinkedHashSet();
+    private final Set<FactoryMethod> factoryMethods = Sets.newLinkedHashSet();
 
     private final Dependencies dependencies = new Dependencies();
 
@@ -109,6 +110,10 @@ public class DependencyInjectorGenerator {
             generateDestroy(injectorClassName, out);
             out.println();
             generateGetters(out);
+            if (!factoryMethods.isEmpty()) {
+                out.println();
+                generateFactoryMethods(out);
+            }
 // Needed to fix double-checked locking
 //            out.println();
 //            generateMakeFunction(out);
@@ -221,6 +226,26 @@ public class DependencyInjectorGenerator {
         return field;
     }
 
+    public void addFactoryMethod(@NotNull Class<?> returnType, Class<?>... parameterTypes) {
+        List<DiType> types = Lists.newArrayList();
+        for (Class<?> type : parameterTypes) {
+            types.add(new DiType(type));
+        }
+        addFactoryMethod(new DiType(returnType), types);
+    }
+
+    public void addFactoryMethod(@NotNull DiType returnType, DiType... parameterTypes) {
+        addFactoryMethod(returnType, Arrays.asList(parameterTypes));
+    }
+
+    public void addFactoryMethod(@NotNull DiType returnType, @NotNull Collection<DiType> parameterTypes) {
+        List<Parameter> parameters = Lists.newArrayList();
+        for (DiType type : parameterTypes) {
+            parameters.add(new Parameter(type, var(type), null, false));
+        }
+        factoryMethods.add(new FactoryMethod("create" + returnType.getSimpleName(), returnType, parameters));
+    }
+
     private void generateImports(PrintStream out, String injectorPackageName) {
         for (Field field : fields) {
             generateImportDirectives(out, field.getType(), injectorPackageName);
@@ -313,46 +338,11 @@ public class DependencyInjectorGenerator {
             }
         }
         else {
-            generateInitializingCode(p, fields);
+            InjectionLogicGenerator.FIELDS.generate(p, fields);
         }
 
         p.popIndent();
         p.println("}");
-    }
-
-    private static void generateInitializingCode(@NotNull Printer p, @NotNull Collection<Field> fields) {
-        // Initialize fields
-        for (Field field : fields) {
-            //if (!backsParameter.contains(field) || field.isPublic()) {
-            p.println("this.", field.getName(), " = ", field.getInitialization().renderAsCode(), ";");
-            //}
-        }
-        p.printlnWithNoIndent();
-
-        // Call setters
-        for (Field field : fields) {
-            for (SetterDependency dependency : field.getDependencies()) {
-                String prefix = field.isPublic() ? "this." : "";
-                String dependencyName = dependency.getDependency().getName();
-                String dependentName = dependency.getDependent().getName();
-                p.println(prefix, dependentName, ".", dependency.getSetterName(), "(", dependencyName, ");");
-            }
-            if (!field.getDependencies().isEmpty()) {
-                p.printlnWithNoIndent();
-            }
-        }
-
-        // call @PostConstruct
-        for (Field field : fields) {
-            // TODO: type of field may be different from type of object
-            List<Method> postConstructMethods = getPostConstructMethods(getEffectiveFieldType(field).getClazz());
-            for (Method postConstruct : postConstructMethods) {
-                p.println(field.getName(), ".", postConstruct.getName(), "();");
-            }
-            if (postConstructMethods.size() > 0) {
-                p.printlnWithNoIndent();
-            }
-        }
     }
 
     private static List<Method> getPostConstructMethods(Class<?> clazz) {
@@ -440,6 +430,60 @@ public class DependencyInjectorGenerator {
             out.println(indent0 + "}");
             out.println();
         }
+    }
+
+    private void generateFactoryMethods(PrintStream out) {
+        Printer p = new Printer(out);
+        p.pushIndent();
+        for (FactoryMethod method : factoryMethods) {
+            generateFactoryMethod(p, method);
+        }
+    }
+
+    private void generateFactoryMethod(Printer p, FactoryMethod method) {
+        Dependencies localDependencies = new Dependencies();
+
+        Map<Parameter, Field> parameterToField = Maps.newHashMap();
+        for (Parameter parameter : method.getParameters()) {
+            Field field = new Field(true, parameter.getType(), parameter.getName());
+            localDependencies.addSatisfiedField(field);
+            parameterToField.put(parameter, field);
+        }
+
+        for (Field storedField : fields) {
+            localDependencies.addSatisfiedField(storedField);
+        }
+
+        Field resultField = new Field(true, method.getReturnType(), "_result");
+        localDependencies.addField(resultField);
+
+        Collection<Field> fields = Lists.newArrayList(localDependencies.satisfyDependencies());
+        fields.add(resultField);
+
+        p.println("public ", type(method.getReturnType()), " ", method.getName(), "(");
+        p.pushIndent();
+        for (Iterator<Parameter> iterator = method.getParameters().iterator(); iterator.hasNext(); ) {
+            Parameter parameter = iterator.next();
+            p.print(type(parameter.getType()), " ", parameter.getName());
+            if (iterator.hasNext()) {
+                p.printlnWithNoIndent(", ");
+            }
+        }
+        p.println();
+        p.popIndent();
+        p.println(") {");
+        p.pushIndent();
+
+        InjectionLogicGenerator.LOCAL_VARIABLES.generate(p, fields);
+
+        p.println("return ", resultField.getName(), ";");
+
+        p.popIndent();
+        p.println("}");
+    }
+
+    private String type(DiType type) {
+        return type.getSimpleName();
     }
 
     private static class Dependencies {
@@ -569,6 +613,84 @@ public class DependencyInjectorGenerator {
         public Set<Field> getNewFields() {
             return newFields;
         }
+    }
+
+    private static abstract class InjectionLogicGenerator {
+
+        public static final InjectionLogicGenerator FIELDS = new InjectionLogicGenerator() {
+            @Override
+            public String prefixForPostConstructorCall(Field field) {
+                return "";
+            }
+
+            @Override
+            public String prefixForSetterCall(Field field) {
+                return field.isPublic() ? "this." : "";
+            }
+
+            @Override
+            public String prefixForInitialization(Field field) {
+                return "this.";
+            }
+        };
+
+        public static final InjectionLogicGenerator LOCAL_VARIABLES = new InjectionLogicGenerator() {
+            @Override
+            public String prefixForPostConstructorCall(Field field) {
+                return "";
+            }
+
+            @Override
+            public String prefixForSetterCall(Field field) {
+                return "";
+            }
+
+            @Override
+            public String prefixForInitialization(Field field) {
+                return field.getType() + " ";
+            }
+        };
+
+        public final void generate(@NotNull Printer p, @NotNull Collection<Field> fields) {
+            // Initialize fields
+            for (Field field : fields) {
+                //if (!backsParameter.contains(field) || field.isPublic()) {
+                p.println(prefixForInitialization(field), field.getName(), " = ", field.getInitialization().renderAsCode(), ";");
+                //}
+            }
+            p.printlnWithNoIndent();
+
+            // Call setters
+            for (Field field : fields) {
+                for (SetterDependency dependency : field.getDependencies()) {
+                    String prefix = prefixForSetterCall(field);
+                    String dependencyName = dependency.getDependency().getName();
+                    String dependentName = dependency.getDependent().getName();
+                    p.println(prefix, dependentName, ".", dependency.getSetterName(), "(", dependencyName, ");");
+                }
+                if (!field.getDependencies().isEmpty()) {
+                    p.printlnWithNoIndent();
+                }
+            }
+
+            // call @PostConstruct
+            for (Field field : fields) {
+                // TODO: type of field may be different from type of object
+                List<Method> postConstructMethods = getPostConstructMethods(getEffectiveFieldType(field).getClazz());
+                for (Method postConstruct : postConstructMethods) {
+                    p.println(prefixForPostConstructorCall(field), field.getName(), ".", postConstruct.getName(), "();");
+                }
+                if (postConstructMethods.size() > 0) {
+                    p.printlnWithNoIndent();
+                }
+            }
+        }
+
+        protected abstract String prefixForInitialization(Field field);
+
+        protected abstract String prefixForSetterCall(Field field);
+
+        protected abstract String prefixForPostConstructorCall(Field field);
     }
 
     private static String var(@NotNull DiType type) {
