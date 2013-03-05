@@ -107,6 +107,18 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
             return;
         }
 
+        List<PsiElement> replacedElements = replaceUsagesWithFirstClass(project, usages);
+
+        if (possibleClasses.size() > 1) {
+            LinkedHashSet<String> possibleTypes = new LinkedHashSet<String>();
+            for (ClassDescriptor klass : possibleClasses) {
+                possibleTypes.add(klass.getName().getName());
+            }
+            buildAndShowTemplate(project, editor, file, replacedElements, possibleTypes);
+        }
+    }
+
+    private List<PsiElement> replaceUsagesWithFirstClass(Project project, List<JetUserType> usages) {
         ClassDescriptor replacementClass = possibleClasses.iterator().next();
         String replacementClassName = replacementClass.getName().getName();
         List<PsiElement> replacedElements = new ArrayList<PsiElement>();
@@ -121,33 +133,28 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
             assert replacedExpression instanceof JetSimpleNameExpression; // assumption: the Kotlin class requires no imports
             replacedElements.add(replacedExpression);
         }
-
-        if (possibleClasses.size() > 1) {
-            LinkedHashSet<String> possibleTypes = new LinkedHashSet<String>();
-            for (ClassDescriptor klass : possibleClasses) {
-                possibleTypes.add(klass.getName().getName());
-            }
-            buildAndShowTemplate(project, editor, file, replacedElements, possibleTypes,
-                                 JetBundle.message("map.platform.class.to.kotlin.advertisement"));
-        }
+        return replacedElements;
     }
 
-    private static void buildAndShowTemplate(Project project, Editor editor, PsiFile file,
-            Collection<PsiElement> replaceElements, LinkedHashSet<String> options, String advertisement) {
+    private static void buildAndShowTemplate(
+            Project project, Editor editor, PsiFile file,
+            Collection<PsiElement> replacedElements, LinkedHashSet<String> options
+    ) {
         PsiDocumentManager.getInstance(project).commitAllDocuments();
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
 
-        PsiElement primaryReplacedExpression = replaceElements.iterator().next();
+        PsiElement primaryReplacedExpression = replacedElements.iterator().next();
 
         final CaretModel caretModel = editor.getCaretModel();
         final int oldOffset = caretModel.getOffset();
         caretModel.moveToOffset(file.getNode().getStartOffset());
 
         TemplateBuilderImpl builder = new TemplateBuilderImpl(file);
-        Expression expression = new MyLookupExpression(primaryReplacedExpression.getText(), options, null, false, advertisement);
+        Expression expression = new MyLookupExpression(primaryReplacedExpression.getText(), options, null, false,
+                                                       JetBundle.message("map.platform.class.to.kotlin.advertisement"));
 
         builder.replaceElement(primaryReplacedExpression, PRIMARY_USAGE, expression, true);
-        for (PsiElement replacedExpression : replaceElements) {
+        for (PsiElement replacedExpression : replacedElements) {
             if (replacedExpression == primaryReplacedExpression) continue;
             builder.replaceElement(replacedExpression, OTHER_USAGE, PRIMARY_USAGE, false);
         }
