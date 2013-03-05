@@ -32,7 +32,7 @@ public class PositioningStrategy<E extends PsiElement> {
     }
 
     public boolean isValid(@NotNull E element) {
-        return true;
+        return !hasSyntaxErrors(element);
     }
 
     @NotNull
@@ -48,5 +48,17 @@ public class PositioningStrategy<E extends PsiElement> {
     @NotNull
     protected static List<TextRange> markRange(@NotNull TextRange range) {
         return Collections.singletonList(range);
+    }
+
+    protected static boolean hasSyntaxErrors(@NotNull PsiElement psiElement) {
+        if (psiElement instanceof PsiErrorElement) return true;
+
+        PsiElement lastChild = psiElement.getLastChild();
+        if (lastChild != null && hasSyntaxErrors(lastChild)) return true;
+
+        PsiElement[] children = psiElement.getChildren();
+        if (children.length > 0 && hasSyntaxErrors(children[children.length - 1])) return true;
+
+        return false;
     }
 }
