@@ -45,10 +45,10 @@ public class DependencyInjectorGenerator {
     private static final String LOCK_NAME = "__lock__";
 
     private final boolean lazy;
-    private final Multimap<DiType, Field> typeToField = HashMultimap.create();
-    private final Set<Field> satisfied = Sets.newHashSet();
     private final Set<Field> fields = Sets.newLinkedHashSet();
     private final Set<Parameter> parameters = Sets.newLinkedHashSet();
+
+    private final Dependencies dependencies = new Dependencies();
 
     private final Set<Field> backsParameter = Sets.newHashSet();
 
@@ -85,9 +85,7 @@ public class DependencyInjectorGenerator {
 
         PrintStream out = new PrintStream(fileOutputStream);
         try {
-            for (Field field : Lists.newArrayList(fields)) {
-                satisfyDependenciesFor(field, field);
-            }
+            fields.addAll(dependencies.satisfyDependencies());
 
             String copyright = "injector-generator/copyright.txt";
             out.println(FileUtil.loadFile(new File(copyright)));
@@ -190,7 +188,7 @@ public class DependencyInjectorGenerator {
         parameters.add(parameter);
         field.setInitialization(new ParameterExpression(parameter));
         backsParameter.add(field);
-        typeToField.put(type, field);
+        dependencies.addSatisfiedField(field);
     }
 
     public Field addPublicField(Class<?> type) {
@@ -221,7 +219,7 @@ public class DependencyInjectorGenerator {
     public Field addField(boolean isPublic, DiType type, @Nullable String name, @Nullable Expression init) {
         Field field = Field.create(isPublic, type, name == null ? var(type) : name, init);
         fields.add(field);
-        typeToField.put(type, field);
+        dependencies.addField(field);
         return field;
     }
 
@@ -436,101 +434,136 @@ public class DependencyInjectorGenerator {
         }
     }
 
-    private void satisfyDependenciesFor(Field field, Field neededFor) {
-        if (!satisfied.add(field)) return;
-        if (backsParameter.contains(field)) return;
+    private static class Dependencies {
 
-        Expression initialization = field.getInitialization();
-        if (initialization instanceof InstantiateType) {
-            initializeByConstructorCall(field, neededFor);
+        private final Set<Field> allFields = Sets.newLinkedHashSet();
+        private final Set<Field> satisfied = Sets.newHashSet();
+        private final Multimap<DiType, Field> typeToFields = HashMultimap.create();
+
+        private final Set<Field> newFields = Sets.newLinkedHashSet();
+
+        public void addField(@NotNull Field field) {
+            allFields.add(field);
+            typeToFields.put(field.getType(), field);
         }
-        DiType typeToInitialize = getEffectiveFieldType(field);
 
-        // Sort setters in order to get deterministic behavior
-        List<Method> declaredMethods = Lists.newArrayList(typeToInitialize.getClazz().getDeclaredMethods());
-        Collections.sort(declaredMethods, new Comparator<Method>() {
-            @Override
-            public int compare(Method o1, Method o2) {
-                return o1.getName().compareTo(o2.getName());
+        public void addSatisfiedField(@NotNull Field field) {
+            addField(field);
+            satisfied.add(field);
+        }
+
+        public Field addNewField(@NotNull DiType type) {
+            Field field = Field.create(false, type, var(type), null);
+            addField(field);
+            newFields.add(field);
+            return field;
+        }
+
+        private void satisfyDependenciesFor(Field field, Field neededFor) {
+            if (!satisfied.add(field)) return;
+
+            Expression initialization = field.getInitialization();
+            if (initialization instanceof InstantiateType) {
+                initializeByConstructorCall(field, neededFor);
             }
-        });
-        for (Method method : declaredMethods) {
-            if (method.getAnnotation(javax.inject.Inject.class) == null
-                || !method.getName().startsWith("set")
-                || method.getParameterTypes().length != 1) continue;
+            DiType typeToInitialize = getEffectiveFieldType(field);
 
-            Type parameterType = method.getGenericParameterTypes()[0];
+            // Sort setters in order to get deterministic behavior
+            List<Method> declaredMethods = Lists.newArrayList(typeToInitialize.getClazz().getDeclaredMethods());
+            Collections.sort(declaredMethods, new Comparator<Method>() {
+                @Override
+                public int compare(Method o1, Method o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
+            for (Method method : declaredMethods) {
+                if (method.getAnnotation(javax.inject.Inject.class) == null
+                    || !method.getName().startsWith("set")
+                    || method.getParameterTypes().length != 1) continue;
+
+                Type parameterType = method.getGenericParameterTypes()[0];
 
 
-            Field dependency = findDependencyOfType(DiType.fromReflectionType(parameterType), field + ": " + method + ": " + fields, field);
+                Field dependency = findDependencyOfType(DiType.fromReflectionType(parameterType), field + ": " + method + ": " + allFields, field);
 
-            field.getDependencies().add(new SetterDependency(field, method.getName(), dependency));
+                field.getDependencies().add(new SetterDependency(field, method.getName(), dependency));
+            }
+        }
+
+        private Field findDependencyOfType(DiType parameterType, String errorMessage, Field neededFor) {
+            List<Field> fields = Lists.newArrayList();
+            for (Map.Entry<DiType, Field> entry : typeToFields.entries()) {
+                if (parameterType.isAssignableFrom(entry.getKey())) {
+                    fields.add(entry.getValue());
+                }
+            }
+
+            if (fields.isEmpty()) {
+
+                if (parameterType.getClazz().isPrimitive() || parameterType.getClazz().getPackage().getName().equals("java.lang")) {
+                    throw new IllegalArgumentException(
+                            "cannot declare magic field of type " + parameterType + ": " + errorMessage);
+                }
+
+                Field dependency = addNewField(parameterType);
+                satisfyDependenciesFor(dependency, neededFor);
+                return dependency;
+            }
+            else if (fields.size() == 1) {
+                return fields.iterator().next();
+            }
+            else {
+                throw new IllegalArgumentException("Ambiguous dependency: " + errorMessage + " needed for " + neededFor);
+            }
+        }
+
+        private void initializeByConstructorCall(Field field, Field neededFor) {
+            Expression initialization = field.getInitialization();
+            DiType type = ((InstantiateType) initialization).getType();
+
+            if (type.getClazz().isInterface()) {
+                throw new IllegalArgumentException("cannot instantiate interface: " + type.getClazz().getName() + " needed for " + neededFor);
+            }
+            if (Modifier.isAbstract(type.getClazz().getModifiers())) {
+                throw new IllegalArgumentException("cannot instantiate abstract class: " + type.getClazz().getName() + " needed for " + neededFor);
+            }
+
+            // Note: projections are not computed here
+
+            // Look for constructor
+            Constructor<?>[] constructors = type.getClazz().getConstructors();
+            if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
+                throw new IllegalArgumentException("No constructor: " + type.getClazz().getName() + " needed for " + neededFor);
+            }
+            if (constructors.length > 1) {
+                throw new IllegalArgumentException("Too many constructors in " + type.getClazz().getName() + " needed for " + neededFor);
+            }
+            Constructor<?> constructor = constructors[0];
+
+            // Find arguments
+            ConstructorCall dependency = new ConstructorCall(constructor);
+            Type[] parameterTypes = constructor.getGenericParameterTypes();
+            for (Type parameterType : parameterTypes) {
+                Field fieldForParameter = findDependencyOfType(DiType.fromReflectionType(parameterType), "constructor: " + constructor + ", parameter: " + parameterType, field);
+                dependency.getConstructorArguments().add(fieldForParameter);
+            }
+
+            field.setInitialization(dependency);
+        }
+
+        public Collection<Field> satisfyDependencies() {
+            for (Field field : Lists.newArrayList(allFields)) {
+                satisfyDependenciesFor(field, field);
+            }
+            return newFields;
+        }
+
+        public Set<Field> getNewFields() {
+            return newFields;
         }
     }
 
-    private Field findDependencyOfType(DiType parameterType, String errorMessage, Field neededFor) {
-        List<Field> fields = Lists.newArrayList();
-        for (Map.Entry<DiType, Field> entry : typeToField.entries()) {
-            if (parameterType.isAssignableFrom(entry.getKey())) {
-                fields.add(entry.getValue());
-            }
-        }
-        
-        Field dependency;
-        if (fields.isEmpty()) {
-            
-            if (parameterType.getClazz().isPrimitive() || parameterType.getClazz().getPackage().getName().equals("java.lang")) {
-                throw new IllegalArgumentException(
-                        "cannot declare magic field of type " + parameterType + ": " + errorMessage);
-            }
-            
-            dependency = addField(parameterType);
-            satisfyDependenciesFor(dependency, neededFor);
-        }
-        else if (fields.size() == 1) {
-            dependency = fields.iterator().next();
-        }
-        else {
-            throw new IllegalArgumentException("Ambiguous dependency: " + errorMessage + " needed for " + neededFor);
-        }
-        return dependency;
-    }
-
-    private void initializeByConstructorCall(Field field, Field neededFor) {
-        Expression initialization = field.getInitialization();
-        DiType type = ((InstantiateType) initialization).getType();
-
-        if (type.getClazz().isInterface()) {
-            throw new IllegalArgumentException("cannot instantiate interface: " + type.getClazz().getName() + " needed for " + neededFor);
-        }
-        if (Modifier.isAbstract(type.getClazz().getModifiers())) {
-            throw new IllegalArgumentException("cannot instantiate abstract class: " + type.getClazz().getName() + " needed for " + neededFor);
-        }
-
-        // Note: projections are not computed here
-
-        // Look for constructor
-        Constructor<?>[] constructors = type.getClazz().getConstructors();
-        if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
-            throw new IllegalArgumentException("No constructor: " + type.getClazz().getName() + " needed for " + neededFor);
-        }
-        if (constructors.length > 1) {
-            throw new IllegalArgumentException("Too many constructors in " + type.getClazz().getName() + " needed for " + neededFor);
-        }
-        Constructor<?> constructor = constructors[0];
-
-        // Find arguments
-        ConstructorCall dependency = new ConstructorCall(constructor);
-        Type[] parameterTypes = constructor.getGenericParameterTypes();
-        for (Type parameterType : parameterTypes) {
-            Field fieldForParameter = findDependencyOfType(DiType.fromReflectionType(parameterType), "constructor: " + constructor + ", parameter: " + parameterType, field);
-            dependency.getConstructorArguments().add(fieldForParameter);
-        }
-
-        field.setInitialization(dependency);
-    }
-
-    private String var(@NotNull DiType type) {
+    private static String var(@NotNull DiType type) {
         StringBuilder sb = new StringBuilder();
         sb.append(StringUtil.decapitalize(type.getClazz().getSimpleName().replaceFirst("(?<=.)Impl$", "")));
         if (type.getTypeParameters().size() > 0) {
