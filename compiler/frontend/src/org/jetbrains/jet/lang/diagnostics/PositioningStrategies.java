@@ -39,31 +39,36 @@ public class PositioningStrategies {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetDeclaration declaration) {
+            return markElement(getElementToMark(declaration));
+        }
+
+        @Override
+        public boolean isValid(@NotNull JetDeclaration declaration) {
+            return !hasSyntaxErrors(getElementToMark(declaration));
+        }
+
+        private PsiElement getElementToMark(@NotNull JetDeclaration declaration) {
             JetTypeReference returnTypeRef = null;
-            ASTNode nameNode = null;
+            PsiElement nameIdentifierOrPlaceholder = null;
             if (declaration instanceof JetNamedFunction) {
                 JetFunction function = (JetNamedFunction) declaration;
                 returnTypeRef = function.getReturnTypeRef();
-                nameNode = getNameNode(function);
+                nameIdentifierOrPlaceholder = function.getNameIdentifier();
             }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
                 returnTypeRef = property.getTypeRef();
-                nameNode = getNameNode(property);
+                nameIdentifierOrPlaceholder = property.getNameIdentifier();
             }
             else if (declaration instanceof JetPropertyAccessor) {
                 JetPropertyAccessor accessor = (JetPropertyAccessor) declaration;
                 returnTypeRef = accessor.getReturnTypeReference();
-                nameNode = accessor.getNamePlaceholder().getNode();
+                nameIdentifierOrPlaceholder = accessor.getNamePlaceholder();
             }
-            if (returnTypeRef != null) return markElement(returnTypeRef);
-            if (nameNode != null) return markNode(nameNode);
-            return markElement(declaration);
-        }
 
-        private ASTNode getNameNode(JetNamedDeclaration function) {
-            PsiElement nameIdentifier = function.getNameIdentifier();
-            return nameIdentifier == null ? null : nameIdentifier.getNode();
+            if (returnTypeRef != null) return returnTypeRef;
+            if (nameIdentifierOrPlaceholder != null) return nameIdentifierOrPlaceholder;
+            return declaration;
         }
     };
 
