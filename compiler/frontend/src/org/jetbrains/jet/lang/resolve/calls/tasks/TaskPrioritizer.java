@@ -44,7 +44,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
-public abstract class TaskPrioritizer {
+public class TaskPrioritizer {
 
     public static <D extends CallableDescriptor> void splitLexicallyLocalDescriptors(
             @NotNull Collection<ResolutionCandidate<D>> allDescriptors,
@@ -235,5 +235,8 @@ public abstract class TaskPrioritizer {
             }
         }
         return false;
+    }
+
+    private TaskPrioritizer() {
     }
 }
