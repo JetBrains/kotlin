@@ -16,15 +16,13 @@
 
 package org.jetbrains.jet.di;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.utils.Printer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -281,70 +279,80 @@ public class DependencyInjectorGenerator {
     }
 
     private void generateConstructor(String injectorClassName, PrintStream out) {
-        String indent = "        ";
+        Printer p = new Printer(out);
+        p.pushIndent();
 
         // Constructor parameters
         if (parameters.isEmpty()) {
-            out.println("    public " + injectorClassName + "() {");
+            p.println("public ", injectorClassName, "() {");
         }
         else {
-            out.println("    public " + injectorClassName + "(");
+            p.println("public ", injectorClassName, "(");
+            p.pushIndent();
             for (Iterator<Parameter> iterator = parameters.iterator(); iterator.hasNext(); ) {
                 Parameter parameter = iterator.next();
-                out.print(indent);
+                p.print(); // indent
                 if (parameter.isRequired()) {
-                    out.print("@NotNull ");
+                    p.printWithNoIndent("@NotNull ");
                 }
-                out.print(parameter.getType().getSimpleName() + " " + parameter.getName());
+                p.printWithNoIndent(parameter.getType().getSimpleName(), " ", parameter.getName());
                 if (iterator.hasNext()) {
-                    out.println(",");
+                    p.printlnWithNoIndent(",");
                 }
             }
-            out.println();
-            out.println("    ) {");
+            p.printlnWithNoIndent();
+            p.popIndent();
+            p.println(") {");
         }
 
+        p.pushIndent();
         if (lazy) {
             // Remember parameters
             for (Parameter parameter : parameters) {
-                out.println(indent + "this." + parameter.getField().getName() + " = " + parameter.getName() + ";");
+                p.println("this.", parameter.getField().getName(), " = ", parameter.getName(), ";");
             }
         }
         else {
-            // Initialize fields
-            for (Field field : fields) {
-                //if (!backsParameter.contains(field) || field.isPublic()) {
-                    String prefix = "this.";
-                    out.println(indent + prefix + field.getName() + " = " + field.getInitialization().renderAsCode() + ";");
-                //}
-            }
-            out.println();
+            generateInitializingCode(p, fields);
+        }
 
-            // Call setters
-            for (Field field : fields) {
-                for (SetterDependency dependency : field.getDependencies()) {
-                    String prefix = field.isPublic() ? "this." : "";
-                    out.println(indent + prefix + dependency.getDependent().getName() + "." + dependency.getSetterName() + "(" + dependency.getDependency().getName() + ");");
-                }
-                if (!field.getDependencies().isEmpty()) {
-                    out.println();
-                }
-            }
+        p.popIndent();
+        p.println("}");
+    }
 
-            // call @PostConstruct
-            for (Field field : fields) {
-                // TODO: type of field may be different from type of object
-                List<Method> postConstructMethods = getPostConstructMethods(getEffectiveFieldType(field).getClazz());
-                for (Method postConstruct : postConstructMethods) {
-                    out.println(indent + field.getName() + "." + postConstruct.getName() + "();");
-                }
-                if (postConstructMethods.size() > 0) {
-                    out.println();
-                }
+    private static void generateInitializingCode(@NotNull Printer p, @NotNull Collection<Field> fields) {
+        // Initialize fields
+        for (Field field : fields) {
+            //if (!backsParameter.contains(field) || field.isPublic()) {
+            p.println("this.", field.getName(), " = ", field.getInitialization().renderAsCode(), ";");
+            //}
+        }
+        p.printlnWithNoIndent();
+
+        // Call setters
+        for (Field field : fields) {
+            for (SetterDependency dependency : field.getDependencies()) {
+                String prefix = field.isPublic() ? "this." : "";
+                String dependencyName = dependency.getDependency().getName();
+                String dependentName = dependency.getDependent().getName();
+                p.println(prefix, dependentName, ".", dependency.getSetterName(), "(", dependencyName, ");");
+            }
+            if (!field.getDependencies().isEmpty()) {
+                p.printlnWithNoIndent();
             }
         }
 
-        out.println("    }");
+        // call @PostConstruct
+        for (Field field : fields) {
+            // TODO: type of field may be different from type of object
+            List<Method> postConstructMethods = getPostConstructMethods(getEffectiveFieldType(field).getClazz());
+            for (Method postConstruct : postConstructMethods) {
+                p.println(field.getName(), ".", postConstruct.getName(), "();");
+            }
+            if (postConstructMethods.size() > 0) {
+                p.printlnWithNoIndent();
+            }
+        }
     }
 
     private static List<Method> getPostConstructMethods(Class<?> clazz) {
