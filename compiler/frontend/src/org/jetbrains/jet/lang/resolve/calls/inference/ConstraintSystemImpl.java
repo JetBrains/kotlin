@@ -43,7 +43,7 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl
 
 public class ConstraintSystemImpl implements ConstraintSystem {
 
-    public static enum ConstraintKind {
+    public enum ConstraintKind {
         SUB_TYPE, EQUAL
     }
 
@@ -55,7 +55,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private boolean hasExpectedTypeMismatch;
 
     public ConstraintSystemImpl() {
-        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(CANT_INFER));
+        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(CANT_INFER_TYPE_PARAMETER));
         this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(DONT_CARE));
     }
 
@@ -214,7 +214,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private boolean isErrorOrSpecialType(@Nullable JetType type) {
         if (type == TypeUtils.NO_EXPECTED_TYPE
             || type == DONT_CARE
-            || type == CANT_INFER) {
+            || type == CANT_INFER_TYPE_PARAMETER) {
             return true;
         }
 
@@ -260,7 +260,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         // can be equal for the recursive invocations:
         // fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
-        if (subType == superType) return;
+        if (subType.equals(superType)) return;
 
         assert !isMyTypeVariable(subType) || !isMyTypeVariable(superType) :
                 "The constraint shouldn't contain different type variables on both sides: " + subType + " <: " + superType;

@@ -196,7 +196,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private String renderTypeWithoutEscape(@NotNull JetType type) {
-        if (type == ExpressionTypingUtils.CANNOT_BE_INFERRED || type == CallResolverUtil.CANT_INFER) {
+        if (type == ExpressionTypingUtils.CANT_INFER_LAMBDA_PARAM_TYPE || type == CallResolverUtil.CANT_INFER_TYPE_PARAMETER) {
             return "???";
         }
         if (ErrorUtils.isErrorType(type)) {

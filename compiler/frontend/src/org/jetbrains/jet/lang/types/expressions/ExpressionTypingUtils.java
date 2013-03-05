@@ -63,7 +63,7 @@ public class ExpressionTypingUtils {
     private ExpressionTypingUtils() {
     }
 
-    public static final JetType CANNOT_BE_INFERRED = ErrorUtils.createErrorType("Cannot be inferred");
+    public static final JetType CANT_INFER_LAMBDA_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
 
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {

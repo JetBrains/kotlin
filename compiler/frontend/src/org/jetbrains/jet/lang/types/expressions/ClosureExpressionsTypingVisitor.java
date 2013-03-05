@@ -40,7 +40,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.CANNOT_BE_INFERRED;
+import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
@@ -219,14 +219,14 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            if (expectedType == null || expectedType == CallResolverUtil.DONT_CARE || expectedType == CallResolverUtil.CANT_INFER) {
+            if (expectedType == null || expectedType == CallResolverUtil.DONT_CARE || expectedType == CallResolverUtil.CANT_INFER_TYPE_PARAMETER) {
                 context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
             }
             if (expectedType != null) {
                 type = expectedType;
             }
             else {
-                type = CANNOT_BE_INFERRED;
+                type = CANT_INFER_LAMBDA_PARAM_TYPE;
             }
         }
         return context.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptor(
@@ -257,7 +257,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 return KotlinBuiltIns.getInstance().getUnitType();
             }
         }
-        return returnType == null ? CANNOT_BE_INFERRED : returnType;
+        return returnType == null ? CANT_INFER_LAMBDA_PARAM_TYPE : returnType;
     }
 
     @Nullable

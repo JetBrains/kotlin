@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
@@ -40,7 +39,7 @@ import java.util.Map;
 public class CallResolverUtil {
 
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
-    public static final JetType CANT_INFER = ErrorUtils.createErrorTypeWithCustomDebugName("CANT_INFER");
+    public static final JetType CANT_INFER_TYPE_PARAMETER = ErrorUtils.createErrorTypeWithCustomDebugName("CANT_INFER_TYPE_PARAMETER");
     public static final JetType PLACEHOLDER_FUNCTION_TYPE = ErrorUtils.createErrorTypeWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE");
 
     public static enum ResolveArgumentsMode {
@@ -84,7 +83,7 @@ public class CallResolverUtil {
         // last argument is return type of function type
         List<TypeProjection> functionParameters = arguments.subList(0, arguments.size() - 1);
         for (TypeProjection functionParameter : functionParameters) {
-            if (TypeUtils.equalsOrContainsAsArgument(functionParameter.getType(), CANT_INFER, DONT_CARE)) {
+            if (TypeUtils.equalsOrContainsAsArgument(functionParameter.getType(), CANT_INFER_TYPE_PARAMETER, DONT_CARE)) {
                 return true;
             }
         }
