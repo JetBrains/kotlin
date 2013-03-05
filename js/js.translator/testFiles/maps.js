@@ -300,7 +300,7 @@
             var values = this._values();
             var i = values.length
             var result = Kotlin.$new(Kotlin.ArrayList)();
-            while (--i) {
+            while (i--) {
                 result.add(values[i]);
             }
             return result;
