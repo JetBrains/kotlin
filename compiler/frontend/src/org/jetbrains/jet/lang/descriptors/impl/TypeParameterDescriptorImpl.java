@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
@@ -108,8 +109,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
     }
 
     private String nameForAssertions() {
-        DeclarationDescriptor owner = getContainingDeclaration();
-        return getName() + " declared in " + (owner == null ? "<no owner>" : owner.getName());
+        return getName() + " declared in " + DescriptorUtils.getFQName(getContainingDeclaration());
     }
 
     public void setInitialized() {
