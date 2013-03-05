@@ -1041,6 +1041,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/ClassWithTypePRefSelf.kt");
         }
         
+        @TestMetadata("ClassWithTypePRefSelfAndClass.kt")
+        public void testClassWithTypePRefSelfAndClass() throws Exception {
+            doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/ClassWithTypePRefSelfAndClass.kt");
+        }
+        
         @TestMetadata("FieldAsVar.kt")
         public void testFieldAsVar() throws Exception {
             doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/FieldAsVar.kt");

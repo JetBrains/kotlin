@@ -72,6 +72,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         doTest("compiler/testData/loadJava/ClassWithTypePRefSelf.java");
     }
     
+    @TestMetadata("ClassWithTypePRefSelfAndClass.java")
+    public void testClassWithTypePRefSelfAndClass() throws Exception {
+        doTest("compiler/testData/loadJava/ClassWithTypePRefSelfAndClass.java");
+    }
+    
     @TestMetadata("FieldAsVar.java")
     public void testFieldAsVar() throws Exception {
         doTest("compiler/testData/loadJava/FieldAsVar.java");
