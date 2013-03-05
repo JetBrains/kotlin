@@ -29,8 +29,13 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.*;
 
 public class CallableDescriptorCollectors {
+    public static CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS = new FunctionCollector();
+    public static CallableDescriptorCollector<VariableDescriptor> VARIABLES = new VariableCollector();
+    public static CallableDescriptorCollector<VariableDescriptor> PROPERTIES = new PropertyCollector();
+    public static List<CallableDescriptorCollector<? extends CallableDescriptor>> FUNCTIONS_AND_VARIABLES =
+            Lists.newArrayList(FUNCTIONS, VARIABLES);
 
-    public static CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS = new CallableDescriptorCollector<FunctionDescriptor>() {
+    private static class FunctionCollector implements CallableDescriptorCollector<FunctionDescriptor> {
 
         @NotNull
         @Override
@@ -61,7 +66,7 @@ public class CallableDescriptorCollectors {
             return scope.getFunctions(name);
         }
 
-        private void addConstructors(JetScope scope, Name name, Collection<FunctionDescriptor> functions) {
+        private static void addConstructors(JetScope scope, Name name, Collection<FunctionDescriptor> functions) {
             ClassifierDescriptor classifier = scope.getClassifier(name);
             if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier.getTypeConstructor())) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
@@ -73,9 +78,9 @@ public class CallableDescriptorCollectors {
         public String toString() {
             return "FUNCTIONS";
         }
-    };
+    }
 
-    public static CallableDescriptorCollector<VariableDescriptor> VARIABLES = new CallableDescriptorCollector<VariableDescriptor>() {
+    private static class VariableCollector implements CallableDescriptorCollector<VariableDescriptor> {
 
         @NotNull
         @Override
@@ -111,10 +116,10 @@ public class CallableDescriptorCollectors {
         public String toString() {
             return "VARIABLES";
         }
-    };
-    
-    public static CallableDescriptorCollector<VariableDescriptor> PROPERTIES = new CallableDescriptorCollector<VariableDescriptor>() {
-        private Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
+    }
+
+    private static class PropertyCollector implements CallableDescriptorCollector<VariableDescriptor> {
+        private static Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
             ArrayList<VariableDescriptor> properties = Lists.newArrayList();
             for (VariableDescriptor descriptor : variableDescriptors) {
                 if (descriptor instanceof PropertyDescriptor) {
@@ -146,8 +151,8 @@ public class CallableDescriptorCollectors {
         public String toString() {
             return "PROPERTIES";
         }
-    };
+    }
 
-    public static List<CallableDescriptorCollector<? extends CallableDescriptor>> FUNCTIONS_AND_VARIABLES = Lists.newArrayList(
-            FUNCTIONS, VARIABLES);
+    private CallableDescriptorCollectors() {
+    }
 }
