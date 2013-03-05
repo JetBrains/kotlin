@@ -208,7 +208,6 @@ public class TaskPrioritizer {
                 if (descriptor.getExpectedThisObject() != null && descriptor.getReceiverParameter() == null) {
                     DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
                     if (descriptor instanceof ConstructorDescriptor) {
-                        assert containingDeclaration != null;
                         containingDeclaration = containingDeclaration.getContainingDeclaration();
                     }
                     if (containingDeclaration != null && isClassObject(containingDeclaration)) {
