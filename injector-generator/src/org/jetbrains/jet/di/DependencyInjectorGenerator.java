@@ -36,9 +36,7 @@ import static org.jetbrains.jet.di.InjectorGeneratorUtil.var;
 public class DependencyInjectorGenerator {
 
     public static final String INDENT_STEP = "    ";
-    private static final String LOCK_NAME = "__lock__";
 
-    private final boolean lazy;
     private final Set<Field> fields = Sets.newLinkedHashSet();
     private final Set<Parameter> parameters = Sets.newLinkedHashSet();
     private final Set<FactoryMethod> factoryMethods = Sets.newLinkedHashSet();
@@ -50,8 +48,7 @@ public class DependencyInjectorGenerator {
     private final List<Class<?>> implementsList = Lists.newArrayList();
     private final Collection<Class<?>> imports = Sets.newHashSet();
 
-    public DependencyInjectorGenerator(boolean lazy) {
-        this.lazy = lazy;
+    public DependencyInjectorGenerator() {
     }
 
     public void generate(String targetSourceRoot, String injectorPackageName, String injectorClassName, Class<?> generatorClass)
@@ -95,9 +92,6 @@ public class DependencyInjectorGenerator {
             out.print("public class " + injectorClassName);
             generateImplementsList(out);
             out.println(" {");
-// Needed for double-checked locking
-//            out.println();
-//            out.println("    private static final Object " + LOCK_NAME + " = new Object();");
             out.println();
             generateFields(out);
             out.println();
@@ -110,9 +104,6 @@ public class DependencyInjectorGenerator {
                 out.println();
                 generateFactoryMethods(out);
             }
-// Needed to fix double-checked locking
-//            out.println();
-//            generateMakeFunction(out);
             out.println("}"); // class
 
             fileOutputStream.close();
@@ -322,15 +313,8 @@ public class DependencyInjectorGenerator {
         }
 
         p.pushIndent();
-        if (lazy) {
-            // Remember parameters
-            for (Parameter parameter : parameters) {
-                p.println("this.", parameter.getField().getName(), " = ", parameter.getName(), ";");
-            }
-        }
-        else {
-            InjectionLogicGenerator.FIELDS.generate(p, fields);
-        }
+
+        InjectionLogicGenerator.FIELDS.generate(p, fields);
 
         p.popIndent();
         p.println("}");
@@ -356,46 +340,10 @@ public class DependencyInjectorGenerator {
     private void generateGetters(PrintStream out) {
         String indent0 = "    ";
         String indent1 = indent0 + INDENT_STEP;
-        String indent2 = indent1 + INDENT_STEP;
-        String indent3 = indent2 + INDENT_STEP;
-        String indent4 = indent3 + INDENT_STEP;
         for (Field field : fields) {
-            if (!lazy && !field.isPublic()) continue;
+            if (!field.isPublic()) continue;
             String visibility = field.isPublic() ? "public" : "private";
             out.println(indent0 + visibility + " " + field.getTypeName() + " " + field.getGetterName() + "() {");
-
-            if (lazy && !backsParameter.contains(field)) {
-                Expression initialization = field.getInitialization();
-                assert initialization instanceof InstantiateType : field;
-
-                // Double-checked locking
-                out.println(indent1 + "if (this." + field.getName() + " == null) {");
-
-                out.println(indent2 + "this." + field.getName() + " = " + initialization + ";");
-                // Invoke setters
-                for (SetterDependency dependency : field.getDependencies()) {
-                    out.println(indent2 + "this." + field.getName() + "." + dependency.getSetterName() + "(" + dependency.getDependency().getGetterName() + "());");
-                }
-
-                out.println(indent1 + "}"); // Outer if
-
-                /*
-                // Double-checked locking
-                out.println(indent1 + "if (this." + field.getName() + " == null) {");
-                out.println(indent2 + "synchronized (" + LOCK_NAME + ") {");
-                out.println(indent3 + "if (this." + field.getName() + " == null) {");
-
-                out.println(indent4 + "this." + field.getName() + " = " + initialization + ";");
-                // Invoke setters
-                for (SetterDependency dependency : field.getDependencies()) {
-                    out.println(indent4 + "this." + field.getName() + "." + dependency.getSetterName() + "(" + dependency.getDependency().getGetterName() + "());");
-                }
-
-                out.println(indent3 + "}"); // Inner if
-                out.println(indent2 + "}"); // synchronized
-                out.println(indent1 + "}"); // Outer if
-                */
-            }
 
             out.println(indent1 + "return this." + field.getName() + ";");
             out.println(indent0 + "}");
@@ -455,19 +403,5 @@ public class DependencyInjectorGenerator {
 
     private String type(DiType type) {
         return type.getSimpleName();
-    }
-
-    private void generateMakeFunction(PrintStream out) {
-        out.println("    private static <T> T make(Class<T> theClass) {");
-        out.println("        try {                                     ");
-        out.println("            return theClass.newInstance();        ");
-        out.println("        }                                         ");
-        out.println("        catch (InstantiationException e) {        ");
-        out.println("            throw new IllegalStateException(e);   ");
-        out.println("        }                                         ");
-        out.println("        catch (IllegalAccessException e) {        ");
-        out.println("            throw new IllegalStateException(e);   ");
-        out.println("        }                                         ");
-        out.println("    }                                             ");
     }
 }

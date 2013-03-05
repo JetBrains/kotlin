@@ -61,7 +61,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForLazyResolve() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generator.addParameter(Project.class);
         generator.addParameter(ResolveSession.class);
         generator.addParameter(BindingTrace.class);
@@ -77,7 +77,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForTopDownAnalyzerBasic() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(ModuleConfiguration.class);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
@@ -86,7 +86,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForTopDownAnalyzerForJs() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addPublicParameter(ModuleConfiguration.class);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
@@ -95,7 +95,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForTopDownAnalyzerForJvm() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generator.implementInterface(InjectorForTopDownAnalyzer.class);
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addField(true, ModuleConfiguration.class, null, new InstantiateType(JavaBridgeConfiguration.class));
@@ -107,7 +107,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForJavaDescriptorResolver() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
 
         // Parameters
         generator.addPublicParameter(Project.class);
@@ -141,7 +141,7 @@ public class GenerateInjectors {
     }
 
     private static void generateMacroInjector() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
 
         // Fields
         generator.addPublicField(ExpressionTypingServices.class);
@@ -154,7 +154,7 @@ public class GenerateInjectors {
     }
 
     private static void generateTestInjector() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
 
         // Fields
         generator.addPublicField(DescriptorResolver.class);
@@ -171,7 +171,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForJavaSemanticServices() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
 
         // Fields
         generator.addPublicField(JavaSemanticServices.class);
@@ -192,7 +192,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForJvmCodegen() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
 
         // Parameters
         generator.addPublicParameter(JetTypeMapper.class);
@@ -217,7 +217,7 @@ public class GenerateInjectors {
     }
 
     private static void generateInjectorForBodyResolve() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         // Fields
         generator.addPublicField(BodyResolver.class);
 
