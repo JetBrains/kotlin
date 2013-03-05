@@ -68,20 +68,16 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
                 return null;
             }
 
-            String libraryName = LIBRARY_NAME;
-
             String copyIntoPath = dialog.getCopyIntoPath();
             if (copyIntoPath != null) {
                 libraryFile = FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_RUNTIME_LIBRARY_CREATION, copyIntoPath, libraryFile);
                 if (libraryFile == null) {
                     return null;
                 }
-
-                libraryName = LIBRARY_NAME + "-" + JetPluginUtil.getPluginVersion();
             }
 
             final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
-            return new NewLibraryConfiguration(libraryName, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+            return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
                 @Override
                 public void addRoots(@NotNull LibraryEditor editor) {
                     editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);

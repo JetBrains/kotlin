@@ -69,8 +69,6 @@ public class JSLibraryDescription extends CustomLibraryDescription {
                 return null;
             }
 
-            String libraryName = LIBRARY_NAME;
-
             String copyIntoPath = dialog.getCopyIntoPath();
             if (copyIntoPath != null) {
                 List<File> copyFiles = new ArrayList<File>();
@@ -86,12 +84,11 @@ public class JSLibraryDescription extends CustomLibraryDescription {
 
                 if (dialog.isCopyLibraryFiles()) {
                     libraryFile = copiedFiles.get(libraryFile);
-                    libraryName = LIBRARY_NAME + "-" + JetPluginUtil.getPluginVersion();
                 }
             }
 
             final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
-            return new NewLibraryConfiguration(libraryName, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+            return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
                 @Override
                 public void addRoots(@NotNull LibraryEditor editor) {
                     editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
