@@ -45,7 +45,7 @@ public class CreateJavaLibraryDialog extends DialogWrapper {
         ChooseCompilerSourcePanel compilerSourcePanel = new ChooseCompilerSourcePanel();
         compilerSourcePanelPlace.add(compilerSourcePanel.getContentPane(), BorderLayout.CENTER, 0);
 
-        copyIntoPanel = new CopyIntoPanel(project, contextDirectory);
+        copyIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "lib"));
         copyIntoPanel.addValidityListener(new ValidityListener() {
             @Override
             public void validityChanged(boolean isValid) {

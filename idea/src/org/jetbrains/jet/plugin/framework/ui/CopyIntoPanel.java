@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.framework.ui;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +37,11 @@ public class CopyIntoPanel {
 
     private boolean hasErrorsState;
 
-    public CopyIntoPanel(@Nullable Project project, @NotNull VirtualFile contextDirectory) {
+    public CopyIntoPanel(@Nullable Project project, @NotNull String defaultPath) {
+        this(project, defaultPath, null);
+    }
+
+    public CopyIntoPanel(@Nullable Project project, @NotNull String defaultPath, @Nullable String labelText) {
         copyIntoField.addBrowseFolderListener(
                 "Copy Into...", "Choose folder where files will be copied", project,
                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
@@ -49,8 +52,20 @@ public class CopyIntoPanel {
             }
         });
 
+        if (labelText != null) {
+            String text = labelText.replace("&", "");
+            int mnemonicIndex = labelText.indexOf("&");
+            char mnemonicChar = mnemonicIndex != -1 && (mnemonicIndex + 1) < labelText.length() ? labelText.charAt(mnemonicIndex + 1) : 0;
+
+            copyIntoLabel.setText(text);
+            copyIntoLabel.setDisplayedMnemonic(mnemonicChar);
+            copyIntoLabel.setDisplayedMnemonicIndex(mnemonicIndex);
+        }
+
         copyIntoLabel.setLabelFor(copyIntoField.getTextField());
-        copyIntoField.getTextField().setText(FileUIUtils.getDefaultLibraryFolder(project, contextDirectory));
+        copyIntoField.getTextField().setText(defaultPath);
+
+        copyIntoField.getTextField().setColumns(40);
 
         updateComponents();
     }

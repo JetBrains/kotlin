@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -36,10 +35,7 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JSLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
@@ -69,15 +65,24 @@ public class JSLibraryDescription extends CustomLibraryDescription {
                 return null;
             }
 
-            String copyIntoPath = dialog.getCopyIntoPath();
-            if (copyIntoPath != null) {
-                List<File> copyFiles = new ArrayList<File>();
+            Map<File, String> copyToPaths = new HashMap<File, String>();
+            if (dialog.isCopyLibraryFiles()) {
+                String copyIntoPath = dialog.getCopyLibraryIntoPath();
+                assert copyIntoPath != null;
 
-                if (dialog.isCopyLibraryFiles()) copyFiles.add(libraryFile);
-                if (dialog.isCopyECMA3()) copyFiles.add(paths.getJsLibJsPath());
+                copyToPaths.put(libraryFile, copyIntoPath);
+            }
 
+            if (dialog.isCopyJS()) {
+                String copyIntoPath = dialog.getCopyJsIntoPath();
+                assert copyIntoPath != null;
+
+                copyToPaths.put(paths.getJsLibJsPath(), copyIntoPath);
+            }
+
+            if (!copyToPaths.isEmpty()) {
                 Map<File,File> copiedFiles =
-                        FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_SCRIPT_LIBRARY_CREATION, copyIntoPath, copyFiles);
+                        FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_SCRIPT_LIBRARY_CREATION, copyToPaths);
                 if (copiedFiles == null) {
                     return null;
                 }

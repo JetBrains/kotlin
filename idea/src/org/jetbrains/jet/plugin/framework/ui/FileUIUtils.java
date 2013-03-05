@@ -16,9 +16,10 @@
 
 package org.jetbrains.jet.plugin.framework.ui;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.intellij.ide.util.projectWizard.ProjectWizardUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -35,7 +36,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 public class FileUIUtils {
     private FileUIUtils() {
@@ -47,7 +47,7 @@ public class FileUIUtils {
             @NotNull String messagesTitle,
             @NotNull String destinationFolder,
             @NotNull File file) {
-        Map<File, File> copiedFiles = copyWithOverwriteDialog(parent, messagesTitle, destinationFolder, ImmutableList.of(file));
+        Map<File, File> copiedFiles = copyWithOverwriteDialog(parent, messagesTitle, ImmutableMap.of(file, destinationFolder));
         if (copiedFiles == null) {
             return null;
         }
@@ -62,40 +62,49 @@ public class FileUIUtils {
     public static Map<File, File> copyWithOverwriteDialog(
             @NotNull Component parent,
             @NotNull String messagesTitle,
-            @NotNull String destinationFolder,
-            @NotNull List<File> files
+            @NotNull Map<File, String> filesWithDestinations
     ) {
-        if (!ProjectWizardUtil.createDirectoryIfNotExists("Destination folder", destinationFolder, false)) {
-            Messages.showErrorDialog(String.format("Error during folder creating '%s'", destinationFolder), messagesTitle + ". Error");
-            return null;
-        }
-        
-        File folder = new File(destinationFolder);
-
         Set<String> fileNames = new HashSet<String>();
-        Map<File, File> targetFiles = new LinkedHashMap<File, File>(files.size());
-        for (File file : files) {
+        Map<File, File> targetFiles = new LinkedHashMap<File, File>(filesWithDestinations.size());
+        for (Map.Entry<File, String> sourceToDestination : filesWithDestinations.entrySet()) {
+            File file = sourceToDestination.getKey();
+            String destinationPath = sourceToDestination.getValue();
+
             String fileName = file.getName();
 
             if (!fileNames.add(fileName)) {
                 throw new IllegalArgumentException("There are several files with the same name: " + fileName);
             }
 
-            targetFiles.put(file, new File(folder, fileName));
+            targetFiles.put(file, new File(destinationPath, fileName));
         }
 
-        Collection<File> existentFiles = Collections2.filter(targetFiles.values(), new Predicate<File>() {
+        Collection<Map.Entry<File, File>> existentFiles = Collections2.filter(targetFiles.entrySet(), new Predicate<Map.Entry<File, File>>() {
             @Override
-            public boolean apply(@Nullable File file) {
-                assert file != null;
-                return file.exists();
+            public boolean apply(@Nullable Map.Entry<File, File> sourceToTarget) {
+                assert sourceToTarget != null;
+                return sourceToTarget.getValue().exists();
             }
         });
 
         if (!existentFiles.isEmpty()) {
-            String message = existentFiles.size() == 1 ?
-                String.format("File \"%s\" is already exist in %s.\nDo you want to overwrite it?", existentFiles.iterator().next().getName(), folder.getAbsolutePath()) :
-                String.format("Several files are already exist in %s:\n%s\nDo you want to overwrite them?", folder.getAbsolutePath(), StringUtil.join(existentFiles, "\n"));
+            String message;
+
+            if (existentFiles.size() == 1) {
+                File conflictingFile = existentFiles.iterator().next().getValue();
+                message = String.format("File \"%s\" already exists in %s.\nDo you want to overwrite it?", conflictingFile.getName(),
+                                        conflictingFile.getParentFile().getAbsolutePath());
+            }
+            else {
+                Collection<File> conflictFiles = Collections2.transform(existentFiles, new Function<Map.Entry<File, File>, File>() {
+                    @Override
+                    public File apply(@Nullable Map.Entry<File, File> pair) {
+                        assert pair != null;
+                        return pair.getValue();
+                    }
+                });
+                message = String.format("Files already exist:\n%s\nDo you want to overwrite them?", StringUtil.join(conflictFiles, "\n"));
+            }
 
             int replaceIfExist = Messages.showYesNoDialog(
                     null,
@@ -112,6 +121,12 @@ public class FileUIUtils {
 
         for (Map.Entry<File, File> sourceToTarget : targetFiles.entrySet()) {
             try {
+                String destinationPath = sourceToTarget.getValue().getParentFile().getAbsolutePath();
+                if (!ProjectWizardUtil.createDirectoryIfNotExists("Destination folder", destinationPath, false)) {
+                    Messages.showErrorDialog(String.format("Error during folder creating '%s'", destinationPath), messagesTitle + ". Error");
+                    return null;
+                }
+
                 FileUtil.copy(sourceToTarget.getKey(), sourceToTarget.getValue());
                 LocalFileSystem.getInstance().refreshAndFindFileByIoFile(sourceToTarget.getValue());
             }
@@ -125,7 +140,7 @@ public class FileUIUtils {
     }
 
     @NotNull
-    public static String getDefaultLibraryFolder(@Nullable Project project, @Nullable VirtualFile contextDirectory) {
+    public static String createRelativePath(@Nullable Project project, @Nullable VirtualFile contextDirectory, String relativePath) {
         String path = null;
         if (contextDirectory != null) {
             path = PathUtil.getLocalPath(contextDirectory);
@@ -136,7 +151,7 @@ public class FileUIUtils {
         }
 
         if (path != null) {
-            path = new File(path, "lib").getAbsolutePath();
+            path = new File(path, relativePath).getAbsolutePath();
         }
         else {
             path = "";

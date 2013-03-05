@@ -12,13 +12,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreateJavaScriptLibraryDialog extends DialogWrapper {
-    private final CopyIntoPanel copyIntoPanel;
+    private final CopyIntoPanel copyJSIntoPanel;
+    private final CopyIntoPanel copyLibraryIntoPanel;
 
     private JPanel contentPane;
     private JCheckBox copyLibraryCheckbox;
-    private JCheckBox ECMAScript3JavaScriptRuntimeCheckBox;
+    private JCheckBox copyJSRuntimeCheckbox;
     private JPanel compilerSourcePanelPlace;
-    private JPanel copyIntoPanelPlace;
+    private JPanel copyJSIntoPanelPlace;
+    private JPanel copyHeadersIntoPanelPlace;
 
     public CreateJavaScriptLibraryDialog(@Nullable Project project, @NotNull String title, VirtualFile contextDirectory) {
         super(project);
@@ -30,14 +32,23 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
         ChooseCompilerSourcePanel compilerSourcePanel = new ChooseCompilerSourcePanel();
         compilerSourcePanelPlace.add(compilerSourcePanel.getContentPane(), BorderLayout.CENTER);
 
-        copyIntoPanel = new CopyIntoPanel(project, contextDirectory);
-        copyIntoPanel.addValidityListener(new ValidityListener() {
+        copyJSIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "script"), "&Script directory:");
+        copyJSIntoPanel.addValidityListener(new ValidityListener() {
             @Override
             public void validityChanged(boolean isValid) {
                 updateComponents();
             }
         });
-        copyIntoPanelPlace.add(copyIntoPanel.getContentPane(), BorderLayout.CENTER);
+        copyJSIntoPanelPlace.add(copyJSIntoPanel.getContentPane(), BorderLayout.CENTER);
+
+        copyLibraryIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "lib"), "&Lib directory:");
+        copyLibraryIntoPanel.addValidityListener(new ValidityListener() {
+            @Override
+            public void validityChanged(boolean isValid) {
+                updateComponents();
+            }
+        });
+        copyHeadersIntoPanelPlace.add(copyLibraryIntoPanel.getContentPane(), BorderLayout.CENTER);
 
         ActionListener updateComponentsListener = new ActionListener() {
             @Override
@@ -47,29 +58,34 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
         };
 
         copyLibraryCheckbox.addActionListener(updateComponentsListener);
-        ECMAScript3JavaScriptRuntimeCheckBox.addActionListener(updateComponentsListener);
+        copyJSRuntimeCheckbox.addActionListener(updateComponentsListener);
 
         updateComponents();
     }
 
     @Nullable
-    public String getCopyIntoPath() {
-        return copyIntoPanel.getPath();
+    public String getCopyJsIntoPath() {
+        return copyJSIntoPanel.getPath();
+    }
+
+    @Nullable
+    public String getCopyLibraryIntoPath() {
+        return copyLibraryIntoPanel.getPath();
     }
 
     public boolean isCopyLibraryFiles() {
         return copyLibraryCheckbox.isSelected();
     }
 
-    public boolean isCopyECMA3() {
-        return ECMAScript3JavaScriptRuntimeCheckBox.isSelected();
+    public boolean isCopyJS() {
+        return copyJSRuntimeCheckbox.isSelected();
     }
 
     private void updateComponents() {
-        copyIntoPanel.setEnabled(copyLibraryCheckbox.isSelected() ||
-                                 ECMAScript3JavaScriptRuntimeCheckBox.isSelected());
+        copyLibraryIntoPanel.setEnabled(copyLibraryCheckbox.isSelected());
+        copyJSIntoPanel.setEnabled(copyJSRuntimeCheckbox.isSelected());
 
-        setOKActionEnabled(!copyIntoPanel.hasErrors());
+        setOKActionEnabled(!(copyJSIntoPanel.hasErrors() || copyLibraryIntoPanel.hasErrors()));
     }
 
     @Nullable
