@@ -36,14 +36,12 @@ import java.util.regex.Pattern;
 
 public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAdapter {
     
-    private final JavaSemanticServices javaSemanticServices;
-    private final JavaDescriptorResolver javaDescriptorResolver;
+    private final DependencyClassByQualifiedNameResolver classByQualifiedNameResolver;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final TypeVariableResolver typeVariableResolver;
 
-    public JetTypeJetSignatureReader(JavaSemanticServices javaSemanticServices, KotlinBuiltIns kotlinBuiltIns, TypeVariableResolver typeVariableResolver) {
-        this.javaSemanticServices = javaSemanticServices;
-        this.javaDescriptorResolver = javaSemanticServices.getDescriptorResolver();
+    public JetTypeJetSignatureReader(DependencyClassByQualifiedNameResolver classByQualifiedNameResolver, KotlinBuiltIns kotlinBuiltIns, TypeVariableResolver typeVariableResolver) {
+        this.classByQualifiedNameResolver = classByQualifiedNameResolver;
         this.kotlinBuiltIns = kotlinBuiltIns;
         this.typeVariableResolver = typeVariableResolver;
     }
@@ -124,7 +122,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         }
 
 
-        return javaDescriptorResolver.resolveClass(ourName, DescriptorSearchRule.INCLUDE_KOTLIN);
+        return classByQualifiedNameResolver.resolveClass(ourName);
     }
 
     @Override
@@ -148,7 +146,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitTypeArgument(final JetSignatureVariance variance) {
-        return new JetTypeJetSignatureReader(javaSemanticServices, kotlinBuiltIns, typeVariableResolver) {
+        return new JetTypeJetSignatureReader(classByQualifiedNameResolver, kotlinBuiltIns, typeVariableResolver) {
 
             @Override
             protected void done(@NotNull JetType jetType) {
@@ -159,7 +157,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitArrayType(final boolean nullable, final JetSignatureVariance wildcard) {
-        return new JetTypeJetSignatureReader(javaSemanticServices, kotlinBuiltIns, typeVariableResolver) {
+        return new JetTypeJetSignatureReader(classByQualifiedNameResolver, kotlinBuiltIns, typeVariableResolver) {
             @Override
             public void visitBaseType(char descriptor, boolean nullable) {
                 JetType primitiveType = getPrimitiveType(descriptor, nullable);
