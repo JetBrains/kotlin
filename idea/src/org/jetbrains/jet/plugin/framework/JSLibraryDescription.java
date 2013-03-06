@@ -42,11 +42,12 @@ public class JSLibraryDescription extends CustomLibraryDescription {
     public static final String LIBRARY_NAME = "KotlinJavaScript";
 
     private static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
+    private static final Set<LibraryKind> libraryKinds = Sets.newHashSet(KOTLIN_JAVASCRIPT_KIND);
 
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return Sets.newHashSet(KOTLIN_JAVASCRIPT_KIND);
+        return libraryKinds;
     }
 
     @Nullable
@@ -55,53 +56,51 @@ public class JSLibraryDescription extends CustomLibraryDescription {
         CreateJavaScriptLibraryDialog dialog = new CreateJavaScriptLibraryDialog(null, "Create Kotlin JavaScript Library", contextDirectory);
         dialog.show();
 
-        if (dialog.isOK()) {
-            KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
+        if (!dialog.isOK()) return null;
 
-            File libraryFile = paths.getJsLibJarPath();
-            if (!libraryFile.exists()) {
-                Messages.showErrorDialog(String.format("JavaScript standard library was not found in %s", paths.getLibPath()),
-                                         JAVA_SCRIPT_LIBRARY_CREATION);
+        KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
+
+        File libraryFile = paths.getJsLibJarPath();
+        if (!libraryFile.exists()) {
+            Messages.showErrorDialog(String.format("JavaScript standard library was not found in %s", paths.getLibPath()),
+                                     JAVA_SCRIPT_LIBRARY_CREATION);
+            return null;
+        }
+
+        Map<File, String> copyToPaths = new HashMap<File, String>();
+        if (dialog.isCopyLibraryFiles()) {
+            String copyIntoPath = dialog.getCopyLibraryIntoPath();
+            assert copyIntoPath != null;
+
+            copyToPaths.put(libraryFile, copyIntoPath);
+        }
+
+        if (dialog.isCopyJS()) {
+            String copyIntoPath = dialog.getCopyJsIntoPath();
+            assert copyIntoPath != null;
+
+            copyToPaths.put(paths.getJsLibJsPath(), copyIntoPath);
+        }
+
+        if (!copyToPaths.isEmpty()) {
+            Map<File,File> copiedFiles =
+                    FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_SCRIPT_LIBRARY_CREATION, copyToPaths);
+            if (copiedFiles == null) {
                 return null;
             }
 
-            Map<File, String> copyToPaths = new HashMap<File, String>();
             if (dialog.isCopyLibraryFiles()) {
-                String copyIntoPath = dialog.getCopyLibraryIntoPath();
-                assert copyIntoPath != null;
-
-                copyToPaths.put(libraryFile, copyIntoPath);
+                libraryFile = copiedFiles.get(libraryFile);
             }
-
-            if (dialog.isCopyJS()) {
-                String copyIntoPath = dialog.getCopyJsIntoPath();
-                assert copyIntoPath != null;
-
-                copyToPaths.put(paths.getJsLibJsPath(), copyIntoPath);
-            }
-
-            if (!copyToPaths.isEmpty()) {
-                Map<File,File> copiedFiles =
-                        FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_SCRIPT_LIBRARY_CREATION, copyToPaths);
-                if (copiedFiles == null) {
-                    return null;
-                }
-
-                if (dialog.isCopyLibraryFiles()) {
-                    libraryFile = copiedFiles.get(libraryFile);
-                }
-            }
-
-            final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
-            return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
-                @Override
-                public void addRoots(@NotNull LibraryEditor editor) {
-                    editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
-                    editor.addRoot(libraryFileUrl, OrderRootType.SOURCES);
-                }
-            };
         }
 
-        return null;
+        final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
+        return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+            @Override
+            public void addRoots(@NotNull LibraryEditor editor) {
+                editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
+                editor.addRoot(libraryFileUrl, OrderRootType.SOURCES);
+            }
+        };
     }
 }

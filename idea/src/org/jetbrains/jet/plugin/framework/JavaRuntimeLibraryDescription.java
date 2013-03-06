@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -43,11 +42,12 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
     public static final String LIBRARY_NAME = "KotlinJavaRuntime";
 
     private static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";
+    private static final Set<LibraryKind> libraryKinds = Sets.newHashSet(KOTLIN_JAVA_RUNTIME_KIND);
 
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return Sets.newHashSet(KOTLIN_JAVA_RUNTIME_KIND);
+        return libraryKinds;
     }
 
     @Nullable
@@ -56,36 +56,34 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
         CreateJavaLibraryDialog dialog = new CreateJavaLibraryDialog(null, "Create Kotlin Java Runtime Library", contextDirectory);
         dialog.show();
 
-        if (dialog.isOK()) {
-            KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
+        if (!dialog.isOK()) return null;
 
-            File libraryFile = paths.getRuntimePath();
-            if (!libraryFile.exists()) {
-                Messages.showErrorDialog(
-                        parentComponent,
-                        String.format("Java Runtime library was not found in '%s'." , paths.getLibPath()),
-                        JAVA_RUNTIME_LIBRARY_CREATION);
-                return null;
-            }
+        KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
 
-            String copyIntoPath = dialog.getCopyIntoPath();
-            if (copyIntoPath != null) {
-                libraryFile = FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_RUNTIME_LIBRARY_CREATION, copyIntoPath, libraryFile);
-                if (libraryFile == null) {
-                    return null;
-                }
-            }
-
-            final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
-            return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
-                @Override
-                public void addRoots(@NotNull LibraryEditor editor) {
-                    editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
-                    editor.addRoot(libraryFileUrl + "src", OrderRootType.SOURCES);
-                }
-            };
+        File libraryFile = paths.getRuntimePath();
+        if (!libraryFile.exists()) {
+            Messages.showErrorDialog(
+                    parentComponent,
+                    String.format("Java Runtime library was not found in '%s'." , paths.getLibPath()),
+                    JAVA_RUNTIME_LIBRARY_CREATION);
+            return null;
         }
 
-        return null;
+        String copyIntoPath = dialog.getCopyIntoPath();
+        if (copyIntoPath != null) {
+            libraryFile = FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_RUNTIME_LIBRARY_CREATION, copyIntoPath, libraryFile);
+            if (libraryFile == null) {
+                return null;
+            }
+        }
+
+        final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
+        return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+            @Override
+            public void addRoots(@NotNull LibraryEditor editor) {
+                editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
+                editor.addRoot(libraryFileUrl + "src", OrderRootType.SOURCES);
+            }
+        };
     }
 }
