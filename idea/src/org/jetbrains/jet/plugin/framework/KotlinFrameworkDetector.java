@@ -65,8 +65,9 @@ public class KotlinFrameworkDetector {
                 @Override
                 public Result<Boolean> compute() {
                     GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-                    return Result.create(KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null,
-                                         ProjectRootModificationTracker.getInstance(module.getProject()));
+                    boolean javaMarkerClassFound = KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null;
+
+                    return Result.create(javaMarkerClassFound, ProjectRootModificationTracker.getInstance(module.getProject()));
                 }
             }, false);
 
