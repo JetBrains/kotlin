@@ -33,12 +33,16 @@ import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class JavaBaseScope extends JetScopeImpl {
+
+    // Injected
+    protected JavaDescriptorResolver javaDescriptorResolver;
 
     @NotNull
     protected final JavaSemanticServices semanticServices;
@@ -66,6 +70,11 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         this.descriptor = descriptor;
     }
 
+    @Inject
+    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
+    }
+
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
@@ -89,7 +98,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<VariableDescriptor> computePropertyDescriptors(@NotNull Name name) {
-        return getResolver().resolveFieldGroupByName(name, declarationProvider, descriptor);
+        return javaDescriptorResolver.resolveFieldGroupByName(name, declarationProvider, descriptor);
     }
 
     @NotNull
@@ -148,11 +157,6 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             result.addAll(getProperties(name));
         }
         return result;
-    }
-
-    @NotNull
-    protected JavaDescriptorResolver getResolver() {
-        return semanticServices.getDescriptorResolver();
     }
 
     //TODO: remove this method

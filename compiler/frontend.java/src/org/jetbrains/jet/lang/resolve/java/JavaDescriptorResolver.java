@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Deprecated
 public class JavaDescriptorResolver {
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");

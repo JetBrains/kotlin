@@ -22,10 +22,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -55,7 +52,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
         PsiClass psiClass = declarationProvider.getPsiClass(name);
         if (psiClass == null) return null;
 
-        ClassDescriptor classDescriptor = getResolver().resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor == null || classDescriptor.getKind().isObject()) {
             return null;
         }
@@ -67,7 +64,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
         PsiClass psiClass = declarationProvider.getPsiClass(name);
         if (psiClass == null) return null;
 
-        ClassDescriptor classDescriptor = getResolver().resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor != null && classDescriptor.getKind().isObject()) {
             return classDescriptor;
         }
@@ -76,7 +73,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
-        return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 
     @NotNull

@@ -53,7 +53,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
+        return javaDescriptorResolver.resolveFunctionGroup(name, declarationProvider, descriptor);
     }
 
     @NotNull
@@ -71,7 +71,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Collection<ClassDescriptor> computeInnerClasses() {
-        return getResolver().resolveInnerClasses(declarationProvider);
+        return javaDescriptorResolver.resolveInnerClasses(declarationProvider);
     }
 
     @Override

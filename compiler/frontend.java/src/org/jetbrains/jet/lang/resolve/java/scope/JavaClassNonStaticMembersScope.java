@@ -56,7 +56,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
 
     private void initConstructorsIfNeeded() {
         if (constructors == null) {
-            constructors = getResolver().resolveConstructors(declarationProvider, descriptor);
+            constructors = javaDescriptorResolver.resolveConstructors(declarationProvider, descriptor);
 
             for (ConstructorDescriptor constructor : constructors) {
                 if (constructor.isPrimary()) {
