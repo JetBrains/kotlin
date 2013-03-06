@@ -162,11 +162,15 @@ public class KotlinRuntimeLibraryUtil {
                     jarNotFoundHandler.run();
                     return;
                 }
+
                 VirtualFile runtimeJar = getLocalKotlinRuntimeJar(project);
                 assert runtimeJar != null;
 
                 try {
-                    FileUtil.copy(runtimePath, new File(runtimeJar.getPath()));
+                    File libraryJarPath = new File(runtimeJar.getPath());
+                    assert !FileUtil.filesEqual(runtimePath, libraryJarPath) : "Shouldn't be called for updating same file";
+
+                    FileUtil.copy(runtimePath, libraryJarPath);
                 }
                 catch (IOException e) {
                     throw new AssertionError(e);
