@@ -46,19 +46,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class FrameworkDetector {
+public class KotlinFrameworkDetector {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JAVA_MODULE = Key.create("IS_KOTLIN_JAVA_MODULE");
 
-    private FrameworkDetector() {
+    private KotlinFrameworkDetector() {
     }
 
-    public static boolean isJsModule(@NotNull JetFile file) {
+    public static boolean isJsKotlinModule(@NotNull JetFile file) {
         Module module = ModuleUtilCore.findModuleForPsiElement(file);
-        return module != null && isJsModule(module);
+        return module != null && isJsKotlinModule(module);
     }
 
-    public static boolean isJavaModule(@NotNull final Module module) {
+    public static boolean isJavaKotlinModule(@NotNull final Module module) {
         CachedValue<Boolean> result = module.getUserData(IS_KOTLIN_JAVA_MODULE);
         if (result == null) {
             result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
@@ -76,7 +76,7 @@ public class FrameworkDetector {
         return result.getValue();
     }
 
-    public static boolean isJsModule(@NotNull final Module module) {
+    public static boolean isJsKotlinModule(@NotNull final Module module) {
         CachedValue<Boolean> result = module.getUserData(IS_KOTLIN_JS_MODULE);
         if (result == null) {
             result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
@@ -138,7 +138,7 @@ public class FrameworkDetector {
     public static Pair<List<String>, String> getLibLocationAndTargetForProject(@NotNull Project project) {
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules) {
-            if (isJsModule(module)) {
+            if (isJsKotlinModule(module)) {
                 return getLibLocationAndTargetForProject(module);
             }
         }

@@ -37,7 +37,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.framework.FrameworkDetector;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.framework.JSFrameworkSupportProvider;
 import org.jetbrains.jet.plugin.framework.JavaFrameworkSupportProvider;
 import org.jetbrains.jet.plugin.framework.ui.AddSupportForSingleFrameworkDialogFixed;
@@ -105,7 +105,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
     }
 
     public static boolean isModuleAlreadyConfigured(Module module) {
-        return isMavenModule(module) || FrameworkDetector.isJsModule(module) || FrameworkDetector.isJavaModule(module);
+        return isMavenModule(module) || KotlinFrameworkDetector.isJsKotlinModule(module) || KotlinFrameworkDetector.isJavaKotlinModule(module);
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
