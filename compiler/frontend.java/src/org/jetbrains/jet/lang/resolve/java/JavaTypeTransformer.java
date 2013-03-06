@@ -43,15 +43,10 @@ public class JavaTypeTransformer {
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
     private JavaSemanticServices javaSemanticServices;
-    private JavaDescriptorResolver resolver;
+
     @Inject
     public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
         this.javaSemanticServices = javaSemanticServices;
-    }
-
-    @Inject
-    public void setResolver(JavaDescriptorResolver resolver) {
-        this.resolver = resolver;
     }
 
     @NotNull
@@ -154,7 +149,7 @@ public class JavaTypeTransformer {
                                                                                                     howThisTypeIsUsed);
 
                     if (classData == null) {
-                        classData = resolver.resolveClass(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
+                        classData = javaSemanticServices.getClassDescriptor(psiClass);
                     }
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
