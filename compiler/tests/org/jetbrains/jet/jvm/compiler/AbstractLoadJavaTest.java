@@ -66,7 +66,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
                 Arrays.asList(javaFile),
                 tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-        checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext);
+        checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
     protected void doTestCompiledJava(@NotNull String expectedFileName, @NotNull String... javaFileNames) throws Exception {
@@ -82,20 +82,20 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File expectedFile = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expectedFile.getName());
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
                 = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
                                                                              ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
+        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
     protected void doTestSourceJava(@NotNull String expectedFileName, @NotNull String javaRoot) throws Exception {
         File expectedFile = new File(expectedFileName);
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
                 = loadTestNamespaceAndBindingContextFromJavaRoot(new File(javaRoot), getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
+        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
     protected void doTestJavaAgainstKotlin(String path) throws Exception {
@@ -136,14 +136,13 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     private static void checkForLoadErrorsAndCompare(
-            @NotNull Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext,
+            @NotNull NamespaceDescriptor javaNamespace,
+            @NotNull BindingContext bindingContext,
             @NotNull Runnable compareNamespacesRunnable
     ) {
-        NamespaceDescriptor javaNamespace = javaNamespaceAndContext.first;
-
         boolean fail = false;
         try {
-            ExpectedLoadErrorsUtil.checkForLoadErrors(javaNamespace, javaNamespaceAndContext.second);
+            ExpectedLoadErrorsUtil.checkForLoadErrors(javaNamespace, bindingContext);
         }
         catch (ComparisonFailure e) {
             // to let the next check run even if this one failed
@@ -166,24 +165,26 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     private static void checkLoadedNamespaces(
             final File txtFile,
             final NamespaceDescriptor kotlinNamespace,
-            final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
+            final NamespaceDescriptor javaNamespace,
+            BindingContext bindingContext
     ) {
-        checkForLoadErrorsAndCompare(javaNamespaceAndContext, new Runnable() {
+        checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
             @Override
             public void run() {
-                compareNamespaces(kotlinNamespace, javaNamespaceAndContext.first, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+                compareNamespaces(kotlinNamespace, javaNamespace, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
             }
         });
     }
 
     private static void checkJavaNamespace(
             final File txtFile,
-            final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
+            final NamespaceDescriptor javaNamespace,
+            BindingContext bindingContext
     ) {
-        checkForLoadErrorsAndCompare(javaNamespaceAndContext, new Runnable() {
+        checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
             @Override
             public void run() {
-                compareNamespaceWithFile(javaNamespaceAndContext.first, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+                compareNamespaceWithFile(javaNamespace, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
             }
         });
     }
