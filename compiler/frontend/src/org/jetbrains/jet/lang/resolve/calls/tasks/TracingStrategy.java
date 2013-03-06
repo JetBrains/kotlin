@@ -92,8 +92,7 @@ public interface TracingStrategy {
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {}
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData,
-                @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint) {}
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData) {}
 
         @Override
         public void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
@@ -136,8 +135,7 @@ public interface TracingStrategy {
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 
-    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData,
-            @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint);
+    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData);
 
     void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
 }

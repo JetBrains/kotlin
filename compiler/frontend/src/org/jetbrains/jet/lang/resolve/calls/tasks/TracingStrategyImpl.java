@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -34,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
@@ -206,26 +206,24 @@ public class TracingStrategyImpl implements TracingStrategy {
     }
 
     @Override
-    public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data, @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint) {
+    public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data) {
         ConstraintSystem constraintSystem = data.constraintSystem;
-        assert !constraintSystem.isSuccessful();
+        assert !constraintSystem.isSuccessful() : "Report error only for not successful constraint system";
+
         if (constraintSystem.hasErrorInConstrainingTypes()) {
+            // Do not report type inference errors if there is one in the arguments
+            // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
             return;
         }
-        boolean successfulWithoutExpectedTypeConstraint = systemWithoutExpectedTypeConstraint.isSuccessful();
-        if (constraintSystem.hasExpectedTypeMismatch() || successfulWithoutExpectedTypeConstraint) {
-            JetType returnType = data.descriptor.getReturnType();
-            assert returnType != null;
-            if (successfulWithoutExpectedTypeConstraint) {
-                returnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(returnType, Variance.INVARIANT);
-                assert returnType != null;
-            }
-            assert data.expectedType != null;
-            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, returnType, data.expectedType));
-            //todo[ConstraintSystemImpl]
-            if (constraintSystem instanceof ConstraintSystemImpl) {
-                ((ConstraintSystemImpl) constraintSystem).setHasExpectedTypeMismatch();
-            }
+        if (constraintSystem.hasOnlyExpectedTypeMismatch()) {
+            JetType declaredReturnType = data.descriptor.getReturnType();
+            if (declaredReturnType == null) return;
+
+            JetType substitutedReturnType = constraintSystem.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
+            assert substitutedReturnType != null; //todo
+
+            assert data.expectedType != TypeUtils.NO_EXPECTED_TYPE : "Expected type doesn't exist, but there is an expected type mismatch error";
+            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, substitutedReturnType, data.expectedType));
         }
         else if (constraintSystem.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));

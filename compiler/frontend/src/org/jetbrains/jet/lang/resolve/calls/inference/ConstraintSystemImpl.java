@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +52,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private final TypeSubstitutor resultingSubstitutor;
     private final TypeSubstitutor currentSubstitutor;
     private boolean hasErrorInConstrainingTypes;
-    private boolean hasExpectedTypeMismatch;
+
+    @Nullable
+    private ConstraintSystem systemWithoutExpectedTypeConstraint;
 
     public ConstraintSystemImpl() {
         this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(CANT_INFER_TYPE_PARAMETER));
@@ -102,13 +103,20 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
-    public boolean hasExpectedTypeMismatch() {
-        return hasExpectedTypeMismatch
-               || (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION));
-    }
-
-    public void setHasExpectedTypeMismatch() {
-        hasExpectedTypeMismatch = true;
+    public boolean hasOnlyExpectedTypeMismatch() {
+        if (systemWithoutExpectedTypeConstraint == null) {
+            // the expected type constraint isn't added, there can't be an error with it
+            return false;
+        }
+        if (!isSuccessful() && systemWithoutExpectedTypeConstraint.isSuccessful()) {
+            return true;
+        }
+        if (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION)) {
+            // if systemWithoutExpectedTypeConstraint has unknown type parameters, it's not successful,
+            // but there can be expected type mismatch after expected type is added
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -157,6 +165,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull JetType subjectType,
             @NotNull ConstraintPosition constraintPosition
     ) {
+        if (constrainingType == TypeUtils.NO_EXPECTED_TYPE) return;
+
+        if (constraintPosition == ConstraintPosition.EXPECTED_TYPE_POSITION) {
+            systemWithoutExpectedTypeConstraint = copy();
+        }
         addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
@@ -212,9 +225,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private boolean isErrorOrSpecialType(@Nullable JetType type) {
-        if (type == TypeUtils.NO_EXPECTED_TYPE
-            || type == DONT_CARE
-            || type == CANT_INFER_TYPE_PARAMETER) {
+        if (type == DONT_CARE || type == CANT_INFER_TYPE_PARAMETER) {
             return true;
         }
 
@@ -365,6 +376,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
+        if (hasOnlyExpectedTypeMismatch()) {
+            assert systemWithoutExpectedTypeConstraint != null;
+            return systemWithoutExpectedTypeConstraint.getResultingSubstitutor();
+        }
         return resultingSubstitutor;
     }
 

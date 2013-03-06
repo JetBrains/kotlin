@@ -225,13 +225,10 @@ public class CandidateResolver {
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
 
-        ConstraintSystem constraintSystemWithoutExpectedTypeConstraint = constraintSystem.copy();
-        constraintSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(),
-                                                ConstraintPosition.EXPECTED_TYPE_POSITION);
-
+        constraintSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(), ConstraintPosition.EXPECTED_TYPE_POSITION);
 
         if (!constraintSystem.isSuccessful()) {
-            resolvedCall.setResultingSubstitutor(constraintSystemWithoutExpectedTypeConstraint.getResultingSubstitutor());
+            resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
             completeNestedCallsInference(context);
             List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace,
                                                                   RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
@@ -239,7 +236,7 @@ public class CandidateResolver {
             InferenceErrorData.ExtendedInferenceErrorData errorData = InferenceErrorData
                     .create(descriptor, constraintSystem, argumentTypes, receiverType, context.expectedType);
 
-            context.tracing.typeInferenceFailed(context.trace, errorData, constraintSystemWithoutExpectedTypeConstraint);
+            context.tracing.typeInferenceFailed(context.trace, errorData);
             resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
             return;
         }

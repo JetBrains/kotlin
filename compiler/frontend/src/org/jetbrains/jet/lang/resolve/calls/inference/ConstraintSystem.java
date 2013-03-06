@@ -104,7 +104,7 @@ public interface ConstraintSystem {
     /**
      * Returns <tt>true</tt> if there is type constructor mismatch only in {@link ConstraintPosition.EXPECTED_TYPE_POSITION}.
      */
-    boolean hasExpectedTypeMismatch();
+    boolean hasOnlyExpectedTypeMismatch();
 
     /**
      * Returns <tt>true</tt> if there is an error in constraining types. <p/>
@@ -125,6 +125,8 @@ public interface ConstraintSystem {
      * - type constraints <p/>
      * - variance of the type variable  // not implemented yet <p/>
      * - type parameter bounds (that can bind type variables with each other). // not implemented yet
+     * If the addition of the 'expected type' constraint made the system fail,
+     * this constraint is not included in the resulting substitution.
      */
     @NotNull
     TypeSubstitutor getResultingSubstitutor();

@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -166,7 +165,7 @@ public class CallExpressionResolver {
 
                 // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
                 ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
-                if (constraintSystem != null && constraintSystem.hasExpectedTypeMismatch()) return null;
+                if (constraintSystem != null && constraintSystem.hasOnlyExpectedTypeMismatch()) return null;
             }
 
             return results.isSingleResult() ? results.getResultingCall() : null;
