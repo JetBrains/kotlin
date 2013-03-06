@@ -261,22 +261,8 @@ public class DependencyInjectorGenerator {
             p.println("public ", injectorClassName, "() {");
         }
         else {
-            p.println("public ", injectorClassName, "(");
-            p.pushIndent();
-            for (Iterator<Parameter> iterator = parameters.iterator(); iterator.hasNext(); ) {
-                Parameter parameter = iterator.next();
-                p.print(); // indent
-                if (parameter.isRequired()) {
-                    p.printWithNoIndent("@NotNull ");
-                }
-                p.printWithNoIndent(type(parameter.getType()), " ", parameter.getName());
-                if (iterator.hasNext()) {
-                    p.printlnWithNoIndent(",");
-                }
-            }
-            p.printlnWithNoIndent();
-            p.popIndent();
-            p.println(") {");
+            p.print("public ", injectorClassName);
+            generateParameterList(p, parameters);
         }
 
         p.pushIndent();
@@ -285,6 +271,25 @@ public class DependencyInjectorGenerator {
 
         p.popIndent();
         p.println("}");
+    }
+
+    private void generateParameterList(Printer p, Collection<Parameter> parameters) {
+        p.printlnWithNoIndent("(");
+        p.pushIndent();
+        for (Iterator<Parameter> iterator = parameters.iterator(); iterator.hasNext(); ) {
+            Parameter parameter = iterator.next();
+            p.print(); // indent
+            if (parameter.isRequired()) {
+                p.printWithNoIndent("@NotNull ");
+            }
+            p.printWithNoIndent(type(parameter.getType()), " ", parameter.getName());
+            if (iterator.hasNext()) {
+                p.printlnWithNoIndent(",");
+            }
+        }
+        p.printlnWithNoIndent();
+        p.popIndent();
+        p.println(") {");
     }
 
     private void generateDestroy(@NotNull String injectorClassName, @NotNull Printer out) {
@@ -333,7 +338,7 @@ public class DependencyInjectorGenerator {
         p.popIndent();
     }
 
-    private void generateFactoryMethod(Printer p, FactoryMethod method) {
+    private Collection<Field> computeFieldsForFactoryMethod(FactoryMethod method, Field resultField) {
         Dependencies localDependencies = new Dependencies();
 
         Map<Parameter, Field> parameterToField = Maps.newHashMap();
@@ -347,24 +352,20 @@ public class DependencyInjectorGenerator {
             localDependencies.addSatisfiedField(storedField);
         }
 
-        Field resultField = new Field(true, method.getReturnType(), "_result");
         localDependencies.addField(resultField);
 
         Collection<Field> fields = Lists.newArrayList(localDependencies.satisfyDependencies());
         fields.add(resultField);
+        return fields;
+    }
 
-        p.println("public ", type(method.getReturnType()), " ", method.getName(), "(");
-        p.pushIndent();
-        for (Iterator<Parameter> iterator = method.getParameters().iterator(); iterator.hasNext(); ) {
-            Parameter parameter = iterator.next();
-            p.print(type(parameter.getType()), " ", parameter.getName());
-            if (iterator.hasNext()) {
-                p.printlnWithNoIndent(", ");
-            }
-        }
-        p.println();
-        p.popIndent();
-        p.println(") {");
+    private void generateFactoryMethod(Printer p, FactoryMethod method) {
+        Field resultField = new Field(true, method.getReturnType(), "_result");
+        Collection<Field> fields = computeFieldsForFactoryMethod(method, resultField);
+
+        p.print("public ", type(method.getReturnType()), " ", method.getName());
+        generateParameterList(p, method.getParameters());
+
         p.pushIndent();
 
         InjectionLogicGenerator.generateForLocalVariables(importManager, p, fields);
