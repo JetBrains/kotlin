@@ -68,8 +68,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                     JetType value = ConstraintsUtil.getValue(getTypeConstraints(descriptor));
-                    if (value != null && !TypeUtils.dependsOnTypeConstructors(value, Collections.singleton(
-                            DONT_CARE.getConstructor()))) {
+                    if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, DONT_CARE)) {
                         return new TypeProjection(value);
                     }
                     if (typeParameterConstraints.containsKey(descriptor)) {
