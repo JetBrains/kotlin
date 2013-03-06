@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,9 +19,9 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
     private JPanel contentPane;
     private JCheckBox copyLibraryCheckbox;
     private JCheckBox copyJSRuntimeCheckbox;
-    private JPanel compilerSourcePanelPlace;
     private JPanel copyJSIntoPanelPlace;
     private JPanel copyHeadersIntoPanelPlace;
+    private JLabel compilerTextLabel;
 
     public CreateJavaScriptLibraryDialog(@Nullable Project project, @NotNull String title, VirtualFile contextDirectory) {
         super(project);
@@ -29,8 +30,7 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
 
         init();
 
-        ChooseCompilerSourcePanel compilerSourcePanel = new ChooseCompilerSourcePanel();
-        compilerSourcePanelPlace.add(compilerSourcePanel.getContentPane(), BorderLayout.CENTER);
+        compilerTextLabel.setText(compilerTextLabel.getText() + " - " + JetPluginUtil.getPluginVersion());
 
         copyJSIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "script"), "&Script directory:");
         copyJSIntoPanel.addValidityListener(new ValidityListener() {

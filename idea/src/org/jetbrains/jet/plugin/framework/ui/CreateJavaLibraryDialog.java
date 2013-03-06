@@ -21,6 +21,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +34,7 @@ public class CreateJavaLibraryDialog extends DialogWrapper {
     private JPanel contentPane;
     private JCheckBox copyLibraryCheckbox;
     private JPanel copyIntoPanelPlace;
-    private JPanel compilerSourcePanelPlace;
+    private JLabel compilerTextLabel;
 
     public CreateJavaLibraryDialog(@Nullable Project project, @NotNull String title, VirtualFile contextDirectory) {
         super(project);
@@ -42,8 +43,7 @@ public class CreateJavaLibraryDialog extends DialogWrapper {
 
         init();
 
-        ChooseCompilerSourcePanel compilerSourcePanel = new ChooseCompilerSourcePanel();
-        compilerSourcePanelPlace.add(compilerSourcePanel.getContentPane(), BorderLayout.CENTER, 0);
+        compilerTextLabel.setText(compilerTextLabel.getText() + " - " + JetPluginUtil.getPluginVersion());
 
         copyIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "lib"));
         copyIntoPanel.addValidityListener(new ValidityListener() {
