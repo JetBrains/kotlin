@@ -24,7 +24,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -40,8 +39,8 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
@@ -56,16 +55,14 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWi
 /*
    LoadJavaTestGenerated should be used instead if possible.
  */
-public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
+public final class LoadJavaCustomTest extends TestCaseWithTmpdir {
     @NotNull
     private static final String PATH = "compiler/testData/loadJavaCustom";
 
-    @Override
-    protected JetCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
-    }
-
     private void doTest(@NotNull String expectedFileName, @NotNull String... javaFileNames) throws Exception {
+        JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
+
         List<File> files = ContainerUtil.map(Arrays.asList(javaFileNames), new Function<String, File>() {
             @Override
             public File fun(String s) {
@@ -204,7 +201,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         doTestNoCompile(dir + "ErrorTypes.txt", dir);
     }
 
-    public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironmentManagement {
+    public static class SubclassingKotlinInJavaTest extends TestCaseWithTmpdir {
         public void testSubclassingKotlinInJava() throws Exception {
             doTest(PATH + "/" + getTestName(true));
         }
