@@ -77,15 +77,9 @@ public class TypeConstraintsImpl implements TypeConstraints {
 
     /*package*/ TypeConstraintsImpl copy() {
         TypeConstraintsImpl typeConstraints = new TypeConstraintsImpl(varianceOfPosition);
-        for (JetType upperBound : upperBounds) {
-            typeConstraints.upperBounds.add(upperBound);
-        }
-        for (JetType lowerBound : lowerBounds) {
-            typeConstraints.lowerBounds.add(lowerBound);
-        }
-        for (JetType exactBound : exactBounds) {
-            typeConstraints.exactBounds.add(exactBound);
-        }
+        typeConstraints.upperBounds.addAll(upperBounds);
+        typeConstraints.lowerBounds.addAll(lowerBounds);
+        typeConstraints.exactBounds.addAll(exactBounds);
         return typeConstraints;
     }
 

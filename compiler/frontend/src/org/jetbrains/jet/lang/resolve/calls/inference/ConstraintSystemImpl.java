@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -123,19 +124,19 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @Override
     @NotNull
     public ConstraintSystem copy() {
-        ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
-        for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
-            TypeParameterDescriptor typeParameter = entry.getKey();
-            TypeConstraintsImpl typeConstraints = entry.getValue();
-            newConstraintSystem.typeParameterConstraints.put(typeParameter, typeConstraints.copy());
-        }
-        newConstraintSystem.errorConstraintPositions.addAll(errorConstraintPositions);
-        newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
-        return newConstraintSystem;
+        return replaceTypeVariables(Functions.<TypeParameterDescriptor>identity(), true);
     }
 
     @NotNull
     public ConstraintSystem replaceTypeVariables(@NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
+        return replaceTypeVariables(typeVariablesMap, false);
+    }
+
+    @NotNull
+    private ConstraintSystem replaceTypeVariables(
+            @NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap,
+            boolean recreateTypeConstraints
+    ) {
         ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
         for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
             TypeParameterDescriptor typeParameter = entry.getKey();
@@ -143,7 +144,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
             TypeParameterDescriptor newTypeParameter = typeVariablesMap.apply(typeParameter);
             assert newTypeParameter != null;
-            newConstraintSystem.typeParameterConstraints.put(newTypeParameter, typeConstraints);
+            newConstraintSystem.typeParameterConstraints.put(newTypeParameter, recreateTypeConstraints ? typeConstraints.copy() : typeConstraints);
         }
         newConstraintSystem.errorConstraintPositions.addAll(errorConstraintPositions);
         newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
