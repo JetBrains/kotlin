@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
@@ -79,9 +78,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     @Override
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
-        result.addAll(computeAllPackageDeclarations(declarationProvider.getPsiPackage(),
-                                                    semanticServices,
-                                                    DescriptorUtils.getFQName(descriptor).toSafe()));
+        result.addAll(computeAllPackageDeclarations(declarationProvider.getPsiPackage(), semanticServices));
         return result;
     }
 }
