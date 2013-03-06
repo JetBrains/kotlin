@@ -32,7 +32,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.impl.elements.ManifestFileUtil;
 import com.intellij.psi.JavaPsiFacade;
@@ -190,16 +189,6 @@ public class KotlinRuntimeLibraryUtil {
             Attributes attributes = ManifestFileUtil.readManifest(manifestFile).getMainAttributes();
             if (attributes.containsKey(Attributes.Name.IMPLEMENTATION_VERSION)) {
                 return attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
-            }
-        }
-
-        VirtualFile buildVersionFile = kotlinStdJar.findFileByRelativePath("META-INF/build.txt");
-        if (buildVersionFile != null) {
-            try {
-                return VfsUtilCore.loadText(buildVersionFile);
-            }
-            catch (IOException e) {
-                // Fall to default return
             }
         }
 

@@ -172,6 +172,14 @@
                 <include name="stdlib/TuplesCode.kt"/>
             </fileset>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin JavaScript StdLib"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
         </jar>
         <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
             <classpath>
