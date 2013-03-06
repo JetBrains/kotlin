@@ -16,23 +16,41 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
+import com.google.common.base.Predicates;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiFile;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
+import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.analyzeKotlinAndLoadTestNamespace;
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceAndBindingContextFromBinary;
-import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
-import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
-import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
+import static org.jetbrains.jet.test.util.NamespaceComparator.*;
 
 /*
     The generated test compares namespace descriptors loaded from kotlin sources and read from compiled java.
@@ -49,6 +67,72 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 Arrays.asList(javaFile),
                 tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext);
+    }
+
+    protected void doTestCompiledJava(@NotNull String expectedFileName, @NotNull String... javaFileNames) throws Exception {
+        JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
+
+        List<File> files = ContainerUtil.map(Arrays.asList(javaFileNames), new Function<String, File>() {
+            @Override
+            public File fun(String s) {
+                return new File(s);
+            }
+        });
+        File expectedFile = new File(expectedFileName);
+        File tmpDir = JetTestUtils.tmpDir(expectedFile.getName());
+
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+                = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
+                                                                             ConfigurationKind.JDK_ONLY);
+
+        checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
+    }
+
+    protected void doTestSourceJava(@NotNull String expectedFileName, @NotNull String javaRoot) throws Exception {
+        File expectedFile = new File(expectedFileName);
+
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+                = loadTestNamespaceAndBindingContextFromJavaRoot(new File(javaRoot), getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+
+        checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
+    }
+
+    protected void doTestJavaAgainstKotlin(String path) throws Exception {
+        File dir = new File(path);
+
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, new File(dir, "java"));
+        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(new File(dir, "kotlin").getAbsolutePath()));
+        JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
+
+        ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<test module>"));
+
+        // we need the same binding trace for resolve from Java and Kotlin
+        BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
+
+        InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(),
+                                                                                                  trace,
+                                                                                                  moduleDescriptor);
+
+        InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
+                environment.getProject(),
+                new TopDownAnalysisParameters(
+                        Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
+                trace,
+                moduleDescriptor);
+
+        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
+
+        JavaDescriptorResolver javaDescriptorResolver = injectorForJava.getJavaDescriptorResolver();
+        NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(
+                LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
+        assert namespaceDescriptor != null;
+
+        compareNamespaceWithFile(namespaceDescriptor, DONT_INCLUDE_METHODS_OF_OBJECT,
+                                 new File(dir, "expected.txt"));
+
+        ExpectedLoadErrorsUtil.checkForLoadErrors(namespaceDescriptor, trace.getBindingContext());
     }
 
     private static void checkForLoadErrorsAndCompare(
