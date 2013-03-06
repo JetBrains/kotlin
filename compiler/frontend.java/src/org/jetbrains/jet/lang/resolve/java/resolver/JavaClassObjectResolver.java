@@ -25,8 +25,7 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassObjectAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
@@ -51,7 +50,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 public final class JavaClassObjectResolver {
 
     private BindingTrace trace;
-    private JavaSemanticServices semanticServices;
+    private JavaClassClassResolutionFacade classResolutionFacade;
     private JavaSupertypeResolver supertypesResolver;
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
 
@@ -66,8 +65,8 @@ public final class JavaClassObjectResolver {
     }
 
     @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
+    public void setSemanticServices(JavaClassClassResolutionFacade classResolutionFacade) {
+        this.classResolutionFacade = classResolutionFacade;
     }
 
     @Inject
@@ -151,7 +150,7 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.setVisibility(containing.getVisibility());
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope classMembersScope = new JavaClassNonStaticMembersScope(classObjectDescriptor, data, semanticServices);
+        JavaClassNonStaticMembersScope classMembersScope = new JavaClassNonStaticMembersScope(classObjectDescriptor, data, classResolutionFacade);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);

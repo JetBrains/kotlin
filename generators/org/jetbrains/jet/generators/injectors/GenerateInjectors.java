@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
@@ -113,7 +113,7 @@ public class GenerateInjectors {
 
         // Fields
         generator.addField(JavaBridgeConfiguration.class);
-        generator.addPublicField(JavaSemanticServices.class);
+        generator.addPublicField(JavaClassClassResolutionFacade.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
 
@@ -171,7 +171,7 @@ public class GenerateInjectors {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
 
         // Fields
-        generator.addPublicField(JavaSemanticServices.class);
+        generator.addPublicField(JavaClassClassResolutionFacade.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addField(true, BindingTrace.class, null,
                            new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));

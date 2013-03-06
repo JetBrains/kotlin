@@ -54,7 +54,7 @@ public final class JavaNamespaceResolver {
 
     private PsiClassFinder psiClassFinder;
     private BindingTrace trace;
-    private JavaSemanticServices javaSemanticServices;
+    private JavaClassClassResolutionFacade javaClassClassResolutionFacade;
 
     public JavaNamespaceResolver() {
     }
@@ -70,14 +70,14 @@ public final class JavaNamespaceResolver {
     }
 
     @Inject
-    public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
-        this.javaSemanticServices = javaSemanticServices;
+    public void setJavaClassClassResolutionFacade(JavaClassClassResolutionFacade javaClassClassResolutionFacade) {
+        this.javaClassClassResolutionFacade = javaClassClassResolutionFacade;
     }
 
     @Nullable
     public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         // First, let's check that there is no Kotlin package:
-        PackageViewDescriptor kotlinPackageViewDescriptor = javaSemanticServices.getKotlinNamespaceDescriptor(qualifiedName);
+        PackageViewDescriptor kotlinPackageViewDescriptor = javaClassClassResolutionFacade.getKotlinNamespaceDescriptor(qualifiedName);
         if (kotlinPackageViewDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinPackageViewDescriptor);
         }
@@ -150,15 +150,15 @@ public final class JavaNamespaceResolver {
             if (psiClass == null) {
                 return new JavaPackageScopeWithoutMembers(
                         packageViewDescriptor,
-                        javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
-                        fqName, javaSemanticServices);
+                        javaClassClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
+                        fqName, javaClassClassResolutionFacade);
             }
 
             AbiVersionUtil.checkAbiVersion(psiClass, JetPackageClassAnnotation.get(psiClass), trace);
             return new JavaScopeForKotlinNamespace(
                     packageViewDescriptor,
-                    javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),
-                    fqName, javaSemanticServices);
+                    javaClassClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),
+                    fqName, javaClassClassResolutionFacade);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -173,8 +173,8 @@ public final class JavaNamespaceResolver {
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, packageViewDescriptor, JavaNamespaceKind.CLASS_STATICS);
         return new JavaClassStaticMembersScope(
                 packageViewDescriptor,
-                javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
-                fqName, javaSemanticServices);
+                javaClassClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
+                fqName, javaClassClassResolutionFacade);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaBaseScope packageScope) {

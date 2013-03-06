@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -86,10 +85,7 @@ public class JavaTypeTransformer {
 
     @NotNull
     public JetType transformToType(@NotNull GlobalSearchScope searchScope, @NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
-        Project project = searchScope.getProject();
-        assert project != null : "Project must not be null: " + searchScope;
-        JavaDependencyByQualifiedNameResolver resolver =
-                new JavaDependencyByQualifiedNameResolver(new PsiClassFinderImpl(project, searchScope), classResolutionFacade);
+        JavaDependencyByQualifiedNameResolver resolver = JavaDependencyByQualifiedNameResolver.createFromSearchScope(searchScope, classResolutionFacade);
         final JetType[] r = new JetType[1];
         JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, KotlinBuiltIns.getInstance(), typeVariableResolver) {
             @Override

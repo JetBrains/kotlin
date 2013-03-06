@@ -39,12 +39,12 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = ImmutableList.of(new ImportPath("java.lang.*"));
 
-    private JavaSemanticServices javaSemanticServices;
+    private JavaDescriptorResolver javaDescriptorResolver;
     private ModuleConfiguration delegateConfiguration;
 
     @Inject
-    public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
-        this.javaSemanticServices = javaSemanticServices;
+    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @PostConstruct
@@ -62,7 +62,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull PackageViewDescriptor packageViewDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        JetScope javaPackageScope = javaSemanticServices.getDescriptorResolver().getJavaPackageScope(packageViewDescriptor);
+        JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(packageViewDescriptor);
         if (javaPackageScope != null) {
             namespaceMemberScope.importScope(javaPackageScope);
         }

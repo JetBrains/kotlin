@@ -50,7 +50,7 @@ import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOT
 public final class JavaSupertypeResolver {
 
     private BindingTrace trace;
-    private JavaSemanticServices semanticServices;
+    private JavaClassClassResolutionFacade classResolutionFacade;
     private JavaTypeTransformer typeTransformer;
     private JavaClassResolver classResolver;
 
@@ -60,8 +60,8 @@ public final class JavaSupertypeResolver {
     }
 
     @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
+    public void setSemanticServices(JavaClassClassResolutionFacade classResolutionFacade) {
+        this.classResolutionFacade = classResolutionFacade;
     }
 
     @Inject
@@ -104,7 +104,7 @@ public final class JavaSupertypeResolver {
     }
 
     private void readSuperTypes(
-            PsiClassWrapper psiClass,
+            final PsiClassWrapper psiClass,
             List<TypeParameterDescriptor> typeParameters,
             ClassDescriptor classDescriptor,
             final List<JetType> result,
@@ -122,8 +122,9 @@ public final class JavaSupertypeResolver {
 
             @Override
             public JetSignatureVisitor visitSuperclass() {
-                return new JetTypeJetSignatureReader(semanticServices, KotlinBuiltIns.getInstance(),
-                                                     typeVariableResolver) {
+                JavaDependencyByQualifiedNameResolver resolver = JavaDependencyByQualifiedNameResolver
+                        .createFromSearchScope(psiClass.getPsiClass().getResolveScope(), classResolutionFacade);
+                return new JetTypeJetSignatureReader(resolver, KotlinBuiltIns.getInstance(), typeVariableResolver) {
                     @Override
                     protected void done(@NotNull JetType jetType) {
                         if (!jetType.equals(KotlinBuiltIns.getInstance().getAnyType())) {

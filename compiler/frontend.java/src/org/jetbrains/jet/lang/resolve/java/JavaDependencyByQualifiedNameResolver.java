@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -24,6 +26,16 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
 public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQualifiedNameResolver {
+
+    @NotNull
+    public static JavaDependencyByQualifiedNameResolver createFromSearchScope(
+            @NotNull GlobalSearchScope searchScope,
+            @NotNull JavaClassClassResolutionFacade classResolutionFacade
+    ) {
+        Project project = searchScope.getProject();
+        assert project != null : "Project must not be null: " + searchScope;
+        return new JavaDependencyByQualifiedNameResolver(new PsiClassFinderImpl(project, searchScope), classResolutionFacade);
+    }
 
     private final PsiClassFinder psiClassFinder;
     private final JavaClassClassResolutionFacade classResolutionFacade;
