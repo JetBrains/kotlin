@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 @Deprecated
-public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
+public class JavaDescriptorResolver {
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
@@ -186,7 +185,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return classResolver.resolveClass(psiClass, searchRule);
     }
 
-    @Override
+    @Nullable
     public ClassDescriptor resolveClass(@NotNull PsiClass psiClass) {
         return classResolver.resolveClass(psiClass);
     }
