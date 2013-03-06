@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
-public interface JavaSemanticServices {
-    @NotNull
-    DiagnosticHolder getDiagnosticHolder();
+public interface JavaClassClassResolutionFacade {
+    @Nullable
+    ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass);
 }

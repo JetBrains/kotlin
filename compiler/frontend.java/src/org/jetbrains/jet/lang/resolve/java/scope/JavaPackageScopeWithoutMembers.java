@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -34,9 +34,9 @@ public final class JavaPackageScopeWithoutMembers extends JavaPackageScope {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull PackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull JavaClassClassResolutionFacade javaClassClassResolutionFacade
     ) {
-        super(descriptor, declarationProvider, packageFQN, semanticServices);
+        super(descriptor, declarationProvider, packageFQN, javaClassClassResolutionFacade);
     }
 
     @Override

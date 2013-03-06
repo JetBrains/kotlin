@@ -40,9 +40,9 @@ public abstract class JavaPackageScope extends JavaBaseScope {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull PackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull JavaClassClassResolutionFacade classResolutionFacade
     ) {
-        super(descriptor, semanticServices, declarationProvider);
+        super(descriptor, classResolutionFacade, declarationProvider);
         this.declarationProvider = declarationProvider;
         this.packageFQN = packageFQN;
     }
@@ -92,7 +92,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
             if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
                 ProgressIndicatorProvider.checkCanceled();
-                ClassDescriptor classDescriptor = semanticServices.getClassDescriptor(psiClass);
+                ClassDescriptor classDescriptor = classResolutionFacade.getClassDescriptor(psiClass);
                 if (classDescriptor != null) {
                     result.add(classDescriptor);
                 }

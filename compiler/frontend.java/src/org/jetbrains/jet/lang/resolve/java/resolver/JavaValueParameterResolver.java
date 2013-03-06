@@ -68,7 +68,7 @@ public final class JavaValueParameterResolver {
 
         JetType outType;
         if (typeFromAnnotation.length() > 0) {
-            outType = getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
+            outType = getTypeTransformer().transformToType(parameter.getPsiParameter().getResolveScope(), typeFromAnnotation, typeVariableResolver);
         }
         else {
             outType = getTypeTransformer().transformToType(psiType, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT,

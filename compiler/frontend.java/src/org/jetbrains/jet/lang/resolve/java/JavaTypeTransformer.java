@@ -19,7 +19,9 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -42,11 +44,11 @@ public class JavaTypeTransformer {
 
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
-    private JavaSemanticServices javaSemanticServices;
+    private JavaClassClassResolutionFacade classResolutionFacade;
 
     @Inject
-    public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
-        this.javaSemanticServices = javaSemanticServices;
+    public void setClassResolutionFacade(JavaClassClassResolutionFacade classResolutionFacade) {
+        this.classResolutionFacade = classResolutionFacade;
     }
 
     @NotNull
@@ -83,9 +85,13 @@ public class JavaTypeTransformer {
     }
 
     @NotNull
-    public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
+    public JetType transformToType(@NotNull GlobalSearchScope searchScope, @NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
+        Project project = searchScope.getProject();
+        assert project != null : "Project must not be null: " + searchScope;
+        JavaDependencyByQualifiedNameResolver resolver =
+                new JavaDependencyByQualifiedNameResolver(new PsiClassFinderImpl(project, searchScope), classResolutionFacade);
         final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, KotlinBuiltIns.getInstance(), typeVariableResolver) {
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, KotlinBuiltIns.getInstance(), typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 r[0] = jetType;
@@ -149,7 +155,7 @@ public class JavaTypeTransformer {
                                                                                                     howThisTypeIsUsed);
 
                     if (classData == null) {
-                        classData = javaSemanticServices.getClassDescriptor(psiClass);
+                        classData = classResolutionFacade.getClassDescriptor(psiClass);
                     }
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());

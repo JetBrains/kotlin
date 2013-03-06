@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeDescriptorBase;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
@@ -50,7 +51,8 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         }
     };
 
-    private final JavaSemanticServices javaSemanticServices;
+    private final JavaClassClassResolutionFacade classResolutionFacade;
+    private final DiagnosticHolder diagnosticHolder;
     private final PsiDeclarationProviderFactory declarationProviderFactory;
     private final PsiClassFinder psiClassFinder;
     private final JavaClassResolver javaClassResolver;
@@ -58,14 +60,16 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
     protected JavaPackageFragmentProvider(
-            @NotNull JavaSemanticServices javaSemanticServices,
+            @NotNull JavaClassClassResolutionFacade classResolutionFacade,
+            @NotNull DiagnosticHolder diagnosticHolder,
             @NotNull StorageManager storageManager,
             @NotNull PsiDeclarationProviderFactory declarationProviderFactory,
             @NotNull JavaClassResolver javaClassResolver,
             @NotNull PsiClassFinder psiClassFinder,
             @NotNull SubModuleDescriptor subModule
     ) {
-        this.javaSemanticServices = javaSemanticServices;
+        this.classResolutionFacade = classResolutionFacade;
+        this.diagnosticHolder = diagnosticHolder;
         this.javaClassResolver = javaClassResolver;
         this.packageFragments = storageManager.createMemoizedFunctionWithNullableValues(
                 new NullableFunction<FqName, PackageFragmentDescriptor>() {
@@ -145,7 +149,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
             return createPackageFragmentForPackageWithoutMembers(fqName, psiPackage);
         }
 
-        AbiVersionUtil.checkAbiVersion(packageClass, JetPackageClassAnnotation.get(packageClass), javaSemanticServices.getDiagnosticHolder());
+        AbiVersionUtil.checkAbiVersion(packageClass, JetPackageClassAnnotation.get(packageClass), diagnosticHolder);
         return createPackageFragmentForPackageWithMembers(fqName, psiPackage, packageClass);
     }
 
@@ -160,7 +164,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                                                        declarationProviderFactory.createDeclarationProviderForClassStaticMembers(
                                                                staticClass),
                                                        fqName,
-                                                       javaSemanticServices);
+                                                       classResolutionFacade);
                                            }
                                        });
     }
@@ -178,7 +182,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                                                                    fragment,
                                                                    declarationProviderFactory.createDeclarationProviderForNamespaceWithoutMembers(
                                                                            psiPackage),
-                                                                   fqName, javaSemanticServices);
+                                                                   fqName, classResolutionFacade);
                                            }
                                        });
     }
@@ -197,7 +201,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                                                        fragment,
                                                        declarationProviderFactory.createDeclarationForKotlinNamespace(
                                                                psiPackage, packageClass),
-                                                       fqName, javaSemanticServices);
+                                                       fqName, classResolutionFacade);
                                            }
                                        });
     }

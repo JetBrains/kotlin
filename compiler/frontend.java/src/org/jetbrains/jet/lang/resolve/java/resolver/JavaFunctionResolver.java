@@ -332,7 +332,7 @@ public final class JavaFunctionResolver {
 
         JetType transformedType;
         if (returnTypeFromAnnotation.length() > 0) {
-            transformedType = typeTransformer.transformToType(returnTypeFromAnnotation, typeVariableResolver);
+            transformedType = typeTransformer.transformToType(method.getPsiMember().getResolveScope(), returnTypeFromAnnotation, typeVariableResolver);
         }
         else {
             transformedType = typeTransformer.transformToType(

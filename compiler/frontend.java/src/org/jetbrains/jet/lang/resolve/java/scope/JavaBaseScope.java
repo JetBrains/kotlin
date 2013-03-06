@@ -24,8 +24,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
@@ -45,7 +45,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     protected JavaDescriptorResolver javaDescriptorResolver;
 
     @NotNull
-    protected final JavaSemanticServices semanticServices;
+    protected final JavaClassClassResolutionFacade classResolutionFacade;
     @NotNull
     protected final PsiDeclarationProvider declarationProvider;
     @NotNull
@@ -62,10 +62,10 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     protected JavaBaseScope(
             @NotNull ClassOrPackageDescriptor descriptor,
-            @NotNull JavaSemanticServices semanticServices,
+            @NotNull JavaClassClassResolutionFacade classResolutionFacade,
             @NotNull PsiDeclarationProvider declarationProvider
     ) {
-        this.semanticServices = semanticServices;
+        this.classResolutionFacade = classResolutionFacade;
         this.declarationProvider = declarationProvider;
         this.descriptor = descriptor;
     }

@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -37,9 +37,9 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     protected JavaClassMembersScope(
             @NotNull ClassOrPackageDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull JavaClassClassResolutionFacade classResolutionFacade
     ) {
-        super(descriptor, semanticServices, declarationProvider);
+        super(descriptor, classResolutionFacade, declarationProvider);
         this.declarationProvider = declarationProvider;
     }
 

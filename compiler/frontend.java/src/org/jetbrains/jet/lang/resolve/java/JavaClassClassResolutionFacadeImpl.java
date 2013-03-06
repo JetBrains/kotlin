@@ -19,66 +19,25 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.NullableFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
-import javax.inject.Inject;
 import java.util.List;
 
-public class JavaSemanticServicesImpl implements JavaSemanticServices {
+public class JavaClassClassResolutionFacadeImpl implements JavaClassClassResolutionFacade {
+
+    private final NullableFunction<PsiClass, ClassDescriptor> lightClassResolver;
+
     private final List<JavaPackageFragmentProvider> providers = Lists.newArrayList();
 
-    @NotNull
-    private JavaTypeTransformer typeTransformer;
-    @NotNull
-    private BindingTrace trace;
-
-    private NullableFunction<PsiClass, ClassDescriptor> lightClassResolver;
-
-    @Inject
-    public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
-        this.typeTransformer = typeTransformer;
-    }
-
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    @Inject
-    public void setLightClassResolver(NullableFunction<PsiClass, ClassDescriptor> lightClassResolver) {
+    public JavaClassClassResolutionFacadeImpl(@NotNull NullableFunction<PsiClass, ClassDescriptor> lightClassResolver) {
         this.lightClassResolver = lightClassResolver;
     }
 
-    @NotNull
-    public JavaTypeTransformer getTypeTransformer() {
-        return typeTransformer;
-    }
-
-    @Override
-    @NotNull
-    public DiagnosticHolder getDiagnosticHolder() {
-        return trace;
-    }
-
-    @NotNull
-    public JavaPackageFragmentProvider registerRoot(
-            @NotNull GlobalSearchScope definingScope,
-            @NotNull SubModuleDescriptor subModule
-    ) {
-        JavaPackageFragmentProvider provider = new JavaPackageFragmentProvider(this, );
+    public void addPackageFragmentProvider(@NotNull JavaPackageFragmentProvider provider) {
         providers.add(provider);
-        return provider;
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -375,8 +376,9 @@ public final class JavaPropertyResolver {
             TypeVariableResolver typeVariableResolverForPropertyInternals
     ) {
         if (!characteristicMember.getType().getTypeString().isEmpty()) {
+            GlobalSearchScope resolveScope = characteristicMember.getMember().getPsiMember().getResolveScope();
             return typeTransformer.transformToType(
-                    characteristicMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
+                    resolveScope, characteristicMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
         }
         JetType propertyType = typeTransformer.transformToType(
                 characteristicMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
@@ -400,9 +402,12 @@ public final class JavaPropertyResolver {
             return null;
         }
         if (!characteristicMember.getReceiverType().getTypeString().isEmpty()) {
-            return typeTransformer.transformToType(characteristicMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
+            GlobalSearchScope resolveScope = characteristicMember.getMember().getPsiMember().getResolveScope();
+            return typeTransformer.transformToType(resolveScope, characteristicMember.getReceiverType().getTypeString(),
+                                                   typeVariableResolverForPropertyInternals);
         }
-        return typeTransformer.transformToType(characteristicMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
+        return typeTransformer.transformToType(characteristicMember.getReceiverType().getPsiType(),
+                                               typeVariableResolverForPropertyInternals);
     }
 
     private static int getNumberOfNonExtensionProperties(@NotNull Collection<PropertyPsiData> propertyPsiDataCollection) {

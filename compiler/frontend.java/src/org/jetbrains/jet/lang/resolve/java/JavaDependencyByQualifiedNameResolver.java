@@ -26,14 +26,14 @@ import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQualifiedNameResolver {
 
     private final PsiClassFinder psiClassFinder;
-    private final JavaSemanticServices javaSemanticServices;
+    private final JavaClassClassResolutionFacade classResolutionFacade;
 
     public JavaDependencyByQualifiedNameResolver(
             @NotNull PsiClassFinder psiClassFinder,
-            @NotNull JavaSemanticServices javaSemanticServices
+            @NotNull JavaClassClassResolutionFacade classResolutionFacade
     ) {
         this.psiClassFinder = psiClassFinder;
-        this.javaSemanticServices = javaSemanticServices;
+        this.classResolutionFacade = classResolutionFacade;
     }
 
     @Nullable
@@ -43,6 +43,6 @@ public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQ
         if (psiClass == null) {
             return null;
         }
-        return javaSemanticServices.getClassDescriptor(psiClass);
+        return classResolutionFacade.getClassDescriptor(psiClass);
     }
 }

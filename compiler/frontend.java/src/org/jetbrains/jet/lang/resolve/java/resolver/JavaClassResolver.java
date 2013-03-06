@@ -46,7 +46,7 @@ public final class JavaClassResolver {
 
     private BindingTrace trace;
     private JavaSignatureResolver signatureResolver;
-    private JavaSemanticServices semanticServices;
+    private JavaClassClassResolutionFacade classResolutionFacade;
     private JavaPackageFragmentProvider packageFragmentProvider;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassObjectResolver classObjectResolver;
@@ -72,8 +72,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
+    public void setClassResolutionFacade(JavaClassClassResolutionFacade classResolutionFacade) {
+        this.classResolutionFacade = classResolutionFacade;
     }
 
     @Inject
@@ -114,7 +114,7 @@ public final class JavaClassResolver {
         }
 
         if (DescriptorResolverUtils.isKotlinLightClass(psiClass)) {
-            return searchRule.processFoundInKotlin(semanticServices.getClassDescriptor(psiClass));
+            return searchRule.processFoundInKotlin(classResolutionFacade.getClassDescriptor(psiClass));
         }
 
         if (isClassObject(psiClass)) {
@@ -185,7 +185,7 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, semanticServices);
+        JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, classResolutionFacade);
         classDescriptor.setScopeForMemberLookup(membersScope);
         classDescriptor.setScopeForConstructorResolve(membersScope);
 

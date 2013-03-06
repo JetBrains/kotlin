@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -34,9 +33,9 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
             @NotNull FqName classFqName,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull JavaClassClassResolutionFacade classResolutionFacade
     ) {
-        super(descriptor, declarationProvider, semanticServices);
+        super(descriptor, declarationProvider, classResolutionFacade);
         this.classFqName = classFqName;
     }
 
