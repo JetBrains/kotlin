@@ -20,6 +20,4 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 
 public interface JavaSemanticServices {
-    @NotNull
-    DiagnosticHolder getDiagnosticHolder();
 }
