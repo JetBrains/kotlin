@@ -69,7 +69,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
-    protected void doTestCompiledJava(@NotNull String expectedFileName, @NotNull String... javaFileNames) throws Exception {
+    protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
+        doTestCompiledJava(new File(javaFileName.replaceFirst("\\.java$", ".txt")), javaFileName);
+    }
+
+    protected void doTestCompiledJava(@NotNull File expectedFile, @NotNull String... javaFileNames) throws Exception {
         JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
 
@@ -79,7 +83,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 return new File(s);
             }
         });
-        File expectedFile = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expectedFile.getName());
 
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
