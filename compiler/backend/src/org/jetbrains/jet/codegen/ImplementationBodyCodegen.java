@@ -194,7 +194,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
                                           !(parentDescriptor instanceof NamespaceDescriptor || parentDescriptor instanceof ClassDescriptor);
         if (isLocalOrAnonymousClass) {
-            String outerClassName = getOuterClassName(descriptor, typeMapper, bindingContext, state);
+            String outerClassName = getOuterClassName(descriptor, typeMapper, bindingContext);
             FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
 
             //Function descriptor could be null only for object literal in package namespace
@@ -214,22 +214,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     public static String getOuterClassName(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull JetTypeMapper typeMapper,
-            @NotNull BindingContext bindingContext,
-            @NotNull GenerationState state
+            @NotNull BindingContext bindingContext
     ) {
         ClassDescriptor container = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
         if (container != null) {
             return typeMapper.mapType(container.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
         }
         else {
-            NamespaceDescriptor namespaceDescriptor = DescriptorUtils.getParentOfType(classDescriptor, NamespaceDescriptor.class);
-            assert namespaceDescriptor != null : "Namespace descriptor should be present: " + classDescriptor.getName();
-            FqName namespaceQN = namespaceDescriptor.getFqName();
-            boolean isMultiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), namespaceQN);
-            return isMultiFile
-                   ? NamespaceCodegen.getNamespacePartInternalName(
-                                     BindingContextUtils.getContainingFile(bindingContext, classDescriptor))
-                   : NamespaceCodegen.getJVMClassNameForKotlinNs(namespaceQN).getInternalName();
+            JetFile containingFile = BindingContextUtils.getContainingFile(bindingContext, classDescriptor);
+            assert containingFile != null : "Containing file should be present for " + classDescriptor;
+            return NamespaceCodegen.getNamespacePartInternalName(containingFile);
         }
     }
 

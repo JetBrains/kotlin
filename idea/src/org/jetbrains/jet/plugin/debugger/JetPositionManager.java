@@ -56,7 +56,6 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.isMultiFileNamespace;
 
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
@@ -155,14 +154,7 @@ public class JetPositionManager implements PositionManager {
                 }
 
                 if (result.isNull()) {
-                    FqName fqName = JetPsiUtil.getFQName(namespace);
-                    boolean multiFileNamespace = isMultiFileNamespace(typeMapper.getBindingContext(), fqName);
-                    if (multiFileNamespace) {
-                        result.set(NamespaceCodegen.getNamespacePartInternalName(namespace));
-                    }
-                    else {
-                        result.set(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName());
-                    }
+                    result.set(NamespaceCodegen.getNamespacePartInternalName(namespace));
                 }
             }
         });

@@ -4,5 +4,5 @@ class A {
 }
 
 fun A.foo() {
-    ""   // a/APackage
+    ""   // a/APackage$src$extensionFunction$
 }

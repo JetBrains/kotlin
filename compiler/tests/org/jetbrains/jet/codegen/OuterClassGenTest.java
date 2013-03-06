@@ -17,6 +17,8 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.util.lang.UrlClassLoader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
@@ -26,7 +28,6 @@ import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -34,82 +35,138 @@ import static org.jetbrains.jet.codegen.CodegenTestUtil.compileJava;
 
 public class OuterClassGenTest extends CodegenTestCase {
 
-    private UrlClassLoader javaClassLoader;
+    public void testClass() throws Exception {
+        doTest("foo.Foo");
+    }
 
-    private ClassFileFactory classFileFactory;
+    public void testClassObject() throws Exception {
+        doTest("foo.Foo$object");
+    }
 
-    private final String [] INFO_PARTS = new String [] {"class", "method", "descriptor"};
+    public void testInnerClass() throws Exception {
+        doTest("foo.Foo$InnerClass");
+    }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    public void testInnerObject() throws Exception {
+        doTest("foo.Foo$InnerObject");
+    }
+
+    public void testLocalClassInFunction() throws Exception {
+        doTest("foo.Foo$foo$LocalClass", "foo.Foo$1LocalClass");
+    }
+
+    public void testLocalObjectInFunction() throws Exception {
+        doTest("foo.Foo$foo$LocalObject", "foo.Foo$1LocalObject");
+    }
+
+    public void testObjectInPackageClass() throws Exception {
+        doTest("foo.PackageInnerObject");
+    }
+
+    public void testObjectLiteralInPackageClass() throws Exception {
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$src$outerClassInfo$", null, null);
+        doCustomTest("foo$packageObjectLiteral$1", expectedInfo);
+    }
+
+    public void testLocalClassInTopLevelFunction() throws Exception {
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$src$outerClassInfo$", "packageMethod", "(Lfoo/Foo;)V");
+        doCustomTest("foo.FooPackage$packageMethod$PackageLocalClass", expectedInfo);
+    }
+
+    public void testLocalObjectInTopLevelFunction() throws Exception {
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$src$outerClassInfo$", "packageMethod", "(Lfoo/Foo;)V");
+        doCustomTest("foo.FooPackage$packageMethod$PackageLocalObject", expectedInfo);
+    }
+
+    private void doTest(@NotNull String className) throws Exception {
+        doTest(className, className);
+    }
+
+    private void doTest(@NotNull String kotlinName, @NotNull String javaName) throws Exception {
         File javaClassesTempDirectory = compileJava("outerClassInfo/outerClassInfo.java");
+
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
-        javaClassLoader = new UrlClassLoader(new URL[] {javaClassesTempDirectory.toURI().toURL()}, getClass().getClassLoader());
-        loadFiles("outerClassInfo/outerClassInfo.kt");
-        classFileFactory = generateClassesInFile();
-    }
 
-    public void testOuterClassInfo() throws ClassNotFoundException, IOException {
-        //CLASS SECTION
-        compareOuterClassInfo("foo.Foo");
-        //class object
-        compareOuterClassInfo("foo.Foo$object");
-        //inner class
-        compareOuterClassInfo("foo.Foo$InnerClass");
-        //inner object
-        compareOuterClassInfo("foo.Foo$InnerObject");
-        //local class in function
-        compareOuterClassInfo("foo.Foo$foo$LocalClass", "foo.Foo$1LocalClass");
-        //local object in function
-        compareOuterClassInfo("foo.Foo$foo$LocalObject", "foo.Foo$1LocalObject");
+        UrlClassLoader javaClassLoader = new UrlClassLoader(new URL[] {javaClassesTempDirectory.toURI().toURL()}, getClass().getClassLoader());
 
-        //PACKAGE SECTION
-        //package object
-        compareOuterClassInfo("foo.PackageInnerObject");
-
-        //object literal in package
-        compareOuterClassInfo("foo$packageObjectLiteral$1", "foo.FooPackage$1");
-        //local class in package function
-        compareOuterClassInfo("foo.FooPackage$packageMethod$PackageLocalClass", "foo.FooPackage$1PackageLocalClass");
-        //local object in package function
-        compareOuterClassInfo("foo.FooPackage$packageMethod$PackageLocalObject", "foo.FooPackage$1PackageLocalObject");
-    }
-
-    private void compareOuterClassInfo(String clazzName) throws ClassNotFoundException, IOException {
-        compareOuterClassInfo(clazzName, clazzName);
-    }
-
-    private void compareOuterClassInfo(String kotlinName, String javaName) throws ClassNotFoundException, IOException {
         String javaClassPath = javaName.replace('.', File.separatorChar) + ".class";
         InputStream javaClassStream = javaClassLoader.getResourceAsStream(javaClassPath);
         ClassReader javaReader =  new ClassReader(javaClassStream);
 
-        ClassReader kotlinReader =  new ClassReader(classFileFactory.asBytes(kotlinName.replace('.', '/') + ".class"));
+        ClassReader kotlinReader = getKotlinClassReader(kotlinName);
 
         checkInfo(kotlinReader, javaReader);
     }
 
-
-    private void checkInfo(ClassReader kotlinReader, ClassReader javaReader) {
-        String [] kotlinInfo = getOuterClassInfo(kotlinReader);
-        String [] javaInfo = getOuterClassInfo(javaReader);
-        for (int i = 0; i < kotlinInfo.length; i++) {
-            String info = kotlinInfo[i];
-            assertEquals("Error in enclosingMethodInfo info for: " + kotlinReader.getClassName() + " class in " + INFO_PARTS[i] + " part", javaInfo[i], info);
+    private void doCustomTest(@NotNull String kotlinName, @NotNull OuterClassInfo expectedInfo) {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        ClassReader kotlinReader = getKotlinClassReader(kotlinName);
+        OuterClassInfo kotlinInfo = getOuterClassInfo(kotlinReader);
+        String message = "Error in enclosingMethodInfo info for: " + kotlinReader.getClassName() + " class";
+        if ((kotlinInfo.owner == null) || !kotlinInfo.owner.startsWith(expectedInfo.owner)) {
+            fail(message + " expectedOwner=" + expectedInfo.owner + ", actualOwner=" + kotlinInfo.owner);
         }
+        assertEquals(message, expectedInfo.method, kotlinInfo.method);
+        assertEquals(message, expectedInfo.descriptor, kotlinInfo.descriptor);
     }
 
-    public String [] getOuterClassInfo(ClassReader reader) {
-        final String [] info = new String [3];
+    private ClassReader getKotlinClassReader(@NotNull String kotlinClassName) {
+        loadFile("outerClassInfo/outerClassInfo.kt");
+        ClassFileFactory classFileFactory = generateClassesInFile();
+        return new ClassReader(classFileFactory.asBytes(kotlinClassName.replace('.', '/') + ".class"));
+    }
+
+    private void checkInfo(ClassReader kotlinReader, ClassReader javaReader) {
+        OuterClassInfo kotlinInfo = getOuterClassInfo(kotlinReader);
+        OuterClassInfo javaInfo = getOuterClassInfo(javaReader);
+        assertEquals("Error in enclosingMethodInfo info for: " + kotlinReader.getClassName() + " class", javaInfo, kotlinInfo);
+    }
+
+    public OuterClassInfo getOuterClassInfo(ClassReader reader) {
+        final OuterClassInfo info = new OuterClassInfo();
         reader.accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public void visitOuterClass(String owner, String name, String desc) {
-                info[0] = owner;
-                info[1] = name;
-                info[2] = desc;
+                info.owner = owner;
+                info.method = name;
+                info.descriptor = desc;
             }
         }, 0);
         return info;
+    }
+
+    private static class OuterClassInfo {
+        @Nullable private String owner;
+        @Nullable private String method;
+        @Nullable private String descriptor;
+
+        private OuterClassInfo(@Nullable String owner, @Nullable String method, @Nullable String descriptor) {
+            this.owner = owner;
+            this.method = method;
+            this.descriptor = descriptor;
+        }
+
+        private OuterClassInfo() {
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof OuterClassInfo)) return false;
+
+            OuterClassInfo info = (OuterClassInfo) o;
+
+            if (descriptor != null ? !descriptor.equals(info.descriptor) : info.descriptor != null) return false;
+            if (method != null ? !method.equals(info.method) : info.method != null) return false;
+            if (owner != null ? !owner.equals(info.owner) : info.owner != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "[owner=" + owner + ", method=" + method + ", descriptor="+ descriptor + "]";
+        }
     }
 }
