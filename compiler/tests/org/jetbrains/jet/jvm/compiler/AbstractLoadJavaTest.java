@@ -129,10 +129,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
         assert namespaceDescriptor != null;
 
-        compareNamespaceWithFile(namespaceDescriptor, DONT_INCLUDE_METHODS_OF_OBJECT,
-                                 new File(dir, "expected.txt"));
-
-        ExpectedLoadErrorsUtil.checkForLoadErrors(namespaceDescriptor, trace.getBindingContext());
+        checkJavaNamespace(new File(dir, "expected.txt"), namespaceDescriptor, trace.getBindingContext());
     }
 
     private static void checkForLoadErrorsAndCompare(
