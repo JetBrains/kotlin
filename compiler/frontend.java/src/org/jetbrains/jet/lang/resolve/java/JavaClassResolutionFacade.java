@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
-public interface JavaClassClassResolutionFacade {
+public interface JavaClassResolutionFacade {
     @Nullable
     ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass);
 }

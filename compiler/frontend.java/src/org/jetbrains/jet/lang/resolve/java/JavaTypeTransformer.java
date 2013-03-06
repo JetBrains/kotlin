@@ -43,10 +43,10 @@ public class JavaTypeTransformer {
 
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
-    private JavaClassClassResolutionFacade classResolutionFacade;
+    private JavaClassResolutionFacade classResolutionFacade;
 
     @Inject
-    public void setClassResolutionFacade(JavaClassClassResolutionFacade classResolutionFacade) {
+    public void setClassResolutionFacade(JavaClassResolutionFacade classResolutionFacade) {
         this.classResolutionFacade = classResolutionFacade;
     }
 

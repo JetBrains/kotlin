@@ -51,7 +51,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         }
     };
 
-    private final JavaClassClassResolutionFacade classResolutionFacade;
+    private final JavaClassResolutionFacade classResolutionFacade;
     private final DiagnosticHolder diagnosticHolder;
     private final PsiDeclarationProviderFactory declarationProviderFactory;
     private final PsiClassFinder psiClassFinder;
@@ -60,7 +60,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
     protected JavaPackageFragmentProvider(
-            @NotNull JavaClassClassResolutionFacade classResolutionFacade,
+            @NotNull JavaClassResolutionFacade classResolutionFacade,
             @NotNull DiagnosticHolder diagnosticHolder,
             @NotNull StorageManager storageManager,
             @NotNull PsiDeclarationProviderFactory declarationProviderFactory,

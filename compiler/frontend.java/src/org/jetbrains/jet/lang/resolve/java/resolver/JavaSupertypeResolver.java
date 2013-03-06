@@ -50,7 +50,7 @@ import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOT
 public final class JavaSupertypeResolver {
 
     private BindingTrace trace;
-    private JavaClassClassResolutionFacade classResolutionFacade;
+    private JavaClassResolutionFacade classResolutionFacade;
     private JavaTypeTransformer typeTransformer;
     private JavaClassResolver classResolver;
 
@@ -60,7 +60,7 @@ public final class JavaSupertypeResolver {
     }
 
     @Inject
-    public void setSemanticServices(JavaClassClassResolutionFacade classResolutionFacade) {
+    public void setSemanticServices(JavaClassResolutionFacade classResolutionFacade) {
         this.classResolutionFacade = classResolutionFacade;
     }
 

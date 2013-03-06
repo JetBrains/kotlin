@@ -40,7 +40,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull PackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
-            @NotNull JavaClassClassResolutionFacade classResolutionFacade
+            @NotNull JavaClassResolutionFacade classResolutionFacade
     ) {
         super(descriptor, classResolutionFacade, declarationProvider);
         this.declarationProvider = declarationProvider;

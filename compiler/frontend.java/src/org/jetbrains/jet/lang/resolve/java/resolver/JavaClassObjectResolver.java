@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassObjectAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
@@ -50,7 +50,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 public final class JavaClassObjectResolver {
 
     private BindingTrace trace;
-    private JavaClassClassResolutionFacade classResolutionFacade;
+    private JavaClassResolutionFacade classResolutionFacade;
     private JavaSupertypeResolver supertypesResolver;
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
 
@@ -65,7 +65,7 @@ public final class JavaClassObjectResolver {
     }
 
     @Inject
-    public void setSemanticServices(JavaClassClassResolutionFacade classResolutionFacade) {
+    public void setSemanticServices(JavaClassResolutionFacade classResolutionFacade) {
         this.classResolutionFacade = classResolutionFacade;
     }
 

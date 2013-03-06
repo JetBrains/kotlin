@@ -46,7 +46,7 @@ public final class JavaClassResolver {
 
     private BindingTrace trace;
     private JavaSignatureResolver signatureResolver;
-    private JavaClassClassResolutionFacade classResolutionFacade;
+    private JavaClassResolutionFacade classResolutionFacade;
     private JavaPackageFragmentProvider packageFragmentProvider;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassObjectResolver classObjectResolver;
@@ -72,7 +72,7 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setClassResolutionFacade(JavaClassClassResolutionFacade classResolutionFacade) {
+    public void setClassResolutionFacade(JavaClassResolutionFacade classResolutionFacade) {
         this.classResolutionFacade = classResolutionFacade;
     }
 

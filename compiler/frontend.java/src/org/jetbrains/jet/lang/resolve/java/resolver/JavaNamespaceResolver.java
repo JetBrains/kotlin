@@ -54,7 +54,7 @@ public final class JavaNamespaceResolver {
 
     private PsiClassFinder psiClassFinder;
     private BindingTrace trace;
-    private JavaClassClassResolutionFacade javaClassClassResolutionFacade;
+    private JavaClassResolutionFacade javaClassResolutionFacade;
 
     public JavaNamespaceResolver() {
     }
@@ -70,14 +70,14 @@ public final class JavaNamespaceResolver {
     }
 
     @Inject
-    public void setJavaClassClassResolutionFacade(JavaClassClassResolutionFacade javaClassClassResolutionFacade) {
-        this.javaClassClassResolutionFacade = javaClassClassResolutionFacade;
+    public void setJavaClassResolutionFacade(JavaClassResolutionFacade javaClassResolutionFacade) {
+        this.javaClassResolutionFacade = javaClassResolutionFacade;
     }
 
     @Nullable
     public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         // First, let's check that there is no Kotlin package:
-        PackageViewDescriptor kotlinPackageViewDescriptor = javaClassClassResolutionFacade.getKotlinNamespaceDescriptor(qualifiedName);
+        PackageViewDescriptor kotlinPackageViewDescriptor = javaClassResolutionFacade.getKotlinNamespaceDescriptor(qualifiedName);
         if (kotlinPackageViewDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinPackageViewDescriptor);
         }
@@ -150,15 +150,15 @@ public final class JavaNamespaceResolver {
             if (psiClass == null) {
                 return new JavaPackageScopeWithoutMembers(
                         packageViewDescriptor,
-                        javaClassClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
-                        fqName, javaClassClassResolutionFacade);
+                        javaClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
+                        fqName, javaClassResolutionFacade);
             }
 
             AbiVersionUtil.checkAbiVersion(psiClass, JetPackageClassAnnotation.get(psiClass), trace);
             return new JavaScopeForKotlinNamespace(
                     packageViewDescriptor,
-                    javaClassClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),
-                    fqName, javaClassClassResolutionFacade);
+                    javaClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),
+                    fqName, javaClassResolutionFacade);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -173,8 +173,8 @@ public final class JavaNamespaceResolver {
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, packageViewDescriptor, JavaNamespaceKind.CLASS_STATICS);
         return new JavaClassStaticMembersScope(
                 packageViewDescriptor,
-                javaClassClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
-                fqName, javaClassClassResolutionFacade);
+                javaClassResolutionFacade.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
+                fqName, javaClassResolutionFacade);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaBaseScope packageScope) {

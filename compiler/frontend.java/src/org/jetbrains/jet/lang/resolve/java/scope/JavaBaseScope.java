@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
@@ -45,7 +45,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     protected JavaDescriptorResolver javaDescriptorResolver;
 
     @NotNull
-    protected final JavaClassClassResolutionFacade classResolutionFacade;
+    protected final JavaClassResolutionFacade classResolutionFacade;
     @NotNull
     protected final PsiDeclarationProvider declarationProvider;
     @NotNull
@@ -62,7 +62,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     protected JavaBaseScope(
             @NotNull ClassOrPackageDescriptor descriptor,
-            @NotNull JavaClassClassResolutionFacade classResolutionFacade,
+            @NotNull JavaClassResolutionFacade classResolutionFacade,
             @NotNull PsiDeclarationProvider declarationProvider
     ) {
         this.classResolutionFacade = classResolutionFacade;

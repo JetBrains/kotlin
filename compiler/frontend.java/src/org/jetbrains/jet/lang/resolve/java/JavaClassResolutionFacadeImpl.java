@@ -26,13 +26,13 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
 import java.util.List;
 
-public class JavaClassClassResolutionFacadeImpl implements JavaClassClassResolutionFacade {
+public class JavaClassResolutionFacadeImpl implements JavaClassResolutionFacade {
 
     private final NullableFunction<PsiClass, ClassDescriptor> lightClassResolver;
 
     private final List<JavaPackageFragmentProvider> providers = Lists.newArrayList();
 
-    public JavaClassClassResolutionFacadeImpl(@NotNull NullableFunction<PsiClass, ClassDescriptor> lightClassResolver) {
+    public JavaClassResolutionFacadeImpl(@NotNull NullableFunction<PsiClass, ClassDescriptor> lightClassResolver) {
         this.lightClassResolver = lightClassResolver;
     }
 

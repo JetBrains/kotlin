@@ -30,7 +30,7 @@ public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQ
     @NotNull
     public static JavaDependencyByQualifiedNameResolver createFromSearchScope(
             @NotNull GlobalSearchScope searchScope,
-            @NotNull JavaClassClassResolutionFacade classResolutionFacade
+            @NotNull JavaClassResolutionFacade classResolutionFacade
     ) {
         Project project = searchScope.getProject();
         assert project != null : "Project must not be null: " + searchScope;
@@ -38,11 +38,11 @@ public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQ
     }
 
     private final PsiClassFinder psiClassFinder;
-    private final JavaClassClassResolutionFacade classResolutionFacade;
+    private final JavaClassResolutionFacade classResolutionFacade;
 
     public JavaDependencyByQualifiedNameResolver(
             @NotNull PsiClassFinder psiClassFinder,
-            @NotNull JavaClassClassResolutionFacade classResolutionFacade
+            @NotNull JavaClassResolutionFacade classResolutionFacade
     ) {
         this.psiClassFinder = psiClassFinder;
         this.classResolutionFacade = classResolutionFacade;

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JavaClassClassResolutionFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     public JavaClassNonStaticMembersScope(
             @NotNull ClassDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider psiDeclarationProvider,
-            @NotNull JavaClassClassResolutionFacade classResolutionFacade
+            @NotNull JavaClassResolutionFacade classResolutionFacade
     ) {
         super(descriptor, psiDeclarationProvider, classResolutionFacade);
         this.descriptor = descriptor;
