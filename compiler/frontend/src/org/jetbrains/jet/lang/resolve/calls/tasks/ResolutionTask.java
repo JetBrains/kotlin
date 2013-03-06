@@ -84,7 +84,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition
     ) {
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
         newTask.setCheckingStrategy(checkingStrategy);

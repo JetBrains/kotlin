@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.context;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -27,13 +28,13 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
     public final ResolveMode resolveMode;
 
     protected CallResolutionContext(
-            BindingTrace trace,
-            JetScope scope,
-            Call call,
-            JetType expectedType,
-            DataFlowInfo dataFlowInfo,
-            ResolveMode resolveMode,
-            ExpressionPosition expressionPosition
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull Call call,
+            @NotNull JetType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ExpressionPosition expressionPosition
     ) {
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
         this.call = call;

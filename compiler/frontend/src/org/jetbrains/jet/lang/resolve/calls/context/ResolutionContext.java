@@ -32,11 +32,11 @@ public abstract class ResolutionContext<Context extends ResolutionContext> {
     public final ExpressionPosition expressionPosition;
 
     protected ResolutionContext(
-            BindingTrace trace,
-            JetScope scope,
-            JetType expectedType,
-            DataFlowInfo dataFlowInfo,
-            ExpressionPosition expressionPosition
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull JetType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ExpressionPosition expressionPosition
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -50,7 +50,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext> {
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition
     );
     
     protected abstract Context self();

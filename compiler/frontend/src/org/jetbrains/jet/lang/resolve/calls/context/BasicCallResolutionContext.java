@@ -32,7 +32,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ResolveMode resolveMode,
-            ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
     }
@@ -54,7 +54,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition
     ) {
         return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
     }

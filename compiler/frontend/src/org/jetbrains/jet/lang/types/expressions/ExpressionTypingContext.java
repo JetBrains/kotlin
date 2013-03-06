@@ -41,7 +41,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition) {
+            @NotNull ExpressionPosition expressionPosition) {
         return newContext(expressionTypingServices, new LabelResolver(), trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }
 
@@ -53,7 +53,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition) {
+            @NotNull ExpressionPosition expressionPosition) {
         return new ExpressionTypingContext(expressionTypingServices, 
                                            labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }
@@ -71,7 +71,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition) {
+            @NotNull ExpressionPosition expressionPosition) {
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
         this.expressionTypingServices = expressionTypingServices;
         this.labelResolver = labelResolver;
@@ -83,7 +83,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition
     ) {
         return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }

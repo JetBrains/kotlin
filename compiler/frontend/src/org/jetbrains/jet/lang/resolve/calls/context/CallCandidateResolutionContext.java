@@ -42,7 +42,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ResolveMode resolveMode,
-            ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
         this.candidateCall = candidateCall;
@@ -83,7 +83,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
