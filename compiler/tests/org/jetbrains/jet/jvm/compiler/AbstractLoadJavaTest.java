@@ -127,7 +127,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         JavaDescriptorResolver javaDescriptorResolver = injectorForJava.getJavaDescriptorResolver();
         NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(
                 LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
-        assert namespaceDescriptor != null;
+        assert namespaceDescriptor != null : "Test namespace not found";
 
         checkJavaNamespace(new File(dir, "expected.txt"), namespaceDescriptor, trace.getBindingContext());
     }
