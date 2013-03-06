@@ -65,6 +65,7 @@ public abstract class Config {
             "/core/javaio.kt",
             "/core/javalang.kt",
             "/core/javautil.kt",
+            "/core/javautilCollections.kt",
             "/core/json.kt",
             "/core/kotlin.kt",
             "/core/math.kt",
@@ -83,7 +84,7 @@ public abstract class Config {
     @NotNull
     public static final List<String> LIB_FILES_WITH_CODE = Arrays.asList(
             "/stdlib/TuplesCode.kt",
-            "/core/javautilCode.kt"
+            "/core/javautilCollectionsCode.kt"
     );
 
     @NotNull

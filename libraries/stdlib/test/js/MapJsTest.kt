@@ -44,8 +44,7 @@ class MapJsTest {
 
     test fun hashMapValues() {
         val map = createTestHashMap()
-        //todo: fixme after sort() will be fixed for JS
-        assertEquals(VALUES, map.values())
+        assertEquals(VALUES.toList(), map.values().toSortedList())
     }
 
     fun createTestHashMap(): HashMap<String, Int> {

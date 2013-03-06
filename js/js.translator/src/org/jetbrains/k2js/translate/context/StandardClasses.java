@@ -107,8 +107,6 @@ public final class StandardClasses {
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
         standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
-
-        standardClasses.declare().forFQ("java.util.Collections.<no name provided>.max").kotlinFunction("collectionsMax");
     }
 
 
