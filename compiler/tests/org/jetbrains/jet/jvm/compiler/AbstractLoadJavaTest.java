@@ -57,7 +57,7 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.*;
 */
 public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
-    public void doTest(@NotNull String javaFileName) throws Exception {
+    protected void doTest(@NotNull String javaFileName) throws Exception {
         Assert.assertTrue("A java file expected: " + javaFileName, javaFileName.endsWith(".java"));
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
@@ -163,7 +163,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
     }
 
-    public static void checkLoadedNamespaces(
+    private static void checkLoadedNamespaces(
             final File txtFile,
             final NamespaceDescriptor kotlinNamespace,
             final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
@@ -176,7 +176,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         });
     }
 
-    public static void checkJavaNamespace(
+    private static void checkJavaNamespace(
             final File txtFile,
             final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
     ) {
