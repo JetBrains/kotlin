@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.NullableFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -42,19 +43,11 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
     @NotNull
     private BindingTrace trace;
 
+    private NullableFunction<PsiClass, ClassDescriptor> lightClassResolver;
+
     @Inject
     public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
         this.typeTransformer = typeTransformer;
-    }
-
-    @Inject
-    public void setDescriptorResolver(@NotNull JavaDescriptorResolver descriptorResolver) {
-        this.descriptorResolver = descriptorResolver;
-    }
-
-    @Inject
-    public void setPsiClassFinder(@NotNull PsiClassFinder psiClassFinder) {
-        this.psiClassFinder = psiClassFinder;
     }
 
     @Inject
@@ -62,14 +55,14 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
         this.trace = trace;
     }
 
+    @Inject
+    public void setLightClassResolver(NullableFunction<PsiClass, ClassDescriptor> lightClassResolver) {
+        this.lightClassResolver = lightClassResolver;
+    }
+
     @NotNull
     public JavaTypeTransformer getTypeTransformer() {
         return typeTransformer;
-    }
-
-    @Inject
-    public void setPsiDeclarationProviderFactory(PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
-        this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
     }
 
     @Override
@@ -83,7 +76,7 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
             @NotNull GlobalSearchScope definingScope,
             @NotNull SubModuleDescriptor subModule
     ) {
-        JavaPackageFragmentProvider provider = new JavaPackageFragmentProvider(this, definingScope, subModule);
+        JavaPackageFragmentProvider provider = new JavaPackageFragmentProvider(this, );
         providers.add(provider);
         return provider;
     }
@@ -91,6 +84,10 @@ public class JavaSemanticServicesImpl implements JavaSemanticServices {
     @Override
     @Nullable
     public ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass) {
+        if (DescriptorResolverUtils.isKotlinLightClass(psiClass)) {
+            return lightClassResolver.fun(psiClass);
+        }
+
         VirtualFile virtualFile = psiClass.getContainingFile().getVirtualFile();
         assert virtualFile != null : "No virtual file for psiClass: " + psiClass.getText();
 

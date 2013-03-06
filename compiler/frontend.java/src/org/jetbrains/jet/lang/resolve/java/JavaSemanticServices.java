@@ -26,9 +26,9 @@ public interface JavaSemanticServices {
     @NotNull
     DiagnosticHolder getDiagnosticHolder();
 
+    /**
+     * Work on KotlinLightClasses too
+     */
     @Nullable
     ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass);
-
-    @NotNull
-    ClassDescriptor getDescriptorByKotlinLightClass(@NotNull PsiClass aClass);
 }

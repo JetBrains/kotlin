@@ -114,7 +114,7 @@ public final class JavaClassResolver {
         }
 
         if (DescriptorResolverUtils.isKotlinLightClass(psiClass)) {
-            return searchRule.processFoundInKotlin(semanticServices.getDescriptorByKotlinLightClass(psiClass));
+            return searchRule.processFoundInKotlin(semanticServices.getClassDescriptor(psiClass));
         }
 
         if (isClassObject(psiClass)) {
