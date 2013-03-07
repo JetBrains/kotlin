@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.completion;
 
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
+import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
@@ -297,15 +299,16 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     }
 
     public void doTestWithJar() {
-        File libraryFile = new File(getTestDataPath() + "/" + getTestName(false) + ".jar");
-        JetJdkAndLibraryProjectDescriptor projectDescriptor = new JetJdkAndLibraryProjectDescriptor(libraryFile);
+        NewLibraryEditor editor = new NewLibraryEditor(null, null);
+        editor.setName("doTestWithJarLib");
+        editor.addRoot(VfsUtil.getUrlForLibraryRoot(new File(getTestDataPath() + "/" + getTestName(false) + ".jar")), OrderRootType.CLASSES);
 
         try {
-            ConfigLibraryUtil.configureLibrary(getModule(), getFullJavaJDK(), projectDescriptor);
+            ConfigLibraryUtil.configureLibrary(getModule(), getFullJavaJDK(), editor);
             doTest();
         }
         finally {
-            ConfigLibraryUtil.unConfigureLibrary(getModule(), getFullJavaJDK(), projectDescriptor);
+            ConfigLibraryUtil.unConfigureLibrary(getModule(), getFullJavaJDK(), editor.getName());
         }
     }
 

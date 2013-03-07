@@ -34,11 +34,11 @@ public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
     protected void doTest(@NotNull String beforeFileName) throws Exception {
         boolean isWithRuntime = beforeFileName.endsWith("Runtime.kt");
 
-        if (isWithRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
-        }
-
         try {
+            if (isWithRuntime) {
+                ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+            }
+
             doSingleTest(getTestName(false) + ".kt");
             checkAvailableActionsAreExpected();
             checkForUnexpectedErrors();

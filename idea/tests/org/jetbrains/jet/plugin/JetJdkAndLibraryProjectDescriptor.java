@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,26 +21,23 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 
 public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor {
+    private static final String LIBRARY_NAME = "myLibrary";
 
-    private final String libraryName = "myLibrary";
     private final File libraryFile;
     private final OrderRootType libraryRootType;
-
-    public JetJdkAndLibraryProjectDescriptor(File libraryFile, OrderRootType libraryRootType) {
-        assert libraryFile.exists() : "Library file doesn't exist: " + libraryFile.getAbsolutePath();
-        this.libraryFile = libraryFile;
-        this.libraryRootType = libraryRootType;
-    }
 
     public JetJdkAndLibraryProjectDescriptor(File libraryFile) {
         assert libraryFile.exists() : "Library file doesn't exist: " + libraryFile.getAbsolutePath();
@@ -59,35 +57,10 @@ public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
-        Library library = model.getModuleLibraryTable().createLibrary(libraryName);
-        Library.ModifiableModel modifiableModel = library.getModifiableModel();
-        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), libraryRootType);
-        modifiableModel.commit();
-    }
+        NewLibraryEditor editor = new NewLibraryEditor();
+        editor.setName(LIBRARY_NAME);
+        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), libraryRootType);
 
-    public void unConfigureModule(@NotNull ModifiableRootModel model) {
-        for (OrderEntry orderEntry : model.getOrderEntries()) {
-            if (orderEntry instanceof LibraryOrderEntry) {
-                LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) orderEntry;
-
-                Library library = libraryOrderEntry.getLibrary();
-                if (library != null) {
-                    String libraryName = library.getName();
-                    if (libraryName != null && libraryName.equals(this.libraryName)) {
-
-                        // Dispose attached roots
-                        Library.ModifiableModel modifiableModel = library.getModifiableModel();
-                        for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.CLASSES)) {
-                            modifiableModel.removeRoot(rootUrl, OrderRootType.CLASSES);
-                        }
-                        modifiableModel.commit();
-
-                        model.getModuleLibraryTable().removeLibrary(library);
-
-                        break;
-                    }
-                }
-            }
-        }
+        ConfigLibraryUtil.addLibrary(editor, model);
     }
 }
