@@ -1072,6 +1072,26 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), true);
             }
             
+            @TestMetadata("DeeplyInnerClass.java")
+            public void testDeeplyInnerClass() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/DeeplyInnerClass.java");
+            }
+            
+            @TestMetadata("Enum.java")
+            public void testEnum() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/Enum.java");
+            }
+            
+            @TestMetadata("InnerClass.java")
+            public void testInnerClass() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/InnerClass.java");
+            }
+            
+            @TestMetadata("Simple.java")
+            public void testSimple() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/Simple.java");
+            }
+            
             @TestMetadata("StaticFinal.java")
             public void testStaticFinal() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/StaticFinal.java");

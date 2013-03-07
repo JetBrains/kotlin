@@ -4,3 +4,7 @@ public open class Simple : java.lang.Object {
     public constructor Simple()
     public open fun foo() : Unit
 }
+
+package Simple {
+    public open fun bar() : Unit
+}
