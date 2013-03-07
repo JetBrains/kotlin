@@ -46,6 +46,7 @@ import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -104,12 +105,20 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
-    protected void doTestJavaAgainstKotlin(String path) throws Exception {
-        File dir = new File(path);
+    protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
+        File expectedFile = new File(expectedFileName);
+        File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
+
+        FileUtil.copyDir(sourcesDir, new File(tmpdir, "test"), new FileFilter() {
+            @Override
+            public boolean accept(@NotNull File pathname) {
+                return pathname.getName().endsWith(".java");
+            }
+        });
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, new File(dir, "java"));
-        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(new File(dir, "kotlin").getAbsolutePath()));
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, tmpdir);
+        configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourcesDir.getAbsolutePath()));
         JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
         ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<test module>"));
@@ -135,7 +144,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
         assert namespaceDescriptor != null : "Test namespace not found";
 
-        checkJavaNamespace(new File(dir, "expected.txt"), namespaceDescriptor, trace.getBindingContext());
+        checkJavaNamespace(expectedFile, namespaceDescriptor, trace.getBindingContext());
     }
 
     private static void checkForLoadErrorsAndCompare(

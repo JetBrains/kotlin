@@ -34,22 +34,4 @@ public final class LoadJavaCustomTest extends AbstractLoadJavaTest {
                            javaDir + "/test/JFrame.java",
                            javaDir + "/awt/Frame.java");
     }
-
-    public static class SubclassingKotlinInJavaTest extends AbstractLoadJavaTest {
-        public void testSubclassingKotlinInJava() throws Exception {
-            doTestJavaAgainstKotlin(PATH + "/" + getTestName(true));
-        }
-
-        public void testDeepSubclassingKotlinInJava() throws Exception {
-            doTestJavaAgainstKotlin(PATH + "/" + getTestName(true));
-        }
-
-        public void testPackageInheritance() throws Exception {
-            doTestJavaAgainstKotlin(PATH + "/packageLocalVisibility/inheritance");
-        }
-
-        public void testProtectedPackageInheritance() throws Exception {
-            doTestJavaAgainstKotlin(PATH + "/protectedPackageVisibility/inheritance");
-        }
-    }
 }
