@@ -36,19 +36,25 @@ public abstract class IDECompilerMessagingTest extends PlatformTestCase {
     protected void performTest(@NotNull Function1<MessageChecker, Void> whatToExpect,
             @NotNull TranslatingCompiler compiler, @NotNull String testDataPath) {
         String pathToTestDir = testDataPath + "/" + getTestName(true);
-        VirtualFile testDir = LocalFileSystem.getInstance().findFileByPath(pathToTestDir);
-        Assert.assertNotNull(testDir);
-        VirtualFile sampleFile = LocalFileSystem.getInstance().findFileByPath(pathToTestDir + "/src/test.kt");
+
+        VirtualFile testDir = getFile(testDataPath, "");
+        VirtualFile sampleFile = getFile(testDataPath, "/src/test.kt");
         VirtualFile outDirectory = getOutDirectory(pathToTestDir, testDir);
-        String pathToSrc = pathToTestDir + "/src/";
-        VirtualFile root = LocalFileSystem.getInstance().findFileByPath(pathToSrc);
-        Assert.assertNotNull(root);
+        VirtualFile root = getFile(testDataPath, "/src");
         MockCompileContext mockCompileContext = new MockCompileContext(myModule, outDirectory, root);
         MockModuleChunk mockModuleChunk = new MockModuleChunk(myModule);
         setSourceEntryForModule(root);
         assert sampleFile != null;
         compile(compiler, sampleFile, mockCompileContext, mockModuleChunk);
         checkMessages(whatToExpect, mockCompileContext);
+    }
+
+    protected VirtualFile getFile(@NotNull String testDataPath, @NotNull String relativePath) {
+        String pathToFile = testDataPath + "/" + getTestName(true) + relativePath;
+        VirtualFile file = LocalFileSystem.getInstance().findFileByPath(pathToFile);
+        Assert.assertNotNull("Can't find path " + pathToFile, file);
+
+        return file;
     }
 
     private void checkMessages(@NotNull Function1<MessageChecker, Void> whatToExpect, @NotNull MockCompileContext mockCompileContext) {
