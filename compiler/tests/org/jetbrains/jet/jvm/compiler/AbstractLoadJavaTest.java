@@ -83,10 +83,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 return new File(s);
             }
         });
-        File tmpDir = JetTestUtils.tmpDir(expectedFile.getName());
 
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
-                = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
+                = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpdir, getTestRootDisposable(),
                                                                              ConfigurationKind.JDK_ONLY);
 
         checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
