@@ -526,6 +526,9 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                  ((JetLoopExpression)parent.getParent()).getBody() != place) {
             return true;
         }
+        else if (parent.getParent() instanceof JetArrayAccessExpression) {
+            return true;
+        }
         return false;
     }
 

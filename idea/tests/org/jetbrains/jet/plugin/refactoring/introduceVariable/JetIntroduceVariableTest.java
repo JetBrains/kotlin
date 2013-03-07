@@ -137,6 +137,10 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testArrayAccessExpr() {
+        doTest();
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
