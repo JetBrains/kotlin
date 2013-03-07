@@ -18,6 +18,7 @@ package org.jetbrains.jet.jvm.compiler;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -89,11 +90,16 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
-    protected void doTestSourceJava(@NotNull String expectedFileName, @NotNull String javaRoot) throws Exception {
-        File expectedFile = new File(expectedFileName);
+    protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
+        File originalJavaFile = new File(javaFileName);
+        File expectedFile = new File(javaFileName.replaceFirst("\\.java$", ".txt"));
+
+        File testPackageDir = new File(tmpdir, "test");
+        assertTrue(testPackageDir.mkdir());
+        FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = loadTestNamespaceAndBindingContextFromJavaRoot(
-                new File(javaRoot), getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+                tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }

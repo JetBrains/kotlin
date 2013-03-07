@@ -35,22 +35,6 @@ public final class LoadJavaCustomTest extends AbstractLoadJavaTest {
                            javaDir + "/awt/Frame.java");
     }
 
-    public void testReturnInnerSubclassOfSupersInnerNoCompile() throws Exception {
-        // Test is here because Java PSI used to have some differences when loading parallel generic hierarchies from cls and source code.
-        String dir = PATH + "/returnInnerSubclassOfSupersInner/";
-        doTestSourceJava(dir + "ReturnInnerSubclassOfSupersInner.txt", dir);
-    }
-
-    public void testReturnNotSubtype() throws Exception {
-        String dir = PATH + "/returnNotSubtype/";
-        doTestSourceJava(dir + "ReturnNotSubtype.txt", dir);
-    }
-
-    public void testErrorTypes() throws Exception {
-        String dir = PATH + "/errorTypes/";
-        doTestSourceJava(dir + "ErrorTypes.txt", dir);
-    }
-
     public static class SubclassingKotlinInJavaTest extends AbstractLoadJavaTest {
         public void testSubclassingKotlinInJava() throws Exception {
             doTestJavaAgainstKotlin(PATH + "/" + getTestName(true));
