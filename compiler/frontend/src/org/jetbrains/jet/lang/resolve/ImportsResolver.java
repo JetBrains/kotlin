@@ -123,14 +123,14 @@ public class ImportsResolver {
                                                                temporaryTrace, configuration, lookupMode);
         }
 
-        Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
+        Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives = Maps.newHashMap();
 
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
                 qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter,
                                                                    trace, configuration, lookupMode);
-            if (descriptors.size() == 1) {
-                resolvedDirectives.put(importDirective, descriptors.iterator().next());
+            if (!descriptors.isEmpty()) {
+                resolvedDirectives.put(importDirective, descriptors);
             }
 
             JetExpression importedReference = importDirective.getImportedReference();
@@ -167,7 +167,7 @@ public class ImportsResolver {
     private static void reportUselessImport(
         @NotNull JetImportDirective importDirective,
         @NotNull WritableScope namespaceScope,
-        @NotNull Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives,
+        @NotNull Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives,
         @NotNull BindingTrace trace
     ) {
 
@@ -180,20 +180,26 @@ public class ImportsResolver {
             return;
         }
 
-        DeclarationDescriptor wasResolved = resolvedDirectives.get(importDirective);
-        DeclarationDescriptor isResolved = null;
-        if (wasResolved instanceof ClassDescriptor) {
-            isResolved = namespaceScope.getClassifier(aliasName);
+        boolean uselessHiddenImport = true;
+        for (DeclarationDescriptor wasResolved : resolvedDirectives.get(importDirective)) {
+            DeclarationDescriptor isResolved = null;
+            if (wasResolved instanceof ClassDescriptor) {
+                isResolved = namespaceScope.getClassifier(aliasName);
+            }
+            else if (wasResolved instanceof VariableDescriptor) {
+                isResolved = namespaceScope.getLocalVariable(aliasName);
+            }
+            else if (wasResolved instanceof NamespaceDescriptor) {
+                isResolved = namespaceScope.getNamespace(aliasName);
+            }
+            if (isResolved == null || isResolved == wasResolved) {
+                uselessHiddenImport = false;
+            }
         }
-        else if (wasResolved instanceof VariableDescriptor) {
-            isResolved = namespaceScope.getLocalVariable(aliasName);
-        }
-        else if (wasResolved instanceof NamespaceDescriptor) {
-            isResolved = namespaceScope.getNamespace(aliasName);
-        }
-        if (isResolved != null && isResolved != wasResolved) {
+        if (uselessHiddenImport) {
             trace.report(USELESS_HIDDEN_IMPORT.on(importedReference));
         }
+
         if (!importDirective.isAllUnder() &&
             importedReference instanceof JetSimpleNameExpression &&
             importDirective.getAliasName() == null) {
