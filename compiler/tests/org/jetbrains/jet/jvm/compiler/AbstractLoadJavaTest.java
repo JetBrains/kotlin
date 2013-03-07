@@ -64,8 +64,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
         NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
-                Arrays.asList(javaFile),
-                tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
@@ -84,9 +83,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             }
         });
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
-                = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpdir, getTestRootDisposable(),
-                                                                             ConfigurationKind.JDK_ONLY);
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+                files, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
@@ -94,8 +92,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     protected void doTestSourceJava(@NotNull String expectedFileName, @NotNull String javaRoot) throws Exception {
         File expectedFile = new File(expectedFileName);
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
-                = loadTestNamespaceAndBindingContextFromJavaRoot(new File(javaRoot), getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = loadTestNamespaceAndBindingContextFromJavaRoot(
+                new File(javaRoot), getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
