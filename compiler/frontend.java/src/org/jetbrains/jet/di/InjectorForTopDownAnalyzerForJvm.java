@@ -41,9 +41,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private ControlFlowAnalyzer controlFlowAnalyzer;
     private DeclarationsChecker declarationsChecker;
     private DescriptorResolver descriptorResolver;
-    private final Project project;
-    private final TopDownAnalysisParameters topDownAnalysisParameters;
-    private final BindingTrace bindingTrace;
+    private Project project;
+    private TopDownAnalysisParameters topDownAnalysisParameters;
+    private BindingTrace bindingTrace;
     private JavaBridgeConfiguration moduleConfiguration;
     private JavaDescriptorResolver javaDescriptorResolver;
     private DeclarationResolver declarationResolver;
@@ -62,7 +62,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private OverrideResolver overrideResolver;
     private TypeHierarchyResolver typeHierarchyResolver;
     private ScriptBodyResolver scriptBodyResolver;
-    private JavaSemanticServices javaSemanticServices;
+    private JavaClassResolutionFacade javaClassResolutionFacade;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaClassResolver javaClassResolver;
     private JavaAnnotationResolver javaAnnotationResolver;
@@ -83,197 +83,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
-        this.topDownAnalyzer = new TopDownAnalyzer();
-        this.topDownAnalysisContext = new TopDownAnalysisContext();
-        this.bodyResolver = new BodyResolver();
-        this.controlFlowAnalyzer = new ControlFlowAnalyzer();
-        this.declarationsChecker = new DeclarationsChecker();
-        this.descriptorResolver = new DescriptorResolver();
-        this.project = project;
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
-        this.bindingTrace = bindingTrace;
-        this.moduleConfiguration = new JavaBridgeConfiguration();
-        this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.declarationResolver = new DeclarationResolver();
-        this.annotationResolver = new AnnotationResolver();
-        this.callResolver = new CallResolver();
-        this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices();
-        this.callExpressionResolver = new CallExpressionResolver();
-        this.typeResolver = new TypeResolver();
-        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.candidateResolver = new CandidateResolver();
-        this.importsResolver = new ImportsResolver();
-        this.jetImportsFactory = new JetImportsFactory();
-        this.scriptHeaderResolver = new ScriptHeaderResolver();
-        this.overloadResolver = new OverloadResolver();
-        this.overrideResolver = new OverrideResolver();
-        this.typeHierarchyResolver = new TypeHierarchyResolver();
-        this.scriptBodyResolver = new ScriptBodyResolver();
-        this.javaSemanticServices = new JavaSemanticServicesImpl();
-        this.javaTypeTransformer = new JavaTypeTransformer();
-        this.javaClassResolver = new JavaClassResolver();
-        this.javaAnnotationResolver = new JavaAnnotationResolver();
-        this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
-        this.javaClassObjectResolver = new JavaClassObjectResolver();
-        this.javaSupertypeResolver = new JavaSupertypeResolver();
-        this.javaNamespaceResolver = new JavaNamespaceResolver();
-        this.javaSignatureResolver = new JavaSignatureResolver();
-        this.javaConstructorResolver = new JavaConstructorResolver();
-        this.javaValueParameterResolver = new JavaValueParameterResolver();
-        this.javaFunctionResolver = new JavaFunctionResolver();
-        this.javaInnerClassResolver = new JavaInnerClassResolver();
-        this.javaPropertyResolver = new JavaPropertyResolver();
-
-        this.topDownAnalyzer.setBodyResolver(bodyResolver);
-        this.topDownAnalyzer.setContext(topDownAnalysisContext);
-        this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        this.topDownAnalyzer.setOverloadResolver(overloadResolver);
-        this.topDownAnalyzer.setOverrideResolver(overrideResolver);
-        this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-
-        this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
-
-        this.bodyResolver.setCallResolver(callResolver);
-        this.bodyResolver.setContext(topDownAnalysisContext);
-        this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
-        this.bodyResolver.setDeclarationsChecker(declarationsChecker);
-        this.bodyResolver.setDescriptorResolver(descriptorResolver);
-        this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
-        this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
-        this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.bodyResolver.setTrace(bindingTrace);
-
-        this.controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.controlFlowAnalyzer.setTrace(bindingTrace);
-
-        this.declarationsChecker.setTrace(bindingTrace);
-
-        this.descriptorResolver.setAnnotationResolver(annotationResolver);
-        this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
-        this.descriptorResolver.setTypeResolver(typeResolver);
-
-        this.moduleConfiguration.setJavaSemanticServices(javaSemanticServices);
-
-        javaDescriptorResolver.setClassResolver(javaClassResolver);
-        javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
-        javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
-        javaDescriptorResolver.setInnerClassResolver(javaInnerClassResolver);
-        javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
-        javaDescriptorResolver.setPropertiesResolver(javaPropertyResolver);
-
-        declarationResolver.setAnnotationResolver(annotationResolver);
-        declarationResolver.setContext(topDownAnalysisContext);
-        declarationResolver.setDescriptorResolver(descriptorResolver);
-        declarationResolver.setImportsResolver(importsResolver);
-        declarationResolver.setScriptHeaderResolver(scriptHeaderResolver);
-        declarationResolver.setTrace(bindingTrace);
-
-        annotationResolver.setCallResolver(callResolver);
-        annotationResolver.setExpressionTypingServices(expressionTypingServices);
-
-        callResolver.setArgumentTypeResolver(argumentTypeResolver);
-        callResolver.setCandidateResolver(candidateResolver);
-        callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setTypeResolver(typeResolver);
-
-        argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
-        argumentTypeResolver.setTypeResolver(typeResolver);
-
-        expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
-        expressionTypingServices.setCallResolver(callResolver);
-        expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        expressionTypingServices.setProject(project);
-        expressionTypingServices.setTypeResolver(typeResolver);
-
-        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
-
-        typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setDescriptorResolver(descriptorResolver);
-        typeResolver.setModuleConfiguration(moduleConfiguration);
-        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
-
-        candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
-
-        importsResolver.setConfiguration(moduleConfiguration);
-        importsResolver.setContext(topDownAnalysisContext);
-        importsResolver.setImportsFactory(jetImportsFactory);
-        importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
-        importsResolver.setTrace(bindingTrace);
-
-        jetImportsFactory.setProject(project);
-
-        scriptHeaderResolver.setContext(topDownAnalysisContext);
-        scriptHeaderResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        scriptHeaderResolver.setTrace(bindingTrace);
-
-        overloadResolver.setContext(topDownAnalysisContext);
-        overloadResolver.setTrace(bindingTrace);
-
-        overrideResolver.setContext(topDownAnalysisContext);
-        overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        overrideResolver.setTrace(bindingTrace);
-
-        typeHierarchyResolver.setContext(topDownAnalysisContext);
-        typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
-        typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
-        typeHierarchyResolver.setTrace(bindingTrace);
-
-        scriptBodyResolver.setContext(topDownAnalysisContext);
-        scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
-        scriptBodyResolver.setTrace(bindingTrace);
-
-        javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
-        javaTypeTransformer.setResolver(javaDescriptorResolver);
-
-        javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
-        javaClassResolver.setSemanticServices(javaSemanticServices);
-        javaClassResolver.setSignatureResolver(javaSignatureResolver);
-        javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassResolver.setTrace(bindingTrace);
-
-        javaAnnotationResolver.setClassResolver(javaClassResolver);
-        javaAnnotationResolver.setCompileTimeConstResolver(javaCompileTimeConstResolver);
-
-        javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
-
-        javaClassObjectResolver.setSemanticServices(javaSemanticServices);
-        javaClassObjectResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassObjectResolver.setTrace(bindingTrace);
-
-        javaSupertypeResolver.setClassResolver(javaClassResolver);
-        javaSupertypeResolver.setSemanticServices(javaSemanticServices);
-        javaSupertypeResolver.setTrace(bindingTrace);
-        javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaNamespaceResolver.setJavaSemanticServices(javaSemanticServices);
-        javaNamespaceResolver.setTrace(bindingTrace);
-
-        javaSignatureResolver.setJavaSemanticServices(javaSemanticServices);
-
-        javaConstructorResolver.setTrace(bindingTrace);
-        javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
-        javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
-
-        javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaFunctionResolver.setParameterResolver(javaValueParameterResolver);
-        javaFunctionResolver.setSignatureResolver(javaSignatureResolver);
-        javaFunctionResolver.setTrace(bindingTrace);
-        javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaInnerClassResolver.setClassResolver(javaClassResolver);
-
-        javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaPropertyResolver.setJavaSignatureResolver(javaSignatureResolver);
-        javaPropertyResolver.setTrace(bindingTrace);
-
-        moduleConfiguration.init();
     }
     
     @PreDestroy
