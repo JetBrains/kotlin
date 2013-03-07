@@ -45,7 +45,7 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
             @Nullable
             @Override
             public CustomLibraryDescription createLibraryDescription() {
-                return new JSLibraryDescription();
+                return new JSLibraryStdDescription();
             }
 
             @Nullable

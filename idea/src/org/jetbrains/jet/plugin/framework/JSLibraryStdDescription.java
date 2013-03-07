@@ -35,9 +35,11 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-public class JSLibraryDescription extends CustomLibraryDescription {
+public class JSLibraryStdDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
     public static final String LIBRARY_NAME = "KotlinJavaScript";
 

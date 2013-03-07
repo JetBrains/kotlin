@@ -28,13 +28,13 @@ import org.jetbrains.jet.utils.PathUtil;
 import javax.swing.*;
 import java.util.List;
 
-public class JSHeadersPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
-    public static JSHeadersPresentationProvider getInstance() {
-        return LibraryPresentationProvider.EP_NAME.findExtension(JSHeadersPresentationProvider.class);
+public class JSLibraryStdPresentationProvider extends CachingLibraryPresentationProvider<LibraryVersionProperties> {
+    public static JSLibraryStdPresentationProvider getInstance() {
+        return LibraryPresentationProvider.EP_NAME.findExtension(JSLibraryStdPresentationProvider.class);
     }
 
-    protected JSHeadersPresentationProvider() {
-        super(JSLibraryDescription.KOTLIN_JAVASCRIPT_KIND);
+    protected JSLibraryStdPresentationProvider() {
+        super(JSLibraryStdDescription.KOTLIN_JAVASCRIPT_KIND);
     }
 
     @Nullable
@@ -53,6 +53,7 @@ public class JSHeadersPresentationProvider extends LibraryPresentationProvider<L
 
         for (VirtualFile root : classesRoots) {
             if (root.getName().equals(PathUtil.JS_LIB_JAR_NAME)) {
+                assert JsHeaderLibraryPresentationProvider.getInstance().detect(classesRoots) != null : "StdLib should also be detected as headers library";
                 return new LibraryVersionProperties(KotlinRuntimeLibraryUtil.getLibraryVersion(root));
             }
         }

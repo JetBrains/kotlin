@@ -222,7 +222,8 @@
     <framework.type implementation="org.jetbrains.jet.plugin.framework.JavaFrameworkType"/>
     <framework.type implementation="org.jetbrains.jet.plugin.framework.JSFrameworkType"/>
     <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider"/>
-    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JSHeadersPresentationProvider"/>
+    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider"/>
+    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JsHeaderLibraryPresentationProvider"/>
 
     <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>

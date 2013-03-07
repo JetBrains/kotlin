@@ -28,7 +28,7 @@ import org.jetbrains.jet.utils.PathUtil;
 import javax.swing.*;
 import java.util.List;
 
-public class JavaRuntimePresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
+public class JavaRuntimePresentationProvider extends CachingLibraryPresentationProvider<LibraryVersionProperties> {
     public static JavaRuntimePresentationProvider getInstance() {
         return LibraryPresentationProvider.EP_NAME.findExtension(JavaRuntimePresentationProvider.class);
     }

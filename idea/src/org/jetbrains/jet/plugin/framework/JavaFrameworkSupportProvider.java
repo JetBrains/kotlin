@@ -66,7 +66,7 @@ public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvid
                     @NotNull ModifiableModelsProvider modifiableModelsProvider) {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
-                        new JSLibraryDescription(),
+                        new JSLibraryStdDescription(),
                         JSFrameworkType.getInstance());
             }
         };

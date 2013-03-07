@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.framework;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -26,25 +27,25 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
-import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class KotlinFrameworkDetector {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
@@ -83,8 +84,7 @@ public class KotlinFrameworkDetector {
             result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
                 @Override
                 public Result<Boolean> compute() {
-                    return Result.create(getStandardJavaScriptLibrary(module) != null,
-                                         ProjectRootModificationTracker.getInstance(module.getProject()));
+                    return Result.create(getJSStandardLibrary(module) != null, ProjectRootModificationTracker.getInstance(module.getProject()));
                 }
             }, false);
 
@@ -92,47 +92,6 @@ public class KotlinFrameworkDetector {
         }
 
         return result.getValue();
-    }
-
-    @NotNull
-    private static Collection<Library> getJavaScriptHeadersLibraries(final Module module) {
-        final Collection<Library> headersLibraries = Lists.newArrayList();
-
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
-                    @Override
-                    public boolean process(Library library) {
-                        if (JSHeadersPresentationProvider.getInstance().detect(
-                                Arrays.asList(library.getFiles(OrderRootType.CLASSES))) != null) {
-                            headersLibraries.add(library);
-                        }
-
-                        return true;
-                    }
-                });
-            }
-        });
-
-        return headersLibraries;
-    }
-
-    @Nullable
-    private static Library getStandardJavaScriptLibrary(final Module module) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<Library>() {
-            @Override
-            public Library compute() {
-                for (Library library : getJavaScriptHeadersLibraries(module)) {
-                    for (VirtualFile file : library.getFiles(OrderRootType.SOURCES)) {
-                        if (file.getName().equals(PathUtil.JS_LIB_JAR_NAME)) {
-                            return library;
-                        }
-                    }
-                }
-                return null;
-            }
-        });
     }
 
     @NotNull
@@ -147,20 +106,52 @@ public class KotlinFrameworkDetector {
         return Pair.empty();
     }
 
-    public static Pair<List<String>, String> getLibLocationAndTargetForProject(Module module) {
-        Library library = getStandardJavaScriptLibrary(module);
+    public static Pair<List<String>, String> getLibLocationAndTargetForProject(final Module module) {
+        final Set<String> pathsToJSLib = Sets.newHashSet();
 
-        if (library != null) {
-            List<String> pathsToJSLib = Lists.newArrayList();
-            VirtualFile[] files = library.getRootProvider().getFiles(OrderRootType.SOURCES);
-            for (VirtualFile file : files) {
-                pathsToJSLib.add(com.intellij.util.PathUtil.getLocalPath(file));
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
+                    @Override
+                    public boolean process(Library library) {
+                        if (JsHeaderLibraryPresentationProvider.getInstance().isDetected(library)) {
+                            for (VirtualFile file : library.getRootProvider().getFiles(OrderRootType.SOURCES)) {
+                                pathsToJSLib.add(PathUtil.getLocalPath(file));
+                            }
+                        }
+
+                        return true;
+                    }
+                });
             }
+        });
 
-            return Pair.create(pathsToJSLib, EcmaVersion.defaultVersion().toString());
-        }
-        else {
-            throw new IllegalStateException("Should be called for JS module only. JS library is expected to be found");
-        }
+        return Pair.<List<String>, String>create(Lists.newArrayList(pathsToJSLib), EcmaVersion.defaultVersion().toString());
+    }
+
+
+    @Nullable
+    private static Library getJSStandardLibrary(final Module module) {
+        final Ref<Library> jsLibrary = Ref.create();
+
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
+                    @Override
+                    public boolean process(Library library) {
+                        if (JSLibraryStdPresentationProvider.getInstance().detect(Arrays.asList(library.getFiles(OrderRootType.CLASSES))) != null) {
+                            jsLibrary.set(library);
+                            return false;
+                        }
+
+                        return true;
+                    }
+                });
+            }
+        });
+
+        return jsLibrary.get();
     }
 }
