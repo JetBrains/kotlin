@@ -116,7 +116,7 @@ public final class JavaAnnotationResolver {
             if (name == null) name = "value";
             Name identifier = Name.identifier(name);
 
-            assert value != null;
+            if (value == null) return null;
             CompileTimeConstant compileTimeConst =
                     compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, postponedTasks);
             if (compileTimeConst != null) {
