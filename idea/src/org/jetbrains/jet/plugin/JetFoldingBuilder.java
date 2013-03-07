@@ -26,6 +26,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
@@ -36,7 +38,22 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     @NotNull
     @Override
     public FoldingDescriptor[] buildFoldRegions(@NotNull PsiElement root, @NotNull Document document, boolean quick) {
+        if (!(root instanceof JetFile)) {
+            return FoldingDescriptor.EMPTY;
+        }
         List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
+        JetFile file = (JetFile) root;
+
+        List<JetImportDirective> importList = file.getImportDirectives();
+        if (importList != null && !importList.isEmpty()) {
+            JetImportDirective firstImport = importList.get(0);
+            PsiElement importKeyword = firstImport.getFirstChild();
+            int startOffset = importKeyword.getTextRange().getEndOffset() + 1;
+            int endOffset = importList.get(importList.size() - 1).getTextRange().getEndOffset();
+            TextRange range = new TextRange(startOffset, endOffset);
+            descriptors.add(new FoldingDescriptor(firstImport, range));
+        }
+
         appendDescriptors(root.getNode(), document, descriptors);
         return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
     }
@@ -77,6 +94,9 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
                 && next.getElementType() == JetTokens.IDE_TEMPLATE_END) {
             return astNode.getText();
         }
+        if (astNode.getPsi() instanceof JetImportDirective) {
+            return "...";
+        }
         return "{...}";
     }
 
@@ -87,6 +107,9 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
 
     @Override
     public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
+        if (astNode.getPsi() instanceof JetImportDirective) {
+            return true;
+        }
         return false;
     }
 }

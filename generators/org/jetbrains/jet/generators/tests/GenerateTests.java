@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
+import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
@@ -229,6 +230,13 @@ public class GenerateTests {
                 "DeprecatedHighlightingTestGenerated",
                 AbstractDeprecatedHighlightingTest.class,
                 testModel("idea/testData/highlighter/deprecated")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "KotlinFoldingTestGenerated",
+                AbstractKotlinFoldingTest.class,
+                testModel("idea/testData/folding")
         );
 
         generateTest(
