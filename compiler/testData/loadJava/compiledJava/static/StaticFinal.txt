@@ -1,0 +1,9 @@
+package test
+
+public open class StaticFinal : java.lang.Object {
+    public constructor StaticFinal()
+}
+
+package StaticFinal {
+    public val foo : jet.String
+}

@@ -971,20 +971,20 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledJava")
-    @InnerTestClasses({CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.SignaturePropagation.class, CompiledJava.StaticFinal.class})
+    @InnerTestClasses({CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.SignaturePropagation.class, CompiledJava.Static.class})
     public static class CompiledJava extends AbstractLoadJavaTest {
         public void testAllFilesPresentInCompiledJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
-        @TestMetadata("inner.java")
-        public void testInner() throws Exception {
-            doTestCompiledJava("compiler/testData/loadJava/compiledJava/inner.java");
+        @TestMetadata("JavaEnum.java")
+        public void testJavaEnum() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/JavaEnum.java");
         }
         
-        @TestMetadata("MyEnum.java")
-        public void testMyEnum() throws Exception {
-            doTestCompiledJava("compiler/testData/loadJava/compiledJava/MyEnum.java");
+        @TestMetadata("SubclassFromNested.java")
+        public void testSubclassFromNested() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/SubclassFromNested.java");
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledJava/protectedPackage")
@@ -1066,15 +1066,15 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             
         }
         
-        @TestMetadata("compiler/testData/loadJava/compiledJava/staticFinal")
-        public static class StaticFinal extends AbstractLoadJavaTest {
-            public void testAllFilesPresentInStaticFinal() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/staticFinal"), Pattern.compile("^(.+)\\.java$"), true);
+        @TestMetadata("compiler/testData/loadJava/compiledJava/static")
+        public static class Static extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInStatic() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), true);
             }
             
-            @TestMetadata("test.java")
-            public void testTest() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/staticFinal/test.java");
+            @TestMetadata("StaticFinal.java")
+            public void testStaticFinal() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/StaticFinal.java");
             }
             
         }
@@ -1085,7 +1085,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             suite.addTestSuite(ProtectedPackage.class);
             suite.addTestSuite(ProtectedStatic.class);
             suite.addTestSuite(SignaturePropagation.class);
-            suite.addTestSuite(StaticFinal.class);
+            suite.addTestSuite(Static.class);
             return suite;
         }
     }

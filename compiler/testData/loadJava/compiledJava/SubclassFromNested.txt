@@ -1,0 +1,5 @@
+package test
+
+public open class SubclassFromNested : test.B.C {
+    public constructor SubclassFromNested()
+}

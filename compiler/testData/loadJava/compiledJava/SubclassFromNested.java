@@ -1,6 +1,6 @@
 package test;
 
-public class inner implements B.C {
+public class SubclassFromNested implements B.C {
 }
 
 class B {

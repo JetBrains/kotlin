@@ -1,0 +1,15 @@
+package test
+
+public final enum class JavaEnum : jet.Enum<test.JavaEnum> {
+    private constructor JavaEnum()
+    public final override /*1*/ /*fake_override*/ fun name() : jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    
+    public class object <class-object-for-JavaEnum> {
+        private constructor <class-object-for-JavaEnum>()
+        public final val ANOTHER : test.JavaEnum
+        public final val ENTRY : test.JavaEnum
+        public final fun valueOf(/*0*/ value : jet.String) : test.JavaEnum
+        public final fun values() : jet.Array<test.JavaEnum>
+    }
+}
