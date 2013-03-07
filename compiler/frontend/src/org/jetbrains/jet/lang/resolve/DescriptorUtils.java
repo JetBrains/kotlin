@@ -32,9 +32,13 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -369,10 +373,18 @@ public class DescriptorUtils {
         return Visibilities.PUBLIC;
     }
 
-    public static List<String> getSortedValueArguments(AnnotationDescriptor descriptor) {
+    @NotNull
+    public static List<String> getSortedValueArguments(
+            @NotNull AnnotationDescriptor descriptor,
+            @Nullable DescriptorRenderer rendererForTypesIfNecessary
+    ) {
         List<String> resultList = Lists.newArrayList();
         for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
-            resultList.add(entry.getKey().getName().getName() + " = " + entry.getValue().toString());
+            CompileTimeConstant<?> value = entry.getValue();
+            String typeSuffix = rendererForTypesIfNecessary == null
+                                ? ""
+                                : ": " + rendererForTypesIfNecessary.renderType(value.getType(KotlinBuiltIns.getInstance()));
+            resultList.add(entry.getKey().getName().getName() + " = " + value.toString() + typeSuffix);
         }
         Collections.sort(resultList);
         return resultList;

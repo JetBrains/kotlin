@@ -56,6 +56,6 @@ public class AnnotationDescriptor {
 
     @Override
     public String toString() {
-        return annotationType.toString() + DescriptorUtils.getSortedValueArguments(this);
+        return annotationType.toString() + DescriptorUtils.getSortedValueArguments(this, null);
     }
 }

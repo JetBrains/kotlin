@@ -5,22 +5,22 @@ public abstract class ClassDoesNotOverrideMethod : java.util.Date {
     public open override /*1*/ /*fake_override*/ fun after(/*0*/ p0 : java.util.Date) : jet.Boolean
     public open override /*1*/ /*fake_override*/ fun before(/*0*/ p0 : java.util.Date) : jet.Boolean
     public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ p0 : java.util.Date) : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getDate() : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getDay() : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getHours() : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getMinutes() : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getMonth() : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getSeconds() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getDate() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getDay() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getHours() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getMinutes() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getMonth() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getSeconds() : jet.Int
     public open override /*1*/ /*fake_override*/ fun getTime() : jet.Long
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getTimezoneOffset() : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getYear() : jet.Int
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setDate(/*0*/ p0 : jet.Int) : Unit
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setHours(/*0*/ p0 : jet.Int) : Unit
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setMinutes(/*0*/ p0 : jet.Int) : Unit
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setMonth(/*0*/ p0 : jet.Int) : Unit
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setSeconds(/*0*/ p0 : jet.Int) : Unit
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getTimezoneOffset() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun getYear() : jet.Int
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun setDate(/*0*/ p0 : jet.Int) : Unit
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun setHours(/*0*/ p0 : jet.Int) : Unit
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun setMinutes(/*0*/ p0 : jet.Int) : Unit
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun setMonth(/*0*/ p0 : jet.Int) : Unit
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun setSeconds(/*0*/ p0 : jet.Int) : Unit
     public open override /*1*/ /*fake_override*/ fun setTime(/*0*/ p0 : jet.Long) : Unit
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setYear(/*0*/ p0 : jet.Int) : Unit
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun toGMTString() : jet.String
-    jet.deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun toLocaleString() : jet.String
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun setYear(/*0*/ p0 : jet.Int) : Unit
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun toGMTString() : jet.String
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun toLocaleString() : jet.String
 }

@@ -2,5 +2,5 @@ package test
 
 public open class AnnotatedMethod : java.lang.Object {
     public constructor AnnotatedMethod()
-    jet.deprecated(value = "Deprecated in Java") public open fun f() : Unit
+    jet.deprecated(value = "Deprecated in Java": jet.String) public open fun f() : Unit
 }
