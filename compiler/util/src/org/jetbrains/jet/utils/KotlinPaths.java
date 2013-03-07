@@ -25,9 +25,6 @@ public interface KotlinPaths {
     File getHomePath();
 
     @NotNull
-    File getBuildVersionFile();
-
-    @NotNull
     File getLibPath();
 
     @NotNull
