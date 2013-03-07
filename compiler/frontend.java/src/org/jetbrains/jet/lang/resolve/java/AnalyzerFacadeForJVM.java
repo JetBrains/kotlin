@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -86,8 +87,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
-
-        final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
 
         // TODO: Replace with stub declaration provider
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
@@ -199,7 +198,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve
     ) {
-        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
+        final ModuleDescriptor owner = new MutableModuleDescriptor(Name.special("<module>"), JavaToKotlinClassMap.getInstance());
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);
