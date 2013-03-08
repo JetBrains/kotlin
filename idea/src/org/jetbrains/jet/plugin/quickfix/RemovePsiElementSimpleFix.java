@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetProperty;
 //import org.jetbrains.jet.lang.psi.JetTypeArgumentList;
+import org.jetbrains.jet.lang.psi.JetTypeArgumentList;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -97,6 +98,18 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
                     return new RemovePsiElementSimpleFix(element, JetBundle.message("remove.spread.sign"), false);
                 }
                 else return null;
+            }
+        };
+    }
+
+    public static JetIntentionActionFactory createRemoveTypeArgumentsFactory() {
+        return new JetIntentionActionFactory() {
+            @Override
+            public JetIntentionAction<PsiElement> createAction(Diagnostic diagnostic) {
+                JetTypeArgumentList element = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeArgumentList.class);
+                if (element == null) return null;
+                return new RemovePsiElementSimpleFix(element,
+                                                     JetBundle.message("remove.type.arguments"), false);
             }
         };
     }

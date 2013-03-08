@@ -196,7 +196,7 @@ public class QuickFixes {
         factories.put(OVERRIDING_FINAL_MEMBER, MakeOverriddenMemberOpenFix.createFactory());
 
 
-        factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemoveTypeArgumentsFix.createFactory());
+        factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory());
 
         factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
 
