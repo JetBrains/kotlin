@@ -76,6 +76,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .around(RANGE).spaceIf(jetSettings.SPACE_AROUND_RANGE)
 
                 .beforeInside(BLOCK, FUN).spaceIf(jetCommonSettings.SPACE_BEFORE_METHOD_LBRACE)
+                .beforeInside(CLASS_BODY, CLASS).spaceIf(jetCommonSettings.SPACE_BEFORE_CLASS_LBRACE)
 
                 .afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0)
                 .beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0)
@@ -103,6 +104,10 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON)
                 .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
 
+                .after(ANNOTATION_ENTRY).spaces(1)
+                .after(MODIFIER_LIST).spaces(1)
+                .afterInside(MODIFIER_KEYWORDS, MODIFIER_LIST).spaces(1)
+                .between(CLASS_KEYWORD, IDENTIFIER).spaces(1)
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
                 .aroundInside(ARROW, WHEN_ENTRY).spaces(1)
                 ;
