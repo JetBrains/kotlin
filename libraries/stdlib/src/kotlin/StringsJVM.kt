@@ -492,6 +492,58 @@ public inline fun String.takeWhile(predicate: (Char) -> Boolean): String = takeW
  */
 public inline fun String.take(n: Int): String = takeWhile(countTo(n))
 
+/**
+  * Returns the string with the leading whitespaces of this string removed.
+  *
+  * @includeFunctionBody ../../test/StringJVMTest.kt trimLeading
+  */
+public inline fun String.trimLeading(): String {
+    var answer = this
+    var spaces = 0
+
+    for (c in answer) {
+        if(c.isWhitespace()) {
+            spaces++
+        } else {
+            break
+        }
+    }
+
+    if(spaces != 0) {
+        answer = answer.substring(spaces)
+    }
+
+    return answer
+}
+
+/**
+  * Returns the string with the trailing whitespaces of this string removed.
+  *
+  * @includeFunctionBody ../../test/StringJVMTest.kt trimTrailing
+  */
+public inline fun String.trimTrailing(): String {
+    var answer = this
+    var spaces = 0
+
+    // iterate from the end
+    var index = length() - 1
+    while(index >= 0) {
+        val c = answer.charAt(index)
+        if(c.isWhitespace()) {
+            spaces++
+        } else {
+            break
+        }
+        index--
+    }
+
+    if(spaces != 0) {
+        answer = answer.substring(0, length() - spaces)
+    }
+
+    return answer
+}
+
 /** Copies all characters into the given collection */
 public inline fun <C: MutableCollection<in Char>> String.toCollection(result: C): C {
     for (c in this) result.add(c)
