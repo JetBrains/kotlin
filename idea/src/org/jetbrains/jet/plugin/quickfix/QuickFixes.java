@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 
 import java.util.Collection;
@@ -84,7 +83,7 @@ public class QuickFixes {
         factories.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
         factories.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addFunctionBodyFactory);
 
-        factories.put(NON_VARARG_SPREAD, RemoveSpreadFix.createFactory());
+        factories.put(NON_VARARG_SPREAD, RemovePsiElementSimpleFix.createRemoveSpreadFactory());
 
         factories.put(NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
 
@@ -130,7 +129,7 @@ public class QuickFixes {
         JetIntentionActionFactory unresolvedReferenceFactory = ImportClassAndFunFix.createFactory();
         factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
 
-        JetIntentionActionFactory removeImportFixFactory = RemoveImportFix.createFactory();
+        JetIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();
         factories.put(USELESS_SIMPLE_IMPORT, removeImportFixFactory);
         factories.put(USELESS_HIDDEN_IMPORT, removeImportFixFactory);
 
@@ -163,7 +162,7 @@ public class QuickFixes {
         actions.put(VAL_OR_VAR_ON_LOOP_PARAMETER, removeValVarFromParametersFix);
         actions.put(VAL_OR_VAR_ON_CATCH_PARAMETER, removeValVarFromParametersFix);
 
-        factories.put(UNUSED_VARIABLE, RemoveVariableFix.createRemoveVariableFactory());
+        factories.put(UNUSED_VARIABLE, RemovePsiElementSimpleFix.createRemoveVariableFactory());
 
         actions.put(UNNECESSARY_SAFE_CALL, ReplaceCallFix.toDotCallFromSafeCall());
         actions.put(UNSAFE_CALL, ReplaceCallFix.toSafeCall());
@@ -195,6 +194,9 @@ public class QuickFixes {
         factories.put(FINAL_UPPER_BOUND, addOpenModifierToClassDeclarationFix);
 
         factories.put(OVERRIDING_FINAL_MEMBER, MakeOverriddenMemberOpenFix.createFactory());
+
+
+        factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory());
 
         factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
 
