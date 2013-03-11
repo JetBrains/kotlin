@@ -50,6 +50,7 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -101,6 +102,7 @@ public class JetCoreEnvironment {
         CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
         project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        project.registerService(KotlinModuleManager.class, new CliModuleManager());
 
         Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)

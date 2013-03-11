@@ -89,6 +89,9 @@
       <projectService serviceInterface="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"
                       serviceImplementation="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"/>
 
+      <projectService serviceInterface="org.jetbrains.jet.lang.resolve.KotlinModuleManager"
+                      serviceImplementation="org.jetbrains.jet.plugin.project.IdeModuleManager"/>
+
       <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
       <internalFileTemplate name="Kotlin File"/>

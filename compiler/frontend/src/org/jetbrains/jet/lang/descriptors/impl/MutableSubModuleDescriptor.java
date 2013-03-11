@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -36,7 +37,7 @@ public class MutableSubModuleDescriptor extends AbstractSubModuleDescriptor {
     private final Set<SubModuleDescriptor> dependencies = Sets.newLinkedHashSet();
     private final List<ImportPath> defaultImports = Lists.newArrayList();
 
-    public MutableSubModuleDescriptor(@NotNull MutableModuleDescriptor module, @NotNull Name name) {
+    public MutableSubModuleDescriptor(@NotNull ModuleDescriptor module, @NotNull Name name) {
         super(module, name);
         this.packageFragmentProvider = new MutablePackageFragmentProvider(this);
     }
