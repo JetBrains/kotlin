@@ -971,7 +971,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledJava")
-    @InnerTestClasses({CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.SignaturePropagation.class, CompiledJava.Static.class})
+    @InnerTestClasses({CompiledJava.Annotations.class, CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.SignaturePropagation.class, CompiledJava.Static.class})
     public static class CompiledJava extends AbstractLoadJavaTest {
         public void testAllFilesPresentInCompiledJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
@@ -985,6 +985,59 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         @TestMetadata("SubclassFromNested.java")
         public void testSubclassFromNested() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/SubclassFromNested.java");
+        }
+        
+        @TestMetadata("compiler/testData/loadJava/compiledJava/annotations")
+        public static class Annotations extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), true);
+            }
+            
+            @TestMetadata("AnnotationWithAnnotationInParam.java")
+            public void testAnnotationWithAnnotationInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithAnnotationInParam.java");
+            }
+            
+            @TestMetadata("AnnotationWithArrayOfEnumInParam.java")
+            public void testAnnotationWithArrayOfEnumInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithArrayOfEnumInParam.java");
+            }
+            
+            @TestMetadata("AnnotationWithArrayOfStringInParam.java")
+            public void testAnnotationWithArrayOfStringInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithArrayOfStringInParam.java");
+            }
+            
+            @TestMetadata("AnnotationWithEmptyArrayInParam.java")
+            public void testAnnotationWithEmptyArrayInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithEmptyArrayInParam.java");
+            }
+            
+            @TestMetadata("AnnotationWithEnumInParam.java")
+            public void testAnnotationWithEnumInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithEnumInParam.java");
+            }
+            
+            @TestMetadata("CustomAnnotation.java")
+            public void testCustomAnnotation() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotation.java");
+            }
+            
+            @TestMetadata("CustomAnnotationWithDefaultParameter.java")
+            public void testCustomAnnotationWithDefaultParameter() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotationWithDefaultParameter.java");
+            }
+            
+            @TestMetadata("RecursiveAnnotation.java")
+            public void testRecursiveAnnotation() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation.java");
+            }
+            
+            @TestMetadata("RecursiveAnnotation2.java")
+            public void testRecursiveAnnotation2() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation2.java");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledJava/protectedPackage")
@@ -1102,6 +1155,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("CompiledJava");
             suite.addTestSuite(CompiledJava.class);
+            suite.addTestSuite(Annotations.class);
             suite.addTestSuite(ProtectedPackage.class);
             suite.addTestSuite(ProtectedStatic.class);
             suite.addTestSuite(SignaturePropagation.class);

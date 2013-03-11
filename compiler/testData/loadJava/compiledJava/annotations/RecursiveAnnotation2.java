@@ -1,4 +1,4 @@
-package annotations;
+package test;
 
 @interface A {
     B value();

@@ -1,4 +1,4 @@
-package annotations;
+package test;
 
 @MyAnnotation(MyEnum.ONE)
 class MyTest {}

@@ -1,4 +1,4 @@
-package annotations;
+package test;
 
 @MyAnnotation(first = "f", second = "s")
 class MyTest {}

@@ -1,6 +1,4 @@
-package annotations;
-
-import java.lang.String;
+package test;
 
 @interface MyAnnotationWithParam {
     MyAnnotation value();
