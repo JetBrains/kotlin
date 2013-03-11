@@ -132,10 +132,12 @@ public class ImportsResolver {
             if (descriptors.size() == 1) {
                 resolvedDirectives.put(importDirective, descriptors.iterator().next());
             }
-            for (DeclarationDescriptor descriptor : descriptors) {
-                JetExpression importedReference = importDirective.getImportedReference();
-                if (lookupMode == LookupMode.ONLY_CLASSES || importedReference == null) continue;
-                reportPlatformClassMappedToKotlin(configuration, trace, importedReference, descriptor);
+
+            JetExpression importedReference = importDirective.getImportedReference();
+            if (lookupMode != LookupMode.ONLY_CLASSES && importedReference != null) {
+                for (DeclarationDescriptor descriptor : descriptors) {
+                    reportPlatformClassMappedToKotlin(configuration, trace, importedReference, descriptor);
+                }
             }
         }
         delayedImporter.processImports();
