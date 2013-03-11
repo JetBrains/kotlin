@@ -19,9 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -47,41 +45,6 @@ public class MutableSubModuleDescriptor extends AbstractSubModuleDescriptor {
     @Override
     public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
         return packageFragmentProvider.getPackageFragments(fqName);
-    }
-
-    @Nullable
-    @Override
-    public PackageViewDescriptor getPackageView(@NotNull FqName fqName) {
-        List<PackageFragmentDescriptor> fragments = getAllFragmentsForPackage(fqName);
-        if (fragments.isEmpty()) return null;
-
-        return new PackageViewDescriptorImpl(this, fqName, fragments) {
-            @Nullable
-            @Override
-            public PackageViewDescriptor getContainingDeclaration() {
-                if (getFqName().isRoot()) return null;
-                return getPackageView(getFqName().parent());
-            }
-
-            @Nullable
-            @Override
-            protected PackageViewDescriptor getSubPackage(@NotNull Name name) {
-                return getPackageView(getFqName().child(name));
-            }
-        };
-    }
-
-    @NotNull
-    private List<PackageFragmentDescriptor> getAllFragmentsForPackage(FqName fqName) {
-        List<PackageFragmentDescriptor> result = Lists.newArrayList();
-
-        result.addAll(getPackageFragments(fqName));
-
-        for (SubModuleDescriptor dependency : getDependencies()) {
-            result.addAll(dependency.getPackageFragments(fqName));
-        }
-
-        return result;
     }
 
     @NotNull

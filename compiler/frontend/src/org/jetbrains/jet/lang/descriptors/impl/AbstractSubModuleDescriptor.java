@@ -18,15 +18,15 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractSubModuleDescriptor extends DeclarationDescriptorImpl implements SubModuleDescriptor {
     private final ModuleDescriptor module;
@@ -34,6 +34,15 @@ public abstract class AbstractSubModuleDescriptor extends DeclarationDescriptorI
     public AbstractSubModuleDescriptor(@NotNull ModuleDescriptor module, @NotNull Name name) {
         super(Collections.<AnnotationDescriptor>emptyList(), name);
         this.module = module;
+    }
+
+    @Nullable
+    @Override
+    public PackageViewDescriptor getPackageView(@NotNull FqName fqName) {
+        List<PackageFragmentDescriptor> fragments = DescriptorUtils.getPackageFragmentsIncludingDependencies(this, fqName);
+        if (fragments.isEmpty()) return null;
+
+        return new PackageViewFromSubModule(this, fqName, fragments);
     }
 
     @NotNull
