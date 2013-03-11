@@ -1,6 +1,6 @@
 import java.util.LinkedList
 open class User() {
 open fun main() : Unit {
-var list : List<String?>? = LinkedList<String?>()
+var list : MutableList<String?>? = LinkedList<String?>()
 }
 }

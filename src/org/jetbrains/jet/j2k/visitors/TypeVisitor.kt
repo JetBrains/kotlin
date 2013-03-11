@@ -79,6 +79,10 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
                 if (qualifiedName.equals(CommonClassNames.JAVA_UTIL_ITERATOR)) {
                     return Identifier(CommonClassNames.JAVA_UTIL_ITERATOR)
                 }
+
+                if (qualifiedName.equals(CommonClassNames.JAVA_UTIL_LIST)) {
+                    return Identifier("MutableList")
+                }
             }
         }
 
