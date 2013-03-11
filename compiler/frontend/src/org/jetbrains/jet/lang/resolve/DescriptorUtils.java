@@ -499,7 +499,13 @@ public class DescriptorUtils {
         fragments.addAll(subModule.getPackageFragments(fqName));
 
         for (SubModuleDescriptor dependency : subModule.getDependencies()) {
-            fragments.addAll(dependency.getPackageFragments(fqName));
+            if (dependency == SubModuleDescriptor.MY_SOURCE) {
+                // The sources of this submodule
+                fragments.addAll(subModule.getPackageFragments(fqName));
+            }
+            else {
+                fragments.addAll(dependency.getPackageFragments(fqName));
+            }
         }
         return fragments;
     }
