@@ -162,39 +162,39 @@ public class ResolutionResultsHandler {
             @NotNull Set<ResolvedCallWithTrace<D>> candidates,
             boolean discriminateGenerics
     ) {
-        if (candidates.size() != 1) {
-            Set<ResolvedCallWithTrace<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
-            for (Iterator<ResolvedCallWithTrace<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
-                ResolvedCallWithTrace<D> candidate = iterator.next();
-                if (candidate.isDirty()) {
-                    iterator.remove();
-                }
-            }
-
-            if (cleanCandidates.isEmpty()) {
-                cleanCandidates = candidates;
-            }
-            ResolvedCallWithTrace<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, false);
-            if (maximallySpecific != null) {
-                return OverloadResolutionResultsImpl.success(maximallySpecific);
-            }
-
-            if (discriminateGenerics) {
-                ResolvedCallWithTrace<D> maximallySpecificGenericsDiscriminated = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, true);
-                if (maximallySpecificGenericsDiscriminated != null) {
-                    return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
-                }
-            }
-
-            Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
-
-            return OverloadResolutionResultsImpl.ambiguity(noOverrides);
+        if (candidates.size() == 1) {
+            return OverloadResolutionResultsImpl.success(candidates.iterator().next());
         }
-        else {
-            ResolvedCallWithTrace<D> result = candidates.iterator().next();
 
-            return OverloadResolutionResultsImpl.success(result);
+        Set<ResolvedCallWithTrace<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
+        for (Iterator<ResolvedCallWithTrace<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
+            ResolvedCallWithTrace<D> candidate = iterator.next();
+            if (candidate.isDirty()) {
+                iterator.remove();
+            }
         }
+
+        if (cleanCandidates.isEmpty()) {
+            cleanCandidates = candidates;
+        }
+        ResolvedCallWithTrace<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, false);
+        if (maximallySpecific != null) {
+            return OverloadResolutionResultsImpl.success(maximallySpecific);
+        }
+
+        if (discriminateGenerics) {
+            ResolvedCallWithTrace<D> maximallySpecificGenericsDiscriminated = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, true);
+            if (maximallySpecificGenericsDiscriminated != null) {
+                return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
+            }
+        }
+
+        Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
+        if (noOverrides.size() == 1) {
+                return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
+        }
+
+        return OverloadResolutionResultsImpl.ambiguity(noOverrides);
     }
 
 
