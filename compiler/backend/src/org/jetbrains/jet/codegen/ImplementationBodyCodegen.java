@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -176,7 +175,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
 
-        writeOuterClass();
+        writeEnclosingMethod();
 
         writeInnerClasses();
 
@@ -185,43 +184,41 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         writeClassSignatureIfNeeded(signature);
     }
 
-    private void writeOuterClass() {
+    private void writeEnclosingMethod() {
         //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
         DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
 
-        boolean isObjectLiteral = descriptor.getName().isSpecial() && descriptor.getKind() == ClassKind.OBJECT;
+        boolean isObjectLiteral = DescriptorUtils.isAnonymous(descriptor);
 
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
                                           !(parentDescriptor instanceof NamespaceDescriptor || parentDescriptor instanceof ClassDescriptor);
         if (isLocalOrAnonymousClass) {
-            String outerClassName = getOuterClassName(descriptor, typeMapper, bindingContext);
+            String outerClassName = getOuterClassName(descriptor, typeMapper);
             FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
 
-            //Function descriptor could be null only for object literal in package namespace
-            assert (!isObjectLiteral && function != null) || isObjectLiteral:
-                    "Function descriptor should be present: " + descriptor.getName();
-
-            Name functionName = function != null ? function.getName() : null;
-
-            v.visitOuterClass(outerClassName,
-                              functionName != null ? functionName.getName() : null,
-                              functionName != null ? typeMapper.mapSignature(functionName, function).getAsmMethod().getDescriptor() : null);
-
+            if (function != null) {
+                Method method = typeMapper.mapSignature(function.getName(), function).getAsmMethod();
+                v.visitOuterClass(outerClassName, method.getName(), method.getDescriptor());
+            }
+            else {
+                assert isObjectLiteral
+                        : "Function descriptor could be null only for object literal in package namespace: " + descriptor.getName();
+                v.visitOuterClass(outerClassName, null, null);
+            }
         }
     }
 
     @NotNull
-    public static String getOuterClassName(
+    private static String getOuterClassName(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull JetTypeMapper typeMapper,
-            @NotNull BindingContext bindingContext
+            @NotNull JetTypeMapper typeMapper
     ) {
         ClassDescriptor container = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
         if (container != null) {
             return typeMapper.mapType(container.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
         }
         else {
-            JetFile containingFile = BindingContextUtils.getContainingFile(bindingContext, classDescriptor);
+            JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), classDescriptor);
             assert containingFile != null : "Containing file should be present for " + classDescriptor;
             return NamespaceCodegen.getNamespacePartInternalName(containingFile);
         }
