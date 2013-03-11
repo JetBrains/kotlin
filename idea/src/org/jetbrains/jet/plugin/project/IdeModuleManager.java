@@ -28,17 +28,25 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.NullableFunction;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
+import org.jetbrains.jet.lang.resolve.MutableModuleSourcesManager;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
+import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -54,8 +62,6 @@ public class IdeModuleManager implements KotlinModuleManager {
         return ServiceManager.getService(project, IdeModuleManager.class);
     }
 
-    private final Key<Collection<ModuleDescriptor>> KOTLIN_MODULES = Key.create("KOTLIN_MODULES");
-
     private final Project project;
 
     public IdeModuleManager(@NotNull Project project) {
@@ -69,18 +75,36 @@ public class IdeModuleManager implements KotlinModuleManager {
             @Nullable
             @Override
             public Result<KotlinModules> compute() {
-                return Result.create(new ModuleBuilder().computeModules(), ProjectRootManager.getInstance(project));
+                return Result.create(
+                        new ModuleBuilder().computeModules(),
+                        ProjectRootManager.getInstance(project),
+                        // Since our modules are eager, we have to invalidate them on every out-of-code-block modification
+                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                );
             }
         }).getModuleDescriptors();
     }
 
     private class ModuleBuilder {
+        private final MutableModuleSourcesManager moduleSourcesManager;
+        private final JavaClassResolutionFacade classResolutionFacade;
 
         private final Map<Module, ModuleDescriptor> kotlinModules = Maps.newHashMap();
         private final Map<Module, MutableSubModuleDescriptor> srcSubModules = Maps.newHashMap();
         private final Map<Module, MutableSubModuleDescriptor> testSubModules = Maps.newHashMap();
         private final Map<Library, MutableSubModuleDescriptor> librarySubModules = Maps.newHashMap();
         private final Map<Sdk, MutableSubModuleDescriptor> sdkSubModules = Maps.newHashMap();
+
+        private ModuleBuilder() {
+            this.moduleSourcesManager = new MutableModuleSourcesManager(project);
+            this.classResolutionFacade = new JavaClassResolutionFacadeImpl(new NullableFunction<PsiClass, ClassDescriptor>() {
+                @Nullable
+                @Override
+                public ClassDescriptor fun(PsiClass psiClass) {
+
+                }
+            });
+        }
 
         @NotNull
         public KotlinModules computeModules() {
@@ -106,6 +130,41 @@ public class IdeModuleManager implements KotlinModuleManager {
 
             Collection<SourceFolder> testFolders = Lists.newArrayList();
             Collection<SourceFolder> srcFolders = Lists.newArrayList();
+            splitSourceFolders(ideaModule, testFolders, srcFolders);
+
+            if (!srcFolders.isEmpty()) {
+                createSrcSubModule(ideaModule, moduleDescriptor);
+            }
+
+            if (!testFolders.isEmpty()) {
+                createTestSubModule(ideaModule, moduleDescriptor);
+            }
+
+        }
+
+        private void createSrcSubModule(Module ideaModule, MutableModuleDescriptor moduleDescriptor) {
+            MutableSubModuleDescriptor srcSubModule =
+                    new MutableSubModuleDescriptor(moduleDescriptor, Name.special("<production sources>"));
+            addPlatformSpecificProviders(ideaModule, srcSubModule, false);
+            moduleDescriptor.addSubModule(srcSubModule);
+
+            srcSubModules.put(ideaModule, srcSubModule);
+        }
+
+        private void createTestSubModule(Module ideaModule, MutableModuleDescriptor moduleDescriptor) {
+            MutableSubModuleDescriptor testSubModule = new MutableSubModuleDescriptor(moduleDescriptor, Name.special("<test sources>"));
+            MutableSubModuleDescriptor srcSubModule = srcSubModules.get(ideaModule);
+            addPlatformSpecificProviders(ideaModule, testSubModule, true);
+            if (srcSubModule != null) {
+                testSubModule.addDependency(srcSubModule);
+            }
+
+            moduleDescriptor.addSubModule(testSubModule);
+
+            testSubModules.put(ideaModule, testSubModule);
+        }
+
+        private void splitSourceFolders(Module ideaModule, Collection<SourceFolder> testFolders, Collection<SourceFolder> srcFolders) {
             ModuleRootManager rootManager = ModuleRootManager.getInstance(ideaModule);
             for (ContentEntry contentEntry : rootManager.getContentEntries()) {
                 for (SourceFolder sourceFolder : contentEntry.getSourceFolders()) {
@@ -117,33 +176,6 @@ public class IdeModuleManager implements KotlinModuleManager {
                     }
                 }
             }
-
-            boolean hasSrc = !srcFolders.isEmpty();
-            boolean hasTestSrc = !testFolders.isEmpty();
-
-            MutableSubModuleDescriptor srcSubModule;
-            if (hasSrc) {
-                srcSubModule = new MutableSubModuleDescriptor(moduleDescriptor, Name.special("<production sources>"));
-
-                moduleDescriptor.addSubModule(srcSubModule);
-
-                srcSubModules.put(ideaModule, srcSubModule);
-            }
-            else {
-                srcSubModule = null;
-            }
-
-            if (hasTestSrc) {
-                MutableSubModuleDescriptor testSubModule = new MutableSubModuleDescriptor(moduleDescriptor, Name.special("<test sources>"));
-                if (hasSrc) {
-                    testSubModule.addDependency(srcSubModule);
-                }
-
-                moduleDescriptor.addSubModule(testSubModule);
-
-                testSubModules.put(ideaModule, testSubModule);
-            }
-
         }
 
         private void createDependencies(Module ideaModule) {
@@ -237,11 +269,18 @@ public class IdeModuleManager implements KotlinModuleManager {
                 List<VirtualFile> files = Arrays.asList(rootProvider.getFiles(OrderRootType.CLASSES));
                 MutableModuleDescriptor moduleDescriptor = new MutableModuleDescriptor(name, JavaToKotlinClassMap.getInstance());
                 subModule = new MutableSubModuleDescriptor(moduleDescriptor, name);
+                subModule.addPackageFragmentProvider(new JavaPackageFragmentProvider());
                 cache.put(key, subModule);
             }
             return subModule;
         }
 
+    }
+
+    private void addPlatformSpecificProviders(Module ideaModule, MutableSubModuleDescriptor srcSubModule, boolean isTestSubModule) {
+        if (!JsModuleDetector.isJsModule(ideaModule)) {
+            srcSubModule.addPackageFragmentProvider(new JavaPackageFragmentProvider());
+        }
     }
 
     @NotNull
