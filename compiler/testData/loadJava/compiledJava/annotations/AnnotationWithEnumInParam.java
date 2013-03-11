@@ -3,7 +3,10 @@ package test;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.RUNTIME)
-@interface retentionAnnotation {
-    String value();
+public interface AnnotationWithEnumInParam {
+
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface RetentionAnnotation {
+        String value();
+    }
 }

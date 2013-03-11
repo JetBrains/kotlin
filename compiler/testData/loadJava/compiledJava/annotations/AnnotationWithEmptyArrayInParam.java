@@ -1,14 +1,16 @@
 package test;
 
-import java.lang.String;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-@interface MyAnnotation {
-    String[] value();
-}
+public interface AnnotationWithEmptyArrayInParam {
 
-@MyAnnotation({})
-class A {
-    
+    public @interface MyAnnotation {
+        String[] value();
+    }
+
+    @MyAnnotation({})
+    public class A {
+
+    }
 }

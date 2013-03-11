@@ -1,0 +1,14 @@
+package test
+
+public trait RecursiveAnnotation2 : java.lang.Object {
+    
+    public final annotation class A : jet.Annotation {
+        public constructor A(/*0*/ value : test.RecursiveAnnotation2.B?)
+        public abstract fun value() : test.RecursiveAnnotation2.B?
+    }
+    
+    test.RecursiveAnnotation2.A(value = B[value = "test"]: test.RecursiveAnnotation2.B) public final annotation class B : jet.Annotation {
+        public constructor B(/*0*/ value : jet.String?)
+        public abstract fun value() : jet.String?
+    }
+}

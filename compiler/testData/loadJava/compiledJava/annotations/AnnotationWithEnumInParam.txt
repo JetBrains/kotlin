@@ -1,0 +1,9 @@
+package test
+
+public trait AnnotationWithEnumInParam : java.lang.Object {
+    
+    java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME: java.lang.annotation.RetentionPolicy) public final annotation class RetentionAnnotation : jet.Annotation {
+        public constructor RetentionAnnotation(/*0*/ value : jet.String?)
+        public abstract fun value() : jet.String?
+    }
+}

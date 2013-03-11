@@ -1,0 +1,13 @@
+package test
+
+public trait AnnotationWithArrayOfStringInParam : java.lang.Object {
+    
+    test.AnnotationWithArrayOfStringInParam.MyAnnotation(value = ["a", "b", "c"]: jet.Array<jet.String>?) public open class A : java.lang.Object {
+        public constructor A()
+    }
+    
+    public final annotation class MyAnnotation : jet.Annotation {
+        public constructor MyAnnotation(/*0*/ vararg value : jet.String? /*jet.Array<jet.String>?*/)
+        public abstract fun value() : jet.Array<jet.String>?
+    }
+}

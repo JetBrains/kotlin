@@ -3,7 +3,10 @@ package test;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD, ElementType.CONSTRUCTOR})
-@interface targetAnnotation {
-    String value();
+public interface AnnotationWithArrayOfEnumInParam {
+
+    @Target({ElementType.FIELD, ElementType.CONSTRUCTOR})
+    public @interface targetAnnotation {
+        String value();
+    }
 }

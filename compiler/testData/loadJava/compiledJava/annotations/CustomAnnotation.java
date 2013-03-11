@@ -1,12 +1,15 @@
 package test;
 
-@MyAnnotation(MyEnum.ONE)
-class MyTest {}
+public interface CustomAnnotation {
 
-@interface MyAnnotation {
-    MyEnum value();
-}
+    @MyAnnotation(MyEnum.ONE)
+    public class MyTest {}
 
-enum MyEnum {
-    ONE
+    public @interface MyAnnotation {
+        MyEnum value();
+    }
+
+    public enum MyEnum {
+        ONE
+    }
 }

@@ -1,10 +1,12 @@
 package test;
 
-@MyAnnotation(first = "f", second = "s")
-class MyTest {}
+public interface CustomAnnotationWithDefaultParameter {
 
-@interface MyAnnotation {
-    String first();
-    String second() default("s");
+    @MyAnnotation(first = "f", second = "s")
+    public class MyTest {}
+
+    public @interface MyAnnotation {
+        String first();
+        String second() default("s");
+    }
 }
-

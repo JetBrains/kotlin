@@ -1,11 +1,14 @@
 package test;
 
-@B(@A("test"))
-@interface A {
-    String value();
-}
+public interface RecursiveAnnotation {
 
-@B(@A("test"))
-@interface B {
-    A value();
+    @B(@A("test"))
+    public @interface A {
+        String value();
+    }
+
+    @B(@A("test"))
+    public @interface B {
+        A value();
+    }
 }
