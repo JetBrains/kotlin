@@ -21,7 +21,10 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.*;
+import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.Label;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
@@ -44,7 +47,10 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -58,6 +64,8 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
@@ -177,6 +185,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         writeEnclosingMethod();
 
+        writeOuterClasses();
+
         writeInnerClasses();
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
@@ -225,20 +235,30 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeInnerClasses() {
-        for (ClassDescriptor innerClass : getInnerClassesAndObjects(descriptor)) {
-            writeInnerClass(innerClass);
-        }
-
-        ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
-        if (classObjectDescriptor != null) {
-            int innerClassAccess = getVisibilityAccessFlag(classObjectDescriptor) | ACC_FINAL | ACC_STATIC;
-            v.visitInnerClass(classAsmType.getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX, classAsmType.getInternalName(),
-                              JvmAbi.CLASS_OBJECT_CLASS_NAME,
-                              innerClassAccess);
+        Collection<ClassDescriptor> result = bindingContext.get(INNER_CLASSES, descriptor);
+        if (result != null) {
+            for (ClassDescriptor innerClass : result) {
+                writeInnerClass(innerClass);
+            }
         }
     }
 
-    private void writeInnerClass(ClassDescriptor innerClass) {
+    private void writeOuterClasses() {
+        // JVMS7 (4.7.6): a nested class or interface member will have InnerClasses information
+        // for each enclosing class and for each immediate member
+        DeclarationDescriptor inner = descriptor;
+        while (true) {
+            if (inner == null || isTopLevelDeclaration(inner)) {
+                break;
+            }
+            if (inner instanceof ClassDescriptor && !isEnumClassObject(inner)) {
+                writeInnerClass((ClassDescriptor) inner);
+            }
+            inner = inner.getContainingDeclaration();
+        }
+    }
+
+    private void writeInnerClass(@NotNull ClassDescriptor innerClass) {
         // TODO: proper access
         int innerClassAccess = getVisibilityAccessFlag(innerClass);
         if (innerClass.getModality() == Modality.FINAL) {
@@ -260,9 +280,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         // TODO: cache internal names
-        String outerClassInternalName = classAsmType.getInternalName();
-        String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
-        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerClass.getName().getName(), innerClassAccess);
+        DeclarationDescriptor containing = innerClass.getContainingDeclaration();
+        String outerClassInternalName = containing instanceof ClassDescriptor ? getInternalNameForImpl((ClassDescriptor) containing) : null;
+
+        String innerClassInternalName;
+        String innerName;
+
+        if (isClassObject(innerClass)) {
+            innerName = JvmAbi.CLASS_OBJECT_CLASS_NAME;
+            innerClassInternalName = outerClassInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
+        }
+        else {
+            innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().getName();
+            innerClassInternalName = getInternalNameForImpl(innerClass);
+        }
+
+        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, innerClassAccess);
+    }
+
+    @NotNull
+    private String getInternalNameForImpl(@NotNull ClassDescriptor descriptor) {
+        return typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
     }
 
     private void writeClassSignatureIfNeeded(JvmClassSignature signature) {

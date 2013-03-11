@@ -53,6 +53,8 @@ public class CodegenBinding {
 
     public static final WritableSlice<ClassDescriptor, Boolean> ENUM_ENTRY_CLASS_NEED_SUBCLASS = Slices.createSimpleSetSlice();
 
+    public static final WritableSlice<ClassDescriptor, Collection<ClassDescriptor>> INNER_CLASSES = Slices.createSimpleSlice();
+
     private CodegenBinding() {
     }
 
@@ -205,6 +207,23 @@ public class CodegenBinding {
         if (canHaveOuter(bindingTrace.getBindingContext(), classDescriptor) && !functionLiteral) {
             closure.setCaptureThis();
         }
+
+        if (enclosing != null) {
+            recordInnerClass(bindingTrace, enclosing, classDescriptor);
+        }
+    }
+
+    private static void recordInnerClass(
+            @NotNull BindingTrace bindingTrace,
+            @NotNull ClassDescriptor outer,
+            @NotNull ClassDescriptor inner
+    ) {
+        Collection<ClassDescriptor> innerClasses = bindingTrace.get(INNER_CLASSES, outer);
+        if (innerClasses == null) {
+            innerClasses = new ArrayList<ClassDescriptor>();
+            bindingTrace.record(INNER_CLASSES, outer, innerClasses);
+        }
+        innerClasses.add(inner);
     }
 
     public static void registerClassNameForScript(BindingTrace bindingTrace, @NotNull JetScript jetScript, @NotNull JvmClassName className) {

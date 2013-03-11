@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -135,4 +136,13 @@ public class ClassGenTest extends CodegenTestCase {
         //        blackBoxFile("regressions/kt1213.kt");
     }
     */
+
+    public void testClassObjectIsInnerClass() throws Exception {
+        loadFile("classes/classObjectIsInnerClass.kt");
+        GeneratedClassLoader loader = createClassLoader(generateClassesInFile());
+        Class<?> a = loader.loadClass("A");
+        Class<?> aClassObject = loader.loadClass("A" + JvmAbi.CLASS_OBJECT_SUFFIX);
+        assertSameElements(a.getDeclaredClasses(), aClassObject);
+        assertEquals(a, aClassObject.getDeclaringClass());
+    }
 }
