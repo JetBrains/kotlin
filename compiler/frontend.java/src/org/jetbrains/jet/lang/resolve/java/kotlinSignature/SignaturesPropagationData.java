@@ -179,7 +179,6 @@ public class SignaturesPropagationData {
                     index,
                     originalParam.getAnnotations(),
                     originalParam.getName(),
-                    originalParam.isVar(),
                     altType,
                     originalParam.declaresDefaultValue(),
                     varargCheckResult.isVararg ? KotlinBuiltIns.getInstance().getArrayElementType(altType) : null

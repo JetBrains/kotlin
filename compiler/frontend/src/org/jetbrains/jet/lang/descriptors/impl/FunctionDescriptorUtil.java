@@ -80,7 +80,6 @@ public class FunctionDescriptorUtil {
                     substitutedDescriptor,
                     unsubstitutedValueParameter,
                     unsubstitutedValueParameter.getAnnotations(),
-                    unsubstitutedValueParameter.isVar(),
                     substitutedType,
                     substituteVarargElementType
             ));

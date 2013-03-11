@@ -132,7 +132,6 @@ public final class JavaConstructorResolver {
                                     i,
                                     Collections.<AnnotationDescriptor>emptyList(),
                                     Name.identifier(method.getName()),
-                                    false,
                                     typeTransformer.transformToType(returnType, resolverForTypeParameters),
                                     annotationMethod.getDefaultValue() != null,
                                     varargElementType));

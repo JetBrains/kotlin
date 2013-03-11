@@ -102,7 +102,6 @@ public final class JavaValueParameterResolver {
                     i,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO
                     name,
-                    false,
                     transformedType,
                     hasDefaultValue,
                     varargElementType

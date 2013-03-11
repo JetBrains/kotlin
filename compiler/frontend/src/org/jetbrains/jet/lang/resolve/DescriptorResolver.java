@@ -381,7 +381,7 @@ public class DescriptorResolver {
             boolean declaresDefaultValue = propertyDescriptor != null;
             ValueParameterDescriptorImpl parameterDescriptor =
                     new ValueParameterDescriptorImpl(functionDescriptor, parameter.getIndex(), parameter.getAnnotations(),
-                                                     parameter.getName(), parameter.isVar(), parameter.getType(),
+                                                     parameter.getName(), parameter.getType(),
                                                      declaresDefaultValue,
                                                      parameter.getVarargElementType());
             parameterDescriptors.add(parameterDescriptor);
@@ -485,7 +485,6 @@ public class DescriptorResolver {
                 index,
                 annotationResolver.resolveAnnotations(scope, valueParameter.getModifierList(), trace),
                 JetPsiUtil.safeName(valueParameter.getName()),
-                false,
                 variableType,
                 valueParameter.getDefaultValue() != null,
                 varargElementType
@@ -1355,7 +1354,6 @@ public class DescriptorResolver {
                 0,
                 Collections.<AnnotationDescriptor>emptyList(),
                 Name.identifier("value"),
-                false,
                 KotlinBuiltIns.getInstance().getStringType(),
                 false,
                 null);

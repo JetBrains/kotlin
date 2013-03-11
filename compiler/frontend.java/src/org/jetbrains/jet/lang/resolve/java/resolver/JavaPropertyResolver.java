@@ -282,7 +282,6 @@ public final class JavaPropertyResolver {
                     0,
                     Collections.<AnnotationDescriptor>emptyList(),
                     Name.identifier("p0") /*TODO*/,
-                    false,
                     propertyDescriptor.getType(),
                     false,
                     null));

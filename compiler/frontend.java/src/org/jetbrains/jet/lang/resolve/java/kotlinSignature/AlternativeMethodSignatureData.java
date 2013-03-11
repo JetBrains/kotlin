@@ -201,7 +201,6 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                     originalParameterDescriptor.getIndex(),
                     originalParameterDescriptor.getAnnotations(),
                     originalParameterDescriptor.getName(),
-                    originalParameterDescriptor.isVar(),
                     alternativeType,
                     originalParameterDescriptor.declaresDefaultValue(),
                     alternativeVarargElementType));

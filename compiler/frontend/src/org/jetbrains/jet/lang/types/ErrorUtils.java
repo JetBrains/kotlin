@@ -198,7 +198,6 @@ public class ErrorUtils {
                     i,
                     Collections.<AnnotationDescriptor>emptyList(),
                     Name.special("<ERROR VALUE_PARAMETER>"),
-                    true,
                     ERROR_PARAMETER_TYPE,
                     false,
                     null));

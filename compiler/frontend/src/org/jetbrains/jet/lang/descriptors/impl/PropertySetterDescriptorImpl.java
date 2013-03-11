@@ -67,7 +67,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     public void initializeDefault() {
         assert parameter == null;
-        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), Name.special("<set-?>"), false, getCorrespondingProperty().getReturnType(), false, null);
+        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), Name.special("<set-?>"), getCorrespondingProperty().getReturnType(), false, null);
     }
 
     @NotNull

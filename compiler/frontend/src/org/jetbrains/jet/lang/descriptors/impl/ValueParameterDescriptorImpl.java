@@ -35,7 +35,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     private final boolean declaresDefaultValue;
 
     private final JetType varargElementType;
-    private final boolean isVar;
     private final int index;
     private final ValueParameterDescriptor original;
 
@@ -48,23 +47,21 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             int index,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Name name,
-            boolean isVar,
             @NotNull JetType outType,
             boolean declaresDefaultValue,
-            @Nullable JetType varargElementType) {
+            @Nullable JetType varargElementType
+    ) {
         super(containingDeclaration, annotations, name, outType);
         this.original = this;
         this.index = index;
         this.declaresDefaultValue = declaresDefaultValue;
         this.varargElementType = varargElementType;
-        this.isVar = isVar;
     }
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ValueParameterDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
-            boolean isVar,
             @NotNull JetType outType,
             @Nullable JetType varargElementType
     ) {
@@ -73,7 +70,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         this.index = original.getIndex();
         this.declaresDefaultValue = original.declaresDefaultValue();
         this.varargElementType = varargElementType;
-        this.isVar = isVar;
     }
 
     @Override
@@ -138,13 +134,13 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @Override
     public boolean isVar() {
-        return isVar;
+        return false;
     }
 
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), isVar, getType(), hasDefaultValue, varargElementType);
+        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), getType(), hasDefaultValue, varargElementType);
     }
 
     @NotNull
