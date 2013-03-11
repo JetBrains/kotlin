@@ -97,36 +97,6 @@ public class IdeModuleManager implements KotlinModuleManager {
             return new KotlinModules(kotlinModules);
         }
 
-        private void createDependencies(Module ideaModule) {
-            final List<OrderEntry> sourceDependencies = Lists.newArrayList();
-            final List<OrderEntry> testDependencies = Lists.newArrayList();
-
-            OrderEnumerator.orderEntries(ideaModule).recursively().exportedOnly().forEach(
-                    new Processor<OrderEntry>() {
-                        @Override
-                        public boolean process(OrderEntry entry) {
-                            if (entry instanceof ExportableOrderEntry) {
-                                DependencyScope scope = ((ExportableOrderEntry) entry).getScope();
-                                if (scope == DependencyScope.RUNTIME) return true;
-                                if (scope != DependencyScope.TEST) {
-                                    sourceDependencies.add(entry);
-                                }
-                                testDependencies.add(entry);
-
-                            }
-                            else if (entry instanceof ModuleSourceOrderEntry) {
-                                sourceDependencies.add(entry);
-                                testDependencies.add(entry);
-                            }
-                            return true;
-                        }
-                    }
-            );
-
-            createDependenciesForSubModule(srcSubModules.get(ideaModule), sourceDependencies, false);
-            createDependenciesForSubModule(testSubModules.get(ideaModule), testDependencies, true);
-        }
-
         private void createModuleAndSubModules(Module ideaModule) {
             MutableModuleDescriptor moduleDescriptor = new MutableModuleDescriptor(
                     stringToSpecialName(ideaModule.getName()),
@@ -174,6 +144,36 @@ public class IdeModuleManager implements KotlinModuleManager {
                 testSubModules.put(ideaModule, testSubModule);
             }
 
+        }
+
+        private void createDependencies(Module ideaModule) {
+            final List<OrderEntry> sourceDependencies = Lists.newArrayList();
+            final List<OrderEntry> testDependencies = Lists.newArrayList();
+
+            OrderEnumerator.orderEntries(ideaModule).recursively().exportedOnly().forEach(
+                    new Processor<OrderEntry>() {
+                        @Override
+                        public boolean process(OrderEntry entry) {
+                            if (entry instanceof ExportableOrderEntry) {
+                                DependencyScope scope = ((ExportableOrderEntry) entry).getScope();
+                                if (scope == DependencyScope.RUNTIME) return true;
+                                if (scope != DependencyScope.TEST) {
+                                    sourceDependencies.add(entry);
+                                }
+                                testDependencies.add(entry);
+
+                            }
+                            else if (entry instanceof ModuleSourceOrderEntry) {
+                                sourceDependencies.add(entry);
+                                testDependencies.add(entry);
+                            }
+                            return true;
+                        }
+                    }
+            );
+
+            createDependenciesForSubModule(srcSubModules.get(ideaModule), sourceDependencies, false);
+            createDependenciesForSubModule(testSubModules.get(ideaModule), testDependencies, true);
         }
 
         private void createDependenciesForSubModule(
