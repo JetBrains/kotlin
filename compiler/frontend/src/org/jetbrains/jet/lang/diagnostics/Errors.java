@@ -524,7 +524,7 @@ public interface Errors {
     DiagnosticFactory0<JetDeclarationWithBody>
             NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_WITH_BODY);
 
-    DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetThisExpression> NO_THIS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetRootNamespaceExpression> NAMESPACE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);

@@ -346,7 +346,7 @@ public class BodyResolver {
         }
         else {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                trace.report(ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR.on(anonymousInitializer));
+                trace.report(ANONYMOUS_INITIALIZER_IN_TRAIT.on(anonymousInitializer));
             }
         }
     }
