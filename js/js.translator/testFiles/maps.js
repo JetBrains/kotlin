@@ -339,7 +339,7 @@
         };
 
         this.each = function (callback) {
-            var entries = that.entries(), i = entries.length, entry;
+            var entries = that._entries(), i = entries.length, entry;
             while (i--) {
                 entry = entries[i];
                 callback(entry[0], entry[1]);
@@ -348,7 +348,7 @@
 
 
         this.putAll = function (hashtable, conflictCallback) {
-            var entries = hashtable.entries();
+            var entries = hashtable._entries();
             var entry, key, value, thisValue, i = entries.length;
             var hasConflictCallback = (typeof conflictCallback == FUNCTION);
             while (i--) {

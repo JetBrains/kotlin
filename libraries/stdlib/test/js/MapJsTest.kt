@@ -6,8 +6,9 @@ import java.util.*
 import org.junit.Test as test
 
 class MapJsTest {
-    val KEYS = array("zero", "one", "two", "three")
-    val VALUES = array(0, 1, 2, 3)
+    //TODO: replace `array(...).toList()` to `listOf(...)`
+    val KEYS = array("zero", "one", "two", "three").toList()
+    val VALUES = array(0, 1, 2, 3).toList()
 
     test fun getOrElse() {
         val data = HashMap<String, Int>()
@@ -44,8 +45,38 @@ class MapJsTest {
 
     test fun hashMapValues() {
         val map = createTestHashMap()
-        assertEquals(VALUES.toList(), map.values().toSortedList())
+        assertEquals(VALUES, map.values().toSortedList())
     }
+
+    test fun hashMapKeySet() {
+        val map = createTestHashMap()
+        assertEquals(KEYS.toSortedList(), map.keySet().toSortedList())
+    }
+
+    test fun hashMapContainsValue() {
+        val map = createTestHashMap()
+
+        assertTrue(map.containsValue(VALUES[0]) &&
+            map.containsValue(VALUES[1]) &&
+            map.containsValue(VALUES[2]) &&
+            map.containsValue(VALUES[3]))
+
+        assertFalse(map.containsValue("four") ||
+            map.containsValue("five"))
+    }
+
+    test fun hashMapSize() {
+        val map = createTestHashMap()
+        assertEquals(KEYS.size, map.size)
+    }
+
+    test fun hashMapPutAll() {
+        val map = createTestHashMap()
+        val newMap = HashMap<String, Int>()
+        newMap.putAll(map)
+        assertEquals(KEYS.size, newMap.size)
+    }
+
 
     fun createTestHashMap(): HashMap<String, Int> {
         val map = HashMap<String, Int>()
