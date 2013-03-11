@@ -20,7 +20,7 @@ public inline fun assertNot(message: String, block: ()-> Boolean) {
     assertTrue(message){ !block() }
 }
 
-/** Asserts that the given block returns true */
+/** Asserts that the given block returns false */
 public inline fun assertNot(block: ()-> Boolean) : Unit = assertNot(block.toString(), block)
 
 /** Asserts that the expression is true with an optional message */
