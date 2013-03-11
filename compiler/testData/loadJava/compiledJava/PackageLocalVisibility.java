@@ -1,3 +1,13 @@
+// FILE: Frame.java
+package awt;
+
+public class Frame {
+
+    String accessibleContext = null;
+
+}
+
+// FILE: JFrame.java
 package test;
 
 import awt.Frame;

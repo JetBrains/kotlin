@@ -20,8 +20,6 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
@@ -47,6 +45,7 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -71,24 +70,34 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
-        doTestCompiledJava(new File(javaFileName.replaceFirst("\\.java$", ".txt")), javaFileName);
-    }
+        final File srcDir = new File(tmpdir, "src");
+        File compiledDir = new File(tmpdir, "compiled");
+        assertTrue(srcDir.mkdir());
+        assertTrue(compiledDir.mkdir());
 
-    protected void doTestCompiledJava(@NotNull File expectedFile, @NotNull String... javaFileNames) throws Exception {
+        List<File> srcFiles = JetTestUtils.createTestFiles(
+                new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName)),
+                new JetTestUtils.TestFileFactory<File>() {
+                    @Override
+                    public File create(String fileName, String text) {
+                        File targetFile = new File(srcDir, fileName);
+                        try {
+                            FileUtil.writeToFile(targetFile, text);
+                        }
+                        catch (IOException e) {
+                            throw new AssertionError(e);
+                        }
+                        return targetFile;
+                    }
+                });
+
         JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
 
-        List<File> files = ContainerUtil.map(Arrays.asList(javaFileNames), new Function<String, File>() {
-            @Override
-            public File fun(String s) {
-                return new File(s);
-            }
-        });
-
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
-                files, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+                srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
+        checkJavaNamespace(new File(javaFileName.replaceFirst("\\.java$", ".txt")), javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
     protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {

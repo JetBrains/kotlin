@@ -982,6 +982,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/JavaEnum.java");
         }
         
+        @TestMetadata("PackageLocalVisibility.java")
+        public void testPackageLocalVisibility() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/PackageLocalVisibility.java");
+        }
+        
         @TestMetadata("SubclassFromNested.java")
         public void testSubclassFromNested() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/SubclassFromNested.java");
