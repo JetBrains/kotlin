@@ -17,7 +17,6 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -29,9 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.JetTestUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,33 +38,6 @@ public class AnnotationJavaDescriptorResolverTest extends AbstractJavaResolverDe
 
     private static final String PATH = "compiler/testData/javaDescriptorResolver/annotations/";
     private static final String DEFAULT_PACKAGE = "annotations";
-
-    public void testCustomAnnotationWithKotlinEnum() throws IOException {
-        File testFile = new File(PATH + "kotlinEnum.kt");
-
-        LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust(testFile, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
-
-        StringBuilder builder = new StringBuilder(tmpdir.getAbsolutePath());
-        builder.append(File.pathSeparator);
-        File runtimePath = JetTestUtils.getPathsForTests().getRuntimePath();
-        if (runtimePath.exists()) {
-            builder.append(runtimePath.getAbsolutePath());
-            builder.append(File.pathSeparator);
-        }
-
-        File annotationsPath = JetTestUtils.getPathsForTests().getJdkAnnotationsPath();
-        if (annotationsPath.exists()) {
-            builder.append(annotationsPath.getAbsolutePath());
-        }
-
-        compileJavaFile("customAnnotationWithKotlinEnum.java", builder.toString());
-
-        String annotationTypeName = DEFAULT_PACKAGE + ".MyAnnotation";
-        AnnotationDescriptor annotation = getAnnotationInClassByType("testClass", annotationTypeName);
-
-        CompileTimeConstant<?> actualCompileTimeConstant = getCompileTimeConstant(annotation, annotationTypeName, "value");
-        checkSimpleCompileTimeConstant(actualCompileTimeConstant, DEFAULT_PACKAGE + ".MyEnum", "MyEnum.ONE");
-    }
 
     private static void compareJetTypeWithClass(@NotNull JetType actualType, @NotNull String expectedType) {
         assertEquals(expectedType, DescriptorRenderer.TEXT.renderType(actualType));
