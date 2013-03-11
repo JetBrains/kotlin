@@ -37,8 +37,8 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.PsiClassFinder.RuntimeClassesHandleMode;
 
@@ -59,7 +59,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     private final SubModuleDescriptor subModule;
     private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
-    protected JavaPackageFragmentProvider(
+    public JavaPackageFragmentProvider(
             @NotNull JavaClassResolutionFacade classResolutionFacade,
             @NotNull DiagnosticHolder diagnosticHolder,
             @NotNull StorageManager storageManager,
@@ -104,7 +104,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     @NotNull
     @Override
-    public Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull final FqName fqName) {
+    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull final FqName fqName) {
         PackageFragmentDescriptor fragment = getPackageFragment(fqName);
         if (fragment == null) {
             return Collections.emptyList();

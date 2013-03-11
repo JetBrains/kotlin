@@ -22,11 +22,17 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class CompositePackageFragmentProvider implements PackageFragmentProvider {
 
     private final Collection<PackageFragmentProvider> children;
+
+    public CompositePackageFragmentProvider(@NotNull PackageFragmentProvider... children) {
+        this(Arrays.asList(children));
+    }
 
     public CompositePackageFragmentProvider(@NotNull Collection<PackageFragmentProvider> children) {
         this.children = children;
@@ -34,8 +40,8 @@ public class CompositePackageFragmentProvider implements PackageFragmentProvider
 
     @NotNull
     @Override
-    public Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-        Collection<PackageFragmentDescriptor> result = Lists.newArrayList();
+    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+        List<PackageFragmentDescriptor> result = Lists.newArrayList();
         for (PackageFragmentProvider child : children) {
             result.addAll(child.getPackageFragments(fqName));
         }

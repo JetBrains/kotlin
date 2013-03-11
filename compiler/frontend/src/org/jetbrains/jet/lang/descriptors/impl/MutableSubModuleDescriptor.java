@@ -45,7 +45,7 @@ public class MutableSubModuleDescriptor extends AbstractSubModuleDescriptor {
 
     @NotNull
     @Override
-    public Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
         return packageFragmentProvider.getPackageFragments(fqName);
     }
 

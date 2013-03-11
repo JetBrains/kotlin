@@ -29,6 +29,8 @@ import java.util.List;
  */
 public interface SubModuleDescriptor extends DeclarationDescriptor, PackageFragmentProvider {
 
+    SubModuleDescriptor MY_SOURCE = MySourceFakeSubModule.MY_SOURCE;
+
     @NotNull
     @Override
     ModuleDescriptor getContainingDeclaration();
@@ -38,7 +40,7 @@ public interface SubModuleDescriptor extends DeclarationDescriptor, PackageFragm
      */
     @Override
     @NotNull
-    Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
+    List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
 
     /**
      * @return a package as seen from this submodule (i.e. including its own declarations and immediate dependencies)

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -26,9 +26,10 @@ import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
+import java.util.List;
 
 public class MutablePackageFragmentProvider implements PackageFragmentProvider {
-    private final Multimap<FqName, MutablePackageFragmentDescriptor> packageFragments = HashMultimap.create();
+    private final Multimap<FqName, MutablePackageFragmentDescriptor> packageFragments = ArrayListMultimap.create();
 
     private final SubModuleDescriptor subModule;
 
@@ -38,9 +39,9 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
 
     @NotNull
     @Override
-    public Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
         //noinspection unchecked
-        return (Collection) packageFragments.get(fqName);
+        return (List) packageFragments.get(fqName);
     }
 
     @NotNull

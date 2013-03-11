@@ -130,7 +130,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
 
             @NotNull
             @Override
-            public Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+            public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
                 List<PackageFragmentDescriptor> result = Lists.newArrayList();
                 result.addAll(subModuleDefinition.getPackageFragmentsLoadedExternally(fqName, this));
 

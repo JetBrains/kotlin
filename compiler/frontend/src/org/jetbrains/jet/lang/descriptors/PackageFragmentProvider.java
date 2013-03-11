@@ -20,8 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface PackageFragmentProvider {
     @NotNull
-    Collection<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
+    List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
 }
