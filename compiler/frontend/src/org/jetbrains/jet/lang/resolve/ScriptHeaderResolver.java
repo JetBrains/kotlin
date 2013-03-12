@@ -47,7 +47,7 @@ public class ScriptHeaderResolver {
     public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");
 
     @NotNull
-    private MutableSubModuleDescriptor subModule;
+    private ModuleSourcesManager moduleSourcesManager;
     @NotNull
     private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
     @NotNull
@@ -58,8 +58,8 @@ public class ScriptHeaderResolver {
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
     @Inject
-    public void setSubModule(@NotNull MutableSubModuleDescriptor subModule) {
-        this.subModule = subModule;
+    public void setModuleSourcesManager(@NotNull ModuleSourcesManager moduleSourcesManager) {
+        this.moduleSourcesManager = moduleSourcesManager;
     }
 
     @Inject
@@ -116,6 +116,7 @@ public class ScriptHeaderResolver {
         JetFile file = (JetFile) script.getContainingFile();
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
         FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
+        MutableSubModuleDescriptor subModule = (MutableSubModuleDescriptor) moduleSourcesManager.getSubModuleForFile(file);
         MutablePackageFragmentDescriptor packageFragment = subModule.getPackageFragmentProviderForKotlinSources().addPackageFragment(
                 PackageFragmentKind.SOURCE, fqName);
 

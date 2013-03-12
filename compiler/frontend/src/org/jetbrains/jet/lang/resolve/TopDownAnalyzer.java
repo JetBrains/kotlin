@@ -213,7 +213,7 @@ public class TopDownAnalyzer {
     ) {
 
         // dummy builder is used because "root" is module descriptor,
-        // namespaces added to module explicitly in
+        // namespaces added to module explicitly in TypeHierarchyResolver
         doProcess(JetScope.EMPTY, new NamespaceLikeBuilderDummy(), files);
     }
 

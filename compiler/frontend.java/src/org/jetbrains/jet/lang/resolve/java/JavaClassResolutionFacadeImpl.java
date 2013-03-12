@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
-import com.intellij.util.NullableFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -28,11 +27,11 @@ import java.util.List;
 
 public class JavaClassResolutionFacadeImpl implements JavaClassResolutionFacade {
 
-    private final NullableFunction<PsiClass, ClassDescriptor> lightClassResolver;
+    private final KotlinLightClassResolver lightClassResolver;
 
     private final List<JavaPackageFragmentProvider> providers = Lists.newArrayList();
 
-    public JavaClassResolutionFacadeImpl(@NotNull NullableFunction<PsiClass, ClassDescriptor> lightClassResolver) {
+    public JavaClassResolutionFacadeImpl(@NotNull KotlinLightClassResolver lightClassResolver) {
         this.lightClassResolver = lightClassResolver;
     }
 
@@ -44,7 +43,7 @@ public class JavaClassResolutionFacadeImpl implements JavaClassResolutionFacade 
     @Nullable
     public ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass) {
         if (DescriptorResolverUtils.isKotlinLightClass(psiClass)) {
-            return lightClassResolver.fun(psiClass);
+            return lightClassResolver.resolveLightClass(psiClass);
         }
 
         VirtualFile virtualFile = psiClass.getContainingFile().getVirtualFile();

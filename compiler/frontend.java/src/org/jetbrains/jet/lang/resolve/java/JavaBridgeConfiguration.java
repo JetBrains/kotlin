@@ -26,11 +26,9 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 
@@ -39,13 +37,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = ImmutableList.of(new ImportPath("java.lang.*"));
 
-    private JavaDescriptorResolver javaDescriptorResolver;
     private ModuleConfiguration delegateConfiguration;
-
-    @Inject
-    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
-    }
 
     @PostConstruct
     public void init() {
@@ -62,10 +54,10 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull PackageViewDescriptor packageViewDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(packageViewDescriptor);
-        if (javaPackageScope != null) {
-            namespaceMemberScope.importScope(javaPackageScope);
-        }
+        //JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(packageViewDescriptor);
+        //if (javaPackageScope != null) {
+        //    namespaceMemberScope.importScope(javaPackageScope);
+        //}
         delegateConfiguration.extendNamespaceScope(trace, packageViewDescriptor, namespaceMemberScope);
     }
 
