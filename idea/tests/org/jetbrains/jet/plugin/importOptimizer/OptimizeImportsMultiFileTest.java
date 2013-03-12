@@ -34,6 +34,10 @@ public class OptimizeImportsMultiFileTest extends CodeInsightTestCase {
         doTest(getTestName(false) + "/main.kt", getTestName(false) + "/MyJavaClass.java");
     }
 
+    public void testArrayAccessExpression() throws Exception {
+        doTest(getTestName(false) + "/main.kt", getTestName(false) + "/myClass.kt");
+    }
+
     public void doTest(String... fileNames) throws Exception {
         configureByFiles(null, fileNames);
         invokeFormatFile();

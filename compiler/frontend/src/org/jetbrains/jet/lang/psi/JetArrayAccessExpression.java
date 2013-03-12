@@ -25,6 +25,7 @@ import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -34,6 +35,14 @@ import java.util.List;
 public class JetArrayAccessExpression extends JetReferenceExpression {
     public JetArrayAccessExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Nullable
+    @Override
+    public PsiReference getReference() {
+        PsiReference[] references = getReferences();
+        if (references.length == 1) return references[0];
+        else return null;
     }
 
     @NotNull
