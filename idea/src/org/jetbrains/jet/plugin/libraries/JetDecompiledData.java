@@ -21,7 +21,6 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
@@ -31,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 
 import java.util.Map;
 
@@ -78,8 +78,7 @@ public class JetDecompiledData {
     }
 
     public static boolean isKotlinFile(@NotNull ClsFileImpl clsFile) {
-        PsiClass psiClass = clsFile.getClasses()[0];
-        return DecompiledDataFactory.isKotlinNamespaceClass(psiClass) || DecompiledDataFactory.isKotlinClass(psiClass);
+        return DescriptorResolverUtils.isKotlinClass(clsFile.getClasses()[0]);
     }
 
     @NotNull

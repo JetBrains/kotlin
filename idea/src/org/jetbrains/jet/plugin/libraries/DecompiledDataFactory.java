@@ -18,14 +18,12 @@ package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.compiled.ClsAnnotationImpl;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.util.PsiTreeUtil;
-import jet.runtime.typeinfo.JetClass;
-import jet.runtime.typeinfo.JetMethod;
-import jet.runtime.typeinfo.JetPackageClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -43,9 +41,6 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import java.util.*;
 
 public class DecompiledDataFactory {
-    private static final String JET_CLASS = JetClass.class.getName();
-    private static final String JET_PACKAGE_CLASS = JetPackageClass.class.getName();
-    private static final String JET_METHOD = JetMethod.class.getName();
     private static final String DECOMPILED_COMMENT = "/* compiled code */";
     private static final DescriptorRenderer DESCRIPTOR_RENDERER =
             new DescriptorRendererBuilder().setWithDefinedIn(false).setClassWithPrimaryConstructor(true).build();
@@ -83,7 +78,7 @@ public class DecompiledDataFactory {
 
         PsiClass psiClass = clsFile.getClasses()[0];
 
-        if (isKotlinNamespaceClass(psiClass)) {
+        if (PackageClassUtils.isPackageClass(psiClass)) {
             NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(new FqName(packageName), DescriptorSearchRule.INCLUDE_KOTLIN);
 
             if (nd != null) {
@@ -206,20 +201,6 @@ public class DecompiledDataFactory {
         }
     }
 
-    private static boolean hasAnnotation(PsiModifierListOwner modifierListOwner, String qualifiedName) {
-        PsiModifierList modifierList = modifierListOwner.getModifierList();
-        if (modifierList != null) {
-            for (PsiAnnotation annotation : modifierList.getAnnotations()) {
-                if (annotation instanceof ClsAnnotationImpl) {
-                    if (qualifiedName.equals(annotation.getQualifiedName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private static boolean isNamedObjectProperty(@NotNull DeclarationDescriptor descriptor, BindingContext bindingContext) {
         if (descriptor instanceof PropertyDescriptor) {
             ClassDescriptor objectDeclaration = bindingContext.get(BindingContext.OBJECT_DECLARATION_CLASS, (PropertyDescriptor) descriptor);
@@ -228,18 +209,6 @@ public class DecompiledDataFactory {
             }
         }
         return false;
-    }
-
-    public static boolean isKotlinClass(@NotNull PsiClass psiClass) {
-        return hasAnnotation(psiClass, JET_CLASS);
-    }
-
-    public static boolean isKotlinNamespaceClass(@NotNull PsiClass psiClass) {
-        return hasAnnotation(psiClass, JET_PACKAGE_CLASS);
-    }
-
-    public static boolean isCompiledFromKotlin(@NotNull PsiClass psiClass) {
-        return isKotlinClass(psiClass) || isKotlinNamespaceClass(psiClass);
     }
 
     public static boolean isKotlinObject(PsiClass aClass) {
