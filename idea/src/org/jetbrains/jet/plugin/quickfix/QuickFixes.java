@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 
 import java.util.Collection;
@@ -183,6 +182,8 @@ public class QuickFixes {
 
         factories.put(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION, AddStarProjectionsFix.createFactoryForIsExpression());
         factories.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, AddStarProjectionsFix.createFactoryForJavaClass());
+
+        factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemoveTypeArgumentsFix.createFactory());
 
         JetIntentionActionFactory changeToStarProjectionFactory = ChangeToStarProjectionFix.createFactory();
         factories.put(UNCHECKED_CAST, changeToStarProjectionFactory);
