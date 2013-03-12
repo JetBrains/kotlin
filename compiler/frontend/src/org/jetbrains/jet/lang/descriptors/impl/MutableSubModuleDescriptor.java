@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -33,24 +34,33 @@ import java.util.Set;
 
 public class MutableSubModuleDescriptor extends AbstractSubModuleDescriptor {
 
-    private final MutablePackageFragmentProvider packageFragmentProvider;
+    private final MutablePackageFragmentProvider packageFragmentProviderForKotlinSources;
+
+    private final List<PackageFragmentProvider> providers = Lists.newArrayList();
+    private final CompositePackageFragmentProvider compositePackageFragmentProvider = new CompositePackageFragmentProvider(providers);
+
     private final Set<SubModuleDescriptor> dependencies = Sets.newLinkedHashSet();
     private final List<ImportPath> defaultImports = Lists.newArrayList();
 
     public MutableSubModuleDescriptor(@NotNull ModuleDescriptor module, @NotNull Name name) {
         super(module, name);
-        this.packageFragmentProvider = new MutablePackageFragmentProvider(this);
+        this.packageFragmentProviderForKotlinSources = new MutablePackageFragmentProvider(this);
+        providers.add(packageFragmentProviderForKotlinSources);
     }
 
     @NotNull
     @Override
     public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-        return packageFragmentProvider.getPackageFragments(fqName);
+        return compositePackageFragmentProvider.getPackageFragments(fqName);
+    }
+
+    public void addPackageFragmentProvider(@NotNull PackageFragmentProvider provider) {
+        providers.add(provider);
     }
 
     @NotNull
-    public MutablePackageFragmentProvider getPackageFragmentProvider() {
-        return packageFragmentProvider;
+    public MutablePackageFragmentProvider getPackageFragmentProviderForKotlinSources() {
+        return packageFragmentProviderForKotlinSources;
     }
 
     @NotNull

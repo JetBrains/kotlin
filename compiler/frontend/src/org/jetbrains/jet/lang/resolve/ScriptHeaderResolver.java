@@ -116,7 +116,8 @@ public class ScriptHeaderResolver {
         JetFile file = (JetFile) script.getContainingFile();
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
         FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
-        MutablePackageFragmentDescriptor packageFragment = subModule.getPackageFragmentProvider().addPackageFragment(PackageFragmentKind.SOURCE, fqName);
+        MutablePackageFragmentDescriptor packageFragment = subModule.getPackageFragmentProviderForKotlinSources().addPackageFragment(
+                PackageFragmentKind.SOURCE, fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);
         if (priority == null) {

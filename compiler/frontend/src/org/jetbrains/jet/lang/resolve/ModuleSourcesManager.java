@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 
@@ -32,7 +31,4 @@ public interface ModuleSourcesManager {
 
     @NotNull
     Collection<JetFile> getPackageFragmentSources(@NotNull PackageFragmentDescriptor packageFragment);
-
-    @NotNull
-    PackageFragmentKind getPackageFragmentKindForFile(PsiFile file);
 }

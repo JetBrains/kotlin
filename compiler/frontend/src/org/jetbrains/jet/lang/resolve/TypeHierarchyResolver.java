@@ -56,7 +56,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private ScriptHeaderResolver scriptHeaderResolver;
     @NotNull
-    private MutableModuleSourcesManager moduleManager;
+    private ModuleSourcesManager moduleManager;
     @NotNull
     private BindingTrace trace;
 
@@ -81,7 +81,7 @@ public class TypeHierarchyResolver {
     }
 
     @Inject
-    public void setModuleManager(@NotNull MutableModuleSourcesManager moduleManager) {
+    public void setModuleManager(@NotNull ModuleSourcesManager moduleManager) {
         this.moduleManager = moduleManager;
     }
 
@@ -475,9 +475,9 @@ public class TypeHierarchyResolver {
 
         @Override
         public void visitJetFile(JetFile file) {
-            MutableSubModuleDescriptor subModule = moduleManager.getSubModuleForFile(file);
-            PackageFragmentKind kind = moduleManager.getPackageFragmentKindForFile(file);
-            MutablePackageFragmentDescriptor fragmentDescriptor = subModule.getPackageFragmentProvider().addPackageFragment(kind, JetPsiUtil.getFQName(file));
+            MutableSubModuleDescriptor subModule = (MutableSubModuleDescriptor) moduleManager.getSubModuleForFile(file);
+            MutablePackageFragmentDescriptor fragmentDescriptor = subModule.getPackageFragmentProviderForKotlinSources()
+                    .addPackageFragment(PackageFragmentKind.SOURCE, JetPsiUtil.getFQName(file));
             context.getPackageFragmentDescriptors().put(file, fragmentDescriptor);
 
             WriteThroughScope fileScope = new WriteThroughScope(outerScope, fragmentDescriptor.getMemberScope(),

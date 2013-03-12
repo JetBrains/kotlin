@@ -58,18 +58,17 @@ public class MutableModuleSourcesManager implements ModuleSourcesManager {
     }
 
     @NotNull
-    @Override
-    public PackageFragmentKind getPackageFragmentKindForFile(PsiFile file) {
-        return getRootForFile(file).rootKind;
-    }
-
-    @NotNull
     private RootData getRootForFile(@NotNull PsiFile file) {
         VirtualFile virtualFile = file.getVirtualFile();
         assert virtualFile != null : "No virtual file for " + file;
         RootData root = roots.getDataForFile(virtualFile);
         assert root != null : "File " + file + " not found ";
         return root;
+    }
+
+    @NotNull
+    public Collection<JetFile> getAllSourceFiles() {
+        return sourceFiles.values();
     }
 
     public void registerRoot(@NotNull MutableSubModuleDescriptor subModule, @NotNull PackageFragmentKind kind, @NotNull VirtualFile root) {
@@ -116,7 +115,7 @@ public class MutableModuleSourcesManager implements ModuleSourcesManager {
         JetFile jetFile = (JetFile) file;
         FqName fqName = JetPsiUtil.getFQName(jetFile);
 
-        MutablePackageFragmentDescriptor fragment = subModule.getPackageFragmentProvider().addPackageFragment(kind, fqName);
+        MutablePackageFragmentDescriptor fragment = subModule.getPackageFragmentProviderForKotlinSources().addPackageFragment(kind, fqName);
         sourceFiles.put(fragment, jetFile);
     }
 
