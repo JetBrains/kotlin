@@ -183,7 +183,7 @@ public class QuickFixes {
         factories.put(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION, AddStarProjectionsFix.createFactoryForIsExpression());
         factories.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, AddStarProjectionsFix.createFactoryForJavaClass());
 
-        factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemoveTypeArgumentsFix.createFactory());
+        factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory());
 
         JetIntentionActionFactory changeToStarProjectionFactory = ChangeToStarProjectionFix.createFactory();
         factories.put(UNCHECKED_CAST, changeToStarProjectionFactory);
