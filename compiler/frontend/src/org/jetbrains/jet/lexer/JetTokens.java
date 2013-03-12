@@ -113,6 +113,7 @@ public interface JetTokens {
     //    JetToken MAP         = new JetToken("MAP");
 //    JetToken FILTER      = new JetToken("FILTER");
     JetToken QUEST       = new JetToken("QUEST");
+    JetToken COLONCOLON  = new JetToken("COLONCOLON");
     JetToken COLON       = new JetToken("COLON");
     JetToken SEMICOLON   = new JetToken("SEMICOLON");
     JetToken RANGE       = new JetToken("RANGE");
@@ -191,7 +192,6 @@ public interface JetTokens {
             COLON,
             RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
             NOT_IN, NOT_IS,
-//            HASH,
             IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
 
     TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);

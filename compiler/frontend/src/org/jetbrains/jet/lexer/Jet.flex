@@ -297,6 +297,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 "=>"         { return JetTokens.DOUBLE_ARROW; }
 ".."         { return JetTokens.RANGE     ; }
 "@@"         { return JetTokens.ATAT      ; }
+"::"         { return JetTokens.COLONCOLON; }
 "["          { return JetTokens.LBRACKET  ; }
 "]"          { return JetTokens.RBRACKET  ; }
 "{"          { return JetTokens.LBRACE    ; }

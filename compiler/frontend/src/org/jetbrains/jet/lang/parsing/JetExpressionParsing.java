@@ -57,7 +57,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
             EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
-            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, //HASH,
+            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS,
+            COLONCOLON,
             COLON
     );
 
@@ -67,6 +68,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             EXCL, EXCLEXCL, // Joining complex tokens makes it necessary to put EXCLEXCL here
             LBRACKET, LABEL_IDENTIFIER, AT, ATAT,
             // Atomic
+
+            COLONCOLON, // callable reference
 
             LPAR, // parenthesized
             HASH, // Tuple
@@ -128,7 +131,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
     @SuppressWarnings({"UnusedDeclaration"})
     public enum Precedence {
         POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
-//                HASH,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER, AT, ATAT) { // attributes

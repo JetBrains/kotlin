@@ -35,7 +35,7 @@ public class JetCallableReferenceExpression extends JetExpressionImpl {
 
     @NotNull
     public JetSimpleNameExpression getCallableReference() {
-        ASTNode node = getNode().findChildByType(JetTokens.OPERATIONS /* TODO: COLONCOLON */);
+        ASTNode node = getNode().findChildByType(JetTokens.COLONCOLON);
         while (node != null) {
             PsiElement psi = node.getPsi();
             if (psi instanceof JetSimpleNameExpression) {
