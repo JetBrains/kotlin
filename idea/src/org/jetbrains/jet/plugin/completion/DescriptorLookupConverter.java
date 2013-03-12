@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -40,7 +41,6 @@ import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
-import org.jetbrains.jet.plugin.libraries.DecompiledDataFactory;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
@@ -145,14 +145,14 @@ public final class DescriptorLookupConverter {
     private static MutableLookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration) {
         if (declaration instanceof PsiClass) {
             PsiClass psiClass = (PsiClass) declaration;
-            if (!DecompiledDataFactory.isCompiledFromKotlin(psiClass)) {
+            if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
                 return new JavaPsiClassReferenceElement(psiClass);
             }
         }
 
         if (declaration instanceof PsiMember) {
             PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
-            if (containingClass != null && !DecompiledDataFactory.isCompiledFromKotlin(containingClass)) {
+            if (containingClass != null && !DescriptorResolverUtils.isKotlinClass(containingClass)) {
                 if (declaration instanceof PsiMethod) {
                     return new JavaMethodCallElementWithCustomHandler(declaration);
                 }

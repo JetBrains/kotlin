@@ -24,6 +24,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -87,7 +88,7 @@ public class JetTypesCompletionHelper {
             return true;
         }
 
-        if (DecompiledDataFactory.isCompiledFromKotlin(aClass)) {
+        if (DescriptorResolverUtils.isKotlinClass(aClass)) {
             if (!DecompiledDataFactory.isKotlinObject(aClass)) {
                 String qualifiedName = aClass.getQualifiedName();
                 if (qualifiedName != null) {
