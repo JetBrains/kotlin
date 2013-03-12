@@ -177,7 +177,17 @@ public final class TipsManager {
         return Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
             @Override
             public boolean apply(DeclarationDescriptor declarationDescriptor) {
-                return declarationDescriptor instanceof NamespaceDescriptor;
+                if (declarationDescriptor instanceof NamespaceDescriptor) {
+                    // Heuristic: we don't want to complete "System" in "package java.lang.Sys",
+                    // so we find class of the same name as namespace, we exclude this namespace
+                    DeclarationDescriptor parent = declarationDescriptor.getContainingDeclaration();
+                    if (parent instanceof NamespaceDescriptor) {
+                        JetScope parentScope = ((NamespaceDescriptor) parent).getMemberScope();
+                        return parentScope.getClassifier(declarationDescriptor.getName()) == null;
+                    }
+                    return true;
+                }
+                return false;
             }
         });
     }
