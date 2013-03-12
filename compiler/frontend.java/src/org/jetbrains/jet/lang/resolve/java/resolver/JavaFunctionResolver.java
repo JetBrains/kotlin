@@ -35,7 +35,9 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagation
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
@@ -324,6 +326,32 @@ public final class JavaFunctionResolver {
         }
         PsiClass psiClass = scopeData.getPsiClass();
         return resolveNamedGroupFunctions(ownerDescriptor, psiClass, namedMembers, methodName, scopeData);
+    }
+
+    @NotNull
+    public Set<FunctionDescriptor> resolveFunctionGroup(
+            @NotNull Name functionName,
+            @NotNull PackagePsiDeclarationProvider scopeData,
+            @NotNull NamespaceDescriptor ownerDescriptor
+    ) {
+
+        NamedMembers namedMembers = scopeData.getMembersCache().get(functionName);
+        if (namedMembers == null) {
+            return Collections.emptySet();
+        }
+
+        PsiClass functionalInterface = namedMembers.getFunctionalInterface();
+        if (functionalInterface != null) {
+            ClassifierDescriptor classifier = ownerDescriptor.getMemberScope().getClassifier(functionName);
+            if (classifier instanceof ClassDescriptor && SingleAbstractMethodUtils.isFunctionalInterface((ClassDescriptor) classifier)) {
+
+                SimpleFunctionDescriptor constructorFunction =
+                        SingleAbstractMethodUtils.createConstructorFunction((ClassDescriptor) classifier);
+                return Collections.<FunctionDescriptor>singleton(constructorFunction);
+            }
+        }
+
+        return Collections.emptySet();
     }
 
     @NotNull

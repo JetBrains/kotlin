@@ -17,7 +17,9 @@
 package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -39,6 +41,9 @@ public final class NamedMembers {
     @NotNull
     private final List<PropertyPsiDataElement> propertyPsiDataElements = Lists.newArrayList();
 
+    @Nullable
+    private PsiClass functionalInterface;
+
     void addMethod(@NotNull PsiMethodWrapper method) {
         methods.add(method);
     }
@@ -47,9 +52,8 @@ public final class NamedMembers {
         propertyPsiDataElements.add(propertyPsiDataElement);
     }
 
-    @NotNull
-    public List<PsiMethodWrapper> getMethods() {
-        return methods;
+    void setFunctionalInterface(@NotNull PsiClass functionalInterface) {
+        this.functionalInterface = functionalInterface;
     }
 
     @NotNull
@@ -58,7 +62,17 @@ public final class NamedMembers {
     }
 
     @NotNull
+    public List<PsiMethodWrapper> getMethods() {
+        return methods;
+    }
+
+    @NotNull
     public List<PropertyPsiDataElement> getPropertyPsiDataElements() {
         return propertyPsiDataElements;
+    }
+
+    @Nullable
+    public PsiClass getFunctionalInterface() {
+        return functionalInterface;
     }
 }
