@@ -45,7 +45,6 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -73,7 +72,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     public static KotlinJavaFileStubProvider createForDeclaredTopLevelClass(
             @NotNull final JetClassOrObject classOrObject
     ) {
-        JetFile file = (JetFile) classOrObject.getContainingFile();
+        final JetFile file = (JetFile) classOrObject.getContainingFile();
         assert classOrObject.getParent() == file : "Not a top-level class: " + classOrObject.getText();
 
         final FqName packageFqName = JetPsiUtil.getFQName(file);
@@ -84,7 +83,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
 
                 NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(packageFqName, state.getFiles());
                 PackageViewDescriptor packageViewDescriptor =
-                        state.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, packageFqName);
+                        state.getModuleSourcesManager().getSubModuleForFile(file).getPackageView(packageFqName);
                 assert packageViewDescriptor != null : "No package descriptor for " + packageFqName + " for class " + classOrObject.getText();
                 namespaceCodegen.generateClassOrObject(packageViewDescriptor, classOrObject);
 
