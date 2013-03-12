@@ -489,6 +489,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/modifiers/beforeIllegalEnumAnnotation2.kt");
         }
         
+        @TestMetadata("beforeRemoveSupertype1.kt")
+        public void testRemoveSupertype1() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype1.kt");
+        }
+        
+        @TestMetadata("beforeRemoveSupertype2.kt")
+        public void testRemoveSupertype2() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype2.kt");
+        }
+        
         @TestMetadata("beforeNotAnAnnotationClass.kt")
         public void testNotAnAnnotationClass() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeNotAnAnnotationClass.kt");
