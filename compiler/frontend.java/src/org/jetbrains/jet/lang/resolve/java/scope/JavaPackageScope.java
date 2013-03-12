@@ -73,7 +73,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
-        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return null;
     }
 
     @NotNull

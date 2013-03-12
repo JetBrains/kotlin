@@ -146,7 +146,6 @@ public class JavaDescriptorResolver {
     private JavaClassResolver classResolver;
     private JavaConstructorResolver constructorResolver;
     private JavaFunctionResolver functionResolver;
-    private JavaNamespaceResolver namespaceResolver;
     private JavaInnerClassResolver innerClassResolver;
 
     @Inject
@@ -157,11 +156,6 @@ public class JavaDescriptorResolver {
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
-    }
-
-    @Inject
-    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
-        this.namespaceResolver = namespaceResolver;
     }
 
     @Inject
@@ -196,18 +190,24 @@ public class JavaDescriptorResolver {
         return constructorResolver.resolveConstructors(classData, classDescriptor);
     }
 
+    @Deprecated
     @Nullable
     public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
+        //return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
+        return null;
     }
 
+    @Deprecated
     public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
-        return namespaceResolver.resolveNamespace(qualifiedName);
+        //return namespaceResolver.resolveNamespace(qualifiedName);
+        return null;
     }
 
+    @Deprecated
     @Nullable
     public JetScope getJavaPackageScope(@NotNull PackageViewDescriptor packageViewDescriptor) {
-        return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(packageViewDescriptor);
+        //return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(packageViewDescriptor);
+        return null;
     }
 
     @NotNull

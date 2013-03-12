@@ -40,7 +40,6 @@ public class InjectorForJavaDescriptorResolver {
     private JavaCompileTimeConstResolver javaCompileTimeConstResolver;
     private JavaClassObjectResolver javaClassObjectResolver;
     private JavaSupertypeResolver javaSupertypeResolver;
-    private JavaNamespaceResolver javaNamespaceResolver;
     private JavaSignatureResolver javaSignatureResolver;
     private JavaConstructorResolver javaConstructorResolver;
     private JavaValueParameterResolver javaValueParameterResolver;

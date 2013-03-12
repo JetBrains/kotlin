@@ -83,10 +83,12 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull final Project fileProject, @NotNull Collection<JetFile> files) {
-        ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
+        ModuleDescriptor javaModule = new MutableModuleDescriptor(Name.special("<java module>"), JavaToKotlinClassMap.getInstance());
 
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
+
+        final PsiClassFinder psiClassFinder = null; // TODO
 
         // TODO: Replace with stub declaration provider
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
@@ -131,7 +133,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             }
         };
 
-        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        ModuleDescriptor lazyModule = new MutableModuleDescriptor(Name.special("<lazy module>"), JavaToKotlinClassMap.getInstance());
 
         return new ResolveSession(fileProject, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
     }

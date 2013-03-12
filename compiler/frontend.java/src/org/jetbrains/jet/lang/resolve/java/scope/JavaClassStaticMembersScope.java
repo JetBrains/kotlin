@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -41,6 +40,6 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
 
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
-        return javaDescriptorResolver.resolveNamespace(classFqName.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return null;
     }
 }
