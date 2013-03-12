@@ -34,8 +34,6 @@ import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllPac
 public abstract class JavaPackageScope extends JavaBaseScope {
 
     @NotNull
-    private final PackagePsiDeclarationProvider declarationProvider;
-    @NotNull
     private final FqName packageFQN;
 
     protected JavaPackageScope(
@@ -45,7 +43,6 @@ public abstract class JavaPackageScope extends JavaBaseScope {
             @NotNull JavaSemanticServices semanticServices
     ) {
         super(descriptor, semanticServices, declarationProvider);
-        this.declarationProvider = declarationProvider;
         this.packageFQN = packageFQN;
     }
 
@@ -78,7 +75,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     @Override
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
-        result.addAll(computeAllPackageDeclarations(declarationProvider.getPsiPackage(), semanticServices));
+        result.addAll(computeAllPackageDeclarations(((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage(), semanticServices));
         return result;
     }
 }
