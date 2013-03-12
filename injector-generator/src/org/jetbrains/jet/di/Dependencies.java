@@ -178,7 +178,7 @@ public class Dependencies {
 
             @Override
             public String toString() {
-                return "<EMPTY>";
+                return "<itself>";
             }
         };
 
