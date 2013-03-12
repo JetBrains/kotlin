@@ -235,8 +235,8 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {
-        visitQualifiedExpression(expression);
+    public void visitCallableReferenceExpression(JetCallableReferenceExpression expression) {
+        visitExpression(expression);
     }
 
     public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {

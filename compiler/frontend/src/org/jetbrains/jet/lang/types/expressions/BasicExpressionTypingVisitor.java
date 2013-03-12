@@ -563,7 +563,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitHashQualifiedExpression(JetHashQualifiedExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitCallableReferenceExpression(JetCallableReferenceExpression expression, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(expression, getClass().getCanonicalName()));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }

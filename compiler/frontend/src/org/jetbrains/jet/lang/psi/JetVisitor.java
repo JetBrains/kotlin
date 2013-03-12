@@ -245,8 +245,8 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitHashQualifiedExpression(JetHashQualifiedExpression expression, D data) {
-        return visitQualifiedExpression(expression, data);
+    public R visitCallableReferenceExpression(JetCallableReferenceExpression expression, D data) {
+        return visitExpression(expression, data);
     }
 
     public R visitDotQualifiedExpression(JetDotQualifiedExpression expression, D data) {

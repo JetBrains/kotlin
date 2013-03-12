@@ -228,7 +228,6 @@ public class JetControlFlowProcessor {
                     visitAssignToArrayAccess(expression, arrayAccessExpression);
                 }
                 else if (left instanceof JetQualifiedExpression) {
-                    assert !(left instanceof JetHashQualifiedExpression) : left; // TODO
                     JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) left;
                     generateInstructions(qualifiedExpression.getReceiverExpression(), false);
                     generateInstructions(expression.getOperationReference(), false);
