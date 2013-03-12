@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class GenerationState {
 
     @NotNull
     private final List<JetFile> files;
+
+    @NotNull
+    private final ModuleSourcesManager moduleSourcesManager = null; // TODO
 
     @NotNull
     private final ClassBuilderMode classBuilderMode;
@@ -132,6 +136,11 @@ public class GenerationState {
     }
 
     @NotNull
+    public ModuleSourcesManager getModuleSourcesManager() {
+        return moduleSourcesManager;
+    }
+
+    @NotNull
     public ScriptCodegen getScriptCodegen() {
         return scriptCodegen;
     }
@@ -172,7 +181,7 @@ public class GenerationState {
         markUsed();
 
         //noinspection unchecked
-        CodegenBinding.initTrace(getBindingTrace(), getFiles());
+        CodegenBinding.initTrace(moduleSourcesManager, getBindingTrace(), getFiles());
     }
 
     private void markUsed() {

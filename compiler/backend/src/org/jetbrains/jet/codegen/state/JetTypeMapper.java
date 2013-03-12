@@ -102,14 +102,14 @@ public class JetTypeMapper extends BindingTraceAware {
     @NotNull
     private JavaNamespaceKind getNsKind(@NotNull PackageViewDescriptor ns) {
         JavaNamespaceKind javaNamespaceKind = bindingContext.get(JavaBindingContext.JAVA_NAMESPACE_KIND, ns);
-        Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, ns);
+        //Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, ns);
 
-        if (javaNamespaceKind == null && src == null) {
+        if (javaNamespaceKind == null /*&& src == null*/) {
             throw new IllegalStateException("unknown namespace origin: " + ns);
         }
 
         if (javaNamespaceKind != null) {
-            if (javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS && src != null) {
+            if (javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS /*&& src != null*/) {
                 throw new IllegalStateException(
                         "conflicting namespace " + ns + ": it is both java statics and from src");
             }

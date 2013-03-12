@@ -31,10 +31,14 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -47,6 +51,7 @@ public class NamespaceCodegen extends MemberCodegen {
     @NotNull
     private final ClassBuilderOnDemand v;
     @NotNull private final FqName name;
+    private final SubModuleDescriptor subModule = null; // TODO
     private final Collection<JetFile> files;
 
     public NamespaceCodegen(
@@ -84,7 +89,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     public void generate(CompilationErrorHandler errorHandler) {
-        boolean multiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), name);
+        boolean multiFile = CodegenBinding.isMultiFileNamespace(state.getModuleSourcesManager(), subModule.getContainingDeclaration(), name);
 
         if (shouldGenerateNSClass(files)) {
             AnnotationVisitor packageClassAnnotation = v.getClassBuilder().newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
@@ -118,7 +123,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private void generate(JetFile file, boolean multiFile) {
-        PackageViewDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+        PackageViewDescriptor descriptor = subModule.getPackageView(JetPsiUtil.getFQName(file));
         assert descriptor != null : "No namespace found for file " + file + " declared package: " + file.getPackageName();
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {

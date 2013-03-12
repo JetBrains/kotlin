@@ -38,10 +38,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -222,13 +219,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return typeMapper.mapType(container.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
         }
         else {
-            PackageViewDescriptor packageViewDescriptor = DescriptorUtils.getParentOfType(classDescriptor, PackageViewDescriptor.class);
-            assert packageViewDescriptor != null : "Namespace descriptor should be present: " + classDescriptor.getName();
-            FqName namespaceQN = packageViewDescriptor.getFqName();
-            boolean isMultiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), namespaceQN);
+            PackageFragmentDescriptor packageFragmentDescriptor = DescriptorUtils.getParentOfType(classDescriptor, PackageFragmentDescriptor.class);
+            assert packageFragmentDescriptor != null : "Namespace descriptor should be present: " + classDescriptor.getName();
+            FqName namespaceQN = packageFragmentDescriptor.getFqName();
+
+            JetFile containingFile = BindingContextUtils.getContainingFile(bindingContext, classDescriptor);
+            ModuleSourcesManager sourcesManager = state.getModuleSourcesManager();
+            ModuleDescriptor module = sourcesManager.getSubModuleForFile(containingFile).getContainingDeclaration();
+
+            boolean isMultiFile = CodegenBinding.isMultiFileNamespace(sourcesManager, module, namespaceQN);
             return isMultiFile
-                   ? NamespaceCodegen.getNamespacePartInternalName(
-                                     BindingContextUtils.getContainingFile(bindingContext, classDescriptor))
+                   ? NamespaceCodegen.getNamespacePartInternalName(containingFile)
                    : NamespaceCodegen.getJVMClassNameForKotlinNs(namespaceQN).getInternalName();
         }
     }

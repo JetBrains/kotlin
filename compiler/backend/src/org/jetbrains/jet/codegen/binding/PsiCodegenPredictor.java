@@ -25,10 +25,7 @@ import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -207,6 +204,7 @@ public final class PsiCodegenPredictor {
     @Nullable
     public static JetFile getFileForCodegenNamedClass(
             @NotNull BindingContext context,
+            @NotNull ModuleSourcesManager moduleSourcesManager,
             @NotNull List<JetFile> allNamespaceFiles,
             @NotNull final JvmClassName className
     ) {
@@ -224,7 +222,7 @@ public final class PsiCodegenPredictor {
             }
         };
 
-        CodegenBinding.initTrace(trace, allNamespaceFiles);
+        CodegenBinding.initTrace(moduleSourcesManager, trace, allNamespaceFiles);
 
         return resultingDescriptor.isNull() ? null
                : BindingContextUtils.getContainingFile(trace.getBindingContext(), resultingDescriptor.get());
