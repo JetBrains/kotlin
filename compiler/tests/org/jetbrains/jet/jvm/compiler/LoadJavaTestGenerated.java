@@ -971,7 +971,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledJava")
-    @InnerTestClasses({CompiledJava.Annotations.class, CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.SignaturePropagation.class, CompiledJava.Static.class})
+    @InnerTestClasses({CompiledJava.Annotations.class, CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.SignaturePropagation.class, CompiledJava.SingleAbstractMethod.class, CompiledJava.Static.class})
     public static class CompiledJava extends AbstractLoadJavaTest {
         public void testAllFilesPresentInCompiledJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1124,6 +1124,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             
         }
         
+        @TestMetadata("compiler/testData/loadJava/compiledJava/singleAbstractMethod")
+        public static class SingleAbstractMethod extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInSingleAbstractMethod() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/singleAbstractMethod"), Pattern.compile("^(.+)\\.java$"), true);
+            }
+            
+            @TestMetadata("Runnable.java")
+            public void testRunnable() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/loadJava/compiledJava/static")
         public static class Static extends AbstractLoadJavaTest {
             public void testAllFilesPresentInStatic() throws Exception {
@@ -1169,6 +1182,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             suite.addTestSuite(ProtectedPackage.class);
             suite.addTestSuite(ProtectedStatic.class);
             suite.addTestSuite(SignaturePropagation.class);
+            suite.addTestSuite(SingleAbstractMethod.class);
             suite.addTestSuite(Static.class);
             return suite;
         }

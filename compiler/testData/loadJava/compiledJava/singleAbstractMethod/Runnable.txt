@@ -1,0 +1,7 @@
+package test
+
+public /*synthesized*/ fun Runnable(/*0*/ function : () -> jet.Unit) : test.Runnable
+
+public trait Runnable : java.lang.Object {
+    public abstract fun run() : jet.Unit
+}

@@ -19,10 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
-import org.jetbrains.jet.lang.resolve.java.TypeSource;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
@@ -73,27 +70,28 @@ public final class MembersCache {
 
         //TODO:
         List<PsiClass> classes = psiPackage != null ? finder.findPsiClasses(psiPackage) : finder.findInnerPsiClasses(psiClass);
-        membersCache.new ObjectClassProcessor(classes).process();
+        membersCache.new ExtraPackageMembersProcessor(classes).process();
         return membersCache;
     }
 
-    private class ObjectClassProcessor {
+    private class ExtraPackageMembersProcessor { // 'extra' means that PSI elements for these members are not just top-level classes
         @NotNull
         private final List<PsiClass> psiClasses;
 
-        private ObjectClassProcessor(@NotNull List<PsiClass> classes) {
+        private ExtraPackageMembersProcessor(@NotNull List<PsiClass> classes) {
             psiClasses = classes;
         }
 
         private void process() {
             for (PsiClass psiClass : psiClasses) {
-                if (!psiClass.isPhysical()) { // to filter out JetLightClasses
-                    continue;
+                if (!(psiClass instanceof JetJavaMirrorMarker)) { // to filter out JetLightClasses
+                    if (JetClassAnnotation.get(psiClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
+                        processObjectClass(psiClass);
+                    }
+                    if (!DescriptorResolverUtils.isKotlinClass(psiClass) && psiClass.isInterface()) {
+                        processFunctionalInterface(psiClass);
+                    }
                 }
-                if (JetClassAnnotation.get(psiClass).kind() != JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
-                    continue;
-                }
-                processObjectClass(psiClass);
             }
         }
 
@@ -105,6 +103,10 @@ public final class MembersCache {
                 TypeSource type = new TypeSource("", instanceField.getType(), instanceField);
                 namedMembers.addPropertyAccessor(new PropertyPsiDataElement(new PsiFieldWrapper(instanceField), type, null));
             }
+        }
+
+        private void processFunctionalInterface(@NotNull PsiClass psiClass) {
+            getOrCreateEmpty(Name.identifier(psiClass.getName()));
         }
     }
 

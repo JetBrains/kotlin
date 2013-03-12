@@ -178,6 +178,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/class/NestedGenericClass.kt");
         }
         
+        @TestMetadata("SingleAbstractMethod.kt")
+        public void testSingleAbstractMethod() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/SingleAbstractMethod.kt");
+        }
+        
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/Trait.kt");
