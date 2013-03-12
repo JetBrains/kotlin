@@ -175,6 +175,11 @@ public class Dependencies {
             public Chain prepend(Object o) {
                 return create(o);
             }
+
+            @Override
+            public String toString() {
+                return "<EMPTY>";
+            }
         };
 
         @NotNull
