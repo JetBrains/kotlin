@@ -55,7 +55,7 @@ public class Dependencies {
         return field;
     }
 
-    private void satisfyDependenciesFor(Field field, Field neededFor) {
+    private void satisfyDependenciesFor(Field field, ImmutableStack<Field> neededFor) {
         if (!satisfied.add(field)) return;
 
         Expression initialization = field.getInitialization();
@@ -80,13 +80,17 @@ public class Dependencies {
             Type parameterType = method.getGenericParameterTypes()[0];
 
 
-            Field dependency = findDependencyOfType(DiType.fromReflectionType(parameterType), field + ": " + method + ": " + allFields, field);
+            Field dependency = findDependencyOfType(
+                    DiType.fromReflectionType(parameterType),
+                    field + ": " + method + ": " + allFields,
+                    neededFor.prepend(field)
+            );
 
             field.getDependencies().add(new SetterDependency(field, method.getName(), dependency));
         }
     }
 
-    private Field findDependencyOfType(DiType parameterType, String errorMessage, Field neededFor) {
+    private Field findDependencyOfType(DiType parameterType, String errorMessage, ImmutableStack<Field> neededFor) {
         List<Field> fields = Lists.newArrayList();
         for (Map.Entry<DiType, Field> entry : typeToFields.entries()) {
             if (parameterType.isAssignableFrom(entry.getKey())) {
@@ -113,7 +117,7 @@ public class Dependencies {
         }
     }
 
-    private void initializeByConstructorCall(Field field, Field neededFor) {
+    private void initializeByConstructorCall(Field field, ImmutableStack<Field> neededFor) {
         Expression initialization = field.getInitialization();
         DiType type = ((InstantiateType) initialization).getType();
 
@@ -140,7 +144,11 @@ public class Dependencies {
         ConstructorCall dependency = new ConstructorCall(constructor);
         Type[] parameterTypes = constructor.getGenericParameterTypes();
         for (Type parameterType : parameterTypes) {
-            Field fieldForParameter = findDependencyOfType(DiType.fromReflectionType(parameterType), "constructor: " + constructor + ", parameter: " + parameterType, field);
+            Field fieldForParameter = findDependencyOfType(
+                    DiType.fromReflectionType(parameterType),
+                    "constructor: " + constructor + ", parameter: " + parameterType,
+                    neededFor.prepend(field)
+            );
             dependency.getConstructorArguments().add(fieldForParameter);
         }
 
@@ -149,8 +157,70 @@ public class Dependencies {
 
     public Collection<Field> satisfyDependencies() {
         for (Field field : Lists.newArrayList(allFields)) {
-            satisfyDependenciesFor(field, field);
+            satisfyDependenciesFor(field, LinkedImmutableStack.<Field>empty());
         }
         return newFields;
     }
+
+    private interface ImmutableStack<T> {
+        @NotNull
+        ImmutableStack<T> prepend(T t);
+    }
+
+    private static class LinkedImmutableStack<T> implements ImmutableStack<T> {
+
+        private static final ImmutableStack EMPTY = new ImmutableStack() {
+            @NotNull
+            @Override
+            public ImmutableStack prepend(Object o) {
+                return create(o);
+            }
+
+            @Override
+            public String toString() {
+                return "<itself>";
+            }
+        };
+
+        @NotNull
+        public static <T> ImmutableStack<T> empty() {
+            return EMPTY;
+        }
+
+        @NotNull
+        public static <T> LinkedImmutableStack<T> create(@NotNull T t) {
+            return new LinkedImmutableStack<T>(t, LinkedImmutableStack.<T>empty());
+        }
+
+        private final T head;
+        private final ImmutableStack<T> tail;
+
+        private LinkedImmutableStack(@NotNull T head, @NotNull ImmutableStack<T> tail) {
+            this.head = head;
+            this.tail = tail;
+        }
+
+        @NotNull
+        @Override
+        public LinkedImmutableStack<T> prepend(@NotNull T t) {
+            return new LinkedImmutableStack<T>(t, this);
+        }
+
+        @Override
+        public String toString() {
+            return doToString(this, new StringBuilder()).toString();
+        }
+
+        private static <T> CharSequence doToString(@NotNull ImmutableStack<T> stack, StringBuilder builder) {
+            if (stack == empty()) {
+                builder.append("|");
+                return builder;
+            }
+
+            LinkedImmutableStack<T> list = (LinkedImmutableStack<T>) stack;
+            builder.append("\n\t").append(list.head).append(" -> ");
+            return doToString(list.tail, builder);
+        }
+    }
+
 }
