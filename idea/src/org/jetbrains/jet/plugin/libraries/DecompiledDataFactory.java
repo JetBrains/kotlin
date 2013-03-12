@@ -210,8 +210,4 @@ public class DecompiledDataFactory {
         }
         return false;
     }
-
-    public static boolean isKotlinObject(PsiClass aClass) {
-        return JetClassAnnotation.get(aClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT;
-    }
 }
