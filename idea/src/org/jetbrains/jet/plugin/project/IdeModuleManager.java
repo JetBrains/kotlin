@@ -16,32 +16,44 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.*;
+import com.intellij.compiler.ModuleCompilerUtil;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.Chunk;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.graph.CachingSemiGraph;
+import com.intellij.util.graph.Graph;
+import com.intellij.util.graph.GraphGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
 import org.jetbrains.jet.lang.resolve.MutableModuleSourcesManager;
 import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
@@ -49,13 +61,13 @@ import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.plugin.JetFileType;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class IdeModuleManager implements KotlinModuleManager {
+
+    public static final Predicate<Object> MUTABLE_SUB_MODULE_DESCRIPTOR = Predicates.instanceOf(MutableSubModuleDescriptor.class);
 
     @NotNull
     public static IdeModuleManager getInstance(@NotNull Project project) {
@@ -89,9 +101,10 @@ public class IdeModuleManager implements KotlinModuleManager {
         private final MutableModuleSourcesManager moduleSourcesManager;
         private final JavaClassResolutionFacade classResolutionFacade;
 
-        private final Map<Module, ModuleDescriptor> kotlinModules = Maps.newHashMap();
-        private final Map<Module, MutableSubModuleDescriptor> srcSubModules = Maps.newHashMap();
-        private final Map<Module, MutableSubModuleDescriptor> testSubModules = Maps.newHashMap();
+        private final BiMap<Module, ModuleDescriptor> kotlinModules = HashBiMap.create();
+        private final BiMap<Module, MutableSubModuleDescriptor> srcSubModules = HashBiMap.create();
+        private final BiMap<Module, MutableSubModuleDescriptor> testSubModules = HashBiMap.create();
+
         private final Map<Library, MutableSubModuleDescriptor> librarySubModules = Maps.newHashMap();
         private final Map<Sdk, MutableSubModuleDescriptor> sdkSubModules = Maps.newHashMap();
 
@@ -108,7 +121,6 @@ public class IdeModuleManager implements KotlinModuleManager {
 
         @NotNull
         public KotlinModules computeModules() {
-
             Module[] ideaModules = ModuleManager.getInstance(project).getModules();
             for (Module ideaModule : ideaModules) {
                 createModuleAndSubModules(ideaModule);
@@ -118,7 +130,73 @@ public class IdeModuleManager implements KotlinModuleManager {
                 createDependencies(ideaModule);
             }
 
+            List<Chunk<MutableSubModuleDescriptor>> dependencyGraphSCCs = ModuleCompilerUtil.getSortedChunks(getSubModuleGraph());
+            for (Chunk<MutableSubModuleDescriptor> scc : dependencyGraphSCCs) {
+                resolveKotlinInStronglyConnectedSubModules(scc.getNodes());
+            }
+
             return new KotlinModules(kotlinModules);
+        }
+
+        private Graph<MutableSubModuleDescriptor> getSubModuleGraph() {
+            return GraphGenerator.create(CachingSemiGraph.create(
+                    new GraphGenerator.SemiGraph<MutableSubModuleDescriptor>() {
+                        @Override
+                        public Collection<MutableSubModuleDescriptor> getNodes() {
+                            //noinspection unchecked
+                            return Lists.newArrayList(ContainerUtil.concat(srcSubModules.values(), testSubModules.values()));
+                        }
+
+                        @Override
+                        public Iterator<MutableSubModuleDescriptor> getIn(MutableSubModuleDescriptor m) {
+                            //noinspection unchecked
+                            return (Iterator) Collections2.filter(m.getDependencies(), MUTABLE_SUB_MODULE_DESCRIPTOR).iterator();
+                        }
+                    }));
+        }
+
+        private void resolveKotlinInStronglyConnectedSubModules(Set<MutableSubModuleDescriptor> scc) {
+            if (scc.size() > 1) {
+                throw new UnsupportedOperationException("Circular module dependencies are not supported yet");
+            }
+
+            // find relevant files
+            MutableModuleSourcesManager sourcesManager = new MutableModuleSourcesManager(project);
+            for (final MutableSubModuleDescriptor subModule : scc) {
+                collectKotlinSourceFiles(subModule, sourcesManager);
+            }
+
+            // TODO: run TDA
+        }
+
+        private void collectKotlinSourceFiles(
+                final MutableSubModuleDescriptor subModule,
+                final MutableModuleSourcesManager sourcesManager
+        ) {
+            Module module = srcSubModules.inverse().get(subModule);
+            final boolean tests = module == null;
+            if (tests) {
+                module = testSubModules.inverse().get(subModule);
+                assert module != null : "SubModule not present in either src or test map: " + subModule;
+            }
+
+            final ModuleFileIndex index = ModuleRootManager.getInstance(module).getFileIndex();
+            index.iterateContent(new ContentIterator() {
+                @Override
+                public boolean processFile(VirtualFile file) {
+                    if (file.isDirectory()) return true;
+                    if (!index.isInSourceContent(file) && tests) return true;
+                    if (!index.isInTestSourceContent(file) && !tests) return true;
+
+                    final FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
+                    if (fileType != JetFileType.INSTANCE) return true;
+                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                    if (psiFile instanceof JetFile) {
+                        sourcesManager.registerRoot(subModule, PackageFragmentKind.SOURCE, file);
+                    }
+                    return true;
+                }
+            });
         }
 
         private void createModuleAndSubModules(Module ideaModule) {
