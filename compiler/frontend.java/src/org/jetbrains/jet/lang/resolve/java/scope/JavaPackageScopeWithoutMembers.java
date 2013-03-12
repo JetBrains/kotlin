@@ -18,10 +18,12 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -42,7 +44,15 @@ public final class JavaPackageScopeWithoutMembers extends JavaPackageScope {
     @Override
     @NotNull
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-            return Collections.emptySet();
+        ClassifierDescriptor classifier = getClassifier(name);
+        if (classifier instanceof ClassDescriptor && SingleAbstractMethodUtils.isFunctionalInterface((ClassDescriptor) classifier)) {
+
+            FunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createConstructorFunction((ClassDescriptor) classifier);
+
+            return Collections.singleton(constructorFunction);
+        }
+
+        return Collections.emptySet();
     }
 
     @NotNull

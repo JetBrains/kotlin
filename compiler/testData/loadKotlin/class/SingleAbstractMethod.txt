@@ -1,0 +1,5 @@
+package test
+
+public trait SingleAbstractMethod {
+    internal abstract fun foo() : jet.Unit
+}
