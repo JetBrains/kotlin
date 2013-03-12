@@ -107,8 +107,15 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
     }
 
     public override fun visitForeachStatement(statement: PsiForeachStatement?): Unit {
+        val iterator = {
+            val iteratorExpr = getConverter().expressionToExpression(statement?.getIteratedValue())
+            if (iteratorExpr.isNullable())
+                BangBangExpression(iteratorExpr)
+            else
+                iteratorExpr
+        }()
         myResult = ForeachStatement(getConverter().parameterToParameter(statement?.getIterationParameter()!!),
-                getConverter().expressionToExpression(statement?.getIteratedValue()),
+                iterator,
                 getConverter().statementToStatement(statement?.getBody()))
     }
 
