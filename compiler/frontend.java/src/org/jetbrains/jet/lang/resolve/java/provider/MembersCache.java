@@ -106,7 +106,8 @@ public final class MembersCache {
         }
 
         private void processFunctionalInterface(@NotNull PsiClass psiClass) {
-            getOrCreateEmpty(Name.identifier(psiClass.getName()));
+            NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(psiClass.getName()));
+            namedMembers.setFunctionalInterface(psiClass);
         }
     }
 
