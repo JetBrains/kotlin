@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -38,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -53,13 +55,16 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 public class ClosureCodegen extends GenerationStateAware {
 
     private final MutableClosure closure;
+    @Nullable
+    private final ClassDescriptor samInterface;
 
     Method constructor;
     JvmClassName name;
 
-    public ClosureCodegen(GenerationState state, MutableClosure closure) {
+    public ClosureCodegen(GenerationState state, MutableClosure closure, @Nullable ClassDescriptor samInterface) {
         super(state);
         this.closure = closure;
+        this.samInterface = samInterface;
     }
 
     public ClosureCodegen gen(JetDeclarationWithBody fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
@@ -69,7 +74,13 @@ public class ClosureCodegen extends GenerationStateAware {
         FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
         assert funDescriptor != null;
 
-        Name interfaceFunctionName = Name.identifier("invoke");
+        Name interfaceFunctionName;
+        if (samInterface == null) {
+            interfaceFunctionName = Name.identifier("invoke");
+        }
+        else {
+            interfaceFunctionName = SingleAbstractMethodUtils.getAbstractMethodOfFunctionalInterface(samInterface).getName();
+        }
 
         SignatureWriter signatureWriter = new SignatureWriter();
 
@@ -83,18 +94,24 @@ public class ClosureCodegen extends GenerationStateAware {
         appendType(signatureWriter, funDescriptor.getReturnType(), '=');
         signatureWriter.visitEnd();
 
+        JvmClassName superclass = samInterface == null ? funClass : JvmClassName.byType(OBJECT_TYPE);
+        String[] superInterfaces = samInterface == null
+                                   ? new String[0]
+                                   : new String[] {JvmClassName.byClassDescriptor(samInterface).getInternalName()};
         cv.defineClass(fun,
                        V1_6,
-                       ACC_PUBLIC|ACC_FINAL/*|ACC_SUPER*/,
+                       ACC_PUBLIC | ACC_FINAL/*|ACC_SUPER*/,
                        name.getInternalName(),
                        null,
-                       funClass.getInternalName(),
-                       new String[0]
+                       superclass.getInternalName(),
+                       superInterfaces
         );
         cv.visitSource(fun.getContainingFile().getName(), null);
 
 
-        generateBridge(interfaceFunctionName, name.getInternalName(), funDescriptor, fun, cv);
+        if (samInterface == null) { // TODO temporary: if SAM interface is generic, we'll need bridge
+            generateBridge(interfaceFunctionName, name.getInternalName(), funDescriptor, fun, cv);
+        }
         generateBody(interfaceFunctionName, funDescriptor, cv, fun, context, expressionCodegen);
 
         constructor = generateConstructor(funClass, fun, cv, closure);
@@ -213,8 +230,10 @@ public class ClosureCodegen extends GenerationStateAware {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            iv.load(0, funClass.getAsmType());
-            iv.invokespecial(funClass.getInternalName(), "<init>", "()V");
+            Type superAsmType = samInterface == null ? funClass.getAsmType() : OBJECT_TYPE;
+
+            iv.load(0, superAsmType);
+            iv.invokespecial(superAsmType.getInternalName(), "<init>", "()V");
 
             int k = 1;
             for (FieldInfo fieldInfo : args) {

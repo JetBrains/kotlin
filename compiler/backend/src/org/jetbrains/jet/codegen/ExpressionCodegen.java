@@ -1230,7 +1230,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.none();
         }
 
-        StackValue closure = genClosure(function);
+        StackValue closure = genClosure(function, null);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
         int index = lookupLocalIndex(descriptor);
         closure.put(OBJECT_TYPE, v);
@@ -1246,18 +1246,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return gen(expression.getFunctionLiteral().getBodyExpression());
         }
         else {
-            return genClosure(expression.getFunctionLiteral());
+            return genClosure(expression.getFunctionLiteral(), null);
         }
     }
 
-    private StackValue genClosure(JetDeclarationWithBody declaration) {
+    private StackValue genClosure(JetDeclarationWithBody declaration, @Nullable ClassDescriptor samInterfaceClass) {
         FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
         ClassDescriptor classDescriptor =
                 bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
         //noinspection SuspiciousMethodCalls
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure).gen(declaration, context, this);
+        ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure, samInterfaceClass).gen(declaration, context, this);
 
         JvmClassName className = closureCodegen.name;
         Type asmType = className.getAsmType();
@@ -1886,6 +1886,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return invokeFunction(call, receiver, functionCall);
             }
             else {
+                if (funDescriptor instanceof SimpleFunctionDescriptor) {
+                    ClassDescriptor samTrait = bindingContext.get(
+                            BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, (SimpleFunctionDescriptor) funDescriptor);
+
+                    if (samTrait != null) {
+                        JetFunctionLiteralExpression argumentExpression = (JetFunctionLiteralExpression) ((ExpressionValueArgument) resolvedCall.getValueArgumentsByIndex().get(0)).getValueArgument()
+                                .getArgumentExpression(); // TODO this will fail for Runnable(f) expression
+
+                        return genClosure(argumentExpression.getFunctionLiteral(), samTrait);
+                    }
+                }
                 return invokeFunction(call, receiver, resolvedCall);
             }
         }
