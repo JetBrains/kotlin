@@ -22,11 +22,11 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
@@ -59,9 +59,10 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
             @NotNull Predicate<PsiFile> filesForBodiesResolve,
             @NotNull BindingTrace traceContext,
             @NotNull BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleConfiguration configuration
+            @NotNull ModuleSourcesManager moduleSourcesManager
     ) {
-        return AnalyzerFacadeForJS.analyzeBodiesInFiles(filesForBodiesResolve, new IDEAConfig(project), traceContext, bodiesResolveContext, configuration);
+        return AnalyzerFacadeForJS.analyzeBodiesInFiles(filesForBodiesResolve, new IDEAConfig(project), traceContext, bodiesResolveContext,
+                                                        moduleSourcesManager);
     }
 
     @NotNull

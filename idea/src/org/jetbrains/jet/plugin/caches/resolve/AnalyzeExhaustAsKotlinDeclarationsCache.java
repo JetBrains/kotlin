@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 
@@ -47,11 +46,5 @@ public class AnalyzeExhaustAsKotlinDeclarationsCache implements KotlinDeclaratio
     @NotNull
     public BindingContext getBindingContext() {
         return exhaust.getBindingContext();
-    }
-
-    @Override
-    @NotNull
-    public ModuleConfiguration getModuleConfiguration() {
-        return exhaust.getModuleConfiguration();
     }
 }

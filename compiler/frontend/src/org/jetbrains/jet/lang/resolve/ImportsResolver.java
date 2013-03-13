@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -94,7 +93,7 @@ public class ImportsResolver {
     }
 
     private void processImportsInFile(@NotNull SubModuleDescriptor subModule, @NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
-        processImportsInFile(lookupMode, scope, directives, rootScope, ModuleConfiguration.UTIL.fromSubModule(subModule), trace, qualifiedExpressionResolver, importsFactory);
+        processImportsInFile(lookupMode, scope, directives, rootScope, subModule, trace, qualifiedExpressionResolver, importsFactory);
     }
 
     public static void processImportsInFile(
@@ -102,7 +101,7 @@ public class ImportsResolver {
             @NotNull WritableScope namespaceScope,
             @NotNull List<JetImportDirective> importDirectives,
             @NotNull JetScope rootScope,
-            @NotNull ModuleConfiguration configuration,
+            @NotNull SubModuleDescriptor subModule,
             @NotNull BindingTrace trace,
             @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
             @NotNull JetImportsFactory importsFactory
@@ -113,13 +112,14 @@ public class ImportsResolver {
             namespaceScope.clearImports();
         }
 
-        for (ImportPath defaultImportPath : configuration.getDefaultImports()) {
+        PlatformToKotlinClassMap platformToKotlinClassMap = subModule.getContainingDeclaration().getPlatformToKotlinClassMap();
+        for (ImportPath defaultImportPath : subModule.getDefaultImports()) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                     trace, "transient trace to resolve default imports"); //not to trace errors of default imports
 
             JetImportDirective defaultImportDirective = importsFactory.createImportDirective(defaultImportPath);
             qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter,
-                                                               temporaryTrace, configuration.getPlatformToKotlinClassMap(), lookupMode);
+                                                               temporaryTrace, platformToKotlinClassMap, lookupMode);
         }
 
         Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
@@ -127,14 +127,14 @@ public class ImportsResolver {
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
                 qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter,
-                                                                   trace, configuration.getPlatformToKotlinClassMap(), lookupMode);
+                                                                   trace, platformToKotlinClassMap, lookupMode);
             if (descriptors.size() == 1) {
                 resolvedDirectives.put(importDirective, descriptors.iterator().next());
             }
             for (DeclarationDescriptor descriptor : descriptors) {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (lookupMode == LookupMode.ONLY_CLASSES || importedReference == null) continue;
-                reportPlatformClassMappedToKotlin(configuration.getPlatformToKotlinClassMap(), trace, importedReference, descriptor);
+                reportPlatformClassMappedToKotlin(platformToKotlinClassMap, trace, importedReference, descriptor);
             }
         }
         delayedImporter.processImports();

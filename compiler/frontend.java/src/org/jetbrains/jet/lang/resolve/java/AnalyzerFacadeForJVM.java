@@ -77,11 +77,11 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                @NotNull Predicate<PsiFile> filesForBodiesResolve,
                                                @NotNull BindingTrace headersTraceContext,
                                                @NotNull BodiesResolveContext bodiesResolveContext,
-                                               @NotNull ModuleConfiguration configuration
+                                               @NotNull ModuleSourcesManager moduleSourcesManager
     ) {
         return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
                 project, scriptParameters, filesForBodiesResolve,
-                headersTraceContext, bodiesResolveContext, configuration);
+                headersTraceContext, bodiesResolveContext, moduleSourcesManager);
     }
 
     @NotNull

@@ -16,72 +16,68 @@
 
 package org.jetbrains.jet.analyzer;
 
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
-import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 
 public class AnalyzeExhaust {
-    private static final ModuleConfiguration ERROR_CONFIGURATION = new ModuleConfiguration() {
-        @Override
-        public List<ImportPath> getDefaultImports() {
-            return Collections.emptyList();
-        }
 
+    private static final ModuleSourcesManager ERROR_MANAGER = new ModuleSourcesManager() {
+        @NotNull
         @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull PackageViewDescriptor packageViewDescriptor, @NotNull WritableScope namespaceMemberScope) {
+        public SubModuleDescriptor getSubModuleForFile(@NotNull PsiFile file) {
+            throw new UnsupportedOperationException(); // TODO
         }
 
         @NotNull
         @Override
-        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-            return PlatformToKotlinClassMap.EMPTY;
+        public Collection<JetFile> getPackageFragmentSources(@NotNull PackageFragmentDescriptor packageFragment) {
+            throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
         public String toString() {
-            return "ERROR_CONFIGURATION";
+            return "ERROR";
         }
     };
 
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleConfiguration configuration) {
-        return new AnalyzeExhaust(bindingContext, configuration, null, null);
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleSourcesManager moduleSourcesManager) {
+        return new AnalyzeExhaust(bindingContext, moduleSourcesManager, null, null);
     }
     public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
             @Nullable BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleConfiguration configuration
+            @NotNull ModuleSourcesManager moduleSourcesManager
     ) {
-        return new AnalyzeExhaust(bindingContext, configuration, bodiesResolveContext, null);
+        return new AnalyzeExhaust(bindingContext, moduleSourcesManager, bodiesResolveContext, null);
     }
 
     public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
-        return new AnalyzeExhaust(bindingContext, ERROR_CONFIGURATION, null, error);
+        return new AnalyzeExhaust(bindingContext, ERROR_MANAGER, null, error);
     }
 
     private final BindingContext bindingContext;
     private final Throwable error;
     private final BodiesResolveContext bodiesResolveContext;
-    private final ModuleConfiguration configuration;
+    private final ModuleSourcesManager moduleSourcesManager;
 
     private AnalyzeExhaust(
             @NotNull BindingContext bindingContext,
-            @NotNull ModuleConfiguration configuration,
+            @NotNull ModuleSourcesManager moduleSourcesManager,
             @Nullable BodiesResolveContext bodiesResolveContext,
             @Nullable Throwable error
     ) {
         this.bindingContext = bindingContext;
         this.error = error;
         this.bodiesResolveContext = bodiesResolveContext;
-        this.configuration = configuration;
+        this.moduleSourcesManager = moduleSourcesManager;
     }
 
     @Nullable
@@ -110,7 +106,7 @@ public class AnalyzeExhaust {
     }
 
     @NotNull
-    public ModuleConfiguration getModuleConfiguration() {
-        return configuration;
+    public ModuleSourcesManager getModuleSourcesManager() {
+        return moduleSourcesManager;
     }
 }

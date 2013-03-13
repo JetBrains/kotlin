@@ -335,7 +335,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                 // Iterate through the function with attempt to resolve found functions
                 for (FqName functionFQN : functionFQNs) {
                     for (CallableDescriptor functionDescriptor : ExpressionTypingUtils.canFindSuitableCall(
-                            functionFQN, project, receiverExpression, expressionType, scope, resolveSession.getModuleConfiguration())) {
+                            functionFQN, project, receiverExpression, expressionType, scope, resolveSession.getModuleConfiguration().getPlatformToKotlinClassMap())) {
 
                         resultDescriptors.add(functionDescriptor);
                     }

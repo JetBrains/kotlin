@@ -33,7 +33,6 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -83,9 +82,10 @@ public final class AnalyzerFacadeWithCache {
                             @Override
                             public Result<AnalyzeExhaust> compute() {
                                 try {
-                                    if (DumbService.isDumb(file.getProject())) {
+                                    Project project = file.getProject();
+                                    if (DumbService.isDumb(project)) {
                                         return new Result<AnalyzeExhaust>(
-                                                emptyExhaust(),
+                                                emptyExhaust(project),
                                                 PsiModificationTracker.MODIFICATION_COUNT);
                                     }
 
@@ -114,8 +114,8 @@ public final class AnalyzerFacadeWithCache {
         }
     }
 
-    private static AnalyzeExhaust emptyExhaust() {
-        return AnalyzeExhaust.success(BindingContext.EMPTY, ModuleConfiguration.EMPTY);
+    private static AnalyzeExhaust emptyExhaust(@NotNull Project project) {
+        return AnalyzeExhaust.success(BindingContext.EMPTY, new MutableModuleSourcesManager(project));
     }
 
     private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(
@@ -145,7 +145,6 @@ public final class AnalyzerFacadeWithCache {
 
     private static AnalyzeExhaust analyzeBodies(AnalyzeExhaust analyzeExhaustHeaders, JetFile file) {
         BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
-        ModuleConfiguration moduleConfiguration = analyzeExhaustHeaders.getModuleConfiguration();
         assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
 
         // Need to resolve bodies in given file and all in the same package
@@ -156,7 +155,7 @@ public final class AnalyzerFacadeWithCache {
                 new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(),
                                            "trace to resolve bodies in file", file.getName()),
                 context,
-                moduleConfiguration);
+                analyzeExhaustHeaders.getModuleSourcesManager());
     }
 
     @NotNull
