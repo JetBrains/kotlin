@@ -135,7 +135,7 @@ public class ImportsResolver {
             for (DeclarationDescriptor descriptor : descriptors) {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (lookupMode == LookupMode.ONLY_CLASSES || importedReference == null) continue;
-                reportPlatformClassMappedToKotlin(configuration, trace, importedReference, descriptor);
+                reportPlatformClassMappedToKotlin(configuration.getPlatformToKotlinClassMap(), trace, importedReference, descriptor);
             }
         }
         delayedImporter.processImports();
@@ -148,15 +148,14 @@ public class ImportsResolver {
     }
 
     public static void reportPlatformClassMappedToKotlin(
-            @NotNull ModuleConfiguration configuration,
+            @NotNull PlatformToKotlinClassMap classMap,
             @NotNull BindingTrace trace,
             @NotNull JetElement element,
             @NotNull DeclarationDescriptor descriptor
     ) {
         if (!(descriptor instanceof ClassDescriptor)) return;
 
-        PlatformToKotlinClassMap platformToKotlinMap = configuration.getPlatformToKotlinClassMap();
-        Collection<ClassDescriptor> kotlinAnalogsForClass = platformToKotlinMap.mapPlatformClass((ClassDescriptor) descriptor);
+        Collection<ClassDescriptor> kotlinAnalogsForClass = classMap.mapPlatformClass((ClassDescriptor) descriptor);
         if (!kotlinAnalogsForClass.isEmpty()) {
             trace.report(PLATFORM_CLASS_MAPPED_TO_KOTLIN.on(element, kotlinAnalogsForClass));
         }

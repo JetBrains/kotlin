@@ -20,10 +20,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -46,7 +44,7 @@ public class TypeResolver {
     private AnnotationResolver annotationResolver;
     private DescriptorResolver descriptorResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
-    private ModuleConfiguration moduleConfiguration;
+    private ModuleSourcesManager moduleSourcesManager;
 
     @Inject
     public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
@@ -64,8 +62,8 @@ public class TypeResolver {
     }
 
     @Inject
-    public void setModuleConfiguration(@NotNull ModuleConfiguration moduleConfiguration) {
-        this.moduleConfiguration = moduleConfiguration;
+    public void setModuleSourcesManager(@NotNull ModuleSourcesManager moduleSourcesManager) {
+        this.moduleSourcesManager = moduleSourcesManager;
     }
 
     @NotNull
@@ -347,7 +345,9 @@ public class TypeResolver {
         Collection<? extends DeclarationDescriptor> descriptors = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace);
         for (DeclarationDescriptor descriptor : descriptors) {
             if (descriptor instanceof ClassifierDescriptor) {
-                ImportsResolver.reportPlatformClassMappedToKotlin(moduleConfiguration, trace, userType, descriptor);
+                SubModuleDescriptor subModule = moduleSourcesManager.getSubModuleForFile(userType.getContainingFile());
+                PlatformToKotlinClassMap classMap = subModule.getContainingDeclaration().getPlatformToKotlinClassMap();
+                ImportsResolver.reportPlatformClassMappedToKotlin(classMap, trace, userType, descriptor);
                 return (ClassifierDescriptor) descriptor;
             }
         }
