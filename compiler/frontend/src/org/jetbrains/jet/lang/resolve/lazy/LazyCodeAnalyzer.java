@@ -21,7 +21,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
@@ -33,10 +32,7 @@ import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmpty
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PackageViewFromSubModule;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.*;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
@@ -66,6 +62,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
 
     private final BindingTrace trace;
     private final RootDeclarationProvider rootProvider;
+    private final ModuleSourcesManager moduleSourcesManager;
     private final DeclarationProviderFactory declarationProviderFactory;
 
     private final InjectorForLazyResolve injector;
@@ -80,7 +77,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
     public LazyCodeAnalyzer(
             @NotNull Project project,
             @NotNull StorageManager storageManager,
-            @NotNull RootDeclarationProvider rootProvider,
+            @NotNull ModuleSourcesManager moduleSourcesManager,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
             @NotNull Predicate<FqNameUnsafe> specialClasses,
@@ -90,9 +87,10 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
         this.trace = storageManager.createSafeTrace(delegationTrace);
-        this.injector = new InjectorForLazyResolve(project, null /*TODO*/, this);
+        this.injector = new InjectorForLazyResolve(project, moduleSourcesManager, this);
         this.declarationProviderFactory = declarationProviderFactory;
-        this.rootProvider = rootProvider;
+        this.rootProvider = null; // TODO Get rid of module definitions etc
+        this.moduleSourcesManager = moduleSourcesManager;
 
         // this map implicitly becomes shared between all subModule objects
         // it is crucial for thread safety that it is not modified after
@@ -178,14 +176,8 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    public SubModuleDescriptor getSubModuleForFile(@NotNull PsiFile file) {
-        SubModuleDefinition subModuleDef = rootProvider.getSubModuleDefinitionForFile(file);
-        assert subModuleDef != null : "No sub-module for file" + file;
-
-        SubModuleDescriptor descriptor = subModules.get(subModuleDef);
-        assert descriptor != null : "No sub-module for file" + file;
-
-        return descriptor;
+    public ModuleSourcesManager getModuleSourcesManager() {
+        return moduleSourcesManager;
     }
 
     @NotNull

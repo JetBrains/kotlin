@@ -72,7 +72,7 @@ public class ScopeProvider {
     }
 
     private JetScope createFileScope(JetFile file) {
-        SubModuleDescriptor subModule = analyzer.getSubModuleForFile(file);
+        SubModuleDescriptor subModule = analyzer.getModuleSourcesManager().getSubModuleForFile(file);
 
         PackageViewDescriptor rootPackageDescriptor = subModule.getPackageView(FqName.ROOT);
         if (rootPackageDescriptor == null) {
@@ -125,7 +125,8 @@ public class ScopeProvider {
         }
 
         FqName fqName = new FqName(header.getQualifiedName());
-        PackageViewDescriptor packageDescriptor = analyzer.getSubModuleForFile(file).getPackageView(fqName);
+
+        PackageViewDescriptor packageDescriptor = analyzer.getModuleSourcesManager().getSubModuleForFile(file).getPackageView(fqName);
 
         if (packageDescriptor == null) {
             throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());

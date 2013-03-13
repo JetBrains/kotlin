@@ -26,7 +26,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
@@ -164,7 +163,7 @@ public class ResolveSessionUtils {
             DelegatingBindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getSubModuleForFile(file));
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getModuleSourcesManager());
 
         JetClassOrObject classOrObject = (JetClassOrObject) specifier.getParent();
         LazyClassDescriptor descriptor = (LazyClassDescriptor) analyzer.getDescriptor(classOrObject);
@@ -189,7 +188,7 @@ public class ResolveSessionUtils {
                 return propertyResolutionScope;
             }
         });
-        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext, analyzer.getSubModuleForFile(file));
+        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext, analyzer.getModuleSourcesManager());
         PropertyDescriptor descriptor = (PropertyDescriptor) analyzer.getDescriptor(jetProperty);
 
         JetExpression propertyInitializer = jetProperty.getInitializer();
@@ -207,7 +206,7 @@ public class ResolveSessionUtils {
             DelegatingBindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getSubModuleForFile(file));
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getModuleSourcesManager());
         JetScope scope = analyzer.getInjector().getScopeProvider().getResolutionScopeForDeclaration(namedFunction);
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) analyzer.getDescriptor(namedFunction);
         bodyResolver.resolveFunctionBody(trace, namedFunction, functionDescriptor, scope);
@@ -219,7 +218,7 @@ public class ResolveSessionUtils {
             DelegatingBindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getSubModuleForFile(file));
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getModuleSourcesManager());
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(classInitializer, JetClassOrObject.class);
         LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) analyzer.getDescriptor(classOrObject);
         bodyResolver.resolveAnonymousInitializers(classOrObject, classOrObjectDescriptor.getUnsubstitutedPrimaryConstructor(),
@@ -229,20 +228,20 @@ public class ResolveSessionUtils {
     }
 
     private static BodyResolver createBodyResolver(DelegatingBindingTrace trace, JetFile file, BodyResolveContextForLazy bodyResolveContext,
-            SubModuleDescriptor subModule) {
+            ModuleSourcesManager moduleSourcesManager) {
         TopDownAnalysisParameters parameters = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, true, Collections.<AnalyzerScriptParameter>emptyList());
         InjectorForBodyResolve bodyResolve = new InjectorForBodyResolve(file.getProject(), parameters, trace, bodyResolveContext,
-                                                                        ModuleConfiguration.UTIL.fromSubModule(subModule));
+                                                                        moduleSourcesManager);
         return bodyResolve.getBodyResolver();
     }
 
     private static BodyResolver createBodyResolverWithEmptyContext(
             DelegatingBindingTrace trace,
             JetFile file,
-            SubModuleDescriptor subModule
+            ModuleSourcesManager moduleSourcesManager
     ) {
-        return createBodyResolver(trace, file, EMPTY_CONTEXT, subModule);
+        return createBodyResolver(trace, file, EMPTY_CONTEXT, moduleSourcesManager);
     }
 
     private static JetScope getExpressionResolutionScope(@NotNull LazyCodeAnalyzer analyzer, @NotNull JetExpression expression) {
@@ -276,7 +275,7 @@ public class ResolveSessionUtils {
                 }
             }
 
-            SubModuleDescriptor subModule = analyzer.getSubModuleForFile(expression.getContainingFile());
+            SubModuleDescriptor subModule = analyzer.getModuleSourcesManager().getSubModuleForFile(expression.getContainingFile());
 
             // Inside import
             if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class, false) != null) {

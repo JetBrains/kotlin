@@ -34,12 +34,11 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.*;
@@ -229,18 +228,18 @@ public class KotlinBuiltIns {
         List<JetFile> files = loadResourcesAsJetFiles(project, LIBRARY_FILES);
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
-        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files);
+        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files);
 
-        final MutableModuleDefinition moduleDefinition =
-                new MutableModuleDefinition(Name.special("<built-ins lazy module>"), PlatformToKotlinClassMap.EMPTY);
+        MutableModuleDescriptor module =
+                new MutableModuleDescriptor(Name.special("<built-ins lazy module>"), PlatformToKotlinClassMap.EMPTY);
 
-        final SubModuleDefinition subModuleDefinition = new BuiltInsSubModuleDefinition(declarationProviderFactory);
-        moduleDefinition.addSubModuleDefinition(subModuleDefinition);
+        SubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<built-ins lazy submodule>"));
+        module.addSubModule(subModule);
 
         return new LazyCodeAnalyzer(
                 project,
                 storageManager,
-                createRootProvider(moduleDefinition, subModuleDefinition),
+                createModuleSourcesManager(subModule, files),
                 declarationProviderFactory,
                 new Function<FqName, Name>() {
                     @Override
@@ -252,21 +251,22 @@ public class KotlinBuiltIns {
                 new BindingTraceContext());
     }
 
-    private static RootDeclarationProvider createRootProvider(
-            final MutableModuleDefinition moduleDefinition,
-            final SubModuleDefinition subModuleDefinition
+    private static ModuleSourcesManager createModuleSourcesManager(
+            final SubModuleDescriptor subModule,
+            final Collection<JetFile> files
     ) {
-        return new RootDeclarationProvider() {
+        return new ModuleSourcesManager() {
             @NotNull
             @Override
-            public Collection<ModuleDefinition> getModuleDefinitions() {
-                return Collections.<ModuleDefinition>singletonList(moduleDefinition);
+            public SubModuleDescriptor getSubModuleForFile(@NotNull PsiFile file) {
+                return subModule;
             }
 
-            @Nullable
+            @NotNull
             @Override
-            public SubModuleDefinition getSubModuleDefinitionForFile(@NotNull PsiFile file) {
-                return subModuleDefinition;
+            public Collection<JetFile> getPackageFragmentSources(@NotNull PackageFragmentDescriptor packageFragment) {
+                assert packageFragment.getFqName().equals(BUILT_INS_PACKAGE_FQ_NAME);
+                return files;
             }
         };
     }
