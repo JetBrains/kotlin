@@ -933,10 +933,6 @@ public class JetTypeMapper extends BindingTraceAware {
         return null;
     }
 
-    public JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
-        return mapSignature(Name.identifier("invoke"), fd);
-    }
-
     public CallableMethod asCallableMethod(FunctionDescriptor fd) {
         JvmMethodSignature descriptor = erasedInvokeSignature(fd);
         JvmClassName owner = getInternalClassName(fd);

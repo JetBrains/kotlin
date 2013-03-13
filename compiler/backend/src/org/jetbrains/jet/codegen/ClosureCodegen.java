@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
@@ -68,6 +69,8 @@ public class ClosureCodegen extends GenerationStateAware {
         FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
         assert funDescriptor != null;
 
+        Name interfaceFunctionName = Name.identifier("invoke");
+
         SignatureWriter signatureWriter = new SignatureWriter();
 
         List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
@@ -91,8 +94,8 @@ public class ClosureCodegen extends GenerationStateAware {
         cv.visitSource(fun.getContainingFile().getName(), null);
 
 
-        generateBridge(name.getInternalName(), funDescriptor, fun, cv);
-        generateBody(funDescriptor, cv, fun, context, expressionCodegen);
+        generateBridge(interfaceFunctionName, name.getInternalName(), funDescriptor, fun, cv);
+        generateBody(interfaceFunctionName, funDescriptor, cv, fun, context, expressionCodegen);
 
         constructor = generateConstructor(funClass, fun, cv, closure);
 
@@ -125,6 +128,7 @@ public class ClosureCodegen extends GenerationStateAware {
     }
 
     private ClassDescriptor generateBody(
+            Name interfaceFunctionName,
             FunctionDescriptor funDescriptor,
             ClassBuilder cv,
             JetDeclarationWithBody body,
@@ -134,19 +138,20 @@ public class ClosureCodegen extends GenerationStateAware {
 
         CodegenContext closureContext = context.intoClosure(funDescriptor, expressionCodegen);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
-        JvmMethodSignature jvmMethodSignature = typeMapper.invokeSignature(funDescriptor);
+        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunctionName, funDescriptor);
         fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor);
         return closureContext.closure.getCaptureThis();
     }
 
     private void generateBridge(
+            Name interfaceFunctionName,
             String className,
             FunctionDescriptor funDescriptor,
             JetExpression fun,
             ClassBuilder cv
     ) {
         JvmMethodSignature bridge = erasedInvokeSignature(funDescriptor);
-        Method delegate = typeMapper.invokeSignature(funDescriptor).getAsmMethod();
+        Method delegate = typeMapper.mapSignature(interfaceFunctionName, funDescriptor).getAsmMethod();
 
         if (bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor())) {
             return;
