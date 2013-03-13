@@ -337,6 +337,7 @@ public class CallResolver {
             CallCandidateResolutionContext<D> callCandidateResolutionContext =
                     CallCandidateResolutionContext.createForCallBeingAnalyzed(resolvedCall, context, tracing);
             candidateResolver.completeNestedCallsInference(callCandidateResolutionContext);
+            candidateResolver.checkValueArgumentTypes(callCandidateResolutionContext);
             return results;
         }
         ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall, context);

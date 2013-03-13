@@ -301,6 +301,7 @@ public class CandidateResolver {
                 }
                 else {
                     completeNestedCallsInference(contextForArgument);
+                    checkValueArgumentTypes(contextForArgument);
                 }
             }
         }
@@ -505,6 +506,12 @@ public class CandidateResolver {
                 // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
                 context.call instanceof CallTransformer.CallForImplicitInvoke));
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
+    }
+
+    public <D extends CallableDescriptor> ValueArgumentsCheckingResult checkValueArgumentTypes(
+            @NotNull CallCandidateResolutionContext<D> context
+    ) {
+        return checkValueArgumentTypes(context, context.candidateCall, context.trace, RESOLVE_FUNCTION_ARGUMENTS);
     }
 
     private <D extends CallableDescriptor, C extends CallResolutionContext<C>> ValueArgumentsCheckingResult checkValueArgumentTypes(
