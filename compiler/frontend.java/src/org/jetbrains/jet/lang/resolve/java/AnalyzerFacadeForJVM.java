@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
@@ -32,13 +33,16 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -83,10 +87,20 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull final Project fileProject, @NotNull Collection<JetFile> files) {
-        ModuleDescriptor javaModule = new MutableModuleDescriptor(Name.special("<java module>"), JavaToKotlinClassMap.getInstance());
+        MutableModuleDescriptor javaModule = new MutableModuleDescriptor(Name.special("<java module>"), JavaToKotlinClassMap.getInstance());
+        SubModuleDescriptor subModule =
+                javaModule.addSubModule(new MutableSubModuleDescriptor(javaModule, Name.special("<java submodule>")));
 
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
+                fileProject,
+                javaResolverTrace,
+                javaModule,
+                null, // TODO light class resolver
+                new LockBasedStorageManager(),
+                subModule,
+                GlobalSearchScope.allScope(fileProject)
+        );
 
         final PsiClassFinder psiClassFinder = null; // TODO
 
@@ -200,14 +214,38 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve
     ) {
-        final ModuleDescriptor owner = new MutableModuleDescriptor(Name.special("<module>"), JavaToKotlinClassMap.getInstance());
+        MutableModuleSourcesManager sourcesManager = new MutableModuleSourcesManager(project);
+        MutableModuleDescriptor module = new MutableModuleDescriptor(Name.special("<module>"), JavaToKotlinClassMap.getInstance());
+        MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<submodule>"));
+        module.addSubModule(subModule);
+        for (JetFile file : files) {
+            sourcesManager.registerRoot(subModule, PackageFragmentKind.SOURCE, file.getVirtualFile());
+        }
+        for (ImportPath path : JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS) {
+            subModule.addDefaultImport(path);
+        }
+        for (ImportPath path : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
+            subModule.addDefaultImport(path);
+        }
+
+        ObservableBindingTrace observableBindingTrace = new ObservableBindingTrace(trace);
+        // TODO
+        //subModule.addPackageFragmentProvider(new JavaPackageFragmentProvider(
+        //        facade,
+        //        trace,
+        //        new LockBasedStorageManager(),
+        //        new PsiDeclarationProviderFactory(finder),
+        //        classResolver,
+        //        finder,
+        //        subModule
+        //));
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
-                new ObservableBindingTrace(trace), owner);
+                observableBindingTrace, KotlinModuleManager.SERVICE.getService(project).getSourcesManager());
         try {
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
