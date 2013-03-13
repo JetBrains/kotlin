@@ -72,7 +72,7 @@ public class SingleAbstractMethodUtils {
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
 
-        JetType parameterType = getFunctionalTypeForFunction((SimpleFunctionDescriptor) getAbstractMembers(klass).get(0));
+        JetType parameterType = getFunctionalTypeForFunction(getAbstractMethodOfFunctionalInterface(klass));;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
                 result, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("function"), parameterType, false, null);
 
@@ -90,6 +90,11 @@ public class SingleAbstractMethodUtils {
         return result;
     }
 
+    @NotNull
+    public static SimpleFunctionDescriptor getAbstractMethodOfFunctionalInterface(@NotNull ClassDescriptor klass) {
+        return (SimpleFunctionDescriptor) getAbstractMembers(klass).get(0);
+    }
+    
     private SingleAbstractMethodUtils() {
     }
 }
