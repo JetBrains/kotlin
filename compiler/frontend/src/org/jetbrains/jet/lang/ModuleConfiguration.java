@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -48,6 +49,32 @@ public interface ModuleConfiguration {
             return "EMPTY";
         }
     };
+
+    class UTIL {
+        public static ModuleConfiguration fromSubModule(@NotNull final SubModuleDescriptor subModule) {
+            return new ModuleConfiguration() {
+                @Override
+                public List<ImportPath> getDefaultImports() {
+                    return subModule.getDefaultImports();
+                }
+
+                @Override
+                public void extendNamespaceScope(
+                        @NotNull BindingTrace trace,
+                        @NotNull PackageViewDescriptor packageViewDescriptor,
+                        @NotNull WritableScope namespaceMemberScope
+                ) {
+                    // Do nothing
+                }
+
+                @NotNull
+                @Override
+                public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+                    return subModule.getContainingDeclaration().getPlatformToKotlinClassMap();
+                }
+            };
+        }
+    }
 
     List<ImportPath> getDefaultImports();
 

@@ -131,6 +131,7 @@ public class TopDownAnalyzer {
     public static void processStandardLibraryNamespace(
             @NotNull Project project,
             @NotNull BindingTrace trace,
+            @NotNull ModuleSourcesManager moduleSourcesManager,
             @NotNull JetScope outerScope,
             @NotNull MutablePackageFragmentDescriptor standardLibraryPackageFragment,
             @NotNull List<JetFile> files) {
@@ -139,7 +140,7 @@ public class TopDownAnalyzer {
                 Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
-                ModuleConfiguration.EMPTY);
+                moduleSourcesManager, ModuleConfiguration.EMPTY);
 
         injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryPackageFragment, files);
     }
@@ -159,6 +160,7 @@ public class TopDownAnalyzer {
 
     public static void processClassOrObject(
             @NotNull Project project,
+            @NotNull ModuleSourcesManager moduleSourcesManager,
             @NotNull final BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull final DeclarationDescriptor containingDeclaration,
@@ -170,7 +172,7 @@ public class TopDownAnalyzer {
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace),
-                ModuleConfiguration.EMPTY);
+                moduleSourcesManager, ModuleConfiguration.EMPTY);
 
         injector.getTopDownAnalyzer().doProcess(outerScope, new NamespaceLikeBuilder() {
 

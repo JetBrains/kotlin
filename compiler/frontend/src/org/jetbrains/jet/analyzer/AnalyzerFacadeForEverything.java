@@ -49,7 +49,7 @@ public class AnalyzerFacadeForEverything {
         InjectorForBodyResolve injector = new InjectorForBodyResolve(
                 project, topDownAnalysisParameters,
                 new ObservableBindingTrace(traceContext),
-                bodiesResolveContext);
+                bodiesResolveContext, configuration);
 
         try {
             injector.getBodyResolver().resolveBodies();

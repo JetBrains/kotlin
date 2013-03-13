@@ -90,7 +90,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
         this.trace = storageManager.createSafeTrace(delegationTrace);
-        this.injector = new InjectorForLazyResolve(project, this, trace);
+        this.injector = new InjectorForLazyResolve(project, null /*TODO*/, this);
         this.declarationProviderFactory = declarationProviderFactory;
         this.rootProvider = rootProvider;
 

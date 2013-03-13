@@ -65,7 +65,8 @@ public class ExpressionTypingServices {
     private DescriptorResolver descriptorResolver;
     @NotNull
     private TypeResolver typeResolver;
-
+    @NotNull
+    private ModuleSourcesManager moduleSourcesManager;
 
 
     @NotNull
@@ -116,6 +117,16 @@ public class ExpressionTypingServices {
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
+    }
+
+    @NotNull
+    public ModuleSourcesManager getModuleSourcesManager() {
+        return moduleSourcesManager;
+    }
+
+    @Inject
+    public void setModuleSourcesManager(@NotNull ModuleSourcesManager moduleSourcesManager) {
+        this.moduleSourcesManager = moduleSourcesManager;
     }
 
     @NotNull

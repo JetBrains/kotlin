@@ -78,7 +78,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), traceAdapter, context.scope,
+        TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), context.expressionTypingServices.getModuleSourcesManager(),
+                                             traceAdapter, context.scope,
                                              context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
 
         DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
