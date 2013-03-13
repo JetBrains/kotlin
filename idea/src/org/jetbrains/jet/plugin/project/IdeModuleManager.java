@@ -33,7 +33,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -55,6 +54,7 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.jet.lang.resolve.MutableModuleSourcesManager;
 import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
@@ -83,6 +83,16 @@ public class IdeModuleManager implements KotlinModuleManager {
     @NotNull
     @Override
     public Collection<ModuleDescriptor> getModules() {
+        return getData().getModuleDescriptors();
+    }
+
+    @NotNull
+    @Override
+    public ModuleSourcesManager getSourcesManager() {
+        return getData().moduleSourcesManager;
+    }
+
+    private KotlinModules getData() {
         return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<KotlinModules>() {
             @Nullable
             @Override
@@ -94,7 +104,7 @@ public class IdeModuleManager implements KotlinModuleManager {
                         PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
                 );
             }
-        }).getModuleDescriptors();
+        });
     }
 
     private class ModuleBuilder {
@@ -135,7 +145,7 @@ public class IdeModuleManager implements KotlinModuleManager {
                 resolveKotlinInStronglyConnectedSubModules(scc.getNodes());
             }
 
-            return new KotlinModules(kotlinModules);
+            return new KotlinModules(kotlinModules, moduleSourcesManager);
         }
 
         private Graph<MutableSubModuleDescriptor> getSubModuleGraph() {
@@ -161,9 +171,8 @@ public class IdeModuleManager implements KotlinModuleManager {
             }
 
             // find relevant files
-            MutableModuleSourcesManager sourcesManager = new MutableModuleSourcesManager(project);
             for (final MutableSubModuleDescriptor subModule : scc) {
-                collectKotlinSourceFiles(subModule, sourcesManager);
+                collectKotlinSourceFiles(subModule, moduleSourcesManager);
             }
 
             // TODO: run TDA
@@ -378,9 +387,11 @@ public class IdeModuleManager implements KotlinModuleManager {
 
     private static class KotlinModules {
         private final ImmutableMap<Module, ModuleDescriptor> moduleDescriptors;
+        private final MutableModuleSourcesManager moduleSourcesManager;
 
-        private KotlinModules(Map<Module, ModuleDescriptor> descriptors) {
-            moduleDescriptors = ImmutableMap.copyOf(descriptors);
+        private KotlinModules(Map<Module, ModuleDescriptor> descriptors, MutableModuleSourcesManager moduleSourcesManager) {
+            this.moduleDescriptors = ImmutableMap.copyOf(descriptors);
+            this.moduleSourcesManager = moduleSourcesManager;
         }
 
         @NotNull

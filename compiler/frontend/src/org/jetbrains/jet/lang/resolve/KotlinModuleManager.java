@@ -35,4 +35,7 @@ public interface KotlinModuleManager {
 
     @NotNull
     Collection<ModuleDescriptor> getModules();
+
+    @NotNull
+    ModuleSourcesManager getSourcesManager();
 }
