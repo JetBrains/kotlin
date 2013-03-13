@@ -254,7 +254,7 @@ public class ResolveSessionUtils {
         DelegatingBindingTrace trace = new DelegatingBindingTrace(
                 resolveSession.getBindingContext(), "trace to resolve a member scope of expression", expression);
 
-        if (expression instanceof JetReferenceExpression) {
+        if (BindingContextUtils.isExpressionWithValidReference(expression, resolveSession.getBindingContext())) {
             QualifiedExpressionResolver qualifiedExpressionResolver = resolveSession.getInjector().getQualifiedExpressionResolver();
 
             // In some type declaration

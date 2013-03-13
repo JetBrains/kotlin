@@ -123,13 +123,16 @@ public final class BindingUtils {
         return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
     }
 
-    @NotNull
+    @Nullable
     public static DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull JetReferenceExpression reference) {
         DeclarationDescriptor referencedDescriptor = getNullableDescriptorForReferenceExpression(context, reference);
-        assert referencedDescriptor != null
-                : message(reference, "Reference expression must reference a descriptor for reference " + reference.getText());
-        return referencedDescriptor;
+        if (BindingContextUtils.isExpressionWithValidReference(reference, context)) {
+            assert referencedDescriptor != null
+                    : message(reference, "Reference expression must reference a descriptor for reference " + reference.getText());
+            return referencedDescriptor;
+        }
+        return null;
     }
 
     @Nullable

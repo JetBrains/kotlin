@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -79,6 +80,10 @@ public class DebugInfoUtil {
 
             @Override
             public void visitReferenceExpression(JetReferenceExpression expression) {
+                if (!BindingContextUtils.isExpressionWithValidReference(expression, bindingContext)){
+                    super.visitReferenceExpression(expression);
+                    return;
+                }
                 if (expression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) expression;
                     IElementType elementType = expression.getNode().getElementType();

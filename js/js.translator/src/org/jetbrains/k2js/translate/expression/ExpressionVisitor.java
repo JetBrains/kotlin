@@ -326,7 +326,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitThisExpression(@NotNull JetThisExpression expression,
             @NotNull TranslationContext context) {
-        return context.getThisObject(getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference()));
+        DeclarationDescriptor thisExpression =
+                getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
+        assert thisExpression != null : "This expression must reference a descriptor: " + expression.getText();
+        return context.getThisObject(thisExpression);
     }
 
     @Override

@@ -229,7 +229,7 @@ public class JetVisitorVoid extends PsiElementVisitor {
     }
 
     public void visitCallExpression(JetCallExpression expression) {
-        visitExpression(expression);
+        visitReferenceExpression(expression);
     }
 
     public void visitArrayAccessExpression(JetArrayAccessExpression expression) {

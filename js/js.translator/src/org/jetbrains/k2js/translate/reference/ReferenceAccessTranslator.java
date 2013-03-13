@@ -37,6 +37,7 @@ public final class ReferenceAccessTranslator extends AbstractTranslator implemen
     /*package*/ static ReferenceAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
                                                              @NotNull TranslationContext context) {
         DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        assert referenceDescriptor != null : "JetSimpleName expression must reference a descriptor " + expression.getText();
         return new ReferenceAccessTranslator(referenceDescriptor, context);
     }
 

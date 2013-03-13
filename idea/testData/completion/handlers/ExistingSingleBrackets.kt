@@ -9,5 +9,5 @@ class A {
 }
 
 fun testMy() {
-    A.testOthe<caret>()
+    A.testOthe<caret>
 }

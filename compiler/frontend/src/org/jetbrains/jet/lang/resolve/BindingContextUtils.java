@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
@@ -297,7 +299,7 @@ public class BindingContextUtils {
         if (result.getDataFlowInfo() != DataFlowInfo.EMPTY) {
             trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
         }
-        if (!(expression instanceof JetReferenceExpression)) {
+        if (!isExpressionWithValidReference(expression, trace.getBindingContext())) {
             trace.record(BindingContext.RESOLUTION_SCOPE, expression, resolutionScope);
         }
     }
@@ -311,5 +313,34 @@ public class BindingContextUtils {
         }
         JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
         return JetTypeInfo.create(type, dataFlowInfo);
+    }
+
+    public static boolean isExpressionWithValidReference(
+            @NotNull JetExpression expression,
+            @NotNull BindingContext context
+    ) {
+        if (!(expression instanceof JetReferenceExpression)) {
+            return false;
+        }
+
+        if (!(expression instanceof JetCallExpression)) {
+            return true;
+        }
+
+        return isCallExpressionWithValidReference(expression, context);
+    }
+
+    public static boolean isCallExpressionWithValidReference(
+            @NotNull JetExpression expression,
+            @NotNull BindingContext context
+    ) {
+        if (expression instanceof JetCallExpression) {
+            JetExpression calleeExpression = ((JetCallExpression) expression).getCalleeExpression();
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, calleeExpression);
+            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+                return true;
+            }
+        }
+        return false;
     }
 }

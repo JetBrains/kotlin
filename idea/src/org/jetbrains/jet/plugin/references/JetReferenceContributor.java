@@ -20,6 +20,7 @@ import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetThisReferenceExpression;
 
@@ -52,6 +53,15 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
                                                     return JetArrayAccessReference.create((JetArrayAccessExpression) element);
+                                                }
+                                            });
+
+        registrar.registerReferenceProvider(psiElement(JetCallExpression.class),
+                                            new PsiReferenceProvider() {
+                                                @NotNull
+                                                @Override
+                                                public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
+                                                    return JetInvokeFunctionReference.create((JetCallExpression) element);
                                                 }
                                             });
     }
