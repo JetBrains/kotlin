@@ -42,14 +42,18 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
     }
 
     protected void doTestCheckingPrimaryConstructors(String testFileName) throws IOException {
-        doTest(testFileName, true);
+        doTest(testFileName, true, false);
+    }
+
+    protected void doTestCheckingPrimaryConstructorsAndAccessors(String testFileName) throws IOException {
+        doTest(testFileName, true, true);
     }
 
     protected void doTestNotCheckingPrimaryConstructors(String testFileName) throws IOException {
-        doTest(testFileName, false);
+        doTest(testFileName, false, false);
     }
 
-    private void doTest(String testFileName, boolean checkPrimaryConstructors) throws IOException {
+    private void doTest(String testFileName, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) throws IOException {
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
                                  new JetTestUtils.TestFileFactory<JetFile>() {
@@ -75,6 +79,6 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
                     public boolean apply(FqNameUnsafe fqName) {
                         return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.toUnsafe().equals(fqName);
                     }
-                }).checkPrimaryConstructors(checkPrimaryConstructors), serializeResultsTo);
+                }).checkPrimaryConstructors(checkPrimaryConstructors).checkPropertyAccessors(checkPropertyAccessors), serializeResultsTo);
     }
 }

@@ -140,7 +140,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LoadCompiledKotlinTestGenerated",
                 AbstractLoadCompiledKotlinTest.class,
-                testModel("compiler/testData/loadKotlin")
+                testModel("compiler/testData/loadKotlin", "doTestWithAccessors")
         );
 
         generateTest(
@@ -199,7 +199,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LazyResolveNamespaceComparingTestGenerated",
                 AbstractLazyResolveNamespaceComparingTest.class,
-                testModel("compiler/testData/loadKotlin", "doTestCheckingPrimaryConstructors"),
+                testModel("compiler/testData/loadKotlin", "doTestCheckingPrimaryConstructorsAndAccessors"),
                 testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", "doTestNotCheckingPrimaryConstructors"),
                 testModel("compiler/testData/lazyResolve/namespaceComparator", "doTestCheckingPrimaryConstructors")
         );

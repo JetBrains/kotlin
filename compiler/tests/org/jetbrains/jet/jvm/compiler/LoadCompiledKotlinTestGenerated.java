@@ -45,142 +45,142 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("Class.kt")
         public void testClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/Class.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/Class.kt");
         }
         
         @TestMetadata("ClassInParam.kt")
         public void testClassInParam() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassInParam.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassInParam.kt");
         }
         
         @TestMetadata("ClassInnerClass.kt")
         public void testClassInnerClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassInnerClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassInnerClass.kt");
         }
         
         @TestMetadata("ClassOutParam.kt")
         public void testClassOutParam() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassOutParam.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassOutParam.kt");
         }
         
         @TestMetadata("ClassParam.kt")
         public void testClassParam() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParam.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassParam.kt");
         }
         
         @TestMetadata("ClassParamReferencesParam.kt")
         public void testClassParamReferencesParam() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParamReferencesParam.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassParamReferencesParam.kt");
         }
         
         @TestMetadata("ClassParamReferencesParam2.kt")
         public void testClassParamReferencesParam2() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParamReferencesParam2.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassParamReferencesParam2.kt");
         }
         
         @TestMetadata("ClassParamReferencesSelf.kt")
         public void testClassParamReferencesSelf() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParamReferencesSelf.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassParamReferencesSelf.kt");
         }
         
         @TestMetadata("ClassParamUpperClassBound.kt")
         public void testClassParamUpperClassBound() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParamUpperClassBound.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassParamUpperClassBound.kt");
         }
         
         @TestMetadata("ClassParamUpperClassInterfaceBound.kt")
         public void testClassParamUpperClassInterfaceBound() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParamUpperClassInterfaceBound.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassParamUpperClassInterfaceBound.kt");
         }
         
         @TestMetadata("ClassParamUpperInterfaceBound.kt")
         public void testClassParamUpperInterfaceBound() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParamUpperInterfaceBound.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassParamUpperInterfaceBound.kt");
         }
         
         @TestMetadata("ClassTwoParams.kt")
         public void testClassTwoParams() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassTwoParams.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassTwoParams.kt");
         }
         
         @TestMetadata("ClassTwoParams2.kt")
         public void testClassTwoParams2() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassTwoParams2.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassTwoParams2.kt");
         }
         
         @TestMetadata("EnumWithGenericConstructorParameter.kt")
         public void testEnumWithGenericConstructorParameter() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/EnumWithGenericConstructorParameter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/EnumWithGenericConstructorParameter.kt");
         }
         
         @TestMetadata("EnumWithPrimitiveConstructorParameter.kt")
         public void testEnumWithPrimitiveConstructorParameter() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
         }
         
         @TestMetadata("InheritClassSimple.kt")
         public void testInheritClassSimple() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/InheritClassSimple.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/InheritClassSimple.kt");
         }
         
         @TestMetadata("InheritClassWithParam.kt")
         public void testInheritClassWithParam() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/InheritClassWithParam.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/InheritClassWithParam.kt");
         }
         
         @TestMetadata("InheritTraitWithParam.kt")
         public void testInheritTraitWithParam() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/InheritTraitWithParam.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/InheritTraitWithParam.kt");
         }
         
         @TestMetadata("InnerClassExtendInnerClass.kt")
         public void testInnerClassExtendInnerClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/InnerClassExtendInnerClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/InnerClassExtendInnerClass.kt");
         }
         
         @TestMetadata("InnerGenericClass.kt")
         public void testInnerGenericClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/InnerGenericClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/InnerGenericClass.kt");
         }
         
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/NamedObject.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObject.kt");
         }
         
         @TestMetadata("NamedObjectInClassObject.kt")
         public void testNamedObjectInClassObject() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/NamedObjectInClassObject.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObjectInClassObject.kt");
         }
         
         @TestMetadata("NamedObjectInNamedObject.kt")
         public void testNamedObjectInNamedObject() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/NamedObjectInNamedObject.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObjectInNamedObject.kt");
         }
         
         @TestMetadata("NamedObjectWithAnotherTopLevelProperty.kt")
         public void testNamedObjectWithAnotherTopLevelProperty() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
         }
         
         @TestMetadata("NestedClass.kt")
         public void testNestedClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/NestedClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NestedClass.kt");
         }
         
         @TestMetadata("NestedClassExtendNestedClass.kt")
         public void testNestedClassExtendNestedClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/NestedClassExtendNestedClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NestedClassExtendNestedClass.kt");
         }
         
         @TestMetadata("NestedGenericClass.kt")
         public void testNestedGenericClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/NestedGenericClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NestedGenericClass.kt");
         }
         
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/Trait.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/class/Trait.kt");
         }
         
     }
@@ -193,32 +193,32 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("ClassInParamUsedInFun.kt")
         public void testClassInParamUsedInFun() throws Exception {
-            doTest("compiler/testData/loadKotlin/classFun/ClassInParamUsedInFun.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classFun/ClassInParamUsedInFun.kt");
         }
         
         @TestMetadata("ClassParamUsedInFun.kt")
         public void testClassParamUsedInFun() throws Exception {
-            doTest("compiler/testData/loadKotlin/classFun/ClassParamUsedInFun.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classFun/ClassParamUsedInFun.kt");
         }
         
         @TestMetadata("FunDelegationToTraitImpl.kt")
         public void testFunDelegationToTraitImpl() throws Exception {
-            doTest("compiler/testData/loadKotlin/classFun/FunDelegationToTraitImpl.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classFun/FunDelegationToTraitImpl.kt");
         }
         
         @TestMetadata("FunInParamSuper.kt")
         public void testFunInParamSuper() throws Exception {
-            doTest("compiler/testData/loadKotlin/classFun/FunInParamSuper.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classFun/FunInParamSuper.kt");
         }
         
         @TestMetadata("TraitFinalFun.kt")
         public void testTraitFinalFun() throws Exception {
-            doTest("compiler/testData/loadKotlin/classFun/TraitFinalFun.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classFun/TraitFinalFun.kt");
         }
         
         @TestMetadata("TraitOpenFun.kt")
         public void testTraitOpenFun() throws Exception {
-            doTest("compiler/testData/loadKotlin/classFun/TraitOpenFun.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classFun/TraitOpenFun.kt");
         }
         
     }
@@ -231,27 +231,27 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("ClassObjectDeclaresVal.kt")
         public void testClassObjectDeclaresVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/classObject/ClassObjectDeclaresVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectDeclaresVal.kt");
         }
         
         @TestMetadata("ClassObjectDeclaresVar.kt")
         public void testClassObjectDeclaresVar() throws Exception {
-            doTest("compiler/testData/loadKotlin/classObject/ClassObjectDeclaresVar.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectDeclaresVar.kt");
         }
         
         @TestMetadata("ClassObjectExtendsTrait.kt")
         public void testClassObjectExtendsTrait() throws Exception {
-            doTest("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTrait.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTrait.kt");
         }
         
         @TestMetadata("ClassObjectExtendsTraitWithTP.kt")
         public void testClassObjectExtendsTraitWithTP() throws Exception {
-            doTest("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
         }
         
         @TestMetadata("SimpleClassObject.kt")
         public void testSimpleClassObject() throws Exception {
-            doTest("compiler/testData/loadKotlin/classObject/SimpleClassObject.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/SimpleClassObject.kt");
         }
         
     }
@@ -265,67 +265,67 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("Constructor0.kt")
         public void testConstructor0() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/Constructor0.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/Constructor0.kt");
         }
         
         @TestMetadata("Constructor1.kt")
         public void testConstructor1() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/Constructor1.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/Constructor1.kt");
         }
         
         @TestMetadata("Constructor1WithParamDefaultValue.kt")
         public void testConstructor1WithParamDefaultValue() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/Constructor1WithParamDefaultValue.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/Constructor1WithParamDefaultValue.kt");
         }
         
         @TestMetadata("Constructor2WithOneParamDefaultValue.kt")
         public void testConstructor2WithOneParamDefaultValue() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/Constructor2WithOneParamDefaultValue.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/Constructor2WithOneParamDefaultValue.kt");
         }
         
         @TestMetadata("ConstructorCollectionParameter.kt")
         public void testConstructorCollectionParameter() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorCollectionParameter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/ConstructorCollectionParameter.kt");
         }
         
         @TestMetadata("ConstructorWithTwoDefArgs.kt")
         public void testConstructorWithTwoDefArgs() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorWithTwoDefArgs.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/ConstructorWithTwoDefArgs.kt");
         }
         
         @TestMetadata("ConstructorWithTwoTypeParameters.kt")
         public void testConstructorWithTwoTypeParameters() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorWithTwoTypeParameters.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/ConstructorWithTwoTypeParameters.kt");
         }
         
         @TestMetadata("ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt")
         public void testConstructorWithTwoTypeParametersAndOneIntValueParameter() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt");
         }
         
         @TestMetadata("ConstructorWithTwoTypeParametersAndOnePValueParameter.kt")
         public void testConstructorWithTwoTypeParametersAndOnePValueParameter() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorWithTwoTypeParametersAndOnePValueParameter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/ConstructorWithTwoTypeParametersAndOnePValueParameter.kt");
         }
         
         @TestMetadata("ConstructorWithTypeParameter.kt")
         public void testConstructorWithTypeParameter() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorWithTypeParameter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/ConstructorWithTypeParameter.kt");
         }
         
         @TestMetadata("ConstructorWithTypeParametersEAndOnePValueParameter.kt")
         public void testConstructorWithTypeParametersEAndOnePValueParameter() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorWithTypeParametersEAndOnePValueParameter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/ConstructorWithTypeParametersEAndOnePValueParameter.kt");
         }
         
         @TestMetadata("InnerClassConstructorWithDefArgs.kt")
         public void testInnerClassConstructorWithDefArgs() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/InnerClassConstructorWithDefArgs.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/InnerClassConstructorWithDefArgs.kt");
         }
         
         @TestMetadata("PrivateConstructor1WithParamDefaultValue.kt")
         public void testPrivateConstructor1WithParamDefaultValue() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
         }
         
         @TestMetadata("compiler/testData/loadKotlin/constructor/vararg")
@@ -336,12 +336,12 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             
             @TestMetadata("ConstructorNonLastVararg.kt")
             public void testConstructorNonLastVararg() throws Exception {
-                doTest("compiler/testData/loadKotlin/constructor/vararg/ConstructorNonLastVararg.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/constructor/vararg/ConstructorNonLastVararg.kt");
             }
             
             @TestMetadata("ConstructorVararg.kt")
             public void testConstructorVararg() throws Exception {
-                doTest("compiler/testData/loadKotlin/constructor/vararg/ConstructorVararg.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/constructor/vararg/ConstructorVararg.kt");
             }
             
         }
@@ -362,37 +362,37 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("MixedComponents.kt")
         public void testMixedComponents() throws Exception {
-            doTest("compiler/testData/loadKotlin/dataClass/MixedComponents.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/dataClass/MixedComponents.kt");
         }
         
         @TestMetadata("NoComponents.kt")
         public void testNoComponents() throws Exception {
-            doTest("compiler/testData/loadKotlin/dataClass/NoComponents.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/dataClass/NoComponents.kt");
         }
         
         @TestMetadata("OneVal.kt")
         public void testOneVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/dataClass/OneVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/dataClass/OneVal.kt");
         }
         
         @TestMetadata("OpenDataClass.kt")
         public void testOpenDataClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/dataClass/OpenDataClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/dataClass/OpenDataClass.kt");
         }
         
         @TestMetadata("OpenPropertyFinalComponent.kt")
         public void testOpenPropertyFinalComponent() throws Exception {
-            doTest("compiler/testData/loadKotlin/dataClass/OpenPropertyFinalComponent.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/dataClass/OpenPropertyFinalComponent.kt");
         }
         
         @TestMetadata("TwoVals.kt")
         public void testTwoVals() throws Exception {
-            doTest("compiler/testData/loadKotlin/dataClass/TwoVals.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/dataClass/TwoVals.kt");
         }
         
         @TestMetadata("TwoVars.kt")
         public void testTwoVars() throws Exception {
-            doTest("compiler/testData/loadKotlin/dataClass/TwoVars.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/dataClass/TwoVars.kt");
         }
         
     }
@@ -406,7 +406,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("PropagateSubclassOfComparable.kt")
         public void testPropagateSubclassOfComparable() throws Exception {
-            doTest("compiler/testData/loadKotlin/fun/PropagateSubclassOfComparable.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/PropagateSubclassOfComparable.kt");
         }
         
         @TestMetadata("compiler/testData/loadKotlin/fun/genericWithTypeVariables")
@@ -417,52 +417,52 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             
             @TestMetadata("FunGenericParam.kt")
             public void testFunGenericParam() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunGenericParam.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunGenericParam.kt");
             }
             
             @TestMetadata("FunParamParam.kt")
             public void testFunParamParam() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamParam.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamParam.kt");
             }
             
             @TestMetadata("FunParamParamErased.kt")
             public void testFunParamParamErased() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamParamErased.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamParamErased.kt");
             }
             
             @TestMetadata("FunParamReferencesParam.kt")
             public void testFunParamReferencesParam() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamReferencesParam.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamReferencesParam.kt");
             }
             
             @TestMetadata("FunParamTwoUpperBounds.kt")
             public void testFunParamTwoUpperBounds() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamTwoUpperBounds.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamTwoUpperBounds.kt");
             }
             
             @TestMetadata("FunParamUpperClassBound.kt")
             public void testFunParamUpperClassBound() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperClassBound.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperClassBound.kt");
             }
             
             @TestMetadata("FunParamUpperClassInterfaceBound.kt")
             public void testFunParamUpperClassInterfaceBound() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperClassInterfaceBound.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperClassInterfaceBound.kt");
             }
             
             @TestMetadata("FunParamUpperInterfaceBound.kt")
             public void testFunParamUpperInterfaceBound() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceBound.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceBound.kt");
             }
             
             @TestMetadata("FunParamVaragParam.kt")
             public void testFunParamVaragParam() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamVaragParam.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamVaragParam.kt");
             }
             
             @TestMetadata("FunTwoTypeParams.kt")
             public void testFunTwoTypeParams() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunTwoTypeParams.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunTwoTypeParams.kt");
             }
             
         }
@@ -475,27 +475,27 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             
             @TestMetadata("FunClassParamNotNull.kt")
             public void testFunClassParamNotNull() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/FunClassParamNotNull.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/FunClassParamNotNull.kt");
             }
             
             @TestMetadata("FunClassParamNullable.kt")
             public void testFunClassParamNullable() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/FunClassParamNullable.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/FunClassParamNullable.kt");
             }
             
             @TestMetadata("FunParamNullable.kt")
             public void testFunParamNullable() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/FunParamNullable.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/FunParamNullable.kt");
             }
             
             @TestMetadata("ReturnTypeClassParamNotNull.kt")
             public void testReturnTypeClassParamNotNull() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNotNull.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNotNull.kt");
             }
             
             @TestMetadata("ReturnTypeClassParamNullable.kt")
             public void testReturnTypeClassParamNullable() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNullable.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNullable.kt");
             }
             
         }
@@ -508,82 +508,82 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             
             @TestMetadata("ClassFun.kt")
             public void testClassFun() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ClassFun.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ClassFun.kt");
             }
             
             @TestMetadata("ClassFunGetFoo.kt")
             public void testClassFunGetFoo() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ClassFunGetFoo.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ClassFunGetFoo.kt");
             }
             
             @TestMetadata("ClassFunGetFooSetFoo.kt")
             public void testClassFunGetFooSetFoo() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ClassFunGetFooSetFoo.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ClassFunGetFooSetFoo.kt");
             }
             
             @TestMetadata("ClassFunSetFoo.kt")
             public void testClassFunSetFoo() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ClassFunSetFoo.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ClassFunSetFoo.kt");
             }
             
             @TestMetadata("ExtFun.kt")
             public void testExtFun() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ExtFun.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ExtFun.kt");
             }
             
             @TestMetadata("ExtFunInClass.kt")
             public void testExtFunInClass() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ExtFunInClass.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ExtFunInClass.kt");
             }
             
             @TestMetadata("FunDefaultArg.kt")
             public void testFunDefaultArg() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/FunDefaultArg.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/FunDefaultArg.kt");
             }
             
             @TestMetadata("FunParamNotNull.kt")
             public void testFunParamNotNull() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/FunParamNotNull.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/FunParamNotNull.kt");
             }
             
             @TestMetadata("FunVarargInt.kt")
             public void testFunVarargInt() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/FunVarargInt.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/FunVarargInt.kt");
             }
             
             @TestMetadata("FunVarargInteger.kt")
             public void testFunVarargInteger() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/FunVarargInteger.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/FunVarargInteger.kt");
             }
             
             @TestMetadata("ModifierAbstract.kt")
             public void testModifierAbstract() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ModifierAbstract.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ModifierAbstract.kt");
             }
             
             @TestMetadata("ModifierOpen.kt")
             public void testModifierOpen() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ModifierOpen.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ModifierOpen.kt");
             }
             
             @TestMetadata("NsFun.kt")
             public void testNsFun() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/NsFun.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/NsFun.kt");
             }
             
             @TestMetadata("NsFunGetFoo.kt")
             public void testNsFunGetFoo() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/NsFunGetFoo.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/NsFunGetFoo.kt");
             }
             
             @TestMetadata("ReturnTypeNotNull.kt")
             public void testReturnTypeNotNull() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ReturnTypeNotNull.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ReturnTypeNotNull.kt");
             }
             
             @TestMetadata("ReturnTypeNullable.kt")
             public void testReturnTypeNullable() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/nonGeneric/ReturnTypeNullable.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/nonGeneric/ReturnTypeNullable.kt");
             }
             
         }
@@ -596,7 +596,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             
             @TestMetadata("nonLastVararg.kt")
             public void testNonLastVararg() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/vararg/nonLastVararg.kt");
+                doTestWithAccessors("compiler/testData/loadKotlin/fun/vararg/nonLastVararg.kt");
             }
             
         }
@@ -613,6 +613,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     }
     
     @TestMetadata("compiler/testData/loadKotlin/prop")
+    @InnerTestClasses({Prop.DefaultAccessors.class})
     public static class Prop extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInProp() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -620,154 +621,223 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("ClassVal.kt")
         public void testClassVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ClassVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ClassVal.kt");
         }
         
         @TestMetadata("ClassValAbstract.kt")
         public void testClassValAbstract() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ClassValAbstract.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ClassValAbstract.kt");
         }
         
         @TestMetadata("ClassVar.kt")
         public void testClassVar() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ClassVar.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ClassVar.kt");
         }
         
         @TestMetadata("CollectionSize.kt")
         public void testCollectionSize() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/CollectionSize.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/CollectionSize.kt");
         }
         
         @TestMetadata("ExtValClass.kt")
         public void testExtValClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValClass.kt");
         }
         
         @TestMetadata("ExtValInClass.kt")
         public void testExtValInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValInClass.kt");
         }
         
         @TestMetadata("ExtValInt.kt")
         public void testExtValInt() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValInt.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValInt.kt");
         }
         
         @TestMetadata("ExtValIntCharSequence.kt")
         public void testExtValIntCharSequence() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValIntCharSequence.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValIntCharSequence.kt");
         }
         
         @TestMetadata("ExtValIntCharSequenceQ.kt")
         public void testExtValIntCharSequenceQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValIntCharSequenceQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValIntCharSequenceQ.kt");
         }
         
         @TestMetadata("ExtValIntListQOfIntInClass.kt")
         public void testExtValIntListQOfIntInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValIntListQOfIntInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValIntListQOfIntInClass.kt");
         }
         
         @TestMetadata("ExtValIntTInClass.kt")
         public void testExtValIntTInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValIntTInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValIntTInClass.kt");
         }
         
         @TestMetadata("ExtValIntTQInClass.kt")
         public void testExtValIntTQInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValIntTQInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValIntTQInClass.kt");
         }
         
         @TestMetadata("ExtValTIntInClass.kt")
         public void testExtValTIntInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtValTIntInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtValTIntInClass.kt");
         }
         
         @TestMetadata("ExtVarClass.kt")
         public void testExtVarClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarClass.kt");
         }
         
         @TestMetadata("ExtVarInClass.kt")
         public void testExtVarInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarInClass.kt");
         }
         
         @TestMetadata("ExtVarInt.kt")
         public void testExtVarInt() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarInt.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarInt.kt");
         }
         
         @TestMetadata("ExtVarIntTInClass.kt")
         public void testExtVarIntTInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarIntTInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarIntTInClass.kt");
         }
         
         @TestMetadata("ExtVarIntTQInClass.kt")
         public void testExtVarIntTQInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarIntTQInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarIntTQInClass.kt");
         }
         
         @TestMetadata("ExtVarMapPQInt.kt")
         public void testExtVarMapPQInt() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarMapPQInt.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarMapPQInt.kt");
         }
         
         @TestMetadata("ExtVarTIntInClass.kt")
         public void testExtVarTIntInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarTIntInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarTIntInClass.kt");
         }
         
         @TestMetadata("ExtVarTQIntInClass.kt")
         public void testExtVarTQIntInClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarTQIntInClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarTQIntInClass.kt");
         }
         
         @TestMetadata("ExtVarl.kt")
         public void testExtVarl() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/ExtVarl.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/ExtVarl.kt");
         }
         
         @TestMetadata("NsVal.kt")
         public void testNsVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/NsVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/NsVal.kt");
         }
         
         @TestMetadata("NsVar.kt")
         public void testNsVar() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/NsVar.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/NsVar.kt");
         }
         
         @TestMetadata("OverrideClassVal.kt")
         public void testOverrideClassVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/OverrideClassVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/OverrideClassVal.kt");
         }
         
         @TestMetadata("OverrideTraitVal.kt")
         public void testOverrideTraitVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/OverrideTraitVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/OverrideTraitVal.kt");
         }
         
         @TestMetadata("PropFromSuperclass.kt")
         public void testPropFromSuperclass() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/PropFromSuperclass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/PropFromSuperclass.kt");
         }
         
         @TestMetadata("TraitFinalVar.kt")
         public void testTraitFinalVar() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/TraitFinalVar.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/TraitFinalVar.kt");
         }
         
         @TestMetadata("TraitOpenVal.kt")
         public void testTraitOpenVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/TraitOpenVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/TraitOpenVal.kt");
         }
         
         @TestMetadata("VarDelegationToTraitImpl.kt")
         public void testVarDelegationToTraitImpl() throws Exception {
-            doTest("compiler/testData/loadKotlin/prop/VarDelegationToTraitImpl.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/VarDelegationToTraitImpl.kt");
         }
         
+        @TestMetadata("compiler/testData/loadKotlin/prop/defaultAccessors")
+        public static class DefaultAccessors extends AbstractLoadCompiledKotlinTest {
+            public void testAllFilesPresentInDefaultAccessors() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("ClassVal.kt")
+            public void testClassVal() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassVal.kt");
+            }
+            
+            @TestMetadata("ClassValParams.kt")
+            public void testClassValParams() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassValParams.kt");
+            }
+            
+            @TestMetadata("ClassValWithGet.kt")
+            public void testClassValWithGet() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassValWithGet.kt");
+            }
+            
+            @TestMetadata("ClassVar.kt")
+            public void testClassVar() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassVar.kt");
+            }
+            
+            @TestMetadata("ClassVarModality.kt")
+            public void testClassVarModality() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassVarModality.kt");
+            }
+            
+            @TestMetadata("ClassVarParams.kt")
+            public void testClassVarParams() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassVarParams.kt");
+            }
+            
+            @TestMetadata("ClassVarWithGet.kt")
+            public void testClassVarWithGet() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassVarWithGet.kt");
+            }
+            
+            @TestMetadata("ClassVarWithSet.kt")
+            public void testClassVarWithSet() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ClassVarWithSet.kt");
+            }
+            
+            @TestMetadata("ExtValLong.kt")
+            public void testExtValLong() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ExtValLong.kt");
+            }
+            
+            @TestMetadata("ExtVarLong.kt")
+            public void testExtVarLong() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ExtVarLong.kt");
+            }
+            
+            @TestMetadata("ExtVarLongWithSet.kt")
+            public void testExtVarLongWithSet() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/prop/defaultAccessors/ExtVarLongWithSet.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Prop");
+            suite.addTestSuite(Prop.class);
+            suite.addTestSuite(DefaultAccessors.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/loadKotlin/type")
@@ -778,147 +848,147 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("Any.kt")
         public void testAny() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/Any.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/Any.kt");
         }
         
         @TestMetadata("AnyQ.kt")
         public void testAnyQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/AnyQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/AnyQ.kt");
         }
         
         @TestMetadata("ArrayOfInNumber.kt")
         public void testArrayOfInNumber() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ArrayOfInNumber.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ArrayOfInNumber.kt");
         }
         
         @TestMetadata("ArrayOfInt.kt")
         public void testArrayOfInt() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ArrayOfInt.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ArrayOfInt.kt");
         }
         
         @TestMetadata("ArrayOfInteger.kt")
         public void testArrayOfInteger() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ArrayOfInteger.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ArrayOfInteger.kt");
         }
         
         @TestMetadata("ArrayOfOutNumber.kt")
         public void testArrayOfOutNumber() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ArrayOfOutNumber.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ArrayOfOutNumber.kt");
         }
         
         @TestMetadata("ArrayOfOutT.kt")
         public void testArrayOfOutT() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ArrayOfOutT.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ArrayOfOutT.kt");
         }
         
         @TestMetadata("ArrayOfString.kt")
         public void testArrayOfString() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ArrayOfString.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ArrayOfString.kt");
         }
         
         @TestMetadata("Function1IntString.kt")
         public void testFunction1IntString() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/Function1IntString.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/Function1IntString.kt");
         }
         
         @TestMetadata("Int.kt")
         public void testInt() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/Int.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/Int.kt");
         }
         
         @TestMetadata("IntArray.kt")
         public void testIntArray() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/IntArray.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/IntArray.kt");
         }
         
         @TestMetadata("IntQ.kt")
         public void testIntQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/IntQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/IntQ.kt");
         }
         
         @TestMetadata("jlInteger.kt")
         public void testJlInteger() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/jlInteger.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/jlInteger.kt");
         }
         
         @TestMetadata("jlIntegerQ.kt")
         public void testJlIntegerQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/jlIntegerQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/jlIntegerQ.kt");
         }
         
         @TestMetadata("jlNumber.kt")
         public void testJlNumber() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/jlNumber.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/jlNumber.kt");
         }
         
         @TestMetadata("jlObject.kt")
         public void testJlObject() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/jlObject.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/jlObject.kt");
         }
         
         @TestMetadata("jlObjectQ.kt")
         public void testJlObjectQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/jlObjectQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/jlObjectQ.kt");
         }
         
         @TestMetadata("jlString.kt")
         public void testJlString() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/jlString.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/jlString.kt");
         }
         
         @TestMetadata("jlStringQ.kt")
         public void testJlStringQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/jlStringQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/jlStringQ.kt");
         }
         
         @TestMetadata("ListOfAny.kt")
         public void testListOfAny() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ListOfAny.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ListOfAny.kt");
         }
         
         @TestMetadata("ListOfAnyQ.kt")
         public void testListOfAnyQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ListOfAnyQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ListOfAnyQ.kt");
         }
         
         @TestMetadata("ListOfStar.kt")
         public void testListOfStar() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ListOfStar.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ListOfStar.kt");
         }
         
         @TestMetadata("ListOfString.kt")
         public void testListOfString() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ListOfString.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ListOfString.kt");
         }
         
         @TestMetadata("ListOfjlString.kt")
         public void testListOfjlString() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/ListOfjlString.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/ListOfjlString.kt");
         }
         
         @TestMetadata("Nothing.kt")
         public void testNothing() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/Nothing.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/Nothing.kt");
         }
         
         @TestMetadata("NothingQ.kt")
         public void testNothingQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/NothingQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/NothingQ.kt");
         }
         
         @TestMetadata("String.kt")
         public void testString() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/String.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/String.kt");
         }
         
         @TestMetadata("StringQ.kt")
         public void testStringQ() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/StringQ.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/StringQ.kt");
         }
         
         @TestMetadata("Tuple0.kt")
         public void testTuple0() throws Exception {
-            doTest("compiler/testData/loadKotlin/type/Tuple0.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/type/Tuple0.kt");
         }
         
     }
@@ -931,52 +1001,52 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         
         @TestMetadata("InternalAbstractTraitMembersOverridden.kt")
         public void testInternalAbstractTraitMembersOverridden() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/InternalAbstractTraitMembersOverridden.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/InternalAbstractTraitMembersOverridden.kt");
         }
         
         @TestMetadata("InternalClass.kt")
         public void testInternalClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/InternalClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/InternalClass.kt");
         }
         
         @TestMetadata("InternalConstructor.kt")
         public void testInternalConstructor() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/InternalConstructor.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/InternalConstructor.kt");
         }
         
         @TestMetadata("InternalTopLevelMembers.kt")
         public void testInternalTopLevelMembers() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/InternalTopLevelMembers.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/InternalTopLevelMembers.kt");
         }
         
         @TestMetadata("InternalTraitMembers.kt")
         public void testInternalTraitMembers() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/InternalTraitMembers.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/InternalTraitMembers.kt");
         }
         
         @TestMetadata("InternalTraitMembersInherited.kt")
         public void testInternalTraitMembersInherited() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/InternalTraitMembersInherited.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/InternalTraitMembersInherited.kt");
         }
         
         @TestMetadata("PrivateClass.kt")
         public void testPrivateClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/PrivateClass.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/PrivateClass.kt");
         }
         
         @TestMetadata("PrivateTopLevelFun.kt")
         public void testPrivateTopLevelFun() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/PrivateTopLevelFun.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/PrivateTopLevelFun.kt");
         }
         
         @TestMetadata("PrivateTopLevelVal.kt")
         public void testPrivateTopLevelVal() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/PrivateTopLevelVal.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/PrivateTopLevelVal.kt");
         }
         
         @TestMetadata("TopLevelVarWithPrivateSetter.kt")
         public void testTopLevelVarWithPrivateSetter() throws Exception {
-            doTest("compiler/testData/loadKotlin/visibility/TopLevelVarWithPrivateSetter.kt");
+            doTestWithAccessors("compiler/testData/loadKotlin/visibility/TopLevelVarWithPrivateSetter.kt");
         }
         
     }
@@ -990,7 +1060,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         suite.addTest(Constructor.innerSuite());
         suite.addTestSuite(DataClass.class);
         suite.addTest(Fun.innerSuite());
-        suite.addTestSuite(Prop.class);
+        suite.addTest(Prop.innerSuite());
         suite.addTestSuite(Type.class);
         suite.addTestSuite(Visibility.class);
         return suite;

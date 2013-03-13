@@ -36,7 +36,16 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir {
+
     public void doTest(@NotNull String ktFileName) throws Exception {
+        doTest(ktFileName, false);
+    }
+
+    public void doTestWithAccessors(@NotNull String ktFileName) throws Exception {
+        doTest(ktFileName, true);
+    }
+
+    private void doTest(@NotNull String ktFileName, boolean includeAccessors) throws Exception {
         File ktFile = new File(ktFileName);
         File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
         AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(),
@@ -49,6 +58,9 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
         NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
         compareNamespaces(namespaceFromSource, namespaceFromClass,
-                          NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.checkPrimaryConstructors(true), txtFile);
+                          NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                                  .checkPrimaryConstructors(true)
+                                  .checkPropertyAccessors(includeAccessors),
+                          txtFile);
     }
 }

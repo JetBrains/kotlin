@@ -45,8 +45,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class NamespaceComparator {
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, Predicates.<FqNameUnsafe>alwaysTrue());
-    public static final Configuration RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysTrue());
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, Predicates.<FqNameUnsafe>alwaysTrue());
+    public static final Configuration RECURSIVE = new Configuration(false, false, true, Predicates.<FqNameUnsafe>alwaysTrue());
 
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
@@ -97,6 +97,22 @@ public class NamespaceComparator {
             if (!topLevel) {
                 printer.popIndent().println("}");
             }
+        }
+        else if (conf.checkPropertyAccessors && descriptor instanceof PropertyDescriptor) {
+            printer.printlnWithNoIndent();
+            printer.pushIndent();
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+            PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+            if (getter != null) {
+                printer.println(RENDERER.render(getter));
+            }
+
+            PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+            if (setter != null) {
+                printer.println(RENDERER.render(setter));
+            }
+
+            printer.popIndent();
         }
         else {
             printer.printlnWithNoIndent();
@@ -198,25 +214,32 @@ public class NamespaceComparator {
 
     public static class Configuration {
         private final boolean checkPrimaryConstructors;
+        private final boolean checkPropertyAccessors;
         private final boolean includeMethodsOfJavaObject;
         private final Predicate<FqNameUnsafe> recurseIntoPackage;
 
         public Configuration(
                 boolean checkPrimaryConstructors,
+                boolean checkPropertyAccessors,
                 boolean includeMethodsOfJavaObject,
                 Predicate<FqNameUnsafe> recurseIntoPackage
         ) {
             this.checkPrimaryConstructors = checkPrimaryConstructors;
+            this.checkPropertyAccessors = checkPropertyAccessors;
             this.includeMethodsOfJavaObject = includeMethodsOfJavaObject;
             this.recurseIntoPackage = recurseIntoPackage;
         }
 
         public Configuration filterRecursion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
-            return new Configuration(checkPrimaryConstructors, includeMethodsOfJavaObject, recurseIntoPackage);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage);
         }
 
         public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
-            return new Configuration(checkPrimaryConstructors, includeMethodsOfJavaObject, recurseIntoPackage);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage);
+        }
+
+        public Configuration checkPropertyAccessors(boolean checkPropertyAccessors) {
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage);
         }
     }
 }

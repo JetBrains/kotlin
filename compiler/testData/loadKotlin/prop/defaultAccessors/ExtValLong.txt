@@ -1,0 +1,10 @@
+package test
+
+internal val jet.Long.date1 : java.lang.Object
+    internal fun jet.Long.<get-date1>() : java.lang.Object
+internal val jet.Long.date12 : java.lang.Object
+    internal fun jet.Long.<get-date12>() : java.lang.Object
+private val jet.Long.date3 : java.util.Date
+    private fun jet.Long.<get-date3>() : java.util.Date
+public val jet.Long.date4 : java.util.Date
+    public fun jet.Long.<get-date4>() : java.util.Date
