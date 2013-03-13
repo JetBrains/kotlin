@@ -26,16 +26,44 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
 public class FieldInfo {
 
+    @NotNull
+    public static FieldInfo createForSingleton(@NotNull ClassDescriptor fieldClassDescriptor, @NotNull JetTypeMapper typeMapper) {
+        ClassKind kind = fieldClassDescriptor.getKind();
+        if (kind != ClassKind.OBJECT && kind != ClassKind.CLASS_OBJECT && kind != ClassKind.ENUM_ENTRY) {
+            throw new UnsupportedOperationException();
+        }
+
+        Type fieldType = typeMapper.mapType(fieldClassDescriptor.getDefaultType());
+
+        ClassDescriptor ownerDescriptor = kind == ClassKind.OBJECT
+                                          ? fieldClassDescriptor: DescriptorUtils.getParentOfType(fieldClassDescriptor, ClassDescriptor.class);
+        assert ownerDescriptor != null;
+        Type ownerType = typeMapper.mapType(ownerDescriptor.getDefaultType());
+
+        String fieldName = kind == ClassKind.ENUM_ENTRY
+                           ? fieldClassDescriptor.getName().getName()
+                           : fieldClassDescriptor.getKind() == ClassKind.CLASS_OBJECT ? JvmAbi.CLASS_OBJECT_FIELD : JvmAbi.INSTANCE_FIELD;
+        return new FieldInfo(ownerType, fieldType, fieldName, true);
+    }
+
+
+    public static FieldInfo createForHiddenField(@NotNull Type owner, Type fieldType, String fieldName) {
+        return new FieldInfo(owner, fieldType, fieldName, false);
+    }
+
     private final Type fieldType;
 
     private final Type ownerType;
 
     private final String fieldName;
 
-    private FieldInfo(@NotNull Type ownerType, @NotNull Type fieldType, @NotNull String fieldName) {
+    private final boolean isStatic;
+
+    private FieldInfo(@NotNull Type ownerType, @NotNull Type fieldType, @NotNull String fieldName, @NotNull boolean isStatic) {
         this.ownerType = ownerType;
         this.fieldType = fieldType;
         this.fieldName = fieldName;
+        this.isStatic = isStatic;
     }
 
     @NotNull
@@ -59,23 +87,7 @@ public class FieldInfo {
     }
 
     @NotNull
-    public static FieldInfo createForSingleton(@NotNull ClassDescriptor fieldClassDescriptor, @NotNull JetTypeMapper typeMapper) {
-        ClassKind kind = fieldClassDescriptor.getKind();
-        if (kind != ClassKind.OBJECT && kind != ClassKind.CLASS_OBJECT && kind != ClassKind.ENUM_ENTRY) {
-            throw new UnsupportedOperationException();
-        }
-
-        Type fieldType = typeMapper.mapType(fieldClassDescriptor.getDefaultType());
-
-        ClassDescriptor ownerDescriptor = kind == ClassKind.OBJECT
-                                          ? fieldClassDescriptor: DescriptorUtils.getParentOfType(fieldClassDescriptor, ClassDescriptor.class);
-        assert ownerDescriptor != null;
-        Type ownerType = typeMapper.mapType(ownerDescriptor.getDefaultType());
-
-        String fieldName = kind == ClassKind.ENUM_ENTRY
-                           ? fieldClassDescriptor.getName().getName()
-                           : fieldClassDescriptor.getKind() == ClassKind.CLASS_OBJECT ? JvmAbi.CLASS_OBJECT_FIELD : JvmAbi.INSTANCE_FIELD;
-        return new FieldInfo(ownerType, fieldType, fieldName);
+    public boolean isStatic() {
+        return isStatic;
     }
-
 }

@@ -955,7 +955,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassDescriptor fieldTypeDescriptor = hasClassObject ? descriptor.getClassObjectDescriptor() : descriptor;
         assert fieldTypeDescriptor != null;
         final FieldInfo info = FieldInfo.createForSingleton(fieldTypeDescriptor, typeMapper);
-        JetClassOrObject original = hasClassObject ? ((JetClass)myClass).getClassObject().getObjectDeclaration() : myClass;
+        JetClassOrObject original = hasClassObject ? ((JetClass) myClass).getClassObject().getObjectDeclaration() : myClass;
 
         v.newField(original, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, info.getFieldName(), info.getFieldType().getDescriptor(), null, null);
 
@@ -1012,8 +1012,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 return;
             }
 
-            generatePrimaryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, hasCapturedThis,
-                                           closure, mv);
+            generatePrimaryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, closure, mv);
         }
 
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);
@@ -1024,7 +1023,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             ConstructorContext constructorContext,
             JvmMethodSignature constructorMethod,
             CallableMethod callableMethod,
-            boolean hasCapturedThis,
             MutableClosure closure,
             MethodVisitor mv
     ) {
@@ -1051,39 +1049,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor, frameMap);
         }
 
-        if (hasCapturedThis) {
-            Type type = typeMapper
-                    .mapType(enclosingClassDescriptor(bindingContext, descriptor));
-            String interfaceDesc = type.getDescriptor();
-            iv.load(0, classAsmType);
-            iv.load(frameMap.getOuterThisIndex(), type);
-            iv.putfield(classname.getInternalName(), CAPTURED_THIS_FIELD, interfaceDesc);
-        }
-
         if (closure != null) {
-            int k = hasCapturedThis ? 2 : 1;
-            String internalName = typeMapper.mapType(descriptor).getInternalName();
-            ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
-            if (captureReceiver != null) {
-                iv.load(0, OBJECT_TYPE);
-                Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.IMPL);
-                iv.load(k, asmType);
-                iv.putfield(internalName, CAPTURED_RECEIVER_FIELD, asmType.getDescriptor());
-                k += asmType.getSize();
-            }
-
-            for (DeclarationDescriptor varDescr : closure.getCaptureVariables().keySet()) {
-                if (varDescr instanceof VariableDescriptor && !(varDescr instanceof PropertyDescriptor)) {
-                    Type sharedVarType = typeMapper.getSharedVarType(varDescr);
-                    if (sharedVarType == null) {
-                        sharedVarType = typeMapper.mapType((VariableDescriptor) varDescr);
-                    }
-                    iv.load(0, OBJECT_TYPE);
-                    iv.load(k, StackValue.refType(sharedVarType));
-                    k += StackValue.refType(sharedVarType).getSize();
-                    iv.putfield(internalName,
-                                "$" + varDescr.getName(), sharedVarType.getDescriptor());
-                }
+            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, bindingContext, state, closure, classAsmType);
+            int k = 1;
+            for (FieldInfo info : argsFromClosure) {
+                k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
             }
         }
 

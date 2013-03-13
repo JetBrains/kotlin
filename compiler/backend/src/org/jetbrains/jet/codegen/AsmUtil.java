@@ -202,15 +202,6 @@ public class AsmUtil {
         return NO_FLAG_PACKAGE_PRIVATE;
     }
 
-    public static int getModalityAccessFlag(@NotNull MemberDescriptor descriptor) {
-        switch (descriptor.getModality()) {
-            case ABSTRACT: return ACC_ABSTRACT;
-            case FINAL: return ACC_FINAL;
-            case OPEN: return 0;
-            default: throw new UnsupportedOperationException("Unknown modality: " + descriptor.getModality());
-        }
-    }
-
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
             return KotlinBuiltIns.getInstance().isDeprecated(descriptor)
@@ -325,6 +316,7 @@ public class AsmUtil {
     }
 
     public static void genInitSingletonField(FieldInfo info, InstructionAdapter iv) {
+        assert info.isStatic();
         genInitSingletonField(info.getOwnerType(), info.getFieldName(), info.getFieldType(), iv);
     }
 
@@ -333,6 +325,16 @@ public class AsmUtil {
         iv.dup();
         iv.invokespecial(fieldAsmType.getInternalName(), "<init>", "()V");
         iv.putstatic(fieldOwnerType.getInternalName(), fieldName, fieldAsmType.getDescriptor());
+    }
+
+    public static int genAssignInstanceFieldFromParam(FieldInfo info, int index, InstructionAdapter iv) {
+        assert !info.isStatic();
+        Type fieldType = info.getFieldType();
+        iv.load(0, info.getOwnerType());//this
+        iv.load(index, fieldType); //param
+        iv.visitFieldInsn(PUTFIELD, info.getOwnerInternalName(), info.getFieldName(), fieldType.getDescriptor());
+        index += fieldType.getSize();
+        return index;
     }
 
     public static void genStringBuilderConstructor(InstructionAdapter v) {
