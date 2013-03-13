@@ -319,8 +319,7 @@ public class ExpressionTypingUtils {
                 @Override
                 public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
                     // excluding all entries related to fake expression
-                    // keys in RESOLUTION_RESULTS_FOR_FUNCTION slice have fake expression inside
-                    return key != fake && slice != RESOLUTION_RESULTS_FOR_FUNCTION;
+                    return key != fake;
                 }
             }, false);
         }

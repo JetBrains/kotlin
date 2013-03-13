@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -48,13 +49,14 @@ public class TypeInfoForCall {
             @NotNull ResolvedCallWithTrace<FunctionDescriptor> resolvedCall,
             @NotNull Call call,
             @NotNull ResolutionContext context,
-            @NotNull ResolveMode resolveMode
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
         JetTypeInfo typeInfo = JetTypeInfo.create(type, dataFlowInfo);
         ResolvedCallImpl<FunctionDescriptor> resolvedCallToComplete = resolvedCall.getCallToCompleteTypeArgumentInference();
         CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext = createForCallBeingAnalyzed(
                 resolvedCallToComplete, context.replaceBindingTrace(TraceUtil.TRACE_STUB),
-                call, resolveMode, resolvedCallToComplete.getTracing());
+                call, resolveMode, resolvedCallToComplete.getTracing(), resolutionResultsCache);
         return new TypeInfoForCall(typeInfo, callCandidateResolutionContext);
 
     }

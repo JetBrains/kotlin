@@ -187,17 +187,18 @@ public class ArgumentTypeResolver {
         if (expression instanceof JetCallExpression) {
             result = callExpressionResolver.getCallExpressionTypeInfoForCall(
                     (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null,
-                    context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL);
+                    context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL, context.resolutionResultsCache);
         }
         else { // expression instanceof JetQualifiedExpression
             result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo(
-                    (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL);
+                    (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE),
+                    ResolveMode.NESTED_CALL, context.resolutionResultsCache);
         }
 
         recordExpressionType(expression, context.trace, context.scope, result.getTypeInfo());
         CallCandidateResolutionContext<FunctionDescriptor> deferredContext = result.getCallCandidateResolutionContext();
         if (deferredContext != null) {
-            context.trace.record(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression, deferredContext);
+            context.resolutionResultsCache.recordDeferredComputationForCall(expression, deferredContext);
         }
         if (traceToCommitForCall != null) {
             traceToCommitForCall.commit();

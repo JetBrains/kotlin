@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -274,17 +276,6 @@ public class BindingContextUtils {
             trace.record(AMBIGUOUS_LABEL_TARGET, targetLabel, targets);
         }
         trace.report(AMBIGUOUS_LABEL.on(targetLabel));
-    }
-
-    public static void commitResolutionCacheData(@NotNull DelegatingBindingTrace trace, @NotNull BindingTrace traceForResolutionCache) {
-        trace.addAllMyDataTo(traceForResolutionCache, new TraceEntryFilter() {
-            @Override
-            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
-                return slice == BindingContext.RESOLUTION_RESULTS_FOR_FUNCTION ||
-                       slice == BindingContext.RESOLUTION_RESULTS_FOR_PROPERTY ||
-                       slice == BindingContext.TRACE_DELTAS_CACHE;
-            }
-        }, false);
     }
 
     public static void recordExpressionType(

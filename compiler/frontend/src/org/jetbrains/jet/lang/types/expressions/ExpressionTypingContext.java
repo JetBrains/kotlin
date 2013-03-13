@@ -21,11 +21,9 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -107,6 +105,6 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
         return expressionTypingServices.getCallResolver().resolveCallWithGivenName(
-                BasicCallResolutionContext.create(this, call, ResolveMode.TOP_LEVEL_CALL), functionReference, name);
+                BasicCallResolutionContext.create(this, call, ResolveMode.TOP_LEVEL_CALL, ResolutionResultsCache.create()), functionReference, name);
     }
 }

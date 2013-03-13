@@ -291,7 +291,7 @@ public class CandidateResolver {
                                        : effectiveExpectedType;
 
                 CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
-                        context.trace.get(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression);
+                        context.resolutionResultsCache.getDeferredComputation(expression);
                 if (storedContextForArgument == null) continue;
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
@@ -358,7 +358,6 @@ public class CandidateResolver {
                 traceToResolveFunctionLiteral.commit();
                 return;
             }
-            BindingContextUtils.commitResolutionCacheData(traceToResolveFunctionLiteral, context.trace);
         }
         JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeByUnknown(expectedType) : expectedType;
         CallCandidateResolutionContext<D> newContext = context.replaceExpectedType(expectedTypeWithoutReturnType);

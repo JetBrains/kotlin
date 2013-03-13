@@ -32,20 +32,23 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ResolveMode resolveMode,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition, resolutionResultsCache);
     }
     @NotNull
-    public static BasicCallResolutionContext create(@NotNull ResolutionContext context, @NotNull Call call, @NotNull ResolveMode resolveMode) {
-        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, resolveMode, context.expressionPosition);
+    public static BasicCallResolutionContext create(
+            @NotNull ResolutionContext context, @NotNull Call call, @NotNull ResolveMode resolveMode, @NotNull ResolutionResultsCache resolutionResultsCache
+    ) {
+        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, resolveMode, context.expressionPosition, resolutionResultsCache);
     }
 
     private BasicCallResolutionContext(
             BindingTrace trace, JetScope scope, Call call, JetType expectedType,
-            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, ExpressionPosition expressionPosition
+            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
+        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition, resolutionResultsCache);
     }
 
     @Override
@@ -56,7 +59,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition
     ) {
-        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
+        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition, resolutionResultsCache);
     }
 
     @Override

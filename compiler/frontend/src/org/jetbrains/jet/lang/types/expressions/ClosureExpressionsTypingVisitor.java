@@ -247,8 +247,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         temporaryTrace.commit(new TraceEntryFilter() {
             @Override
             public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
-                return (slice != BindingContext.RESOLUTION_RESULTS_FOR_FUNCTION && slice != BindingContext.RESOLUTION_RESULTS_FOR_PROPERTY &&
-                        slice != BindingContext.TRACE_DELTAS_CACHE);
+                return (slice != BindingContext.TRACE_DELTAS_CACHE);
             }
         }, true);
 
