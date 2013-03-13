@@ -51,8 +51,12 @@ public abstract class PsiAnnotationWithFlags extends PsiAnnotationWrapper {
 
     public final boolean hasInternalFlag() {
         return (flags() & JvmStdlibNames.FLAG_INTERNAL_BIT) != 0;
-
     }
+
+    public final boolean hasProtectedFlag() {
+        return (flags() & JvmStdlibNames.FLAG_PROTECTED_BIT) != 0;
+    }
+
     public final boolean hasPrivateFlag() {
         return (flags() & JvmStdlibNames.FLAG_PRIVATE_BIT) != 0;
     }

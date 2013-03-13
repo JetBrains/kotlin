@@ -84,6 +84,9 @@ public final class DescriptorResolverUtils {
             else if (annotation.hasInternalFlag()) {
                 return Visibilities.INTERNAL;
             }
+            else if (annotation.hasProtectedFlag()) {
+                return Visibilities.PROTECTED;
+            }
         }
 
         if (modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC)) {

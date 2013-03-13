@@ -138,7 +138,9 @@ public final class MembersCache {
                 return false;
             }
 
-            if (member.isPrivate()) {
+            //process private accessors
+            if (member.isPrivate()
+                && !(member instanceof PsiMethodWrapper && ((PsiMethodWrapper)member).getJetMethodAnnotation().hasPropertyFlag())) {
                 return false;
             }
 

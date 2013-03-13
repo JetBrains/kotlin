@@ -114,6 +114,9 @@ public class CodegenUtil {
         else if (visibility == Visibilities.PRIVATE) {
             return JvmStdlibNames.FLAG_PRIVATE_BIT;
         }
+        else if (visibility == Visibilities.PROTECTED) {
+            return JvmStdlibNames.FLAG_PROTECTED_BIT;
+        }
         return 0;
     }
 

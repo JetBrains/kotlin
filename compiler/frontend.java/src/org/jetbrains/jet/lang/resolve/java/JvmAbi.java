@@ -27,7 +27,7 @@ public class JvmAbi {
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
      */
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;

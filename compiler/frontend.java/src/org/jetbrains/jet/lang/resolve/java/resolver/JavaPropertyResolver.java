@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiData;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.java.wrapper.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -235,7 +232,7 @@ public final class JavaPropertyResolver {
                 DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
                 receiverType
         );
-        initializeSetterAndGetter(propertyDescriptor, getterDescriptor, setterDescriptor, propertyType);
+        initializeSetterAndGetter(propertyDescriptor, getterDescriptor, setterDescriptor, propertyType, psiData);
 
         if (kind == CallableMemberDescriptor.Kind.DECLARATION) {
             trace.record(BindingContext.VARIABLE, psiData.getCharacteristicPsi(), propertyDescriptor);
@@ -274,20 +271,27 @@ public final class JavaPropertyResolver {
     }
 
     private static void initializeSetterAndGetter(
-            PropertyDescriptor propertyDescriptor,
-            PropertyGetterDescriptorImpl getterDescriptor,
-            PropertySetterDescriptorImpl setterDescriptor,
-            JetType propertyType
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @Nullable PropertyGetterDescriptorImpl getterDescriptor,
+            @Nullable PropertySetterDescriptorImpl setterDescriptor,
+            @NotNull JetType propertyType,
+            @NotNull PropertyPsiData data
     ) {
         if (getterDescriptor != null) {
             getterDescriptor.initialize(propertyType);
         }
         if (setterDescriptor != null) {
+            PropertyPsiDataElement setter = data.getSetter();
+            assert setter != null;
+            List<PsiParameterWrapper> parameters = ((PsiMethodWrapper) setter.getMember()).getParameters();
+            assert parameters.size() != 0;
+            int valueIndex = parameters.size() - 1;
+            PsiParameterWrapper valueParameter = parameters.get(valueIndex);
             setterDescriptor.initialize(new ValueParameterDescriptorImpl(
                     setterDescriptor,
                     0,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    Name.identifier("p0") /*TODO*/,
+                    Name.identifierNoValidate(valueParameter.getJetValueParameter().name()),
                     propertyDescriptor.getType(),
                     false,
                     null));
@@ -325,7 +329,7 @@ public final class JavaPropertyResolver {
         return new PropertyGetterDescriptorImpl(
                 propertyDescriptor,
                 annotationResolver.resolveAnnotations(getter.getMember().getPsiMember()),
-                Modality.OPEN,
+                propertyDescriptor.getModality(),
                 visibility,
                 true,
                 false,
@@ -352,7 +356,7 @@ public final class JavaPropertyResolver {
         return new PropertySetterDescriptorImpl(
                 propertyDescriptor,
                 annotationResolver.resolveAnnotations(setter.getMember().getPsiMember()),
-                Modality.OPEN,
+                propertyDescriptor.getModality(),
                 setterVisibility,
                 true,
                 false,

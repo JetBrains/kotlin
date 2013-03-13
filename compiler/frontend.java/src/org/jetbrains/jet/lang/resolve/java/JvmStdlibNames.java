@@ -47,17 +47,18 @@ public class JvmStdlibNames {
     public static final int FLAG_FORCE_FINAL_BIT = 1 << 2;
     public static final int FLAG_PRIVATE_BIT =  1 << 3;
     public static final int FLAG_INTERNAL_BIT = 1 << 4;
+    public static final int FLAG_PROTECTED_BIT = 1 << 5;
 
     // for method, three bits (one reserved)
-    public static final int FLAG_METHOD_KIND_MASK = 7 << 5;
-    public static final int FLAG_METHOD_KIND_DECLARATION =   0 << 5;
-    public static final int FLAG_METHOD_KIND_FAKE_OVERRIDE = 1 << 5;
-    public static final int FLAG_METHOD_KIND_DELEGATION =    2 << 5;
-    public static final int FLAG_METHOD_KIND_SYNTHESIZED =   3 << 5;
+    public static final int FLAG_METHOD_KIND_MASK = 7 << 6;
+    public static final int FLAG_METHOD_KIND_DECLARATION =   0 << 6;
+    public static final int FLAG_METHOD_KIND_FAKE_OVERRIDE = 1 << 6;
+    public static final int FLAG_METHOD_KIND_DELEGATION =    2 << 6;
+    public static final int FLAG_METHOD_KIND_SYNTHESIZED =   3 << 6;
 
-    public static final int FLAG_CLASS_KIND_MASK = 7 << 5;
-    public static final int FLAG_CLASS_KIND_DEFAULT = 0 << 5;
-    public static final int FLAG_CLASS_KIND_OBJECT = 1 << 5;
+    public static final int FLAG_CLASS_KIND_MASK = 7 << 6;
+    public static final int FLAG_CLASS_KIND_DEFAULT = 0 << 6;
+    public static final int FLAG_CLASS_KIND_OBJECT = 1 << 6;
 
     public static final JvmClassName JET_CONSTRUCTOR = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetConstructor");
 
