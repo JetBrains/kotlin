@@ -1,0 +1,29 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+version = '1.4'
+group = 'org.jetbrains.kotlin'
+
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile gradleApi()
+}
+
+
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude('META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA') 
+}
+
+artifacts {
+    archives  jar
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.4'
+}

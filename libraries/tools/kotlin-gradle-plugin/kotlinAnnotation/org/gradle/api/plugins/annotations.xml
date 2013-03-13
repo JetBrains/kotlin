@@ -1,0 +1,13 @@
+<root>
+    <item name='org.gradle.api.plugins.Convention java.util.Map&lt;java.lang.String,java.lang.Object&gt; getPlugins()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getPlugins() : MutableMap&lt;String, Any&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='org.gradle.api.plugins.Convention org.gradle.api.internal.DynamicObject getExtensionsAsDynamicObject()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getExtensionsAsDynamicObject() : DynamicObject&quot;"/>
+        </annotation>
+    </item>
+</root>
