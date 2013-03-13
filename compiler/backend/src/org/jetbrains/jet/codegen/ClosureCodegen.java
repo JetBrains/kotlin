@@ -66,10 +66,10 @@ public class ClosureCodegen extends GenerationStateAware {
         ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName() + ".class", fun.getContainingFile());
 
         FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
+        assert funDescriptor != null;
 
         SignatureWriter signatureWriter = new SignatureWriter();
 
-        assert funDescriptor != null;
         List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
         JvmClassName funClass = getInternalClassName(funDescriptor);
         signatureWriter.visitClassType(funClass.getInternalName());
