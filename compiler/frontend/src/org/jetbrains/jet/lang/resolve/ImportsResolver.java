@@ -21,10 +21,7 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -42,7 +39,7 @@ public class ImportsResolver {
     @NotNull
     private TopDownAnalysisContext context;
     @NotNull
-    private ModuleConfiguration configuration;
+    private ModuleSourcesManager moduleSourcesManager;
     @NotNull
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     @NotNull
@@ -56,8 +53,8 @@ public class ImportsResolver {
     }
 
     @Inject
-    public void setConfiguration(@NotNull ModuleConfiguration configuration) {
-        this.configuration = configuration;
+    public void setModuleSourcesManager(@NotNull ModuleSourcesManager moduleSourcesManager) {
+        this.moduleSourcesManager = moduleSourcesManager;
     }
 
     @Inject
@@ -86,16 +83,18 @@ public class ImportsResolver {
     private void processImports(@NotNull LookupMode lookupMode, @NotNull JetScope rootScope) {
         for (JetFile file : context.getPackageFragmentDescriptors().keySet()) {
             WritableScope namespaceScope = context.getFileScopes().get(file);
-            processImportsInFile(lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives()), rootScope);
+            SubModuleDescriptor subModule = moduleSourcesManager.getSubModuleForFile(file);
+            processImportsInFile(subModule, lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives()), rootScope);
         }
         for (JetScript script : context.getScripts().keySet()) {
             WritableScope scriptScope = context.getScriptScopes().get(script);
-            processImportsInFile(lookupMode, scriptScope, script.getImportDirectives(), rootScope);
+            SubModuleDescriptor subModule = moduleSourcesManager.getSubModuleForFile(script.getContainingFile());
+            processImportsInFile(subModule, lookupMode, scriptScope, script.getImportDirectives(), rootScope);
         }
     }
 
-    private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
-        processImportsInFile(lookupMode, scope, directives, rootScope, configuration, trace, qualifiedExpressionResolver, importsFactory);
+    private void processImportsInFile(@NotNull SubModuleDescriptor subModule, @NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
+        processImportsInFile(lookupMode, scope, directives, rootScope, ModuleConfiguration.UTIL.fromSubModule(subModule), trace, qualifiedExpressionResolver, importsFactory);
     }
 
     public static void processImportsInFile(

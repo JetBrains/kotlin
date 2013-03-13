@@ -21,8 +21,8 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
@@ -39,8 +39,8 @@ public class InjectorForTests {
     private TypeResolver typeResolver;
     private CallResolver callResolver;
     private KotlinBuiltIns kotlinBuiltIns;
-    private ModuleConfiguration moduleConfiguration;
     private final Project project;
+    private final ModuleSourcesManager moduleSourcesManager;
     private AnnotationResolver annotationResolver;
     private CallExpressionResolver callExpressionResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -48,15 +48,16 @@ public class InjectorForTests {
     private CandidateResolver candidateResolver;
     
     public InjectorForTests(
-        @NotNull Project project
+        @NotNull Project project,
+        @NotNull ModuleSourcesManager moduleSourcesManager
     ) {
         this.descriptorResolver = new DescriptorResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.callResolver = new CallResolver();
         this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
-        this.moduleConfiguration = ModuleConfiguration.EMPTY;
         this.project = project;
+        this.moduleSourcesManager = moduleSourcesManager;
         this.annotationResolver = new AnnotationResolver();
         this.callExpressionResolver = new CallExpressionResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
@@ -70,12 +71,13 @@ public class InjectorForTests {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        this.expressionTypingServices.setModuleSourcesManager(moduleSourcesManager);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
         this.typeResolver.setAnnotationResolver(annotationResolver);
         this.typeResolver.setDescriptorResolver(descriptorResolver);
-        this.typeResolver.setModuleConfiguration(moduleConfiguration);
+        this.typeResolver.setModuleSourcesManager(moduleSourcesManager);
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
