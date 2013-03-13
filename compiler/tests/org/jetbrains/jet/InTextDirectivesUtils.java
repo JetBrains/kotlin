@@ -34,7 +34,7 @@ public final class InTextDirectivesUtils {
 
     @Nullable
     public static Integer getPrefixedInt(String fileText, String prefix) {
-        final String[] numberStrings = findArrayWithPrefix(prefix, fileText);
+        String[] numberStrings = findArrayWithPrefix(prefix, fileText);
         if (numberStrings.length > 0) {
             return Integer.parseInt(numberStrings[0]);
         }

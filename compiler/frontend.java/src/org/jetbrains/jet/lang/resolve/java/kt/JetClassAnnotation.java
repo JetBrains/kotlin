@@ -53,7 +53,7 @@ public class JetClassAnnotation extends PsiAnnotationWithAbiVersion {
 
     @NotNull
     public static JetClassAnnotation get(PsiClass psiClass) {
-        final PsiAnnotation annotation = JavaAnnotationResolver.findOwnAnnotation(psiClass,
+        PsiAnnotation annotation = JavaAnnotationResolver.findOwnAnnotation(psiClass,
                                                                                   JvmStdlibNames.JET_CLASS.getFqName().getFqName());
         return annotation != null ? new JetClassAnnotation(annotation) : NULL_ANNOTATION;
     }

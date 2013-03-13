@@ -141,7 +141,7 @@ public class CompileEnvironmentUtil {
         }
         try {
             Class namespaceClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-            final Method method = namespaceClass.getDeclaredMethod("project");
+            Method method = namespaceClass.getDeclaredMethod("project");
             if (method == null) {
                 throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");
             }
@@ -162,10 +162,10 @@ public class CompileEnvironmentUtil {
     }
 
     // TODO: includeRuntime should be not a flag but a path to runtime
-    public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
+    public static void writeToJar(ClassFileFactory factory, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
-            final Attributes mainAttributes = manifest.getMainAttributes();
+            Attributes mainAttributes = manifest.getMainAttributes();
             mainAttributes.putValue("Manifest-Version", "1.0");
             mainAttributes.putValue("Created-By", "JetBrains Kotlin");
             if (mainClass != null) {
@@ -193,7 +193,7 @@ public class CompileEnvironmentUtil {
                 @Override
                 public boolean process(File file) {
                     if (file.isDirectory()) return true;
-                    final String relativePath = FileUtil.getRelativePath(unpackedRuntimePath, file);
+                    String relativePath = FileUtil.getRelativePath(unpackedRuntimePath, file);
                     try {
                         stream.putNextEntry(new JarEntry(FileUtil.toSystemIndependentName(relativePath)));
                         FileInputStream fis = new FileInputStream(file);

@@ -58,14 +58,14 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
     private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher");
 
     @Override
-    public boolean execute(@NotNull final AnnotatedElementsSearch.Parameters p, @NotNull final Processor<PsiModifierListOwner> consumer) {
-        final PsiClass annClass = p.getAnnotationClass();
+    public boolean execute(@NotNull AnnotatedElementsSearch.Parameters p, @NotNull final Processor<PsiModifierListOwner> consumer) {
+        PsiClass annClass = p.getAnnotationClass();
         assert annClass.isAnnotationType() : "Annotation type should be passed to annotated members search";
 
         final String annotationFQN = annClass.getQualifiedName();
         assert annotationFQN != null;
 
-        final SearchScope useScope = p.getScope();
+        SearchScope useScope = p.getScope();
 
         for (final PsiElement elt : getJetAnnotationCandidates(annClass, useScope)) {
             if (notJetAnnotationEntry(elt)) continue;
@@ -135,7 +135,7 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
         });
     }
 
-    private static boolean notJetAnnotationEntry(final PsiElement found) {
+    private static boolean notJetAnnotationEntry(PsiElement found) {
         if (found instanceof JetAnnotationEntry) return false;
 
         VirtualFile faultyContainer = PsiUtilCore.getVirtualFile(found);

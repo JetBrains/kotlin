@@ -105,7 +105,7 @@ public abstract class CodegenContext {
     @Nullable
     public final CallableDescriptor getCallableDescriptorWithReceiver() {
         if (contextDescriptor instanceof CallableDescriptor) {
-            final CallableDescriptor callableDescriptor = (CallableDescriptor) getContextDescriptor();
+            CallableDescriptor callableDescriptor = (CallableDescriptor) getContextDescriptor();
             return callableDescriptor.getReceiverParameter() != null ? callableDescriptor : null;
         }
         return null;
@@ -151,7 +151,7 @@ public abstract class CodegenContext {
             ClassDescriptor descriptor,
             ExpressionCodegen expressionCodegen
     ) {
-        final JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
+        JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
         return new AnonymousClassContext(typeMapper, descriptor, OwnerKind.IMPLEMENTATION, this,
                                          expressionCodegen);
     }
@@ -177,7 +177,7 @@ public abstract class CodegenContext {
             FunctionDescriptor funDescriptor,
             ExpressionCodegen expressionCodegen
     ) {
-        final JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
+        JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
         return new ClosureContext(typeMapper, funDescriptor,
                                   typeMapper.getBindingContext().get(CLASS_FOR_FUNCTION, funDescriptor),
                                   this, expressionCodegen);
@@ -275,7 +275,7 @@ public abstract class CodegenContext {
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
-        final MutableClosure top = closure;
+        MutableClosure top = closure;
         if (top != null) {
             EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
             if (answer != null) {

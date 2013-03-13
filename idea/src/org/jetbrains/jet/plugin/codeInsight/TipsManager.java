@@ -51,8 +51,8 @@ public final class TipsManager {
 
     @NotNull
     public static Collection<DeclarationDescriptor> getReferenceVariants(
-            @NotNull final JetSimpleNameExpression expression,
-            @NotNull final BindingContext context
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull BindingContext context
     ) {
         JetExpression receiverExpression = expression.getReceiverExpression();
         if (receiverExpression != null) {
@@ -146,9 +146,9 @@ public final class TipsManager {
     }
 
     public static Collection<DeclarationDescriptor> excludeNotCallableExtensions(
-            @NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull final JetScope scope
+            @NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull JetScope scope
     ) {
-        final Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
+        Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
         final List<ReceiverParameterDescriptor> result = scope.getImplicitReceiversHierarchy();
 
@@ -194,7 +194,7 @@ public final class TipsManager {
 
     private static Set<DeclarationDescriptor> includeExternalCallableExtensions(
             @NotNull Collection<DeclarationDescriptor> descriptors,
-            @NotNull final JetScope externalScope,
+            @NotNull JetScope externalScope,
             @NotNull final ReceiverValue receiverValue
     ) {
         // It's impossible to add extension function for namespace

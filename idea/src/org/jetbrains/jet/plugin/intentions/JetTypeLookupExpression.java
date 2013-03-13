@@ -57,7 +57,7 @@ public abstract class JetTypeLookupExpression<T> extends Expression {
         LookupElement[] lookupElements = new LookupElement[lookupItems.size()];
         Iterator<T> iterator = lookupItems.iterator();
         for (int i = 0; i < lookupElements.length; i++) {
-            final T suggestion = iterator.next();
+            T suggestion = iterator.next();
             lookupElements[i] = LookupElementBuilder.create(suggestion, getLookupString(suggestion)).withInsertHandler(
                     new InsertHandler<LookupElement>() {
                         @Override

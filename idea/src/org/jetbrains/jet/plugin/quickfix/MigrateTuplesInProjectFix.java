@@ -70,7 +70,7 @@ public class MigrateTuplesInProjectFix extends JetIntentionAction<PsiElement> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetFile initialFile = (JetFile) file;
         Collection<JetFile> files = PluginJetFilesProvider.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(initialFile);
 

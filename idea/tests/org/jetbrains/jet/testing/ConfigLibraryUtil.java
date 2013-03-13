@@ -33,11 +33,11 @@ public class ConfigLibraryUtil {
     private ConfigLibraryUtil() {
     }
 
-    public static void configureKotlinRuntime(final Module module, final Sdk sdk) {
+    public static void configureKotlinRuntime(Module module, Sdk sdk) {
         configureLibrary(module, sdk, JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
     }
 
-    public static void unConfigureKotlinRuntime(final Module module, final Sdk sdk) {
+    public static void unConfigureKotlinRuntime(Module module, Sdk sdk) {
         unConfigureLibrary(module, sdk, JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
     }
 
@@ -50,8 +50,8 @@ public class ConfigLibraryUtil {
             @Override
             public void run() {
 
-                final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-                final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+                ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+                ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
                 rootModel.setSdk(sdk);
                 projectDescriptor.configureModule(module, rootModel, null);
@@ -68,8 +68,8 @@ public class ConfigLibraryUtil {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-                final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+                ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+                ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
                 rootModel.setSdk(sdk);
                 if (projectDescriptor instanceof JetJdkAndLibraryProjectDescriptor) {

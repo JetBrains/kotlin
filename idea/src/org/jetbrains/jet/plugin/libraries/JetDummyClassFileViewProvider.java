@@ -125,7 +125,7 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
     }
 
     @Override
-    public boolean supportsIncrementalReparse(@NotNull final Language rootLanguage) {
+    public boolean supportsIncrementalReparse(@NotNull Language rootLanguage) {
         return true;
     }
 
@@ -139,13 +139,13 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
     }
 
     @Override
-    public PsiReference findReferenceAt(final int offset) {
+    public PsiReference findReferenceAt(int offset) {
         return SharedPsiElementImplUtil.findReferenceAt(getPsi(getBaseLanguage()), offset);
     }
 
     @Override
     @Nullable
-    public PsiElement findElementAt(final int offset, @NotNull final Language language) {
+    public PsiElement findElementAt(int offset, @NotNull Language language) {
         return language == getBaseLanguage() ? findElementAt(offset) : null;
     }
 
@@ -159,13 +159,13 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
     }
 
     @Override
-    public PsiElement findElementAt(final int offset) {
+    public PsiElement findElementAt(int offset) {
         LeafElement element = jetFile.calcTreeElement().findLeafElementAt(offset);
         return element != null ? element.getPsi() : null;
     }
 
     @Override
-    public PsiReference findReferenceAt(final int offsetInElement, @NotNull final Language language) {
+    public PsiReference findReferenceAt(int offsetInElement, @NotNull Language language) {
         if (JetLanguage.INSTANCE != language) {
             return null;
         }
@@ -174,7 +174,7 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
 
     @NotNull
     @Override
-    public FileViewProvider createCopy(@NotNull final VirtualFile copy) {
+    public FileViewProvider createCopy(@NotNull VirtualFile copy) {
         throw new UnsupportedOperationException();
     }
 

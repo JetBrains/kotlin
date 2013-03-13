@@ -72,9 +72,9 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
                             Location<PsiMethod> methodLocation = PsiLocation.fromPsiElement(method);
                             if (JUnitUtil.isTestMethod(methodLocation, false)) {
                                 RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
-                                final JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
+                                JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
 
-                                final Module originalModule = configuration.getConfigurationModule().getModule();
+                                Module originalModule = configuration.getConfigurationModule().getModule();
                                 configuration.beMethodConfiguration(methodLocation);
                                 configuration.restoreOriginalModule(originalModule);
                                 JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
@@ -100,9 +100,9 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
 
             if (delegate != null && JUnitUtil.isTestClass(delegate)) {
                 RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
-                final JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
+                JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
 
-                final Module originalModule = configuration.getConfigurationModule().getModule();
+                Module originalModule = configuration.getConfigurationModule().getModule();
                 configuration.beClassConfiguration(delegate);
                 configuration.restoreOriginalModule(originalModule);
                 JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);

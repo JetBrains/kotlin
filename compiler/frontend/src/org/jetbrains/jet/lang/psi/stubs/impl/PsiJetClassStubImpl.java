@@ -44,7 +44,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     public PsiJetClassStubImpl(
             JetClassElementType type,
             StubElement parent,
-            @Nullable final String qualifiedName,
+            @Nullable String qualifiedName,
             String name,
             List<String> superNames,
             boolean isTrait, boolean isEnumClass, boolean isEnumEntry, boolean isAnnotation, boolean isInner) {

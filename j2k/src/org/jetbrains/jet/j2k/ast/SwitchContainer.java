@@ -25,7 +25,7 @@ public class SwitchContainer extends Statement {
     private final Expression myExpression;
     private final List<CaseContainer> myCaseContainers;
 
-    public SwitchContainer(final Expression expression, final List<CaseContainer> caseContainers) {
+    public SwitchContainer(Expression expression, List<CaseContainer> caseContainers) {
         myExpression = expression;
         myCaseContainers = caseContainers;
     }

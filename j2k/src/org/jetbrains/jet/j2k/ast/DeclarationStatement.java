@@ -36,7 +36,7 @@ public class DeclarationStatement extends Statement {
             if (e instanceof LocalVariable) {
                 LocalVariable v = (LocalVariable) e;
 
-                final String varKeyword = v.hasModifier(Modifier.FINAL) ? "val" : "var";
+                String varKeyword = v.hasModifier(Modifier.FINAL) ? "val" : "var";
                 result.add(
                         varKeyword + SPACE + e.toKotlin()
                 );

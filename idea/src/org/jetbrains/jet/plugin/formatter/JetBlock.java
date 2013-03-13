@@ -182,7 +182,7 @@ public class JetBlock extends AbstractBlock {
     @NotNull
     @Override
     public ChildAttributes getChildAttributes(int newChildIndex) {
-        final IElementType type = getNode().getElementType();
+        IElementType type = getNode().getElementType();
         if (CODE_BLOCKS.contains(type) ||
             type == WHEN ||
             type == IF ||

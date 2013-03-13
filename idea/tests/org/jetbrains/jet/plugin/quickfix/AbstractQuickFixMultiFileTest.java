@@ -70,11 +70,11 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
             @Override
             public void run() {
                 try {
-                    final Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(
+                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(
                             getFile(),FileUtil.loadFile(new File(getTestDataPath() + beforeFileName)));
-                    final String text = pair.getFirst();
+                    String text = pair.getFirst();
 
-                    final boolean actionShouldBeAvailable = pair.getSecond();
+                    boolean actionShouldBeAvailable = pair.getSecond();
 
                     QuickFixActionsUtils.checkForUnexpectedErrors((JetFile) getFile());
 
@@ -92,7 +92,7 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
     }
 
     @SuppressWarnings({"HardCodedStringLiteral"})
-    public void doAction(final String text, final boolean actionShouldBeAvailable, final String testFullPath)
+    public void doAction(String text, boolean actionShouldBeAvailable, String testFullPath)
             throws Exception {
         List<IntentionAction> availableActions = getAvailableActions();
         IntentionAction action = LightQuickFixTestCase.findActionWithText(availableActions, text);
@@ -120,7 +120,7 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
             UIUtil.dispatchAllInvocationEvents();
 
             if (!shouldBeAvailableAfterExecution()) {
-                final IntentionAction afterAction = LightQuickFixTestCase.findActionWithText(getAvailableActions(), text);
+                IntentionAction afterAction = LightQuickFixTestCase.findActionWithText(getAvailableActions(), text);
 
                 if (afterAction != null) {
                     fail("Action '" + text + "' is still available after its invocation in test " + testFullPath);

@@ -47,7 +47,7 @@ public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBl
             if (!(file instanceof PsiJavaFile)) {
                 return null;
             }
-            final String eol = System.getProperty("line.separator");
+            String eol = System.getProperty("line.separator");
             List<PsiElement> buffer = getSelectedElements(file, startOffsets, endOffsets);
             StringBuilder result = new StringBuilder();
 
@@ -101,7 +101,7 @@ public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBl
     }
 
     @Override
-    public void processTransferableData(Project project, @NotNull final Editor editor, @NotNull final RangeMarker bounds, int caretColumn, Ref<Boolean> indented, @NotNull final TextBlockTransferableData value) {
+    public void processTransferableData(Project project, @NotNull final Editor editor, @NotNull final RangeMarker bounds, int caretColumn, Ref<Boolean> indented, @NotNull TextBlockTransferableData value) {
         try {
             final PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             if (!(file instanceof JetFile)) {

@@ -43,7 +43,7 @@ public class JetAllShortFunctionNameIndex extends StringStubIndexExtension<JetNa
     }
 
     @Override
-    public Collection<JetNamedFunction> get(final String s, final Project project, @NotNull final GlobalSearchScope scope) {
+    public Collection<JetNamedFunction> get(String s, Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));
     }
 }

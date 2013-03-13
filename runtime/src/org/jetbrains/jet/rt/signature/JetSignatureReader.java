@@ -30,7 +30,7 @@ public class JetSignatureReader {
     }
 
 
-    public void accept(final JetSignatureVisitor v) {
+    public void accept(JetSignatureVisitor v) {
         String signature = this.signature;
         int len = signature.length();
         int pos = acceptFormalTypeParameters(v);
@@ -133,9 +133,9 @@ public class JetSignatureReader {
 
 
     private static int parseType(
-            final String signature,
+            String signature,
             int pos,
-            final JetSignatureVisitor v)
+            JetSignatureVisitor v)
     {
         if (signature.length() == 0) {
             throw new IllegalStateException();

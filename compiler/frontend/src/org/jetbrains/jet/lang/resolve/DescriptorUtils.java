@@ -47,8 +47,8 @@ import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_
 public class DescriptorUtils {
 
     @NotNull
-    public static <D extends CallableDescriptor> D substituteBounds(@NotNull final D functionDescriptor) {
-        final List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
+    public static <D extends CallableDescriptor> D substituteBounds(@NotNull D functionDescriptor) {
+        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
         if (typeParameters.isEmpty()) return functionDescriptor;
 
         // TODO: this does not handle any recursion in the bounds

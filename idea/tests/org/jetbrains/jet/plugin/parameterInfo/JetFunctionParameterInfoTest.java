@@ -88,7 +88,7 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
 
     private void doTest() {
         myFixture.configureByFile(getTestName(false) + ".kt");
-        final JetFile file = (JetFile) myFixture.getFile();
+        JetFile file = (JetFile) myFixture.getFile();
         PsiElement lastChild = file.getLastChild();
         assert lastChild != null;
         String expectedResultText = null;
@@ -102,9 +102,9 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         assert expectedResultText != null;
         JetFunctionParameterInfoHandler parameterInfoHandler = new JetFunctionParameterInfoHandler();
         MockCreateParameterInfoContext mockCreateParameterInfoContext = new MockCreateParameterInfoContext(file, myFixture);
-        final JetValueArgumentList parameterOwner = parameterInfoHandler.findElementForParameterInfo(mockCreateParameterInfoContext);
+        JetValueArgumentList parameterOwner = parameterInfoHandler.findElementForParameterInfo(mockCreateParameterInfoContext);
 
-        final MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(file, myFixture);
+        MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(file, myFixture);
 
         //to update current parameter index
         parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);

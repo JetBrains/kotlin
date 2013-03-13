@@ -65,7 +65,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
         assert psiFile != null;
 
-        final ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
         String modifiedTestName = ktFile.getName().replace(".kt", ".class");
         boolean isClassFound = false;
@@ -73,8 +73,8 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
             if (filename.equals(modifiedTestName)) {
                 isClassFound = true;
                 ClassReader cr = new ClassReader(factory.asBytes(filename));
-                final List<LocalVariable> expectedLocalVariables = parseExpectations();
-                final List<LocalVariable> actualLocalVariables = readLocalVariable(cr, parseMethodName());
+                List<LocalVariable> expectedLocalVariables = parseExpectations();
+                List<LocalVariable> actualLocalVariables = readLocalVariable(cr, parseMethodName());
 
                 assertEquals("Count of variables are different", expectedLocalVariables.size(), actualLocalVariables.size());
 
@@ -173,7 +173,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
             }
 
             @Override
-            public MethodVisitor visitMethod(int access, String name, final String desc, final String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                 if (methodName.equals(name + desc)) {
                     return new MethodVisitor(Opcodes.ASM4) {
                         @Override

@@ -202,7 +202,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void doOverrideImplement(OverrideImplementMethodsHandler handler, @Nullable String memberToOverride) {
-        final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
+        PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
@@ -210,7 +210,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         final BindingContext bindingContext = WholeProjectAnalyzerFacade
                 .analyzeProjectWithCacheOnAFile(jetFile)
                 .getBindingContext();
-        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
+        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
         final CallableMemberDescriptor singleToOverride;
         if (memberToOverride == null) {
@@ -245,7 +245,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void doMultiOverrideImplement(OverrideImplementMethodsHandler handler) {
-        final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
+        PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
@@ -253,7 +253,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         final BindingContext bindingContext = WholeProjectAnalyzerFacade
                 .analyzeProjectWithCacheOnAFile(jetFile)
                 .getBindingContext();
-        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
+        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
         final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
         Collections.sort(descriptorsList, new Comparator<CallableMemberDescriptor>() {

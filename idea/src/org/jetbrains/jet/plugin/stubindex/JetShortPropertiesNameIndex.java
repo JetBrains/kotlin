@@ -43,7 +43,7 @@ public class JetShortPropertiesNameIndex extends StringStubIndexExtension<JetPro
     }
 
     @Override
-    public Collection<JetProperty> get(final String s, final Project project, @NotNull final GlobalSearchScope scope) {
+    public Collection<JetProperty> get(String s, Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));
     }
 }

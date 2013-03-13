@@ -137,7 +137,7 @@ public class JavaToKotlinTranslator {
 
     public static void main(@NotNull String[] args) throws IOException {
         //noinspection UseOfSystemOutOrSystemErr
-        final PrintStream out = System.out;
+        PrintStream out = System.out;
         if (args.length == 1) {
             String kotlinCode = "";
             try {

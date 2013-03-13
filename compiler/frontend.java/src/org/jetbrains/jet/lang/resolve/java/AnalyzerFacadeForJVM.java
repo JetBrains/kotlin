@@ -81,7 +81,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @NotNull
     @Override
-    public ResolveSession getLazyResolveSession(@NotNull final Project fileProject, @NotNull Collection<JetFile> files) {
+    public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
         ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
 
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
@@ -91,7 +91,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         // TODO: Replace with stub declaration provider
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
-        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
+        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
                 return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
@@ -199,7 +199,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve
     ) {
-        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
+        ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);

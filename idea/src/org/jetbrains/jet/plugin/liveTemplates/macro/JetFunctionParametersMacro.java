@@ -38,10 +38,10 @@ public class JetFunctionParametersMacro extends Macro {
         return JetBundle.message("macro.fun.parameters");
     }
 
-    public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+    public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
         Project project = context.getProject();
         int templateStartOffset = context.getTemplateStartOffset();
-        final int offset = templateStartOffset > 0 ? context.getTemplateStartOffset() - 1 : context.getTemplateStartOffset();
+        int offset = templateStartOffset > 0 ? context.getTemplateStartOffset() - 1 : context.getTemplateStartOffset();
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 

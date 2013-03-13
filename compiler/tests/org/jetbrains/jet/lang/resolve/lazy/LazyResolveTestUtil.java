@@ -89,7 +89,7 @@ public class LazyResolveTestUtil {
 
         ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
 
-        final Project project = environment.getProject();
+        Project project = environment.getProject();
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
         InjectorForJavaDescriptorResolver injector =
                 new InjectorForJavaDescriptorResolver(project, sharedTrace, javaModule);
@@ -98,7 +98,7 @@ public class LazyResolveTestUtil {
 
 
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
-        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
+        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
                 return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);

@@ -32,7 +32,7 @@ public class JetJavaClassInsertHandler implements InsertHandler<JavaPsiClassRefe
     public static final InsertHandler<JavaPsiClassReferenceElement> INSTANCE = new JetJavaClassInsertHandler();
 
     @Override
-    public void handleInsert(final InsertionContext context, final JavaPsiClassReferenceElement item) {
+    public void handleInsert(InsertionContext context, JavaPsiClassReferenceElement item) {
         PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
 
         if (context.getFile() instanceof JetFile) {

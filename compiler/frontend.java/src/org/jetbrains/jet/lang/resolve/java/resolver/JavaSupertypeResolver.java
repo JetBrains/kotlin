@@ -79,7 +79,7 @@ public final class JavaSupertypeResolver {
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
 
-        final List<JetType> result = new ArrayList<JetType>();
+        List<JetType> result = new ArrayList<JetType>();
 
         String context = "class " + psiClass.getQualifiedName();
 
@@ -179,7 +179,7 @@ public final class JavaSupertypeResolver {
         for (PsiClassType type : extendsListTypes) {
             PsiClass resolved = type.resolve();
             if (resolved != null) {
-                final String qualifiedName = resolved.getQualifiedName();
+                String qualifiedName = resolved.getQualifiedName();
                 assert qualifiedName != null;
                 if (JvmStdlibNames.JET_OBJECT.getFqName().equalsTo(qualifiedName)) {
                     continue;

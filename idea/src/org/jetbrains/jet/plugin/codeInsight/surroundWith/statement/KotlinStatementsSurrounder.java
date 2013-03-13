@@ -46,9 +46,9 @@ public abstract class KotlinStatementsSurrounder implements Surrounder {
 
     @Nullable
     protected abstract TextRange surroundStatements(
-            final Project project,
-            final Editor editor,
-            final PsiElement container,
-            final PsiElement[] statements
+            Project project,
+            Editor editor,
+            PsiElement container,
+            PsiElement[] statements
     );
 }

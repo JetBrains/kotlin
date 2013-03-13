@@ -87,7 +87,7 @@ public class TaskPrioritizer {
         else {
             scope = context.scope;
         }
-        final Predicate<ResolutionCandidate<D>> visibleStrategy = new Predicate<ResolutionCandidate<D>>() {
+        Predicate<ResolutionCandidate<D>> visibleStrategy = new Predicate<ResolutionCandidate<D>>() {
             @Override
             public boolean apply(@Nullable ResolutionCandidate<D> call) {
                 if (call == null) return false;

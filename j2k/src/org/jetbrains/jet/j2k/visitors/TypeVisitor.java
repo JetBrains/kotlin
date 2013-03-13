@@ -55,8 +55,8 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
 
     @Override
     public Type visitPrimitiveType(@NotNull PsiPrimitiveType primitiveType) {
-        final String name = primitiveType.getCanonicalText();
-        final IdentifierImpl identifier = new IdentifierImpl(name);
+        String name = primitiveType.getCanonicalText();
+        IdentifierImpl identifier = new IdentifierImpl(name);
 
         if (name.equals("void")) {
             myResult = new PrimitiveType(new IdentifierImpl(KotlinBuiltIns.UNIT_ALIAS.getName()));
@@ -80,8 +80,8 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
 
     @Override
     public Type visitClassType(@NotNull PsiClassType classType) {
-        final IdentifierImpl identifier = constructClassTypeIdentifier(classType);
-        final List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
+        IdentifierImpl identifier = constructClassTypeIdentifier(classType);
+        List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
 
         if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
             myResult = new ClassType(identifier, resolvedClassTypeParams);
@@ -94,7 +94,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
 
     @NotNull
     private IdentifierImpl constructClassTypeIdentifier(@NotNull PsiClassType classType) {
-        final PsiClass psiClass = classType.resolve();
+        PsiClass psiClass = classType.resolve();
         if (psiClass != null) {
             String qualifiedName = psiClass.getQualifiedName();
             if (qualifiedName != null) {
@@ -109,7 +109,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
                 }
             }
         }
-        final String classTypeName = createQualifiedName(classType);
+        String classTypeName = createQualifiedName(classType);
 
         if (classTypeName.isEmpty()) {
             return new IdentifierImpl(getClassTypeName(classType));
@@ -122,12 +122,12 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
     private static String createQualifiedName(@NotNull PsiClassType classType) {
         String classTypeName = "";
         if (classType instanceof PsiClassReferenceType) {
-            final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
+            PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
             if (reference.isQualified()) {
                 String result = new IdentifierImpl(reference.getReferenceName()).toKotlin();
                 PsiElement qualifier = reference.getQualifier();
                 while (qualifier != null) {
-                    final PsiJavaCodeReferenceElement p = (PsiJavaCodeReferenceElement) qualifier;
+                    PsiJavaCodeReferenceElement p = (PsiJavaCodeReferenceElement) qualifier;
                     result = new IdentifierImpl(p.getReferenceName()).toKotlin() + "." + result; // TODO: maybe need to replace by safe call?
                     qualifier = p.getQualifier();
                 }
@@ -139,10 +139,10 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
 
     @NotNull
     private List<Type> createRawTypesForResolvedReference(@NotNull PsiClassType classType) {
-        final List<Type> typeParams = new LinkedList<Type>();
+        List<Type> typeParams = new LinkedList<Type>();
         if (classType instanceof PsiClassReferenceType) {
-            final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
-            final PsiElement resolve = reference.resolve();
+            PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
+            PsiElement resolve = reference.resolve();
             if (resolve != null) {
                 if (resolve instanceof PsiClass)
                 //noinspection UnusedDeclaration

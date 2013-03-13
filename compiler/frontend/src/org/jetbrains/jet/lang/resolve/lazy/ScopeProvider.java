@@ -65,7 +65,7 @@ public class ScopeProvider {
     }
 
     @NotNull
-    public JetScope getFileScope(final JetFile file) {
+    public JetScope getFileScope(JetFile file) {
         return fileScopes.fun(file);
     }
 

@@ -41,14 +41,14 @@ public abstract class TranslatorTestCaseBuilder {
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(@NotNull final String dataPath,
+    public static TestSuite suiteForDirectory(@NotNull String dataPath,
                                               @NotNull NamedTestFactory factory) {
         return suiteForDirectory(dataPath, true, emptyFilter, factory);
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(@NotNull final String dataPath, boolean recursive,
-                                              final FilenameFilter filter, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(@NotNull String dataPath, boolean recursive,
+                                              FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
         suite.setName(dataPath);
         appendTestsInDirectory(dataPath, recursive, filter, factory, suite);

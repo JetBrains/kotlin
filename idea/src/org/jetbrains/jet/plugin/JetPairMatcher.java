@@ -38,7 +38,7 @@ public class JetPairMatcher implements PairedBraceMatcher {
     }
 
     @Override
-    public boolean isPairedBracesAllowedBeforeType(@NotNull final IElementType lbraceType, @Nullable final IElementType contextType) {
+    public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
         return JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
                 || contextType == JetTokens.SEMICOLON
                 || contextType == JetTokens.COMMA
@@ -49,7 +49,7 @@ public class JetPairMatcher implements PairedBraceMatcher {
     }
 
     @Override
-    public int getCodeConstructStart(final PsiFile file, final int openingBraceOffset) {
+    public int getCodeConstructStart(PsiFile file, int openingBraceOffset) {
         return openingBraceOffset;
     }
 

@@ -42,7 +42,7 @@ final class JetLtGtTypingUtils {
         JavaBackspaceHandler.handleLTDeletion(editor, offset, JetTokens.LT, JetTokens.GT, INVALID_INSIDE_REFERENCE);
     }
 
-    static boolean shouldAutoCloseAngleBracket(int offset, final Editor editor) {
+    static boolean shouldAutoCloseAngleBracket(int offset, Editor editor) {
         return isAfterClassIdentifier(offset, editor) || isAfterFunKeyword(offset, editor);
     }
 

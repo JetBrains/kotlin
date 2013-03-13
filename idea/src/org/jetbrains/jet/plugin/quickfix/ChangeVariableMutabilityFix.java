@@ -66,7 +66,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     }
 
     private static JetProperty getCorrespondingProperty(Editor editor, JetFile file) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         JetProperty property = PsiTreeUtil.getParentOfType(elementAtCaret, JetProperty.class);
         if (property != null) return property;
         JetSimpleNameExpression simpleNameExpression = PsiTreeUtil.getParentOfType(elementAtCaret, JetSimpleNameExpression.class);

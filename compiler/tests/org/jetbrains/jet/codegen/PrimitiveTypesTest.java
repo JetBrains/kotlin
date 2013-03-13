@@ -30,15 +30,15 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testPlus() throws Exception {
         loadText("fun f(a: Int, b: Int): Int { return a + b }");
-        final Method main = generateFunction();
-        final int returnValue = (Integer) main.invoke(null, 37, 5);
+        Method main = generateFunction();
+        int returnValue = (Integer) main.invoke(null, 37, 5);
         assertEquals(42, returnValue);
     }
 
     public void testGt() throws Exception {
         loadText("fun foo(f: Int): Boolean { if (f > 0) return true; return false; }");
 
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(true, main.invoke(null, 1));
         assertEquals(false, main.invoke(null, 0));
     }
@@ -53,28 +53,28 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testNE() throws Exception {
         loadText("fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(0, main.invoke(null, 5, 5));
         assertEquals(1, main.invoke(null, 5, 3));
     }
 
     public void testGE() throws Exception {
         loadText("fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(1, main.invoke(null, 5, 5));
         assertEquals(0, main.invoke(null, 3, 5));
     }
 
     public void testReturnCmp() throws Exception {
         loadText("fun foo(a: Int, b: Int): Boolean = a == b");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(true, main.invoke(null, 1, 1));
         assertEquals(false, main.invoke(null, 1, 2));
     }
 
     public void testLong() throws Exception {
         loadText("fun foo(a: Long, b: Long): Long = a + b");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         long arg = (long) Integer.MAX_VALUE;
         long expected = 2 * (long) Integer.MAX_VALUE;
         assertEquals(expected, main.invoke(null, arg, arg));
@@ -82,7 +82,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testLongCmp() throws Exception {
         loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffff else 0xfffffffe");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(0xffffffffL, main.invoke(null, 1, 1));
         assertEquals(0xfffffffeL, main.invoke(null, 1, 0));
     }
@@ -114,7 +114,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testBooleanConstant() throws Exception {
         loadText("fun foo(): Boolean = true");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(true, main.invoke(null));
     }
 
@@ -141,26 +141,26 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testDoubleToJava() throws Exception {
         loadText("import java.lang.Double as jlDouble; fun foo(d: Double): String? = jlDouble.toString(d)");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals("1.0", main.invoke(null, 1.0));
     }
 
     public void testDoubleToInt() throws Exception {
         loadText("fun foo(a: Double): Int = a.toInt()");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(1, main.invoke(null, 1.0));
     }
 
     public void testCastConstant() throws Exception {
         loadText("fun foo(): Double = 1.toDouble()");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(1.0, main.invoke(null));
     }
 
     public void testCastOnStack() throws Exception {
         loadText("fun foo(): Double = System.currentTimeMillis().toDouble()");
-        final Class<?> mainClass = generateNamespaceSrcClass();
-        final Method main = mainClass.getDeclaredMethod("foo");
+        Class<?> mainClass = generateNamespaceSrcClass();
+        Method main = mainClass.getDeclaredMethod("foo");
         double currentTimeMillis = (double) System.currentTimeMillis();
         double result = (Double) main.invoke(null);
         double delta = Math.abs(currentTimeMillis - result);
@@ -169,43 +169,43 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testNeg() throws Exception {
         loadText("fun foo(a: Int): Int = -a");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(-10, main.invoke(null, 10));
     }
 
     public void testPreIncrement() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; ++x; return x;}");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(11, main.invoke(null, 10));
     }
 
     public void testPreIncrementValue() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; return ++x;}");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(11, main.invoke(null, 10));
     }
 
     public void testPreDecrement() throws Exception {
         loadText("fun foo(a0: Int): Int { var a = a0; return --a;}");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(9, main.invoke(null, 10));
     }
 
     public void testPreIncrementLong() throws Exception {
         loadText("fun foo(a0: Long): Long { var a = a0; return ++a}");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(11L, main.invoke(null, 10L));
     }
 
     public void testPreIncrementFloat() throws Exception {
         loadText("fun foo(a0: Float): Float { var a = a0; return ++a }");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(2.0f, main.invoke(null, 1.0f));
     }
 
     public void testPreIncrementDouble() throws Exception {
         loadText("fun foo(a0: Double): Double {var a = a0; return ++a }");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(2.0, main.invoke(null, 1.0));
     }
 
@@ -231,7 +231,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testBitInv() throws Exception {
         loadText("fun foo(a: Int): Int = a.inv()");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(0xffff0000, main.invoke(null, 0x0000ffff));
     }
 
@@ -245,31 +245,31 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testPostIncrementTypeInferenceFail() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; var y = x++; if (y+1 != x) return -1; return x; }");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(6, main.invoke(null, 5));
     }
 
     public void testPostIncrement() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; var y = x++; return x*y; }");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(6, main.invoke(null, 2));
     }
 
     public void testPostIncrementLong() throws Exception {
         loadText("fun foo(a: Long): Long { var x = a; var y = x++; return x*y; }");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(6L, main.invoke(null, 2L));
     }
 
     public void testDecrementAsStatement() throws Exception {
         loadFile("bottles.kt");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         main.invoke(null);  // ensure no exception
     }
 
-    private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
+    private void binOpTest(String text, Object arg1, Object arg2, Object expected) throws Exception {
         loadText(text);
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(expected, main.invoke(null, arg1, arg2));
     }
 }

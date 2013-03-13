@@ -97,7 +97,7 @@ public class DescriptorSubstitutor {
 
     @NotNull
     public static TypeSubstitutor createUpperBoundsSubstitutor(
-            @NotNull final List<TypeParameterDescriptor> typeParameters
+            @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
         Map<TypeConstructor, TypeProjection> mutableSubstitution = Maps.newHashMap();
         TypeSubstitutor substitutor = TypeSubstitutor.create(mutableSubstitution);

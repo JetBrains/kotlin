@@ -73,7 +73,7 @@ public class ElementVisitor extends JavaElementVisitor implements J2KVisitor {
     public void visitReferenceElement(@NotNull PsiJavaCodeReferenceElement reference) {
         super.visitReferenceElement(reference);
 
-        final List<Type> types = getConverter().typesToTypeList(reference.getTypeParameters());
+        List<Type> types = getConverter().typesToTypeList(reference.getTypeParameters());
         if (!reference.isQualified()) {
             myResult = new ReferenceElement(
                     new IdentifierImpl(reference.getReferenceName()),
@@ -84,7 +84,7 @@ public class ElementVisitor extends JavaElementVisitor implements J2KVisitor {
             String result = new IdentifierImpl(reference.getReferenceName()).toKotlin();
             PsiElement qualifier = reference.getQualifier();
             while (qualifier != null) {
-                final PsiJavaCodeReferenceElement p = (PsiJavaCodeReferenceElement) qualifier;
+                PsiJavaCodeReferenceElement p = (PsiJavaCodeReferenceElement) qualifier;
                 result = new IdentifierImpl(p.getReferenceName()).toKotlin() + "." + result; // TODO: maybe need to replace by safe call?
                 qualifier = p.getQualifier();
             }

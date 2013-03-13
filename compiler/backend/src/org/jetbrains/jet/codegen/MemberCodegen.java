@@ -122,7 +122,7 @@ public class MemberCodegen extends GenerationStateAware {
 
         ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor, aClass.getContainingFile());
 
-        final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
+        CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) {
             // Outer class implementation must happen prior inner classes so we get proper scoping tree in JetLightClass's delegate

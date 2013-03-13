@@ -413,7 +413,7 @@ public final class StaticContext {
                         return null;
                     }
 
-                    final JsNameRef result = new JsNameRef(getNameForDescriptor(containingDescriptor));
+                    JsNameRef result = new JsNameRef(getNameForDescriptor(containingDescriptor));
                     if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) containingDescriptor)) {
                         return result;
                     }

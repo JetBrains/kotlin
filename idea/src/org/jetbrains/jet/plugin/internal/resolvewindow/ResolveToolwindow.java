@@ -142,7 +142,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         }
 
         @Override
-        protected void onResultReady(@NotNull Location requestInfo, @Nullable final String resultText) {
+        protected void onResultReady(@NotNull Location requestInfo, @Nullable String resultText) {
             if (resultText != null) {
                 setText(resultText);
             }

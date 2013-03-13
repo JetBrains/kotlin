@@ -32,7 +32,7 @@ public class JetTypeParameter extends JetNamedDeclarationStub<PsiJetTypeParamete
 
     public static final ArrayFactory<JetTypeParameter> ARRAY_FACTORY = new ArrayFactory<JetTypeParameter>() {
         @Override
-        public JetTypeParameter[] create(final int count) {
+        public JetTypeParameter[] create(int count) {
             return count == 0 ? EMPTY_ARRAY : new JetTypeParameter[count];
         }
     };

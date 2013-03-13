@@ -31,12 +31,12 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
     
     private final PsiModificationTrackerImpl myModificationTracker;
 
-    public JetCodeBlockModificationListener(final PsiModificationTracker modificationTracker) {
+    public JetCodeBlockModificationListener(PsiModificationTracker modificationTracker) {
         myModificationTracker = (PsiModificationTrackerImpl) modificationTracker;
     }
 
     @Override
-    public void treeChanged(final PsiTreeChangeEventImpl event) {
+    public void treeChanged(PsiTreeChangeEventImpl event) {
         if (!(event.getFile() instanceof JetFile)) return;
         switch (event.getCode()) {
             case BEFORE_CHILDREN_CHANGE:
@@ -71,7 +71,7 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
         }
     }
 
-    private void processChange(final PsiElement parent, final PsiElement child1, final PsiElement child2) {
+    private void processChange(PsiElement parent, PsiElement child1, PsiElement child2) {
         try {
             if (!isInsideCodeBlock(parent)) {
                 if (parent != null && parent.getContainingFile() instanceof JetFile) {
@@ -91,7 +91,7 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
         }
     }
 
-    private static boolean containsClassesInside(final PsiElement element) {
+    private static boolean containsClassesInside(PsiElement element) {
         if (element == null) return false;
         if (element instanceof PsiClass) return true;
 

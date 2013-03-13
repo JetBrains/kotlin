@@ -118,7 +118,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     @Override
     public TreeElement[] getChildren() {
         if (myElement instanceof JetFile) {
-            final JetFile jetFile = (JetFile) myElement;
+            JetFile jetFile = (JetFile) myElement;
             context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
             return wrapDeclarations(jetFile.getDeclarations());
         }
@@ -153,7 +153,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         if (myElement instanceof JetDeclaration) {
             JetDeclaration declaration = (JetDeclaration) myElement;
 
-            final DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+            DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
             if (descriptor != null) {
                 text = getDescriptorTreeText(descriptor);
             }

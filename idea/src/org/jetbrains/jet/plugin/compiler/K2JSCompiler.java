@@ -67,7 +67,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
     }
 
     @Override
-    public void compile(final CompileContext context, Chunk<Module> moduleChunk, final VirtualFile[] files, OutputSink sink) {
+    public void compile(CompileContext context, Chunk<Module> moduleChunk, VirtualFile[] files, OutputSink sink) {
         if (files.length == 0) {
             return;
         }

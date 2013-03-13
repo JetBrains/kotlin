@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 
 public class JetStructureViewFactory implements PsiStructureViewFactory {
     @Override
-    public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
+    public StructureViewBuilder getStructureViewBuilder(PsiFile psiFile) {
         if (psiFile instanceof JetFile) {
             final JetFile file = (JetFile) psiFile;
 

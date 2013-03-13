@@ -78,7 +78,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return INTERNAL_ERROR;
         }
 
-        final List<String> argumentsSourceDirs = arguments.getSourceDirs();
+        List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
             arguments.module == null &&
             arguments.src == null &&

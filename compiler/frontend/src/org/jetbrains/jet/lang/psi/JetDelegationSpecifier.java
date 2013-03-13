@@ -43,9 +43,9 @@ public class JetDelegationSpecifier extends JetElementImpl {
 
     @Nullable
     public JetUserType getTypeAsUserType() {
-        final JetTypeReference reference = getTypeReference();
+        JetTypeReference reference = getTypeReference();
         if (reference != null) {
-            final JetTypeElement element = reference.getTypeElement();
+            JetTypeElement element = reference.getTypeElement();
             if (element instanceof JetUserType) {
                 return ((JetUserType) element);
             }

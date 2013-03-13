@@ -49,7 +49,7 @@ public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
 
     @NotNull
     public static KotlinSignatureAnnotation get(PsiModifierListOwner psiModifierListOwner) {
-        final PsiAnnotation annotation =
+        PsiAnnotation annotation =
                 JavaAnnotationResolver.findAnnotationWithExternal(psiModifierListOwner, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
         return annotation != null ? new KotlinSignatureAnnotation(annotation) : NULL_ANNOTATION;
     }

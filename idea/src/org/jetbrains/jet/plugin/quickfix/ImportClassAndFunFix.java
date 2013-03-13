@@ -80,7 +80,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             return Collections.emptyList();
         }
 
-        final String referenceName = element.getReferencedName();
+        String referenceName = element.getReferencedName();
 
         if (!StringUtil.isNotEmpty(referenceName)) {
             return Collections.emptyList();
@@ -173,7 +173,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         return Lists.newArrayList(possibleResolveNames);
     }
 
-    private static Collection<FqName> getClassesFromCache(@NotNull final String typeName, @NotNull final JetFile file) {
+    private static Collection<FqName> getClassesFromCache(@NotNull String typeName, @NotNull final JetFile file) {
         PsiShortNamesCache cache = getShortNamesCache(file);
 
         PsiClass[] classes = cache.getClassesByName(typeName, GlobalSearchScope.allScope(file.getProject()));
@@ -229,7 +229,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             return false;
         }
 
-        final Project project = editor.getProject();
+        Project project = editor.getProject();
         if (project == null) {
             return false;
         }
@@ -268,7 +268,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     }
 
     @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, final PsiFile file)
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, PsiFile file)
             throws IncorrectOperationException {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override

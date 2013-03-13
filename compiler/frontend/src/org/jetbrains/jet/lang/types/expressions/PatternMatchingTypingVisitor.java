@@ -59,16 +59,16 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext context) {
         return visitWhenExpression(expression, context, false);
     }
 
-    public JetTypeInfo visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+    public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         // TODO :change scope according to the bound value in the when header
-        final JetExpression subjectExpression = expression.getSubjectExpression();
+        JetExpression subjectExpression = expression.getSubjectExpression();
 
-        final JetType subjectType;
+        JetType subjectType;
         if (subjectExpression == null) {
             subjectType = ErrorUtils.createErrorType("Unknown type");
         }
@@ -77,7 +77,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             subjectType = typeInfo.getType();
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
-        final DataFlowValue subjectDataFlowValue = subjectExpression != null
+        DataFlowValue subjectDataFlowValue = subjectExpression != null
                 ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext())
                 : DataFlowValue.NULL;
 

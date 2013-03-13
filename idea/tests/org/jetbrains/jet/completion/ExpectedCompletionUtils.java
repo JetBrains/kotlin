@@ -191,7 +191,7 @@ public class ExpectedCompletionUtils {
     }
 
     protected static List<CompletionProposal> getItemsInformation(LookupElement[] items) {
-        final LookupElementPresentation presentation = new LookupElementPresentation();
+        LookupElementPresentation presentation = new LookupElementPresentation();
 
         List<CompletionProposal> result = new ArrayList<CompletionProposal>();
         if (items != null) {

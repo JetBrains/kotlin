@@ -51,7 +51,7 @@ public class KotlinLightTypeParameter extends AbstractLightClass implements PsiT
     }
 
     @Override
-    public void accept(@NotNull final PsiElementVisitor visitor) {
+    public void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof JavaElementVisitor) {
             ((JavaElementVisitor) visitor).visitTypeParameter(this);
         }
@@ -89,13 +89,13 @@ public class KotlinLightTypeParameter extends AbstractLightClass implements PsiT
     }
 
     @Override
-    public PsiAnnotation findAnnotation(@NotNull final String qualifiedName) {
+    public PsiAnnotation findAnnotation(@NotNull String qualifiedName) {
         return getDelegate().findAnnotation(qualifiedName);
     }
 
     @NotNull
     @Override
-    public PsiAnnotation addAnnotation(@NotNull final String qualifiedName) {
+    public PsiAnnotation addAnnotation(@NotNull String qualifiedName) {
         return getDelegate().addAnnotation(qualifiedName);
     }
 

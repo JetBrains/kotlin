@@ -82,7 +82,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
     public void testNoErrorsInAlternativeSignatures() {
         List<FqName> affectedClasses = getAffectedClasses("file://jdk-annotations");
 
-        final Map<String, List<String>> errors = Maps.newLinkedHashMap();
+        Map<String, List<String>> errors = Maps.newLinkedHashMap();
 
         for (int chunkIndex = 0; chunkIndex < affectedClasses.size() / CLASSES_IN_CHUNK + 1; chunkIndex++) {
             Disposable parentDisposable = CompileEnvironmentUtil.createMockDisposable();
@@ -127,7 +127,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         }
     }
 
-    static List<FqName> getAffectedClasses(final String rootUrl) {
+    static List<FqName> getAffectedClasses(String rootUrl) {
         Disposable myDisposable = CompileEnvironmentUtil.createMockDisposable();
 
         try {

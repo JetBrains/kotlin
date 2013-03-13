@@ -58,7 +58,7 @@ public class JetAnonymousSuperMacro extends Macro {
     }
 
     @Override
-    public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+    public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
         AnonymousTemplateEditingListener.registerListener(context.getEditor(), context.getProject());
 
         PsiNamedElement[] vars = getSupertypes(params, context);
@@ -68,9 +68,9 @@ public class JetAnonymousSuperMacro extends Macro {
 
     @Override
     public LookupElement[] calculateLookupItems(@NotNull Expression[] params, ExpressionContext context) {
-        final PsiNamedElement[] vars = getSupertypes(params, context);
+        PsiNamedElement[] vars = getSupertypes(params, context);
         if (vars == null || vars.length < 2) return null;
-        final Set<LookupElement> set = new LinkedHashSet<LookupElement>();
+        Set<LookupElement> set = new LinkedHashSet<LookupElement>();
         for (PsiNamedElement var : vars) {
             set.add(LookupElementBuilder.create(var));
         }

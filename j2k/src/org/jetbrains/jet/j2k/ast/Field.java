@@ -82,7 +82,7 @@ public class Field extends Member {
     @NotNull
     @Override
     public String toKotlin() {
-        final String declaration = modifiersToKotlin() + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
+        String declaration = modifiersToKotlin() + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
 
         if (myInitializer.isEmpty()) {
             return declaration + (isVal() && !isStatic() && myWritingAccesses == 1

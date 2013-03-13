@@ -70,7 +70,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
     @Override
     public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-        final PsiClass[] allClasses = findClasses(qualifiedName, scope);
+        PsiClass[] allClasses = findClasses(qualifiedName, scope);
         return allClasses.length > 0 ? allClasses[0] : null;
     }
 

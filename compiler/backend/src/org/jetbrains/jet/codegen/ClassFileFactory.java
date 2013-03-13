@@ -57,7 +57,7 @@ public final class ClassFileFactory extends GenerationStateAware {
     
     private ClassBuilder newVisitor(String outputFilePath, Collection<? extends PsiFile> sourceFiles) {
         state.getProgress().reportOutput(toIoFilesIgnoringNonPhysical(sourceFiles), new File(outputFilePath));
-        final ClassBuilder answer = builderFactory.newClassBuilder();
+        ClassBuilder answer = builderFactory.newClassBuilder();
         generators.put(outputFilePath, answer);
         return answer;
     }

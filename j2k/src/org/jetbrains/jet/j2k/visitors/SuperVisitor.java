@@ -45,7 +45,7 @@ public class SuperVisitor extends JavaRecursiveElementVisitor {
 
     static boolean isSuper(@NotNull PsiReference r) {
         if (r.getCanonicalText().equals("super")) {
-            final PsiElement baseConstructor = r.resolve();
+            PsiElement baseConstructor = r.resolve();
             if (baseConstructor != null && baseConstructor instanceof PsiMethod && ((PsiMethod) baseConstructor).isConstructor()) {
                 return true;
             }

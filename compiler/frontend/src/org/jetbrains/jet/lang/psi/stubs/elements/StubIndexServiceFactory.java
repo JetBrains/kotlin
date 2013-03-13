@@ -25,7 +25,7 @@ final class StubIndexServiceFactory {
 
     public static StubIndexService getInstance() {
         // If executed in plugin service will be registered
-        final StubIndexService registeredService = ServiceManager.getService(StubIndexService.class);
+        StubIndexService registeredService = ServiceManager.getService(StubIndexService.class);
         return registeredService != null ? registeredService : StubIndexService.NO_INDEX_SERVICE;
     }
 }

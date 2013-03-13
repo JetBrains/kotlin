@@ -35,7 +35,7 @@ import javax.swing.event.HyperlinkEvent;
 public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent {
     private static final String SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version";
 
-    public OutdatedKotlinRuntimeNotification(final Project project) {
+    public OutdatedKotlinRuntimeNotification(Project project) {
         super(project);
     }
 

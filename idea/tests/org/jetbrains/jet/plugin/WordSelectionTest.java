@@ -60,7 +60,7 @@ public class WordSelectionTest extends LightCodeInsightFixtureTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        final String testRelativeDir = "wordSelection";
+        String testRelativeDir = "wordSelection";
         myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), testRelativeDir).getPath() +
                                   File.separator);
     }

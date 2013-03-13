@@ -29,7 +29,7 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
     private final boolean isInVariance;
     private final boolean isOutVariance;
 
-    public PsiJetTypeParameterStubImpl(JetTypeParameterElementType type, final StubElement parent,
+    public PsiJetTypeParameterStubImpl(JetTypeParameterElementType type, StubElement parent,
             StringRef name, StringRef extendBoundTypeText, boolean isInVariance, boolean isOutVariance) {
         super(parent, type);
 
@@ -39,7 +39,7 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
         this.isOutVariance = isOutVariance;
     }
 
-    public PsiJetTypeParameterStubImpl(JetTypeParameterElementType type, final StubElement parent,
+    public PsiJetTypeParameterStubImpl(JetTypeParameterElementType type, StubElement parent,
             String name, String extendBoundTypeText, boolean isInVariance, boolean isOutVariance) {
         this(type, parent, StringRef.fromString(name), StringRef.fromString(extendBoundTypeText), isInVariance, isOutVariance);
     }

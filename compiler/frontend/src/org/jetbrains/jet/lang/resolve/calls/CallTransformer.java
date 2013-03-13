@@ -173,10 +173,10 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public Collection<ResolvedCallWithTrace<FunctionDescriptor>> transformCall(@NotNull final CallCandidateResolutionContext<CallableDescriptor> context,
-                @NotNull CallResolver callResolver, @NotNull final ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
+        public Collection<ResolvedCallWithTrace<FunctionDescriptor>> transformCall(@NotNull CallCandidateResolutionContext<CallableDescriptor> context,
+                @NotNull CallResolver callResolver, @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
 
-            final CallableDescriptor descriptor = context.candidateCall.getCandidateDescriptor();
+            CallableDescriptor descriptor = context.candidateCall.getCandidateDescriptor();
             if (descriptor instanceof FunctionDescriptor) {
                 return super.transformCall(context, callResolver, task);
             }
@@ -191,7 +191,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             Call functionCall = createFunctionCall(context, task, returnType);
 
-            final DelegatingBindingTrace variableCallTrace = context.candidateCall.getTrace();
+            DelegatingBindingTrace variableCallTrace = context.candidateCall.getTrace();
             BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(
                     variableCallTrace, context.scope, functionCall, context.expectedType, context.dataFlowInfo, context.resolveMode, context.expressionPosition);
 

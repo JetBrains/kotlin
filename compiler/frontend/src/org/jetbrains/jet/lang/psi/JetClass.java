@@ -43,7 +43,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
         super(node);
     }
 
-    public JetClass(@NotNull final PsiJetClassStub stub) {
+    public JetClass(@NotNull PsiJetClassStub stub) {
         super(stub, JetStubElementTypes.CLASS);
     }
 
@@ -231,13 +231,13 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
             return stub.getSuperNames();
         }
 
-        final List<JetDelegationSpecifier> specifiers = getDelegationSpecifiers();
+        List<JetDelegationSpecifier> specifiers = getDelegationSpecifiers();
         if (specifiers.size() == 0) return Collections.emptyList();
         List<String> result = new ArrayList<String>();
         for (JetDelegationSpecifier specifier : specifiers) {
-            final JetUserType superType = specifier.getTypeAsUserType();
+            JetUserType superType = specifier.getTypeAsUserType();
             if (superType != null) {
-                final String referencedName = superType.getReferencedName();
+                String referencedName = superType.getReferencedName();
                 if (referencedName != null) {
                     addSuperName(result, referencedName);
                 }
@@ -249,7 +249,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     private void addSuperName(List<String> result, String referencedName) {
         result.add(referencedName);
         if (getContainingFile() instanceof JetFile) {
-            final JetImportDirective directive = ((JetFile) getContainingFile()).findImportByAlias(referencedName);
+            JetImportDirective directive = ((JetFile) getContainingFile()).findImportByAlias(referencedName);
             if (directive != null) {
                 JetExpression reference = directive.getImportedReference();
                 while (reference instanceof JetDotQualifiedExpression) {

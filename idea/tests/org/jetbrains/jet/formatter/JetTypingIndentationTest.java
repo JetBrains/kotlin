@@ -128,7 +128,7 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
     @Override
     protected String getTestDataPath() {
 
-        final String testRelativeDir = "formatter/IndentationOnNewline";
+        String testRelativeDir = "formatter/IndentationOnNewline";
         return new File(PluginTestCaseBase.getTestDataPathBase(), testRelativeDir).getPath() +
                File.separator;
     }

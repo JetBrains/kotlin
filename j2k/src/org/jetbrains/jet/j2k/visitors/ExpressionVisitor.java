@@ -40,7 +40,7 @@ public class ExpressionVisitor extends StatementVisitor {
     }
 
     @Override
-    public void visitExpression(final PsiExpression expression) {
+    public void visitExpression(PsiExpression expression) {
         myResult = Expression.EMPTY_EXPRESSION;
     }
 
@@ -74,7 +74,7 @@ public class ExpressionVisitor extends StatementVisitor {
 
         // TODO: simplify
 
-        final IElementType tokenType = expression.getOperationSign().getTokenType();
+        IElementType tokenType = expression.getOperationSign().getTokenType();
 
         String secondOp = "";
         if (tokenType == JavaTokenType.GTGTEQ) secondOp = "shr";
@@ -196,11 +196,11 @@ public class ExpressionVisitor extends StatementVisitor {
     public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
         super.visitLiteralExpression(expression);
 
-        final Object value = expression.getValue();
+        Object value = expression.getValue();
         String text = expression.getText();
         boolean isQuotingNeeded = true;
 
-        final PsiType type = expression.getType();
+        PsiType type = expression.getType();
         if (type != null) {
             String canonicalTypeStr = type.getCanonicalText();
             if (canonicalTypeStr.equals("double") || canonicalTypeStr.equals(JAVA_LANG_DOUBLE)) {
@@ -264,10 +264,10 @@ public class ExpressionVisitor extends StatementVisitor {
 
     @NotNull
     private Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
-        final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
-        final PsiMethod constructor = expression.resolveMethod();
+        PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
+        PsiMethod constructor = expression.resolveMethod();
         PsiJavaCodeReferenceElement classReference = expression.getClassOrAnonymousClassReference();
-        final boolean isNotConvertedClass = classReference != null && !getConverter().getClassIdentifiers().contains(classReference.getQualifiedName());
+        boolean isNotConvertedClass = classReference != null && !getConverter().getClassIdentifiers().contains(classReference.getQualifiedName());
         PsiExpressionList argumentList = expression.getArgumentList();
         PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
         if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {
@@ -280,8 +280,8 @@ public class ExpressionVisitor extends StatementVisitor {
             );
         }
         // is constructor secondary
-        final PsiJavaCodeReferenceElement reference = expression.getClassReference();
-        final List<Type> typeParameters = reference != null
+        PsiJavaCodeReferenceElement reference = expression.getClassReference();
+        List<Type> typeParameters = reference != null
                                           ? getConverter().typesToTypeList(reference.getTypeParameters())
                                           : Collections.<Type>emptyList();
         return new CallChainExpression(
@@ -342,17 +342,17 @@ public class ExpressionVisitor extends StatementVisitor {
     public void visitReferenceExpression(@NotNull PsiReferenceExpression expression) {
         super.visitReferenceExpression(expression);
 
-        final boolean isFieldReference = isFieldReference(expression, getContainingClass(expression));
-        final boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
-        final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
-        final boolean isThis = isThisExpression(expression);
-        final boolean notNull = isResolvedToNotNull(expression);
-        final boolean isNullable = getConverter().typeToType(expression.getType(), notNull).isNullable();
-        final String className = getClassNameWithConstructor(expression);
+        boolean isFieldReference = isFieldReference(expression, getContainingClass(expression));
+        boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
+        boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
+        boolean isThis = isThisExpression(expression);
+        boolean notNull = isResolvedToNotNull(expression);
+        boolean isNullable = getConverter().typeToType(expression.getType(), notNull).isNullable();
+        String className = getClassNameWithConstructor(expression);
 
         Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);
 
-        final String __ = "__";
+        String __ = "__";
         if (hasReceiver) {
             identifier = new CallChainExpression(new IdentifierImpl(__, false), new IdentifierImpl(expression.getReferenceName(), isNullable));
         }
@@ -382,9 +382,9 @@ public class ExpressionVisitor extends StatementVisitor {
         PsiElement context = expression.getContext();
         while (context != null) {
             if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
-                final PsiClass containingClass = ((PsiMethod) context).getContainingClass();
+                PsiClass containingClass = ((PsiMethod) context).getContainingClass();
                 if (containingClass != null) {
-                    final PsiIdentifier identifier = containingClass.getNameIdentifier();
+                    PsiIdentifier identifier = containingClass.getNameIdentifier();
                     if (identifier != null) {
                         return identifier.getText();
                     }
@@ -400,8 +400,8 @@ public class ExpressionVisitor extends StatementVisitor {
         PsiElement context = expression.getContext();
         while (context != null) {
             if (context instanceof PsiClass) {
-                final PsiClass containingClass = (PsiClass) context;
-                final PsiIdentifier identifier = containingClass.getNameIdentifier();
+                PsiClass containingClass = (PsiClass) context;
+                PsiIdentifier identifier = containingClass.getNameIdentifier();
                 if (identifier != null) {
                     return identifier.getText();
                 }
@@ -412,9 +412,9 @@ public class ExpressionVisitor extends StatementVisitor {
     }
 
     private static boolean isFieldReference(@NotNull PsiReferenceExpression expression, PsiClass currentClass) {
-        final PsiReference reference = expression.getReference();
+        PsiReference reference = expression.getReference();
         if (reference != null) {
-            final PsiElement resolvedReference = reference.resolve();
+            PsiElement resolvedReference = reference.resolve();
             if (resolvedReference != null) {
                 if (resolvedReference instanceof PsiField) {
                     return ((PsiField) resolvedReference).getContainingClass() == currentClass;
@@ -461,7 +461,7 @@ public class ExpressionVisitor extends StatementVisitor {
     private static boolean isThisExpression(@NotNull PsiReferenceExpression expression) {
         for (PsiReference r : expression.getReferences())
             if (r.getCanonicalText().equals("this")) {
-                final PsiElement res = r.resolve();
+                PsiElement res = r.resolve();
                 if (res != null && res instanceof PsiMethod && ((PsiMethod) res).isConstructor()) {
                     return true;
                 }
@@ -472,7 +472,7 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitSuperExpression(@NotNull PsiSuperExpression expression) {
         super.visitSuperExpression(expression);
-        final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
+        PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
         myResult = new SuperExpression(
                 qualifier != null ?
                 new IdentifierImpl(qualifier.getQualifiedName()) :
@@ -483,7 +483,7 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitThisExpression(@NotNull PsiThisExpression expression) {
         super.visitThisExpression(expression);
-        final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
+        PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
         myResult = new ThisExpression(
                 qualifier != null ?
                 new IdentifierImpl(qualifier.getQualifiedName()) :
@@ -495,7 +495,7 @@ public class ExpressionVisitor extends StatementVisitor {
     public void visitTypeCastExpression(@NotNull PsiTypeCastExpression expression) {
         super.visitTypeCastExpression(expression);
 
-        final PsiTypeElement castType = expression.getCastType();
+        PsiTypeElement castType = expression.getCastType();
         if (castType != null) {
             myResult = new TypeCastExpression(
                     getConverter().typeToType(castType.getType()),

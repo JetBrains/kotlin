@@ -73,8 +73,8 @@ public final class JsModuleSetUp {
         refreshRootDir(module, continuation);
     }
 
-    private static void setUpLibraryAsSourceLibrary(final Module module, final @NotNull File rootDir) {
-        final File libJarFile = new File(rootDir, "lib/" + PathUtil.JS_LIB_JAR_NAME);
+    private static void setUpLibraryAsSourceLibrary(final Module module, @NotNull File rootDir) {
+        File libJarFile = new File(rootDir, "lib/" + PathUtil.JS_LIB_JAR_NAME);
         final VirtualFile libFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libJarFile);
 
         if (libFile != null) {

@@ -35,7 +35,7 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     private final Stack<Boolean> newlinesEnabled = new Stack<Boolean>();
 
-    public SemanticWhitespaceAwarePsiBuilderImpl(final PsiBuilder delegate) {
+    public SemanticWhitespaceAwarePsiBuilderImpl(PsiBuilder delegate) {
         super(delegate);
         newlinesEnabled.push(true);
         joinComplexTokens.push(true);

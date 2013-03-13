@@ -130,7 +130,7 @@ public class PseudocodeVariablesData {
         Set<VariableDescriptor> usedVariables = getUsedVariables(pseudocode);
         Set<VariableDescriptor> declaredVariables = getDeclaredVariables(pseudocode, false);
         Map<VariableDescriptor, VariableInitState> initialMap = Collections.emptyMap();
-        final Map<VariableDescriptor, VariableInitState> initialMapForStartInstruction = prepareInitializersMapForStartInstruction(
+        Map<VariableDescriptor, VariableInitState> initialMapForStartInstruction = prepareInitializersMapForStartInstruction(
                 usedVariables, declaredVariables);
 
         Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializersMap = PseudocodeTraverser.collectData(

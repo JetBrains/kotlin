@@ -116,7 +116,7 @@ public class Class extends Member {
 
     @NotNull
     LinkedList<Member> membersExceptConstructors() {
-        final LinkedList<Member> result = new LinkedList<Member>();
+        LinkedList<Member> result = new LinkedList<Member>();
         for (Member m : myMembers)
             if (m.getKind() != Kind.CONSTRUCTOR) {
                 result.add(m);
@@ -126,18 +126,18 @@ public class Class extends Member {
 
     @NotNull
     List<Function> secondaryConstructorsAsStaticInitFunction() {
-        final LinkedList<Function> result = new LinkedList<Function>();
+        LinkedList<Function> result = new LinkedList<Function>();
         for (Member m : myMembers)
             if (m.getKind() == Kind.CONSTRUCTOR && !((Constructor) m).isPrimary()) {
                 Function f = (Function) m;
                 Set<String> modifiers = new HashSet<String>(m.myModifiers);
                 modifiers.add(Modifier.STATIC);
 
-                final List<Statement> statements = f.getBlock().getStatements();
+                List<Statement> statements = f.getBlock().getStatements();
                 statements.add(new ReturnStatement(new IdentifierImpl("__"))); // TODO: move to one place, find other __ usages
-                final Block block = new Block(statements);
+                Block block = new Block(statements);
 
-                final List<Element> typeParameters = new LinkedList<Element>();
+                List<Element> typeParameters = new LinkedList<Element>();
                 if (f.getTypeParameters().size() == 0) {
                     typeParameters.addAll(myTypeParameters);
                 }
@@ -245,7 +245,7 @@ public class Class extends Member {
 
     @NotNull
     private String classObjectToKotlin() {
-        final List<Member> staticMembers = new LinkedList<Member>(secondaryConstructorsAsStaticInitFunction());
+        List<Member> staticMembers = new LinkedList<Member>(secondaryConstructorsAsStaticInitFunction());
         staticMembers.addAll(getStatic(membersExceptConstructors()));
         if (staticMembers.size() > 0) {
             return "class" + SPACE + "object" + SPACE + "{" + N +

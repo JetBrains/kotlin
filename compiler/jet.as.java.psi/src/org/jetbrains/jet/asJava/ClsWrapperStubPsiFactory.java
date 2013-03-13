@@ -95,7 +95,7 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     @Override
     public PsiMethod createMethod(PsiMethodStub stub) {
-        final PsiElement origin = ((StubBase) stub).getUserData(ORIGIN_ELEMENT);
+        PsiElement origin = ((StubBase) stub).getUserData(ORIGIN_ELEMENT);
         if (origin == null) {
             return delegate.createMethod(stub);
         }

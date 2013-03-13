@@ -42,7 +42,7 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
                 Query<PsiClass> query = ClassInheritorsSearch.search(psiClass, true);
                 query.forEach(new Processor<PsiClass>() {
                     @Override
-                    public boolean process(final PsiClass clazz) {
+                    public boolean process(PsiClass clazz) {
                         return consumer.process(clazz);
                     }
                 });

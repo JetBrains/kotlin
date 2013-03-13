@@ -89,7 +89,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
 
         Disposer.dispose(myTestRootDisposable);
 
-        final Expectation expectation = parseExpectations();
+        Expectation expectation = parseExpectations();
 
         ActualSignature actualSignature = readSignature(expectation.className, expectation.methodName);
 

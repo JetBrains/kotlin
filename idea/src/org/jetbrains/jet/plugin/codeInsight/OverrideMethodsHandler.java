@@ -26,7 +26,7 @@ import java.util.Set;
 public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
     @Override
     protected Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor) {
-        final Set<CallableMemberDescriptor> superMethods = OverrideResolver.collectSuperMethods(descriptor).keySet();
+        Set<CallableMemberDescriptor> superMethods = OverrideResolver.collectSuperMethods(descriptor).keySet();
         for (CallableMemberDescriptor member : descriptor.getDeclaredCallableMembers()) {
             superMethods.removeAll(member.getOverriddenDescriptors());
         }

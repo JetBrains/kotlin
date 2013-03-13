@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class SwitchLabelStatement extends Statement {
     private final Expression myExpression;
 
-    public SwitchLabelStatement(final Expression expression) {
+    public SwitchLabelStatement(Expression expression) {
         myExpression = expression;
     }
 

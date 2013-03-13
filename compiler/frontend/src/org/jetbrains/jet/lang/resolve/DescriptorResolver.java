@@ -289,7 +289,7 @@ public class DescriptorResolver {
             returnType = KotlinBuiltIns.getInstance().getUnitType();
         }
         else {
-            final JetExpression bodyExpression = function.getBodyExpression();
+            JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {
                 returnType =
                         DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
@@ -1024,7 +1024,7 @@ public class DescriptorResolver {
             @NotNull DeclarationDescriptorWithVisibility descriptor,
             @NotNull JetNamedDeclaration declaration,
             @NotNull JetType type,
-            @NotNull final BindingTrace trace
+            @NotNull BindingTrace trace
     ) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
         if (!DescriptorUtils.isAnonymous(classifierDescriptor)) {
@@ -1052,7 +1052,7 @@ public class DescriptorResolver {
     private JetType resolveInitializerType(
             @NotNull JetScope scope,
             @NotNull JetExpression initializer,
-            @NotNull final DataFlowInfo dataFlowInfo,
+            @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
         return expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace);

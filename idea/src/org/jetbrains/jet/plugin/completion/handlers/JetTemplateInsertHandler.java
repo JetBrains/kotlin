@@ -39,7 +39,7 @@ public class JetTemplateInsertHandler implements InsertHandler<LookupElement> {
         Editor editor = context.getEditor();
 
         String insertion = myInsertion;
-        final char currentChar = context.getTailOffset() < document.getTextLength() ? document.getCharsSequence().charAt(context.getTailOffset()) : 0;
+        char currentChar = context.getTailOffset() < document.getTextLength() ? document.getCharsSequence().charAt(context.getTailOffset()) : 0;
         if (insertion.endsWith(" ") && context.getCompletionChar() != ' ' && (currentChar == ')' || currentChar == ' ' || currentChar == '\t')) {
             insertion = insertion.trim();
         }
@@ -55,7 +55,7 @@ public class JetTemplateInsertHandler implements InsertHandler<LookupElement> {
 
         context.setTailOffset(tailOffset);
 
-        final CodeFoldingManager foldManager = CodeFoldingManager.getInstance(context.getProject());
+        CodeFoldingManager foldManager = CodeFoldingManager.getInstance(context.getProject());
         foldManager.updateFoldRegions(editor);
 
         String text = document.getText();

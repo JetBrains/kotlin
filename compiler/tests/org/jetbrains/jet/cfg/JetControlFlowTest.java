@@ -69,7 +69,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     protected void runTest() throws Throwable {
         JetFile file = loadPsiFile(myName + ".jet");
 
-        final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
+        Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
         AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file);
         List<JetDeclaration> declarations = file.getDeclarations();
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
@@ -271,7 +271,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     }
 
     public void dumpEdges(List<Instruction> instructions,  final PrintStream out, final int[] count, final Map<Instruction, String> nodeToName) {
-        for (final Instruction fromInst : instructions) {
+        for (Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {
                 @Override
                 public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {

@@ -198,7 +198,7 @@ public class JetCoreEnvironment {
             projectEnvironment.addJarToClassPath(path);
         }
         else {
-            final VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
+            VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
             if (root == null) {
                 report(WARNING, "Classpath entry points to a non-existent location: " + path);
                 return;

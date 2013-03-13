@@ -71,8 +71,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
     }
 
     private void generateClassBody() {
-        final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen);
+        FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
+        PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             generateDeclaration(propertyCodegen, declaration, functionCodegen);
@@ -114,7 +114,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
-            final MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
+            MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
 
@@ -133,7 +133,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
     private void generateRemoveInIterator() {
         // generates stub 'remove' function for subclasses of Iterator to be compatible with java.util.Iterator
         if (DescriptorUtils.isIteratorWithoutRemoveImpl(descriptor)) {
-            final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "remove", "()V", null, null);
+            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "remove", "()V", null, null);
             genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
         }
     }

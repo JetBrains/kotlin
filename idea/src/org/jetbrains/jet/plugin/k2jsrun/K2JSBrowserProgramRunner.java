@@ -31,7 +31,8 @@ import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.openBrowser;
 
 public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
     @Override
-    protected RunContentDescriptor doExecute(final Project project,
+    protected RunContentDescriptor doExecute(
+            Project project,
             Executor executor,
             RunProfileState state,
             RunContentDescriptor contentToReuse,

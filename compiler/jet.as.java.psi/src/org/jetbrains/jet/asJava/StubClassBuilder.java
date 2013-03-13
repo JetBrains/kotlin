@@ -89,7 +89,7 @@ public class StubClassBuilder extends ClassBuilder {
 
     @Override
     public MethodVisitor newMethod(@Nullable PsiElement origin, int access, String name, String desc, @Nullable String signature, @Nullable String[] exceptions) {
-        final MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
+        MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
 
         if (internalVisitor != null) {
             // If stub for method generated
@@ -101,7 +101,7 @@ public class StubClassBuilder extends ClassBuilder {
 
     @Override
     public FieldVisitor newField(@Nullable PsiElement origin, int access, String name, String desc, @Nullable String signature, @Nullable Object value) {
-        final FieldVisitor internalVisitor = super.newField(origin, access, name, desc, signature, value);
+        FieldVisitor internalVisitor = super.newField(origin, access, name, desc, signature, value);
 
         if (internalVisitor != null) {
             // If stub for field generated
@@ -112,7 +112,7 @@ public class StubClassBuilder extends ClassBuilder {
     }
 
     private void markLastChild(@Nullable PsiElement origin) {
-        final List children = v.getResult().getChildrenStubs();
+        List children = v.getResult().getChildrenStubs();
         StubBase last = (StubBase) children.get(children.size() - 1);
 
         PsiElement oldOrigin = last.getUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT);
@@ -126,7 +126,7 @@ public class StubClassBuilder extends ClassBuilder {
     @Override
     public void done() {
         if (!isNamespace) {
-            final StubElement pop = parentStack.pop();
+            StubElement pop = parentStack.pop();
             assert pop == v.getResult();
         }
         super.done();

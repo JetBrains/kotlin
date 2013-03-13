@@ -52,12 +52,12 @@ abstract class TestCaseBuilder {
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull String dataPath, @NotNull NamedTestFactory factory) {
         return suiteForDirectory(baseDataDir, dataPath, true, emptyFilter, factory);
     }
 
     @NotNull
-    private static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
+    private static TestSuite suiteForDirectory(String baseDataDir, @NotNull String dataPath, boolean recursive, @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
         final String extensionJava = ".jav";
 

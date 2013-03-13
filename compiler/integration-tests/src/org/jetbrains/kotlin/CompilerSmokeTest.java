@@ -26,7 +26,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
 
     @Test
     public void compileAndRunHelloApp() throws Exception {
-        final String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
+        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar));
         runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
@@ -34,7 +34,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
 
     @Test
     public void compileAndRunModule() throws Exception {
-        final String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
+        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 
         assertEquals("compilation failed", 0, runCompiler("Smoke.compile", "-module", "Smoke.kts", "-jar", jar));
         runJava("Smoke.run", "-cp", jar + File.pathSeparator + getKotlinRuntimePath(), "Smoke.SmokePackage", "1", "2", "3");
@@ -42,14 +42,14 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
 
     @Test
     public void compilationFailed() throws Exception {
-        final String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
+        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 
         runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar);
     }
 
     @Test
     public void syntaxErrors() throws Exception {
-        final String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
+        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 
         runCompiler("test.compile", "-src", "test.kt", "-jar", jar);
     }

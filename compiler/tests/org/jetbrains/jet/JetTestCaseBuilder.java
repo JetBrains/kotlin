@@ -59,13 +59,13 @@ public abstract class JetTestCaseBuilder {
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
         return suiteForDirectory(baseDataDir, dataPath, recursive, KOTLIN_FILTER, factory);
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive,
-            @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull String dataPath, boolean recursive,
+            @NotNull FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
         appendTestsInDirectory(baseDataDir, dataPath, recursive, filter, factory, suite);
         return suite;

@@ -29,7 +29,7 @@ public class AddOpenToClassDeclarationTest extends AbstractQuickFixMultiFileTest
 
         LocalFileSystemUtils.refreshPath(getTestDataPath());
         String path = getTestDataPath() + "javaCode/";
-        final VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false);
+        VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false);
         addSourceContentToRoots(myModule, rootDir);
         PsiDocumentManager.getInstance(myProject).commitAllDocuments();
     }

@@ -64,7 +64,7 @@ public class JetKeywordInsertHandler implements InsertHandler<LookupElement> {
 
         // Add space after keyword
         context.setAddCompletionChar(false);
-        final TailType tailType = TailType.SPACE;
+        TailType tailType = TailType.SPACE;
         tailType.processTail(context.getEditor(), context.getTailOffset());
     }
 }

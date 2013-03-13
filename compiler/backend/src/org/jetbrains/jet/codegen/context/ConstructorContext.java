@@ -33,7 +33,7 @@ public class ConstructorContext extends MethodContext {
     ) {
         super(contextDescriptor, kind, parent);
 
-        final ClassDescriptor type = getEnclosingClass();
+        ClassDescriptor type = getEnclosingClass();
         outerExpression = type != null ? local1 : null;
     }
 

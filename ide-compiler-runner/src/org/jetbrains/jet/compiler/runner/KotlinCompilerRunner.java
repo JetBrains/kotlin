@@ -100,7 +100,7 @@ public class KotlinCompilerRunner {
             CompilerEnvironment environment,
             File scriptFile
     ) {
-        final SimpleJavaParameters params = new SimpleJavaParameters();
+        SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
         params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
 
@@ -117,7 +117,7 @@ public class KotlinCompilerRunner {
 
         Sdk sdk = params.getJdk();
 
-        final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
+        GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
                 ((JavaSdkType) sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
 
         messageCollector.report(CompilerMessageSeverity.INFO,

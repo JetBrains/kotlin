@@ -332,7 +332,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @NotNull
     private static GenerationState generate(
-            final JetCoreEnvironment environment,
+            JetCoreEnvironment environment,
             AnalyzeExhaust exhaust,
             boolean stubs) {
         Project project = environment.getProject();
@@ -373,7 +373,7 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull String scriptPath,
             @Nullable List<AnalyzerScriptParameter> scriptParameters,
             @Nullable List<JetScriptDefinition> scriptDefinitions) {
-        final MessageRenderer messageRenderer = MessageRenderer.PLAIN;
+        MessageRenderer messageRenderer = MessageRenderer.PLAIN;
         GroupingMessageCollector messageCollector = new GroupingMessageCollector(new PrintingMessageCollector(System.err, messageRenderer, false));
         Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
         try {

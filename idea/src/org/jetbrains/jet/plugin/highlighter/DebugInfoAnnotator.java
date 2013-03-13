@@ -50,7 +50,7 @@ public class DebugInfoAnnotator implements Annotator {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
             try {
-                final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
                 DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
                     @Override
                     public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {

@@ -74,7 +74,7 @@ public class CheckerTestUtil {
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
             diagnostics.add(new SyntaxErrorDiagnostic(errorElement));
         }
-        final List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext);
+        List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext);
         diagnostics.addAll(debugAnnotations);
         return diagnostics;
     }

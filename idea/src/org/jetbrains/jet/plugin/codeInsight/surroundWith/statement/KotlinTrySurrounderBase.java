@@ -44,7 +44,7 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
 
         // TODO move a comment for first statement
 
-        final JetBlockExpression tryBlock = tryExpression.getTryBlock();
+        JetBlockExpression tryBlock = tryExpression.getTryBlock();
         // Add statements in try block of created try - catch - finally
         KotlinSurrounderUtils.addStatementsInBlock(tryBlock, statements);
 

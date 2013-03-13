@@ -84,11 +84,11 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         doTextTest(Action.REFORMAT, loadFile(fileNameBefore), loadFile(fileNameAfter), "");
     }
 
-    public void doTextTest(@NonNls final String text, @NonNls String textAfter, String commentToTextCompare) throws IncorrectOperationException {
+    public void doTextTest(@NonNls String text, @NonNls String textAfter, String commentToTextCompare) throws IncorrectOperationException {
         doTextTest(Action.REFORMAT, text, textAfter, commentToTextCompare);
     }
 
-    public void doIndentTextTest(@NonNls final String text, @NonNls String textAfter) throws IncorrectOperationException {
+    public void doIndentTextTest(@NonNls String text, @NonNls String textAfter) throws IncorrectOperationException {
         doTextTest(Action.INDENT, text, textAfter, "");
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         final PsiFile file = createFile("A.kt", text);
 
         if (myLineRange != null) {
-            final DocumentImpl document = new DocumentImpl(text);
+            DocumentImpl document = new DocumentImpl(text);
             myTextRange =
                     new TextRange(document.getLineStartOffset(myLineRange.getStartOffset()), document.getLineEndOffset(myLineRange.getEndOffset()));
         }

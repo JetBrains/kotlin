@@ -38,7 +38,7 @@ public class Not implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        final StackValue stackValue;
+        StackValue stackValue;
         if (arguments.size() == 1) {
             stackValue = codegen.gen(arguments.get(0));
         }

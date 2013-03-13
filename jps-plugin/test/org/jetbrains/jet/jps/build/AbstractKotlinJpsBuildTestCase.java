@@ -65,7 +65,7 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
     }
 
     @Override
-    protected JpsSdk<JpsDummyElement> addJdk(final String name, final String path) {
+    protected JpsSdk<JpsDummyElement> addJdk(String name, String path) {
         String homePath = System.getProperty("java.home");
         String versionString = System.getProperty("java.version");
         JpsTypedLibrary<JpsSdk<JpsDummyElement>> jdk = myModel.getGlobal().addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE);

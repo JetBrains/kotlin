@@ -31,28 +31,28 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testStringArray() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test(vararg ts: String) = ts");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         String[] args = {"mama", "papa"};
         assertTrue(args == main.invoke(null, new Object[]{ args } ));
     }
 
     public void testIntArray() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test(vararg ts: Int) = ts");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         int[] args = {3, 4};
         assertTrue(args == main.invoke(null, new Object[]{ args }));
     }
 
     public void testIntArrayKotlinNoArgs() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(); fun testf(vararg ts: Int) = ts");
-        final Method main = generateFunction("test");
+        Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((int[])res).length == 0);
     }
 
     public void testIntArrayKotlin() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(239, 7); fun testf(vararg ts: Int) = ts");
-        final Method main = generateFunction("test");
+        Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((int[])res).length == 2);
         assertTrue(((int[])res)[0] == 239);
@@ -61,7 +61,7 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testNullableIntArrayKotlin() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(239.toByte(), 7.toByte()); fun testf(vararg ts: Byte?) = ts");
-        final Method main = generateFunction("test");
+        Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((Byte[])res).length == 2);
         assertTrue(((Byte[])res)[0] == (byte)239);
@@ -70,7 +70,7 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testIntArrayKotlinObj() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(\"239\"); fun testf(vararg ts: String) = ts");
-        final Method main = generateFunction("test");
+        Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((String[])res).length == 1);
         assertTrue(((String[])res)[0].equals("239"));
@@ -78,7 +78,7 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testArrayT() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = _array(2, 4); fun <T> _array(vararg elements : T) = elements");
-        final Method main = generateFunction("test");
+        Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((Integer[])res).length == 2);
         assertTrue(((Integer[])res)[0].equals(2));
@@ -87,14 +87,14 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testArrayAsVararg() throws InvocationTargetException, IllegalAccessException {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts: Array<String>) = asList(*ts); ");
-        final Method main = generateFunction("test");
+        Method main = generateFunction("test");
         String[] args = {"mama", "papa"};
         assertTrue(args == main.invoke(null, new Object[]{ args } ));
     }
 
     public void testArrayAsVararg2() throws InvocationTargetException, IllegalAccessException {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts1: Array<String>, ts2: String) = asList(*ts1, ts2); ");
-        final Method main = generateFunction("test");
+        Method main = generateFunction("test");
         Object invoke = main.invoke(null, new Object[] {new String[] {"mama"}, "papa" });
         assertInstanceOf(invoke, String[].class);
         assertEquals(2, Array.getLength(invoke));

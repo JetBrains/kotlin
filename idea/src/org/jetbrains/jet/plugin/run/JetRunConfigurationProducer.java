@@ -51,7 +51,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
 
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(@NotNull Location location, ConfigurationContext configurationContext) {
-        final Module module = location.getModule();
+        Module module = location.getModule();
         if (module == null) {
             return null;
         }

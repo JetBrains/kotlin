@@ -95,7 +95,7 @@ public class OverrideResolver {
     }
 
     private void generateOverridesAndDelegationInAClass(
-            @NotNull final MutableClassDescriptor classDescriptor,
+            @NotNull MutableClassDescriptor classDescriptor,
             @NotNull Set<ClassifierDescriptor> processed,
             @NotNull Set<MutableClassDescriptor> classesBeingAnalyzed
             // to filter out classes such as stdlib and others that come from dependencies

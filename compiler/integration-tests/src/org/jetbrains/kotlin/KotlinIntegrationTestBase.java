@@ -56,7 +56,7 @@ public abstract class KotlinIntegrationTestBase {
     public TestRule watchman = new TestWatcher() {
         @Override
         protected void starting(Description description) {
-            final File baseTestDataDir =
+            File baseTestDataDir =
                     new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
             testDataDir = new File(baseTestDataDir, description.getMethodName());
         }
@@ -64,9 +64,9 @@ public abstract class KotlinIntegrationTestBase {
     };
 
     protected int runCompiler(String logName, String... arguments) throws Exception {
-        final File lib = getCompilerLib();
+        File lib = getCompilerLib();
 
-        final String classpath = lib.getAbsolutePath() + File.separator + "kotlin-compiler.jar";
+        String classpath = lib.getAbsolutePath() + File.separator + "kotlin-compiler.jar";
 
         Collection<String> javaArgs = new ArrayList<String>();
         javaArgs.add("-cp");
@@ -97,7 +97,7 @@ public abstract class KotlinIntegrationTestBase {
     }
 
     private static String replacePath(String content, File path, String pathId) {
-        final String absolutePath = path.getAbsolutePath();
+        String absolutePath = path.getAbsolutePath();
 
         return content
                 .replace(absolutePath + "/", pathId + "/")
@@ -113,17 +113,17 @@ public abstract class KotlinIntegrationTestBase {
     }
 
     protected void check(String baseName, String content) throws IOException {
-        final File actualFile = new File(testDataDir, baseName + ".actual");
-        final File expectedFile = new File(testDataDir, baseName + ".expected");
+        File actualFile = new File(testDataDir, baseName + ".actual");
+        File expectedFile = new File(testDataDir, baseName + ".expected");
 
-        final String normalizedContent = normalizeOutput(content);
+        String normalizedContent = normalizeOutput(content);
 
         if (!expectedFile.isFile()) {
             Files.write(normalizedContent, actualFile, Charsets.UTF_8);
             fail("No .expected file " + expectedFile);
         }
         else {
-            final String goldContent = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
+            String goldContent = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
             try {
                 assertEquals(goldContent, normalizedContent);
                 actualFile.delete();
@@ -135,7 +135,7 @@ public abstract class KotlinIntegrationTestBase {
         }
     }
 
-    protected static int runProcess(final GeneralCommandLine commandLine, final StringBuilder executionLog) throws ExecutionException {
+    protected static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {
         OSProcessHandler handler =
                 new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString(), commandLine.getCharset());
 
@@ -175,23 +175,23 @@ public abstract class KotlinIntegrationTestBase {
     }
 
     protected static File getJavaRuntime() {
-        final File javaHome = new File(System.getProperty("java.home"));
-        final String javaExe = SystemInfo.isWindows ? "java.exe" : "java";
+        File javaHome = new File(System.getProperty("java.home"));
+        String javaExe = SystemInfo.isWindows ? "java.exe" : "java";
 
-        final File runtime = new File(javaHome, "bin" + File.separator + javaExe);
+        File runtime = new File(javaHome, "bin" + File.separator + javaExe);
         assertTrue("no java runtime at " + runtime, runtime.isFile());
 
         return runtime;
     }
 
     protected static File getCompilerLib() {
-        final File file = new File(getKotlinProjectHome(), "dist" + File.separator + "kotlinc" + File.separator + "lib");
+        File file = new File(getKotlinProjectHome(), "dist" + File.separator + "kotlinc" + File.separator + "lib");
         assertTrue("no kotlin compiler lib at " + file, file.isDirectory());
         return file;
     }
 
     protected static String getKotlinRuntimePath() {
-        final File file = new File(getCompilerLib(), "kotlin-runtime.jar");
+        File file = new File(getCompilerLib(), "kotlin-runtime.jar");
         assertTrue("no kotlin runtime at " + file, file.isFile());
         return file.getAbsolutePath();
     }

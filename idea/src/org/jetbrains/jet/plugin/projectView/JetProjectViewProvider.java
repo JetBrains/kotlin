@@ -126,7 +126,7 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
     }
 
     private boolean fileInRoots(VirtualFile file) {
-        final ProjectFileIndex index = ProjectRootManager.getInstance(myProject).getFileIndex();
+        ProjectFileIndex index = ProjectRootManager.getInstance(myProject).getFileIndex();
         return file != null && (index.isInSourceContent(file) || index.isInLibraryClasses(file) || index.isInLibrarySource(file));
     }
 }

@@ -43,19 +43,19 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testSuperclassNames() {
-        final PsiFile psiFile = myFixture.configureByText("foo.kt", "import java.util.ArrayList as alist\nclass C(): alist() { }");
-        final List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
-        final JetClass jetClass = (JetClass) declarations.get(0);
-        final PsiJetClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
-        final List<String> names = stub.getSuperNames();
+        PsiFile psiFile = myFixture.configureByText("foo.kt", "import java.util.ArrayList as alist\nclass C(): alist() { }");
+        List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
+        JetClass jetClass = (JetClass) declarations.get(0);
+        PsiJetClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
+        List<String> names = stub.getSuperNames();
         assertSameElements(names, "ArrayList", "alist");
     }
 
     public void testClassIsTrait() {
         PsiFile psiFile = myFixture.configureByText("foo.kt", "trait Test { }");
-        final List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
-        final JetClass jetClass = (JetClass) declarations.get(0);
-        final PsiJetClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
+        List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
+        JetClass jetClass = (JetClass) declarations.get(0);
+        PsiJetClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
         assertEquals(true, stub.isTrait());
     }
 
@@ -220,18 +220,18 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 
-    private void doBuildTest(@NonNls final String source, @NonNls @NotNull final String tree) {
-        final JetFile file = (JetFile) createLightFile(JetFileType.INSTANCE, source);
-        final FileASTNode fileNode = file.getNode();
+    private void doBuildTest(@NonNls String source, @NonNls @NotNull String tree) {
+        JetFile file = (JetFile) createLightFile(JetFileType.INSTANCE, source);
+        FileASTNode fileNode = file.getNode();
         assertNotNull(fileNode);
         // assertFalse(fileNode.isParsed()); // TODO
 
         JetFileStubBuilder jetStubBuilder = new JetFileStubBuilder();
 
-        final StubElement lighterTree = jetStubBuilder.buildStubTree(file);
+        StubElement lighterTree = jetStubBuilder.buildStubTree(file);
         // assertFalse(fileNode.isParsed()); // TODO
 
-        final String lightStr = DebugUtil.stubTreeToString(lighterTree);
+        String lightStr = DebugUtil.stubTreeToString(lighterTree);
 
         assertEquals("light tree differs", tree, lightStr);
     }

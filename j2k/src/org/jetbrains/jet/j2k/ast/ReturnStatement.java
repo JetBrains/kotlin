@@ -27,7 +27,7 @@ public class ReturnStatement extends Statement {
         myExpression = expression;
     }
 
-    public ReturnStatement(final Expression expression, final String conversion) {
+    public ReturnStatement(Expression expression, String conversion) {
         this(expression);
         myConversion = conversion;
     }

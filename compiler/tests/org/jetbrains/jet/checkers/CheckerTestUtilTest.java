@@ -119,7 +119,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
             makeTestData(diagnostics, diagnosedRanges);
 
-            final List<String> expectedMessages = Lists.newArrayList(expected);
+            List<String> expectedMessages = Lists.newArrayList(expected);
             final List<String> actualMessages = Lists.newArrayList();
 
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {

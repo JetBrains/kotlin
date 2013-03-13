@@ -69,7 +69,7 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     public void gen(JetNamedFunction f) {
-        final SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
+        SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
         JvmMethodSignature method =
                 typeMapper.mapToCallableMethod(
@@ -383,7 +383,7 @@ public class FunctionCodegen extends GenerationStateAware {
             throw new IllegalStateException();
         }
 
-        final List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
+        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
         assert kotlinParameterTypes != null;
 
         if (receiverParameter != null) {
@@ -572,7 +572,7 @@ public class FunctionCodegen extends GenerationStateAware {
         if (!isStatic && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerInternalName.getDescriptor());
         }
-        final MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
+        MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
                                              isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX,
                                              descriptor, null, null);
         InstructionAdapter iv = new InstructionAdapter(mv);
@@ -628,8 +628,8 @@ public class FunctionCodegen extends GenerationStateAware {
             receiverType = state.getTypeMapper().mapType(receiverParameter.getType());
         }
 
-        final int extraInLocalVariablesTable = getSizeOfExplicitArgumentsInLocalVariablesTable(aStatic, hasOuter, isEnumConstructor, receiverType);
-        final int countOfExtraVarsInMethodArgs = getCountOfExplicitArgumentsInMethodArguments(hasOuter, hasReceiver, isEnumConstructor);
+        int extraInLocalVariablesTable = getSizeOfExplicitArgumentsInLocalVariablesTable(aStatic, hasOuter, isEnumConstructor, receiverType);
+        int countOfExtraVarsInMethodArgs = getCountOfExplicitArgumentsInMethodArguments(hasOuter, hasReceiver, isEnumConstructor);
 
         Type[] argTypes = jvmSignature.getArgumentTypes();
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
@@ -641,7 +641,7 @@ public class FunctionCodegen extends GenerationStateAware {
             paramSizeInLocalVariablesTable += size;
         }
 
-        final int maskIndex = extraInLocalVariablesTable + paramSizeInLocalVariablesTable;
+        int maskIndex = extraInLocalVariablesTable + paramSizeInLocalVariablesTable;
 
         loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, receiverType, ownerInternalName.getAsmType(), aStatic, hasOuter, isEnumConstructor);
 
@@ -674,9 +674,9 @@ public class FunctionCodegen extends GenerationStateAware {
             indexInLocalVariablesTable += t.getSize();
         }
 
-        final String internalName = ownerInternalName.getInternalName();
-        final String jvmSignatureName = jvmSignature.getName();
-        final String jvmSignatureDescriptor = jvmSignature.getDescriptor();
+        String internalName = ownerInternalName.getInternalName();
+        String jvmSignatureName = jvmSignature.getName();
+        String jvmSignatureDescriptor = jvmSignature.getDescriptor();
         if (!aStatic) {
             if (kind == OwnerKind.TRAIT_IMPL) {
                 iv.invokeinterface(internalName, jvmSignatureName, jvmSignatureDescriptor);
@@ -806,7 +806,7 @@ public class FunctionCodegen extends GenerationStateAware {
     ) {
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
-        final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
@@ -854,7 +854,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
-        final MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }

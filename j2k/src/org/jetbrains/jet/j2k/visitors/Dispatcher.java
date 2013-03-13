@@ -22,7 +22,7 @@ import org.jetbrains.jet.j2k.Converter;
 public class Dispatcher {
     private ExpressionVisitor myExpressionVisitor;
 
-    public void setExpressionVisitor(final ExpressionVisitor expressionVisitor) {
+    public void setExpressionVisitor(ExpressionVisitor expressionVisitor) {
         this.myExpressionVisitor = expressionVisitor;
     }
 

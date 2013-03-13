@@ -125,7 +125,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     }
 
     @Override
-    public Icon getElementIcon(final int flags) {
+    public Icon getElementIcon(int flags) {
         throw new UnsupportedOperationException("This should be done byt JetIconProvider");
     }
 

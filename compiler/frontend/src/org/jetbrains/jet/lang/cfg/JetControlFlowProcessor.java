@@ -370,7 +370,7 @@ public class JetControlFlowProcessor {
         @Override
         public void visitTryExpression(JetTryExpression expression) {
             builder.read(expression);
-            final JetFinallySection finallyBlock = expression.getFinallyBlock();
+            JetFinallySection finallyBlock = expression.getFinallyBlock();
             final FinallyBlockGenerator finallyBlockGenerator = new FinallyBlockGenerator(finallyBlock);
             if (finallyBlock != null) {
                 builder.enterTryFinally(new GenerationTrigger() {
@@ -388,7 +388,7 @@ public class JetControlFlowProcessor {
             }
 
             List<JetCatchClause> catchClauses = expression.getCatchClauses();
-            final boolean hasCatches = !catchClauses.isEmpty();
+            boolean hasCatches = !catchClauses.isEmpty();
             Label onException = null;
             if (hasCatches) {
                 onException = builder.createUnboundLabel("onException");
@@ -786,7 +786,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitIsExpression(final JetIsExpression expression) {
+        public void visitIsExpression(JetIsExpression expression) {
             generateInstructions(expression.getLeftHandSide(), inCondition);
             // no CF for types
             // TODO : builder.read(expression.getPattern());

@@ -55,10 +55,10 @@ public class JavaToKotlinActionUtil {
     @NotNull
     /*package*/ static List<PsiFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {
         Set<VirtualFile> filesSet = allVirtualFiles(vFiles);
-        final PsiManager manager = PsiManager.getInstance(project);
-        final List<PsiFile> res = new ArrayList<PsiFile>();
-        for (final VirtualFile file : filesSet) {
-            final PsiFile psiFile = manager.findFile(file);
+        PsiManager manager = PsiManager.getInstance(project);
+        List<PsiFile> res = new ArrayList<PsiFile>();
+        for (VirtualFile file : filesSet) {
+            PsiFile psiFile = manager.findFile(file);
             if (psiFile != null && psiFile.getFileType() instanceof JavaFileType) {
                 res.add(psiFile);
             }
@@ -138,7 +138,7 @@ public class JavaToKotlinActionUtil {
                     //noinspection CallToPrintStackTrace
                     e.printStackTrace();
                 }
-                final PsiManager manager = psiFile.getManager();
+                PsiManager manager = psiFile.getManager();
                 assert manager != null;
                 VirtualFile copy = virtualFile.copy(manager, virtualFile.getParent(), virtualFile.getNameWithoutExtension() + ".kt");
                 copy.setBinaryContent(CharsetToolkit.getUtf8Bytes(result));

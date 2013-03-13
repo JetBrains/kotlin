@@ -79,7 +79,7 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
 
     private void doTest() {
         myFixture.configureByFile(getTestName(false) + ".kt");
-        final JetFile file = (JetFile) myFixture.getFile();
+        JetFile file = (JetFile) myFixture.getFile();
         PsiElement lastChild = file.getLastChild();
         assert lastChild != null;
         String expectedResultText = null;

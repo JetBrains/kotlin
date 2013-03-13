@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetTypeParameterList;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterListStub;
 
 public class PsiJetTypeParameterListStubImpl extends StubBase<JetTypeParameterList> implements PsiJetTypeParameterListStub {
-    public PsiJetTypeParameterListStubImpl(@NotNull IStubElementType elementType, final StubElement parent) {
+    public PsiJetTypeParameterListStubImpl(@NotNull IStubElementType elementType, StubElement parent) {
         super(parent, elementType);
     }
 

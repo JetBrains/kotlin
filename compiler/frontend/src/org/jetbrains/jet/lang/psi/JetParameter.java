@@ -31,7 +31,7 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
 
     public static final ArrayFactory<JetParameter> ARRAY_FACTORY = new ArrayFactory<JetParameter>() {
         @Override
-        public JetParameter[] create(final int count) {
+        public JetParameter[] create(int count) {
             return count == 0 ? EMPTY_ARRAY : new JetParameter[count];
         }
     };

@@ -34,15 +34,15 @@ public class JetRunConfigurationSettingsFormatConverterProvider extends Converte
 
     @NotNull
     @Override
-    public ProjectConverter createConverter(@NotNull final ConversionContext context) {
+    public ProjectConverter createConverter(@NotNull ConversionContext context) {
         return new ProjectConverter() {
             @NotNull
             @Override
             public ConversionProcessor<RunManagerSettings> createRunConfigurationsConverter() {
                 return new ConversionProcessor<RunManagerSettings>() {
                     @Override
-                    public boolean isConversionNeeded(@NotNull final RunManagerSettings settings) {
-                        for (final Element runConfiguration : settings.getRunConfigurations()) {
+                    public boolean isConversionNeeded(@NotNull RunManagerSettings settings) {
+                        for (Element runConfiguration : settings.getRunConfigurations()) {
                             if (isJetRunConfiguration(runConfiguration) && getOldSettings(runConfiguration) != null) {
                                 return true;
                             }
@@ -51,16 +51,16 @@ public class JetRunConfigurationSettingsFormatConverterProvider extends Converte
                     }
 
                     @Override
-                    public void process(@NotNull final RunManagerSettings settings) throws CannotConvertException {
-                        for (final Element runConfiguration : settings.getRunConfigurations()) {
+                    public void process(@NotNull RunManagerSettings settings) throws CannotConvertException {
+                        for (Element runConfiguration : settings.getRunConfigurations()) {
                             if (isJetRunConfiguration(runConfiguration)) {
-                                final Element oldSettings = getOldSettings(runConfiguration);
+                                Element oldSettings = getOldSettings(runConfiguration);
                                 if (oldSettings == null) continue;
-                                for (final Object optionObj : oldSettings.getChildren("option")) {
+                                for (Object optionObj : oldSettings.getChildren("option")) {
                                     if (optionObj instanceof Element) {
-                                        final Element option = (Element)optionObj;
-                                        final String optionName = option.getAttributeValue("name");
-                                        final String optionValue = option.getAttributeValue("value");
+                                        Element option = (Element)optionObj;
+                                        String optionName = option.getAttributeValue("name");
+                                        String optionValue = option.getAttributeValue("value");
                                         if ("mainClassName".equals(optionName)) {
                                             runConfiguration.addContent(createOption("MAIN_CLASS_NAME", optionValue));
                                         }
@@ -84,18 +84,18 @@ public class JetRunConfigurationSettingsFormatConverterProvider extends Converte
         };
     }
 
-    private static boolean isJetRunConfiguration(@NotNull final Element runConfiguration) {
+    private static boolean isJetRunConfiguration(@NotNull Element runConfiguration) {
         return "JetRunConfigurationType".equals(runConfiguration.getAttributeValue("type"));
     }
 
     @Nullable
-    private static Element getOldSettings(@NotNull final Element runConfiguration) {
+    private static Element getOldSettings(@NotNull Element runConfiguration) {
         return runConfiguration.getChild("JetRunConfigurationSettings");
     }
 
     @NotNull
-    private static Element createOption(@NotNull final String name, @Nullable final String value) {
-        final Element option = new Element("option");
+    private static Element createOption(@NotNull String name, @Nullable String value) {
+        Element option = new Element("option");
         option.setAttribute("name", name);
         option.setAttribute("value", value == null ? "" : value);
         return option;

@@ -31,7 +31,7 @@ public class ExpressionVisitorForDirectObjectInheritors extends ExpressionVisito
     }
 
     @Override
-    public void visitMethodCallExpression(@NotNull final PsiMethodCallExpression expression) {
+    public void visitMethodCallExpression(@NotNull PsiMethodCallExpression expression) {
         if (superMethodInvocation(expression.getMethodExpression(), "hashCode")) {
             myResult = new DummyMethodCallExpression(new IdentifierImpl("System"), "identityHashCode", new IdentifierImpl("this"));
         }
@@ -47,11 +47,11 @@ public class ExpressionVisitorForDirectObjectInheritors extends ExpressionVisito
     }
 
     @Override
-    public void visitReferenceExpression(@NotNull final PsiReferenceExpression expression) {
+    public void visitReferenceExpression(@NotNull PsiReferenceExpression expression) {
         super.visitReferenceExpression(expression);
     }
 
-    private static boolean superMethodInvocation(@NotNull final PsiReferenceExpression expression, final String methodName) {
+    private static boolean superMethodInvocation(@NotNull PsiReferenceExpression expression, String methodName) {
         String referenceName = expression.getReferenceName();
         PsiExpression qualifierExpression = expression.getQualifierExpression();
         if (referenceName != null && referenceName.equals(methodName)) {

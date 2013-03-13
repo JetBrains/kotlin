@@ -128,7 +128,7 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetTypeInfo getTypeInfo(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+    public JetTypeInfo getTypeInfo(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, scope, dataFlowInfo, expectedType, ExpressionPosition.FREE
         );
@@ -136,7 +136,7 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+    public JetType getType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace).getType();
     }
 
@@ -174,8 +174,8 @@ public class ExpressionTypingServices {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
 
-        final boolean blockBody = function.hasBlockBody();
-        final ExpressionTypingContext newContext =
+        boolean blockBody = function.hasBlockBody();
+        ExpressionTypingContext newContext =
                 blockBody
                 ? context.replaceExpectedType(NO_EXPECTED_TYPE)
                 : context;
@@ -289,19 +289,19 @@ public class ExpressionTypingServices {
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
         for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
-            final JetElement statement = iterator.next();
+            JetElement statement = iterator.next();
             if (!(statement instanceof JetExpression)) {
                 continue;
             }
             trace.record(STATEMENT, statement);
-            final JetExpression statementExpression = (JetExpression) statement;
+            JetExpression statementExpression = (JetExpression) statement;
             //TODO constructor assert context.expectedType != FORBIDDEN : ""
             if (!iterator.hasNext()) {
                 if (context.expectedType != NO_EXPECTED_TYPE) {
                     if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType)) {
                         // This implements coercion to Unit
                         TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace, "trace to resolve coercion to unit with expected type");
-                        final boolean[] mismatch = new boolean[1];
+                        boolean[] mismatch = new boolean[1];
                         ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
                         newContext = createContext(newContext, errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType);
                         result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);

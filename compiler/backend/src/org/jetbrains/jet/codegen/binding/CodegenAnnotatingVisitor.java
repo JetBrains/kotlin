@@ -111,7 +111,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     public void visitJetFile(JetFile file) {
         if (file.isScript()) {
             //noinspection ConstantConditions
-            final ClassDescriptor classDescriptor =
+            ClassDescriptor classDescriptor =
                     bindingContext.get(CLASS_FOR_FUNCTION, bindingContext.get(SCRIPT, file.getScript()));
             classStack.push(classDescriptor);
             //noinspection ConstantConditions
@@ -132,7 +132,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
         assert descriptor != null;
 
-        final boolean trivial = enumEntry.getDeclarations().isEmpty();
+        boolean trivial = enumEntry.getDeclarations().isEmpty();
         if (!trivial) {
             bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
             super.visitEnumEntry(enumEntry);
@@ -211,7 +211,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             return;
         }
 
-        final String name = inventAnonymousClassName(expression.getObjectDeclaration());
+        String name = inventAnonymousClassName(expression.getObjectDeclaration());
         recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
         classStack.push(classDescriptor);

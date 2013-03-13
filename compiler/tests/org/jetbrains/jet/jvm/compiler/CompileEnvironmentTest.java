@@ -56,7 +56,7 @@ public class CompileEnvironmentTest extends TestCase {
             try {
                 JarInputStream is = new JarInputStream(fileInputStream);
                 try {
-                    final List<String> entries = listEntries(is);
+                    List<String> entries = listEntries(is);
                     assertTrue(entries.contains("Smoke/" + PackageClassUtils.getPackageClassName(new FqName("Smoke")) + ".class"));
                     assertEquals(2, entries.size());
                 }
@@ -97,7 +97,7 @@ public class CompileEnvironmentTest extends TestCase {
     private static List<String> listEntries(JarInputStream is) throws IOException {
         List<String> entries = new ArrayList<String>();
         while (true) {
-            final JarEntry jarEntry = is.getNextJarEntry();
+            JarEntry jarEntry = is.getNextJarEntry();
             if (jarEntry == null) {
                 break;
             }

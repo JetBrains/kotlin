@@ -91,7 +91,7 @@ public final class JavaFunctionResolver {
 
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
-            @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
+            @NotNull PsiClass psiClass, PsiMethodWrapper method,
             @NotNull PsiDeclarationProvider scopeData, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
         PsiType returnPsiType = method.getReturnType();
@@ -104,8 +104,8 @@ public final class JavaFunctionResolver {
             return null;
         }
 
-        final PsiMethod psiMethod = method.getPsiMethod();
-        final PsiClass containingClass = psiMethod.getContainingClass();
+        PsiMethod psiMethod = method.getPsiMethod();
+        PsiClass containingClass = psiMethod.getContainingClass();
         if (scopeData.getDeclarationOrigin() == KOTLIN) {
             // TODO: unless maybe class explicitly extends Object
             assert containingClass != null;
@@ -119,7 +119,7 @@ public final class JavaFunctionResolver {
             return trace.get(BindingContext.FUNCTION, psiMethod);
         }
 
-        final SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 ownerDescriptor,
                 annotationResolver.resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
@@ -141,7 +141,7 @@ public final class JavaFunctionResolver {
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
-        final List<String> signatureErrors = Lists.newArrayList();
+        List<String> signatureErrors = Lists.newArrayList();
 
         List<FunctionDescriptor> superFunctions;
         if (ownerDescriptor instanceof ClassDescriptor) {

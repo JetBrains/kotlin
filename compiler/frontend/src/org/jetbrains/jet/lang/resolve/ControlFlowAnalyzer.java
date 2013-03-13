@@ -60,7 +60,7 @@ public class ControlFlowAnalyzer {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
             if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
-            final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
+            JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
             checkFunction(function, expectedReturnType);
@@ -94,7 +94,7 @@ public class ControlFlowAnalyzer {
         }
     }
 
-    private void checkFunction(JetDeclarationWithBody function, final @NotNull JetType expectedReturnType) {
+    private void checkFunction(JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
         assert function instanceof JetDeclaration;
 
         JetExpression bodyExpression = function.getBodyExpression();

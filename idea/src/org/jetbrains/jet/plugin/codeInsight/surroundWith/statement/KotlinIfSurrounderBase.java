@@ -48,7 +48,7 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
 
         // TODO move a comment for first statement
 
-        final JetBlockExpression thenBranch = (JetBlockExpression) ifExpression.getThen();
+        JetBlockExpression thenBranch = (JetBlockExpression) ifExpression.getThen();
         assert thenBranch != null : "Then branch should exist for created if expression: " + ifExpression.getText();
         // Add statements in then branch of created if
         KotlinSurrounderUtils.addStatementsInBlock(thenBranch, statements);

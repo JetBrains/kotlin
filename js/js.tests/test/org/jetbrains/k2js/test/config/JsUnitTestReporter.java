@@ -100,7 +100,7 @@ public class JsUnitTestReporter {
 
     @NotNull
     public TestSuite createTestSuiteAndFlush() {
-        final TestSuite suite = new TestSuite("!");
+        TestSuite suite = new TestSuite("!");
         Collection<String> newFinishedTests = getNewFinishedTests();
         for (String test : newFinishedTests) {
             //NOTE: well, it is a test

@@ -70,7 +70,7 @@ public class PluginJetFilesProvider extends JetFilesProvider {
                             if (file.isDirectory()) return true;
                             if (!index.isInSourceContent(file) && !index.isInTestSourceContent(file)) return true;
 
-                            final FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
+                            FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
                             if (fileType != JetFileType.INSTANCE) return true;
                             PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                             if (psiFile instanceof JetFile) {
@@ -95,7 +95,7 @@ public class PluginJetFilesProvider extends JetFilesProvider {
     }
 
     @Override
-    public Collection<JetFile> allInScope(final GlobalSearchScope scope) {
+    public Collection<JetFile> allInScope(GlobalSearchScope scope) {
         final PsiManager manager = PsiManager.getInstance(project);
 
         Collection<JetFile> jetFiles = Collections2.transform(FileTypeIndex.getFiles(JetFileType.INSTANCE, scope),

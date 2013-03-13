@@ -134,7 +134,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         myBuilder.advanceLexer();
     }
 
-    protected void advanceAtSet(final TokenSet set) {
+    protected void advanceAtSet(TokenSet set) {
         assert _atSet(set);
         myBuilder.advanceLexer();
     }
@@ -161,7 +161,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return false;
     }
 
-    protected boolean at(final IElementType expectation) {
+    protected boolean at(IElementType expectation) {
         if (_at(expectation)) return true;
         IElementType token = tt();
         if (token == IDENTIFIER && expectation instanceof JetKeywordToken) {
@@ -191,7 +191,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     /**
      * Side-effect-free version of atSet()
      */
-    protected boolean _atSet(final TokenSet set) {
+    protected boolean _atSet(TokenSet set) {
         IElementType token = tt();
         if (set.contains(token)) return true;
         if (set.contains(EOL_OR_SEMICOLON)) {
@@ -206,7 +206,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return atSet(TokenSet.create(tokens));
     }
 
-    protected boolean atSet(final TokenSet set) {
+    protected boolean atSet(TokenSet set) {
         if (_atSet(set)) return true;
         IElementType token = tt();
         if (token == IDENTIFIER) {

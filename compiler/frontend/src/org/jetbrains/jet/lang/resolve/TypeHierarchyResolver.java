@@ -183,11 +183,11 @@ public class TypeHierarchyResolver {
 
     @Nullable
     private Collection<JetDeclarationContainer> collectNamespacesAndClassifiers(
-            @NotNull final JetScope outerScope,
-            @NotNull final NamespaceLikeBuilder owner,
+            @NotNull JetScope outerScope,
+            @NotNull NamespaceLikeBuilder owner,
             @NotNull Iterable<? extends PsiElement> declarations
     ) {
-        final Collection<JetDeclarationContainer> forDeferredResolve = new ArrayList<JetDeclarationContainer>();
+        Collection<JetDeclarationContainer> forDeferredResolve = new ArrayList<JetDeclarationContainer>();
 
         ClassifierCollector collector = new ClassifierCollector(outerScope, owner, forDeferredResolve);
 

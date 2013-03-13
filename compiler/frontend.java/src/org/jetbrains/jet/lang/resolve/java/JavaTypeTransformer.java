@@ -55,7 +55,7 @@ public class JavaTypeTransformer {
     }
 
     @NotNull
-    private TypeProjection transformToTypeProjection(@NotNull final PsiType javaType,
+    private TypeProjection transformToTypeProjection(@NotNull PsiType javaType,
             @NotNull final TypeParameterDescriptor typeParameterDescriptor,
             @NotNull final TypeVariableResolver typeVariableByPsiResolver,
             @NotNull final TypeUsage howThisTypeIsUsed
@@ -102,7 +102,7 @@ public class JavaTypeTransformer {
 
     @NotNull
     public JetType transformToType(@NotNull PsiType javaType,
-                                   @NotNull final TypeVariableResolver typeVariableResolver) {
+                                   @NotNull TypeVariableResolver typeVariableResolver) {
         return transformToType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT, typeVariableResolver);
     }
 

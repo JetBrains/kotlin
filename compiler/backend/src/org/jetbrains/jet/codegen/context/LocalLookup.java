@@ -50,14 +50,14 @@ public interface LocalLookup {
             ) {
                 VariableDescriptor vd = (VariableDescriptor) d;
 
-                final boolean idx = localLookup != null && localLookup.lookupLocal(vd);
+                boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
-                final Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
+                Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
                 Type localType = state.getTypeMapper().mapType(vd);
-                final Type type = sharedVarType != null ? sharedVarType : localType;
+                Type type = sharedVarType != null ? sharedVarType : localType;
 
-                final String fieldName = "$" + vd.getName();
+                String fieldName = "$" + vd.getName();
                 StackValue innerValue = sharedVarType != null
                                         ? StackValue.fieldForSharedVar(localType, className, fieldName)
                                         : StackValue.field(type, className, fieldName, false);
@@ -85,14 +85,14 @@ public interface LocalLookup {
             ) {
                 FunctionDescriptor vd = (FunctionDescriptor) d;
 
-                final boolean idx = localLookup.lookupLocal(vd);
+                boolean idx = localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
                 JetElement expression = (JetElement) callableDescriptorToDeclaration(state.getBindingContext(), vd);
                 JvmClassName cn = classNameForAnonymousClass(state.getBindingContext(), expression);
                 Type localType = cn.getAsmType();
 
-                final String fieldName = "$" + vd.getName();
+                String fieldName = "$" + vd.getName();
                 StackValue innerValue = StackValue.field(localType, className, fieldName, false);
 
                 closure.recordField(fieldName, localType);
@@ -117,7 +117,7 @@ public interface LocalLookup {
             ) {
                 if (closure.getEnclosingReceiverDescriptor() != d) return null;
 
-                final JetType receiverType = ((CallableDescriptor) d).getReceiverParameter().getType();
+                JetType receiverType = ((CallableDescriptor) d).getReceiverParameter().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
                 StackValue innerValue = StackValue.field(type, className, CAPTURED_RECEIVER_FIELD, false);
                 closure.setCaptureReceiver();
@@ -143,7 +143,7 @@ public interface LocalLookup {
         );
 
         public StackValue outerValue(EnclosedValueDescriptor d, ExpressionCodegen expressionCodegen) {
-            final int idx = expressionCodegen.lookupLocalIndex(d.getDescriptor());
+            int idx = expressionCodegen.lookupLocalIndex(d.getDescriptor());
             assert idx != -1;
 
             return StackValue.local(idx, d.getType());

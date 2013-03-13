@@ -57,7 +57,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
 
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) file).getBindingContext();
 
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, funOrClass);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, funOrClass);
 
 
         Collection<? extends DeclarationDescriptor> superDescriptors;

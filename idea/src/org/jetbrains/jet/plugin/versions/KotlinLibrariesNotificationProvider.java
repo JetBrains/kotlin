@@ -105,7 +105,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
 
             if (CompilerManager.getInstance(myProject).isExcludedFromCompilation(file)) return null;
 
-            final Module module = ModuleUtilCore.findModuleForFile(file, myProject);
+            Module module = ModuleUtilCore.findModuleForFile(file, myProject);
             if (module == null) return null;
 
             if (!KotlinRuntimeLibraryUtil.isModuleAlreadyConfigured(module)) {
@@ -129,7 +129,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
     }
 
     private EditorNotificationPanel createConfigureRuntimeLibraryNotificationPanel(final Module module) {
-        final EditorNotificationPanel answer = new EditorNotificationPanel();
+        EditorNotificationPanel answer = new EditorNotificationPanel();
 
         answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
         answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
@@ -160,8 +160,8 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         JsModuleSetUp.doSetUpModule(module, updateNotifications);
     }
 
-    private EditorNotificationPanel createUnsupportedAbiVersionNotificationPanel(final Collection<VirtualFile> badRoots) {
-        final EditorNotificationPanel answer = new ErrorNotificationPanel();
+    private EditorNotificationPanel createUnsupportedAbiVersionNotificationPanel(Collection<VirtualFile> badRoots) {
+        EditorNotificationPanel answer = new ErrorNotificationPanel();
 
         VirtualFile kotlinRuntimeJar = KotlinRuntimeLibraryUtil.getLocalKotlinRuntimeJar(myProject);
         if (kotlinRuntimeJar != null && badRoots.contains(kotlinRuntimeJar)) {

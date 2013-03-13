@@ -51,10 +51,10 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
 
                     if (context.getFile() instanceof JetFile && item.getObject() instanceof JetLookupObject) {
                         JetLookupObject lookupObject = (JetLookupObject)item.getObject();
-                        final DeclarationDescriptor descriptor = lookupObject.getDescriptor();
+                        DeclarationDescriptor descriptor = lookupObject.getDescriptor();
                         PsiElement targetElement = lookupObject.getPsiElement();
                         if (descriptor != null) {
-                            final FqName fqn = DescriptorUtils.getFQName(descriptor).toSafe();
+                            FqName fqn = DescriptorUtils.getFQName(descriptor).toSafe();
 
                             // TODO: Find out the way for getting psi element for JS libs
                             if (targetElement != null) {

@@ -181,8 +181,8 @@ public final class AnalyzerFacadeWithCache {
     }
 
     @NotNull
-    public static ResolveSession getLazyResolveSession(@NotNull final JetFile file) {
-        final Project fileProject = file.getProject();
+    public static ResolveSession getLazyResolveSession(@NotNull JetFile file) {
+        Project fileProject = file.getProject();
 
         Collection<JetFile> files = JetFilesProvider.getInstance(fileProject).allInScope(GlobalSearchScope.allScope(fileProject));
 

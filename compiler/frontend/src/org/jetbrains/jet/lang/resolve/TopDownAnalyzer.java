@@ -181,7 +181,7 @@ public class TopDownAnalyzer {
 
     public static void processClassOrObject(
             @NotNull Project project,
-            @NotNull final BindingTrace trace,
+            @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
@@ -234,7 +234,7 @@ public class TopDownAnalyzer {
     public void analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters) {
-        final WritableScope scope = new WritableScopeImpl(
+        WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, moduleDescriptor,
                 new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
 

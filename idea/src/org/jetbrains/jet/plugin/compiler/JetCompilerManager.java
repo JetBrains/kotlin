@@ -55,7 +55,7 @@ public class JetCompilerManager implements ProjectComponent {
                     boolean aborted, int errors, int warnings, CompileContext compileContext
             ) {
                 for (CompilerMessage error : compileContext.getMessages(CompilerMessageCategory.ERROR)) {
-                    final String message = error.getMessage();
+                    String message = error.getMessage();
                     if (message.startsWith(INTERNAL_ERROR_PREFIX) || message.startsWith(PREFIX_WITH_COMPILER_NAME)) {
                         LOG.error(new KotlinCompilerException(message));
                     }

@@ -94,7 +94,7 @@ public class PropertyCodegen extends GenerationStateAware {
             }
 
             Object value = null;
-            final JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
+            JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
             if (initializer != null) {
                 if (initializer instanceof JetConstantExpression) {
                     CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
@@ -177,8 +177,8 @@ public class PropertyCodegen extends GenerationStateAware {
         }
 
         JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
-        final JvmMethodSignature jvmMethodSignature = signature.getJvmMethodSignature();
-        final String descriptor = jvmMethodSignature.getAsmMethod().getDescriptor();
+        JvmMethodSignature jvmMethodSignature = signature.getJvmMethodSignature();
+        String descriptor = jvmMethodSignature.getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, jvmMethodSignature.getGenericsSignature(), null);
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
@@ -208,7 +208,7 @@ public class PropertyCodegen extends GenerationStateAware {
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, OBJECT_TYPE);
                     }
-                    final Type type = typeMapper.mapType(propertyDescriptor);
+                    Type type = typeMapper.mapType(propertyDescriptor);
 
                     iv.visitFieldInsn(
                             kind == OwnerKind.NAMESPACE ? GETSTATIC : GETFIELD,
@@ -261,8 +261,8 @@ public class PropertyCodegen extends GenerationStateAware {
 
         JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
         assert true;
-        final JvmMethodSignature jvmMethodSignature = signature.getJvmMethodSignature();
-        final String descriptor = jvmMethodSignature.getAsmMethod().getDescriptor();
+        JvmMethodSignature jvmMethodSignature = signature.getJvmMethodSignature();
+        String descriptor = jvmMethodSignature.getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, jvmMethodSignature.getGenericsSignature(), null);
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         assert setter != null;
@@ -284,7 +284,7 @@ public class PropertyCodegen extends GenerationStateAware {
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    final Type type = typeMapper.mapType(propertyDescriptor);
+                    Type type = typeMapper.mapType(propertyDescriptor);
                     int paramCode = 0;
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, OBJECT_TYPE);

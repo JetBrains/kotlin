@@ -111,9 +111,9 @@ public class BytecodeCompilerTask extends Task {
     @Override
     public void execute() {
 
-        final BytecodeCompiler compiler = new BytecodeCompiler();
-        final String stdlibPath = (this.stdlib != null ? getPath(this.stdlib) : null);
-        final String[] classpath = (this.compileClasspath != null ? this.compileClasspath.list() : null);
+        BytecodeCompiler compiler = new BytecodeCompiler();
+        String stdlibPath = (this.stdlib != null ? getPath(this.stdlib) : null);
+        String[] classpath = (this.compileClasspath != null ? this.compileClasspath.list() : null);
 
         if (this.src != null) {
 

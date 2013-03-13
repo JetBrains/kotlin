@@ -204,7 +204,7 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
      * @param action
      */
     public static void runWithWriteActionPriority(@NotNull final ProgressIndicator indicator, @NotNull final Runnable action) {
-        final ApplicationAdapter listener = new ApplicationAdapter() {
+        ApplicationAdapter listener = new ApplicationAdapter() {
             @Override
             public void beforeWriteActionStart(Object action) {
                 indicator.cancel();

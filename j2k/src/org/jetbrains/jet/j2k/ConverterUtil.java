@@ -52,7 +52,7 @@ public class ConverterUtil {
     @Nullable
     private static PsiMethod findMainMethod(@NotNull PsiClass aClass) {
         if (isMainClass(aClass)) {
-            final PsiMethod[] mainMethods = aClass.findMethodsByName("main", false);
+            PsiMethod[] mainMethods = aClass.findMethodsByName("main", false);
             return findMainMethod(mainMethods);
         }
         return null;
@@ -77,11 +77,11 @@ public class ConverterUtil {
         if (PsiType.VOID != method.getReturnType()) return false;
         if (!method.hasModifierProperty(PsiModifier.STATIC)) return false;
         if (!method.hasModifierProperty(PsiModifier.PUBLIC)) return false;
-        final PsiParameter[] parameters = method.getParameterList().getParameters();
+        PsiParameter[] parameters = method.getParameterList().getParameters();
         if (parameters.length != 1) return false;
-        final PsiType type = parameters[0].getType();
+        PsiType type = parameters[0].getType();
         if (!(type instanceof PsiArrayType)) return false;
-        final PsiType componentType = ((PsiArrayType) type).getComponentType();
+        PsiType componentType = ((PsiArrayType) type).getComponentType();
         return componentType.equalsToText("java.lang.String");
     }
 

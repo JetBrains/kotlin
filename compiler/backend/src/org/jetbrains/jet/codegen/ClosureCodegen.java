@@ -63,19 +63,19 @@ public class ClosureCodegen extends GenerationStateAware {
     }
 
     public ClosureCodegen gen(JetExpression fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
-        final SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, fun);
+        SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, fun);
         assert descriptor != null;
 
         name = classNameForAnonymousClass(state.getBindingContext(), fun);
-        final ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName() + ".class", fun.getContainingFile());
+        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName() + ".class", fun.getContainingFile());
 
-        final FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
+        FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
 
         SignatureWriter signatureWriter = new SignatureWriter();
 
         assert funDescriptor != null;
-        final List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
-        final JvmClassName funClass = getInternalClassName(funDescriptor);
+        List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
+        JvmClassName funClass = getInternalClassName(funDescriptor);
         signatureWriter.visitClassType(funClass.getInternalName());
         for (ValueParameterDescriptor parameter : parameters) {
             appendType(signatureWriter, parameter.getType(), '=');
@@ -113,7 +113,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
     private void generateConstInstance(PsiElement fun, ClassBuilder cv) {
         MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, new String[0]);
-        final InstructionAdapter iv = new InstructionAdapter(mv);
+        InstructionAdapter iv = new InstructionAdapter(mv);
 
         cv.newField(fun, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, name.getDescriptor(), null, null);
 
@@ -136,7 +136,7 @@ public class ClosureCodegen extends GenerationStateAware {
             ExpressionCodegen expressionCodegen
     ) {
 
-        final CodegenContext closureContext = context.intoClosure(funDescriptor, expressionCodegen);
+        CodegenContext closureContext = context.intoClosure(funDescriptor, expressionCodegen);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         JvmMethodSignature jvmMethodSignature = typeMapper.invokeSignature(funDescriptor);
         fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor);
@@ -149,14 +149,14 @@ public class ClosureCodegen extends GenerationStateAware {
             JetExpression fun,
             ClassBuilder cv
     ) {
-        final JvmMethodSignature bridge = erasedInvokeSignature(funDescriptor);
-        final Method delegate = typeMapper.invokeSignature(funDescriptor).getAsmMethod();
+        JvmMethodSignature bridge = erasedInvokeSignature(funDescriptor);
+        Method delegate = typeMapper.invokeSignature(funDescriptor).getAsmMethod();
 
         if (bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor())) {
             return;
         }
 
-        final MethodVisitor mv =
+        MethodVisitor mv =
                 cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE | ACC_VOLATILE, "invoke", bridge.getAsmMethod().getDescriptor(), null,
                              new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
@@ -169,14 +169,14 @@ public class ClosureCodegen extends GenerationStateAware {
 
             iv.load(0, Type.getObjectType(className));
 
-            final ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
+            ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
             int count = 1;
             if (receiver != null) {
                 StackValue.local(count, OBJECT_TYPE).put(typeMapper.mapType(receiver.getType()), iv);
                 count++;
             }
 
-            final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
+            List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
             for (ValueParameterDescriptor param : params) {
                 StackValue.local(count, OBJECT_TYPE).put(typeMapper.mapType(param.getType()), iv);
                 count++;
@@ -197,13 +197,13 @@ public class ClosureCodegen extends GenerationStateAware {
             ClassBuilder cv,
             CalculatedClosure closure
     ) {
-        final ArrayList<Pair<String, Type>> args = new ArrayList<Pair<String, Type>>();
+        ArrayList<Pair<String, Type>> args = new ArrayList<Pair<String, Type>>();
         calculateConstructorParameters(args, state, closure);
 
-        final Type[] argTypes = nameAnTypeListToTypeArray(args);
+        Type[] argTypes = nameAnTypeListToTypeArray(args);
 
-        final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
+        Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
+        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
@@ -217,8 +217,8 @@ public class ClosureCodegen extends GenerationStateAware {
             int k = 1;
             for (int i = 0; i != argTypes.length; ++i) {
                 StackValue.local(0, OBJECT_TYPE).put(OBJECT_TYPE, iv);
-                final Pair<String, Type> nameAndType = args.get(i);
-                final Type type = nameAndType.second;
+                Pair<String, Type> nameAndType = args.get(i);
+                Type type = nameAndType.second;
                 StackValue.local(k, type).put(type, iv);
                 k += type.getSize();
                 StackValue.field(type, name, nameAndType.first, false).store(type, iv);
@@ -236,27 +236,27 @@ public class ClosureCodegen extends GenerationStateAware {
             GenerationState state,
             CalculatedClosure closure
     ) {
-        final ClassDescriptor captureThis = closure.getCaptureThis();
+        ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
-            final Type type = typeMapper.mapType(captureThis);
+            Type type = typeMapper.mapType(captureThis);
             args.add(new Pair<String, Type>(CAPTURED_THIS_FIELD, type));
         }
-        final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
+        ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
             args.add(new Pair<String, Type>(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiver)));
         }
 
         for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
             if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
-                final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
+                Type sharedVarType = typeMapper.getSharedVarType(descriptor);
 
-                final Type type = sharedVarType != null
+                Type type = sharedVarType != null
                                   ? sharedVarType
                                   : typeMapper.mapType((VariableDescriptor) descriptor);
                 args.add(new Pair<String, Type>("$" + descriptor.getName().getName(), type));
             }
             else if (isLocalNamedFun(state.getBindingContext(), descriptor)) {
-                final Type type =
+                Type type =
                         classNameForAnonymousClass(bindingContext,
                                                    (JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
                         .getAsmType();
@@ -270,7 +270,7 @@ public class ClosureCodegen extends GenerationStateAware {
     }
 
     private static Type[] nameAnTypeListToTypeArray(List<Pair<String, Type>> args) {
-        final Type[] argTypes = new Type[args.size()];
+        Type[] argTypes = new Type[args.size()];
         for (int i = 0; i != argTypes.length; ++i) {
             argTypes[i] = args.get(i).second;
         }
@@ -280,7 +280,7 @@ public class ClosureCodegen extends GenerationStateAware {
     private void appendType(SignatureWriter signatureWriter, JetType type, char variance) {
         signatureWriter.visitTypeArgument(variance);
 
-        final Type rawRetType = typeMapper.mapType(type, JetTypeMapperMode.TYPE_PARAMETER);
+        Type rawRetType = typeMapper.mapType(type, JetTypeMapperMode.TYPE_PARAMETER);
         signatureWriter.visitClassType(rawRetType.getInternalName());
         signatureWriter.visitEnd();
     }

@@ -69,7 +69,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     }
 
     @Override
-    public void readExternal(final Element element) throws InvalidDataException {
+    public void readExternal(Element element) throws InvalidDataException {
         PathMacroManager.getInstance(getProject()).expandPaths(element);
         super.readExternal(element);
 
@@ -81,7 +81,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     }
 
     @Override
-    public void writeExternal(final Element element) throws WriteExternalException {
+    public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
         JavaRunConfigurationExtensionManager.getInstance().writeExternal(this, element);
         DefaultJDOMExternalizer.writeExternal(this, element);
@@ -133,7 +133,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     }
 
     @Override
-    public void setEnvs(@NotNull final Map<String, String> envs) {
+    public void setEnvs(@NotNull Map<String, String> envs) {
         this.myEnvs = envs;
     }
 
@@ -179,7 +179,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment)
         throws ExecutionException {
-        final JavaCommandLineState state = new MyJavaCommandLineState(this, executionEnvironment);
+        JavaCommandLineState state = new MyJavaCommandLineState(this, executionEnvironment);
         state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
         return state;
     }
@@ -188,23 +188,23 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
         private final JetRunConfiguration myConfiguration;
 
-        public MyJavaCommandLineState(@NotNull final JetRunConfiguration configuration,
-                                      final ExecutionEnvironment environment) {
+        public MyJavaCommandLineState(@NotNull JetRunConfiguration configuration,
+                                      ExecutionEnvironment environment) {
             super(environment);
             myConfiguration = configuration;
         }
 
         @Override
         protected JavaParameters createJavaParameters() throws ExecutionException {
-            final JavaParameters params = new JavaParameters();
-            final RunConfigurationModule module = myConfiguration.getConfigurationModule();
+            JavaParameters params = new JavaParameters();
+            RunConfigurationModule module = myConfiguration.getConfigurationModule();
 
-            final int classPathType = JavaParametersUtil.getClasspathType(
+            int classPathType = JavaParametersUtil.getClasspathType(
                     module,
                     myConfiguration.getRunClass(),
                     false);
 
-            final String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH
+            String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH
                                                                                 : null;
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
             JavaParametersUtil.configureConfiguration(params, myConfiguration);

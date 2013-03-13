@@ -57,7 +57,7 @@ public class JetParsing extends AbstractJetParsing {
         return jetParsing;
     }
 
-    private static JetParsing createForByClause(final SemanticWhitespaceAwarePsiBuilder builder) {
+    private static JetParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
         final SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
         JetParsing jetParsing = new JetParsing(builderForByClause);
         jetParsing.myExpressionParsing = new JetExpressionParsing(builderForByClause, jetParsing) {
@@ -753,7 +753,7 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // CLASS_KEYWORD
 
-        final PsiBuilder.Marker objectDeclaration = mark();
+        PsiBuilder.Marker objectDeclaration = mark();
         parseObject(false, true);
         objectDeclaration.done(OBJECT_DECLARATION);
 

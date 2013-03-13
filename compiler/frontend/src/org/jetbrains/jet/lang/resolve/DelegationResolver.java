@@ -110,7 +110,7 @@ public class DelegationResolver {
 
     private static boolean isNotTrait(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            final ClassKind kind = ((ClassDescriptor) descriptor).getKind();
+            ClassKind kind = ((ClassDescriptor) descriptor).getKind();
             return kind != ClassKind.TRAIT;
         }
         return false;

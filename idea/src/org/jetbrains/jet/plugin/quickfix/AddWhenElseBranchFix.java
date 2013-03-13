@@ -68,7 +68,7 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         element.addAfter(JetPsiFactory.createNewLine(project), insertedBranch);
 
         JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
-        final TextRange textRange = insertedWhenEntry.getTextRange();
+        TextRange textRange = insertedWhenEntry.getTextRange();
 
         int indexOfOpenBrace = insertedWhenEntry.getText().indexOf('{');
         editor.getCaretModel().moveToOffset(textRange.getStartOffset() + indexOfOpenBrace + 1);

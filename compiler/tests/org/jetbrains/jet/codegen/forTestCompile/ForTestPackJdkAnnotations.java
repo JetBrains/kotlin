@@ -63,7 +63,7 @@ public class ForTestPackJdkAnnotations {
         if (ForTestCompileSomething.ACTUALLY_COMPILE) {
             return getJarFile();
         }
-        final File jdkAnnotations = new File("dist/kotlinc/lib/kotlin-jdk-annotations.jar");
+        File jdkAnnotations = new File("dist/kotlinc/lib/kotlin-jdk-annotations.jar");
         if (!jdkAnnotations.exists()) {
             throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
         }

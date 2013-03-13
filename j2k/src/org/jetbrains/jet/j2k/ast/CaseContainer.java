@@ -26,7 +26,7 @@ public class CaseContainer extends Statement {
     private final List<Statement> myCaseStatement;
     private final Block myBlock;
 
-    public CaseContainer(final List<Statement> caseStatement, @NotNull final List<Statement> statements) {
+    public CaseContainer(List<Statement> caseStatement, @NotNull List<Statement> statements) {
         myCaseStatement = caseStatement;
         List<Statement> newStatements = new LinkedList<Statement>();
         for (Statement s : statements)

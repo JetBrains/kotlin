@@ -67,7 +67,7 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
 
     @Override
     public MemberChooserObject getParentNodeDelegate() {
-        final DeclarationDescriptor parent = myDescriptor.getContainingDeclaration();
+        DeclarationDescriptor parent = myDescriptor.getContainingDeclaration();
         PsiElement declaration;
         if (myPsiElement instanceof JetDeclaration) {
             // kotlin

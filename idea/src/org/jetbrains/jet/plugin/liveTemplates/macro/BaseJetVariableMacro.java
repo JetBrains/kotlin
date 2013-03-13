@@ -51,7 +51,7 @@ public abstract class BaseJetVariableMacro extends Macro {
     private JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
         if (params.length != 0) return null;
 
-        final Project project = context.getProject();
+        Project project = context.getProject();
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
@@ -108,16 +108,16 @@ public abstract class BaseJetVariableMacro extends Macro {
 
     @Override
     public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
-        final JetNamedDeclaration[] vars = getVariables(params, context);
+        JetNamedDeclaration[] vars = getVariables(params, context);
         if (vars == null || vars.length == 0) return null;
         return new JetPsiElementResult(vars[0]);
     }
 
     @Override
     public LookupElement[] calculateLookupItems(@NotNull Expression[] params, ExpressionContext context) {
-        final PsiNamedElement[] vars = getVariables(params, context);
+        PsiNamedElement[] vars = getVariables(params, context);
         if (vars == null || vars.length < 2) return null;
-        final Set<LookupElement> set = new LinkedHashSet<LookupElement>();
+        Set<LookupElement> set = new LinkedHashSet<LookupElement>();
         for (PsiNamedElement var : vars) {
             set.add(LookupElementBuilder.create(var));
         }

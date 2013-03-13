@@ -40,14 +40,14 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testIf() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(15, main.invoke(null, true));
         assertEquals(20, main.invoke(null, false));
     }
 
     public void testSingleBranchIf() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(15, main.invoke(null, true));
         assertEquals(20, main.invoke(null, false));
     }
@@ -66,42 +66,42 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     private void factorialTest(String name) throws Exception {
         loadFile(name);
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(6, main.invoke(null, 3));
         assertEquals(120, main.invoke(null, 5));
     }
 
     public void testContinue() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(3, main.invoke(null, 4));
         assertEquals(7, main.invoke(null, 5));
     }
 
     public void testIfNoElse() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(5, main.invoke(null, 5, true));
         assertEquals(10, main.invoke(null, 5, false));
     }
 
     public void testCondJumpOnStack() throws Exception {
         loadText("import java.lang.Boolean as jlBoolean; fun foo(a: String): Int = if (jlBoolean.parseBoolean(a)) 5 else 10");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(5, main.invoke(null, "true"));
         assertEquals(10, main.invoke(null, "false"));
     }
 
     public void testFor() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
         assertEquals("IntelliJ IDEA", main.invoke(null, args));
     }
 
     public void testIfBlock() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
         assertEquals("TTT", main.invoke(null, args));
         args = Arrays.asList("JetBrains");
@@ -110,14 +110,14 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testForInArray() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
         assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
     }
 
     public void testForInRange() throws Exception {
         loadText("fun foo(sb: StringBuilder) { for(x in 1..4) sb.append(x) }");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         StringBuilder stringBuilder = new StringBuilder();
         main.invoke(null, stringBuilder);
         assertEquals("1234", stringBuilder.toString());
@@ -125,20 +125,20 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testThrowCheckedException() throws Exception {
         loadText("fun foo() { throw Exception(); }");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertThrows(main, Exception.class, null);
     }
 
     public void testTryCatch() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals("no message", main.invoke(null, "0"));
         assertEquals("For input string: \"a\"", main.invoke(null, "a"));
     }
 
     public void testTryFinally() throws Exception {
         loadFile();
-        final Method main = generateFunction();
+        Method main = generateFunction();
         StringBuilder sb = new StringBuilder();
         main.invoke(null, sb, "9");
         assertEquals("foo9bar", sb.toString());
@@ -157,7 +157,7 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertTrue(text.contains("IFNE"));
         assertFalse(text.contains("IF_ICMPEQ"));
         assertFalse(text.contains("IF_ICMPNE"));
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(true, main.invoke(null, 0, 1));
         assertEquals(false, main.invoke(null, 1, 0));
     }
@@ -166,14 +166,14 @@ public class ControlStructuresTest extends CodegenTestCase {
         loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
         String text = generateToText();
         assertTrue(!text.contains("java/lang/Object.equals"));
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, null, null));
     }
 
     public void testCompareToNonnullableEq() throws Exception {
         loadText("fun foo(a: String?, b: String): Boolean = a == b || b == a");
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(false, main.invoke(null, null, "lala"));
         assertEquals(true, main.invoke(null, "papa", "papa"));
     }
@@ -182,7 +182,7 @@ public class ControlStructuresTest extends CodegenTestCase {
         loadText("fun foo(a: String?, b: String): Boolean = a != b");
         String text = generateToText();
         assertTrue(text.contains("IXOR"));
-        final Method main = generateFunction();
+        Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, "papa", "papa"));
     }

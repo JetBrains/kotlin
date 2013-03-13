@@ -37,7 +37,7 @@ public class File extends Node {
     @NotNull
     @Override
     public String toKotlin() {
-        final String common = AstUtil.joinNodes(myImports, N) + N2 + AstUtil.joinNodes(myClasses, N) + N + myMainFunction;
+        String common = AstUtil.joinNodes(myImports, N) + N2 + AstUtil.joinNodes(myClasses, N) + N + myMainFunction;
         if (myPackageName.isEmpty()) {
             return common;
         }

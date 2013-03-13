@@ -58,7 +58,7 @@ public class Increment implements IntrinsicMethod {
                 operand = ((JetParenthesizedExpression) operand).getExpression();
             }
             if (operand instanceof JetReferenceExpression) {
-                final int index = codegen.indexOfLocal((JetReferenceExpression) operand);
+                int index = codegen.indexOfLocal((JetReferenceExpression) operand);
                 if (index >= 0 && isIntPrimitive(expectedType)) {
                     return StackValue.preIncrement(index, myDelta);
                 }

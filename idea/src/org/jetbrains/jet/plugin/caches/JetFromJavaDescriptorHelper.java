@@ -151,7 +151,7 @@ class JetFromJavaDescriptorHelper {
         PsiClass containingClass = method.getContainingClass();
 
         if (containingClass != null) {
-            final String qualifiedName = containingClass.getQualifiedName();
+            String qualifiedName = containingClass.getQualifiedName();
             assert qualifiedName != null;
 
             FqName classFQN = new FqName(qualifiedName);
@@ -199,7 +199,7 @@ class JetFromJavaDescriptorHelper {
         Collection<PsiAnnotation> annotations = JavaAnnotationIndex.getInstance().get(annotationName, project, scope);
         for (PsiAnnotation annotation : annotations) {
             PsiModifierList modifierList = (PsiModifierList) annotation.getParent();
-            final PsiElement owner = modifierList.getParent();
+            PsiElement owner = modifierList.getParent();
             if (owner instanceof PsiClass) {
                 classes.add((PsiClass) owner);
             }

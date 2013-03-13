@@ -176,7 +176,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
 
         ClassVisitor visitor = new ClassVisitor(Opcodes.ASM4) {
             @Override
-            public MethodVisitor visitMethod(int access, String name, final String desc, final String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                 return new MethodVisitor(Opcodes.ASM4) {
                     private Label lastLabel;
 

@@ -104,7 +104,7 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
     }
 
 
-    public static JetIntentionActionFactory createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier) {
+    public static JetIntentionActionFactory createRemoveModifierFromListOwnerFactory(JetKeywordToken modifier) {
         return createRemoveModifierFromListOwnerFactory(modifier, false);
     }
 

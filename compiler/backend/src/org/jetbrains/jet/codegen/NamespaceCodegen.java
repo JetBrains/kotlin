@@ -148,12 +148,12 @@ public class NamespaceCodegen extends MemberCodegen {
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
                     {
-                        final CodegenContext context =
+                        CodegenContext context =
                                 CodegenContext.STATIC.intoNamespace(descriptor);
                         genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, builder);
                     }
                     {
-                        final CodegenContext context =
+                        CodegenContext context =
                                 CodegenContext.STATIC.intoNamespacePart(className, descriptor);
                         genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                     }
@@ -216,9 +216,9 @@ public class NamespaceCodegen extends MemberCodegen {
 
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetProperty) {
-                    final JetExpression initializer = ((JetProperty) declaration).getInitializer();
+                    JetExpression initializer = ((JetProperty) declaration).getInitializer();
                     if (initializer != null && !(initializer instanceof JetConstantExpression)) {
-                        final PropertyDescriptor descriptor =
+                        PropertyDescriptor descriptor =
                                 (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
                         assert descriptor != null;
                         codegen.genToJVMStack(initializer);
@@ -238,7 +238,7 @@ public class NamespaceCodegen extends MemberCodegen {
         for (JetFile file : files) {
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetProperty) {
-                    final JetExpression initializer = ((JetProperty) declaration).getInitializer();
+                    JetExpression initializer = ((JetProperty) declaration).getInitializer();
                     if (initializer != null && !(initializer instanceof JetConstantExpression)) {
                         return true;
                     }

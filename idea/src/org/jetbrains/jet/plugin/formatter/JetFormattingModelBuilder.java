@@ -34,7 +34,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
     @Override
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
-        final JetBlock block = new JetBlock(
+        JetBlock block = new JetBlock(
             element.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
             createSpacingBuilder(settings));
 

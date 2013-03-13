@@ -34,7 +34,7 @@ import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.*;
 
 public class JavaToKotlinAction extends AnAction {
     @Override
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(AnActionEvent e) {
         VirtualFile[] virtualFiles = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
         assert virtualFiles != null;
         final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
@@ -60,7 +60,7 @@ public class JavaToKotlinAction extends AnAction {
                 new Runnable() {
                     @Override
                     public void run() {
-                        final List<VirtualFile> newFiles = convertFiles(converter, allJavaFilesNear);
+                        List<VirtualFile> newFiles = convertFiles(converter, allJavaFilesNear);
                         if (finalRemoveIt) {
                             deleteFiles(allJavaFilesNear);
                         }
@@ -93,7 +93,7 @@ public class JavaToKotlinAction extends AnAction {
 
     @Override
     public void update(AnActionEvent e) {
-        final boolean enabled = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY) != null;
+        boolean enabled = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY) != null;
         e.getPresentation().setVisible(enabled);
         e.getPresentation().setEnabled(enabled);
     }

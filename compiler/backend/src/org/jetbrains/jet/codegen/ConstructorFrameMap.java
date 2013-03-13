@@ -34,7 +34,7 @@ public class ConstructorFrameMap extends FrameMap {
     public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor) {
         enterTemp(OBJECT_TYPE); // this
 
-        final List<JvmMethodParameterSignature> parameterTypes = callableMethod.getSignature().getKotlinParameterTypes();
+        List<JvmMethodParameterSignature> parameterTypes = callableMethod.getSignature().getKotlinParameterTypes();
         if (parameterTypes != null) {
             for (JvmMethodParameterSignature parameterType : parameterTypes) {
                 if (parameterType.getKind() == JvmMethodParameterKind.OUTER) {

@@ -26,7 +26,7 @@ public class JetReferenceCharFilter extends CharFilter {
     @Override
     @Nullable
     public Result acceptChar(char c, int prefixLength, Lookup lookup) {
-        final PsiFile psiFile = lookup.getPsiFile();
+        PsiFile psiFile = lookup.getPsiFile();
         if (!(psiFile instanceof JetFile)) {
             return null;
         }

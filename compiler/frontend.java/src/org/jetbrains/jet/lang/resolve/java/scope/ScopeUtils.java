@@ -40,7 +40,7 @@ public final class ScopeUtils {
             JavaSemanticServices javaSemanticServices
     ) {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
-        final JavaDescriptorResolver descriptorResolver = javaSemanticServices.getDescriptorResolver();
+        JavaDescriptorResolver descriptorResolver = javaSemanticServices.getDescriptorResolver();
 
         for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
             NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(

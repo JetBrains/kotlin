@@ -35,7 +35,7 @@ public class JetExtensionReceiverTypeContributor extends CompletionContributor {
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters,
                                       ProcessingContext context,
-                                      final @NotNull CompletionResultSet result
+                                      @NotNull CompletionResultSet result
         ) {
             ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
                     (JetFile) parameters.getPosition().getContainingFile());

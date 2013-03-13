@@ -122,7 +122,7 @@ public class AsmUtil {
         return Type.getType(internalName.substring(1));
     }
 
-    public static Type unboxType(final Type type) {
+    public static Type unboxType(Type type) {
         JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByWrapperAsmType(type);
         if (jvmPrimitiveType != null) {
             return jvmPrimitiveType.getAsmType();
@@ -270,7 +270,7 @@ public class AsmUtil {
     }
 
     private static Type stringValueOfOrStringBuilderAppendType(Type type) {
-        final int sort = type.getSort();
+        int sort = type.getSort();
         return sort == Type.OBJECT || sort == Type.ARRAY
                    ? AsmTypeConstants.OBJECT_TYPE
                    : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
@@ -293,20 +293,20 @@ public class AsmUtil {
     }
 
     public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {
-        final ClassifierDescriptor captureThis = closure.getCaptureThis();
-        final int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
+        ClassifierDescriptor captureThis = closure.getCaptureThis();
+        int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         if (captureThis != null) {
             v.newField(null, access, CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis).getDescriptor(), null,
                        null);
         }
 
-        final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
+        ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
             v.newField(null, access, CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiver).getDescriptor(),
                        null, null);
         }
 
-        final List<Pair<String, Type>> fields = closure.getRecordedFields();
+        List<Pair<String, Type>> fields = closure.getRecordedFields();
         for (Pair<String, Type> field : fields) {
             v.newField(null, access, field.first, field.second.getDescriptor(), null, null);
         }
@@ -339,7 +339,7 @@ public class AsmUtil {
     }
 
     public static StackValue genToString(InstructionAdapter v, StackValue receiver) {
-        final Type type = stringValueOfOrStringBuilderAppendType(receiver.type);
+        Type type = stringValueOfOrStringBuilderAppendType(receiver.type);
         receiver.put(type, v);
         v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;");
         return StackValue.onStack(JAVA_STRING_TYPE);
@@ -347,7 +347,7 @@ public class AsmUtil {
 
     static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type) {
         if (type.getSort() == Type.ARRAY) {
-            final Type elementType = correctElementType(type);
+            Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
                 iv.invokestatic("java/util/Arrays", "hashCode", "([Ljava/lang/Object;)I");
             }

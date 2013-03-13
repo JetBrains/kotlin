@@ -109,7 +109,7 @@ public class ExclExclCallFix implements IntentionAction {
     }
 
     private static PsiElement getExclExclElement(Editor editor, PsiFile file) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         if (isExclExclLeaf(elementAtCaret)) {
             return elementAtCaret;
         }
@@ -130,7 +130,7 @@ public class ExclExclCallFix implements IntentionAction {
     }
 
     private static JetExpression getExpressionForIntroduceCall(Editor editor, PsiFile file) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         if (elementAtCaret != null) {
             JetExpression expression = getExpressionForIntroduceCall(elementAtCaret);
             if (expression != null) {

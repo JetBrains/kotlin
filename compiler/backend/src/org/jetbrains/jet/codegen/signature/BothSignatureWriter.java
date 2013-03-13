@@ -271,14 +271,14 @@ public class BothSignatureWriter {
         pop();
     }
 
-    public void writeTypeVariable(final Name name, boolean nullable, Type asmType) {
+    public void writeTypeVariable(Name name, boolean nullable, Type asmType) {
         signatureVisitor().visitTypeVariable(name.getName());
         jetSignatureWriter.visitTypeVariable(name.getName(), nullable);
         generic = true;
         writeAsmType0(asmType);
     }
 
-    public void writeFormalTypeParameter(final String name, Variance variance, boolean reified) {
+    public void writeFormalTypeParameter(String name, Variance variance, boolean reified) {
         checkTopLevel();
 
         signatureVisitor().visitFormalTypeParameter(name);

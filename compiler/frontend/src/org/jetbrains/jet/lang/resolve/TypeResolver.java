@@ -69,11 +69,11 @@ public class TypeResolver {
     }
 
     @NotNull
-    public JetType resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference, BindingTrace trace, boolean checkBounds) {
+    public JetType resolveType(@NotNull JetScope scope, @NotNull JetTypeReference typeReference, BindingTrace trace, boolean checkBounds) {
         JetType cachedType = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
         if (cachedType != null) return cachedType;
 
-        final List<AnnotationDescriptor> annotations = annotationResolver.getResolvedAnnotations(typeReference.getAnnotations(), trace);
+        List<AnnotationDescriptor> annotations = annotationResolver.getResolvedAnnotations(typeReference.getAnnotations(), trace);
 
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, trace, checkBounds);
@@ -276,7 +276,7 @@ public class TypeResolver {
     }
 
     private List<JetType> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements, BindingTrace trace, boolean checkBounds) {
-        final List<JetType> arguments = new ArrayList<JetType>();
+        List<JetType> arguments = new ArrayList<JetType>();
         for (JetTypeReference argumentElement : argumentElements) {
             arguments.add(resolveType(scope, argumentElement, trace, checkBounds));
         }
@@ -285,7 +285,7 @@ public class TypeResolver {
 
     @NotNull
     private List<TypeProjection> resolveTypeProjections(JetScope scope, TypeConstructor constructor, List<JetTypeProjection> argumentElements, BindingTrace trace, boolean checkBounds) {
-        final List<TypeProjection> arguments = new ArrayList<TypeProjection>();
+        List<TypeProjection> arguments = new ArrayList<TypeProjection>();
         for (int i = 0, argumentElementsSize = argumentElements.size(); i < argumentElementsSize; i++) {
             JetTypeProjection argumentElement = argumentElements.get(i);
 

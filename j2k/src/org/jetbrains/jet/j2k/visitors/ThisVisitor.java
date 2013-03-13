@@ -31,7 +31,7 @@ public class ThisVisitor extends JavaRecursiveElementVisitor {
     public void visitReferenceExpression(@NotNull PsiReferenceExpression expression) {
         for (PsiReference r : expression.getReferences())
             if (r.getCanonicalText().equals("this")) {
-                final PsiElement res = r.resolve();
+                PsiElement res = r.resolve();
                 if (res != null && res instanceof PsiMethod && ((PsiMethod) res).isConstructor()) {
                     myResolvedConstructors.add((PsiMethod) res);
                 }

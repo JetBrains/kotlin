@@ -89,7 +89,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     */
     @Nullable
     public FqName getFqName() {
-        final PsiJetFunctionStub stub = getStub();
+        PsiJetFunctionStub stub = getStub();
         if (stub != null) {
             return stub.getTopFQName();
         }
@@ -101,7 +101,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
                 return null;
             }
             JetFile jetFile = (JetFile) parent;
-            final FqName fileFQN = JetPsiUtil.getFQName(jetFile);
+            FqName fileFQN = JetPsiUtil.getFQName(jetFile);
             Name nameAsName = getNameAsName();
             if (nameAsName != null) {
                 return fileFQN.child(nameAsName);

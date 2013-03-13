@@ -44,8 +44,8 @@ public class RangeTo implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (arguments.size() == 1) {
-            final Type leftType = receiver.type;
-            final Type rightType = codegen.expressionType(arguments.get(0));
+            Type leftType = receiver.type;
+            Type rightType = codegen.expressionType(arguments.get(0));
             receiver.put(leftType, v);
             codegen.gen(arguments.get(0), rightType);
             v.invokestatic("jet/runtime/Ranges", "rangeTo",
@@ -54,8 +54,8 @@ public class RangeTo implements IntrinsicMethod {
         }
         else {
             JetBinaryExpression expression = (JetBinaryExpression) element;
-            final Type leftType = codegen.expressionType(expression.getLeft());
-            final Type rightType = codegen.expressionType(expression.getRight());
+            Type leftType = codegen.expressionType(expression.getLeft());
+            Type rightType = codegen.expressionType(expression.getRight());
             //            if (JetTypeMapper.isIntPrimitive(leftType)) {
             codegen.gen(expression.getLeft(), leftType);
             codegen.gen(expression.getRight(), rightType);

@@ -26,13 +26,13 @@ public class ArrayInitializerExpression extends Expression {
     private final Type myType;
     private final List<Expression> myInitializers;
 
-    public ArrayInitializerExpression(final Type type, List<Expression> initializers) {
+    public ArrayInitializerExpression(Type type, List<Expression> initializers) {
         myType = type;
         myInitializers = initializers;
     }
 
     @NotNull
-    private static String createArrayFunction(@NotNull final Type type) {
+    private static String createArrayFunction(@NotNull Type type) {
         String sType = innerTypeStr(type);
         if (PRIMITIVE_TYPES.contains(sType)) {
             return sType + "Array"; // intArray
@@ -41,12 +41,12 @@ public class ArrayInitializerExpression extends Expression {
     }
 
     @NotNull
-    private static String innerTypeStr(@NotNull final Type type) {
+    private static String innerTypeStr(@NotNull Type type) {
         return type.convertedToNotNull().toKotlin().replace("Array", "").toLowerCase();
     }
 
     @NotNull
-    private static String createInitializers(@NotNull final Type type, @NotNull final List<Expression> initializers) {
+    private static String createInitializers(@NotNull Type type, @NotNull List<Expression> initializers) {
         List<String> arguments = new LinkedList<String>();
         for (Expression i : initializers)
             arguments.add(explicitConvertIfNeeded(type, i));
@@ -54,7 +54,7 @@ public class ArrayInitializerExpression extends Expression {
     }
 
     @NotNull
-    private static String explicitConvertIfNeeded(@NotNull final Type type, @NotNull final Expression i) {
+    private static String explicitConvertIfNeeded(@NotNull Type type, @NotNull Expression i) {
         Set<String> doubleOrFloatTypes = new HashSet<String>(
                 Arrays.asList("double", "float", "java.lang.double", "java.lang.float")
         );
@@ -72,7 +72,7 @@ public class ArrayInitializerExpression extends Expression {
     }
 
     @NotNull
-    private static String getConversion(@NotNull final String afterReplace) {
+    private static String getConversion(@NotNull String afterReplace) {
         if (afterReplace.contains("double")) return DOT + OperatorConventions.DOUBLE + "()";
         if (afterReplace.contains("float")) return DOT + OperatorConventions.FLOAT + "()";
         return "";

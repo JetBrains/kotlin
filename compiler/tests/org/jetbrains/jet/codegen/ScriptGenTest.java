@@ -189,7 +189,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testLanguage() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/fib.lang.kt");
-        final Class aClass = generateClass("Fib");
+        Class aClass = generateClass("Fib");
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Field result = aClass.getDeclaredField("result");
@@ -205,7 +205,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testLanguageWithPackage() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/fibwp.lang.kt");
-        final Class aClass = generateClass("test.Fibwp");
+        Class aClass = generateClass("test.Fibwp");
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Field result = aClass.getDeclaredField("result");
@@ -221,7 +221,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testDependentScripts() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFiles("script/fibwp.lang.kt", "script/fibwprunner.ktscript");
-        final Class aClass = generateClass("Fibwprunner");
+        Class aClass = generateClass("Fibwprunner");
         try {
             Constructor constructor = aClass.getConstructor();
             Field result = aClass.getDeclaredField("result");
@@ -244,7 +244,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testScriptWhereMethodHasClosure() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/methodWithClosure.lang.kt");
-        final Class aClass = generateClass("MethodWithClosure");
+        Class aClass = generateClass("MethodWithClosure");
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Object script = constructor.newInstance(239);

@@ -105,7 +105,7 @@ public final class PatternBuilder {
     }
 
     @NotNull
-    public static DescriptorPredicate pattern(@NotNull final NamePredicate... checkers) {
+    public static DescriptorPredicate pattern(@NotNull NamePredicate... checkers) {
         return pattern(Arrays.asList(checkers));
     }
 }

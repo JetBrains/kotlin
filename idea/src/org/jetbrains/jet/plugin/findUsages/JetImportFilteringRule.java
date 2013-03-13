@@ -29,7 +29,7 @@ public class JetImportFilteringRule extends ImportFilteringRule {
     @Override
     public boolean isVisible(@NotNull Usage usage) {
         if (usage instanceof PsiElementUsage) {
-            final PsiElement psiElement = ((PsiElementUsage)usage).getElement();
+            PsiElement psiElement = ((PsiElementUsage)usage).getElement();
             if (psiElement.getContainingFile() instanceof JetFile) {
                 return PsiTreeUtil.getParentOfType(psiElement, JetImportDirective.class) == null;
             }

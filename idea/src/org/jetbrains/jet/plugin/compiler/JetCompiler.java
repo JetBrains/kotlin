@@ -68,16 +68,17 @@ public class JetCompiler implements TranslatingCompiler {
     }
 
     @Override
-    public void compile(final CompileContext compileContext,
+    public void compile(
+            CompileContext compileContext,
             Chunk<Module> moduleChunk,
-            final VirtualFile[] virtualFiles,
+            VirtualFile[] virtualFiles,
             OutputSink outputSink) {
         if (virtualFiles.length == 0) return;
 
         List<VirtualFile> productionFiles = new ArrayList<VirtualFile>();
         List<VirtualFile> testFiles = new ArrayList<VirtualFile>();
         for (VirtualFile file : virtualFiles) {
-            final boolean inTests = ((CompileContextEx)compileContext).isInTestSourceContent(file);
+            boolean inTests = ((CompileContextEx)compileContext).isInTestSourceContent(file);
             if (inTests) {
                 testFiles.add(file);
             }
@@ -86,7 +87,7 @@ public class JetCompiler implements TranslatingCompiler {
             }
         }
 
-        final Module module = compileContext.getModuleByFile(virtualFiles[0]);
+        Module module = compileContext.getModuleByFile(virtualFiles[0]);
 
         doCompile(compileContext, moduleChunk, productionFiles, module, outputSink, false);
         doCompile(compileContext, moduleChunk, testFiles, module, outputSink, true);

@@ -152,14 +152,14 @@ public class BodyResolver {
         }
     }
 
-    private void resolveDelegationSpecifierList(JetClassOrObject jetClass, final MutableClassDescriptor descriptor) {
+    private void resolveDelegationSpecifierList(JetClassOrObject jetClass, MutableClassDescriptor descriptor) {
         resolveDelegationSpecifierList(jetClass, descriptor,
                                        descriptor.getUnsubstitutedPrimaryConstructor(),
                                        descriptor.getScopeForSupertypeResolution(),
                                        descriptor.getScopeForMemberResolution());
     }
 
-    public void resolveDelegationSpecifierList(@NotNull final JetClassOrObject jetClass, @NotNull final ClassDescriptor descriptor,
+    public void resolveDelegationSpecifierList(@NotNull JetClassOrObject jetClass, @NotNull final ClassDescriptor descriptor,
             @Nullable final ConstructorDescriptor primaryConstructor,
             @NotNull JetScope scopeForSupertypeResolution,
             @NotNull final JetScope scopeForMemberResolution) {
@@ -378,7 +378,7 @@ public class BodyResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             for (JetProperty property : jetClass.getProperties()) {
-                final PropertyDescriptor propertyDescriptor = this.context.getProperties().get(property);
+                PropertyDescriptor propertyDescriptor = this.context.getProperties().get(property);
                 assert propertyDescriptor != null;
 
                 computeDeferredType(propertyDescriptor.getReturnType());
@@ -403,7 +403,7 @@ public class BodyResolver {
             if (!context.completeAnalysisNeeded(property)) continue;
             if (processed.contains(property)) continue;
 
-            final PropertyDescriptor propertyDescriptor = entry.getValue();
+            PropertyDescriptor propertyDescriptor = entry.getValue();
 
             computeDeferredType(propertyDescriptor.getReturnType());
 

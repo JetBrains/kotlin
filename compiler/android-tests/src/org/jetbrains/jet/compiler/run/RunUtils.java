@@ -107,7 +107,7 @@ public class RunUtils {
         final StringBuilder stdOut = new StringBuilder();
         final StringBuilder stdErr = new StringBuilder();
 
-        final OSProcessHandler handler;
+        OSProcessHandler handler;
         try {
             handler = new OSProcessHandler(settings.commandLine.createProcess(), settings.commandLine.getCommandLineString(), Charsets.UTF_8);
             if (settings.input != null) {

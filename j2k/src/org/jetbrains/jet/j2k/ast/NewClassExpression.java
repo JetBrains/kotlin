@@ -48,8 +48,8 @@ public class NewClassExpression extends Expression {
     @NotNull
     @Override
     public String toKotlin() {
-        final String callOperator = myQualifier.isNullable() ? QUESTDOT : DOT;
-        final String qualifier = myQualifier.isEmpty() ? EMPTY : myQualifier.toKotlin() + callOperator;
+        String callOperator = myQualifier.isNullable() ? QUESTDOT : DOT;
+        String qualifier = myQualifier.isEmpty() ? EMPTY : myQualifier.toKotlin() + callOperator;
         List<String> applyConversions = AstUtil.applyConversions(AstUtil.nodesToKotlin(myArguments), myConversions);
         String appliedArguments = AstUtil.join(applyConversions, COMMA_WITH_SPACE);
         return myAnonymousClass != null ?

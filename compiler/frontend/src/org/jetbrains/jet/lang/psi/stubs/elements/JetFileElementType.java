@@ -57,31 +57,31 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     }
 
     @Override
-    public void serialize(final PsiJetFileStub stub, final StubOutputStream dataStream)
+    public void serialize(PsiJetFileStub stub, StubOutputStream dataStream)
             throws IOException {
         dataStream.writeName(stub.getPackageName());
         dataStream.writeBoolean(stub.isScript());
     }
 
     @Override
-    public PsiJetFileStub deserialize(final StubInputStream dataStream, final StubElement parentStub) throws IOException {
+    public PsiJetFileStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef packName = dataStream.readName();
         boolean isScript = dataStream.readBoolean();
         return new PsiJetFileStubImpl(null, packName, isScript);
     }
 
     @Override
-    protected ASTNode doParseContents(@NotNull final ASTNode chameleon, @NotNull final PsiElement psi) {
-        final Project project = psi.getProject();
+    protected ASTNode doParseContents(@NotNull ASTNode chameleon, @NotNull PsiElement psi) {
+        Project project = psi.getProject();
         Language languageForParser = getLanguageForParser(psi);
-        final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
-        final JetParser parser = (JetParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
+        PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
+        JetParser parser = (JetParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
         return parser.parse(this, builder, psi.getContainingFile()).getFirstChildNode();
     }
 
 
     @Override
-    public void indexStub(final PsiJetFileStub stub, final IndexSink sink) {
+    public void indexStub(PsiJetFileStub stub, IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexFile(stub, sink);
     }
 }

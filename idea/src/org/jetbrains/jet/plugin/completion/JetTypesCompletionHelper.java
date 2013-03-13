@@ -35,8 +35,8 @@ public class JetTypesCompletionHelper {
     private JetTypesCompletionHelper() {}
 
     static void addJetTypes(
-            @NotNull final CompletionParameters parameters,
-            @NotNull final JetCompletionResultSet jetCompletionResult
+            @NotNull CompletionParameters parameters,
+            @NotNull JetCompletionResultSet jetCompletionResult
     ) {
         jetCompletionResult.addAllElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses());
 
@@ -54,7 +54,7 @@ public class JetTypesCompletionHelper {
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
     static void addAdaptedJavaCompletion(
-            @NotNull final CompletionParameters parameters,
+            @NotNull CompletionParameters parameters,
             @NotNull final JetCompletionResultSet jetCompletionResult
     ) {
         CompletionResultSet tempResult = jetCompletionResult.getResult().withPrefixMatcher(

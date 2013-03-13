@@ -155,7 +155,7 @@ public abstract class StackValue {
         return new Expression(type, expression, generator);
     }
 
-    private static void box(final Type type, final Type toType, InstructionAdapter v) {
+    private static void box(Type type, Type toType, InstructionAdapter v) {
         // TODO handle toType correctly
         if (type == Type.INT_TYPE || (isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
@@ -183,7 +183,7 @@ public abstract class StackValue {
         }
     }
 
-    private static void unbox(final Type type, InstructionAdapter v) {
+    private static void unbox(Type type, InstructionAdapter v) {
         if (type == Type.INT_TYPE) {
             v.invokevirtual("java/lang/Number", "intValue", "()I");
         }
@@ -1142,7 +1142,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            final StackValue stackValue = codegen.generateThisOrOuter(descriptor, isSuper);
+            StackValue stackValue = codegen.generateThisOrOuter(descriptor, isSuper);
             stackValue.put(coerceType ? type : stackValue.type, v);
         }
     }

@@ -48,7 +48,7 @@ public class JetPackagesContributor extends CompletionContributor {
                    protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                                  @NotNull CompletionResultSet result) {
 
-                       final PsiElement position = parameters.getPosition();
+                       PsiElement position = parameters.getPosition();
                        if (!(position.getContainingFile() instanceof JetFile)) {
                            return;
                        }
@@ -58,7 +58,7 @@ public class JetPackagesContributor extends CompletionContributor {
                            return;
                        }
 
-                       final PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
+                       PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
 
                        if (ref instanceof JetSimpleNameReference) {
                            JetSimpleNameReference simpleNameReference = (JetSimpleNameReference)ref;

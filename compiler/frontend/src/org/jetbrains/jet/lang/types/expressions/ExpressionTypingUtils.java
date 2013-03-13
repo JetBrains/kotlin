@@ -286,7 +286,7 @@ public class ExpressionTypingUtils {
         int index = 0;
         List<JetExpression> fakeArguments = Lists.newArrayList();
         for (JetType type : argumentTypes) {
-            final JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeArgument" + index++);
+            JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeArgument" + index++);
             fakeArguments.add(fakeArgument);
             traceWithFakeArgumentInfo.record(EXPRESSION_TYPE, fakeArgument, type);
         }
@@ -336,7 +336,7 @@ public class ExpressionTypingUtils {
     ) {
         int componentIndex = 1;
         for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
-            final Name componentName = Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + componentIndex);
+            Name componentName = Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + componentIndex);
             componentIndex++;
 
             JetType expectedType = getExpectedTypeForComponent(context, entry);

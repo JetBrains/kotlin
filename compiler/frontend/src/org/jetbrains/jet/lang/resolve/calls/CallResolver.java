@@ -113,7 +113,7 @@ public class CallResolver {
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
             @NotNull BasicCallResolutionContext context,
-            @NotNull final JetReferenceExpression functionReference,
+            @NotNull JetReferenceExpression functionReference,
             @NotNull Name name) {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
                 TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
@@ -140,7 +140,7 @@ public class CallResolver {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> prioritizedTasks;
         
         JetExpression calleeExpression = context.call.getCalleeExpression();
-        final JetReferenceExpression functionReference;
+        JetReferenceExpression functionReference;
         if (calleeExpression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
             functionReference = expression;
@@ -262,10 +262,10 @@ public class CallResolver {
 
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallOrGetCachedResults(
             @NotNull WritableSlice<CallKey, OverloadResolutionResultsImpl<F>> resolutionResultsSlice,
-            @NotNull final BasicCallResolutionContext context,
-            @NotNull final List<ResolutionTask<D, F>> prioritizedTasks,
+            @NotNull BasicCallResolutionContext context,
+            @NotNull List<ResolutionTask<D, F>> prioritizedTasks,
             @NotNull CallTransformer<D, F> callTransformer,
-            @NotNull final JetReferenceExpression reference
+            @NotNull JetReferenceExpression reference
     ) {
         PsiElement element = context.call.getCallElement();
         OverloadResolutionResultsImpl<F> results = null;
@@ -379,10 +379,10 @@ public class CallResolver {
 
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCall(
-            @NotNull final BasicCallResolutionContext context,
-            @NotNull final List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
+            @NotNull BasicCallResolutionContext context,
+            @NotNull List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
             @NotNull CallTransformer<D, F> callTransformer,
-            @NotNull final JetReferenceExpression reference) {
+            @NotNull JetReferenceExpression reference) {
 
         ResolutionDebugInfo.Data debugInfo = ResolutionDebugInfo.create();
         context.trace.record(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement(), debugInfo);
@@ -435,7 +435,7 @@ public class CallResolver {
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResults<D> resolveFunctionArguments(
-            @NotNull final BasicCallResolutionContext context,
+            @NotNull BasicCallResolutionContext context,
             @NotNull OverloadResolutionResults<D> results
     ) {
         if (results.isSingleResult()) {

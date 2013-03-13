@@ -126,7 +126,7 @@ public class JetImportOptimizer implements ImportOptimizer {
         return false;
     }
 
-    public static Set<FqName> extractUsedQualifiedNames(final JetFile jetFile) {
+    public static Set<FqName> extractUsedQualifiedNames(JetFile jetFile) {
         final Set<FqName> usedQualifiedNames = new HashSet<FqName>();
         jetFile.accept(new JetVisitorVoid() {
             @Override

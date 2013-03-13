@@ -158,7 +158,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         };
     }
 
-    public static JetIntentionActionFactory createFactory(final JetKeywordToken modifier) {
+    public static JetIntentionActionFactory createFactory(JetKeywordToken modifier) {
         return createFactory(modifier, JetModifierListOwner.class);
     }
 

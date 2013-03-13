@@ -131,8 +131,8 @@ public class JetPositionManager implements PositionManager {
             @Override
             @SuppressWarnings("unchecked")
             public void run() {
-                final JetFile namespace = (JetFile) sourcePosition.getFile();
-                final JetTypeMapper typeMapper = prepareTypeMapper(namespace);
+                JetFile namespace = (JetFile) sourcePosition.getFile();
+                JetTypeMapper typeMapper = prepareTypeMapper(namespace);
 
                 PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
                 if (element instanceof JetClassOrObject) {
@@ -164,7 +164,7 @@ public class JetPositionManager implements PositionManager {
 
     @Nullable
     private static String getJvmInternalNameForImpl(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
-        final ClassDescriptor classDescriptor = typeMapper.getBindingContext().get(BindingContext.CLASS, jetClass);
+        ClassDescriptor classDescriptor = typeMapper.getBindingContext().get(BindingContext.CLASS, jetClass);
         if (classDescriptor == null) {
             return null;
         }
@@ -185,12 +185,12 @@ public class JetPositionManager implements PositionManager {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
                 @Override
                 public Result<JetTypeMapper> compute() {
-                    final AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+                    AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
                     analyzeExhaust.throwIfError();
 
                     List<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allNamespaceFiles().fun(file);
 
-                    final DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
+                    DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
                     JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, true, ClassBuilderMode.FULL);
                     //noinspection unchecked
                     CodegenBinding.initTrace(bindingTrace, namespaceFiles);
@@ -228,7 +228,7 @@ public class JetPositionManager implements PositionManager {
         if (!(sourcePosition.getFile() instanceof JetFile)) {
             throw new NoDataException();
         }
-        final String className = classNameForPosition(sourcePosition);
+        String className = classNameForPosition(sourcePosition);
         if (className == null) {
             return null;
         }

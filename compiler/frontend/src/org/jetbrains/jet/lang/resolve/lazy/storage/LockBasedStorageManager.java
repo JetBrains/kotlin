@@ -44,7 +44,7 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
-            @NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind
+            @NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind
     ) {
         ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
         return new MapBasedMemoizedFunctionToNotNull<K, V>(lock, map, compute);
@@ -53,7 +53,7 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
-            @NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind
+            @NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind
     ) {
         ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
         return new MapBasedMemoizedFunction<K, V>(lock, map, compute);
@@ -187,7 +187,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         @Override
         @Nullable
-        public V fun(@NotNull final K input) {
+        public V fun(@NotNull K input) {
             Object value = cache.get(input);
             if (value != null) return Nulls.unescape(value);
 

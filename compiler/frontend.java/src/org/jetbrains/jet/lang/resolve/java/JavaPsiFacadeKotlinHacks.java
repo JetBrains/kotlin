@@ -82,7 +82,7 @@ public class JavaPsiFacadeKotlinHacks {
         return psiPackage;
     }
 
-    public PsiClass findClass(@NotNull final String qualifiedName, @NotNull GlobalSearchScope scope) {
+    public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
         ProgressIndicatorProvider.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
 
         PsiClass aClass = javaFileManager.findClass(qualifiedName, scope);

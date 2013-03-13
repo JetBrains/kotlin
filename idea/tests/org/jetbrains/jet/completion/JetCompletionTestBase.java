@@ -41,10 +41,10 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
     protected void doTest() {
         try {
-            final String testName = getTestName(false);
+            String testName = getTestName(false);
             configureByFileNoComplete(testName + ".kt");
 
-            final String fileText = getFile().getText();
+            String fileText = getFile().getText();
             type = getCompletionType(testName, fileText);
 
             boolean withKotlinRuntime = InTextDirectivesUtils.getPrefixedInt(fileText, "// RUNTIME:") != null;
@@ -105,7 +105,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
     }
 
     @Override
-    protected void complete(final int time) {
+    protected void complete(int time) {
         new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false, false);
 
         Lookup lookup = LookupManager.getActiveLookup(myEditor);

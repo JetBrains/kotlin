@@ -159,7 +159,7 @@ public class SignaturesPropagationData {
 
         List<ValueParameterDescriptor> resultParameters = Lists.newArrayList();
 
-        for (final ValueParameterDescriptor originalParam : parameters.getDescriptors()) {
+        for (ValueParameterDescriptor originalParam : parameters.getDescriptors()) {
             final int index = originalParam.getIndex();
             List<TypeAndVariance> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                     new Function<FunctionDescriptor, TypeAndVariance>() {

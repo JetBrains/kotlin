@@ -40,7 +40,7 @@ public class KotlinQuoteHandler implements QuoteHandler {
 
     @Override
     public boolean isOpeningQuote(HighlighterIterator iterator, int offset) {
-        final IElementType tokenType = iterator.getTokenType();
+        IElementType tokenType = iterator.getTokenType();
 
         if (tokenType == JetTokens.OPEN_QUOTE) {
             int start = iterator.getStart();
@@ -56,7 +56,7 @@ public class KotlinQuoteHandler implements QuoteHandler {
 
     @Override
     public boolean isInsideLiteral(HighlighterIterator iterator) {
-        final IElementType tokenType = iterator.getTokenType();
+        IElementType tokenType = iterator.getTokenType();
         return tokenType == JetTokens.REGULAR_STRING_PART ||
                tokenType == JetTokens.OPEN_QUOTE ||
                tokenType == JetTokens.CLOSING_QUOTE ||

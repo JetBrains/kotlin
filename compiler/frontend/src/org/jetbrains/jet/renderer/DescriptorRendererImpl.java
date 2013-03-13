@@ -285,7 +285,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
         builder.append(" ").append(renderMessage("defined in")).append(" ");
 
-        final DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration != null) {
             FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
             builder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : renderFqName(fqName));

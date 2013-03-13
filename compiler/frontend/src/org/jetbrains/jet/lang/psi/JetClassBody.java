@@ -65,13 +65,13 @@ public class JetClassBody extends JetElementImpl implements JetDeclarationContai
 
     @Nullable
     public PsiElement getRBrace() {
-        final ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.RBRACE));
+        ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.RBRACE));
         return children.length == 1 ? children[0].getPsi() : null;
     }
 
     @Nullable
     public PsiElement getLBrace() {
-        final ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.LBRACE));
+        ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.LBRACE));
         return children.length == 1 ? children[0].getPsi() : null;
     }
 }

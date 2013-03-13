@@ -68,13 +68,13 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
         String javaPath = "j2k/tests/testData/" + getTestFilePath();
         String kotlinPath = javaPath.replace(".jav", ".kt");
 
-        final File kotlinFile = new File(kotlinPath);
+        File kotlinFile = new File(kotlinPath);
         if (!kotlinFile.exists()) {
             FileUtil.writeToFile(kotlinFile, "");
         }
-        final String expected = FileUtil.loadFile(kotlinFile, true);
-        final File javaFile = new File(javaPath);
-        final String javaCode = FileUtil.loadFile(javaFile, true);
+        String expected = FileUtil.loadFile(kotlinFile, true);
+        File javaFile = new File(javaPath);
+        String javaCode = FileUtil.loadFile(javaFile, true);
 
         String actual = "";
         String parentFileName = javaFile.getParentFile().getName();
@@ -97,7 +97,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
 
         assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression: " + javaPath + " parent: " + parentFileName;
 
-        final File tmp = new File(kotlinPath + ".tmp");
+        File tmp = new File(kotlinPath + ".tmp");
         if (!expected.equals(actual)) FileUtil.writeToFile(tmp, actual);
         if (expected.equals(actual) && tmp.exists()) //noinspection ResultOfMethodCallIgnored
         {

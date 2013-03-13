@@ -85,7 +85,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (lightClass == null) {
             return null;
         }
-        final PsiElement[] children = lightClass.getDelegate().getChildren();
+        PsiElement[] children = lightClass.getDelegate().getChildren();
         return children.length > 0 ? children[0] : null;
     }
 
@@ -100,21 +100,21 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     };
 
     @Override
-    public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement element) {
+    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
 
         JetFile file = (JetFile)element.getContainingFile();
         if (file == null) return null;
 
         if (!(element instanceof JetNamedFunction || element instanceof JetProperty))     return null;
 
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
 
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         if (!(descriptor instanceof CallableMemberDescriptor)) {
             return null;
         }
 
-        final Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
         if (overriddenMembers.size() == 0) {
             return null;
         }
@@ -150,27 +150,27 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = (JetFile)elt.getContainingFile();
         assert file != null;
 
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
         if (!(descriptor instanceof CallableMemberDescriptor)) {
             return;
         }
 
-        final Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
         if (overriddenMembers.size() == 0) {
             return;
         }
 
         if (overriddenMembers.isEmpty()) return;
-        final List<PsiElement> list = Lists.newArrayList();
+        List<PsiElement> list = Lists.newArrayList();
         for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
             PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, overriddenMember);
             list.add(declarationPsiElement);
         }
         if (list.isEmpty()) {
             String myEmptyText = "empty text";
-            final JComponent renderer = HintUtil.createErrorLabel(myEmptyText);
-            final JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(renderer, renderer).createPopup();
+            JComponent renderer = HintUtil.createErrorLabel(myEmptyText);
+            JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(renderer, renderer).createPopup();
             if (event != null) {
                 popup.show(new RelativePoint(event));
             }
@@ -193,14 +193,14 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = (JetFile)element.getContainingFile();
         if (file == null) return "";
 
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
 
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         if (!(descriptor instanceof CallableMemberDescriptor)) {
             return "";
         }
 
-        final Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
         if (overriddenMembers.size() == 0) {
             return "";
         }
@@ -210,8 +210,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
         }
 
-        final String implementsOrOverrides = allOverriddenAbstract ? "implements" : "overrides";
-        final String memberKind = element instanceof JetNamedFunction ? "function" : "property";
+        String implementsOrOverrides = allOverriddenAbstract ? "implements" : "overrides";
+        String memberKind = element instanceof JetNamedFunction ? "function" : "property";
 
 
         StringBuilder builder = new StringBuilder();
@@ -258,7 +258,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
         PsiClass inheritor = ClassInheritorsSearch.search(lightClass, false).findFirst();
         if (inheritor != null) {
-            final PsiElement nameIdentifier = element.getNameIdentifier();
+            PsiElement nameIdentifier = element.getNameIdentifier();
             PsiElement anchor = nameIdentifier != null ? nameIdentifier : element;
             Icon mark = isTrait ? IMPLEMENTED_MARK : OVERRIDDEN_MARK;
             result.add(new LineMarkerInfo<PsiElement>(anchor, anchor.getTextOffset(), mark, Pass.UPDATE_OVERRIDEN_MARKERS,

@@ -216,7 +216,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     }
 
     @Override
-    public Icon getElementIcon(final int flags) {
+    public Icon getElementIcon(int flags) {
         throw new UnsupportedOperationException("This should be done byt JetIconProvider");
     }
 

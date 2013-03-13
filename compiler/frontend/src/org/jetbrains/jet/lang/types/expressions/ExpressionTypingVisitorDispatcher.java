@@ -43,7 +43,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @NotNull
-    public static ExpressionTypingInternals createForBlock(final WritableScope writableScope) {
+    public static ExpressionTypingInternals createForBlock(WritableScope writableScope) {
         return new ExpressionTypingVisitorDispatcher(writableScope);
     }
 

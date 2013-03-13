@@ -76,7 +76,7 @@ public final class AnalyzerFacadeForJS {
             boolean storeContextForBodiesResolve) {
         Project project = config.getProject();
 
-        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
+        ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
 
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
@@ -139,7 +139,7 @@ public final class AnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static ResolveSession getLazyResolveSession(Collection<JetFile> files, final Config config) {
+    public static ResolveSession getLazyResolveSession(Collection<JetFile> files, Config config) {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());

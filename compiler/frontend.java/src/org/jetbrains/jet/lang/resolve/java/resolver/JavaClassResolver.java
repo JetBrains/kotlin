@@ -190,7 +190,7 @@ public final class JavaClassResolver {
 
     @NotNull
     private ClassDescriptor createJavaClassDescriptor(
-            @NotNull FqName fqName, @NotNull final PsiClass psiClass,
+            @NotNull FqName fqName, @NotNull PsiClass psiClass,
             @NotNull PostponedTasks taskList
     ) {
 
@@ -292,7 +292,7 @@ public final class JavaClassResolver {
     }
 
     void checkFqNamesAreConsistent(@NotNull PsiClass psiClass, @NotNull FqName desiredFqName) {
-        final String qualifiedName = psiClass.getQualifiedName();
+        String qualifiedName = psiClass.getQualifiedName();
         assert qualifiedName != null;
 
         FqName fqName = new FqName(qualifiedName);
@@ -315,7 +315,7 @@ public final class JavaClassResolver {
 
     @NotNull
     private static FqName getFqName(@NotNull PsiClass psiClass) {
-        final String qualifiedName = psiClass.getQualifiedName();
+        String qualifiedName = psiClass.getQualifiedName();
         assert qualifiedName != null;
         return new FqName(qualifiedName);
     }

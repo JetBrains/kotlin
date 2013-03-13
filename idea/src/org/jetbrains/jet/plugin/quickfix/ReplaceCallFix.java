@@ -88,7 +88,7 @@ public class ReplaceCallFix implements IntentionAction {
     }
 
     private JetQualifiedExpression getCallExpression(@NotNull Editor editor, @NotNull JetFile file) {
-        final PsiElement elementAtCaret = getElementAtCaret(editor, file);
+        PsiElement elementAtCaret = getElementAtCaret(editor, file);
         return PsiTreeUtil.getParentOfType(elementAtCaret, toSafe ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
     }
 

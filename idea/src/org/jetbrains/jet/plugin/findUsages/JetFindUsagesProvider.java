@@ -62,7 +62,7 @@ public class JetFindUsagesProvider implements FindUsagesProvider {
     @Override
     public String getDescriptiveName(@NotNull PsiElement psiElement) {
         if (psiElement instanceof PsiNamedElement) {
-          final String name = ((PsiNamedElement)psiElement).getName();
+          String name = ((PsiNamedElement)psiElement).getName();
           return name == null ? "<unnamed>" : name;
         }
         return "";

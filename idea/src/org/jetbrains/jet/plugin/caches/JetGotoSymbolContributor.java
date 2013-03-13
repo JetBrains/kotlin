@@ -53,7 +53,7 @@ public class JetGotoSymbolContributor implements ChooseByNameContributor {
         Collection<? extends NavigationItem> properties = StubIndex.getInstance().get(
                 JetShortPropertiesNameIndex.getInstance().getKey(), name, project, scope);
 
-        final List<NavigationItem> items = new ArrayList<NavigationItem>(Collections2.filter(functions, Predicates.notNull()));
+        List<NavigationItem> items = new ArrayList<NavigationItem>(Collections2.filter(functions, Predicates.notNull()));
         items.addAll(properties);
 
         return ArrayUtil.toObjectArray(items, NavigationItem.class);

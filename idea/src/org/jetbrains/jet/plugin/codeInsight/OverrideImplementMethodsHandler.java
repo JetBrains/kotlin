@@ -80,7 +80,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
 
         List<JetElement> elementsToCompact = new ArrayList<JetElement>();
-        final JetFile file = (JetFile) classOrObject.getContainingFile();
+        JetFile file = (JetFile) classOrObject.getContainingFile();
         for (JetElement element : generateOverridingMembers(selectedElements, file)) {
             PsiElement added = body.addAfter(element, afterAnchor);
             afterAnchor = added;
@@ -116,7 +116,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file) {
         List<JetElement> overridingMembers = new ArrayList<JetElement>();
         for (DescriptorClassMember selectedElement : selectedElements) {
-            final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
+            DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
                 overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor) descriptor));
             }
@@ -225,8 +225,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (!isAbstractFun) {
             delegationBuilder.append(")");
         }
-        final JetType returnType = descriptor.getReturnType();
-        final KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        JetType returnType = descriptor.getReturnType();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
         if (returnsNotUnit) {
@@ -254,7 +254,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     @NotNull
     public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject, BindingContext bindingContext) {
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
         if (descriptor instanceof MutableClassDescriptor) {
             return collectMethodsToGenerate((MutableClassDescriptor) descriptor);
         }
@@ -267,7 +267,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             Project project,
             DescriptorClassMember[] members
     ) {
-        final MemberChooser<DescriptorClassMember> chooser = new MemberChooser<DescriptorClassMember>(members, true, true, project);
+        MemberChooser<DescriptorClassMember> chooser = new MemberChooser<DescriptorClassMember>(members, true, true, project);
         chooser.setTitle(getChooserTitle());
         chooser.show();
         if (chooser.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
@@ -281,15 +281,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (!(file instanceof JetFile)) {
             return false;
         }
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         return classOrObject != null;
     }
 
     protected abstract String getNoMethodsFoundHint();
 
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file, boolean implementAll) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+    public void invoke(@NotNull Project project, @NotNull final Editor editor, @NotNull PsiFile file, boolean implementAll) {
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
 
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
@@ -310,7 +310,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             selectedElements = members;
         }
         else {
-            final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(
+            MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(
                     project,
                     members.toArray(new DescriptorClassMember[members.size()]));
 
@@ -331,7 +331,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file) {
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
         invoke(project, editor, file, false);
     }
 

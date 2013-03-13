@@ -112,7 +112,7 @@ public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConf
     }
 
     @Override
-    public void readExternal(final Element element) throws InvalidDataException {
+    public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
         Element settingsElement = element.getChild(K2JSConfigurationSettings.class.getSimpleName());
         if (settingsElement != null) {
@@ -124,7 +124,7 @@ public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConf
     }
 
     @Override
-    public void writeExternal(final Element element) throws WriteExternalException {
+    public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
         element.addContent(XmlSerializer.serialize(settings()));
     }

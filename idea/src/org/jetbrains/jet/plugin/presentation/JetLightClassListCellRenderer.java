@@ -28,12 +28,12 @@ public class JetLightClassListCellRenderer extends PsiElementListCellRenderer<Ko
     }
 
     @Override
-    protected String getContainerText(KotlinLightClass element, final String name) {
+    protected String getContainerText(KotlinLightClass element, String name) {
         return getContainerTextStatic(element);
     }
 
     @Nullable
-    public static String getContainerTextStatic(final KotlinLightClass element) {
+    public static String getContainerTextStatic(KotlinLightClass element) {
         return "(" + element.getFqName().parent() + ")";
     }
 

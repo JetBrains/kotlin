@@ -160,11 +160,11 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
 
     @Nullable
     public static LookupElement getExistentLookupElement(@Nullable String lookupString, @Nullable String tailText) {
-        final LookupImpl lookup = (LookupImpl) LookupManager.getInstance(getProject()).getActiveLookup();
+        LookupImpl lookup = (LookupImpl) LookupManager.getInstance(getProject()).getActiveLookup();
         LookupElement foundElement = null;
 
         if (lookup != null) {
-            final LookupElementPresentation presentation = new LookupElementPresentation();
+            LookupElementPresentation presentation = new LookupElementPresentation();
 
             for (LookupElement lookupElement : lookup.getItems()) {
                 boolean lookupOk;

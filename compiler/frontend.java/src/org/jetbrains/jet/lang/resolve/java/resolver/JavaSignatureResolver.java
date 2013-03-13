@@ -198,7 +198,7 @@ public final class JavaSignatureResolver {
         List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
 
         @Override
-        public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
+        public JetSignatureVisitor visitFormalTypeParameter(final String name, TypeInfoVariance variance, boolean reified) {
             TypeParameterDescriptorImpl typeParameter = TypeParameterDescriptorImpl.createForFurtherModification(
                     containingDeclaration,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
@@ -274,7 +274,7 @@ public final class JavaSignatureResolver {
     private void initializeTypeParameter(TypeParameterDescriptorInitialization typeParameter, TypeVariableResolver typeVariableByPsiResolver) {
         TypeParameterDescriptorImpl typeParameterDescriptor = typeParameter.descriptor;
         if (typeParameter.origin == TypeParameterDescriptorOrigin.KOTLIN) {
-            final List<JetType> upperBoundsForKotlin = typeParameter.upperBoundsForKotlin;
+            List<JetType> upperBoundsForKotlin = typeParameter.upperBoundsForKotlin;
             assert upperBoundsForKotlin != null;
             if (upperBoundsForKotlin.size() == 0){
                 typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
@@ -344,7 +344,7 @@ public final class JavaSignatureResolver {
     ) {
 
         List<TypeParameterDescriptorInitialization> typeParametersIntialization;
-        final PsiMethod psiMethod = method.getPsiMethod();
+        PsiMethod psiMethod = method.getPsiMethod();
         if (method.getJetMethodAnnotation().typeParameters().length() > 0) {
             typeParametersIntialization = resolveMethodTypeParametersFromJetSignature(
                     method.getJetMethodAnnotation().typeParameters(), psiMethod, functionDescriptor);
@@ -353,7 +353,7 @@ public final class JavaSignatureResolver {
             typeParametersIntialization = makeUninitializedTypeParameters(functionDescriptor, psiMethod.getTypeParameters());
         }
 
-        final PsiClass psiMethodContainingClass = psiMethod.getContainingClass();
+        PsiClass psiMethodContainingClass = psiMethod.getContainingClass();
         assert psiMethodContainingClass != null;
         String context = "method " + method.getName() + " in class " + psiMethodContainingClass.getQualifiedName();
         initializeTypeParameters(typeParametersIntialization, functionDescriptor, context);
@@ -371,9 +371,9 @@ public final class JavaSignatureResolver {
      * @see #resolveClassTypeParametersFromJetSignature(String, PsiClass, ClassDescriptor)
      */
     private List<TypeParameterDescriptorInitialization> resolveMethodTypeParametersFromJetSignature(String jetSignature,
-            final PsiMethod method, final DeclarationDescriptor functionDescriptor)
+            PsiMethod method, DeclarationDescriptor functionDescriptor)
     {
-        final PsiClass methodContainingClass = method.getContainingClass();
+        PsiClass methodContainingClass = method.getContainingClass();
         assert methodContainingClass != null;
         String context = "method " + method.getName() + " in class " + methodContainingClass.getQualifiedName();
         JetSignatureTypeParametersVisitor jetSignatureTypeParametersVisitor = new JetSignatureTypeParametersVisitor(functionDescriptor, method, context);

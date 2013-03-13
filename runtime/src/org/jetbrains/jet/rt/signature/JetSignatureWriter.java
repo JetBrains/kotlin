@@ -57,7 +57,7 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     // ------------------------------------------------------------------------
 
     @Override
-    public JetSignatureVisitor visitFormalTypeParameter(final String name, TypeInfoVariance variance, boolean reified) {
+    public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified) {
         if (!hasFormals) {
             hasFormals = true;
             buf.append('<');
@@ -141,13 +141,13 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     }
 
     @Override
-    public void visitBaseType(final char descriptor, boolean nullable) {
+    public void visitBaseType(char descriptor, boolean nullable) {
         visitNullabe(nullable);
         buf.append(descriptor);
     }
 
     @Override
-    public void visitTypeVariable(final String name, boolean nullable) {
+    public void visitTypeVariable(String name, boolean nullable) {
         visitNullabe(nullable);
         buf.append('T');
         buf.append(name);
@@ -165,7 +165,7 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     }
 
     @Override
-    public void visitClassType(final String name, boolean nullable, boolean forceReal) {
+    public void visitClassType(String name, boolean nullable, boolean forceReal) {
         visitNullabe(nullable);
         buf.append(forceReal ? 'M' : 'L');
         buf.append(name);
@@ -173,7 +173,7 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     }
 
     @Override
-    public void visitInnerClassType(final String name, boolean nullable, boolean forceReal) {
+    public void visitInnerClassType(String name, boolean nullable, boolean forceReal) {
         endArguments();
         visitNullabe(nullable);
         buf.append('.');

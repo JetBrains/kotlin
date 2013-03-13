@@ -238,7 +238,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
             elements = Collections2.transform(elementsList, new Function<String, LookupElement>() {
                 @Override
                 public LookupElement apply(String keyword) {
-                    final LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(keyword).bold();
+                    LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(keyword).bold();
 
                     if (keyword.contains("<#<")) {
                         return JetTemplateInsertHandler.lookup(keyword);
@@ -255,7 +255,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
-                                      @NotNull final CompletionResultSet result) {
+                                      @NotNull CompletionResultSet result) {
             result.withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements);
         }
     }
@@ -329,25 +329,25 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         CLASS_OBJECT_WITHOUT_CLASS_TEMPLATE);
     }
 
-    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, boolean notIdentifier, String... keywords) {
+    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, boolean notIdentifier, String... keywords) {
         extend(CompletionType.BASIC, getPlacePattern(placeFilter, notIdentifier),
                new KeywordsCompletionProvider(keywords));
     }
 
-    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, boolean notIdentifier, JetToken... keywords) {
+    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, boolean notIdentifier, JetToken... keywords) {
         registerScopeKeywordsCompletion(placeFilter, notIdentifier, convertTokensToStrings(keywords));
     }
 
-    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
+    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, String... keywords) {
         registerScopeKeywordsCompletion(placeFilter, true, keywords);
     }
 
-    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, JetToken... keywords) {
+    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, JetToken... keywords) {
         registerScopeKeywordsCompletion(placeFilter, convertTokensToStrings(keywords));
     }
 
     private static String[] convertTokensToStrings(JetToken... keywords) {
-        final ArrayList<String> strings = new ArrayList<String>(keywords.length);
+        ArrayList<String> strings = new ArrayList<String>(keywords.length);
         for (JetToken keyword : keywords) {
             strings.add(keyword.toString());
         }
@@ -355,7 +355,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         return ArrayUtil.toStringArray(strings);
     }
 
-    private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter, boolean notIdentifier) {
+    private static ElementPattern<PsiElement> getPlacePattern(ElementFilter placeFilter, boolean notIdentifier) {
         if (notIdentifier) {
             return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, NOT_IDENTIFIER_FILTER, placeFilter)));
         }

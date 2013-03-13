@@ -28,7 +28,7 @@ public class AstUtil {
     private AstUtil() {
     }
 
-    private static String join(@NotNull final String[] array, @Nullable final String delimiter) {
+    private static String join(@NotNull String[] array, @Nullable String delimiter) {
         StringBuilder buffer = new StringBuilder();
         boolean haveDelimiter = (delimiter != null);
 
@@ -43,11 +43,11 @@ public class AstUtil {
         return buffer.toString();
     }
 
-    public static String joinNodes(@NotNull final List<? extends INode> nodes, final String delimiter) {
+    public static String joinNodes(@NotNull List<? extends INode> nodes, String delimiter) {
         return join(nodesToKotlin(nodes), delimiter);
     }
 
-    public static String join(@NotNull final List<String> array, final String delimiter) {
+    public static String join(@NotNull List<String> array, String delimiter) {
         return join(array.toArray(new String[array.size()]), delimiter);
     }
 
@@ -70,8 +70,8 @@ public class AstUtil {
     }
 
     @NotNull
-    public static <T> List<String> createListWithEmptyString(@NotNull final List<T> arguments) {
-        final List<String> conversions = new LinkedList<String>();
+    public static <T> List<String> createListWithEmptyString(@NotNull List<T> arguments) {
+        List<String> conversions = new LinkedList<String>();
         //noinspection UnusedDeclaration
         for (T argument : arguments) conversions.add("");
         return conversions;

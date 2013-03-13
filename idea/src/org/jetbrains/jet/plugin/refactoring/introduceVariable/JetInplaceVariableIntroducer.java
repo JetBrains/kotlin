@@ -158,7 +158,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
             });
         }
 
-        final JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(null);
         int count = 1;
         if (myVarCheckbox != null) {

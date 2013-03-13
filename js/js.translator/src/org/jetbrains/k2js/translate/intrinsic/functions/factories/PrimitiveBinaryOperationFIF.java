@@ -98,7 +98,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
             return RANGE_TO_INTRINSIC;
         }
-        final JsBinaryOperator operator = getOperator(descriptor);
+        JsBinaryOperator operator = getOperator(descriptor);
         return new PrimitiveBinaryOperationFunctionIntrinsic(operator);
     }
 

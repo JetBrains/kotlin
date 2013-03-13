@@ -50,9 +50,9 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         }
         else if (element instanceof JetNamedFunction) {
             final JetNamedFunction function = (JetNamedFunction) element;
-            final String name = function.getName();
+            String name = function.getName();
             if (name != null) {
-                final PsiMethod method = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
+                PsiMethod method = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
                     @Override
                     public PsiMethod compute() {
                         return LightClassUtil.getLightClassMethod(function);

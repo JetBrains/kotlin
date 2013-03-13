@@ -127,12 +127,12 @@ public class StatementVisitor extends ElementVisitor {
     public void visitForStatement(@NotNull PsiForStatement statement) {
         super.visitForStatement(statement);
 
-        final PsiStatement initialization = statement.getInitialization();
-        final PsiStatement update = statement.getUpdate();
-        final PsiExpression condition = statement.getCondition();
-        final PsiStatement body = statement.getBody();
+        PsiStatement initialization = statement.getInitialization();
+        PsiStatement update = statement.getUpdate();
+        PsiExpression condition = statement.getCondition();
+        PsiStatement body = statement.getBody();
 
-        final PsiLocalVariable firstChild = initialization != null && initialization.getFirstChild() instanceof PsiLocalVariable
+        PsiLocalVariable firstChild = initialization != null && initialization.getFirstChild() instanceof PsiLocalVariable
                                             ?
                                             (PsiLocalVariable) initialization.getFirstChild()
                                             : null;
@@ -142,7 +142,7 @@ public class StatementVisitor extends ElementVisitor {
         int updateWriteCount = countWritingAccesses(firstChild, update);
         boolean onceWritableIterator = updateWriteCount == 1 && bodyWriteCount + conditionWriteCount == 0;
 
-        final IElementType operationTokenType = condition != null && condition instanceof PsiBinaryExpression ?
+        IElementType operationTokenType = condition != null && condition instanceof PsiBinaryExpression ?
                                                 ((PsiBinaryExpression) condition).getOperationTokenType() : null;
         if (
                 initialization != null &&
@@ -160,8 +160,8 @@ public class StatementVisitor extends ElementVisitor {
                 && firstChild.getNameIdentifier() != null
                 && onceWritableIterator
                 ) {
-            final Expression end = getConverter().expressionToExpression(((PsiBinaryExpression) condition).getROperand());
-            final Expression endExpression = operationTokenType == JavaTokenType.LT ?
+            Expression end = getConverter().expressionToExpression(((PsiBinaryExpression) condition).getROperand());
+            Expression endExpression = operationTokenType == JavaTokenType.LT ?
                                              new BinaryExpression(end, new IdentifierImpl("1"), "-") :
                                              end;
             myResult = new ForeachWithRangeStatement(
@@ -240,9 +240,9 @@ public class StatementVisitor extends ElementVisitor {
     }
 
     @NotNull
-    private List<CaseContainer> switchBodyToCases(@Nullable final PsiCodeBlock body) {
-        final List<List<PsiStatement>> cases = splitToCases(body);
-        final List<PsiStatement> allSwitchStatements = body != null
+    private List<CaseContainer> switchBodyToCases(@Nullable PsiCodeBlock body) {
+        List<List<PsiStatement>> cases = splitToCases(body);
+        List<PsiStatement> allSwitchStatements = body != null
                                                        ? Arrays.asList(body.getStatements())
                                                        : Collections.<PsiStatement>emptyList();
 
@@ -282,7 +282,7 @@ public class StatementVisitor extends ElementVisitor {
         return result;
     }
 
-    private static boolean containsBreak(@NotNull final List<PsiStatement> slice) {
+    private static boolean containsBreak(@NotNull List<PsiStatement> slice) {
         for (PsiStatement s : slice)
             if (s instanceof PsiBreakStatement) {
                 return true;
@@ -291,7 +291,7 @@ public class StatementVisitor extends ElementVisitor {
     }
 
     @NotNull
-    private static List<PsiStatement> getAllToNextBreak(@NotNull final List<PsiStatement> allStatements, final int start) {
+    private static List<PsiStatement> getAllToNextBreak(@NotNull List<PsiStatement> allStatements, int start) {
         List<PsiStatement> result = new LinkedList<PsiStatement>();
         for (int i = start; i < allStatements.size(); i++) {
             PsiStatement s = allStatements.get(i);
@@ -306,7 +306,7 @@ public class StatementVisitor extends ElementVisitor {
     }
 
     @NotNull
-    private static List<List<PsiStatement>> splitToCases(@Nullable final PsiCodeBlock body) {
+    private static List<List<PsiStatement>> splitToCases(@Nullable PsiCodeBlock body) {
         List<List<PsiStatement>> cases = new LinkedList<List<PsiStatement>>();
         List<PsiStatement> currentCaseStatements = new LinkedList<PsiStatement>();
         boolean isFirst = true;

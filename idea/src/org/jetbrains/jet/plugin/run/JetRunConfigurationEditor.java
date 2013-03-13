@@ -36,7 +36,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     private CommonJavaParametersPanel myCommonProgramParameters;
     private ConfigurationModuleSelector myModuleSelector;
 
-    public JetRunConfigurationEditor(final Project project) {
+    public JetRunConfigurationEditor(Project project) {
         LabeledComponent<JComboBox> moduleChooser = LabeledComponent.create(new JComboBox(),  "Use classpath and JDK of module:");
         myModuleChooserHolder.add(moduleChooser, BorderLayout.CENTER);
         myModuleSelector = new ConfigurationModuleSelector(project, moduleChooser.getComponent());

@@ -35,12 +35,12 @@ public abstract class IDECompilerMessagingTest extends PlatformTestCase {
 
     protected void performTest(@NotNull Function1<MessageChecker, Void> whatToExpect,
             @NotNull TranslatingCompiler compiler, @NotNull String testDataPath) {
-        final String pathToTestDir = testDataPath + "/" + getTestName(true);
+        String pathToTestDir = testDataPath + "/" + getTestName(true);
         VirtualFile testDir = LocalFileSystem.getInstance().findFileByPath(pathToTestDir);
         Assert.assertNotNull(testDir);
         VirtualFile sampleFile = LocalFileSystem.getInstance().findFileByPath(pathToTestDir + "/src/test.kt");
         VirtualFile outDirectory = getOutDirectory(pathToTestDir, testDir);
-        final String pathToSrc = pathToTestDir + "/src/";
+        String pathToSrc = pathToTestDir + "/src/";
         VirtualFile root = LocalFileSystem.getInstance().findFileByPath(pathToSrc);
         Assert.assertNotNull(root);
         MockCompileContext mockCompileContext = new MockCompileContext(myModule, outDirectory, root);

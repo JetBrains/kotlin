@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 
 public class JetPropertyPresenter implements ItemPresentationProvider<JetProperty> {
     @Override
-    public ItemPresentation getPresentation(final JetProperty item) {
+    public ItemPresentation getPresentation(JetProperty item) {
         return new JetDefaultNamedDeclarationPresentation(item);
     }
 }

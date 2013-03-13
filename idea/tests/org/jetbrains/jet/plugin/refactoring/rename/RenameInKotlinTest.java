@@ -74,14 +74,14 @@ public class RenameInKotlinTest extends MultiFileTestCase {
                 ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
 
                 assertNotNull(classDescriptor);
-                final JetScope scope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-                final FunctionDescriptor methodDescriptor = scope.getFunctions(Name.identifier(oldMethodName)).iterator().next();
+                JetScope scope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+                FunctionDescriptor methodDescriptor = scope.getFunctions(Name.identifier(oldMethodName)).iterator().next();
                 return BindingContextUtils.callableDescriptorToDeclaration(bindingContext, methodDescriptor);
             }
         }, newMethodName);
     }
 
-    private void doTestWithRenameClass(@NonNls final FqName qClassName, @NonNls final String newName) throws Exception {
+    private void doTestWithRenameClass(@NonNls final FqName qClassName, @NonNls String newName) throws Exception {
         doTestWithRename(new Function<PsiFile, PsiElement>() {
             @Override
             public PsiElement fun(PsiFile file) {

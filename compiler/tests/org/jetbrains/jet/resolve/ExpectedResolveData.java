@@ -158,7 +158,7 @@ public abstract class ExpectedResolveData {
     public final void checkResult(BindingContext bindingContext) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
-        final Set<PsiElement> unresolvedReferences = Sets.newHashSet();
+        Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 unresolvedReferences.add(diagnostic.getPsiElement());

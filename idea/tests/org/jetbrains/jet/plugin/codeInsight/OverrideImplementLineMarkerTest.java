@@ -46,12 +46,12 @@ public class OverrideImplementLineMarkerTest extends LightCodeInsightFixtureTest
     }
 
     private void doTest(int count) {
-        final Editor editor = myFixture.getEditor();
-        final Project project = myFixture.getProject();
+        Editor editor = myFixture.getEditor();
+        Project project = myFixture.getProject();
 
         myFixture.doHighlighting();
 
-        final List<LineMarkerInfo> infoList = DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), project);
+        List<LineMarkerInfo> infoList = DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), project);
         assertNotNull(infoList);
         assertEquals(count, infoList.size());
     }

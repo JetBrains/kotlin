@@ -58,7 +58,7 @@ class JavaMethodSignatureUtil {
     ) {
         if (superReturnType == null) return false;
         PsiType substitutedSuperReturnType;
-        final boolean isJdk15 = PsiUtil.isLanguageLevel5OrHigher(method);
+        boolean isJdk15 = PsiUtil.isLanguageLevel5OrHigher(method);
         if (isJdk15 && !superMethodSignature.isRaw() && superMethodSignature.equals(methodSignature)) { //see 8.4.5
             PsiSubstitutor unifyingSubstitutor = MethodSignatureUtil.getSuperMethodSignatureSubstitutor(methodSignature,
                                                                                                         superMethodSignature);

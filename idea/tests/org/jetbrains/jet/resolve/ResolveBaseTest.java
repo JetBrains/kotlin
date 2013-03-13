@@ -55,11 +55,11 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
     }
 
     protected void doSingleResolveTest(@Nullable String referenceToString) throws Exception {
-        final String testName = getTestName(false);
+        String testName = getTestName(false);
         configureByFile(testName + ".kt");
 
         int offset = getEditor().getCaretModel().getOffset();
-        final PsiReference psiReference = getFile().findReferenceAt(offset);
+        PsiReference psiReference = getFile().findReferenceAt(offset);
         if (psiReference != null) {
             PsiElement resolvedTo = psiReference.resolve();
             if (resolvedTo != null) {
@@ -81,18 +81,18 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
     }
 
     protected void doMultiResolveTest() throws Exception {
-        final String testName = getTestName(false);
+        String testName = getTestName(false);
         configureByFile(testName + ".kt");
 
-        final PsiReference psiReference =
+        PsiReference psiReference =
                 getFile().findReferenceAt(getEditor().getCaretModel().getOffset());
 
         assertTrue(psiReference instanceof PsiPolyVariantReference);
 
-        final PsiPolyVariantReference variantReference = (PsiPolyVariantReference) psiReference;
+        PsiPolyVariantReference variantReference = (PsiPolyVariantReference) psiReference;
 
         PsiElement element = variantReference.resolve();
-        final ResolveResult[] results = variantReference.multiResolve(true);
+        ResolveResult[] results = variantReference.multiResolve(true);
         for (ResolveResult result : results) {
             assertNotNull(result);
         }

@@ -30,7 +30,7 @@ public final class QualifiedNamesUtil {
     private QualifiedNamesUtil() {
     }
 
-    public static boolean isSubpackageOf(@NotNull final FqName subpackageName, @NotNull FqName packageName) {
+    public static boolean isSubpackageOf(@NotNull FqName subpackageName, @NotNull FqName packageName) {
         if (subpackageName.equals(packageName)) {
             return true;
         }
@@ -45,7 +45,7 @@ public final class QualifiedNamesUtil {
         return (subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr.charAt(packageNameStr.length()) == '.');
     }
 
-    public static boolean isOneSegmentFQN(@NotNull final String fqn) {
+    public static boolean isOneSegmentFQN(@NotNull String fqn) {
         if (fqn.isEmpty()) {
             return false;
         }
@@ -114,7 +114,7 @@ public final class QualifiedNamesUtil {
             return null;
         }
 
-        final String nextSegment = getFirstSegment(tail(fqn, fullFQN));
+        String nextSegment = getFirstSegment(tail(fqn, fullFQN));
 
         if (isOneSegmentFQN(nextSegment)) {
             return combine(fqn, Name.guess(nextSegment));

@@ -263,7 +263,7 @@ public final class MembersCache {
                 }
 
                 // TODO: what if returnType == null?
-                final PsiType returnType = method.getReturnType();
+                PsiType returnType = method.getReturnType();
                 assert returnType != null;
                 TypeSource propertyType = new TypeSource(method.getJetMethodAnnotation().propertyType(), returnType, method.getPsiMethod());
 

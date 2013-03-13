@@ -104,7 +104,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
 
             StringBuilder answer = new StringBuilder();
 
-            final ClassFileFactory factory = state.getFactory();
+            ClassFileFactory factory = state.getFactory();
             for (String filename : factory.files()) {
                 answer.append("// ================");
                 answer.append(filename);
@@ -116,7 +116,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         }
 
         @Override
-        protected void onResultReady(@NotNull Location requestInfo, final String resultText) {
+        protected void onResultReady(@NotNull Location requestInfo, String resultText) {
             Editor editor = requestInfo.getEditor();
             assert editor != null;
 

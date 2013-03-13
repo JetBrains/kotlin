@@ -113,7 +113,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @NotNull
-    public MultiMap<String, FqName> getAllPackageClasses(@NotNull final GlobalSearchScope scope) {
+    public MultiMap<String, FqName> getAllPackageClasses(@NotNull GlobalSearchScope scope) {
         Collection<String> packageFqNames = JetAllPackagesIndex.getInstance().getAllKeys(project);
 
         MultiMap<String, FqName> result = new MultiMap<String, FqName>();

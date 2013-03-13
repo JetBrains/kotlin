@@ -54,7 +54,7 @@ public final class JetScopeUtils {
      * @return extension descriptors.
      */
     public static Collection<CallableDescriptor> getAllExtensions(@NotNull JetScope scope) {
-        final Set<CallableDescriptor> result = Sets.newHashSet();
+        Set<CallableDescriptor> result = Sets.newHashSet();
 
         for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
             if (descriptor instanceof CallableDescriptor) {

@@ -58,7 +58,7 @@ public class CodegenUtil {
 
     public static boolean isInterface(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            final ClassKind kind = ((ClassDescriptor) descriptor).getKind();
+            ClassKind kind = ((ClassDescriptor) descriptor).getKind();
             return kind == ClassKind.TRAIT || kind == ClassKind.ANNOTATION_CLASS;
         }
         return false;
@@ -123,7 +123,7 @@ public class CodegenUtil {
 
     @NotNull
     public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
-        final int paramCount = descriptor.getValueParameters().size();
+        int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter() != null) {
             return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
         }
@@ -181,7 +181,7 @@ public class CodegenUtil {
     }
 
     public static JetType getSuperClass(ClassDescriptor classDescriptor) {
-        final List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
+        List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
         for (ClassDescriptor descriptor : superclassDescriptors) {
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 return descriptor.getDefaultType();

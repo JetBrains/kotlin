@@ -192,7 +192,7 @@ public final class DescriptorLookupConverter {
             @NotNull Iterable<DeclarationDescriptor> descriptors) {
         List<LookupElement> result = Lists.newArrayList();
 
-        for (final DeclarationDescriptor descriptor : descriptors) {
+        for (DeclarationDescriptor descriptor : descriptors) {
             result.add(createLookupElement(analyzer, bindingContext, descriptor));
         }
 
@@ -206,7 +206,7 @@ public final class DescriptorLookupConverter {
 
         @Override
         public void handleInsert(InsertionContext context) {
-            final InsertHandler<? extends LookupElement> handler = getInsertHandler();
+            InsertHandler<? extends LookupElement> handler = getInsertHandler();
             if (handler != null) {
                 //noinspection unchecked
                 ((InsertHandler)handler).handleInsert(context, this);
@@ -224,7 +224,7 @@ public final class DescriptorLookupConverter {
 
         @Override
         public void handleInsert(InsertionContext context) {
-            final InsertHandler<? extends LookupElement> handler = getInsertHandler();
+            InsertHandler<? extends LookupElement> handler = getInsertHandler();
             if (handler != null) {
                 //noinspection unchecked
                 ((InsertHandler)handler).handleInsert(context, this);

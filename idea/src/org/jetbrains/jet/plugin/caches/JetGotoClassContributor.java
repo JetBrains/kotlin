@@ -60,7 +60,7 @@ public class JetGotoClassContributor implements GotoClassContributor {
     @NotNull
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
-        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         PsiClass[] classes = JetShortNamesCache.getKotlinInstance(project).getClassesByName(name, scope);
 
         Collection<String> javaQualifiedNames = new HashSet<String>();
