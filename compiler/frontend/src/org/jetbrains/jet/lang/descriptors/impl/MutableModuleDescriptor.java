@@ -47,8 +47,9 @@ public class MutableModuleDescriptor extends DeclarationDescriptorImpl implement
         return subModules;
     }
 
-    public void addSubModule(@NotNull SubModuleDescriptor subModule) {
+    public SubModuleDescriptor addSubModule(@NotNull SubModuleDescriptor subModule) {
         subModules.add(subModule);
+        return subModule;
     }
 
     @Nullable
