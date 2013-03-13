@@ -53,7 +53,7 @@ public class DependencyInjectorGenerator {
         File file = new File(outputFileName);
 
         fields.addAll(dependencies.satisfyDependencies());
-
+        reportUnusedParameters(injectorPackageName, injectorClassName);
 
         StringBuilder preamble = new StringBuilder();
         generatePreamble(injectorPackageName, new Printer(preamble));
@@ -90,6 +90,15 @@ public class DependencyInjectorGenerator {
         text.append(body);
 
         GeneratorsFileUtil.writeFileIfContentChanged(file, text.toString());
+    }
+
+    private void reportUnusedParameters(String injectorPackageName, String injectorClassName) {
+        Sets.SetView<Field> unusedParameters = Sets.difference(backsParameter, dependencies.getUsedFields());
+        for (Field parameter : unusedParameters) {
+            if (!parameter.isPublic()) {
+                System.err.println("Unused parameter: " + parameter + " for " + injectorPackageName + "." + injectorClassName);
+            }
+        }
     }
 
     private void generatePreamble(String injectorPackageName, Printer p) throws IOException {

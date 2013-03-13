@@ -34,6 +34,7 @@ public class Dependencies {
 
     private final Set<Field> allFields = Sets.newLinkedHashSet();
     private final Set<Field> satisfied = Sets.newHashSet();
+    private final Set<Field> used = Sets.newHashSet();
     private final Multimap<DiType, Field> typeToFields = HashMultimap.create();
 
     private final Set<Field> newFields = Sets.newLinkedHashSet();
@@ -85,6 +86,7 @@ public class Dependencies {
                     field + ": " + method + ": " + allFields,
                     neededFor.prepend(field)
             );
+            used.add(dependency);
 
             field.getDependencies().add(new SetterDependency(field, method.getName(), dependency));
         }
@@ -152,6 +154,7 @@ public class Dependencies {
                     "constructor: " + constructor + ", parameter: " + parameterType,
                     neededFor.prepend(field)
             );
+            used.add(fieldForParameter);
             dependency.getConstructorArguments().add(fieldForParameter);
         }
 
@@ -163,6 +166,11 @@ public class Dependencies {
             satisfyDependenciesFor(field, LinkedImmutableStack.<Field>empty());
         }
         return newFields;
+    }
+
+    @NotNull
+    public Set<Field> getUsedFields() {
+        return used;
     }
 
     private interface ImmutableStack<T> {
