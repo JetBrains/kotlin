@@ -267,6 +267,7 @@ public class CallResolver {
     ) {
         PsiElement element = context.call.getCallElement();
         OverloadResolutionResultsImpl<F> results = null;
+        TracingStrategy tracing = prioritizedTasks.isEmpty() ? TracingStrategy.EMPTY : prioritizedTasks.iterator().next().tracing;
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", context.call);
         if (element instanceof JetExpression) {
             CallKey key = CallKey.create(context.call.getCallType(), (JetExpression) element);
@@ -285,8 +286,8 @@ public class CallResolver {
             if (deltasTraceForTypeInference != null) {
                 deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
             }
-            completeTypeInferenceDependentOnFunctionLiterals(newContext, results, TracingStrategy.EMPTY);
-            cacheResults(memberType, context, results, traceToResolveCall);
+            completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
+            cacheResults(memberType, context, results, traceToResolveCall, tracing);
         }
         traceToResolveCall.commit();
 
@@ -295,7 +296,6 @@ public class CallResolver {
         }
         if (context.resolveMode == ResolveMode.NESTED_CALL) return results;
 
-        TracingStrategy tracing = prioritizedTasks.iterator().next().tracing;
         return completeTypeInferenceDependentOnExpectedType(context, results, tracing);
     }
 
@@ -351,8 +351,11 @@ public class CallResolver {
 
     private static <F extends CallableDescriptor> void cacheResults(
             @NotNull ResolutionResultsCache.MemberType<F> memberType,
-            @NotNull BasicCallResolutionContext context, @NotNull OverloadResolutionResultsImpl<F> results,
-            @NotNull DelegatingBindingTrace traceToResolveCall) {
+            @NotNull BasicCallResolutionContext context,
+            @NotNull OverloadResolutionResultsImpl<F> results,
+            @NotNull DelegatingBindingTrace traceToResolveCall,
+            @NotNull TracingStrategy tracing
+    ) {
         PsiElement callElement = context.call.getCallElement();
         if (!(callElement instanceof JetExpression)) return;
 
@@ -360,9 +363,15 @@ public class CallResolver {
                 new BindingTraceContext().getBindingContext(), "delta trace for caching resolve of", context.call);
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
 
-        context.resolutionResultsCache.recordResolutionResults(
-                CallKey.create(context.call.getCallType(), (JetExpression) callElement), memberType, results);
-        context.resolutionResultsCache.recordResolutionTrace((JetExpression) callElement, deltasTraceToCacheResolve);
+        JetExpression callExpression = (JetExpression) callElement;
+        context.resolutionResultsCache.recordResolutionResults(CallKey.create(context.call.getCallType(), callExpression), memberType, results);
+        context.resolutionResultsCache.recordResolutionTrace(callExpression, deltasTraceToCacheResolve);
+
+        if (results.isSingleResult() && memberType == ResolutionResultsCache.FUNCTION_MEMBER_TYPE) {
+            CallCandidateResolutionContext<F> callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
+                    results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
+            context.resolutionResultsCache.recordDeferredComputationForCall(callExpression, callCandidateResolutionContext, memberType);
+        }
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> checkArgumentTypesAndFail(BasicCallResolutionContext context) {

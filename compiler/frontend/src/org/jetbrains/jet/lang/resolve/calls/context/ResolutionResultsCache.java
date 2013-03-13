@@ -71,8 +71,13 @@ public class ResolutionResultsCache {
         return trace.get(TRACE_DELTAS_CACHE, expression);
     }
 
-    public void recordDeferredComputationForCall(@NotNull JetExpression expression, @NotNull CallCandidateResolutionContext<FunctionDescriptor> deferredComputation) {
-        trace.record(DEFERRED_COMPUTATION_FOR_CALL, expression, deferredComputation);
+    public <D extends CallableDescriptor> void recordDeferredComputationForCall(
+            @NotNull JetExpression expression,
+            @NotNull CallCandidateResolutionContext<D> deferredComputation,
+            @NotNull MemberType memberType
+    ) {
+        if (memberType == PROPERTY_MEMBER_TYPE) return;
+        trace.record(DEFERRED_COMPUTATION_FOR_CALL, expression, (CallCandidateResolutionContext<FunctionDescriptor>) deferredComputation);
     }
 
     @Nullable

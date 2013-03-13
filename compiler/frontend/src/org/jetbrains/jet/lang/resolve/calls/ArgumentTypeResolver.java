@@ -196,10 +196,6 @@ public class ArgumentTypeResolver {
         }
 
         recordExpressionType(expression, context.trace, context.scope, result.getTypeInfo());
-        CallCandidateResolutionContext<FunctionDescriptor> deferredContext = result.getCallCandidateResolutionContext();
-        if (deferredContext != null) {
-            context.resolutionResultsCache.recordDeferredComputationForCall(expression, deferredContext);
-        }
         if (traceToCommitForCall != null) {
             traceToCommitForCall.commit();
         }
