@@ -18,21 +18,25 @@ package org.jetbrains.jet.generators.injectors;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.di.*;
+import org.jetbrains.jet.di.DependencyInjectorGenerator;
+import org.jetbrains.jet.di.GivenExpression;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
+import org.jetbrains.jet.di.InstantiateType;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
@@ -64,10 +68,7 @@ public class GenerateInjectors {
     private static void generateInjectorForLazyResolve() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generator.addParameter(Project.class);
-        generator.addParameter(ResolveSession.class);
-        generator.addParameter(BindingTrace.class);
         generator.addParameter(ModuleConfiguration.class);
-        generator.addParameter(StorageManager.class);
         generator.addParameter(LazyCodeAnalyzer.class);
         generator.addPublicField(DescriptorResolver.class);
         generator.addPublicField(ExpressionTypingServices.class);
@@ -101,7 +102,6 @@ public class GenerateInjectors {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addField(JavaDependencyByQualifiedNameResolver.class);
         generator.addParameter(JavaClassResolutionFacade.class);
-        generator.addParameter(StorageManager.class);
         generator.addParameter(GlobalSearchScope.class);
         generator.addField(PsiClassFinderImpl.class);
         generator.addField(true, ModuleConfiguration.class, null, new InstantiateType(JavaBridgeConfiguration.class));
@@ -145,7 +145,6 @@ public class GenerateInjectors {
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(BindingTrace.class);
-        generator.addParameter(ModuleDescriptor.class);
         generator.addParameter(ModuleSourcesManager.class);
     }
 
@@ -210,8 +209,6 @@ public class GenerateInjectors {
 
         // Parameters
         generator.addPublicParameter(JetTypeMapper.class);
-        generator.addParameter(DiType.listOf(JetFile.class));
-        generator.addParameter(BuiltinToJavaTypesMapping.class);
         generator.addPublicParameter(GenerationState.class);
         generator.addParameter(ClassBuilderFactory.class);
         generator.addPublicParameter(Project.class);
