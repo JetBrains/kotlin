@@ -343,11 +343,14 @@ public final class JavaFunctionResolver {
         PsiClass functionalInterface = namedMembers.getFunctionalInterface();
         if (functionalInterface != null) {
             ClassifierDescriptor classifier = ownerDescriptor.getMemberScope().getClassifier(functionName);
-            if (classifier instanceof ClassDescriptor && SingleAbstractMethodUtils.isFunctionalInterface((ClassDescriptor) classifier)) {
+            if (classifier instanceof ClassDescriptor) {
+                ClassDescriptor klass = (ClassDescriptor) classifier;
 
-                SimpleFunctionDescriptor constructorFunction =
-                        SingleAbstractMethodUtils.createConstructorFunction((ClassDescriptor) classifier);
-                return Collections.<FunctionDescriptor>singleton(constructorFunction);
+                if (SingleAbstractMethodUtils.isFunctionalInterface(klass)) {
+                    SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createConstructorFunction(klass);
+                    trace.record(BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, constructorFunction, klass);
+                    return Collections.<FunctionDescriptor>singleton(constructorFunction);
+                }
             }
         }
 
