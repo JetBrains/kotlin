@@ -695,7 +695,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/override")
-    @InnerTestClasses({Override.TypeMismatchOnOverride.class})
+    @InnerTestClasses({Override.NothingToOverride.class, Override.TypeMismatchOnOverride.class})
     public static class Override extends AbstractQuickFixTest {
         public void testAllFilesPresentInOverride() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -704,11 +704,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeChangeToInvocation.kt")
         public void testChangeToInvocation() throws Exception {
             doTest("idea/testData/quickfix/override/beforeChangeToInvocation.kt");
-        }
-        
-        @TestMetadata("beforeNothingToOverride.kt")
-        public void testNothingToOverride() throws Exception {
-            doTest("idea/testData/quickfix/override/beforeNothingToOverride.kt");
         }
         
         @TestMetadata("beforeOverriddingMultipleFinalMethods.kt")
@@ -754,6 +749,74 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeVirtualMethodHidden.kt")
         public void testVirtualMethodHidden() throws Exception {
             doTest("idea/testData/quickfix/override/beforeVirtualMethodHidden.kt");
+        }
+        
+        @TestMetadata("idea/testData/quickfix/override/nothingToOverride")
+        public static class NothingToOverride extends AbstractQuickFixTest {
+            public void testAllFilesPresentInNothingToOverride() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeChangeParameterType.kt")
+            public void testChangeParameterType() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterType.kt");
+            }
+            
+            @TestMetadata("beforeChangeParameterTypeAbstractSuperclass.kt")
+            public void testChangeParameterTypeAbstractSuperclass() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterTypeAbstractSuperclass.kt");
+            }
+            
+            @TestMetadata("beforeChangeParameterTypeGenerics.kt")
+            public void testChangeParameterTypeGenerics() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterTypeGenerics.kt");
+            }
+            
+            @TestMetadata("beforeChangeParameterTypeInlineMethod.kt")
+            public void testChangeParameterTypeInlineMethod() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterTypeInlineMethod.kt");
+            }
+            
+            @TestMetadata("beforeChangeParameterTypeModifyOrder.kt")
+            public void testChangeParameterTypeModifyOrder() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterTypeModifyOrder.kt");
+            }
+            
+            @TestMetadata("beforeChangeParameterTypeOpenOverride.kt")
+            public void testChangeParameterTypeOpenOverride() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterTypeOpenOverride.kt");
+            }
+            
+            @TestMetadata("beforeChangeParameterTypeSuperTrait.kt")
+            public void testChangeParameterTypeSuperTrait() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterTypeSuperTrait.kt");
+            }
+            
+            @TestMetadata("beforeChangeParameterTypeTrait.kt")
+            public void testChangeParameterTypeTrait() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeParameterTypeTrait.kt");
+            }
+            
+            @TestMetadata("beforeChangeReturnType.kt")
+            public void testChangeReturnType() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeChangeReturnType.kt");
+            }
+            
+            @TestMetadata("beforeNoOpenSupermethod.kt")
+            public void testNoOpenSupermethod() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeNoOpenSupermethod.kt");
+            }
+            
+            @TestMetadata("beforeRemoveOverride.kt")
+            public void testRemoveOverride() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeRemoveOverride.kt");
+            }
+            
+            @TestMetadata("beforeRemoveParameterTwoTraits.kt")
+            public void testRemoveParameterTwoTraits() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeRemoveParameterTwoTraits.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/quickfix/override/typeMismatchOnOverride")
@@ -802,6 +865,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Override");
             suite.addTestSuite(Override.class);
+            suite.addTestSuite(NothingToOverride.class);
             suite.addTestSuite(TypeMismatchOnOverride.class);
             return suite;
         }
