@@ -55,6 +55,7 @@ public class GenerateMockJdk {
             "java/io/File.class",
             "java/io/FileInputStream.class",
             "java/io/FilenameFilter.class",
+            "java/io/FileFilter.class",
             "java/io/FileNotFoundException.class",
             "java/io/FileOutputStream.class",
             "java/io/FileReader.class",
