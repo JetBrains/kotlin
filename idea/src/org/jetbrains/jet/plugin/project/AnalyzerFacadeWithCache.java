@@ -16,13 +16,11 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -40,6 +38,9 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.plugin.caches.resolve.AnalyzeExhaustAsKotlinDeclarationsCache;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
 import org.jetbrains.jet.plugin.util.ApplicationUtils;
 
 import java.util.Collection;
@@ -49,7 +50,6 @@ public final class AnalyzerFacadeWithCache {
 
     private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache");
 
-    private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST_HEADERS = Key.create("ANALYZE_EXHAUST_HEADERS");
     private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST_FULL = Key.create("ANALYZE_EXHAUST_FULL");
 
     private static final Object lock = new Object();
@@ -65,15 +65,10 @@ public final class AnalyzerFacadeWithCache {
 
     /**
      * Analyze project with string cache for given file. Given file will be fully analyzed.
-     *
-     * @param file
-     * @param declarationProvider
-     * @return
      */
     // TODO: Also need to pass several files when user have multi-file environment
     @NotNull
-    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
-            @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
+    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file) {
         // Need lock, because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
             return CachedValuesManager.getManager(file.getProject()).getCachedValue(
@@ -91,7 +86,7 @@ public final class AnalyzerFacadeWithCache {
 
                             ApplicationUtils.warnTimeConsuming(LOG);
 
-                            AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, declarationProvider);
+                            AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file);
 
                             AnalyzeExhaust exhaust = analyzeBodies(analyzeExhaustHeaders, file);
 
@@ -115,29 +110,9 @@ public final class AnalyzerFacadeWithCache {
         return AnalyzeExhaust.success(BindingContext.EMPTY, ModuleConfiguration.EMPTY);
     }
 
-    private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(
-            @NotNull final JetFile fileToCache,
-            @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider
-    ) {
-        CachedValue<AnalyzeExhaust> bindingContextCachedValue = fileToCache.getUserData(ANALYZE_EXHAUST_HEADERS);
-        if (bindingContextCachedValue == null) {
-            bindingContextCachedValue =
-                    CachedValuesManager.getManager(fileToCache.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                        @Override
-                        public Result<AnalyzeExhaust> compute() {
-                            AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(fileToCache)
-                                    .analyzeFiles(fileToCache.getProject(),
-                                                  declarationProvider.fun(fileToCache),
-                                                  Collections.<AnalyzerScriptParameter>emptyList(),
-                                                  Predicates.<PsiFile>alwaysFalse());
-
-                            return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
-                        }
-                    }, false);
-            fileToCache.putUserData(ANALYZE_EXHAUST_HEADERS, bindingContextCachedValue);
-        }
-
-        return bindingContextCachedValue.getValue();
+    private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull JetFile fileToCache) {
+        KotlinDeclarationsCache cache = KotlinCacheManager.getInstance(fileToCache.getProject()).getDeclarationsFromProject();
+        return ((AnalyzeExhaustAsKotlinDeclarationsCache) cache).getAnalyzeExhaust();
     }
 
     private static AnalyzeExhaust analyzeBodies(AnalyzeExhaust analyzeExhaustHeaders, JetFile file) {
@@ -162,12 +137,9 @@ public final class AnalyzerFacadeWithCache {
         bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
         AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
 
-        CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_HEADERS);
-        if (bindingContextCachedValue != null && bindingContextCachedValue.hasUpToDateValue()) {
-            // Force invalidating of headers cache - temp decision for monitoring rewrite slice bug
-            PsiModificationTracker tracker = PsiManager.getInstance(file.getProject()).getModificationTracker();
-            ((PsiModificationTrackerImpl) tracker).incOutOfCodeBlockModificationCounter();
-        }
+        // Force invalidating of headers cache - temp decision for monitoring rewrite slice bug
+        PsiModificationTracker tracker = PsiManager.getInstance(file.getProject()).getModificationTracker();
+        ((PsiModificationTrackerImpl) tracker).incOutOfCodeBlockModificationCounter();
 
         return new CachedValueProvider.Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
     }

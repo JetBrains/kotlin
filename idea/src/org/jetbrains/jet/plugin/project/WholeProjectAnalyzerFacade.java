@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
 public final class WholeProjectAnalyzerFacade {
@@ -29,7 +28,7 @@ public final class WholeProjectAnalyzerFacade {
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
-        return AnalyzerFacadeWithCache.analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
+        return AnalyzerFacadeWithCache.analyzeFileWithCache(file);
     }
 
     @NotNull

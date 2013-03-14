@@ -54,4 +54,9 @@ public class AnalyzeExhaustAsKotlinDeclarationsCache implements KotlinDeclaratio
     public ModuleConfiguration getModuleConfiguration() {
         return exhaust.getModuleConfiguration();
     }
+
+    @NotNull
+    public AnalyzeExhaust getAnalyzeExhaust() {
+        return exhaust;
+    }
 }

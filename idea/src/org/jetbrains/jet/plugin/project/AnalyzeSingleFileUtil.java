@@ -28,7 +28,7 @@ public final class AnalyzeSingleFileUtil {
 
     @NotNull
     public static AnalyzeExhaust analyzeSingleFileWithCache(@NotNull JetFile file) {
-        return AnalyzerFacadeWithCache.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER);
+        return AnalyzerFacadeWithCache.analyzeFileWithCache(file);
     }
 
     @NotNull
