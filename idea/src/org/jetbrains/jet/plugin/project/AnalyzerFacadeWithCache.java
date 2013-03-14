@@ -74,43 +74,40 @@ public final class AnalyzerFacadeWithCache {
     @NotNull
     public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
             @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
-        // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
+        // Need lock, because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
-            CachedValue<AnalyzeExhaust> result = file.getUserData(ANALYZE_EXHAUST_FULL);
-            if (result == null) {
-                result =
-                        CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                            @Override
-                            public Result<AnalyzeExhaust> compute() {
-                                try {
-                                    if (DumbService.isDumb(file.getProject())) {
-                                        return new Result<AnalyzeExhaust>(
-                                                emptyExhaust(),
-                                                PsiModificationTracker.MODIFICATION_COUNT);
-                                    }
-
-                                    ApplicationUtils.warnTimeConsuming(LOG);
-
-                                    AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, declarationProvider);
-
-                                    AnalyzeExhaust exhaust = analyzeBodies(analyzeExhaustHeaders, file);
-
-                                    return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                                }
-                                catch (ProcessCanceledException e) {
-                                    throw e;
-                                }
-                                catch (Throwable e) {
-                                    handleError(e);
-                                    return emptyExhaustWithDiagnosticOnFile(file, e);
-                                }
+            return CachedValuesManager.getManager(file.getProject()).getCachedValue(
+                file,
+                ANALYZE_EXHAUST_FULL,
+                new CachedValueProvider<AnalyzeExhaust>() {
+                    @Override
+                    public Result<AnalyzeExhaust> compute() {
+                        try {
+                            if (DumbService.isDumb(file.getProject())) {
+                                return new Result<AnalyzeExhaust>(
+                                        emptyExhaust(),
+                                        PsiModificationTracker.MODIFICATION_COUNT);
                             }
-                        }, false);
 
-                file.putUserData(ANALYZE_EXHAUST_FULL, result);
-            }
+                            ApplicationUtils.warnTimeConsuming(LOG);
 
-            return result.getValue();
+                            AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, declarationProvider);
+
+                            AnalyzeExhaust exhaust = analyzeBodies(analyzeExhaustHeaders, file);
+
+                            return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                        }
+                        catch (ProcessCanceledException e) {
+                            throw e;
+                        }
+                        catch (Throwable e) {
+                            handleError(e);
+                            return emptyExhaustWithDiagnosticOnFile(file, e);
+                        }
+                    }
+                },
+                false
+            );
         }
     }
 
