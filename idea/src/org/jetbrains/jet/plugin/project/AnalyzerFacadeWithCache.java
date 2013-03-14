@@ -29,7 +29,9 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
+import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -50,7 +52,7 @@ public final class AnalyzerFacadeWithCache {
 
     private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache");
 
-    private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST_FULL = Key.create("ANALYZE_EXHAUST_FULL");
+    private final static Key<CachedValue<SLRUCache<JetFile, AnalyzeExhaust>>> ANALYZE_EXHAUST_FULL = Key.create("ANALYZE_EXHAUST_FULL");
 
     private static final Object lock = new Object();
     public static final Function<JetFile, Collection<JetFile>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
@@ -68,41 +70,47 @@ public final class AnalyzerFacadeWithCache {
      */
     // TODO: Also need to pass several files when user have multi-file environment
     @NotNull
-    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file) {
+    public static AnalyzeExhaust analyzeFileWithCache(@NotNull JetFile file) {
         // Need lock, because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
-            return CachedValuesManager.getManager(file.getProject()).getCachedValue(
-                file,
-                ANALYZE_EXHAUST_FULL,
-                new CachedValueProvider<AnalyzeExhaust>() {
-                    @Override
-                    public Result<AnalyzeExhaust> compute() {
-                        try {
-                            if (DumbService.isDumb(file.getProject())) {
-                                return new Result<AnalyzeExhaust>(
-                                        emptyExhaust(),
-                                        PsiModificationTracker.MODIFICATION_COUNT);
-                            }
+            Project project = file.getProject();
+            return CachedValuesManager.getManager(project).getCachedValue(
+                    project,
+                    ANALYZE_EXHAUST_FULL,
+                    new CachedValueProvider<SLRUCache<JetFile, AnalyzeExhaust>>() {
+                        @Nullable
+                        @Override
+                        public Result<SLRUCache<JetFile, AnalyzeExhaust>> compute() {
+                            SLRUCache<JetFile, AnalyzeExhaust> cache = new SLRUCache<JetFile, AnalyzeExhaust>(3, 8) {
 
-                            ApplicationUtils.warnTimeConsuming(LOG);
+                                @NotNull
+                                @Override
+                                public AnalyzeExhaust createValue(JetFile file) {
+                                    try {
+                                        if (DumbService.isDumb(file.getProject())) {
+                                            return emptyExhaust();
+                                        }
 
-                            AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file);
+                                        ApplicationUtils.warnTimeConsuming(LOG);
 
-                            AnalyzeExhaust exhaust = analyzeBodies(analyzeExhaustHeaders, file);
+                                        AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file);
 
-                            return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                                        return analyzeBodies(analyzeExhaustHeaders, file);
+                                    }
+                                    catch (ProcessCanceledException e) {
+                                        throw e;
+                                    }
+                                    catch (Throwable e) {
+                                        handleError(e);
+                                        return emptyExhaustWithDiagnosticOnFile(file, e);
+                                    }
+                                }
+                            };
+                            return Result.create(cache, PsiModificationTracker.MODIFICATION_COUNT);
                         }
-                        catch (ProcessCanceledException e) {
-                            throw e;
-                        }
-                        catch (Throwable e) {
-                            handleError(e);
-                            return emptyExhaustWithDiagnosticOnFile(file, e);
-                        }
-                    }
-                },
-                false
-            );
+                    },
+                    false
+            ).get(file);
         }
     }
 
@@ -132,7 +140,7 @@ public final class AnalyzerFacadeWithCache {
     }
 
     @NotNull
-    private static CachedValueProvider.Result<AnalyzeExhaust> emptyExhaustWithDiagnosticOnFile(JetFile file, Throwable e) {
+    private static AnalyzeExhaust emptyExhaustWithDiagnosticOnFile(JetFile file, Throwable e) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
         AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
@@ -141,7 +149,7 @@ public final class AnalyzerFacadeWithCache {
         PsiModificationTracker tracker = PsiManager.getInstance(file.getProject()).getModificationTracker();
         ((PsiModificationTrackerImpl) tracker).incOutOfCodeBlockModificationCounter();
 
-        return new CachedValueProvider.Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
+        return analyzeExhaust;
     }
 
     private static void handleError(@NotNull Throwable e) {
