@@ -23,11 +23,19 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -178,6 +186,21 @@ public class JetImportOptimizer implements ImportOptimizer {
                 }
 
                 super.visitReferenceExpression(expression);
+            }
+
+            @Override
+            public void visitForExpression(JetForExpression expression) {
+                ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
+                BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
+                ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange());
+                if (resolvedCall != null) {
+                    FunctionDescriptor iteratorDescriptor = resolvedCall.getResultingDescriptor();
+                    FqNameUnsafe name = DescriptorUtils.getFQName(iteratorDescriptor);
+                    assert name.isSafe();
+                    usedQualifiedNames.add(name.toSafe());
+                }
+
+                super.visitForExpression(expression);
             }
         });
 
