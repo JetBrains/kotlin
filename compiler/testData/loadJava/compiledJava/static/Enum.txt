@@ -17,10 +17,12 @@ public final enum class Enum : jet.Enum<test.Enum> {
     public open inner class Inner : java.lang.Object {
         public constructor Inner()
         public/*package*/ open fun bar() : Unit
+        public/*package*/ open fun valueOf(/*0*/ p0 : jet.String?) : Unit
     }
     
     public open class Nested : java.lang.Object {
         public constructor Nested()
         public/*package*/ open fun foo() : Unit
+        public/*package*/ open fun values() : Unit
     }
 }

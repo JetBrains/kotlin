@@ -189,7 +189,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
-        if (!isEnumClassObject()) return;
+        if (!DescriptorUtils.isEnumClassObject(thisDescriptor)) return;
 
         if (name.equals(DescriptorResolver.VALUES_METHOD_NAME)) {
             SimpleFunctionDescriptor valuesMethod = DescriptorResolver
@@ -201,15 +201,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     .createEnumClassObjectValueOfMethod(thisDescriptor, resolveSession.getTrace());
             result.add(valueOfMethod);
         }
-    }
-
-    private boolean isEnumClassObject() {
-        DeclarationDescriptor containingDeclaration = thisDescriptor.getContainingDeclaration();
-        if (!(containingDeclaration instanceof ClassDescriptor)) return false;
-        ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) return false;
-        if (classDescriptor.getClassObjectDescriptor() != thisDescriptor) return false;
-        return true;
     }
 
     @NotNull

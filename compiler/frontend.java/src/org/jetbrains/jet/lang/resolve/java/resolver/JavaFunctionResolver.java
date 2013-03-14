@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -48,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
@@ -296,9 +296,9 @@ public final class JavaFunctionResolver {
         OverrideResolver.resolveUnknownVisibilities(functions, trace);
         functions.addAll(functionsFromCurrent);
 
-        if (DescriptorUtils.isEnumClassObject(owner)) {
+        if (isEnumClassObject(owner)) {
             for (FunctionDescriptor functionDescriptor : Lists.newArrayList(functions)) {
-                if (isEnumSpecialMethod(functionDescriptor)) {
+                if (isEnumValueOfMethod(functionDescriptor) || isEnumValuesMethod(functionDescriptor)) {
                     functions.remove(functionDescriptor);
                 }
             }
@@ -359,17 +359,6 @@ public final class JavaFunctionResolver {
             }
         }
         return r;
-    }
-
-    private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        String methodName = functionDescriptor.getName().getName();
-        JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
-        if (methodName.equals("valueOf") && methodTypeParameters.size() == 1
-            && JetTypeChecker.INSTANCE.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString)) {
-            return true;
-        }
-        return (methodName.equals("values") && methodTypeParameters.isEmpty());
     }
 
     private static boolean containsErrorType(@NotNull List<FunctionDescriptor> superFunctions, @NotNull FunctionDescriptor function) {
