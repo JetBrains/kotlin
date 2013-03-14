@@ -253,5 +253,15 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             return invokeExpression;
         }
 
+        @NotNull
+        @Override
+        public CallType getCallType() {
+            return CallType.INVOKE;
+        }
+
+        @NotNull
+        public Call getOuterCall() {
+            return outerCall;
+        }
     }
 }
