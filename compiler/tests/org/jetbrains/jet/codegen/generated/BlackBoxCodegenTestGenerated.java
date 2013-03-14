@@ -3159,6 +3159,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/sam"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("filenameFilter.kt")
+        public void testFilenameFilter() throws Exception {
+            doTest("compiler/testData/codegen/box/sam/filenameFilter.kt");
+        }
+        
         @TestMetadata("runnable.kt")
         public void testRunnable() throws Exception {
             doTest("compiler/testData/codegen/box/sam/runnable.kt");
