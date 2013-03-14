@@ -337,6 +337,9 @@ public class GenerateMockJdk {
 
 
     private static void generateFilteredJar(File source, File target, Set<String> entryNamesToInclude, boolean assertAllFound) throws IOException {
+        if (!source.exists()) {
+            throw new AssertionError(source + " doesn't exist");
+        }
         JarFile sourceJar = new JarFile(source);
         JarOutputStream targetJar = new JarOutputStream(new FileOutputStream(target));
 
@@ -382,8 +385,14 @@ public class GenerateMockJdk {
     }
 
     public static void main(String[] args) throws IOException {
-        File rtJar = new File("<your jdk rt.jar>");
-        File srcJar = new File("<your jdk src dir>/src.jar");
+        String rtJarPath = System.getProperty("rt.jar");
+        String srcZipPath = System.getProperty("src.zip");
+        if (rtJarPath == null || srcZipPath == null) {
+            throw new AssertionError("Provide path to rt.jar and src.zip in VM options: \"-Drt.jar=... -Dsrc.zip=...\"");
+        }
+
+        File rtJar = new File(rtJarPath);
+        File srcJar = new File(srcZipPath);
 
         generateFilteredJar(
                 rtJar,
@@ -395,5 +404,8 @@ public class GenerateMockJdk {
                 new File("compiler/testData/mockJDK/src.zip"),
                 getSourceFileEntries(),
                 false);
+    }
+
+    private GenerateMockJdk() {
     }
 }
