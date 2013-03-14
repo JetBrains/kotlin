@@ -43,6 +43,7 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
     protected static final String PACKAGE = "testData.libraries";
     protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
     protected static final String SOURCES_PATH = TEST_DATA_PATH + "/library";
+    protected static final String SRC_DIR_NAME = "src";
     private static File tempDirWithCompiled;
     protected VirtualFile libraryDir;
     protected VirtualFile librarySourceDir;
@@ -74,6 +75,7 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
             public void run() {
                 try {
                     libraryDir = baseDir.createChildDirectory(this, "lib");
+                    baseDir.createChildDirectory(this, SRC_DIR_NAME);
                 }
                 catch (IOException e) {
                     throw new RuntimeException(e);
@@ -96,8 +98,8 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
 
         FileUtil.copyDir(getTempDirWithCompiled(), new File(libraryDir.getPath()));
 
-        ((NewVirtualFile)libraryDir).markDirtyRecursively();
-        libraryDir.refresh(false, true);
+        ((NewVirtualFile)baseDir).markDirtyRecursively();
+        baseDir.refresh(false, true);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
@@ -111,8 +113,34 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
                 }
                 libraryModel.commit();
 
+                VirtualFile srcDir = baseDir.findChild(SRC_DIR_NAME);
+                assertNotNull(srcDir);
+                moduleModel.addContentEntry(srcDir).addSourceFolder(srcDir, false);
+
                 moduleModel.commit();
             }
         });
+    }
+
+    @NotNull
+    protected VirtualFile copyFileToSrcDir(@NotNull String path) {
+        VirtualFile originalFile = LocalFileSystem.getInstance().findFileByPath(path);
+        assertNotNull(originalFile);
+
+        VirtualFile srcDir = getProject().getBaseDir().findChild(SRC_DIR_NAME);
+        assertNotNull(srcDir);
+        try {
+            VfsUtilCore.copyFile(null, originalFile, srcDir);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        ((NewVirtualFile)srcDir).markDirtyRecursively();
+        srcDir.refresh(false, true);
+
+        VirtualFile result = srcDir.findChild(originalFile.getName());
+        assertNotNull(result);
+        return result;
     }
 }

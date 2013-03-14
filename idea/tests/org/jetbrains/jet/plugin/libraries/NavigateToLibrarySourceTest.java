@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -89,8 +88,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     }
 
     private void doTest() {
-        userFile = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
-        assertNotNull(userFile);
+        userFile = copyFileToSrcDir(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
 
         checkAnnotatedLibraryCode(false);
         checkAnnotatedLibraryCode(true);
