@@ -22,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -58,6 +61,14 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @NotNull
     public JsExpression translateAsGet(@Nullable JsExpression receiver) {
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        if (getter == null) {
+            //TODO: Temporary hack!!! Rewrite codegen!
+            //Now for consistency we don't create default getter for object declaration property descriptor
+            PropertyGetterDescriptorImpl getterImpl = DescriptorResolver.createDefaultGetter(propertyDescriptor);
+            getterImpl.initialize(propertyDescriptor.getType());
+            ((PropertyDescriptorImpl)propertyDescriptor).initialize(getterImpl, null);
+            getter = getterImpl;
+        }
         assert getter != null : "Getter for kotlin properties should bot be null.";
         return callBuilderForAccessor(receiver)
                 .descriptor(getter)

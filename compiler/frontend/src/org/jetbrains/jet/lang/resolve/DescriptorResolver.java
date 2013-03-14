@@ -805,7 +805,7 @@ public class DescriptorResolver {
         );
         propertyDescriptor.setType(getTypeForObjectDeclaration(classDescriptor), Collections.<TypeParameterDescriptor>emptyList(),
                                    getExpectedThisObjectIfNeeded(containingDeclaration), NO_RECEIVER_PARAMETER);
-        propertyDescriptor.initialize(createDefaultGetter(propertyDescriptor), null);
+        propertyDescriptor.initialize(null, null);
         trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, classDescriptor);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
         if (nameAsDeclaration != null) {
