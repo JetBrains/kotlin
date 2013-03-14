@@ -1,0 +1,8 @@
+// from KT-488
+
+class MyClass<A: Comparable<A>> : Iterable<A> {
+
+    public override fun iterator(): Iterator<A> {
+        throw UnsupportedOperationException()
+    }
+}
