@@ -17,12 +17,18 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.CallKey;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
@@ -35,6 +41,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
 
 public class CallResolverUtil {
 
@@ -124,5 +132,15 @@ public class CallResolverUtil {
             }
         }
         return false;
+    }
+
+    @Nullable
+    public static CallKey createCallKey(@NotNull BasicCallResolutionContext context) {
+        if (context.call.getCallType() == Call.CallType.INVOKE) {
+            return null;
+        }
+        PsiElement callElement = context.call.getCallElement();
+        if (!(callElement instanceof JetExpression)) return null;
+        return CallKey.create(context.call.getCallType(), (JetExpression) callElement);
     }
 }

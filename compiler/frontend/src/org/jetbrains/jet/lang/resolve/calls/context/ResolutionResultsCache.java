@@ -22,11 +22,9 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -34,16 +32,14 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 public class ResolutionResultsCache {
 
     public static class MemberType<D extends CallableDescriptor> {}
-    private static class FunctionMemberType extends MemberType<FunctionDescriptor> {}
-    private static class PropertyMemberType extends MemberType<VariableDescriptor> {}
-    public static final FunctionMemberType FUNCTION_MEMBER_TYPE = new FunctionMemberType();
-    public static final PropertyMemberType PROPERTY_MEMBER_TYPE = new PropertyMemberType();
+    public static final MemberType<FunctionDescriptor> FUNCTION_MEMBER_TYPE = new MemberType<FunctionDescriptor>();
+    public static final MemberType<VariableDescriptor> PROPERTY_MEMBER_TYPE = new MemberType<VariableDescriptor>();
 
 
     private static final WritableSlice<CallKey, OverloadResolutionResultsImpl<FunctionDescriptor>> RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
     private static final WritableSlice<CallKey, OverloadResolutionResultsImpl<VariableDescriptor>> RESOLUTION_RESULTS_FOR_PROPERTY = Slices.createSimpleSlice();
-    private static final WritableSlice<JetExpression, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
-    private static final WritableSlice<JetExpression, CallCandidateResolutionContext<FunctionDescriptor>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
+    private static final WritableSlice<CallKey, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
+    private static final WritableSlice<CallKey, CallCandidateResolutionContext<FunctionDescriptor>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
 
     private final BindingTrace trace = new BindingTraceContext();
 
@@ -62,27 +58,27 @@ public class ResolutionResultsCache {
         return trace.get(getSliceByMemberType(memberType), callKey);
     }
 
-    public void recordResolutionTrace(@NotNull JetExpression expression, @NotNull DelegatingBindingTrace delegatingTrace) {
-        trace.record(TRACE_DELTAS_CACHE, expression, delegatingTrace);
+    public void recordResolutionTrace(@NotNull CallKey callKey, @NotNull DelegatingBindingTrace delegatingTrace) {
+        trace.record(TRACE_DELTAS_CACHE, callKey, delegatingTrace);
     }
 
     @Nullable
-    public DelegatingBindingTrace getResolutionTrace(@NotNull JetExpression expression) {
-        return trace.get(TRACE_DELTAS_CACHE, expression);
+    public DelegatingBindingTrace getResolutionTrace(@NotNull CallKey callKey) {
+        return trace.get(TRACE_DELTAS_CACHE, callKey);
     }
 
     public <D extends CallableDescriptor> void recordDeferredComputationForCall(
-            @NotNull JetExpression expression,
+            @NotNull CallKey callKey,
             @NotNull CallCandidateResolutionContext<D> deferredComputation,
             @NotNull MemberType memberType
     ) {
         if (memberType == PROPERTY_MEMBER_TYPE) return;
-        trace.record(DEFERRED_COMPUTATION_FOR_CALL, expression, (CallCandidateResolutionContext<FunctionDescriptor>) deferredComputation);
+        trace.record(DEFERRED_COMPUTATION_FOR_CALL, callKey, (CallCandidateResolutionContext<FunctionDescriptor>) deferredComputation);
     }
 
     @Nullable
-    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@NotNull JetExpression expression) {
-        return trace.get(DEFERRED_COMPUTATION_FOR_CALL, expression);
+    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@NotNull CallKey callKey) {
+        return trace.get(DEFERRED_COMPUTATION_FOR_CALL, callKey);
     }
 
     @NotNull
