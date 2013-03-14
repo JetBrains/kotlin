@@ -23,6 +23,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -193,14 +194,31 @@ public class JetImportOptimizer implements ImportOptimizer {
                 ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
                 BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange());
-                if (resolvedCall != null) {
-                    FunctionDescriptor iteratorDescriptor = resolvedCall.getResultingDescriptor();
-                    FqNameUnsafe name = DescriptorUtils.getFQName(iteratorDescriptor);
-                    assert name.isSafe();
-                    usedQualifiedNames.add(name.toSafe());
-                }
+                addResolvedCallFqName(resolvedCall);
 
                 super.visitForExpression(expression);
+            }
+
+            @Override
+            public void visitMultiDeclaration(JetMultiDeclaration declaration) {
+                ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) declaration.getContainingFile());
+                BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, declaration);
+                List<JetMultiDeclarationEntry> entries = declaration.getEntries();
+                for (JetMultiDeclarationEntry entry : entries) {
+                    ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
+                    addResolvedCallFqName(resolvedCall);
+                }
+
+                super.visitMultiDeclaration(declaration);
+            }
+
+            private void addResolvedCallFqName(@Nullable ResolvedCall resolvedCall) {
+                if (resolvedCall != null) {
+                    CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
+                    FqNameUnsafe name = DescriptorUtils.getFQName(resultingDescriptor);
+                    assert name.isSafe(): "FqName for resulting descriptor should be safe " + resultingDescriptor.getName();
+                    usedQualifiedNames.add(name.toSafe());
+                }
             }
         });
 
