@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.*;
+import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -37,7 +36,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intellij.psi.util.PsiFormatUtilBase.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
     public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
@@ -147,5 +148,30 @@ public final class DescriptorResolverUtils {
         assert value != null : "jet.deprecated must have one parameter called value";
         annotationDescriptor.setValueArgument(value, new StringValue("Deprecated in Java"));
         return annotationDescriptor;
+    }
+
+    /**
+     * @return true if {@code member} is a static member of enum class, which is to be put into its class object (and not into the
+     * corresponding package). This applies to enum entries, values() and valueOf(String) methods
+     */
+    public static boolean shouldBeInEnumClassObject(@NotNull PsiMember member) {
+        PsiClass psiClass = member.getContainingClass();
+        if (psiClass == null || !psiClass.isEnum()) return false;
+
+        if (member instanceof PsiEnumConstant) return true;
+
+        if (!(member instanceof PsiMethod)) return false;
+        String signature = PsiFormatUtil.formatMethod((PsiMethod) member,
+                PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+
+        return "values()".equals(signature) ||
+               "valueOf(java.lang.String)".equals(signature);
+    }
+
+    public static boolean isCorrectOwnerForEnumMember(
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull PsiMember member
+    ) {
+        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member);
     }
 }

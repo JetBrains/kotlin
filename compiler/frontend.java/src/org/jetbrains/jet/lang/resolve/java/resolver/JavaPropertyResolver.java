@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiEnumConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -114,6 +115,10 @@ public final class JavaPropertyResolver {
                 continue;
             }
 
+            if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, propertyPsiData.getCharacteristicPsi())) {
+                continue;
+            }
+
             propertiesFromCurrent.add(resolveProperty(ownerDescriptor, scopeData, propertyName, context, propertyPsiData));
         }
 
@@ -181,7 +186,7 @@ public final class JavaPropertyResolver {
             kind = DescriptorKindUtils.flagsToKind(methodAnnotation.kind());
         }
 
-        boolean isEnumEntry = DescriptorUtils.isEnumClassObject(owner);
+        boolean isEnumEntry = psiData.getCharacteristicPsi() instanceof PsiEnumConstant;
         PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 owner,
                 annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
@@ -196,6 +201,7 @@ public final class JavaPropertyResolver {
         // class descriptor for enum entries is not used by backends so for now this should be safe to use
         // remove this when JavaDescriptorResolver gets rewritten
         if (isEnumEntry) {
+            assert DescriptorUtils.isEnumClassObject(owner) : "Enum entries should be put into class object of enum only: " + owner;
             ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
                     new ClassDescriptorImpl(owner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
             dummyClassDescriptorForEnumEntryObject.initialize(

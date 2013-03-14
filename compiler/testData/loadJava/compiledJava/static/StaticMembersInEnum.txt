@@ -1,0 +1,22 @@
+package test
+
+public final enum class StaticMembersInEnum : jet.Enum<test.StaticMembersInEnum> {
+    private constructor StaticMembersInEnum()
+    public final override /*1*/ /*fake_override*/ fun name() : jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    
+    public class object <class-object-for-StaticMembersInEnum> {
+        private constructor <class-object-for-StaticMembersInEnum>()
+        public final val ENTRY : test.StaticMembersInEnum
+        public final fun valueOf(/*0*/ value : jet.String) : test.StaticMembersInEnum
+        public final fun values() : jet.Array<test.StaticMembersInEnum>
+    }
+}
+
+package StaticMembersInEnum {
+    public val CONSTANT : test.StaticMembersInEnum
+    public var STATIC_FIELD : jet.Int
+    public open fun foo() : Unit
+    public open fun valueOf(/*0*/ p0 : jet.Int) : Unit
+    public open fun values(/*0*/ p0 : jet.Int) : Unit
+}

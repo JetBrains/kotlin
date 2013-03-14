@@ -1155,6 +1155,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/StaticFinal.java");
             }
             
+            @TestMetadata("StaticMembersInEnum.java")
+            public void testStaticMembersInEnum() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/StaticMembersInEnum.java");
+            }
+            
         }
         
         public static Test innerSuite() {

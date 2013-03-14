@@ -94,6 +94,10 @@ public final class JavaFunctionResolver {
             @NotNull PsiClass psiClass, PsiMethodWrapper method,
             @NotNull PsiDeclarationProvider scopeData, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
+        if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method.getPsiMember())) {
+            return null;
+        }
+
         PsiType returnPsiType = method.getReturnType();
         if (returnPsiType == null) {
             return null;

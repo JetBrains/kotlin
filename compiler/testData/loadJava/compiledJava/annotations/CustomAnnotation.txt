@@ -24,6 +24,3 @@ public trait CustomAnnotation : java.lang.Object {
         public constructor MyTest()
     }
 }
-
-package CustomAnnotation {
-}

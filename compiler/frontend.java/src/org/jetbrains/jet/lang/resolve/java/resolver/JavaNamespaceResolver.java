@@ -168,11 +168,6 @@ public final class JavaNamespaceResolver {
         if (psiClass == null) {
             return null;
         }
-        if (psiClass.isEnum()) {
-            // NOTE: we don't want to create namespace for enum classes because we put
-            // static members of enum class into class object descriptor
-            return null;
-        }
         if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
             return null;
         }
@@ -219,7 +214,7 @@ public final class JavaNamespaceResolver {
 
     private static boolean hasStaticMembers(@NotNull PsiClass psiClass) {
         for (PsiMember member : ContainerUtil.concat(psiClass.getMethods(), psiClass.getFields())) {
-            if (member.hasModifierProperty(PsiModifier.STATIC)) {
+            if (member.hasModifierProperty(PsiModifier.STATIC) && !DescriptorResolverUtils.shouldBeInEnumClassObject(member)) {
                 return true;
             }
         }
