@@ -44,6 +44,7 @@ import com.intellij.util.graph.Graph;
 import com.intellij.util.graph.GraphGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -52,6 +53,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -113,13 +115,29 @@ public class IdeModuleManager implements KotlinModuleManager {
         private final Map<Library, MutableSubModuleDescriptor> librarySubModules = Maps.newHashMap();
         private final Map<Sdk, MutableSubModuleDescriptor> sdkSubModules = Maps.newHashMap();
 
+        private final BindingTrace trace;
+
+
         private ModuleBuilder() {
+            this.trace = new BindingTraceContext();
             this.moduleSourcesManager = new MutableModuleSourcesManager(project);
             this.classResolutionFacade = new JavaClassResolutionFacadeImpl(new KotlinLightClassResolver() {
                 @Nullable
                 @Override
                 public ClassDescriptor resolveLightClass(@NotNull PsiClass kotlinLightClass) {
-
+                    assert kotlinLightClass instanceof KotlinLightClass
+                            : "Wrong light class: " + kotlinLightClass + " " + kotlinLightClass.getClass();
+                    JetClassOrObject sourceElement = ((KotlinLightClass) kotlinLightClass).getSourceElement();
+                    if (sourceElement == null) {
+                        return null; // package class, invisible from Kotlin
+                    }
+                    ClassDescriptor classDescriptor = trace.get(BindingContext.CLASS, sourceElement);
+                    assert classDescriptor != null : "No class descriptor found for" +
+                                                     "\nlight class " + kotlinLightClass.getQualifiedName() +
+                                                     "\nkotlin psi element " + sourceElement +
+                                                     "\nfile:" + sourceElement.getContainingFile() +
+                                                     "\n" + sourceElement.getContainingFile().getText();
+                    return classDescriptor;
                 }
             });
         }
@@ -135,7 +153,6 @@ public class IdeModuleManager implements KotlinModuleManager {
                 createDependencies(ideaModule);
             }
 
-            BindingTrace trace = new BindingTraceContext();
             List<Chunk<MutableSubModuleDescriptor>> dependencyGraphSCCs = ModuleCompilerUtil.getSortedChunks(getSubModuleGraph());
             for (Chunk<MutableSubModuleDescriptor> scc : dependencyGraphSCCs) {
                 resolveKotlinInStronglyConnectedSubModules(scc.getNodes(), trace);
