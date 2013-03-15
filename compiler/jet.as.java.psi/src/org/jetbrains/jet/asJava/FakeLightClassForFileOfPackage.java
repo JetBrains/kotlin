@@ -21,6 +21,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -67,6 +69,12 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
     @Override
     public PsiClass getDelegate() {
         return delegate;
+    }
+
+    @Nullable
+    @Override
+    public JetClassOrObject getSourceElement() {
+        return null; // package class
     }
 
     @NotNull

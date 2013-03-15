@@ -28,6 +28,7 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -112,6 +113,12 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @Override
     public PsiElement getNavigationElement() {
         return files.iterator().next();
+    }
+
+    @Nullable
+    @Override
+    public JetClassOrObject getSourceElement() {
+        return null; // package class
     }
 
     @Override

@@ -199,10 +199,16 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         return _containingFile.getValue();
     }
 
+    @Nullable
+    @Override
+    public JetClassOrObject getSourceElement() {
+        return classOrObject;
+    }
+
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        return classOrObject;
+        return getSourceElement();
     }
 
     @Override

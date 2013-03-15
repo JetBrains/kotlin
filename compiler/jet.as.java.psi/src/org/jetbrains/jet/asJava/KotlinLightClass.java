@@ -18,6 +18,8 @@ package org.jetbrains.jet.asJava;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface KotlinLightClass extends PsiClass {
@@ -26,4 +28,10 @@ public interface KotlinLightClass extends PsiClass {
 
     @NotNull
     PsiClass getDelegate();
+
+    /**
+     * @return {@code null} for package classes
+     */
+    @Nullable
+    JetClassOrObject getSourceElement();
 }
