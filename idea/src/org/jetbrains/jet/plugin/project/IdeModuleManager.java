@@ -37,7 +37,6 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Chunk;
-import com.intellij.util.NullableFunction;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.graph.CachingSemiGraph;
@@ -45,6 +44,7 @@ import com.intellij.util.graph.Graph;
 import com.intellij.util.graph.GraphGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -53,13 +53,8 @@ import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
-import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
-import org.jetbrains.jet.lang.resolve.MutableModuleSourcesManager;
-import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
-import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
-import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -120,10 +115,10 @@ public class IdeModuleManager implements KotlinModuleManager {
 
         private ModuleBuilder() {
             this.moduleSourcesManager = new MutableModuleSourcesManager(project);
-            this.classResolutionFacade = new JavaClassResolutionFacadeImpl(new NullableFunction<PsiClass, ClassDescriptor>() {
+            this.classResolutionFacade = new JavaClassResolutionFacadeImpl(new KotlinLightClassResolver() {
                 @Nullable
                 @Override
-                public ClassDescriptor fun(PsiClass psiClass) {
+                public ClassDescriptor resolveLightClass(@NotNull PsiClass kotlinLightClass) {
 
                 }
             });
@@ -140,12 +135,13 @@ public class IdeModuleManager implements KotlinModuleManager {
                 createDependencies(ideaModule);
             }
 
+            BindingTrace trace = new BindingTraceContext();
             List<Chunk<MutableSubModuleDescriptor>> dependencyGraphSCCs = ModuleCompilerUtil.getSortedChunks(getSubModuleGraph());
             for (Chunk<MutableSubModuleDescriptor> scc : dependencyGraphSCCs) {
-                resolveKotlinInStronglyConnectedSubModules(scc.getNodes());
+                resolveKotlinInStronglyConnectedSubModules(scc.getNodes(), trace);
             }
 
-            return new KotlinModules(kotlinModules, moduleSourcesManager);
+            return new KotlinModules(kotlinModules, moduleSourcesManager, trace.getBindingContext());
         }
 
         private Graph<MutableSubModuleDescriptor> getSubModuleGraph() {
@@ -165,22 +161,27 @@ public class IdeModuleManager implements KotlinModuleManager {
                     }));
         }
 
-        private void resolveKotlinInStronglyConnectedSubModules(Set<MutableSubModuleDescriptor> scc) {
-            if (scc.size() > 1) {
-                throw new UnsupportedOperationException("Circular module dependencies are not supported yet");
+        // This method creates package fragments for all mentioned packages in all submodules
+        // See usages of MutableSubModuleDescriptor.getPackageFragmentProviderForKotlinSources()
+        private void resolveKotlinInStronglyConnectedSubModules(Set<MutableSubModuleDescriptor> scc, BindingTrace trace) {
+            Collection<JetFile> sourceFiles = Lists.newArrayList();
+            for (MutableSubModuleDescriptor subModule : scc) {
+                collectKotlinSourceFiles(subModule, moduleSourcesManager, sourceFiles);
             }
 
-            // find relevant files
-            for (final MutableSubModuleDescriptor subModule : scc) {
-                collectKotlinSourceFiles(subModule, moduleSourcesManager);
-            }
-
-            // TODO: run TDA
+            TopDownAnalysisParameters parameters = new TopDownAnalysisParameters(
+                    Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()
+            );
+            TopDownAnalyzer topDownAnalyzer = new InjectorForTopDownAnalyzerForJvm(
+                    project, parameters, trace, moduleSourcesManager
+            ).getTopDownAnalyzer();
+            topDownAnalyzer.analyzeFiles(sourceFiles, Collections.<AnalyzerScriptParameter>emptyList());
         }
 
         private void collectKotlinSourceFiles(
                 final MutableSubModuleDescriptor subModule,
-                final MutableModuleSourcesManager sourcesManager
+                final MutableModuleSourcesManager sourcesManager,
+                final Collection<JetFile> result
         ) {
             Module module = srcSubModules.inverse().get(subModule);
             final boolean tests = module == null;
@@ -197,11 +198,12 @@ public class IdeModuleManager implements KotlinModuleManager {
                     if (!index.isInSourceContent(file) && tests) return true;
                     if (!index.isInTestSourceContent(file) && !tests) return true;
 
-                    final FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
+                    FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
                     if (fileType != JetFileType.INSTANCE) return true;
                     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                     if (psiFile instanceof JetFile) {
                         sourcesManager.registerRoot(subModule, PackageFragmentKind.SOURCE, file);
+                        result.add((JetFile) psiFile);
                     }
                     return true;
                 }
@@ -388,10 +390,16 @@ public class IdeModuleManager implements KotlinModuleManager {
     private static class KotlinModules {
         private final ImmutableMap<Module, ModuleDescriptor> moduleDescriptors;
         private final MutableModuleSourcesManager moduleSourcesManager;
+        private final BindingContext bindingContext;
 
-        private KotlinModules(Map<Module, ModuleDescriptor> descriptors, MutableModuleSourcesManager moduleSourcesManager) {
+        private KotlinModules(
+                Map<Module, ModuleDescriptor> descriptors,
+                MutableModuleSourcesManager moduleSourcesManager,
+                BindingContext bindingContext
+        ) {
             this.moduleDescriptors = ImmutableMap.copyOf(descriptors);
             this.moduleSourcesManager = moduleSourcesManager;
+            this.bindingContext = bindingContext;
         }
 
         @NotNull
