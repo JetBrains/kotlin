@@ -80,8 +80,8 @@ public class DebugInfoUtil {
 
             @Override
             public void visitReferenceExpression(JetReferenceExpression expression) {
+                super.visitReferenceExpression(expression);
                 if (!BindingContextUtils.isExpressionWithValidReference(expression, bindingContext)){
-                    super.visitReferenceExpression(expression);
                     return;
                 }
                 if (expression instanceof JetSimpleNameExpression) {
