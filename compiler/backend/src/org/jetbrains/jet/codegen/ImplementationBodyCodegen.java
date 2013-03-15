@@ -1365,10 +1365,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         int flags = ACC_PUBLIC; // TODO.
 
         TraitImplDelegateInfo delegateInfo = getTraitImplDelegateInfo(fun);
-        Method function = delegateInfo.delegate;
-        Method functionOriginal = delegateInfo.original;
+        Method methodToGenerate = delegateInfo.methodToGenerate;
+        Method methodInTrait = delegateInfo.methodInTrait;
 
-        MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(myClass, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null, null);
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(fun);
 
         writeAnnotationForDelegateToTraitImpl(fun, inheritedFun, mv);
@@ -1377,15 +1377,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            Type returnType = function.getReturnType();
+            Type returnType = methodToGenerate.getReturnType();
 
             mv.visitCode();
             FrameMap frameMap = context.prepareFrame(typeMapper);
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context, state);
             codegen.generateThisOrOuter(descriptor, false);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?
 
-            Type[] argTypes = function.getArgumentTypes();
-            Type[] originalArgTypes = functionOriginal.getArgumentTypes();
+            Type[] argTypes = methodToGenerate.getArgumentTypes();
+            Type[] originalArgTypes = methodInTrait.getArgumentTypes();
 
             InstructionAdapter iv = new InstructionAdapter(mv);
             iv.load(0, OBJECT_TYPE);
@@ -1396,27 +1396,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             Type type = getTraitImplThisParameterType(containingClass, typeMapper);
-            String functionDescriptor = functionOriginal.getDescriptor().replace("(", "(" + type.getDescriptor());
+            String functionDescriptor = methodInTrait.getDescriptor().replace("(", "(" + type.getDescriptor());
 
             Type tImplType = typeMapper.mapType(containingClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL);
 
-            iv.invokestatic(tImplType.getInternalName(), function.getName(), functionDescriptor);
-            StackValue.onStack(functionOriginal.getReturnType()).put(returnType, iv);
+            iv.invokestatic(tImplType.getInternalName(), methodToGenerate.getName(), functionDescriptor);
+            StackValue.onStack(methodInTrait.getReturnType()).put(returnType, iv);
             iv.areturn(returnType);
 
             FunctionCodegen.endVisit(iv, "trait method", callableDescriptorToDeclaration(bindingContext, fun));
         }
 
-        FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun);
+        FunctionCodegen.generateBridgeIfNeeded(context, state, v, methodToGenerate, fun);
     }
 
     private static class TraitImplDelegateInfo {
-        private final Method delegate;
-        private final Method original;
+        private final Method methodToGenerate;
+        private final Method methodInTrait;
 
-        private TraitImplDelegateInfo(@NotNull Method delegate, @NotNull Method original) {
-            this.delegate = delegate;
-            this.original = original;
+        private TraitImplDelegateInfo(@NotNull Method methodToGenerate, @NotNull Method methodInTrait) {
+            this.methodToGenerate = methodToGenerate;
+            this.methodInTrait = methodInTrait;
         }
     }
 
@@ -1426,16 +1426,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) fun).getCorrespondingProperty();
             PropertyDescriptor original = property.getOriginal();
             if (fun instanceof PropertyGetterDescriptor) {
-                JvmPropertyAccessorSignature function = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION);
-                JvmPropertyAccessorSignature functionOriginal = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
+                JvmPropertyAccessorSignature toGenerate = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION);
+                JvmPropertyAccessorSignature inTrait = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
                 return new TraitImplDelegateInfo(
-                        function.getJvmMethodSignature().getAsmMethod(), functionOriginal.getJvmMethodSignature().getAsmMethod());
+                        toGenerate.getJvmMethodSignature().getAsmMethod(), inTrait.getJvmMethodSignature().getAsmMethod());
             }
             else if (fun instanceof PropertySetterDescriptor) {
-                JvmPropertyAccessorSignature function = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION);
-                JvmPropertyAccessorSignature functionOriginal = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
+                JvmPropertyAccessorSignature toGenerate = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION);
+                JvmPropertyAccessorSignature inTrait = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
                 return new TraitImplDelegateInfo(
-                        function.getJvmMethodSignature().getAsmMethod(), functionOriginal.getJvmMethodSignature().getAsmMethod());
+                        toGenerate.getJvmMethodSignature().getAsmMethod(), inTrait.getJvmMethodSignature().getAsmMethod());
             }
             else {
                 throw new IllegalStateException("Accessor is neither getter, nor setter, what is it? " + fun);
