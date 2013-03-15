@@ -1369,33 +1369,28 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Method functionOriginal = delegateInfo.original;
 
         MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
-        AnnotationCodegen.forMethod(mv, state.getTypeMapper()).genAnnotations(fun);
+        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(fun);
 
-        JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(
-                inheritedFun,
-                false,
-                isCallInsideSameClassAsDeclared(inheritedFun, context),
-                isCallInsideSameModuleAsDeclared(inheritedFun, context),
-                OwnerKind.IMPLEMENTATION).getSignature();
-
-        writeAnnotationForDelegateToTraitImpl(fun, inheritedFun, mv, jvmSignature);
+        writeAnnotationForDelegateToTraitImpl(fun, inheritedFun, mv);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            Type returnType = function.getReturnType();
+
             mv.visitCode();
-            FrameMap frameMap = context.prepareFrame(state.getTypeMapper());
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
+            FrameMap frameMap = context.prepareFrame(typeMapper);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context, state);
             codegen.generateThisOrOuter(descriptor, false);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?
 
             Type[] argTypes = function.getArgumentTypes();
-            List<Type> originalArgTypes = jvmSignature.getValueParameterTypes();
+            Type[] originalArgTypes = functionOriginal.getArgumentTypes();
 
             InstructionAdapter iv = new InstructionAdapter(mv);
             iv.load(0, OBJECT_TYPE);
             for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                StackValue.local(reg, argTypes[i]).put(originalArgTypes.get(i), iv);
+                StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
                 //noinspection AssignmentToForLoopParameter
                 reg += argTypes[i].getSize();
             }
@@ -1406,8 +1401,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type tImplType = typeMapper.mapType(containingClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL);
 
             iv.invokestatic(tImplType.getInternalName(), function.getName(), functionDescriptor);
-            StackValue.onStack(functionOriginal.getReturnType()).put(function.getReturnType(), iv);
-            iv.areturn(function.getReturnType());
+            StackValue.onStack(functionOriginal.getReturnType()).put(returnType, iv);
+            iv.areturn(returnType);
 
             FunctionCodegen.endVisit(iv, "trait method", callableDescriptorToDeclaration(bindingContext, fun));
         }
@@ -1453,12 +1448,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private static void writeAnnotationForDelegateToTraitImpl(
+    private void writeAnnotationForDelegateToTraitImpl(
             @NotNull FunctionDescriptor fun,
             @NotNull FunctionDescriptor inheritedFun,
-            @NotNull MethodVisitor mv,
-            @NotNull JvmMethodSignature jvmSignature
+            @NotNull MethodVisitor mv
     ) {
+        JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(
+                inheritedFun,
+                false,
+                isCallInsideSameClassAsDeclared(inheritedFun, context),
+                isCallInsideSameModuleAsDeclared(inheritedFun, context),
+                OwnerKind.IMPLEMENTATION).getSignature();
+
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         int kotlinFlags = getFlagsForVisibility(fun.getVisibility());
         if (fun instanceof PropertyAccessorDescriptor) {
