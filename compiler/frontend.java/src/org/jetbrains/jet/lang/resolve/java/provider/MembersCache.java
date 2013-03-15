@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.provider;
 
+import com.google.common.collect.ImmutableSet;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -31,7 +33,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.intellij.psi.util.PsiFormatUtilBase.*;
+
 public final class MembersCache {
+    private static final ImmutableSet<String> OBJECT_METHODS = ImmutableSet.of("hashCode()", "equals(java.lang.Object)", "toString()");
+
     @NotNull
     private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
@@ -144,6 +150,10 @@ public final class MembersCache {
             //process private accessors
             if (member.isPrivate()
                 && !(member instanceof PsiMethodWrapper && ((PsiMethodWrapper)member).getJetMethodAnnotation().hasPropertyFlag())) {
+                return false;
+            }
+
+            if (isObjectMethodInInterface(member.getPsiMember())) {
                 return false;
             }
 
@@ -290,5 +300,21 @@ public final class MembersCache {
         private void createEmptyEntry(@NotNull Name identifier) {
             getOrCreateEmpty(identifier);
         }
+    }
+
+    private static boolean isObjectMethodInInterface(@NotNull PsiMember member) {
+        if (!(member instanceof PsiMethod)) {
+            return false;
+        }
+        PsiClass containingClass = member.getContainingClass();
+        assert containingClass != null : "containing class is null for " + member;
+
+        if (!containingClass.isInterface()) {
+            return false;
+        }
+
+        String formattedMethod = PsiFormatUtil.formatMethod(
+                (PsiMethod) member, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+        return OBJECT_METHODS.contains(formattedMethod);
     }
 }
