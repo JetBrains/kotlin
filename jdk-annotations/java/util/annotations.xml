@@ -958,9 +958,6 @@
                     val="&quot;fun &lt;T&gt; sort(a : Array&lt;out T&gt;, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
         </annotation>
     </item>
-    <item name="java.util.Arrays void sort(T[], java.util.Comparator&lt;? super T&gt;) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.Arrays void sort(byte[])">
         <annotation name="jet.runtime.typeinfo.KotlinSignature">
             <val name="value" val="&quot;fun sort(a : ByteArray) : Unit&quot;"/>
