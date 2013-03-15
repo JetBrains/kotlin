@@ -1395,11 +1395,23 @@
     <item name="java.util.concurrent.RejectedExecutionHandler void rejectedExecution(java.lang.Runnable, java.util.concurrent.ThreadPoolExecutor) 1">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; schedule(java.lang.Runnable, long, java.util.concurrent.TimeUnit)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+        <annotation name="jet.runtime.typeinfo.KotlinSignature">
+            <val name="value" val="&quot;fun schedule(command : Runnable, delay : Long, unit : TimeUnit) : ScheduledFuture&lt;out Any?&gt;&quot;" />
+        </annotation>
+    </item>
     <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; schedule(java.lang.Runnable, long, java.util.concurrent.TimeUnit) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; schedule(java.lang.Runnable, long, java.util.concurrent.TimeUnit) 2">
         <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; scheduleAtFixedRate(java.lang.Runnable, long, long, java.util.concurrent.TimeUnit)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+        <annotation name="jet.runtime.typeinfo.KotlinSignature">
+            <val name="value" val="&quot;fun scheduleAtFixedRate(command : Runnable, initialDelay : Long, period : Long, unit : TimeUnit) : ScheduledFuture&lt;out Any?&gt;&quot;" />
+        </annotation>
     </item>
     <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; scheduleAtFixedRate(java.lang.Runnable, long, long, java.util.concurrent.TimeUnit) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
@@ -1407,11 +1419,23 @@
     <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; scheduleAtFixedRate(java.lang.Runnable, long, long, java.util.concurrent.TimeUnit) 3">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; scheduleWithFixedDelay(java.lang.Runnable, long, long, java.util.concurrent.TimeUnit)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+        <annotation name="jet.runtime.typeinfo.KotlinSignature">
+            <val name="value" val="&quot;fun scheduleWithFixedDelay(command : Runnable, initialDelay : Long, delay : Long, unit : TimeUnit) : ScheduledFuture&lt;out Any?&gt;&quot;" />
+        </annotation>
+    </item>
     <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; scheduleWithFixedDelay(java.lang.Runnable, long, long, java.util.concurrent.TimeUnit) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;?&gt; scheduleWithFixedDelay(java.lang.Runnable, long, long, java.util.concurrent.TimeUnit) 3">
         <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;V&gt; schedule(java.util.concurrent.Callable&lt;V&gt;, long, java.util.concurrent.TimeUnit)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+        <annotation name="jet.runtime.typeinfo.KotlinSignature">
+            <val name="value" val="&quot;fun &lt;V&gt; schedule(callable : Callable&lt;V&gt;, delay : Long, unit : TimeUnit) : ScheduledFuture&lt;V&gt;&quot;" />
+        </annotation>
     </item>
     <item name="java.util.concurrent.ScheduledExecutorService java.util.concurrent.ScheduledFuture&lt;V&gt; schedule(java.util.concurrent.Callable&lt;V&gt;, long, java.util.concurrent.TimeUnit) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>

@@ -3327,5 +3327,10 @@
     <item name="javax.swing.ViewportLayout void removeLayoutComponent(java.awt.Component) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="javax.swing.SwingUtilities java.awt.Point convertPoint(java.awt.Component, java.awt.Point, java.awt.Component)">
+        <annotation name="jet.runtime.typeinfo.KotlinSignature">
+            <val name="value" val="&quot;fun convertPoint(source : Component?, aPoint : Point, destination : Component?) : Point&quot;" />
+        </annotation>
+    </item>
 </root>
 

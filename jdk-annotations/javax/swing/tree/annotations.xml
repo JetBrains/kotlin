@@ -188,6 +188,9 @@
     </item>
     <item name="javax.swing.tree.TreePath javax.swing.tree.TreePath pathByAddingChild(java.lang.Object)">
         <annotation name="org.jetbrains.annotations.NotNull"/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+        <val name="value" val="&quot;fun pathByAddingChild(child : Any) : TreePath&quot;"/>
+      </annotation>
     </item>
     <item name="javax.swing.tree.TreePath javax.swing.tree.TreePath pathByAddingChild(java.lang.Object) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
