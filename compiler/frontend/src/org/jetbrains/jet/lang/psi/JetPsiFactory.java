@@ -75,6 +75,12 @@ public class JetPsiFactory {
         return Pair.create(property.findElementAt(5), property.findElementAt(7));
     }
 
+    //the pair contains the first and the last elements of a range
+    public static Pair<PsiElement, PsiElement> createTypeWhiteSpaceAndColon(Project project, String type) {
+        JetProperty property = createProperty(project, "val x: " + type);
+        return Pair.create(property.findElementAt(5), (PsiElement) property.getTypeRef());
+    }
+
     public static ASTNode createColonNode(Project project) {
         JetProperty property = createProperty(project, "val x: Int");
         return property.getNode().findChildByType(JetTokens.COLON);
