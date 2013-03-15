@@ -27,6 +27,8 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.apache.commons.io.FileUtils
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -91,8 +93,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         args.setSourceDirs(sources.map { it.getAbsolutePath() })
 
-        // todo: WTF absolute == gradle class path?
-        val gradleClasspath = getClasspath().filter(KSpec { it != null && it.isAbsolute() })
+        val gradleClasspath = getClasspath()
         val effectiveClassPath = (javaSrcRoots + gradleClasspath).makeString(File.pathSeparator)
 
         args.setClasspath(effectiveClassPath)
@@ -104,19 +105,17 @@ public open class KotlinCompile(): AbstractCompile() {
         args.annotations = embeddedAnnotations.getPath()
         args.noStdlib = true
 
-        val messageCollector = GradleMessageCollector(getLogger())
+        val logger = Logging.getLogger(getClass())
+        val messageCollector = GradleMessageCollector(logger)
         val exitCode = compiler.exec(messageCollector, args)
 
-        if (embeddedAnnotations.getParentFile()?.delete() != true) {
-            throw GradleException("Can't delete extracted annotations " + embeddedAnnotations)
-        }
+        FileUtils.deleteDirectory(embeddedAnnotations.getParentFile());
 
         when (exitCode) {
             ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
             ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
             else -> {}
         }
-
     }
 
     fun getAnnotations(): File {
@@ -205,7 +204,8 @@ public open class KDoc(): SourceTask() {
 
         val compiler = KDocCompiler()
 
-        val messageCollector = GradleMessageCollector(getLogger())
+        val logger = Logging.getLogger(getClass())
+        val messageCollector = GradleMessageCollector(logger)
         val exitCode = compiler.exec(messageCollector, args);
 
         when (exitCode) {
