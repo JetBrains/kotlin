@@ -20,16 +20,13 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
-import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -183,23 +180,23 @@ public class ArgumentTypeResolver {
             return expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace);
         }
 
-        TypeInfoForCall result;
+        JetTypeInfo result;
         if (expression instanceof JetCallExpression) {
-            result = callExpressionResolver.getCallExpressionTypeInfoForCall(
+            result = callExpressionResolver.getCallExpressionTypeInfo(
                     (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null,
                     context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL, context.resolutionResultsCache);
         }
         else { // expression instanceof JetQualifiedExpression
-            result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo(
+            result = callExpressionResolver.getQualifiedExpressionTypeInfo(
                     (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE),
                     ResolveMode.NESTED_CALL, context.resolutionResultsCache);
         }
 
-        recordExpressionType(expression, context.trace, context.scope, result.getTypeInfo());
+        recordExpressionType(expression, context.trace, context.scope, result);
         if (traceToCommitForCall != null) {
             traceToCommitForCall.commit();
         }
-        return result.getTypeInfo();
+        return result;
     }
 
     @NotNull

@@ -34,6 +34,8 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCache;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -591,13 +593,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
-        return callExpressionResolver.getQualifiedExpressionTypeInfo(expression, context);
+        return callExpressionResolver
+                .getQualifiedExpressionTypeInfo(expression, context, ResolveMode.TOP_LEVEL_CALL, ResolutionResultsCache.create());
     }
 
     @Override
     public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
-        return callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        return callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context, ResolveMode.TOP_LEVEL_CALL,
+                                                                ResolutionResultsCache.create());
     }
 
     @Override
