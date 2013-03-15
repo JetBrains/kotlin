@@ -290,8 +290,29 @@ public class CandidateResolver {
                                        ? constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
                                        : effectiveExpectedType;
 
+                //todo inner calls should be analyzed, for parenthesized, labeled, if, when expressions as well
+                JetVisitor<JetExpression, Void> callExpressionFinder = new JetVisitor<JetExpression, Void>() {
+                    @Override
+                    public JetExpression visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
+                        JetExpression selector = expression.getSelectorExpression();
+                        return selector != null ? selector.accept(this, null) : null;
+                    }
+
+                    @Override
+                    public JetExpression visitCallExpression(JetCallExpression expression, Void data) {
+                        return expression;
+                    }
+
+                    @Override
+                    public JetExpression visitJetElement(JetElement element, Void data) {
+                        return null;
+                    }
+                };
+                JetExpression callExpression = expression.accept(callExpressionFinder, null);
+                if (callExpression == null) continue;
+
                 CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
-                        context.resolutionResultsCache.getDeferredComputation(expression);
+                        context.resolutionResultsCache.getDeferredComputation(CallKey.create(context.call.getCallType(), callExpression));
                 if (storedContextForArgument == null) continue;
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
