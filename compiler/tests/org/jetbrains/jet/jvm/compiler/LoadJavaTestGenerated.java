@@ -1135,6 +1135,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/FilenameFilter.java");
             }
             
+            @TestMetadata("InterfaceWithObjectMethod.java")
+            public void testInterfaceWithObjectMethod() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/InterfaceWithObjectMethod.java");
+            }
+            
             @TestMetadata("Runnable.java")
             public void testRunnable() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
