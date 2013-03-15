@@ -29,6 +29,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.apache.commons.io.FileUtils
+import java.io.IOException
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -109,7 +110,12 @@ public open class KotlinCompile(): AbstractCompile() {
         val messageCollector = GradleMessageCollector(logger)
         val exitCode = compiler.exec(messageCollector, args)
 
-        FileUtils.deleteDirectory(embeddedAnnotations.getParentFile());
+        val annotationsDir = embeddedAnnotations.getParentFile()
+        try {
+            FileUtils.deleteDirectory(annotationsDir);
+        } catch (e : IOException) {
+            logger.warn("Could not delete temporary annotations directory " + annotationsDir, e)
+        }
 
         when (exitCode) {
             ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
