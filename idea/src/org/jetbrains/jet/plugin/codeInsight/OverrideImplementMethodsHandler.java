@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -321,6 +322,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             selectedElements = chooser.getSelectedElements();
             if (selectedElements == null || selectedElements.isEmpty()) return;
         }
+
+        PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
