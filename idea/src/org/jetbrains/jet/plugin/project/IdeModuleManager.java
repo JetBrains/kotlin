@@ -106,7 +106,7 @@ public class IdeModuleManager implements KotlinModuleManager {
 
     private class ModuleBuilder {
         private final MutableModuleSourcesManager moduleSourcesManager;
-        private final JavaClassResolutionFacade classResolutionFacade;
+        private final JavaClassResolutionFacadeImpl classResolutionFacade;
 
         private final BiMap<Module, ModuleDescriptor> kotlinModules = HashBiMap.create();
         private final BiMap<Module, MutableSubModuleDescriptor> srcSubModules = HashBiMap.create();
@@ -140,6 +140,11 @@ public class IdeModuleManager implements KotlinModuleManager {
                     return classDescriptor;
                 }
             });
+        }
+
+        private void registerJavaPackageFragmentProvider(MutableSubModuleDescriptor subModule, JavaPackageFragmentProvider provider) {
+            classResolutionFacade.addPackageFragmentProvider(provider);
+            subModule.addPackageFragmentProvider(provider);
         }
 
         @NotNull
@@ -375,18 +380,18 @@ public class IdeModuleManager implements KotlinModuleManager {
                 List<VirtualFile> files = Arrays.asList(rootProvider.getFiles(OrderRootType.CLASSES));
                 MutableModuleDescriptor moduleDescriptor = new MutableModuleDescriptor(name, JavaToKotlinClassMap.getInstance());
                 subModule = new MutableSubModuleDescriptor(moduleDescriptor, name);
-                subModule.addPackageFragmentProvider(new JavaPackageFragmentProvider());
+                registerJavaPackageFragmentProvider(subModule, new JavaPackageFragmentProvider());
                 cache.put(key, subModule);
             }
             return subModule;
         }
 
-    }
-
-    private void addPlatformSpecificProviders(Module ideaModule, MutableSubModuleDescriptor srcSubModule, boolean isTestSubModule) {
-        if (!JsModuleDetector.isJsModule(ideaModule)) {
-            srcSubModule.addPackageFragmentProvider(new JavaPackageFragmentProvider());
+        private void addPlatformSpecificProviders(Module ideaModule, MutableSubModuleDescriptor srcSubModule, boolean isTestSubModule) {
+            if (!JsModuleDetector.isJsModule(ideaModule)) {
+                registerJavaPackageFragmentProvider(srcSubModule, new JavaPackageFragmentProvider());
+            }
         }
+
     }
 
     @NotNull
