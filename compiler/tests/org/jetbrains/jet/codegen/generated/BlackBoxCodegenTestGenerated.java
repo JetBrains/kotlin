@@ -3275,6 +3275,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/traits/withRequired.kt");
         }
         
+        @TestMetadata("withRequiredGenericProperty.kt")
+        public void testWithRequiredGenericProperty() throws Exception {
+            doTest("compiler/testData/codegen/box/traits/withRequiredGenericProperty.kt");
+        }
+        
+        @TestMetadata("withRequiredProperty.kt")
+        public void testWithRequiredProperty() throws Exception {
+            doTest("compiler/testData/codegen/box/traits/withRequiredProperty.kt");
+        }
+        
+        @TestMetadata("withRequiredPropertyViaBridge.kt")
+        public void testWithRequiredPropertyViaBridge() throws Exception {
+            doTest("compiler/testData/codegen/box/traits/withRequiredPropertyViaBridge.kt");
+        }
+        
         @TestMetadata("withRequiredSuper.kt")
         public void testWithRequiredSuper() throws Exception {
             doTest("compiler/testData/codegen/box/traits/withRequiredSuper.kt");

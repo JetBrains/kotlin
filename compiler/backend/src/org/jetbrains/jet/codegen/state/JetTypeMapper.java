@@ -729,24 +729,8 @@ public class JetTypeMapper extends BindingTraceAware {
         writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
         signatureWriter.writeParametersStart();
-
-        if (kind == OwnerKind.TRAIT_IMPL) {
-            @SuppressWarnings("ConstantConditions") ClassDescriptor containingDeclaration = (ClassDescriptor) parentDescriptor;
-            signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
-            mapType(containingDeclaration.getDefaultType(), signatureWriter, JetTypeMapperMode.IMPL);
-            signatureWriter.writeParameterTypeEnd();
-        }
-        else {
-            if (descriptor instanceof AccessorForPropertyDescriptor) {
-                signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
-                mapType(((ClassifierDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), signatureWriter,
-                        JetTypeMapperMode.VALUE);
-                signatureWriter.writeParameterTypeEnd();
-            }
-        }
-
+        writeThisIfNeeded(descriptor, kind, signatureWriter);
         writeReceiverIfNeeded(descriptor.getReceiverParameter(), signatureWriter);
-
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
@@ -767,34 +751,15 @@ public class JetTypeMapper extends BindingTraceAware {
 
         writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
-        JetType outType = descriptor.getType();
-
         signatureWriter.writeParametersStart();
-
-        String name = PropertyCodegen.setterName(descriptor.getName());
-        if (kind == OwnerKind.TRAIT_IMPL) {
-            ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
-            signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
-            mapType(containingDeclaration.getDefaultType(), signatureWriter, JetTypeMapperMode.VALUE);
-            signatureWriter.writeParameterTypeEnd();
-        }
-        else {
-            if (descriptor instanceof AccessorForPropertyDescriptor) {
-                signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
-                mapType(((ClassifierDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), signatureWriter,
-                        JetTypeMapperMode.VALUE);
-                signatureWriter.writeParameterTypeEnd();
-            }
-        }
-
+        writeThisIfNeeded(descriptor, kind, signatureWriter);
         writeReceiverIfNeeded(descriptor.getReceiverParameter(), signatureWriter);
-
-        writeParameter(signatureWriter, outType);
-
+        writeParameter(signatureWriter, descriptor.getType());
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeVoidReturn();
 
+        String name = PropertyCodegen.setterName(descriptor.getName());
         JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature(name);
         return new JvmPropertyAccessorSignature(jvmMethodSignature,
                                                 jvmMethodSignature.getKotlinParameterType(jvmMethodSignature.getParameterCount() - 1));
