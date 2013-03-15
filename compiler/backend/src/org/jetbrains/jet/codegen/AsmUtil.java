@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -47,8 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
-import static org.jetbrains.jet.codegen.CodegenUtil.isNullableType;
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 
@@ -267,6 +265,16 @@ public class AsmUtil {
             return ACC_PUBLIC;
         }
         return null;
+    }
+
+    @NotNull
+    public static Type getTraitImplThisParameterType(@NotNull ClassDescriptor traitDescriptor, @NotNull JetTypeMapper typeMapper) {
+        JetType jetType = getSuperClass(traitDescriptor);
+        Type type = typeMapper.mapType(jetType);
+        if (type.getInternalName().equals("java/lang/Object")) {
+            return typeMapper.mapType(traitDescriptor.getDefaultType());
+        }
+        return type;
     }
 
     private static Type stringValueOfOrStringBuilderAppendType(Type type) {

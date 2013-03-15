@@ -46,6 +46,7 @@ import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -547,10 +548,11 @@ public class JetTypeMapper extends BindingTraceAware {
                 thisClass, receiverParameterType, null);
     }
 
-    private static boolean isAccessor(FunctionDescriptor functionDescriptor) {
-        return functionDescriptor instanceof AccessorForFunctionDescriptor ||
-               functionDescriptor instanceof AccessorForPropertyDescriptor.Getter ||
-               functionDescriptor instanceof AccessorForPropertyDescriptor.Setter;
+    private static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
+        return descriptor instanceof AccessorForFunctionDescriptor ||
+               descriptor instanceof AccessorForPropertyDescriptor ||
+               descriptor instanceof AccessorForPropertyDescriptor.Getter ||
+               descriptor instanceof AccessorForPropertyDescriptor.Setter;
     }
 
     @NotNull
@@ -566,7 +568,6 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     private JvmMethodSignature mapSignature(FunctionDescriptor f, boolean needGenericSignature, OwnerKind kind) {
-
         if (kind == OwnerKind.TRAIT_IMPL) {
             needGenericSignature = false;
         }
@@ -575,35 +576,11 @@ public class JetTypeMapper extends BindingTraceAware {
 
         writeFormalTypeParameters(f.getTypeParameters(), signatureVisitor);
 
-        JetType receiverType = DescriptorUtils.getReceiverParameterType(f.getReceiverParameter());
-        List<ValueParameterDescriptor> parameters = f.getValueParameters();
-
         signatureVisitor.writeParametersStart();
+        writeThisIfNeeded(f, kind, signatureVisitor);
+        writeReceiverIfNeeded(f.getReceiverParameter(), signatureVisitor);
 
-        if (kind == OwnerKind.TRAIT_IMPL) {
-            ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
-            JetType jetType = CodegenUtil.getSuperClass(containingDeclaration);
-            Type type = mapType(jetType);
-            if (type.getInternalName().equals("java/lang/Object")) {
-                jetType = containingDeclaration.getDefaultType();
-                type = mapType(jetType);
-            }
-
-            signatureVisitor.writeParameterType(JvmMethodParameterKind.THIS);
-            signatureVisitor.writeAsmType(type, jetType.isNullable());
-            signatureVisitor.writeParameterTypeEnd();
-        }
-        else {
-            writeThisForAccessorIfNeeded(f, signatureVisitor);
-        }
-
-        if (receiverType != null) {
-            signatureVisitor.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(receiverType, signatureVisitor, JetTypeMapperMode.VALUE);
-            signatureVisitor.writeParameterTypeEnd();
-        }
-
-        for (ValueParameterDescriptor parameter : parameters) {
+        for (ValueParameterDescriptor parameter : f.getValueParameters()) {
             writeParameter(signatureVisitor, parameter.getType());
         }
 
@@ -622,10 +599,28 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureVisitor.makeJvmMethodSignature(f.getName().getName());
     }
 
-    private void writeThisForAccessorIfNeeded(FunctionDescriptor f, BothSignatureWriter signatureVisitor) {
-        if (isAccessor(f) && f.getExpectedThisObject() != null) {
+    private void writeThisIfNeeded(
+            @NotNull CallableMemberDescriptor descriptor,
+            @NotNull OwnerKind kind,
+            @NotNull BothSignatureWriter signatureVisitor
+    ) {
+        if (kind == OwnerKind.TRAIT_IMPL) {
+            ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+            Type type = getTraitImplThisParameterType(containingDeclaration, this);
+
             signatureVisitor.writeParameterType(JvmMethodParameterKind.THIS);
-            mapType(((ClassifierDescriptor) f.getContainingDeclaration()).getDefaultType(), signatureVisitor, JetTypeMapperMode.VALUE);
+            signatureVisitor.writeAsmType(type, false);
+            signatureVisitor.writeParameterTypeEnd();
+        }
+        else {
+            writeThisForAccessorIfNeeded(descriptor, signatureVisitor);
+        }
+    }
+
+    private void writeThisForAccessorIfNeeded(@NotNull CallableMemberDescriptor descriptor, @NotNull BothSignatureWriter signatureVisitor) {
+        if (isAccessor(descriptor) && descriptor.getExpectedThisObject() != null) {
+            signatureVisitor.writeParameterType(JvmMethodParameterKind.THIS);
+            mapType(((ClassifierDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), signatureVisitor, JetTypeMapperMode.VALUE);
             signatureVisitor.writeParameterTypeEnd();
         }
     }

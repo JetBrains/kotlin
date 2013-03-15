@@ -64,7 +64,6 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -1431,12 +1430,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         reg += argTypes[i].getSize();
                     }
 
-                    JetType jetType = CodegenUtil.getSuperClass(declaration);
-                    Type type = typeMapper.mapType(jetType, JetTypeMapperMode.IMPL);
-                    if (type.getInternalName().equals("java/lang/Object")) {
-                        jetType = declaration.getDefaultType();
-                        type = typeMapper.mapType(jetType, JetTypeMapperMode.IMPL);
-                    }
+                    Type type = getTraitImplThisParameterType(declaration, typeMapper);
 
                     String fdescriptor = functionOriginal.getDescriptor().replace("(", "(" + type.getDescriptor());
                     Type type1 =
