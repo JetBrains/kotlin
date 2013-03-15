@@ -18,16 +18,14 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-
-import java.util.Collection;
 
 public interface KotlinCodeAnalyzer {
 
     @NotNull
-    Collection<ModuleDescriptor> getModules();
+    PackageFragmentProvider getPackageFragmentProvider();
 
     @NotNull
     DeclarationDescriptor getDescriptor(@NotNull JetDeclaration declaration);

@@ -17,23 +17,20 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.AbstractSubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.PackageViewFromSubModule;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
@@ -42,10 +39,8 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
@@ -61,8 +56,8 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
     private final StorageManager storageManager;
 
     private final BindingTrace trace;
-    private final RootDeclarationProvider rootProvider;
     private final ModuleSourcesManager moduleSourcesManager;
+    private final SubModuleDescriptor subModule;
     private final DeclarationProviderFactory declarationProviderFactory;
 
     private final InjectorForLazyResolve injector;
@@ -70,14 +65,12 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
     private final Predicate<FqNameUnsafe> specialClasses;
     private final Function<FqName, Name> classifierAliases;
 
-    private final Collection<ModuleDescriptor> modules;
-    private final Map<SubModuleDefinition, SubModuleDescriptor> subModules;
-
     @Deprecated // Internal use only
     public LazyCodeAnalyzer(
             @NotNull Project project,
             @NotNull StorageManager storageManager,
             @NotNull ModuleSourcesManager moduleSourcesManager,
+            @NotNull SubModuleDescriptor subModule,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
             @NotNull Predicate<FqNameUnsafe> specialClasses,
@@ -89,88 +82,23 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
         this.trace = storageManager.createSafeTrace(delegationTrace);
         this.injector = new InjectorForLazyResolve(project, moduleSourcesManager, this);
         this.declarationProviderFactory = declarationProviderFactory;
-        this.rootProvider = null; // TODO Get rid of module definitions etc
         this.moduleSourcesManager = moduleSourcesManager;
-
-        // this map implicitly becomes shared between all subModule objects
-        // it is crucial for thread safety that it is not modified after
-        // the constructor of LazyCodeAnalyzer returns
-        Map<SubModuleDefinition, SubModuleDescriptor> subModules = Maps.newHashMap();
-        this.modules = computeModules(rootProvider.getModuleDefinitions(), subModules);
-        this.subModules = Collections.unmodifiableMap(subModules);
+        this.subModule = subModule;
     }
 
-    private Collection<ModuleDescriptor> computeModules(
-            Collection<ModuleDefinition> definitions,
-            Map<SubModuleDefinition, SubModuleDescriptor> subModules
-    ) {
-        Collection<ModuleDescriptor> result = Lists.newArrayList();
-
-        for (ModuleDefinition moduleDefinition : definitions) {
-            MutableModuleDescriptor module = new MutableModuleDescriptor(moduleDefinition.getName(), moduleDefinition.getPlatformToKotlinClassMap());
-            result.add(module);
-
-            for (SubModuleDefinition subModuleDefinition : moduleDefinition.getSubModules()) {
-                SubModuleDescriptor subModule = createSubModule(module, subModuleDefinition);
-                subModules.put(subModuleDefinition, subModule);
-
-                module.addSubModule(subModule);
-            }
-        }
-        return result;
-    }
-
-    private AbstractSubModuleDescriptor createSubModule(
-            ModuleDescriptor module,
-            final SubModuleDefinition subModuleDefinition
-    ) {
-        return new AbstractSubModuleDescriptor(module, subModuleDefinition.getName()) {
-
+    @NotNull
+    @Override
+    public PackageFragmentProvider getPackageFragmentProvider() {
+        return new PackageFragmentProvider() {
             @NotNull
             @Override
             public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-                List<PackageFragmentDescriptor> result = Lists.newArrayList();
-                result.addAll(subModuleDefinition.getPackageFragmentsLoadedExternally(fqName, this));
+                PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
+                if (provider == null) return Collections.emptyList();
 
-                PackageMemberDeclarationProvider provider = subModuleDefinition.getPackageMembersFromSourceFiles(fqName);
-                if (provider != null) {
-                    result.add(new LazyPackageDescriptor(LazyCodeAnalyzer.this, this, fqName, provider));
-                }
-
-                return result;
-            }
-
-            @Nullable
-            @Override
-            public PackageViewDescriptor getPackageView(@NotNull FqName fqName) {
-                List<PackageFragmentDescriptor> fragments = DescriptorUtils.getPackageFragmentsIncludingDependencies(this, fqName);
-                Collection<FqName> subPackages = subModuleDefinition.getAllSubPackages(fqName);
-                if (fragments.isEmpty() && subPackages.isEmpty()) {
-                    return null;
-                }
-                return new PackageViewFromSubModule(this, fqName, fragments);
-            }
-
-            @NotNull
-            @Override
-            public Collection<SubModuleDescriptor> getDependencies() {
-                Collection<SubModuleDescriptor> result = Lists.newArrayList();
-
-                for (SubModuleDefinition dependency : subModuleDefinition.getDependenciesToBeResolved()) {
-                    SubModuleDescriptor descriptor = subModules.get(dependency);
-                    assert descriptor != null : "No subModule created for dependency " + subModuleDefinition.getName() + " of " + this;
-                    result.add(descriptor);
-                }
-
-                result.addAll(subModuleDefinition.getExternalDependencies());
-
-                return result;
-            }
-
-            @NotNull
-            @Override
-            public List<ImportPath> getDefaultImports() {
-                return subModuleDefinition.getDefaultImports();
+                return Collections.<PackageFragmentDescriptor>singletonList(
+                        new LazyPackageDescriptor(LazyCodeAnalyzer.this, subModule, fqName, provider)
+                );
             }
         };
     }
@@ -192,12 +120,6 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
     @NotNull
     public StorageManager getStorageManager() {
         return storageManager;
-    }
-
-    @NotNull
-    @Override
-    public Collection<ModuleDescriptor> getModules() {
-        return modules;
     }
 
     @NotNull
@@ -361,50 +283,47 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
 
     @Override
     public void forceResolveAll() {
-        for (ModuleDescriptor module : modules) {
-            module.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
+        subModule.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
 
-                @Override
-                public Void visitModuleDescriptor(ModuleDescriptor descriptor, Void data) {
-                    for (SubModuleDescriptor subModuleDescriptor : descriptor.getSubModules()) {
-                        subModuleDescriptor.acceptVoid(this);
-                    }
-                    return null;
+            @Override
+            public Void visitModuleDescriptor(ModuleDescriptor descriptor, Void data) {
+                for (SubModuleDescriptor subModuleDescriptor : descriptor.getSubModules()) {
+                    subModuleDescriptor.acceptVoid(this);
                 }
+                return null;
+            }
 
-                @Override
-                public Void visitSubModuleDescriptor(SubModuleDescriptor descriptor, Void data) {
-                    PackageViewDescriptor packageView = descriptor.getPackageView(FqName.ROOT);
-                    if (packageView != null) {
-                        ForceResolveUtil.forceResolveAllContents(packageView);
-                    }
-                    return null;
+            @Override
+            public Void visitSubModuleDescriptor(SubModuleDescriptor descriptor, Void data) {
+                PackageViewDescriptor packageView = descriptor.getPackageView(FqName.ROOT);
+                if (packageView != null) {
+                    ForceResolveUtil.forceResolveAllContents(packageView.getMemberScope());
                 }
+                return null;
+            }
 
-                @Override
-                public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, Void data) {
-                    ForceResolveUtil.forceResolveAllContents(descriptor);
-                    return null;
-                }
+            @Override
+            public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
+                return super.visitPackageViewDescriptor(descriptor, data); // TODO
+            }
 
-                @Override
-                public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                    ForceResolveUtil.forceResolveAllContents(descriptor);
-                    return null;
-                }
+            @Override
+            public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(descriptor);
+                return null;
+            }
 
-                @Override
-                public Void visitModuleDeclaration(ModuleDescriptor descriptor, Void data) {
-                    ForceResolveUtil.forceResolveAllContents(descriptor);
-                    return null;
-                }
+            @Override
+            public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(descriptor);
+                return null;
+            }
 
-                @Override
-                public Void visitScriptDescriptor(ScriptDescriptor scriptDescriptor, Void data) {
-                    ForceResolveUtil.forceResolveAllContents(scriptDescriptor);
-                    return null;
-                }
-            });
-        }
+            @Override
+            public Void visitScriptDescriptor(ScriptDescriptor scriptDescriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(scriptDescriptor);
+                return null;
+            }
+        });
     }
 }
