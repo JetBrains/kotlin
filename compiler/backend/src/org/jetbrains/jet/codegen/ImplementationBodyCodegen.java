@@ -1364,27 +1364,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int flags = ACC_PUBLIC; // TODO.
 
-        Method function;
-        Method functionOriginal;
-        if (fun instanceof PropertyAccessorDescriptor) {
-            PropertyDescriptor property = ((PropertyAccessorDescriptor) fun).getCorrespondingProperty();
-            PropertyDescriptor original = property.getOriginal();
-            if (fun instanceof PropertyGetterDescriptor) {
-                function = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                functionOriginal = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-            }
-            else if (fun instanceof PropertySetterDescriptor) {
-                function = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                functionOriginal = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-            }
-            else {
-                throw new IllegalStateException("Accessor is neither getter, nor setter, what is it? " + fun);
-            }
-        }
-        else {
-            function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
-            functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
-        }
+        TraitImplDelegateInfo delegateInfo = getTraitImplDelegateInfo(fun);
+        Method function = delegateInfo.delegate;
+        Method functionOriginal = delegateInfo.original;
 
         MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
         AnnotationCodegen.forMethod(mv, state.getTypeMapper()).genAnnotations(fun);
@@ -1396,20 +1378,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isCallInsideSameModuleAsDeclared(inheritedFun, context),
                 OwnerKind.IMPLEMENTATION).getSignature();
 
-        JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-        int kotlinFlags = getFlagsForVisibility(fun.getVisibility());
-        if (fun instanceof PropertyAccessorDescriptor) {
-            kotlinFlags |= JvmStdlibNames.FLAG_PROPERTY_BIT;
-            aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
-            aw.writePropertyType(jvmSignature.getKotlinReturnType());
-        }
-        else {
-            aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
-            aw.writeReturnType(jvmSignature.getKotlinReturnType());
-        }
-        kotlinFlags |= DescriptorKindUtils.kindToFlags(inheritedFun.getKind());
-        aw.writeFlags(kotlinFlags);
-        aw.visitEnd();
+        writeAnnotationForDelegateToTraitImpl(fun, inheritedFun, mv, jvmSignature);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
@@ -1444,6 +1413,66 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun);
+    }
+
+    private static class TraitImplDelegateInfo {
+        private final Method delegate;
+        private final Method original;
+
+        private TraitImplDelegateInfo(@NotNull Method delegate, @NotNull Method original) {
+            this.delegate = delegate;
+            this.original = original;
+        }
+    }
+
+    @NotNull
+    private TraitImplDelegateInfo getTraitImplDelegateInfo(@NotNull FunctionDescriptor fun) {
+        if (fun instanceof PropertyAccessorDescriptor) {
+            PropertyDescriptor property = ((PropertyAccessorDescriptor) fun).getCorrespondingProperty();
+            PropertyDescriptor original = property.getOriginal();
+            if (fun instanceof PropertyGetterDescriptor) {
+                JvmPropertyAccessorSignature function = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION);
+                JvmPropertyAccessorSignature functionOriginal = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
+                return new TraitImplDelegateInfo(
+                        function.getJvmMethodSignature().getAsmMethod(), functionOriginal.getJvmMethodSignature().getAsmMethod());
+            }
+            else if (fun instanceof PropertySetterDescriptor) {
+                JvmPropertyAccessorSignature function = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION);
+                JvmPropertyAccessorSignature functionOriginal = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
+                return new TraitImplDelegateInfo(
+                        function.getJvmMethodSignature().getAsmMethod(), functionOriginal.getJvmMethodSignature().getAsmMethod());
+            }
+            else {
+                throw new IllegalStateException("Accessor is neither getter, nor setter, what is it? " + fun);
+            }
+        }
+        else {
+            Method function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
+            Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
+            return new TraitImplDelegateInfo(function, functionOriginal);
+        }
+    }
+
+    private static void writeAnnotationForDelegateToTraitImpl(
+            @NotNull FunctionDescriptor fun,
+            @NotNull FunctionDescriptor inheritedFun,
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmSignature
+    ) {
+        JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
+        int kotlinFlags = getFlagsForVisibility(fun.getVisibility());
+        if (fun instanceof PropertyAccessorDescriptor) {
+            kotlinFlags |= JvmStdlibNames.FLAG_PROPERTY_BIT;
+            aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+            aw.writePropertyType(jvmSignature.getKotlinReturnType());
+        }
+        else {
+            aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+            aw.writeReturnType(jvmSignature.getKotlinReturnType());
+        }
+        kotlinFlags |= DescriptorKindUtils.kindToFlags(inheritedFun.getKind());
+        aw.writeFlags(kotlinFlags);
+        aw.visitEnd();
     }
 
     private void generateDelegatorToConstructorCall(
