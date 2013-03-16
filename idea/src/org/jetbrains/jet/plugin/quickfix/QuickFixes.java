@@ -239,5 +239,17 @@ public class QuickFixes {
         factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
 
         factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
+
+        factories.put(NO_GET_METHOD, CreateMethodFromUsageFix.createCreateGetMethodFromUsageFactory());
+        factories.put(NO_SET_METHOD, CreateMethodFromUsageFix.createCreateSetMethodFromUsageFactory());
+        JetIntentionActionFactory createHasNextFromUsageFactory = CreateMethodFromUsageFix.createCreateHasNextMethodFromUsageFactory();
+        factories.put(HAS_NEXT_MISSING, createHasNextFromUsageFactory);
+        factories.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, createHasNextFromUsageFactory);
+        JetIntentionActionFactory createNextFromUsageFactory = CreateMethodFromUsageFix.createCreateNextMethodFromUsageFactory();
+        factories.put(NEXT_MISSING, createNextFromUsageFactory);
+        factories.put(NEXT_NONE_APPLICABLE, createNextFromUsageFactory);
+        factories.put(ITERATOR_MISSING, CreateMethodFromUsageFix.createCreateIteratorMethodFromUsageFactory());
+        factories.put(COMPONENT_FUNCTION_MISSING, CreateMethodFromUsageFix.createCreateComponentMethodFromUsageFactory());
+        factories.put(NO_CLASS_OBJECT, CreateClassObjectFromUsageFix.createCreateClassObjectFromUsageFactory());
     }
 }
