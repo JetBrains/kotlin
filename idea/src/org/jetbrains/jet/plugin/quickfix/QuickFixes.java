@@ -210,8 +210,8 @@ public class QuickFixes {
 
         factories.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED, AddSemicolonAfterFunctionCallFix.createFactory());
 
-        factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, ChangeReturnTypeToMatchOverriddenMethodFix.createFactory());
         factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, ChangePropertyTypeToMatchOverriddenPropertyFix.createFactory());
+        factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, ChangeFunctionReturnTypeFix.createFactoryForReturnTypeMismatchOnOverride());
         factories.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForComponentFunctionReturnTypeMismatch());
         factories.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch());
         factories.put(COMPARE_TO_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch());

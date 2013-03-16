@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
@@ -147,6 +148,21 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 PsiElement compareTo = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
                 if (!(compareTo instanceof JetFunction)) return null;
                 return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
+            }
+        };
+    }
+
+    @NotNull
+    public static JetIntentionActionFactory createFactoryForReturnTypeMismatchOnOverride() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                assert function != null : "RETURN_TYPE_MISMATCH_ON_OVERRIDE reported on element that is not within any function";
+                BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(function);
+                JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, function);
+                return matchingReturnType == null ? null : new ChangeFunctionReturnTypeFix(function, matchingReturnType);
             }
         };
     }
