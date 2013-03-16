@@ -1,4 +1,4 @@
-// "Change return type to 'T'" "true"
+// "Change 'B.foo' function return type to 'T'" "true"
 open class S {}
 open class T : S() {}
 
@@ -11,5 +11,5 @@ trait X {
 }
 
 abstract class B : A(), X {
-    override abstract fun foo() : Int<caret>;
+    override abstract fun foo(): Int<caret>
 }
