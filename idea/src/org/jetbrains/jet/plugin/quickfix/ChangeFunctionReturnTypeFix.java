@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -128,6 +129,24 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                     return new ChangeFunctionReturnTypeFix(hasNextFunction, KotlinBuiltIns.getInstance().getBooleanType());
                 }
                 else return null;
+            }
+        };
+    }
+
+    @NotNull
+    public static JetIntentionActionFactory createFactoryForCompareToTypeMismatch() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
+                assert expression != null : "COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression";
+                BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
+                ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+                if (resolvedCall == null) return null;
+                PsiElement compareTo = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                if (!(compareTo instanceof JetFunction)) return null;
+                return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
             }
         };
     }
