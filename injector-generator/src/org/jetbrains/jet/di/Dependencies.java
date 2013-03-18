@@ -113,7 +113,10 @@ public class Dependencies {
             return fields.iterator().next();
         }
         else {
-            throw new IllegalArgumentException("Ambiguous dependency: " + errorMessage + " needed for " + neededFor);
+            throw new IllegalArgumentException("Ambiguous dependency: \n"
+                                               + errorMessage
+                                               + "\nneeded for " + neededFor
+                                               + "\navailable: " + fields);
         }
     }
 
