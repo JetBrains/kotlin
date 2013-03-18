@@ -132,6 +132,6 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/resolve/std/";
+        return PluginTestCaseBase.getTestDataPathBase() + "/resolve/builtins/";
     }
 }
