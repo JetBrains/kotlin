@@ -27,6 +27,8 @@ import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
+import org.jetbrains.jet.completion.AbstractJavaCompletionTest;
+import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -225,6 +227,22 @@ public class GenerateTests {
 
         generateTest(
                 "idea/tests/",
+                "JetBasicJSCompletionTest",
+                AbstractJetJSCompletionTest.class,
+                testModel("idea/testData/completion/basic", false, "doTest"),
+                testModel("idea/testData/completion/basic/js", false, "doTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "JetBasicJavaCompletionTest",
+                AbstractJavaCompletionTest.class,
+                testModel("idea/testData/completion/basic", false, "doTest"),
+                testModel("idea/testData/completion/basic/java", false, "doTest")
+        );
+
+        generateTest(
+                "idea/tests/",
                 "QuickFixMultiFileTestGenerated",
                 AbstractQuickFixMultiFileTest.class,
                 new SimpleTestClassModel(new File("idea/testData/quickfix"), true, Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), "doTestWithExtraFile")
@@ -284,6 +302,10 @@ public class GenerateTests {
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath, @NotNull String methodName) {
         return testModel(rootPath, true, "kt", methodName);
+    }
+
+    private static SimpleTestClassModel testModel(@NotNull String rootPath, boolean recursive, @NotNull String methodName) {
+        return testModel(rootPath, recursive, "kt", methodName);
     }
 
     private static SimpleTestClassModel testModelWithDirectories(@NotNull String rootPath, @NotNull String methodName) {

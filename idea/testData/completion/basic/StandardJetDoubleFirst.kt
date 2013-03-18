@@ -1,7 +1,8 @@
 fun some(a: Double<caret>) {
 }
 
-// COMPLETE: 2
+// TIME: 2
 // WITH_ORDER: 1
 // EXIST: Double~(jet)
-// EXIST: Double~(java.lang)
+// EXIST_JAVA_ONLY: Double~(java.lang)
+// EXIST: DoubleArray~(jet)

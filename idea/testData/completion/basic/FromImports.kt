@@ -6,4 +6,6 @@ fun hello() {
     val a = So<caret>
 }
 
-// EXIST: SortedSet, SortedMap
+// EXIST: SortedSet
+// EXIST_JAVA_ONLY: SortedMap
+// EXIST_JS_ONLY: JSON

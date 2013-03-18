@@ -4,4 +4,5 @@ class Test {
 
 // TIME: 1
 // EXIST: String~(jet)
-// EXIST: StringBuffer
+// EXIST: StringBuilder
+// EXIST_JAVA_ONLY: StringBuffer

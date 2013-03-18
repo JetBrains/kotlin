@@ -2,11 +2,12 @@ fun main(args: Array<String>) {
     Array<caret>
 }
 
-// COMPLETE: 2
+// TIME: 2
 // WITH_ORDER: 1
 // EXIST: Array~(jet)
-// EXIST: Array~(java.sql)
-
+// EXIST_JAVA_ONLY: Array~(java.sql)
+// EXIST_JAVA_ONLY: ArrayList~<E> (java.util)
+// EXIST_JS_ONLY: ArrayList~(java.util)
 
 
 
