@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.codeInsight.CodeInsightSettings;
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -112,6 +114,10 @@ public class ImportInsertHelper {
     }
 
     public static void addImportDirectiveIfNeeded(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
+            new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
+        }
+
         if (!doNeedImport(importPath, file)) {
             return;
         }
