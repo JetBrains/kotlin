@@ -21,14 +21,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class SingleAbstractMethodUtils {
     public static boolean isFunctionalInterface(@NotNull ClassDescriptor klass) {
@@ -53,7 +58,6 @@ public class SingleAbstractMethodUtils {
 
     @NotNull
     private static JetType getFunctionalTypeForFunction(@NotNull FunctionDescriptor function) {
-        // TODO substitute type parameters of class
         // TODO substitute type parameters of function with star projections
         JetType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
@@ -72,16 +76,32 @@ public class SingleAbstractMethodUtils {
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
 
-        JetType parameterType = getFunctionalTypeForFunction(getAbstractMethodOfFunctionalInterface(klass));;
+        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
+                SignaturesUtil.recreateTypeParametersAndReturnMapping(klass.getTypeConstructor().getParameters(), result);
+        TypeSubstitutor typeParametersSubstitutor = SignaturesUtil.createSubstitutorForTypeParameters(traitToFunTypeParameters);
+
+        JetType parameterTypeUnsubstituted = getFunctionalTypeForFunction(getAbstractMethodOfFunctionalInterface(klass));
+        JetType parameterType = typeParametersSubstitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
+        assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParametersSubstitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
                 result, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("function"), parameterType, false, null);
+
+        JetType returnType = typeParametersSubstitutor.substitute(klass.getDefaultType(), Variance.OUT_VARIANCE);
+        assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParametersSubstitutor;
+
+        for (TypeParameterDescriptorImpl typeParameter : traitToFunTypeParameters.values()) {
+            // TODO copy substituted upper bound
+            // TODO consider recursive upper bound
+            typeParameter.addDefaultUpperBound();
+            typeParameter.setInitialized();
+        }
 
         result.initialize(
                 null,
                 null,
-                Lists.<TypeParameterDescriptor>newArrayList(), // TODO recreate type parameters of class
+                Lists.newArrayList(traitToFunTypeParameters.values()),
                 Arrays.asList(parameter),
-                klass.getDefaultType(), // TODO substitute type parameters of class
+                returnType,
                 Modality.FINAL,
                 klass.getVisibility(),
                 false

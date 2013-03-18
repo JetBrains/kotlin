@@ -1130,6 +1130,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/singleAbstractMethod"), Pattern.compile("^(.+)\\.java$"), true);
             }
             
+            @TestMetadata("Comparator.java")
+            public void testComparator() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Comparator.java");
+            }
+            
             @TestMetadata("FilenameFilter.java")
             public void testFilenameFilter() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/FilenameFilter.java");
