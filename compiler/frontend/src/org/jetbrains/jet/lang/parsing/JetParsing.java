@@ -1452,7 +1452,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : ("namespace" ".")? simpleUserType{"."}
      *   ;
      */
-    private void parseUserType() {
+    void parseUserType() {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {

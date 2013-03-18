@@ -343,7 +343,36 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * atomicExpression postfixUnaryOperation?
+     * callableReference
+     *   : userType? "::" SimpleName
+     *   ;
+     */
+    private boolean parseCallableReferenceExpression() {
+        PsiBuilder.Marker expression = mark();
+
+        if (!at(COLONCOLON)) {
+            PsiBuilder.Marker typeReference = mark();
+            myJetParsing.parseUserType();
+            typeReference.done(TYPE_REFERENCE);
+            if (!at(COLONCOLON)) {
+                expression.rollbackTo();
+                return false;
+            }
+        }
+
+        advance(); // COLONCOLON
+
+        parseSimpleNameExpression();
+        expression.done(CALLABLE_REFERENCE_EXPRESSION);
+
+        return true;
+    }
+
+    /*
+     * postfixUnaryExpression
+     *   : atomicExpression postfixUnaryOperation*
+     *   : callableReference postfixUnaryOperation*
+     *   ;
      *
      * postfixUnaryOperation
      *   : "++" : "--" : "!!"
@@ -354,10 +383,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parsePostfixExpression() {
-//        System.out.println("post at "  + myBuilder.getTokenText());
-
         PsiBuilder.Marker expression = mark();
-        parseAtomicExpression();
+
+        boolean callableReference = parseCallableReferenceExpression();
+        if (!callableReference) {
+            parseAtomicExpression();
+        }
+
         while (true) {
             if (interruptedWithNewLine()) {
                 break;
@@ -366,7 +398,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseArrayAccess();
                 expression.done(ARRAY_ACCESS_EXPRESSION);
             }
-            else if (parseCallSuffix()) {
+            else if (!callableReference && parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
             }
             else if (at(DOT)) {
@@ -383,13 +415,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 expression.done(SAFE_ACCESS_EXPRESSION);
             }
-//            else if (at(HASH)) {
-//                advance(); // HASH
-//
-//                expect(IDENTIFIER, "Expecting property or function name");
-//
-//                expression.done(HASH_QUALIFIED_EXPRESSION);
-//            }
             else if (atSet(Precedence.POSTFIX.getOperations())) {
                 parseOperationReference();
                 expression.done(POSTFIX_EXPRESSION);
