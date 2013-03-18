@@ -310,15 +310,11 @@ public class BindingContextUtils {
             @NotNull JetExpression expression,
             @NotNull BindingContext context
     ) {
-        if (!(expression instanceof JetReferenceExpression)) {
-            return false;
+        if (expression instanceof JetCallExpression) {
+            return isCallExpressionWithValidReference(expression, context);
         }
 
-        if (!(expression instanceof JetCallExpression)) {
-            return true;
-        }
-
-        return isCallExpressionWithValidReference(expression, context);
+        return expression instanceof JetReferenceExpression;
     }
 
     public static boolean isCallExpressionWithValidReference(

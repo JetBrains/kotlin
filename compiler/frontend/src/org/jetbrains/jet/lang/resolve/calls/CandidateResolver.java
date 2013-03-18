@@ -59,6 +59,7 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -329,19 +330,15 @@ public class CandidateResolver {
         recordReferenceForInvokeFunction(context);
     }
 
-    private <D extends CallableDescriptor> void recordReferenceForInvokeFunction(CallCandidateResolutionContext<D> context) {
-        // TODO Replace using CallForImplicitInvoke
-        JetExpression calleeExpression = context.call.getCalleeExpression();
-        if (calleeExpression != null) {
-            PsiElement parent = calleeExpression.getParent();
-            if (parent instanceof JetCallExpression) {
-                JetCallExpression callExpression = (JetCallExpression) parent;
-                if (BindingContextUtils.isCallExpressionWithValidReference(callExpression, context.trace.getBindingContext())) {
-                    CallableDescriptor resultingDescriptor = context.candidateCall.getResultingDescriptor();
-                    context.trace.record(BindingContext.EXPRESSION_TYPE, callExpression, resultingDescriptor.getReturnType());
-                    context.trace.record(BindingContext.REFERENCE_TARGET, callExpression, resultingDescriptor);
-                }
-            }
+    private static <D extends CallableDescriptor> void recordReferenceForInvokeFunction(CallCandidateResolutionContext<D> context) {
+        PsiElement callElement = context.call.getCallElement();
+        if (!(callElement instanceof JetCallExpression)) return;
+
+        JetCallExpression callExpression = (JetCallExpression) callElement;
+        CallableDescriptor resultingDescriptor = context.candidateCall.getResultingDescriptor();
+        if (BindingContextUtils.isCallExpressionWithValidReference(callExpression, context.trace.getBindingContext())) {
+            context.trace.record(BindingContext.EXPRESSION_TYPE, callExpression, resultingDescriptor.getReturnType());
+            context.trace.record(BindingContext.REFERENCE_TARGET, callExpression, resultingDescriptor);
         }
     }
 
@@ -524,7 +521,7 @@ public class CandidateResolver {
                 candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
                 candidateCall.getExplicitReceiverKind().isThisObject(),
                 // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
-                context.call instanceof CallTransformer.CallForImplicitInvoke));
+                context.call instanceof CallForImplicitInvoke));
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
