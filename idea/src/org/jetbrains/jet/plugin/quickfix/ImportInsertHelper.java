@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -117,6 +116,10 @@ public class ImportInsertHelper {
             return;
         }
 
+        writeImportToFile(importPath, file);
+    }
+
+    public static void writeImportToFile(ImportPath importPath, JetFile file) {
         JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
         List<JetImportDirective> importDirectives = file.getImportDirectives();
 
@@ -179,6 +182,10 @@ public class ImportInsertHelper {
     }
 
     public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        return doNeedImport(importPath, file, file.getImportDirectives());
+    }
+
+    public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
         if (importPath.fqnPart().firstSegmentIs(JavaDescriptorResolver.JAVA_ROOT)) {
             FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
             importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder(), importPath.getAlias());
@@ -187,8 +194,6 @@ public class ImportInsertHelper {
         if (isImportedByDefault(importPath, JetPsiUtil.getFQName(file))) {
             return false;
         }
-
-        List<JetImportDirective> importDirectives = file.getImportDirectives();
 
         if (!importDirectives.isEmpty()) {
             // Check if import is already present

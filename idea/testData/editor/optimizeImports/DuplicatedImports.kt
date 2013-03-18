@@ -1,7 +1,5 @@
-import java.io as JavaIO
 import java.util.ArrayList
-import java.util.ArrayList as SomeThing
-import java.io.*
+import java.util.ArrayList
 
 class Action {
     fun test() {

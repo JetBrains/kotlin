@@ -37,7 +37,11 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
         doTest();
     }
 
-    public void testSortImports() throws Exception {
+    public void testRemoveImportsIfGeneralBefore() throws Exception {
+        doTest();
+    }
+
+    public void testDuplicatedImports() throws Exception {
         doTest();
     }
 

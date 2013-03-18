@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.editor.importOptimizer;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
@@ -42,6 +43,8 @@ import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
 
+import static org.jetbrains.jet.plugin.quickfix.ImportInsertHelper.doNeedImport;
+
 public class JetImportOptimizer implements ImportOptimizer {
     @Override
     public boolean supports(PsiFile file) {
@@ -58,31 +61,10 @@ public class JetImportOptimizer implements ImportOptimizer {
                 final JetFile jetFile = (JetFile) file;
                 final Set<FqName> usedQualifiedNames = extractUsedQualifiedNames(jetFile);
 
-                final List<JetImportDirective> sortedDirectives = jetFile.getImportDirectives();
-                Collections.sort(sortedDirectives, new Comparator<JetImportDirective>() {
-                    @Override
-                    public int compare(JetImportDirective directive1, JetImportDirective directive2) {
-                        ImportPath firstPath = JetPsiUtil.getImportPath(directive1);
-                        ImportPath secondPath = JetPsiUtil.getImportPath(directive2);
+                final List<JetImportDirective> directives = jetFile.getImportDirectives();
 
-                        if (firstPath == null || secondPath == null) {
-                            return firstPath == null && secondPath == null ? 0 :
-                                   firstPath == null ? -1 :
-                                   1;
-                        }
-
-                        // import bla.bla.bla.* should be before import bla.bla.bla.something
-                        if (firstPath.isAllUnder() && !secondPath.isAllUnder() && firstPath.fqnPart().equals(secondPath.fqnPart().parent())) {
-                            return -1;
-                        }
-
-                        if (!firstPath.isAllUnder() && secondPath.isAllUnder() && secondPath.fqnPart().equals(firstPath.fqnPart().parent())) {
-                            return 1;
-                        }
-
-                        return firstPath.getPathStr().compareTo(secondPath.getPathStr());
-                    }
-                });
+                final List<JetImportDirective> directivesBeforeCurrent = Lists.newArrayList();
+                final List<JetImportDirective> directivesAfterCurrent = jetFile.getImportDirectives();
 
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
@@ -104,14 +86,19 @@ public class JetImportOptimizer implements ImportOptimizer {
                         }
 
                         // Insert back only necessary imports in correct order
-                        for (JetImportDirective anImport : sortedDirectives) {
+                        for (JetImportDirective anImport : directives) {
+                            directivesAfterCurrent.remove(anImport);
+
                             ImportPath importPath = JetPsiUtil.getImportPath(anImport);
                             if (importPath == null) {
                                 continue;
                             }
 
-                            if (isUseful(importPath, usedQualifiedNames)) {
-                                ImportInsertHelper.addImportDirective(importPath, jetFile);
+                            if (isUseful(importPath, usedQualifiedNames) &&
+                                    doNeedImport(importPath, jetFile, directivesBeforeCurrent) &&
+                                    doNeedImport(importPath, jetFile, directivesAfterCurrent)) {
+                                ImportInsertHelper.writeImportToFile(importPath, jetFile);
+                                directivesBeforeCurrent.add(anImport);
                             }
                         }
                     }
