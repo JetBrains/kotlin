@@ -129,15 +129,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("\"d\"", builtIns.getStringType());
         assertType("\"\"\"d\"\"\"", builtIns.getStringType());
 
-        assertType("#()", KotlinBuiltIns.getInstance().getUnitType());
+        assertType("Unit.VALUE", KotlinBuiltIns.getInstance().getUnitType());
 
         assertType("null", KotlinBuiltIns.getInstance().getNullableNothingType());
-    }
-
-    public void testTupleConstants() throws Exception {
-        assertType("#()", KotlinBuiltIns.getInstance().getUnitType());
-
-        assertType("#(1, 'a')", KotlinBuiltIns.getInstance().getTupleType(builtIns.getIntType(), builtIns.getCharType()));
     }
 
     public void testTypeInfo() throws Exception {
@@ -269,41 +263,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertNotSubtype("Unit", "Int");
     }
 
-    public void testTuples() throws Exception {
-        assertSubtype("Unit", "#()");
-        assertSubtype("#()", "Unit");
-        assertSubtype("#()", "#()");
-
-        assertSubtype("#(Boolean)", "#(Boolean)");
-        assertSubtype("#(Byte)", "#(Byte)");
-        assertSubtype("#(Char)",    "#(Char)");
-        assertSubtype("#(Short)",   "#(Short)");
-        assertSubtype("#(Int)", "#(Int)");
-        assertSubtype("#(Long)",    "#(Long)");
-        assertSubtype("#(Float)",   "#(Float)");
-        assertSubtype("#(Double)",  "#(Double)");
-        assertSubtype("#(Unit)",    "#(Unit)");
-        assertSubtype("#(Unit, Unit)",    "#(Unit, Unit)");
-
-        assertSubtype("#(Boolean)", "#(Boolean)");
-        assertSubtype("#(Byte)",    "#(Byte)");
-        assertSubtype("#(Char)",    "#(Char)");
-        assertSubtype("#(Short)",   "#(Short)");
-        assertSubtype("#(Int)",     "#(Int)");
-        assertSubtype("#(Long)",    "#(Long)");
-        assertSubtype("#(Float)", "#(Float)");
-        assertSubtype("#(Double)", "#(Double)");
-        assertSubtype("#(Unit)", "#(Unit)");
-        assertSubtype("#(Unit, Unit)", "#(Unit, Unit)");
-
-        assertNotSubtype("#(Unit)", "#(Int)");
-
-        assertSubtype("#(Unit)", "#(Any)");
-        assertSubtype("#(Unit, Unit)", "#(Any, Any)");
-        assertSubtype("#(Unit, Unit)", "#(Any, Unit)");
-        assertSubtype("#(Unit, Unit)", "#(Unit, Any)");
-    }
-
     public void testProjections() throws Exception {
         assertSubtype("Base_T<Int>", "Base_T<Int>");
         assertNotSubtype("Base_T<Int>", "Base_T<Any>");
@@ -433,7 +392,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     public void testOverloads() throws Exception {
         assertType("Functions<String>().f()", "Unit");
         assertType("Functions<String>().f(1)", "Int");
-        assertType("Functions<Double>().f(#(1, 1))", "Double");
+        assertType("Functions<Double>().f(Pair(1, 1))", "Double");
         assertType("Functions<Double>().f(1.0)", "Any");
         assertType("Functions<Byte>().f<String>(\"\")", "Byte");
 

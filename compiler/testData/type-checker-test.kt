@@ -1,5 +1,7 @@
 package testData
 
+class Pair<out A, out B> (val first: A, val second: B}
+
 open class Base_T<T>()
 open class Derived_T<T>() : Base_T<T>
 open class DDerived_T<T>() : Derived_T<T>
