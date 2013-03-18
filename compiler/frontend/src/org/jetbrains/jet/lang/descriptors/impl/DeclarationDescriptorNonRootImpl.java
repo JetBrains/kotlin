@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorNonRoot;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -37,6 +38,8 @@ public abstract class DeclarationDescriptorNonRootImpl
             @NotNull Name name) {
         super(annotations, name);
 
+        assert !(containingDeclaration instanceof PackageViewDescriptor)
+                : "Nothing other than package views can be contained in a package view";
         this.containingDeclaration = containingDeclaration;
     }
 
