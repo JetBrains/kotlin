@@ -59,10 +59,6 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
         doTest();
     }
 
-    public void testTupleElement() throws Exception {
-        doTest();
-    }
-
     public void testUnit() throws Exception {
         doTest();
     }
