@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -29,13 +31,14 @@ import java.util.Map;
 
 public class SignaturesUtil {
     public static Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> recreateTypeParametersAndReturnMapping(
-            @NotNull List<TypeParameterDescriptor> originalParameters
+            @NotNull List<TypeParameterDescriptor> originalParameters,
+            @Nullable DeclarationDescriptor newOwner
     ) {
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result = Maps.newHashMap();
         for (TypeParameterDescriptor typeParameter : originalParameters) {
             result.put(typeParameter,
                        TypeParameterDescriptorImpl.createForFurtherModification(
-                               typeParameter.getContainingDeclaration(),
+                               newOwner == null ? typeParameter.getContainingDeclaration() : newOwner,
                                typeParameter.getAnnotations(),
                                typeParameter.isReified(),
                                typeParameter.getVariance(),

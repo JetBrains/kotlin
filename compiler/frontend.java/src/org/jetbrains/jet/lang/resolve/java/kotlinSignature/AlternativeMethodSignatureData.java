@@ -70,7 +70,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         Project project = method.getPsiMethod().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
-        originalToAltTypeParameters = SignaturesUtil.recreateTypeParametersAndReturnMapping(methodTypeParameters);
+        originalToAltTypeParameters = SignaturesUtil.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
 
         try {
             checkForSyntaxErrors(altFunDeclaration);
