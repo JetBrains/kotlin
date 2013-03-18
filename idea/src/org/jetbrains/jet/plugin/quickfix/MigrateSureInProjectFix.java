@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.google.common.base.Predicates;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -24,14 +25,20 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
     public MigrateSureInProjectFix(@NotNull PsiElement element) {
@@ -89,7 +96,7 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
         JetFile initialFile = (JetFile) file;
         Collection<JetFile> files = PluginJetFilesProvider.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(initialFile);
 
-        AnalyzeExhaust analyzeExhaust = MigrateTuplesInProjectFix.analyzeFiles(initialFile, files);
+        AnalyzeExhaust analyzeExhaust = analyzeFiles(initialFile, files);
 
         for (JetFile jetFile : files) {
             replaceUnresolvedSure(jetFile, analyzeExhaust.getBindingContext());
@@ -138,5 +145,26 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
                 return new MigrateSureInProjectFix(element);
             }
         };
+    }
+
+    private static AnalyzeExhaust analyzeFiles(JetFile initialFile, Collection<JetFile> files) {
+        AnalyzeExhaust analyzeExhaustHeaders = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(initialFile).analyzeFiles(
+                initialFile.getProject(),
+                files,
+                Collections.<AnalyzerScriptParameter>emptyList(),
+                Predicates.<PsiFile>alwaysFalse());
+
+        BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
+        ModuleConfiguration moduleConfiguration = analyzeExhaustHeaders.getModuleConfiguration();
+        assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
+
+        // Need to resolve bodies in given file and all in the same package
+        return AnalyzerFacadeProvider.getAnalyzerFacadeForFile(initialFile).analyzeBodiesInFiles(
+                initialFile.getProject(),
+                Collections.<AnalyzerScriptParameter>emptyList(),
+                Predicates.<PsiFile>alwaysTrue(),
+                new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(), "trace in migrate sure fix"),
+                context,
+                moduleConfiguration);
     }
 }
