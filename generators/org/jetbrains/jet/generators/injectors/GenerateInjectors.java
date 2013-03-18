@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
@@ -109,7 +110,7 @@ public class GenerateInjectors {
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(BindingTrace.class);
         generator.addPublicParameter(ModuleDescriptor.class);
-        generator.addParameter(KotlinLightClassResolver.class);
+        generator.addParameter(JavaClassResolutionFacade.class);
         generator.addParameter(StorageManager.class);
         generator.addParameter(SubModuleDescriptor.class);
         generator.addParameter(GlobalSearchScope.class);
@@ -117,8 +118,8 @@ public class GenerateInjectors {
         // Fields
         generator.addField(JavaBridgeConfiguration.class);
         generator.addField(JavaDependencyByQualifiedNameResolver.class);
-        generator.addPublicField(JavaClassResolutionFacadeImpl.class);
         generator.addPublicField(JavaDescriptorResolver.class);
+        generator.addPublicField(JavaClassResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
 
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaDescriptorResolver",

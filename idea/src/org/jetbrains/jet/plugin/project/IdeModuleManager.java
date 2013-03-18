@@ -25,14 +25,17 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.LibraryScopeCache;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -45,6 +48,7 @@ import com.intellij.util.graph.GraphGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClass;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -57,6 +61,9 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -105,6 +112,8 @@ public class IdeModuleManager implements KotlinModuleManager {
     }
 
     private class ModuleBuilder {
+        private final StorageManager storageManager = new LockBasedStorageManager();
+
         private final MutableModuleSourcesManager moduleSourcesManager;
         private final JavaClassResolutionFacadeImpl classResolutionFacade;
 
@@ -349,7 +358,7 @@ public class IdeModuleManager implements KotlinModuleManager {
                                         librarySubModules,
                                         library,
                                         stringToSpecialName(library.getName()),
-                                        library.getRootProvider()));
+                                        new LibraryScope(project, library)));
                     }
                     else if (dependency instanceof JdkOrderEntry) {
                         JdkOrderEntry entry = (JdkOrderEntry) dependency;
@@ -362,7 +371,7 @@ public class IdeModuleManager implements KotlinModuleManager {
                                         sdkSubModules,
                                         jdk,
                                         stringToSpecialName(jdk.getName()),
-                                        jdk.getRootProvider()));
+                                        LibraryScopeCache.getInstance(project).getScopeForSdk(entry)));
                     }
                 }
             }
@@ -373,25 +382,55 @@ public class IdeModuleManager implements KotlinModuleManager {
                 @NotNull Map<K, MutableSubModuleDescriptor> cache,
                 @NotNull K key,
                 @NotNull Name name,
-                @NotNull RootProvider rootProvider
+                @NotNull GlobalSearchScope searchScope
         ) {
             MutableSubModuleDescriptor subModule = cache.get(key);
             if (subModule == null) {
-                List<VirtualFile> files = Arrays.asList(rootProvider.getFiles(OrderRootType.CLASSES));
                 MutableModuleDescriptor moduleDescriptor = new MutableModuleDescriptor(name, JavaToKotlinClassMap.getInstance());
                 subModule = new MutableSubModuleDescriptor(moduleDescriptor, name);
-                registerJavaPackageFragmentProvider(subModule, new JavaPackageFragmentProvider());
+                createJavaPackageFragmentProvider(subModule, searchScope);
                 cache.put(key, subModule);
             }
             return subModule;
         }
 
+        private JavaPackageFragmentProvider createJavaPackageFragmentProvider(
+                MutableSubModuleDescriptor subModule,
+                GlobalSearchScope allLibrariesScope
+        ) {
+            InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
+                    project, trace, subModule.getContainingDeclaration(), classResolutionFacade, storageManager, subModule, allLibrariesScope
+            );
+            PsiClassFinderImpl psiClassFinder = injector.getPsiClassFinder();
+            JavaPackageFragmentProvider provider = new JavaPackageFragmentProvider(
+                    classResolutionFacade,
+                    trace,
+                    storageManager,
+                    new PsiDeclarationProviderFactory(psiClassFinder),
+                    injector.getJavaClassResolver(),
+                    psiClassFinder,
+                    subModule
+            );
+            registerJavaPackageFragmentProvider(subModule, provider);
+            return provider;
+        }
+
         private void addPlatformSpecificProviders(Module ideaModule, MutableSubModuleDescriptor srcSubModule, boolean isTestSubModule) {
             if (!JsModuleDetector.isJsModule(ideaModule)) {
-                registerJavaPackageFragmentProvider(srcSubModule, new JavaPackageFragmentProvider());
+                GlobalSearchScope searchScope = getSourcesScope(ideaModule, isTestSubModule);
+                registerJavaPackageFragmentProvider(srcSubModule, createJavaPackageFragmentProvider(srcSubModule, searchScope));
             }
         }
 
+        private GlobalSearchScope getSourcesScope(Module ideaModule, boolean isTestSubModule) {
+            GlobalSearchScope onlyProductionSources = ideaModule.getModuleScope(false);
+            if (isTestSubModule) {
+                return ideaModule.getModuleScope(true).intersectWith(GlobalSearchScope.notScope(onlyProductionSources));
+            }
+            else {
+                return onlyProductionSources;
+            }
+        }
     }
 
     @NotNull

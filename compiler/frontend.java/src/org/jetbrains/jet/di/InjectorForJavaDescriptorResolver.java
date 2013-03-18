@@ -19,29 +19,28 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.java.KotlinLightClassResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDependencyByQualifiedNameResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassObjectResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -51,35 +50,34 @@ public class InjectorForJavaDescriptorResolver {
     private final Project project;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
-    private final KotlinLightClassResolver kotlinLightClassResolver;
+    private final JavaClassResolutionFacade javaClassResolutionFacade;
     private final StorageManager storageManager;
     private final SubModuleDescriptor subModuleDescriptor;
     private final GlobalSearchScope globalSearchScope;
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private JavaDependencyByQualifiedNameResolver javaDependencyByQualifiedNameResolver;
-    private JavaClassResolutionFacadeImpl javaClassResolutionFacade;
     private JavaDescriptorResolver javaDescriptorResolver;
-    private PsiClassFinderImpl psiClassFinder;
     private JavaClassResolver javaClassResolver;
+    private PsiClassFinderImpl psiClassFinder;
+    private JavaConstructorResolver javaConstructorResolver;
+    private JavaTypeTransformer javaTypeTransformer;
+    private JavaValueParameterResolver javaValueParameterResolver;
+    private JavaFunctionResolver javaFunctionResolver;
     private JavaAnnotationResolver javaAnnotationResolver;
     private JavaCompileTimeConstResolver javaCompileTimeConstResolver;
+    private JavaSignatureResolver javaSignatureResolver;
+    private JavaInnerClassResolver javaInnerClassResolver;
+    private JavaPropertyResolver javaPropertyResolver;
     private JavaClassObjectResolver javaClassObjectResolver;
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
     private JavaSupertypeResolver javaSupertypeResolver;
-    private JavaTypeTransformer javaTypeTransformer;
     private JavaPackageFragmentProvider javaPackageFragmentProvider;
-    private JavaSignatureResolver javaSignatureResolver;
-    private JavaConstructorResolver javaConstructorResolver;
-    private JavaValueParameterResolver javaValueParameterResolver;
-    private JavaFunctionResolver javaFunctionResolver;
-    private JavaInnerClassResolver javaInnerClassResolver;
-    private JavaPropertyResolver javaPropertyResolver;
     
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,
         @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor,
-        @NotNull KotlinLightClassResolver kotlinLightClassResolver,
+        @NotNull JavaClassResolutionFacade javaClassResolutionFacade,
         @NotNull StorageManager storageManager,
         @NotNull SubModuleDescriptor subModuleDescriptor,
         @NotNull GlobalSearchScope globalSearchScope
@@ -87,29 +85,28 @@ public class InjectorForJavaDescriptorResolver {
         this.project = project;
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
-        this.kotlinLightClassResolver = kotlinLightClassResolver;
+        this.javaClassResolutionFacade = javaClassResolutionFacade;
         this.storageManager = storageManager;
         this.subModuleDescriptor = subModuleDescriptor;
         this.globalSearchScope = globalSearchScope;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
-        this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(getPsiClassFinder(), getJavaClassResolutionFacade());
-        this.javaClassResolutionFacade = new JavaClassResolutionFacadeImpl(kotlinLightClassResolver);
+        this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(getPsiClassFinder(), javaClassResolutionFacade);
         this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
         this.javaClassResolver = new JavaClassResolver();
+        this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
+        this.javaConstructorResolver = new JavaConstructorResolver();
+        this.javaTypeTransformer = new JavaTypeTransformer();
+        this.javaValueParameterResolver = new JavaValueParameterResolver();
+        this.javaFunctionResolver = new JavaFunctionResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
+        this.javaSignatureResolver = new JavaSignatureResolver();
+        this.javaInnerClassResolver = new JavaInnerClassResolver();
+        this.javaPropertyResolver = new JavaPropertyResolver();
         this.javaClassObjectResolver = new JavaClassObjectResolver();
         this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
         this.javaSupertypeResolver = new JavaSupertypeResolver();
-        this.javaTypeTransformer = new JavaTypeTransformer();
-        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider(getJavaClassResolutionFacade(), getBindingTrace(), storageManager, psiDeclarationProviderFactory, javaClassResolver, getPsiClassFinder(), subModuleDescriptor);
-        this.javaSignatureResolver = new JavaSignatureResolver();
-        this.javaConstructorResolver = new JavaConstructorResolver();
-        this.javaValueParameterResolver = new JavaValueParameterResolver();
-        this.javaFunctionResolver = new JavaFunctionResolver();
-        this.javaInnerClassResolver = new JavaInnerClassResolver();
-        this.javaPropertyResolver = new JavaPropertyResolver();
+        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider(javaClassResolutionFacade, getBindingTrace(), storageManager, psiDeclarationProviderFactory, getJavaClassResolver(), getPsiClassFinder(), subModuleDescriptor);
 
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
@@ -117,20 +114,44 @@ public class InjectorForJavaDescriptorResolver {
         this.javaDescriptorResolver.setInnerClassResolver(javaInnerClassResolver);
         this.javaDescriptorResolver.setPropertiesResolver(javaPropertyResolver);
 
-        javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
-        javaClassResolver.setClassResolutionFacade(javaClassResolutionFacade);
-        javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
-        javaClassResolver.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
-        javaClassResolver.setSignatureResolver(javaSignatureResolver);
-        javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassResolver.setTrace(bindingTrace);
+        this.javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
+        this.javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
+        this.javaClassResolver.setClassResolutionFacade(javaClassResolutionFacade);
+        this.javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
+        this.javaClassResolver.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
+        this.javaClassResolver.setSignatureResolver(javaSignatureResolver);
+        this.javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
+        this.javaClassResolver.setTrace(bindingTrace);
+
+        javaConstructorResolver.setTrace(bindingTrace);
+        javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
+        javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
+
+        javaTypeTransformer.setClassResolutionFacade(javaClassResolutionFacade);
+
+        javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
+
+        javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaFunctionResolver.setParameterResolver(javaValueParameterResolver);
+        javaFunctionResolver.setSignatureResolver(javaSignatureResolver);
+        javaFunctionResolver.setTrace(bindingTrace);
+        javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
 
         javaAnnotationResolver.setClassResolver(javaClassResolver);
         javaAnnotationResolver.setCompileTimeConstResolver(javaCompileTimeConstResolver);
 
         javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
         javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
+
+        javaSignatureResolver.setJavaSemanticServices(javaDependencyByQualifiedNameResolver);
+        javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
+
+        javaInnerClassResolver.setClassResolver(javaClassResolver);
+
+        javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaPropertyResolver.setJavaSignatureResolver(javaSignatureResolver);
+        javaPropertyResolver.setTrace(bindingTrace);
+        javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
         javaClassObjectResolver.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
         javaClassObjectResolver.setSemanticServices(javaClassResolutionFacade);
@@ -141,30 +162,6 @@ public class InjectorForJavaDescriptorResolver {
         javaSupertypeResolver.setSemanticServices(javaClassResolutionFacade);
         javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaTypeTransformer.setClassResolutionFacade(javaClassResolutionFacade);
-
-        javaSignatureResolver.setJavaSemanticServices(javaDependencyByQualifiedNameResolver);
-        javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaConstructorResolver.setTrace(bindingTrace);
-        javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
-        javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
-
-        javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaFunctionResolver.setParameterResolver(javaValueParameterResolver);
-        javaFunctionResolver.setSignatureResolver(javaSignatureResolver);
-        javaFunctionResolver.setTrace(bindingTrace);
-        javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaInnerClassResolver.setClassResolver(javaClassResolver);
-
-        javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaPropertyResolver.setJavaSignatureResolver(javaSignatureResolver);
-        javaPropertyResolver.setTrace(bindingTrace);
-        javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
         javaBridgeConfiguration.init();
 
@@ -186,12 +183,12 @@ public class InjectorForJavaDescriptorResolver {
         return this.moduleDescriptor;
     }
     
-    public JavaClassResolutionFacadeImpl getJavaClassResolutionFacade() {
-        return this.javaClassResolutionFacade;
-    }
-    
     public JavaDescriptorResolver getJavaDescriptorResolver() {
         return this.javaDescriptorResolver;
+    }
+    
+    public JavaClassResolver getJavaClassResolver() {
+        return this.javaClassResolver;
     }
     
     public PsiClassFinderImpl getPsiClassFinder() {
