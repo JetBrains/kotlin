@@ -1,0 +1,1 @@
+for (; condition() ; update()) body();

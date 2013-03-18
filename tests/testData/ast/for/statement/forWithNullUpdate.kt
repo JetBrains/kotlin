@@ -1,0 +1,7 @@
+{
+init()
+while (condition())
+{
+body()
+}
+}

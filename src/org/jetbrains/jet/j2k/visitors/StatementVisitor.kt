@@ -99,9 +99,13 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
         else {
             var forStatements = ArrayList<Element>()
             forStatements.add(getConverter().statementToStatement(initialization))
-            forStatements.add(WhileStatement(getConverter().expressionToExpression(condition),
-                    Block(arrayList(getConverter().statementToStatement(body),
-                            Block(arrayList(getConverter().statementToStatement(update)), false)), false)))
+            forStatements.add(WhileStatement(
+                if (condition == null)
+                    LiteralExpression("true")
+                else
+                    getConverter().expressionToExpression(condition)
+                , Block(arrayListOf(getConverter().statementToStatement(body),
+                    Block(arrayListOf(getConverter().statementToStatement(update)), false)), false)))
             myResult = Block(forStatements, false)
         }
     }
