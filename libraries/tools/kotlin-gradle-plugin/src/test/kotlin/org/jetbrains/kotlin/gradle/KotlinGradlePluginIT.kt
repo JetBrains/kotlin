@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class BasicKotlinGradleIntegrationTest {
+class BasicKotlinGradleIT {
 
     var workingDir: File = File(".")
 
@@ -30,11 +30,11 @@ class BasicKotlinGradleIntegrationTest {
     Test fun testSimpleCompile() {
         val projectDir = File(workingDir, "alfa")
 
-        val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("target/local-repo").getAbsolutePath()
+        val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
         val cmd = if (SystemInfo.isWindows)
             listOf("cmd", "/C", "gradlew.bat", "clean", "compileDeployKotlin", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
         else
-            listOf("/bin/sh", "./gradlew", "clean", "compileDeployKotlin", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
+            listOf("/bin/bash", "./gradlew", "clean", "compileDeployKotlin", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
 
         val builder = ProcessBuilder(cmd)
         builder.directory(projectDir)
