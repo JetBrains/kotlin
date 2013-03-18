@@ -25,11 +25,11 @@ import java.util.*
  * free space (a path does not go through walls). One can move only
  * straightly up, down, left or right, no diagonal moves allowed.
  */
-fun findPath(maze : Maze) : List<#(Int, Int)>? {
-    val previous = HashMap<#(Int, Int), #(Int, Int)>
+fun findPath(maze : Maze) : List<Pair<Int, Int>>? {
+    val previous = HashMap<Pair<Int, Int>, Pair<Int, Int>>
 
-    val queue = LinkedList<#(Int, Int)>
-    val visited = HashSet<#(Int, Int)>
+    val queue = LinkedList<Pair<Int, Int>>
+    val visited = HashSet<Pair<Int, Int>>
 
     queue.offer(maze.start)
     visited.add(maze.start)
@@ -47,7 +47,7 @@ fun findPath(maze : Maze) : List<#(Int, Int)>? {
 
     if (previous[maze.end] == null) return null
 
-    val path = ArrayList<#(Int, Int)>()
+    val path = ArrayList<Pair<Int, Int>>()
     var current = previous[maze.end]
     while (current != maze.start) {
         path.add(0, current)
@@ -59,8 +59,8 @@ fun findPath(maze : Maze) : List<#(Int, Int)>? {
 /**
  * Find neighbors of the (i, j) cell that are not walls
  */
-fun Maze.neighbors(i : Int, j : Int) : List<#(Int, Int)> {
-  val result = ArrayList<#(Int, Int)>
+fun Maze.neighbors(i : Int, j : Int) : List<Pair<Int, Int>> {
+  val result = ArrayList<Pair<Int, Int>>
   addIfFree(i - 1, j, result)
   addIfFree(i, j - 1, result)
   addIfFree(i + 1, j, result)
@@ -68,12 +68,12 @@ fun Maze.neighbors(i : Int, j : Int) : List<#(Int, Int)> {
   return result
 }
 
-fun Maze.addIfFree(i : Int, j : Int, result : List<#(Int, Int)>) {
+fun Maze.addIfFree(i : Int, j : Int, result : List<Pair<Int, Int>>) {
   if (i !in 0..height-1) return
   if (j !in 0..width-1) return
   if (walls[i][j]) return
 
-  result.add(#(i, j))
+  result.add(Pair(i, j))
 }
 
 /**
@@ -87,9 +87,9 @@ class Maze(
     // true for a wall, false for free space
     val walls : Array<out Array<out Boolean>>,
     // The starting point (must not be a wall)
-    val start : #(Int, Int),
+    val start : Pair<Int, Int>,
     // The target point (must not be a wall)
-    val end : #(Int, Int)
+    val end : Pair<Int, Int>
 ) {
 }
 
@@ -137,7 +137,7 @@ fun printMaze(str : String) {
   val path = findPath(maze)
   for (i in 0..maze.height - 1) {
     for (j in 0..maze.width - 1) {
-      val cell = #(i, j)
+      val cell = Pair(i, j)
         print(
           if (maze.walls[i][j]) "O"
           else if (cell == maze.start) "I"
@@ -179,16 +179,16 @@ fun makeMaze(s : String) : Maze {
   })!!
   val data = Array<Array<Boolean>>(lines.size) {Array<Boolean>(w.size) {false}}
 
-  var start : #(Int, Int)? = null
-  var end : #(Int, Int)? = null
+  var start : Pair<Int, Int>? = null
+  var end : Pair<Int, Int>? = null
 
   for (line in lines.indices) {
     for (x in lines[line].indices) {
       val c = lines[line]!![x]
       data[line][x] = c == 'O'
       when (c) {
-        'I' -> start = #(line, x)
-        '$' -> end = #(line, x)
+        'I' -> start = Pair(line, x)
+        '$' -> end = Pair(line, x)
         else -> {}
       }
     }

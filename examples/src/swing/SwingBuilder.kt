@@ -62,9 +62,9 @@ var JFrame.title : String
   get() = getTitle()!!
   set(t) {setTitle(t)}
 
-var JFrame.size : #(Int, Int)
-  get() = #(getSize()!!.getWidth().toInt(), getSize()!!.getHeight().toInt())
-  set(dim) {setSize(Dimension(dim._1, dim._2))}
+var JFrame.size : Pair<Int, Int>
+  get() = Pair(getSize()!!.getWidth().toInt(), getSize()!!.getHeight().toInt())
+  set(dim) {setSize(Dimension(dim.first, dim.second))}
 
 var JFrame.height : Int
   get() = getSize()!!.getHeight().toInt()
