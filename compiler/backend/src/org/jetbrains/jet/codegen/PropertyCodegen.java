@@ -120,7 +120,8 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateGetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor getter) {
-        if (getter != null && getter.getBodyExpression() != null || isExternallyAccessible(propertyDescriptor)) {
+        //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
+        //if (getter != null && getter.getBodyExpression() != null || isExternallyAccessible(propertyDescriptor)) {
             JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
             PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
             getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorResolver.createDefaultGetter(propertyDescriptor);
@@ -129,12 +130,13 @@ public class PropertyCodegen extends GenerationStateAware {
                                            true,
                                            signature.getPropertyTypeKotlinSignature(),
                                            getterDescriptor);
-        }
+        //}
     }
 
     private void generateSetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor setter) {
-        if (setter != null && setter.getBodyExpression() != null
-            || isExternallyAccessible(propertyDescriptor) && propertyDescriptor.isVar()) {
+        //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
+        if (/*setter != null && setter.getBodyExpression() != null
+            || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
             JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
             PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
             setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorResolver.createDefaultSetter(propertyDescriptor);
@@ -155,7 +157,7 @@ public class PropertyCodegen extends GenerationStateAware {
             @NotNull CodegenContext context) {
 
         PropertyDescriptor propertyDescriptor = accessorDescriptor.getCorrespondingProperty();
-        final Type type = typeMapper.mapType(propertyDescriptor);
+        Type type = typeMapper.mapType(propertyDescriptor);
         if (accessorDescriptor instanceof PropertyGetterDescriptor) {
             if (kind != OwnerKind.NAMESPACE) {
                 iv.load(0, OBJECT_TYPE);
@@ -166,7 +168,8 @@ public class PropertyCodegen extends GenerationStateAware {
                     propertyDescriptor.getName().getName(),
                     type.getDescriptor());
             iv.areturn(type);
-        } else if (accessorDescriptor instanceof  PropertySetterDescriptor) {
+        }
+        else if (accessorDescriptor instanceof  PropertySetterDescriptor) {
             int paramCode = 0;
             if (kind != OwnerKind.NAMESPACE) {
                 iv.load(0, OBJECT_TYPE);
@@ -184,7 +187,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
             iv.visitInsn(RETURN);
         } else {
-            assert false;
+            assert false : "Unreachable state";
         }
     }
 

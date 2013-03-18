@@ -4,10 +4,10 @@ trait TextField {
 }
 
 class SimpleTextField : TextField {
-    private var text = ""
-    override fun getText() = text
+    private var text2 = ""
+    override fun getText() = text2
     override fun setText(text: String) {
-        this.text = text
+        this.text2 = text
     }
 }
 

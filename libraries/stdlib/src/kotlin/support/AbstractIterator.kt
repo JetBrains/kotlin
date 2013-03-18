@@ -19,7 +19,7 @@ object State {
  */
 public abstract class AbstractIterator<T>: Iterator<T> {
     private var state = State.NotReady
-    private var next: T? = null
+    private var nextValue: T? = null
 
     override fun hasNext(): Boolean {
         require(state != State.Failed)
@@ -33,13 +33,13 @@ public abstract class AbstractIterator<T>: Iterator<T> {
     override fun next(): T {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
-        return next as T
+        return nextValue as T
     }
 
     /** Returns the next element in the iteration without advancing the iteration */
     fun peek(): T {
         if (!hasNext()) throw NoSuchElementException()
-        return next as T;
+        return nextValue as T;
     }
 
     private fun tryToComputeNext(): Boolean {
@@ -64,7 +64,7 @@ public abstract class AbstractIterator<T>: Iterator<T> {
      * Sets the next value in the iteration, called from the [[computeNext()]] function
      */
     protected fun setNext(value: T): Unit {
-        next = value
+        nextValue = value
         state = State.Ready
     }
 

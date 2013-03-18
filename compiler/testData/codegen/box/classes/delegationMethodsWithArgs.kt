@@ -13,10 +13,10 @@ trait MooableTextField : InputTextField {
 }
 
 class SimpleTextField : MooableTextField {
-    private var text = ""
-    override fun getText() = text
+    private var text2 = ""
+    override fun getText() = text2
     override fun setText(text: String) {
-        this.text = text
+        this.text2 = text
     }
     override fun moo(a: Int, b: Int, c: Int) = a + b + c
 }
