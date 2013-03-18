@@ -1888,7 +1888,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             else {
                 if (funDescriptor instanceof SimpleFunctionDescriptor) {
                     ClassDescriptor samTrait = bindingContext.get(
-                            BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, (SimpleFunctionDescriptor) funDescriptor);
+                            BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
                     if (samTrait != null) {
                         JetFunctionLiteralExpression argumentExpression = (JetFunctionLiteralExpression) ((ExpressionValueArgument) resolvedCall.getValueArgumentsByIndex().get(0)).getValueArgument()
