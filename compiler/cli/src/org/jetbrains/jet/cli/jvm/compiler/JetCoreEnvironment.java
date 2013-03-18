@@ -99,11 +99,12 @@ public class JetCoreEnvironment {
         project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
         project.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
         project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
+        project.registerService(CliIndexManager.class, new CliIndexManager(this));
 
         SimpleKotlinModuleManager moduleManager = new SimpleKotlinModuleManager(this, "cli", JavaToKotlinClassMap.getInstance());
         project.registerService(KotlinModuleManager.class, moduleManager);
 
-        CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport(moduleManager.getSourcesManager());
+        CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport(project);
         project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
 

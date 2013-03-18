@@ -31,10 +31,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -61,8 +62,10 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     private BindingTrace trace;
+    private final CliIndexManager cliIndexManager;
 
-    public CliLightClassGenerationSupport() {
+    public CliLightClassGenerationSupport(@NotNull Project project) {
+        this.cliIndexManager = CliIndexManager.getInstance(project);
     }
 
     @NotNull
@@ -119,19 +122,13 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
-        PackageViewDescriptor packageViewDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
-        if (packageViewDescriptor != null) {
-            Collection<JetFile> files = getTrace().get(BindingContext.NAMESPACE_TO_FILES, packageViewDescriptor);
-            if (files != null) {
-                return Collections2.filter(files, new Predicate<JetFile>() {
-                    @Override
-                    public boolean apply(JetFile input) {
-                        return PsiSearchScopeUtil.isInScope(searchScope, input);
-                    }
-                });
-            }
-        }
-        return Collections.emptyList();
+        return Collections2.filter(cliIndexManager.getPackageSources(fqName),
+                                   new Predicate<JetFile>() {
+                                       @Override
+                                       public boolean apply(JetFile file) {
+                                           return PsiSearchScopeUtil.isInScope(searchScope, file);
+                                       }
+                                   });
     }
 
     @NotNull
@@ -152,27 +149,13 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @Override
-    public boolean packageExists(
-            @NotNull FqName fqName, @NotNull GlobalSearchScope scope
-    ) {
-        return getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName) != null;
+    public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
+        return cliIndexManager.packageExists(fqName);
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        PackageViewDescriptor packageViewDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqn);
-        if (packageViewDescriptor == null) return Collections.emptyList();
-
-        Collection<DeclarationDescriptor> allDescriptors = packageViewDescriptor.getMemberScope().getAllDescriptors();
-        return ContainerUtil.mapNotNull(allDescriptors, new Function<DeclarationDescriptor, FqName>() {
-            @Override
-            public FqName fun(DeclarationDescriptor input) {
-                if (input instanceof PackageViewDescriptor) {
-                    return DescriptorUtils.getFQName(input).toSafe();
-                }
-                return null;
-            }
-        });
+        return cliIndexManager.getSubpackagesOf(fqn);
     }
 }

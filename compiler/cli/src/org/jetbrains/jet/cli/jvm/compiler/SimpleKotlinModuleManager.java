@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -28,16 +25,12 @@ import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
 import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * KotlinModuleManager that assumes that all the sources belong to the same submodule
@@ -46,23 +39,16 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
 
     private final ModuleDescriptor module;
     private final ModuleSourcesManager moduleSourcesManager;
-    private final NotNullLazyValue<Index> index;
 
     public SimpleKotlinModuleManager(
-            @NotNull final JetCoreEnvironment jetCoreEnvironment,
+            @NotNull JetCoreEnvironment jetCoreEnvironment,
             @NotNull String baseName,
             @NotNull PlatformToKotlinClassMap classMap
     ) {
         MutableModuleDescriptor mutableModule = new MutableModuleDescriptor(Name.special("<" + baseName + " module>"), classMap);
         final SubModuleDescriptor subModule =
                 mutableModule.addSubModule(new MutableSubModuleDescriptor(mutableModule, Name.special("<" + baseName + " sub-module>")));
-        this.index = new NotNullLazyValue<Index>() {
-            @NotNull
-            @Override
-            protected Index compute() {
-                return Index.compute(jetCoreEnvironment);
-            }
-        };
+        final CliIndexManager index = CliIndexManager.getInstance(jetCoreEnvironment.getProject());
         this.moduleSourcesManager = new ModuleSourcesManager() {
 
             @NotNull
@@ -74,7 +60,7 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
             @NotNull
             @Override
             public Collection<JetFile> getPackageFragmentSources(@NotNull PackageFragmentDescriptor packageFragment) {
-                return index.getValue().getPackageFragmentSources(packageFragment);
+                return index.getPackageSources(packageFragment.getFqName());
             }
         };
         this.module = mutableModule;
@@ -90,33 +76,5 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
     @Override
     public ModuleSourcesManager getSourcesManager() {
         return moduleSourcesManager;
-    }
-
-    private static class Index {
-
-        @NotNull
-        public static Index compute(@NotNull JetCoreEnvironment jetCoreEnvironment) {
-            List<JetFile> files = jetCoreEnvironment.getSourceFiles();
-            Multimap<FqName, JetFile> packageToSources = HashMultimap.create();
-            for (JetFile jetFile : files) {
-                packageToSources.put(JetPsiUtil.getFQName(jetFile), jetFile);
-            }
-            return new Index(packageToSources.asMap());
-        }
-
-        private final Map<FqName, Collection<JetFile>> packageToSources;
-
-        private Index(@NotNull Map<FqName, Collection<JetFile>> packageToSources) {
-            this.packageToSources = packageToSources;
-        }
-
-        @NotNull
-        public Collection<JetFile> getPackageFragmentSources(@NotNull PackageFragmentDescriptor fragment) {
-            Collection<JetFile> files = packageToSources.get(fragment.getFqName());
-            if (files == null) {
-                return Collections.emptyList();
-            }
-            return files;
-        }
     }
 }
