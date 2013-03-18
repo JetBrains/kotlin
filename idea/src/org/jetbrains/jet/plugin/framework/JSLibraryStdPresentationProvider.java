@@ -46,6 +46,11 @@ public class JSLibraryStdPresentationProvider extends CachingLibraryPresentation
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
+        if (JavaRuntimePresentationProvider.getInstance().detect(classesRoots) != null) {
+            // Prevent clashing with java runtime, in case when library collects all roots.
+            return null;
+        }
+
         if (classesRoots.isEmpty()) {
             // TODO: Deprecated - remove after some iterations
             return new LibraryVersionProperties(null);
