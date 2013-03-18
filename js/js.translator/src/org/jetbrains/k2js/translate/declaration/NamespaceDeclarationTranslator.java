@@ -20,8 +20,9 @@ import com.google.dart.compiler.backend.js.ast.*;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -55,7 +56,8 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
 
         ClassDeclarationTranslator classDeclarationTranslator = new ClassDeclarationTranslator(context());
         for (JetFile file : files) {
-            PackageViewDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+            SubModuleDescriptor subModule = context().moduleSourcesManager().getSubModuleForFile(file);
+            PackageViewDescriptor descriptor = subModule.getPackageView(JetPsiUtil.getFQName(file));
             assert descriptor != null;
             NamespaceTranslator translator = descriptorToTranslator.get(descriptor);
             if (translator == null) {

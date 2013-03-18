@@ -20,8 +20,8 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
@@ -89,8 +89,9 @@ public final class K2JSTranslator {
             @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
         KotlinBuiltIns.initialize(config.getProject());
-        BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, config);
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
+        return Translation.generateAst(analyzeExhaust.getBindingContext(), analyzeExhaust.getModuleSourcesManager(), filesToTranslate,
+                                       mainCallParameters, config);
     }
 
     @NotNull

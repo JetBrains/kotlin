@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
@@ -180,6 +181,11 @@ public class TranslationContext {
     @NotNull
     public Namer namer() {
         return staticContext.getNamer();
+    }
+
+    @NotNull
+    public ModuleSourcesManager moduleSourcesManager() {
+        return staticContext.getModuleSourcesManager();
     }
 
     @NotNull

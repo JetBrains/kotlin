@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
@@ -133,12 +134,12 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsProgram generateAst(@NotNull BindingContext bindingContext,
+    public static JsProgram generateAst(@NotNull BindingContext bindingContext, @NotNull ModuleSourcesManager moduleSourcesManager,
             @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
             @NotNull Config config)
             throws TranslationException {
         try {
-            return doGenerateAst(bindingContext, files, mainCallParameters, config);
+            return doGenerateAst(bindingContext, moduleSourcesManager, files, mainCallParameters, config);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -149,11 +150,15 @@ public final class Translation {
     }
 
     @NotNull
-    private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files,
+    private static JsProgram doGenerateAst(
+            @NotNull BindingContext bindingContext,
+            @NotNull ModuleSourcesManager moduleSourcesManager,
+            @NotNull Collection<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull Config config) throws MainFunctionNotFoundException {
+            @NotNull Config config
+    ) throws MainFunctionNotFoundException {
         //TODO: move some of the code somewhere
-        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget());
+        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, moduleSourcesManager, config.getTarget());
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
 

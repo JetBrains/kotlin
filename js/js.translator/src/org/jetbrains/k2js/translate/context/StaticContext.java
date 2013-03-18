@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
@@ -48,12 +49,16 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
  */
 public final class StaticContext {
 
-    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull EcmaVersion ecmaVersion) {
+    public static StaticContext generateStaticContext(
+            @NotNull BindingContext bindingContext,
+            @NotNull ModuleSourcesManager moduleSourcesManager,
+            @NotNull EcmaVersion ecmaVersion
+    ) {
         JsProgram program = new JsProgram("main");
         Namer namer = Namer.newInstance(program.getRootScope());
         Intrinsics intrinsics = new Intrinsics();
         StandardClasses standardClasses = StandardClasses.bindImplementations(namer.getKotlinScope());
-        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), ecmaVersion);
+        return new StaticContext(program, bindingContext, moduleSourcesManager, namer, intrinsics, standardClasses, program.getRootScope(), ecmaVersion);
     }
 
     @NotNull
@@ -63,6 +68,8 @@ public final class StaticContext {
     private final BindingContext bindingContext;
     @NotNull
     private final Namer namer;
+    @NotNull
+    private final ModuleSourcesManager moduleSourcesManager;
 
     @NotNull
     private final Intrinsics intrinsics;
@@ -92,11 +99,14 @@ public final class StaticContext {
     private final LiteralFunctionTranslator literalFunctionTranslator = new LiteralFunctionTranslator();
 
     //TODO: too many parameters in constructor
-    private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
+    private StaticContext(
+            @NotNull JsProgram program, @NotNull BindingContext bindingContext, @NotNull ModuleSourcesManager moduleSourcesManager,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull EcmaVersion ecmaVersion) {
+            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull EcmaVersion ecmaVersion
+    ) {
         this.program = program;
         this.bindingContext = bindingContext;
+        this.moduleSourcesManager = moduleSourcesManager;
         this.namer = namer;
         this.intrinsics = intrinsics;
         this.rootScope = rootScope;
@@ -136,6 +146,11 @@ public final class StaticContext {
     @NotNull
     public Namer getNamer() {
         return namer;
+    }
+
+    @NotNull
+    public ModuleSourcesManager getModuleSourcesManager() {
+        return moduleSourcesManager;
     }
 
     @NotNull

@@ -27,15 +27,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
-
+@Deprecated
 public class JsConfiguration implements ModuleConfiguration {
 
     @NotNull
@@ -84,11 +82,11 @@ public class JsConfiguration implements ModuleConfiguration {
     @SuppressWarnings("ConstantConditions")
     private void extendScopeWithPreAnalyzedContextForTests(@NotNull PackageViewDescriptor packageViewDescriptor,
             @NotNull WritableScope namespaceMemberScope) {
-        if (isNamespaceImportedByDefault(packageViewDescriptor) || isRootNamespace(packageViewDescriptor)) {
-            FqName descriptorName = DescriptorUtils.getFQName(packageViewDescriptor).toSafe();
-            PackageViewDescriptor alreadyAnalyzedNamespace = preanalyzedContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, descriptorName);
-            namespaceMemberScope.importScope(alreadyAnalyzedNamespace.getMemberScope());
-        }
+        //if (isNamespaceImportedByDefault(packageViewDescriptor) || isRootNamespace(packageViewDescriptor)) {
+        //    FqName descriptorName = DescriptorUtils.getFQName(packageViewDescriptor).toSafe();
+        //    PackageViewDescriptor alreadyAnalyzedNamespace = preanalyzedContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, descriptorName);
+        //    namespaceMemberScope.importScope(alreadyAnalyzedNamespace.getMemberScope());
+        //}
     }
 
     private static boolean isNamespaceImportedByDefault(@NotNull PackageViewDescriptor packageViewDescriptor) {
