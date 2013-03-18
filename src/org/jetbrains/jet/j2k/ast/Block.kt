@@ -4,7 +4,7 @@ import java.util.LinkedList
 
 public open class Block(val statements: List<Element>, val notEmpty: Boolean = false): Statement() {
     public override fun isEmpty(): Boolean {
-        return !notEmpty && (statements.size() == 0  || statements.all { it == Statement.EMPTY_STATEMENT })
+        return !notEmpty && (statements.size() == 0 || statements.all { it == Statement.EMPTY_STATEMENT })
     }
 
     public override fun toKotlin(): String {

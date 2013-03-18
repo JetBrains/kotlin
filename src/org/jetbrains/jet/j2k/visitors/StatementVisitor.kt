@@ -103,9 +103,9 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
                 if (condition == null)
                     LiteralExpression("true")
                 else
-                    getConverter().expressionToExpression(condition)
-                , Block(arrayListOf(getConverter().statementToStatement(body),
-                    Block(arrayListOf(getConverter().statementToStatement(update)), false)), false)))
+                    getConverter().expressionToExpression(condition),
+                Block(arrayListOf(getConverter().statementToStatement(body),
+                Block(arrayListOf(getConverter().statementToStatement(update)), false)), false)))
             myResult = Block(forStatements, false)
         }
     }
