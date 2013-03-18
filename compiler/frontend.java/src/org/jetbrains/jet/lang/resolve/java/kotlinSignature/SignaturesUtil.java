@@ -48,7 +48,7 @@ public class SignaturesUtil {
         return result;
     }
 
-    public static TypeSubstitutor createSubstitutorForFunctionTypeParameters(
+    public static TypeSubstitutor createSubstitutorForTypeParameters(
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters
     ) {
         Map<TypeConstructor, TypeProjection> typeSubstitutionContext = Maps.newHashMap();
