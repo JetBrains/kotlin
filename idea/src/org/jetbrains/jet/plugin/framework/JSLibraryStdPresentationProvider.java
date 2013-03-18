@@ -51,8 +51,7 @@ public class JSLibraryStdPresentationProvider extends CachingLibraryPresentation
             return null;
         }
 
-        if (classesRoots.isEmpty()) {
-            // TODO: Deprecated - remove after some iterations
+        if (isOldJSStandardLibrary(classesRoots)) {
             return new LibraryVersionProperties(null);
         }
 
@@ -64,5 +63,10 @@ public class JSLibraryStdPresentationProvider extends CachingLibraryPresentation
         }
 
         return null;
+    }
+
+    // TODO: Deprecated - remove after some iterations
+    static boolean isOldJSStandardLibrary(@NotNull List<VirtualFile> classesRoots) {
+        return classesRoots.isEmpty();
     }
 }
