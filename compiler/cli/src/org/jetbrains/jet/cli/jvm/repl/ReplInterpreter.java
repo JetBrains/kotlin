@@ -40,14 +40,14 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilderDummy;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -81,19 +81,20 @@ public class ReplInterpreter {
     @NotNull
     private final BindingTraceContext trace;
     @NotNull
-    private final ModuleDescriptor module;
+    private final ModuleSourcesManager moduleSourcesManager;
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
         jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
-        module = new ModuleDescriptor(Name.special("<repl>"));
+        KotlinModuleManager moduleManager = KotlinModuleManager.SERVICE.getService(project);
+        moduleSourcesManager = moduleManager.getSourcesManager();
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(),
                 false,
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
-        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, moduleSourcesManager);
 
         List<URL> classpath = Lists.newArrayList();
 
@@ -223,7 +224,7 @@ public class ReplInterpreter {
             earierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassName()));
         }
 
-        BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), injector.getModuleConfiguration()).getBindingContext();
+        BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), moduleSourcesManager).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false),
                                                               bindingContext, Collections.singletonList(psiFile));
         generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassName, earierScripts,
@@ -268,21 +269,23 @@ public class ReplInterpreter {
 
     @Nullable
     private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
+        SubModuleDescriptor subModule = moduleSourcesManager.getSubModuleForFile(psiFile);
         final WritableScope scope = new WritableScopeImpl(
-                JetScope.EMPTY, module,
+                JetScope.EMPTY, subModule,
                 new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        NamespaceDescriptorImpl rootNs = injector.getNamespaceFactory().createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
+        PackageViewDescriptor rootPackage = subModule.getPackageView(FqName.ROOT);
+        assert rootPackage != null : "Root package not found in " + subModule;
 
         // map "jet" namespace into KotlinBuiltIns
         // @see DefaultModuleConfiguraiton#extendNamespaceScope
-        injector.getNamespaceFactory().createNamespaceDescriptorPathIfNeeded(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
+        //TODO injector.getNamespaceFactory().createNamespaceDescriptorPathIfNeeded(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
 
         // Import a scope that contains all top-level namespaces that come from dependencies
         // This makes the namespaces visible at all, does not import themselves
-        scope.importScope(rootNs.getMemberScope());
+        scope.importScope(rootPackage.getMemberScope());
 
         if (lastLineScope != null) {
             scope.importScope(lastLineScope);
