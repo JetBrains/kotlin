@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -123,11 +124,11 @@ public class KotlinFrameworkDetector {
 
     @Nullable
     private static Library getJSStandardLibrary(final Module module) {
-        final Ref<Library> jsLibrary = Ref.create();
-
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
+        return ApplicationManager.getApplication().runReadAction(new Computable<Library>() {
             @Override
-            public void run() {
+            public Library compute() {
+                final Ref<Library> jsLibrary = Ref.create();
+
                 ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
                     @Override
                     public boolean process(Library library) {
@@ -139,9 +140,9 @@ public class KotlinFrameworkDetector {
                         return true;
                     }
                 });
+
+                return jsLibrary.get();
             }
         });
-
-        return jsLibrary.get();
     }
 }
