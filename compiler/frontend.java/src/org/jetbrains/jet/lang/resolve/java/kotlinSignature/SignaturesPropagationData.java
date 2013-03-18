@@ -187,7 +187,7 @@ public class SignaturesPropagationData {
 
         JetType originalReceiverType = parameters.getReceiverType();
         if (originalReceiverType != null) {
-            JetType substituted = SignaturesUtil.createSubstitutorForFunctionTypeParameters(autoTypeParameterToModified)
+            JetType substituted = SignaturesUtil.createSubstitutorForTypeParameters(autoTypeParameterToModified)
                     .substitute(originalReceiverType, INVARIANT);
             assert substituted != null;
             return new JavaDescriptorResolver.ValueParameterDescriptors(substituted, resultParameters);

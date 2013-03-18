@@ -97,7 +97,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             @Nullable JetType returnType
     ) {
-        TypeSubstitutor substitutor = SignaturesUtil.createSubstitutorForFunctionTypeParameters(originalToAltTypeParameters);
+        TypeSubstitutor substitutor = SignaturesUtil.createSubstitutorForTypeParameters(originalToAltTypeParameters);
 
         for (ValueParameterDescriptor parameter : valueParameterDescriptors.getDescriptors()) {
             int index = parameter.getIndex();
