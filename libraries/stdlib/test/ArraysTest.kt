@@ -33,6 +33,74 @@ class ArraysTest {
         assertEquals("4", arr2[arr2.lastIndex])
     }
 
+    test fun byteArray() {
+        val arr = ByteArray(2)
+
+        val expected: Byte = 0
+        assertEquals(arr.size, 2)
+        assertEquals(expected, arr[0])
+        assertEquals(expected, arr[1])
+    }
+
+    test fun shortArray() {
+        val arr = ShortArray(2)
+
+        val expected: Short = 0
+        assertEquals(arr.size, 2)
+        assertEquals(expected, arr[0])
+        assertEquals(expected, arr[1])
+    }
+
+    test fun intArray() {
+        val arr = IntArray(2)
+
+        assertEquals(arr.size, 2)
+        assertEquals(0, arr[0])
+        assertEquals(0, arr[1])
+    }
+
+    test fun longArray() {
+        val arr = LongArray(2)
+
+        val expected: Long = 0
+        assertEquals(arr.size, 2)
+        assertEquals(expected, arr[0])
+        assertEquals(expected, arr[1])
+    }
+
+    test fun floatArray() {
+        val arr = FloatArray(2)
+
+        val expected: Float = 0.0
+        assertEquals(arr.size, 2)
+        assertEquals(expected, arr[0])
+        assertEquals(expected, arr[1])
+    }
+
+    test fun doubleArray() {
+        val arr = DoubleArray(2)
+
+        assertEquals(arr.size, 2)
+        assertEquals(0.0, arr[0])
+        assertEquals(0.0, arr[1])
+    }
+
+    test fun charArray() {
+        val arr = CharArray(2)
+
+        val expected: Char = '\u0000'
+        assertEquals(arr.size, 2)
+        assertEquals(expected, arr[0])
+        assertEquals(expected, arr[1])
+    }
+
+    test fun booleanArray() {
+        val arr = BooleanArray(2)
+        assertEquals(arr.size, 2)
+        assertEquals(false, arr[0])
+        assertEquals(false, arr[1])
+    }
+
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers

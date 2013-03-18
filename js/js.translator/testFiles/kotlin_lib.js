@@ -499,6 +499,18 @@ var kotlin = {set:function (receiver, key, value) {
         return res;
     };
 
+    Kotlin.numberArrayOfSize = function (size) {
+        return Kotlin.arrayFromFun(size, function(){ return 0; });
+    };
+
+    Kotlin.charArrayOfSize = function (size) {
+        return Kotlin.arrayFromFun(size, function(){ return '\0'; });
+    };
+
+    Kotlin.booleanArrayOfSize = function (size) {
+        return Kotlin.arrayFromFun(size, function(){ return false; });
+    };
+
     Kotlin.arrayFromFun = function (size, initFun) {
         var result = new Array(size);
         for (var i = 0; i < size; i++) {

@@ -38,14 +38,39 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
 public final class ArrayFIF extends CompositeFIF {
 
     @NotNull
-    private static final NamePredicate ARRAYS;
+    private static final NamePredicate NUMBER_ARRAY;
 
+    @NotNull
+    private static final NamePredicate CHAR_ARRAY;
+
+    @NotNull
+    private static final NamePredicate BOOLEAN_ARRAY;
+
+    @NotNull
+    private static final NamePredicate ARRAY;
+
+    @NotNull
+    private static final NamePredicate ARRAYS;
     static {
         List<Name> arrayTypeNames = Lists.newArrayList();
-        for (PrimitiveType type : PrimitiveType.values()) {
-            arrayTypeNames.add(type.getArrayTypeName());
+        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
+            if (type != PrimitiveType.CHAR) {
+                arrayTypeNames.add(type.getArrayTypeName());
+            }
         }
-        arrayTypeNames.add(Name.identifier("Array"));
+
+        Name arrayName = Name.identifier("Array");
+        Name booleanArrayName = PrimitiveType.BOOLEAN.getArrayTypeName();
+        Name charArrayName = PrimitiveType.CHAR.getArrayTypeName();
+
+        NUMBER_ARRAY = new NamePredicate(arrayTypeNames);
+        CHAR_ARRAY = new NamePredicate(charArrayName);
+        BOOLEAN_ARRAY = new NamePredicate(booleanArrayName);
+        ARRAY = new NamePredicate(arrayName);
+
+        arrayTypeNames.add(charArrayName);
+        arrayTypeNames.add(booleanArrayName);
+        arrayTypeNames.add(arrayName);
         ARRAYS = new NamePredicate(arrayTypeNames);
     }
 
@@ -91,6 +116,9 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "<get-size>"), ARRAY_LENGTH_INTRINSIC);
         add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIndices", "Kotlin"), true, 0));
         add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIterator", "Kotlin"), true, 0));
-        add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayFromFun", "Kotlin"), false, 2));
+        add(pattern(ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayFromFun", "Kotlin"), false, 2));
+        add(pattern(NUMBER_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("numberArrayOfSize", "Kotlin"), false, 1));
+        add(pattern(CHAR_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("charArrayOfSize", "Kotlin"), false, 1));
+        add(pattern(BOOLEAN_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("booleanArrayOfSize", "Kotlin"), false, 1));
     }
 }
