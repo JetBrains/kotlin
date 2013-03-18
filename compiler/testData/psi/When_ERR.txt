@@ -205,33 +205,6 @@ JetFile: When_ERR.jet
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace('\n    ')
-        WHEN_ENTRY
-          WHEN_CONDITION_WITH_EXPRESSION
-            TUPLE
-              PsiElement(HASH)('#')
-              PsiElement(LPAR)('(')
-              PsiErrorElement:Expecting a tuple entry (element)
-                PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              PsiErrorElement:Expecting a tuple entry (element)
-                PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              PsiErrorElement:Expecting a tuple entry (element)
-                PsiElement(COMMA)(',')
-              PsiErrorElement:Expecting an expression
-                <empty list>
-              PsiWhiteSpace(' ')
-              PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace('\n  ')
         PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')

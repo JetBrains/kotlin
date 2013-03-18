@@ -43,7 +43,7 @@ fun foo() {
     !in 2 -> sd
     !is t -> d
     (foo) -> Bar -> fgpp
-    is #(Int, Int) -> 2
+    is Pair<Int, Int> -> 2
     else -> foo
   }
 }

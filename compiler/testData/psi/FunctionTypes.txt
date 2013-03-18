@@ -116,10 +116,9 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -233,10 +232,9 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -441,12 +439,11 @@ JetFile: FunctionTypes.jet
             PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
-              TUPLE_TYPE
-                PsiElement(HASH)('#')
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
-  PsiComment(EOL_COMMENT)('//type f =  (ref foo, ref a :  (ref a) -> b) ->  () -> #()')
+  PsiComment(EOL_COMMENT)('//type f =  (ref foo, ref a :  (ref a) -> b) ->  () -> Unit')
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -472,10 +469,9 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -505,10 +501,9 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -561,10 +556,9 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -600,10 +594,9 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -643,10 +636,9 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
   TYPEDEF
     PsiElement(type)('type')
@@ -709,7 +701,6 @@ JetFile: FunctionTypes.jet
         PsiElement(ARROW)('->')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          TUPLE_TYPE
-            PsiElement(HASH)('#')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Unit')

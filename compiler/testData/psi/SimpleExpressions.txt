@@ -20,10 +20,12 @@ JetFile: SimpleExpressions.jet
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        TUPLE
-          PsiElement(HASH)('#')
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Unit')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('VALUE')
       PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       VALUE_PARAMETER
@@ -327,23 +329,28 @@ JetFile: SimpleExpressions.jet
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        TUPLE
-          PsiElement(HASH)('#')
-          PsiElement(LPAR)('(')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('10')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          STRING_TEMPLATE
-            PsiElement(OPEN_QUOTE)('"')
-            LITERAL_STRING_TEMPLATE_ENTRY
-              PsiElement(REGULAR_STRING_PART)('A')
-            PsiElement(CLOSING_QUOTE)('"')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('0xf')
-          PsiElement(RPAR)(')')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Triple')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('10')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_ARGUMENT
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                LITERAL_STRING_TEMPLATE_ENTRY
+                  PsiElement(REGULAR_STRING_PART)('A')
+                PsiElement(CLOSING_QUOTE)('"')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_ARGUMENT
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('0xf')
+            PsiElement(RPAR)(')')
       PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       VALUE_PARAMETER

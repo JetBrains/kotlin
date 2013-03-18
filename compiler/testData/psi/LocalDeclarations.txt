@@ -124,9 +124,8 @@ JetFile: LocalDeclarations.jet
             PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
-              TUPLE_TYPE
-                PsiElement(HASH)('#')
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
       PsiWhiteSpace('\n\n')
       PsiElement(RBRACE)('}')

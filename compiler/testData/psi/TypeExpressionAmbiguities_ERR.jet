@@ -1,7 +1,7 @@
 fun foo() {
     foo<Int?>()
     fooo<Double?addddd>()
-    dd<#(Int, Int, Int)>(if (true) #(1, 1, 1) else #(2, 2, 2))
+    dd<Triple<Int, Int, Int>>(if (true) Triple(1, 1, 1) else Triple(2, 2, 2))
     foo(bar<a, b, c>(d))
     foo(bar<a, b+1, c>(d))
     foo(bar<a, f(), c>(d))

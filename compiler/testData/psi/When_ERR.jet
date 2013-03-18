@@ -21,6 +21,5 @@ fun foo() {
   }
   when (e) {
     - -> foo
-    #(, , 1, , ) -> foo
   }
 }

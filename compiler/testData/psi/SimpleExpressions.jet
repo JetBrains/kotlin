@@ -1,6 +1,5 @@
-
 fun a(
-    a : foo = #(),
+    a : foo = Unit.VALUE,
     a : foo = 10,
     a : foo = 0x10,
     a : foo = '1',
@@ -17,7 +16,7 @@ fun a(
     a : foo = this,
     a : foo = super<sdf>,
     a : foo = (10),
-    a : foo = #(10, "A", 0xf),
+    a : foo = Triple(10, "A", 0xf),
     a : foo = Foo(bar),
     a : foo = Foo<A>(bar),
     a : foo = Foo(),
