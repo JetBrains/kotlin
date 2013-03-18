@@ -62,7 +62,7 @@ public class ImportInsertHelper {
             return;
         }
         for (ClassDescriptor clazz : TypeUtils.getAllClassDescriptors(type)) {
-            addImportDirective(DescriptorUtils.getFQName(getTopLevelClass(clazz)).toSafe(), file);
+            addImportDirectiveIfNeeded(DescriptorUtils.getFQName(getTopLevelClass(clazz)).toSafe(), file);
         }
     }
 
@@ -72,8 +72,8 @@ public class ImportInsertHelper {
      * @param importFqn full name of the import
      * @param file File where directive should be added.
      */
-    public static void addImportDirective(@NotNull FqName importFqn, @NotNull JetFile file) {
-        addImportDirective(new ImportPath(importFqn, false), file);
+    public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
+        addImportDirectiveIfNeeded(new ImportPath(importFqn, false), file);
     }
 
     public static void addImportDirectiveOrChangeToFqName(@NotNull FqName importFqn, @NotNull JetFile file, int refOffset, @NotNull PsiElement targetElement) {
@@ -108,10 +108,10 @@ public class ImportInsertHelper {
                 return;
             }
         }
-        addImportDirective(new ImportPath(importFqn, false), file);
+        addImportDirectiveIfNeeded(new ImportPath(importFqn, false), file);
     }
 
-    public static void addImportDirective(@NotNull ImportPath importPath, @NotNull JetFile file) {
+    public static void addImportDirectiveIfNeeded(@NotNull ImportPath importPath, @NotNull JetFile file) {
         if (!doNeedImport(importPath, file)) {
             return;
         }

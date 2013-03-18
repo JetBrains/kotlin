@@ -61,7 +61,7 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
                                 ImportInsertHelper.addImportDirectiveOrChangeToFqName(fqn, jetFile, context.getStartOffset(), targetElement);
                             }
                             else if (KotlinFrameworkDetector.isJsKotlinModule(jetFile)) {
-                                ImportInsertHelper.addImportDirective(fqn, jetFile);
+                                ImportInsertHelper.addImportDirectiveIfNeeded(fqn, jetFile);
                             }
                         }
                     }

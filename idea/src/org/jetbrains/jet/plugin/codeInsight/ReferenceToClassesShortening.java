@@ -71,7 +71,7 @@ public class ReferenceToClassesShortening {
                                 compactReferenceToClass(userType, targetClass);
                             }
                             else if (classifier == null) {
-                                ImportInsertHelper.addImportDirective(DescriptorUtils.getFQName(targetTopLevelClass).toSafe(), file);
+                                ImportInsertHelper.addImportDirectiveIfNeeded(DescriptorUtils.getFQName(targetTopLevelClass).toSafe(), file);
                                 compactReferenceToClass(userType, targetClass);
                             }
                             else {

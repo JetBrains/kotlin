@@ -157,9 +157,7 @@ public class JetAddImportAction implements QuestionAction {
                     public void run() {
                         PsiFile file = element.getContainingFile();
                         if (!(file instanceof JetFile)) return;
-                        ImportInsertHelper.addImportDirective(selectedImport,
-                                (JetFile) file
-                        );
+                        ImportInsertHelper.addImportDirectiveIfNeeded(selectedImport, (JetFile) file);
                     }
                 });
             }
