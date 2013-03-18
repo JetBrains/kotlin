@@ -17,29 +17,38 @@
 package org.jetbrains.jet.completion.handlers;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.LightCompletionTestCase;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.LookupEvent;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
-import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 
 import java.io.File;
 
-public class CompletionHandlerTest extends LightCompletionTestCase {
+public class CompletionHandlerTest extends LightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetLightProjectDescriptor.INSTANCE;
     }
 
     public void testClassCompletionImport() {
@@ -79,9 +88,9 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void testSingleBrackets() {
-        configureByFile(getBeforeFileName());
-        type('(');
-        checkResultByFile(getAfterFileName());
+        myFixture.configureByFile(getBeforeFileName());
+        myFixture.type('(');
+        myFixture.checkResultByFile(getAfterFileName());
     }
 
     public void testExistingSingleBrackets() {
@@ -97,9 +106,9 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void testInsertFunctionWithBothParentheses() {
-        configureByFile(getBeforeFileName());
-        type("test()");
-        checkResultByFile(getAfterFileName());
+        myFixture.configureByFile(getBeforeFileName());
+        myFixture.type("test()");
+        myFixture.checkResultByFile(getAfterFileName());
     }
 
     public void testInsertImportOnTab() {
@@ -135,31 +144,25 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void doTest(CompletionType type, int time, @Nullable String lookupString, @Nullable String tailText, char completionChar) {
-        try {
-            configureByFileNoComplete(getBeforeFileName());
-            setType(type);
+        myFixture.configureByFile(getBeforeFileName());
 
-            if (lookupString != null || tailText != null) {
-                complete(time);
+        if (lookupString != null || tailText != null) {
+            myFixture.complete(type, time);
 
-                LookupElement item = getExistentLookupElement(lookupString, tailText);
-                if (item != null) {
-                    selectItem(item, completionChar);
-                }
+            LookupElement item = getExistentLookupElement(lookupString, tailText);
+            if (item != null) {
+                selectItem(item, completionChar);
             }
-            else {
-                forceCompleteFirst(time);
-            }
+        }
+        else {
+            forceCompleteFirst(type, time);
+        }
 
-            checkResultByFile(getAfterFileName());
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
+        myFixture.checkResultByFile(getAfterFileName());
     }
 
     @Nullable
-    public static LookupElement getExistentLookupElement(@Nullable String lookupString, @Nullable String tailText) {
+    public LookupElement getExistentLookupElement(@Nullable String lookupString, @Nullable String tailText) {
         LookupImpl lookup = (LookupImpl) LookupManager.getInstance(getProject()).getActiveLookup();
         LookupElement foundElement = null;
 
@@ -214,15 +217,30 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/").getPath() + File.separator;
     }
 
-    @Override
-    protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+    protected void forceCompleteFirst(CompletionType type, int time) {
+        myFixture.complete(type, time);
+        LookupElement[] items = myFixture.getLookupElements();
+        if (items != null && items.length > 1) {
+            selectItem(items[0]);
+        }
     }
 
-    protected void forceCompleteFirst(int time) {
-        complete(time);
-        if (myItems != null && myItems.length > 1) {
-            selectItem(myItems[0]);
+    protected void selectItem(LookupElement item) {
+        selectItem(item, (char)0);
+    }
+
+    protected void selectItem(LookupElement item, final char completionChar) {
+        final LookupImpl lookup = (LookupImpl) myFixture.getLookup();
+        lookup.setCurrentItem(item);
+        if (LookupEvent.isSpecialCompletionChar(completionChar)) {
+            new WriteCommandAction.Simple(getProject()) {
+                @Override
+                protected void run() throws Throwable {
+                    lookup.finishLookup(completionChar);
+                }
+            }.execute().throwException();
+        } else {
+            myFixture.type(completionChar);
         }
     }
 }
