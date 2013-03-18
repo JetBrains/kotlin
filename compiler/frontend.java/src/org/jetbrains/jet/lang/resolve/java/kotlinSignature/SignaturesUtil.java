@@ -34,7 +34,7 @@ public class SignaturesUtil {
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
     ) {
-        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result = Maps.newHashMap();
+        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result = Maps.newLinkedHashMap(); // save order of type parameters
         for (TypeParameterDescriptor typeParameter : originalParameters) {
             result.put(typeParameter,
                        TypeParameterDescriptorImpl.createForFurtherModification(
