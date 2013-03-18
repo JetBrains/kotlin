@@ -365,26 +365,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitTupleExpression(JetTupleExpression expression, ExpressionTypingContext context) {
         // TODO: remove this method completely when tuples are droppped
-        if (expression.getEntries().size() <= 3) {
-            context.trace.report(TUPLES_ARE_NOT_SUPPORTED.on(expression));
-        }
-        else {
-            context.trace.report(TUPLES_ARE_NOT_SUPPORTED_BIG.on(expression));
-        }
-
-        List<JetExpression> entries = expression.getEntries();
-        List<JetType> types = new ArrayList<JetType>();
-        for (JetExpression entry : entries) {
-            types.add(context.expressionTypingServices.safeGetType(context.scope, entry, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace)); // TODO
-        }
-        if (context.expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isTupleType(context.expectedType)) {
-            List<JetType> enrichedTypes = checkArgumentTypes(types, entries, context.expectedType.getArguments(), context);
-            if (enrichedTypes != types) {
-                return JetTypeInfo.create(KotlinBuiltIns.getInstance().getTupleType(enrichedTypes), context.dataFlowInfo);
-            }
-        }
-        // TODO : labels
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getTupleType(types), expression, context, context.dataFlowInfo);
+        throw new IllegalStateException("Tuples are not supported: " + expression.getText());
     }
 
     @NotNull

@@ -195,15 +195,7 @@ public class TypeResolver {
                 @Override
                 public void visitTupleType(JetTupleType type) {
                     // TODO: remove this method completely when tuples are droppped
-                    if (type.getComponentTypeRefs().size() <= 3) {
-                        trace.report(TUPLES_ARE_NOT_SUPPORTED.on(type));
-                    }
-                    else {
-                        trace.report(TUPLES_ARE_NOT_SUPPORTED_BIG.on(type));
-                    }
-
-                    // TODO labels
-                    result[0] = KotlinBuiltIns.getInstance().getTupleType(resolveTypes(scope, type.getComponentTypeRefs(), trace, checkBounds));
+                    throw new IllegalStateException("Tuples are not supported: " + type.getText());
                 }
 
                 @Override

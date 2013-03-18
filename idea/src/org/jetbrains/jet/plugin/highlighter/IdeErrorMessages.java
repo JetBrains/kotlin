@@ -39,14 +39,6 @@ public class IdeErrorMessages {
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP, DefaultErrorMessages.MAP);
 
     static {
-        // TODO: Remove when tuples are completely dropped
-        MAP.put(TUPLES_ARE_NOT_SUPPORTED, "<html>Tuples are not supported. Press <b>Alt+Enter</b> to replace tuples with library classes</html>");
-        MAP.put(TUPLES_ARE_NOT_SUPPORTED_BIG, "<html>" +
-                                              "Tuples are not supported.<br/>" +
-                                              "Use data classes instead. For example:<br/>" +
-                                              "<b>data class</b> FourThings(<b>val</b> a: A, <b>val</b> b: B, <b>val</b> c: C, <b>val</b> d: D)" +
-                                              "</html>");
-
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
                 HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 

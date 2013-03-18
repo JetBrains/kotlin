@@ -54,12 +54,6 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, String> UNSUPPORTED = DiagnosticFactory1.create(ERROR);
 
-    // TODO: Temporary error message: to deprecate tuples we report this error and provide a quick fix
-    @Deprecated // Tuples will be dropped in Kotlin M4
-            DiagnosticFactory0<PsiElement> TUPLES_ARE_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
-    @Deprecated // Tuples will be dropped in Kotlin M4
-            DiagnosticFactory0<PsiElement> TUPLES_ARE_NOT_SUPPORTED_BIG = DiagnosticFactory0.create(ERROR);
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Generic errors/warnings: applicable in many contexts
