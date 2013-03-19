@@ -38,7 +38,8 @@ public class GenerateFunctions {
                 out.print("in P" + j);
                 out.print(", ");
             }
-            out.print("out R> {\n");
+            out.print("out R> {");
+            out.println();
             out.print("  public abstract fun " + (extension ? "T." : "") +
                       "invoke(");
             for (int j = 1; j <= i; j++) {
@@ -47,7 +48,8 @@ public class GenerateFunctions {
                     out.print(", ");
                 }
             }
-            out.print(") : R\n");
+            out.print(") : R");
+            out.println();
             out.println("}");
         }
     }
