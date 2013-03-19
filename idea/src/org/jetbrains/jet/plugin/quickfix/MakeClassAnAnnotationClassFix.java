@@ -21,25 +21,22 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 
 import static org.jetbrains.jet.lexer.JetTokens.ANNOTATION_KEYWORD;
 
 public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotationEntry> {
     private final JetAnnotationEntry annotationEntry;
-    private JetType annotationType;
     private JetClass annotationClass;
 
     public MakeClassAnAnnotationClassFix(@NotNull JetAnnotationEntry annotationEntry) {
@@ -53,28 +50,32 @@ public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotat
             return false;
         }
 
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
-        AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
-        if (annotationDescriptor == null) {
+        JetTypeReference typeReference = annotationEntry.getTypeReference();
+        if (typeReference == null) {
             return false;
         }
-        annotationType = annotationDescriptor.getType();
-        DeclarationDescriptor declarationDescriptor = annotationType.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor == null) {
+
+        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(typeReference, JetSimpleNameExpression.class);
+        if (referenceExpression == null) {
             return false;
         }
-        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, declarationDescriptor);
-        if (declaration instanceof JetClass) {
-            annotationClass = (JetClass) declaration;
-            return annotationClass.isWritable();
+
+        PsiReference reference = referenceExpression.getReference();
+        if (reference != null) {
+            PsiElement target = reference.resolve();
+            if (target instanceof JetClass) {
+                annotationClass = (JetClass) target;
+                return annotationClass.isWritable();
+            }
         }
+
         return false;
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("make.class.annotation.class", annotationType);
+        return JetBundle.message("make.class.annotation.class", annotationClass.getName());
     }
 
     @NotNull
