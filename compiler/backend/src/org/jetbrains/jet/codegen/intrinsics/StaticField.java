@@ -25,12 +25,21 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_UNIT_TYPE;
+public class StaticField implements IntrinsicMethod {
+    private final FqName ownerClass;
+    private final Name propertyName;
 
-public class UnitValue implements IntrinsicMethod {
+
+    public StaticField(FqName ownerClass, Name propertyName) {
+        this.ownerClass = ownerClass;
+        this.propertyName = propertyName;
+    }
 
     @Override
     public StackValue generate(
@@ -42,7 +51,7 @@ public class UnitValue implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        v.getstatic(JET_UNIT_TYPE.getInternalName(), "VALUE", JET_UNIT_TYPE.getDescriptor());
+        v.getstatic(JvmClassName.byFqNameWithoutInnerClasses(ownerClass).getInternalName(), propertyName.getName(), expectedType.getDescriptor());
         return StackValue.onStack(expectedType);
     }
 }

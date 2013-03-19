@@ -147,15 +147,10 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
-        Name unitName = KotlinBuiltIns.getInstance().getUnit().getName();
-        intrinsicsMap.registerIntrinsic(
-                getClassObjectFqName(unitName),
-                Name.identifier("VALUE"), -1, new UnitValue());
+        registerStaticField(getFQName(KotlinBuiltIns.getInstance().getUnit()).toSafe(), Name.identifier("VALUE"));
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-            intrinsicsMap.registerIntrinsic(
-                    getClassObjectFqName(type.getRangeTypeName()),
-                    Name.identifier("EMPTY"), -1, new EmptyRange(type));
+            registerStaticField(type.getRangeClassName(), Name.identifier("EMPTY"));
         }
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
@@ -170,13 +165,13 @@ public class IntrinsicMethods {
         declareArrayMethods();
     }
 
-    private void registerRangeOrProgressionProperty(@NotNull FqName ownerClass, @NotNull Name propertyName) {
-        intrinsicsMap.registerIntrinsic(ownerClass, propertyName, -1, new PropertyOfProgressionOrRange(ownerClass, propertyName));
+    private void registerStaticField(@NotNull FqName classFqName, @NotNull Name propertyName) {
+        FqNameUnsafe classObjectFqName = classFqName.toUnsafe().child(getClassObjectName(classFqName.shortName()));
+        intrinsicsMap.registerIntrinsic(classObjectFqName, propertyName, -1, new StaticField(classFqName, propertyName));
     }
 
-    @NotNull
-    private static FqNameUnsafe getClassObjectFqName(@NotNull Name builtinClassName) {
-        return KotlinBuiltIns.getInstance().getBuiltInsPackageFqName().child(builtinClassName).toUnsafe().child(getClassObjectName(builtinClassName));
+    private void registerRangeOrProgressionProperty(@NotNull FqName ownerClass, @NotNull Name propertyName) {
+        intrinsicsMap.registerIntrinsic(ownerClass, propertyName, -1, new PropertyOfProgressionOrRange(ownerClass, propertyName));
     }
 
     private void declareArrayMethods() {
