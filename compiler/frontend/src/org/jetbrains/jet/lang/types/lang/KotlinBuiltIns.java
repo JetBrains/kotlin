@@ -430,6 +430,11 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getUnit() {
+        return getBuiltInClassByName("Tuple0");
+    }
+
+    @NotNull
     public ClassDescriptor getFunction(int parameterCount) {
         return getBuiltInClassByName("Function" + parameterCount);
     }

@@ -147,9 +147,9 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
-        Name tuple0Name = KotlinBuiltIns.getInstance().getTuple(0).getName();
+        Name unitName = KotlinBuiltIns.getInstance().getUnit().getName();
         intrinsicsMap.registerIntrinsic(
-                getClassObjectFqName(tuple0Name),
+                getClassObjectFqName(unitName),
                 Name.identifier("VALUE"), -1, new UnitValue());
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
