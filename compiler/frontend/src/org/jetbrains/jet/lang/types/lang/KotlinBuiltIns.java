@@ -85,6 +85,8 @@ public class KotlinBuiltIns {
             .put(new FqName("jet.Unit"), Name.identifier("Tuple0"))
             .build();
 
+    private static final int FUNCTION_TRAIT_COUNT = 23;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static volatile KotlinBuiltIns instance = null;
@@ -170,8 +172,8 @@ public class KotlinBuiltIns {
             this.builtInsModule = new ModuleDescriptor(Name.special("<built-ins lazy module>"));
             this.analyzer = createLazyResolveSession(project);
 
-            this.functionClassesSet = computeIndexedClasses("Function", getFunctionTraitCount());
-            this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", getFunctionTraitCount());
+            this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
+            this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
             this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
@@ -185,7 +187,7 @@ public class KotlinBuiltIns {
             this.arrayClass = getBuiltInClassByName("Array");
             this.deprecatedAnnotationClass = getBuiltInClassByName("deprecated");
             this.dataAnnotationClass = getBuiltInClassByName("data");
-            this.functionClasses = new ClassDescriptor[getFunctionTraitCount()];
+            this.functionClasses = new ClassDescriptor[FUNCTION_TRAIT_COUNT];
             for (int i = 0; i < functionClasses.length; i++) {
                 functionClasses[i] = getBuiltInClassByName("Function" + i);
             }
@@ -829,10 +831,6 @@ public class KotlinBuiltIns {
     }
 
     // Functions
-
-    public int getFunctionTraitCount() {
-        return 23;
-    }
 
     @NotNull
     private ImmutableSet<ClassDescriptor> computeIndexedClasses(@NotNull String prefix, int count) {
