@@ -31,8 +31,6 @@ import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAdapter {
     
@@ -111,18 +109,6 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
                 return mappedDescriptor;
             }
         }
-
-        // TODO: this is the worst code in Kotlin project
-        Matcher functionMatcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName.getFqName());
-        if (functionMatcher.matches()) {
-            return KotlinBuiltIns.getInstance().getFunction(Integer.parseInt(functionMatcher.group(1)));
-        }
-
-        Matcher patternMatcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName.getFqName());
-        if (patternMatcher.matches()) {
-            return KotlinBuiltIns.getInstance().getTuple(Integer.parseInt(patternMatcher.group(1)));
-        }
-
 
         return javaDescriptorResolver.resolveClass(ourName, DescriptorSearchRule.INCLUDE_KOTLIN);
     }
