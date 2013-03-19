@@ -1,7 +1,7 @@
 package jet
 
-public class Tuple0 private () {
+public class Unit private () {
   public class object {
-    public val VALUE: Tuple0
+    public val VALUE: Unit
   }
 }

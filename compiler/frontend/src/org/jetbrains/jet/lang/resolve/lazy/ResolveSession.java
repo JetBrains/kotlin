@@ -45,7 +45,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
 public class ResolveSession implements KotlinCodeAnalyzer {
-    private static final Function<FqName, Name> NO_ALIASES = new Function<FqName, Name>() {
+    public static final Function<FqName, Name> NO_ALIASES = new Function<FqName, Name>() {
 
         @Override
         public Name fun(FqName name) {

@@ -1265,11 +1265,11 @@ public open class Throwable {
     public final fun printStackTrace() : Unit
 }
 
-public final class Tuple0 {
-    private constructor Tuple0()
+public final class Unit {
+    private constructor Unit()
     
-    public class object <class-object-for-Tuple0> {
-        private constructor <class-object-for-Tuple0>()
+    public class object <class-object-for-Unit> {
+        private constructor <class-object-for-Unit>()
         public final val VALUE : Unit
     }
 }

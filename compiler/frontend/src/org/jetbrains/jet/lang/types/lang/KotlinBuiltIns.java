@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -26,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
@@ -37,10 +35,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -80,10 +78,6 @@ public class KotlinBuiltIns {
             BUILT_INS_DIR + "/Nothing.jet",
             BUILT_INS_DIR + "/Unit.jet"
     );
-
-    private static final Map<FqName, Name> ALIASES = ImmutableMap.<FqName, Name>builder()
-            .put(new FqName("jet.Unit"), Name.identifier("Tuple0"))
-            .build();
 
     private static final int FUNCTION_TRAIT_COUNT = 23;
 
@@ -202,7 +196,7 @@ public class KotlinBuiltIns {
         nullableAnyType = TypeUtils.makeNullable(anyType);
         nothingType = getBuiltInTypeByClassName("Nothing");
         nullableNothingType = TypeUtils.makeNullable(nothingType);
-        unitType = getBuiltInTypeByClassName("Tuple0");
+        unitType = getBuiltInTypeByClassName("Unit");
         stringType = getBuiltInTypeByClassName("String");
         annotationType = getBuiltInTypeByClassName("Annotation");
 
@@ -227,12 +221,7 @@ public class KotlinBuiltIns {
                 builtInsModule,
                 new SpecialModuleConfiguration(),
                 new FileBasedDeclarationProviderFactory(storageManager, files),
-                new Function<FqName, Name>() {
-                    @Override
-                    public Name fun(FqName name) {
-                        return ALIASES.get(name);
-                    }
-                },
+                ResolveSession.NO_ALIASES,
                 Predicates.in(Sets.newHashSet(new FqNameUnsafe("jet.Any"), new FqNameUnsafe("jet.Nothing"))),
                 new BindingTraceContext());
     }
@@ -428,7 +417,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getUnit() {
-        return getBuiltInClassByName("Tuple0");
+        return getBuiltInClassByName("Unit");
     }
 
     @NotNull
