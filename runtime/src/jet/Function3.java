@@ -19,12 +19,6 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public abstract class Function3<D1, D2, D3, R> extends DefaultJetObject {
-    public abstract R invoke(D1 d1, D2 d2, D3 d3);
-
-    @Override
-    public String toString() {
-      return "{(d1: D1, d2: D2, d3: D3) : R)}";
-    }
+public abstract class Function3<P1, P2, P3, R> extends DefaultJetObject {
+    public abstract R invoke(P1 p1, P2 p2, P3 p3);
 }
-
