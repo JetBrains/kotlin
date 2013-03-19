@@ -94,6 +94,12 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         checkAnnotatedLibraryCode(true);
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        JetSourceNavigationHelper.setForceResolve(false);
+        super.tearDown();
+    }
+
     private void checkAnnotatedLibraryCode(boolean forceResolve) {
         JetSourceNavigationHelper.setForceResolve(forceResolve);
         String actualCode = getActualAnnotatedLibraryCode();
