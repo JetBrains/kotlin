@@ -21,10 +21,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.util.slicedmap.MutableSlicedMap;
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.SlicedMapImpl;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +29,12 @@ import java.util.List;
 public class BindingTraceContext implements BindingTrace {
     private final List<Diagnostic> diagnostics = Lists.newArrayList();
 
-    private final MutableSlicedMap map = SlicedMapImpl.create();
+    // This flag is used for debugging of "Rewrite at slice..." exceptions
+    // NOTE: sometimes TrackingSlicedMap throws a ClassCastException (after you have fixed the rewrite).
+    // I gave up debugging it, because it still serves its purpose. Any suggestions on how to fix it are welcome. (abreslav)
+    private final static boolean TRACK_REWRITES = false;
+    @SuppressWarnings("ConstantConditions")
+    private final MutableSlicedMap map = TRACK_REWRITES ? new TrackingSlicedMap(SlicedMapImpl.create()) : SlicedMapImpl.create();
 
     private final BindingContext bindingContext = new BindingContext() {
 

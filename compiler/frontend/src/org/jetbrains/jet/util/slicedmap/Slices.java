@@ -32,6 +32,7 @@ public class Slices {
         @Override
         public <K, V> boolean processRewrite(WritableSlice<K, V> slice, K key, V oldValue, V newValue) {
             if (!((oldValue == null && newValue == null) || (oldValue != null && oldValue.equals(newValue)))) {
+                // NOTE: Use BindingTraceContext.TRACK_REWRITES to debug this exception
                 throw new IllegalStateException("Rewrite at slice " + slice +
                         " key: " + key +
                         " old value: " + oldValue + '@' + System.identityHashCode(oldValue) +
