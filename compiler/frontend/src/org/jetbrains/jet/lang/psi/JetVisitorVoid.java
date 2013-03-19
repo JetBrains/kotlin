@@ -319,11 +319,6 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitTypeElement(type);
     }
 
-    @Deprecated // Tuples are to be removed in Kotlin M4
-    public void visitTupleType(JetTupleType type) {
-        visitTypeElement(type);
-    }
-
     public void visitFunctionType(JetFunctionType type) {
         visitTypeElement(type);
     }

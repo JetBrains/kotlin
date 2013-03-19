@@ -330,11 +330,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitTypeElement(type, data);
     }
 
-    @Deprecated // Tuples are to be removed in Kotlin M4
-    public R visitTupleType(JetTupleType type, D data) {
-        return visitTypeElement(type, data);
-    }
-
     public R visitFunctionType(JetFunctionType type, D data) {
         return visitTypeElement(type, data);
     }

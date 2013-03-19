@@ -193,12 +193,6 @@ public class TypeResolver {
                 }
 
                 @Override
-                public void visitTupleType(JetTupleType type) {
-                    // TODO: remove this method completely when tuples are droppped
-                    throw new IllegalStateException("Tuples are not supported: " + type.getText());
-                }
-
-                @Override
                 public void visitFunctionType(JetFunctionType type) {
                     JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
                     JetType receiverType = receiverTypeRef == null ? null : resolveType(scope, receiverTypeRef, trace, checkBounds);

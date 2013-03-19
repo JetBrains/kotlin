@@ -88,11 +88,6 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Override
-    public JetType visitTupleType(JetTupleType type, Void data) {
-        return visitCommonType(KotlinBuiltIns.getInstance().getTuple(type.getComponentTypeRefs().size()), type);
-    }
-
-    @Override
     public JetType visitUserType(JetUserType type, Void data) {
         JetUserType qualifier = type.getQualifier();
 
