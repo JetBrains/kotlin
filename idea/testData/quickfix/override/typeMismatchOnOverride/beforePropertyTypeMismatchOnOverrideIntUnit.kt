@@ -1,4 +1,4 @@
-// "Change property type to 'Int'" "true"
+// "Change 'x' type to 'Int'" "true"
 abstract class A {
     abstract var x : Int
 }
