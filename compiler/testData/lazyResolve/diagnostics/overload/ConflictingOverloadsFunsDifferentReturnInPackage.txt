@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="qwertyuiop">
-namespace qwertyuiop
-
-internal final fun c(/*0*/ s: jet.String): jet.Tuple0
-internal final fun c(/*0*/ s: jet.String): jet.Tuple0
-// </namespace name="qwertyuiop">

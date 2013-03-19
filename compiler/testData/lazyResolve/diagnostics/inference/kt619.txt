@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final class A : jet.Comparable<A> {
-    public final /*constructor*/ fun <init>(/*0*/ t: jet.Int): A
-    public open override /*1*/ fun compareTo(/*0*/ other: A): jet.Int
-    internal final var i: jet.Int
-}

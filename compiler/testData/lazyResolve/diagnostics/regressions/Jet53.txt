@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final val ab: java.util.List<jet.Int>?

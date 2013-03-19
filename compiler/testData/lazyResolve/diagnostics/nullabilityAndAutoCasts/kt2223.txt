@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="kt2223">
-namespace kt2223
-
-internal final fun foo(): jet.Tuple0
-// </namespace name="kt2223">

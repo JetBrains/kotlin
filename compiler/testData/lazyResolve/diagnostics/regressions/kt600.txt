@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ T : jet.Any>T?._sure(): T
-internal final fun test(): jet.Tuple0

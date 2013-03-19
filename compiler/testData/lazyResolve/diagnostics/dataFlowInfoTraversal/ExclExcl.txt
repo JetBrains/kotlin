@@ -1,8 +1,0 @@
-namespace <root>
-
-internal final fun bar(/*0*/ x: jet.Int): jet.Int
-internal final fun f1(/*0*/ x: jet.Int?): jet.Tuple0
-internal final fun f2(/*0*/ x: jet.Int?): jet.Tuple0
-internal final fun f3(/*0*/ x: jet.Int?): jet.Tuple0
-internal final fun f4(/*0*/ x: jet.Int?): jet.Tuple0
-internal final fun f5(/*0*/ x: jet.Int?): jet.Tuple0

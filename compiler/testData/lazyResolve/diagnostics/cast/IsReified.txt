@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final class MyList</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): MyList<T>
-}
-internal final fun ff(/*0*/ a: jet.Any): jet.Boolean

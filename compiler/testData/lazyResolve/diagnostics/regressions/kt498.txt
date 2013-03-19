@@ -1,9 +1,0 @@
-namespace <root>
-
-internal final class IdUnavailableException : java.lang.Exception {
-    public final /*constructor*/ fun <init>(): IdUnavailableException
-    public final override /*1*/ fun getCause(): jet.Throwable?
-    public final override /*1*/ fun getMessage(): jet.String?
-    public final override /*1*/ fun printStackTrace(): jet.Tuple0
-}
-internal final fun </*0*/ T : jet.Any>T.getJavaClass(): java.lang.Class<T>

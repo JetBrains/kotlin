@@ -1,8 +1,0 @@
-namespace <root>
-
-internal final val A: A
-internal final val a: <no name provided>
-internal final val b: [ERROR : <ERROR PROPERTY TYPE>]
-internal final val c: jet.Int
-internal final val y: <no name provided>
-internal final val z: [ERROR : Type for y]

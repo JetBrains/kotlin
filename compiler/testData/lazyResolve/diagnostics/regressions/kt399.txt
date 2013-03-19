@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun box(): jet.String
-internal final fun </*0*/ T : jet.Any?>getSameTypeChecker(/*0*/ obj: T): jet.Function1<jet.Any, jet.Boolean>

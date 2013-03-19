@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="b">
-namespace b
-
-internal final fun bar(): jet.Tuple0
-// </namespace name="b">

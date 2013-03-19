@@ -1,9 +1,0 @@
-namespace <root>
-
-internal open class A : jet.Any {
-    public final /*constructor*/ fun <init>(): A
-}
-internal final class B : A {
-    public final /*constructor*/ fun <init>(): B
-}
-internal final fun ff(/*0*/ l: java.util.Collection<B>): jet.Boolean

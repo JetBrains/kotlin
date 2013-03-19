@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun ff(/*0*/ a: jet.String): jet.Int
-internal final fun gg(): jet.Tuple0

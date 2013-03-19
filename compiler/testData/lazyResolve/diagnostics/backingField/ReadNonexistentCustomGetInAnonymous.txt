@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final class ReadNonexistent : jet.Any {
-    public final /*constructor*/ fun <init>(): ReadNonexistent
-    internal final val a: jet.Int
-}

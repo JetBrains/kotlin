@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="extensionFunctions">
-namespace extensionFunctions
-
-internal final fun jet.Int.qwe(/*0*/ a: jet.Float): jet.Int
-internal final fun jet.Int.qwe(/*0*/ a: jet.Float): jet.Int
-// </namespace name="extensionFunctions">

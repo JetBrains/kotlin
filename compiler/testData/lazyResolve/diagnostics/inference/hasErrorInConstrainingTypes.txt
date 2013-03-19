@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="n">
-namespace n
-
-internal final fun </*0*/ T : jet.Any?>foo(/*0*/ t: T, /*1*/ t1: T): jet.Tuple0
-internal final fun test(): jet.Tuple0
-// </namespace name="n">

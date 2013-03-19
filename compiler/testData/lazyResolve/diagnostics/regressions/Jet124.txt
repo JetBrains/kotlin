@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun foo(): jet.Tuple0
-internal final fun foo1(): jet.Function1<jet.Int, jet.Int>

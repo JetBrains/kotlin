@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="java">
-namespace java
-
-internal final val c: java.lang.Class<out jet.Any?>?
-internal final val  </*0*/ T : jet.Any?> jet.Array<T>?.length: jet.Int
-// </namespace name="java">

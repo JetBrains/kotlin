@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kt455">
-namespace kt455
-
-internal final fun doSmth(/*0*/ i: jet.Int): jet.Tuple0
-internal final fun foo(): jet.Tuple0
-// </namespace name="kt455">

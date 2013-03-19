@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="foo">
-namespace foo
-
-private final fun </*0*/ T : jet.Any?>sendCommand(/*0*/ errorCallback: jet.Function0<jet.Tuple0>? = ?): jet.Tuple0
-// </namespace name="foo">

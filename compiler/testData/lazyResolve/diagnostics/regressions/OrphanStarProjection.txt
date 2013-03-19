@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final class B : jet.Any {
-    public final /*constructor*/ fun <init>(): B
-}
-internal final val b: [ERROR : B<*>]

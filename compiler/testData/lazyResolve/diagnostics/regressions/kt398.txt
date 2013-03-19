@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final class X</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): X<T>
-    internal final val check: jet.Function1<jet.Any, jet.Boolean>
-}
-internal final fun box(): jet.String

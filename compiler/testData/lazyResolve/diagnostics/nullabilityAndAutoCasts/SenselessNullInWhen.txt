@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="kt2457">
-namespace kt2457
-
-internal final fun foo(/*0*/ i: jet.Int): jet.Int
-// </namespace name="kt2457">

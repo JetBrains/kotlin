@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final fun test(): jet.Tuple0
-internal final fun test(/*0*/ a: java.lang.Class<jet.Int>): jet.Tuple0
-internal final fun test(/*0*/ a: java.lang.Comparable<jet.Int>): jet.Tuple0
-internal final fun test(/*0*/ a: java.lang.annotation.RetentionPolicy): jet.Tuple0
-internal final fun test(/*0*/ a: java.util.ArrayList<jet.Int>): jet.Tuple0

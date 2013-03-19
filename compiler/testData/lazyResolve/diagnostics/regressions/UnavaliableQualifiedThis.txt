@@ -1,7 +1,0 @@
-namespace <root>
-
-internal abstract trait Iterator</*0*/ out T : jet.Any?> : jet.Any {
-    internal abstract val hasNext: jet.Boolean
-    internal open fun </*0*/ R : jet.Any?>map(/*0*/ transform: jet.Function1<T, R>): Iterator<R>
-    internal abstract fun next(): T
-}

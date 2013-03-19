@@ -1,8 +1,0 @@
-namespace <root>
-
-internal final class Foo : jet.Any {
-    public final /*constructor*/ fun <init>(): Foo
-}
-internal final fun jet.Any.equals(/*0*/ other: jet.Any?): jet.Boolean
-internal final fun jet.Any?.equals1(/*0*/ other: jet.Any?): jet.Boolean
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0

@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final class C : jet.Any {
-    public final /*constructor*/ fun <init>(/*0*/ f: jet.Int): C
-    internal final val f: jet.Int
-}
-internal final fun test(/*0*/ e: jet.Any): jet.Tuple0

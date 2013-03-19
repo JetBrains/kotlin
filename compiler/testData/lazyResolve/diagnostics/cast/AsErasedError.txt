@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun ff(/*0*/ c: java.util.Collection<jet.String>): java.util.List<jet.Int>

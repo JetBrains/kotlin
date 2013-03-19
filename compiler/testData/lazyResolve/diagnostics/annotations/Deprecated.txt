@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final java.lang.Deprecated() fun foo(): jet.Tuple0
-internal final java.lang.Deprecated() fun foo1(): jet.Tuple0

@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="a">
-namespace a
-
-internal final fun bar(): jet.Boolean
-internal final fun foo(): jet.Int
-internal final fun foo1(): jet.Boolean
-// </namespace name="a">

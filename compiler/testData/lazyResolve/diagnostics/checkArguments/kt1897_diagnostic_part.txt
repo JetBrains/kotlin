@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="a">
-namespace a
-
-internal final fun bar(): jet.Tuple0
-internal final fun foo(/*0*/ i: jet.Int, /*1*/ s: jet.String): jet.Tuple0
-internal final fun test(): jet.Tuple0
-// </namespace name="a">

@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ T : jet.Any?>T.mustBe(/*0*/ t: T): jet.Tuple0

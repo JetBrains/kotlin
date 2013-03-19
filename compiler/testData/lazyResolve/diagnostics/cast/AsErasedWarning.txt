@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun ff(/*0*/ a: jet.Any): java.util.List<jet.String>

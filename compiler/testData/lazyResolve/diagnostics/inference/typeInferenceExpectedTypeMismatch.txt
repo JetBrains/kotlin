@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="typeInferenceExpectedTypeMismatch">
-namespace typeInferenceExpectedTypeMismatch
-
-internal final fun </*0*/ S : jet.Any?>newList(): java.util.ArrayList<S>
-internal final fun test(): jet.Tuple0
-// </namespace name="typeInferenceExpectedTypeMismatch">

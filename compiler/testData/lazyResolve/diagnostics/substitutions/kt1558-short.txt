@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun testArrays(/*0*/ ci: java.util.List<jet.Int>): jet.Tuple0

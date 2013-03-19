@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="qualified_expressions">
-namespace qualified_expressions
-
-internal final fun jet.String.startsWith(/*0*/ s: jet.String): jet.Boolean
-internal final fun test(/*0*/ s: jet.String?): jet.Tuple0
-// </namespace name="qualified_expressions">

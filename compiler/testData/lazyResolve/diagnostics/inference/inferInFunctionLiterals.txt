@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="n">
-namespace n
-
-internal final fun </*0*/ T : jet.Any?>expected(/*0*/ t: T, /*1*/ f: jet.Function0<T>): T
-internal final fun </*0*/ T : jet.Any?>java.util.List<T>.reverse(): java.util.List<T>
-internal final fun test(/*0*/ arrayList: java.util.ArrayList<jet.Int>, /*1*/ list: java.util.List<jet.Int>): jet.Tuple0
-// </namespace name="n">

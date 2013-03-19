@@ -1,9 +1,0 @@
-namespace <root>
-
-internal final class C</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): C<T>
-    internal final fun foo(): T
-}
-internal final fun </*0*/ T : jet.Any?>bar(): C<T>
-internal final fun foo(/*0*/ c: C<jet.Int>): jet.Tuple0
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0

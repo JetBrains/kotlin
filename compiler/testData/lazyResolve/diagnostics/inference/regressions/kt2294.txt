@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="a">
-namespace a
-
-internal final fun </*0*/ T : jet.Any?>array(/*0*/ vararg t: T /*jet.Array<T>*/): jet.Array<T>
-public final fun </*0*/ E : jet.Any?>foo(/*0*/ array: jet.Array<E>): jet.Array<E>
-public final fun test(): jet.Tuple0
-// </namespace name="a">

@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun f(/*0*/ a: java.util.List<out jet.Any>): jet.Boolean

@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ T : jet.Any?>jet.Array<T>?.get(/*0*/ i: jet.Int): T
-internal final fun jet.Int?.inc(): jet.Int
-internal final fun test(): jet.Tuple0

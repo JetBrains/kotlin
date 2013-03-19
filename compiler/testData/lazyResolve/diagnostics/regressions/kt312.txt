@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final val args: jet.Array<jet.String>
-internal final val name: jet.String
-internal final val name1: jet.String?
-internal final fun </*0*/ T : jet.Any?>jet.Array<out T>.safeGet(/*0*/ index: jet.Int): T?

@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun test(/*0*/ c: jet.Char): jet.Tuple0

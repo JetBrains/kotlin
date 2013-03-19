@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final class Cyclic : jet.Any {
-    public final /*constructor*/ fun <init>(): Cyclic
-    internal final val a: [ERROR : Type for $a]
-}

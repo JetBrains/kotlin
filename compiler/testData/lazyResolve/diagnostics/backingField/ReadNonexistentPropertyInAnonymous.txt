@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final class Cl : jet.Any {
-    public final /*constructor*/ fun <init>(): Cl
-}

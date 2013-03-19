@@ -1,9 +1,0 @@
-namespace <root>
-
-internal final class Set : jet.Any {
-    public final /*constructor*/ fun <init>(): Set
-    internal final fun contains(/*0*/ x: jet.Int): jet.Boolean
-}
-internal final fun jet.Int?.contains(/*0*/ x: jet.Int): jet.Boolean
-internal final fun f(): jet.Tuple0
-internal final fun Set?.plus(/*0*/ x: jet.Int): jet.Int

@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="c">
-namespace c
-
-internal final val i: [ERROR : No type, no body]
-// </namespace name="c">

@@ -1,4 +1,0 @@
-namespace <root>
-
-private final fun double(/*0*/ d: jet.Int): jet.Int
-internal final fun </*0*/ T : jet.Any?, /*1*/ R : jet.Any?>let(/*0*/ t: T, /*1*/ body: jet.Function1<T, R>): R

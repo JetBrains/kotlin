@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ T : jet.Any?>array1(/*0*/ vararg a: T /*jet.Array<T>*/): jet.Array<T>
-internal final fun join(/*0*/ x: jet.Int, /*1*/ vararg a: jet.String /*jet.Array<jet.String>*/): jet.String
-internal final fun </*0*/ T : jet.Any?>joinG(/*0*/ x: jet.Int, /*1*/ vararg a: T /*jet.Array<T>*/): jet.String
-internal final fun </*0*/ T : jet.Any?>joinT(/*0*/ x: jet.Int, /*1*/ vararg a: T /*jet.Array<T>*/): T?
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0

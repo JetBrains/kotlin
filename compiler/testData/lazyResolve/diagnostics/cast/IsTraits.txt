@@ -1,7 +1,0 @@
-namespace <root>
-
-internal abstract trait Aaa : jet.Any {
-}
-internal abstract trait Bbb : jet.Any {
-}
-internal final fun f(/*0*/ a: Aaa): jet.Boolean

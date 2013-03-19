@@ -1,8 +1,0 @@
-namespace <root>
-
-internal final class Hello : jet.Any {
-    public final /*constructor*/ fun <init>(/*0*/ args: jet.Any): Hello
-}
-internal final var bar: jet.Int
-internal final val x: jet.Function1<jet.Int, jet.Int>
-internal final fun foo(/*0*/ f: jet.Int): jet.Tuple0

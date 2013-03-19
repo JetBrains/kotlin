@@ -1,5 +1,0 @@
-namespace <root>
-
-internal abstract trait Tree : jet.Any {
-}
-internal final fun jet.Any?.TreeValue(): Tree

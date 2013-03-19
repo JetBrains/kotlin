@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="typeConstructorMismatch">
-namespace typeConstructorMismatch
-
-internal final fun </*0*/ R : jet.Any?>elemAndList(/*0*/ r: R, /*1*/ t: java.util.List<R>): R
-internal final fun </*0*/ R : jet.Any?>R.elemAndListWithReceiver(/*0*/ r: R, /*1*/ t: java.util.List<R>): R
-internal final fun test(/*0*/ set: java.util.Set<jet.String>): jet.Tuple0
-// </namespace name="typeConstructorMismatch">

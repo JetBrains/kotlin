@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="toplevelObjectDeclarations">
-namespace toplevelObjectDeclarations
-
-internal final val CObj: toplevelObjectDeclarations.CObj
-internal final val DOjb: toplevelObjectDeclarations.DOjb
-// </namespace name="toplevelObjectDeclarations">

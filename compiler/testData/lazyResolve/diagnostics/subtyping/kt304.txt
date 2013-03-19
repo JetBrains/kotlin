@@ -1,8 +1,0 @@
-namespace <root>
-
-internal open class Bar</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): Bar<T>
-}
-internal open class Foo {
-    public final /*constructor*/ fun <init>(): Foo
-}

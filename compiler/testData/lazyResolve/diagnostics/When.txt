@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final val _type_test: jet.Int
-internal final val jet.Tuple2<out jet.Int, out jet.Int>.boo: jet.Tuple3<out jet.Int, out jet.Int, out jet.Int>
-internal final fun foo(): jet.Int
-internal final fun jet.Int.foo(): jet.Boolean
-internal final fun test(): jet.Tuple0

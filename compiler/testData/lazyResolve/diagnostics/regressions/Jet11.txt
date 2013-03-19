@@ -1,8 +1,0 @@
-namespace <root>
-
-internal open class NoC : jet.Any {
-    public final /*constructor*/ fun <init>(): NoC
-}
-internal final class NoC1 : NoC {
-    public final /*constructor*/ fun <init>(): NoC1
-}

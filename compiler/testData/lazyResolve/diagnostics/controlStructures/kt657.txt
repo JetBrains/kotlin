@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="kt657">
-namespace kt657
-
-internal final fun cond1(): jet.Boolean
-internal final fun cond2(): jet.Boolean
-internal final fun foo(): jet.Int
-// </namespace name="kt657">

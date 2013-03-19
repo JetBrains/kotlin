@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun a(/*0*/ e: java.util.Enumeration<jet.Int>): jet.Tuple0
-internal final fun </*0*/ T : jet.Any?>java.util.Enumeration<T>.iterator(): iterator.<no name provided>

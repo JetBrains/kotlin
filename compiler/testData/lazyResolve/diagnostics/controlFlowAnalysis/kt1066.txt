@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="kt1066">
-namespace kt1066
-
-internal final fun foo(/*0*/ excluded: java.util.Set<jet.Char>): jet.Tuple0
-internal final fun randomDigit(): jet.Char
-internal final fun test(): jet.Tuple0
-// </namespace name="kt1066">

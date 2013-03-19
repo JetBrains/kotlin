@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun jet.Int.rty(): jet.Int
-internal final fun jet.String.rty(): jet.Int

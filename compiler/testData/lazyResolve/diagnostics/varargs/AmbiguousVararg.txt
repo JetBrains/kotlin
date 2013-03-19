@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final fun foo(/*0*/ vararg t: jet.Int /*jet.IntArray*/): jet.String
-internal final fun foo(/*0*/ vararg t: jet.String /*jet.Array<jet.String>*/): jet.String
-internal final fun test(): jet.Tuple0

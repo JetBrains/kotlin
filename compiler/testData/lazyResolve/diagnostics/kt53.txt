@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final val  </*0*/ T : jet.Any?, /*1*/ E : jet.Any?> T.foo: E?
-internal final fun test(): jet.Int?

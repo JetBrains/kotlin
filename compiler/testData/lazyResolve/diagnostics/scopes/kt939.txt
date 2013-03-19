@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kt939">
-namespace kt939
-
-internal final fun compare(/*0*/ o1: jet.String?, /*1*/ o2: jet.String?): jet.Int
-internal final fun test(): jet.Tuple0
-// </namespace name="kt939">

@@ -1,5 +1,0 @@
-namespace <root>
-
-internal abstract trait T : jet.Any {
-    internal open val a: [ERROR : <ERROR FUNCTION RETURN TYPE>]
-}

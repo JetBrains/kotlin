@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="i">
-namespace i
-
-internal final fun a(): jet.Tuple0
-public final fun </*0*/ T : jet.Any?>from(/*0*/ yielder: jet.Function0<jet.Iterable<T>>): jet.Iterable<T>
-public final fun </*0*/ T : jet.Any?>jet.Iterable<T>.where(/*0*/ predicate: jet.Function1<T, jet.Boolean>): jet.Function0<jet.Iterable<T>>
-// </namespace name="i">

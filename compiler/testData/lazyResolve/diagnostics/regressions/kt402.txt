@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kt402">
-namespace kt402
-
-internal final fun f(): jet.Function1<jet.Any, jet.Boolean>
-internal final fun getTypeChecker(): jet.Function1<jet.Any, jet.Boolean>
-// </namespace name="kt402">

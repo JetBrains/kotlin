@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun bar(/*0*/ x: jet.Int): java.lang.RuntimeException
-internal final fun foo(): jet.Tuple0

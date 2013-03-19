@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun set(/*0*/ key: jet.String, /*1*/ value: jet.String): jet.Tuple0

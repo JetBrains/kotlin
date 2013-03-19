@@ -1,9 +1,0 @@
-namespace <root>
-
-internal final class TypeInfo</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): TypeInfo<T>
-}
-internal final fun </*0*/ T : jet.Any?>TypeInfo<T>.getJavaClass(): java.lang.Class<T>
-internal final fun </*0*/ T : jet.Any?>getJavaClass(): java.lang.Class<T>
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0
-internal final fun </*0*/ T : jet.Any?>typeinfo(): TypeInfo<T>

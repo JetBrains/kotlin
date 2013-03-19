@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final class C</*0*/ T : C<T>> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : C<T>><init>(): C<T>
-}

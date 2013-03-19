@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final class WithC : jet.Any {
-    public final /*constructor*/ fun <init>(): WithC
-    internal final val a: jet.Int
-    internal final val b: jet.Int
-}

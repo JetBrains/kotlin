@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="a">
-namespace a
-
-internal final val B: a.B
-// </namespace name="a">

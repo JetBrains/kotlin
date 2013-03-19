@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final fun foo(/*0*/ a: jet.Any?): jet.Tuple0
-internal final fun </*0*/ T : jet.Any?>getT(): jet.Tuple0
-internal final fun </*0*/ A : jet.Any?, /*1*/ B : jet.Any?>getTT(): jet.Tuple0
-internal final fun </*0*/ A : jet.Any?, /*1*/ B : jet.Any?, /*2*/ C : jet.Any?>getTTT(/*0*/ x: jet.Any): jet.Tuple0
-internal open fun main(): jet.Tuple0

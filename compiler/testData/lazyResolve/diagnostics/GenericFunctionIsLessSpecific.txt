@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final fun foo(/*0*/ i: jet.Int): jet.Int
-internal final fun </*0*/ T : jet.Any?>foo(/*0*/ t: T): jet.Tuple0
-internal final fun test(): jet.Tuple0

@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun ff(): jet.Tuple0
-internal final fun jet.Int.gg(): jet.Nothing?

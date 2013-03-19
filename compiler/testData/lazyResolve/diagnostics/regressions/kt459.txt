@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ K : jet.Any?, /*1*/ V : jet.Any?>java.util.Map<K, V>.set(/*0*/ key: K, /*1*/ value: V): jet.Tuple0
-internal final fun test(): jet.Tuple0

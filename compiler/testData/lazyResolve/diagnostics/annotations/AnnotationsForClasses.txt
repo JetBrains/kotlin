@@ -1,8 +1,0 @@
-namespace <root>
-
-java.lang.Deprecated() internal final annotation class my : jet.Any {
-    public final /*constructor*/ fun <init>(): my
-}
-java.lang.Deprecated() internal final annotation class my1 : jet.Any {
-    public final /*constructor*/ fun <init>(): my1
-}

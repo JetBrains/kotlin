@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="unresolved">
-namespace unresolved
-
-internal final fun foo1(/*0*/ i: jet.Int): jet.Tuple0
-internal final fun testGenericArgumentsCount(): jet.Tuple0
-internal final fun testUnresolved(): jet.Tuple0
-// </namespace name="unresolved">

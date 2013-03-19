@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun div(/*0*/ c: jet.String = ?, /*1*/ f: jet.Function0<jet.Tuple0>): jet.Tuple0
-internal final fun f(): jet.Tuple0

@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="extensionAndRegular">
-namespace extensionAndRegular
-
-internal final fun jet.Int.who(): jet.Int
-internal final fun who(): jet.Int
-// </namespace name="extensionAndRegular">

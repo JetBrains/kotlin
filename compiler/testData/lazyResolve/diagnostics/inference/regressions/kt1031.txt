@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="i">
-namespace i
-
-internal final fun a(): jet.Tuple0
-public final fun </*0*/ TItem : jet.Any?, /*1*/ TResult : jet.Any?>select(/*0*/ yielder: jet.Function0<jet.Iterable<TItem>>, /*1*/ selector: jet.Function1<TItem, TResult>): jet.Function0<jet.Iterable<TResult>>
-public final fun </*0*/ TItem : jet.Any?>jet.Iterable<TItem>.where(/*0*/ predicate: jet.Function1<TItem, jet.Boolean>): jet.Function0<jet.Iterable<TItem>>
-// </namespace name="i">

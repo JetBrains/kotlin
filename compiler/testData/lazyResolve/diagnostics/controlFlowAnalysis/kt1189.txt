@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kt1189">
-namespace kt1189
-
-internal final fun foo(): jet.Tuple0
-internal final fun </*0*/ T : jet.Any?>java.util.concurrent.locks.ReentrantReadWriteLock.write(/*0*/ action: jet.Function0<T>): T
-// </namespace name="kt1189">

@@ -1,8 +1,0 @@
-namespace <root>
-
-internal final class D : jet.Any {
-    public final /*constructor*/ fun <init>(): D
-    internal final fun from(/*0*/ vararg a: jet.Any /*jet.Array<jet.Any>*/): jet.Tuple0
-    internal final fun from(/*0*/ vararg a: jet.String /*jet.Array<jet.String>*/): jet.Tuple0
-}
-internal final fun main(/*0*/ d: D): jet.Tuple0

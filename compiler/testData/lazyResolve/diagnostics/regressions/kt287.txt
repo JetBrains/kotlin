@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final val attributes: java.util.Map<jet.String, jet.String>
-internal final fun attributes(): java.util.Map<jet.String, jet.String>
-internal final fun foo(/*0*/ m: java.util.Map<jet.String, jet.String>): jet.Tuple0
-internal final fun test(): jet.Tuple0

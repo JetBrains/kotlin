@@ -1,8 +1,0 @@
-namespace <root>
-
-Foo() internal final class Bar : jet.Any {
-    public final /*constructor*/ fun <init>(): Bar
-}
-internal final class Foo : jet.Any {
-    public final /*constructor*/ fun <init>(): Foo
-}

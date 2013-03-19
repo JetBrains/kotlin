@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="kt2212">
-namespace kt2212
-
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0
-// </namespace name="kt2212">

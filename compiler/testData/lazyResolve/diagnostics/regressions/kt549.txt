@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="demo">
-namespace demo
-
-internal final fun </*0*/ T : jet.Any?>filter(/*0*/ list: jet.Array<T>, /*1*/ filter: jet.Function1<T, jet.Boolean>): java.util.List<T>
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0
-// </namespace name="demo">

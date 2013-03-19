@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final class ReadByAnotherPropertyInitializer : jet.Any {
-    public final /*constructor*/ fun <init>(): ReadByAnotherPropertyInitializer
-    internal final val a: jet.Int
-    internal final val b: jet.Int
-}

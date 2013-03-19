@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kt41">
-namespace kt41
-
-internal final fun aaa(): [ERROR : Error function type]
-internal final fun bbb(): jet.Tuple0
-// </namespace name="kt41">

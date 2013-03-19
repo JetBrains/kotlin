@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kotlin1">
-namespace kotlin1
-
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0
-internal final fun test(/*0*/ a: java.util.List<jet.Int>, /*1*/ m: java.util.Map<jet.String, jet.Int>): jet.Tuple0
-// </namespace name="kotlin1">

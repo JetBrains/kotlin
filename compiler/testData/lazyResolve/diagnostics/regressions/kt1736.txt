@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kt1736">
-namespace kt1736
-
-internal final val Obj: kt1736.Obj
-internal final val x: jet.Tuple0
-// </namespace name="kt1736">

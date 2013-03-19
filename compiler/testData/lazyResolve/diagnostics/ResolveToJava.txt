@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="xxx">
-namespace xxx
-
-// </namespace name="xxx">
-internal final val l: java.util.List<in jet.Int>
-internal final fun test(/*0*/ l: java.util.List<jet.Int>): jet.Tuple0

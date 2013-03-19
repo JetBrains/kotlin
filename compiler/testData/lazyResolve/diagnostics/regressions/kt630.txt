@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final val s: jet.String
-internal final val x: jet.String

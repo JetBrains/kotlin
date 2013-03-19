@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun test(): jet.Tuple0

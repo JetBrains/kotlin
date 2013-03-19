@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final class Raise : jet.Any {
-    public final /*constructor*/ fun <init>(): Raise
-    internal final var zz: jet.Int
-}

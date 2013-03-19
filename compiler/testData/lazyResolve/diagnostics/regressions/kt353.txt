@@ -1,6 +1,0 @@
-namespace <root>
-
-internal abstract trait A : jet.Any {
-    internal abstract fun </*0*/ T : jet.Any?>gen(): T
-}
-internal final fun foo(/*0*/ a: A): jet.Tuple0

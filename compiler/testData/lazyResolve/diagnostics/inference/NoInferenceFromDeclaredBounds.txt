@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final val n: jet.Nothing
-internal final fun foo1(): jet.Tuple0
-internal final fun </*0*/ T : jet.Any?>fooT22(): T?

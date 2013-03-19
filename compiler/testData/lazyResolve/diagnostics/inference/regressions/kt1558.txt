@@ -1,7 +1,0 @@
-namespace <root>
-
-// <namespace name="j">
-namespace j
-
-internal final fun testArrays(/*0*/ ci: java.util.List<jet.Int?>, /*1*/ cii: java.util.List<jet.Int?>): jet.Tuple0
-// </namespace name="j">

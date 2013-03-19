@@ -1,6 +1,0 @@
-namespace <root>
-
-internal final class Flower : jet.Any {
-    public final /*constructor*/ fun <init>(): Flower
-    internal final var minusOne: jet.Int
-}

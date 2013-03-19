@@ -1,9 +1,0 @@
-namespace <root>
-
-internal final class BinOp : Expr {
-    public final /*constructor*/ fun <init>(/*0*/ operator: jet.String): BinOp
-    internal final val operator: jet.String
-}
-internal abstract trait Expr : jet.Any {
-}
-internal final fun test(/*0*/ e: Expr): jet.Tuple0

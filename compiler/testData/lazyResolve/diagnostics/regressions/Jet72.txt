@@ -1,9 +1,0 @@
-namespace <root>
-
-internal abstract class Item : jet.Any {
-    public final /*constructor*/ fun <init>(/*0*/ room: java.lang.Object): Item
-    internal abstract val name: jet.String
-    internal final val room: java.lang.Object
-}
-internal final val items: java.util.ArrayList<Item>
-internal final fun test(/*0*/ room: java.lang.Object): jet.Tuple0

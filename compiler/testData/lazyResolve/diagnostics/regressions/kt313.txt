@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ T : jet.Any?>jet.Iterable<T>.join(/*0*/ separator: jet.String?): jet.String
-internal final fun </*0*/ T : jet.Any>T?.npe(): T

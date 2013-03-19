@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ T : jet.Any?>ff(/*0*/ l: java.util.Collection<T>): jet.Boolean

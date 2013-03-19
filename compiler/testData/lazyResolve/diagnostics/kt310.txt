@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun f(/*0*/ c: jet.Array<jet.Int>): jet.Int

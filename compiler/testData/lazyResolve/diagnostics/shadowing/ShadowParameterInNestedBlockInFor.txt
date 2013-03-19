@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun f(/*0*/ i: jet.Int): jet.Tuple0

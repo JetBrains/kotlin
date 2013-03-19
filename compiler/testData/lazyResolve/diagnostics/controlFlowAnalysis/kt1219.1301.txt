@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="kt1219">
-namespace kt1219
-
-internal final fun </*0*/ T : jet.Any?, /*1*/ R : jet.Any?>jet.Iterable<T>.fold(/*0*/ r: R, /*1*/ op: jet.Function2<T, R, R>): R
-internal final fun foo(): jet.Tuple0
-internal final fun </*0*/ T : jet.Any?>jet.Iterable<T>.foreach(/*0*/ operation: jet.Function1<T, jet.Tuple0>): jet.Tuple0
-// </namespace name="kt1219">

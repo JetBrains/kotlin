@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final class Aaa : jet.Any {
-    public final /*constructor*/ fun <init>(): Aaa
-    internal final fun f(): jet.Int
-    internal final fun </*0*/ P : jet.Any?>f(): jet.Int
-}

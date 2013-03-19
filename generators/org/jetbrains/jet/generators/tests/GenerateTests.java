@@ -181,15 +181,6 @@ public class GenerateTests {
                 testModel("compiler/testData/renderer")
         );
 
-        // TODO test is temporarily disabled
-        //generateTest(
-        //        "compiler/tests/",
-        //        "org.jetbrains.jet.lang.resolve.lazy",
-        //        "LazyResolveDiagnosticsTestGenerated",
-        //        AbstractLazyResolveDiagnosticsTest.class,
-        //        new SimpleTestClassModel(AbstractLazyResolveDiagnosticsTest.TEST_DATA_DIR, true, "kt", "doTest")
-        //);
-
         generateTest("compiler/tests",
                      "LazyResolveTestGenerated",
                      AbstractLazyResolveTest.class,

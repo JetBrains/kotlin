@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final fun evaluate(/*0*/ expr: java.lang.StringBuilder, /*1*/ numbers: java.util.ArrayList<jet.Int>): jet.Int
-internal final fun evaluateAdd(/*0*/ expr: java.lang.StringBuilder, /*1*/ numbers: java.util.ArrayList<jet.Int>): jet.Int
-internal final fun evaluateArg(/*0*/ expr: jet.CharSequence, /*1*/ numbers: java.util.ArrayList<jet.Int>): jet.Int
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0
-internal final fun takeFirst(/*0*/ expr: java.lang.StringBuilder): jet.Char

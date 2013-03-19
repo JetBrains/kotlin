@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="kt1293">
-namespace kt1293
-
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0
-internal final fun requiresInt(/*0*/ i: jet.Int): jet.Tuple0
-// </namespace name="kt1293">

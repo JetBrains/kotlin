@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="kt2216">
-namespace kt2216
-
-internal final fun bar(/*0*/ y: jet.Int, /*1*/ z: jet.Int): jet.Int
-internal final fun baz(/*0*/ a: jet.Int, /*1*/ b: jet.Int, /*2*/ c: jet.Int, /*3*/ d: jet.Int): jet.Int
-internal final fun foo(): jet.Tuple0
-// </namespace name="kt2216">

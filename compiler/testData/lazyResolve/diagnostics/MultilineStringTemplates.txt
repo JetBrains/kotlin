@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun box(): jet.String
-internal final fun new(): jet.String

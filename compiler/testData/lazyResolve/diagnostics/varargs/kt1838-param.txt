@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final class A : jet.Any {
-    public final /*constructor*/ fun <init>(/*0*/ vararg t: jet.Int /*jet.IntArray*/): A
-}

@@ -1,3 +1,0 @@
-namespace <root>
-
-internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0

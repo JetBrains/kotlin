@@ -1,9 +1,0 @@
-namespace <root>
-
-internal open class Abs : jet.Any {
-    public final /*constructor*/ fun <init>(): Abs
-}
-internal final class Bar : Abs {
-    public final /*constructor*/ fun <init>(): Bar
-}
-internal final fun </*0*/ F : Abs>patternMatchingAndGenerics(/*0*/ arg: F): jet.String

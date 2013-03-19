@@ -1,9 +1,0 @@
-namespace <root>
-
-internal final class List</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(/*0*/ head: T, /*1*/ tail: List<T>? = ?): List<T>
-    internal final val head: T
-    internal final val tail: List<T>?
-}
-internal final fun </*0*/ T : jet.Any?>foo(/*0*/ t: T): T
-internal final fun </*0*/ T : jet.Any?, /*1*/ Q : jet.Any?>List<T>.map(/*0*/ f: jet.Function1<T, Q>): List<T>?

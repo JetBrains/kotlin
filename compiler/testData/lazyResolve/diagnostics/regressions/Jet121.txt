@@ -1,8 +1,0 @@
-namespace <root>
-
-// <namespace name="jet121">
-namespace jet121
-
-internal final fun apply(/*0*/ arg: jet.String, /*1*/ f: jet.ExtensionFunction0<jet.String, jet.Int>): jet.Int
-internal final fun box(): jet.String
-// </namespace name="jet121">

@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final fun bar(/*0*/ x: jet.Int = ?, /*1*/ y: jet.Int = ?, /*2*/ z: jet.String): jet.Tuple0
-internal final fun foo(/*0*/ a: jet.Int = ?, /*1*/ b: jet.String = ?): jet.Tuple0
-internal final fun test(): jet.Tuple0

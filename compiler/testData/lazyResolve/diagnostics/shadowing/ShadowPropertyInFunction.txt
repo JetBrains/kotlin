@@ -1,7 +1,0 @@
-namespace <root>
-
-internal final class RedefinePropertyInFunction : jet.Any {
-    public final /*constructor*/ fun <init>(): RedefinePropertyInFunction
-    internal final fun f(): jet.Int
-    internal final var i: jet.Int
-}

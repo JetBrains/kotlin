@@ -1,5 +1,0 @@
-namespace <root>
-
-internal final class D</*0*/ A : D<A, jet.String>, /*1*/ B : D<A, B>> : jet.Any {
-    public final /*constructor*/ fun </*0*/ A : D<A, jet.String>, /*1*/ B : D<A, B>><init>(): D<A, B>
-}

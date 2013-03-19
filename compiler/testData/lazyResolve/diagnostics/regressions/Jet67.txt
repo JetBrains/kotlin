@@ -1,6 +1,0 @@
-namespace <root>
-
-internal abstract class XXX : jet.Any {
-    public final /*constructor*/ fun <init>(): XXX
-    internal abstract val a: jet.Int
-}

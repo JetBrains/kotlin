@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final fun </*0*/ T : jet.Any?>java.util.List<T>.plus(/*0*/ other: java.util.List<T>): java.util.List<T>
-internal final fun </*0*/ T : jet.Comparable<T>>java.util.List<T>.sort(): jet.Tuple0

@@ -1,9 +1,0 @@
-namespace <root>
-
-// <namespace name="kt786">
-namespace kt786
-
-internal final fun bar(): jet.Int
-internal final fun fff(): jet.Int
-internal final fun foo(): jet.Int
-// </namespace name="kt786">

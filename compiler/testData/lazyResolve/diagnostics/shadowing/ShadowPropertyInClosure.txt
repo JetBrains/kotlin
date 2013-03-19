@@ -1,4 +1,0 @@
-namespace <root>
-
-internal final val f: jet.Function0<jet.Int>
-internal final val i: jet.Int
