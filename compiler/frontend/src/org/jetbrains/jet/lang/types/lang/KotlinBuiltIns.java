@@ -78,7 +78,6 @@ public class KotlinBuiltIns {
             BUILT_INS_DIR + "/ExtensionFunctions.jet",
             BUILT_INS_DIR + "/Functions.jet",
             BUILT_INS_DIR + "/Nothing.jet",
-            BUILT_INS_DIR + "/Tuples.jet",
             BUILT_INS_DIR + "/Unit.jet"
     );
 

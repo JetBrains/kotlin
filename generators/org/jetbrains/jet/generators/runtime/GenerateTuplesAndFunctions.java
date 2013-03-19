@@ -23,30 +23,6 @@ import java.io.PrintStream;
 public class GenerateTuplesAndFunctions {
     private static final int TUPLE_COUNT = 23;
 
-    private static void generateTuples(PrintStream out, int count) {
-        generated(out);
-        for (int i = 1; i < count; i++) {
-            out.print("public class Tuple" + i);
-            out.print("<");
-            for (int j = 1; j <= i; j++) {
-                out.print("out T" + j);
-                if (j < i) {
-                    out.print(", ");
-                }
-            }
-            out.print(">");
-            out.print("(");
-            for (int j = 1; j <= i; j++) {
-                out.print("public val _" + j + ": " + "T" + j);
-                if (j < i) {
-                    out.print(", ");
-                }
-            }
-            out.print(") {}");
-            out.println();
-        }
-    }
-
     private static void generateFunctions(PrintStream out, int count, boolean extension) {
         generated(out);
         for (int i = 0; i < count; i++) {
@@ -86,10 +62,6 @@ public class GenerateTuplesAndFunctions {
     public static void main(String[] args) throws FileNotFoundException {
         File baseDir = new File("compiler/frontend/src/jet/");
         assert baseDir.exists() : "Base dir does not exist: " + baseDir.getAbsolutePath();
-
-        PrintStream tuples = new PrintStream(new File(baseDir, "Tuples.jet"));
-        generateTuples(tuples, TUPLE_COUNT);
-        tuples.close();
 
         PrintStream functions = new PrintStream(new File(baseDir, "Functions.jet"));
         generateFunctions(functions, TUPLE_COUNT, false);

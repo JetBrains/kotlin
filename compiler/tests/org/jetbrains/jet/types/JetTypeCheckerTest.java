@@ -469,12 +469,12 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testEffectiveProjectionKinds() throws Exception {
-        assertSubtype("Tuple1<Int>", "Tuple1<Int>");
-        assertSubtype("Tuple1<out Int>", "Tuple1<out Int>");
-        assertSubtype("Tuple1<out Int>", "Tuple1<Int>");
-        assertSubtype("Tuple1<Int>", "Tuple1<out Int>");
-        assertSubtype("Tuple1<in Int>", "Tuple1<out Any?>");
-        assertSubtype("Tuple1<out Any?>", "Tuple1<in String>");
+        assertSubtype("Base_outT<Int>", "Base_outT<Int>");
+        assertSubtype("Base_outT<out Int>", "Base_outT<out Int>");
+        assertSubtype("Base_outT<out Int>", "Base_outT<Int>");
+        assertSubtype("Base_outT<Int>", "Base_outT<out Int>");
+        assertSubtype("Base_outT<in Int>", "Base_outT<out Any?>");
+        assertSubtype("Base_outT<out Any?>", "Base_outT<in String>");
         assertSubtype("Base_inT<Int>", "Base_inT<Int>");
         assertSubtype("Base_inT<in Int>", "Base_inT<in Int>");
         assertSubtype("Base_inT<in Int>", "Base_inT<Int>");
