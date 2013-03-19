@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_TUPLE0_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_UNIT_TYPE;
 
 public class UnitValue implements IntrinsicMethod {
 
@@ -42,7 +42,7 @@ public class UnitValue implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        v.getstatic(JET_TUPLE0_TYPE.getInternalName(), "VALUE", JET_TUPLE0_TYPE.getDescriptor());
+        v.getstatic(JET_UNIT_TYPE.getInternalName(), "VALUE", JET_UNIT_TYPE.getDescriptor());
         return StackValue.onStack(expectedType);
     }
 }

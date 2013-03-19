@@ -1147,7 +1147,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             Type type = expressionType(expression);
-            Type targetType = type.equals(JET_TUPLE0_TYPE) ? type : OBJECT_TYPE;
+            Type targetType = type.equals(JET_UNIT_TYPE) ? type : OBJECT_TYPE;
 
             gen(expression, targetType);
 
@@ -1156,7 +1156,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             markLineNumber(ifExpression);
             v.mark(elseLabel);
-            StackValue.putTuple0Instance(v);
+            StackValue.putUnitInstance(v);
 
             v.mark(end);
             return StackValue.onStack(targetType);

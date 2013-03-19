@@ -29,6 +29,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -235,15 +236,15 @@ public abstract class StackValue {
         }
         else if (fromType.getSort() == Type.VOID) {
             if (toType.getSort() == Type.OBJECT) {
-                putTuple0Instance(v);
+                putUnitInstance(v);
             }
             else {
                 pushDefaultPrimitiveValueOnStack(toType, v);
             }
         }
-        else if (toType.equals(JET_TUPLE0_TYPE)) {
+        else if (toType.equals(JET_UNIT_TYPE)) {
             pop(fromType, v);
-            putTuple0Instance(v);
+            putUnitInstance(v);
         }
         else if (toType.getSort() == Type.ARRAY) {
             v.checkcast(toType);
@@ -275,8 +276,8 @@ public abstract class StackValue {
         }
     }
 
-    public static void putTuple0Instance(InstructionAdapter v) {
-        v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "VALUE", "Ljet/Tuple0;");
+    public static void putUnitInstance(InstructionAdapter v) {
+        v.visitFieldInsn(GETSTATIC, AsmTypeConstants.JET_UNIT_TYPE.getInternalName(), "VALUE", AsmTypeConstants.JET_UNIT_TYPE.getDescriptor());
     }
 
     protected void putAsBoolean(InstructionAdapter v) {

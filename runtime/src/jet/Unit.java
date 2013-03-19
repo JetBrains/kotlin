@@ -19,10 +19,10 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class Tuple0 {
-    public static final Tuple0 VALUE = new Tuple0();
+public class Unit {
+    public static final Unit VALUE = new Unit();
 
-    private Tuple0() {
+    private Unit() {
     }
 
     @Override
