@@ -1,8 +1,8 @@
-var v1 : () -> Tuple0
+var v1 : () -> Unit
 var v2 : (Int) -> Int
 var v3 : (Int, String) -> String
 var v4 : Function1<Int, String>
-var v4 : (() -> Int, (String) -> Tuple0) -> String
+var v4 : (() -> Int, (String) -> Unit) -> String
 var v5 : Int.() -> Int
 var v6  : Int.(String, Int) -> Unit
 var v7  : ExtensionFunction1<Int, String, Boolean>

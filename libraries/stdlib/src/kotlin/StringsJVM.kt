@@ -102,7 +102,7 @@ public inline fun String.getBytes(charset : java.nio.charset.Charset) : ByteArra
 
 public inline fun String.getBytes(charsetName : String) : ByteArray = (this as java.lang.String).getBytes(charsetName)
 
-public inline fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Tuple0 = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
+public inline fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
 
 public inline fun String.indexOf(ch : Char) : Int = (this as java.lang.String).indexOf(ch.toString())
 

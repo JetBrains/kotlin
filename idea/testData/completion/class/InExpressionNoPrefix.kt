@@ -5,5 +5,5 @@ class Test {
 }
 
 // RUNTIME: 1
-// EXIST: Any, Nothing, Tuple0, Int, Number
+// EXIST: Any, Nothing, Unit, Int, Number
 // EXIST: Array, Math, Hashable, OutputStream

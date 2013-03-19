@@ -986,9 +986,9 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/type/StringQ.kt");
         }
         
-        @TestMetadata("Tuple0.kt")
-        public void testTuple0() throws Exception {
-            doTestWithAccessors("compiler/testData/loadKotlin/type/Tuple0.kt");
+        @TestMetadata("Unit.kt")
+        public void testUnit() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/type/Unit.kt");
         }
         
     }
