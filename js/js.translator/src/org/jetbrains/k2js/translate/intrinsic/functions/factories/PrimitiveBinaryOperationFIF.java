@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 
@@ -79,12 +81,23 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     @NotNull
     private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorConventions.BINARY_OPERATION_NAMES.values());
+    private static final DescriptorPredicate INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr");
+
+    private static final ImmutableMap<String, JsBinaryOperator> BINARY_BITWISE_OPERATIONS = ImmutableMap.<String, JsBinaryOperator>builder()
+            .put("or", JsBinaryOperator.BIT_OR)
+            .put("and", JsBinaryOperator.BIT_AND)
+            .put("xor", JsBinaryOperator.BIT_XOR)
+            .put("shl", JsBinaryOperator.SHL)
+            .put("shr", JsBinaryOperator.SHR)
+            .put("ushr", JsBinaryOperator.SHRU)
+            .build();
 
     @NotNull
     @Override
     public Predicate<FunctionDescriptor> getPredicate() {
         //TODO: check that it is binary operation
-        return Predicates.or(pattern(NamePredicate.PRIMITIVE_NUMBERS, BINARY_OPERATIONS),
+        return Predicates.or(INT_WITH_BIT_OPERATIONS,
+                             pattern(NamePredicate.PRIMITIVE_NUMBERS, BINARY_OPERATIONS),
                              pattern("Boolean.or|and|xor"),
                              pattern("String.plus"));
     }
@@ -97,6 +110,12 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
         if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
             return RANGE_TO_INTRINSIC;
+        }
+        if (INT_WITH_BIT_OPERATIONS.apply(descriptor)) {
+            JsBinaryOperator op = BINARY_BITWISE_OPERATIONS.get(descriptor.getName().getName());
+            if (op != null) {
+                return new PrimitiveBinaryOperationFunctionIntrinsic(op);
+            }
         }
         JsBinaryOperator operator = getOperator(descriptor);
         return new PrimitiveBinaryOperationFunctionIntrinsic(operator);

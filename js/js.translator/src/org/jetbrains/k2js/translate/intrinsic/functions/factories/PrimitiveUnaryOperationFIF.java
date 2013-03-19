@@ -49,7 +49,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             pattern(PRIMITIVE_NUMBERS, UNARY_OPERATIONS);
     @NotNull
     private static final Predicate<FunctionDescriptor> PRIMITIVE_UNARY_OPERATION_NAMES =
-            Predicates.or(UNARY_OPERATION_FOR_PRIMITIVE_NUMBER, pattern("Boolean.not"));
+            Predicates.or(UNARY_OPERATION_FOR_PRIMITIVE_NUMBER, pattern("Boolean.not"), pattern("Int.inv"));
     @NotNull
     private static final DescriptorPredicate NO_PARAMETERS = new DescriptorPredicate() {
         @Override
@@ -71,8 +71,17 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
         Name name = descriptor.getName();
-        JetToken jetToken = OperatorConventions.UNARY_OPERATION_NAMES.inverse().get(name);
-        final JsUnaryOperator jsOperator = OperatorTable.getUnaryOperator(jetToken);
+
+        JsUnaryOperator jsOperator = null;
+        if ("inv".equals(name.getName())) {
+            jsOperator = JsUnaryOperator.BIT_NOT;
+        }
+        else {
+            JetToken jetToken = OperatorConventions.UNARY_OPERATION_NAMES.inverse().get(name);
+            jsOperator = OperatorTable.getUnaryOperator(jetToken);
+        }
+
+        final JsUnaryOperator finalJsOperator = jsOperator;
         return new FunctionIntrinsic() {
             @NotNull
             @Override
@@ -82,7 +91,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
                 assert receiver != null;
                 assert arguments.size() == 0 : "Unary operator should not have arguments.";
                 //NOTE: cannot use this for increment/decrement
-                return new JsPrefixOperation(jsOperator, receiver);
+                return new JsPrefixOperation(finalJsOperator, receiver);
             }
         };
     }
