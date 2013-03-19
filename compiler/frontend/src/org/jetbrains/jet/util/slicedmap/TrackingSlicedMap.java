@@ -142,7 +142,7 @@ public class TrackingSlicedMap implements MutableSlicedMap {
 
         private final ReadOnlySlice<K, V> delegate;
 
-        private SliceWithStackTrace(ReadOnlySlice<K, V> delegate) {
+        private SliceWithStackTrace(@NotNull ReadOnlySlice<K, V> delegate) {
             this.delegate = delegate;
         }
 
@@ -158,7 +158,7 @@ public class TrackingSlicedMap implements MutableSlicedMap {
 
         @Override
         public WithStackTrace<V> computeValue(SlicedMap map, K key, WithStackTrace<V> value, boolean valueNotFound) {
-            return new WithStackTrace<V>(delegate.computeValue(map, key, value.value, valueNotFound));
+            return new WithStackTrace<V>(delegate.computeValue(map, key, value == null ? null : value.value, valueNotFound));
         }
 
         @Override
