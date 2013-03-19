@@ -68,6 +68,9 @@ public class PackageIndex {
 
     private Set<FqName> doGetSubPackagesOf(FqName parent, Set<FqName> result) {
         Collection<Name> immediateChildren = subPackages.get(parent);
+        if (immediateChildren == null) {
+            return result;
+        }
         for (Name childName : immediateChildren) {
             if (childName == PRESENCE_MARKER) continue;
             result.add(parent.child(childName));
