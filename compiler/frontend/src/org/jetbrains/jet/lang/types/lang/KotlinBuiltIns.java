@@ -177,10 +177,13 @@ public class KotlinBuiltIns {
         try {
             MutableModuleDescriptor module =
                     new MutableModuleDescriptor(Name.special("<built-ins lazy module>"), PlatformToKotlinClassMap.EMPTY);
-            SubModuleDescriptor subModule =
-                    module.addSubModule(new MutableSubModuleDescriptor(module, Name.special("<built-ins lazy submodule>")));
+            MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<built-ins lazy submodule>"));
+            module.addSubModule(subModule);
 
-            this.analyzer = createLazyAnalyzer(project, subModule);
+            LazyCodeAnalyzer lazyAnalyzer = createLazyAnalyzer(project, subModule);
+            subModule.addPackageFragmentProvider(lazyAnalyzer.getPackageFragmentProvider());
+
+            this.analyzer = lazyAnalyzer;
             this.builtInsSubModule = subModule;
 
             this.functionClassesSet = computeIndexedClasses("Function", getFunctionTraitCount());
@@ -230,7 +233,7 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    private static KotlinCodeAnalyzer createLazyAnalyzer(@NotNull Project project, @NotNull SubModuleDescriptor subModule) throws IOException {
+    private static LazyCodeAnalyzer createLazyAnalyzer(@NotNull Project project, @NotNull SubModuleDescriptor subModule) throws IOException {
         List<JetFile> files = loadResourcesAsJetFiles(project, LIBRARY_FILES);
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
