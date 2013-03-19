@@ -144,9 +144,6 @@ public class KotlinBuiltIns {
 
     private final ImmutableSet<ClassDescriptor> extensionFunctionClassesSet;
 
-    @Deprecated
-    private final ImmutableSet<ClassDescriptor> tupleClassesSet;
-
     private final EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;
     private final EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToArrayClass;
     private final EnumMap<PrimitiveType, JetType> primitiveTypeToJetType;
@@ -176,7 +173,6 @@ public class KotlinBuiltIns {
 
             this.functionClassesSet = computeIndexedClasses("Function", getFunctionTraitCount());
             this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", getFunctionTraitCount());
-            this.tupleClassesSet = computeIndexedClasses("Tuple", getFunctionTraitCount());
 
             this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
@@ -960,65 +956,6 @@ public class KotlinBuiltIns {
     @NotNull
     public JetType getDefaultBound() {
         return getNullableAnyType();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // TUPLES
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    @Deprecated
-    @NotNull
-    public List<JetType> getTupleElementTypes(@NotNull JetType type) {
-        assert isTupleType(type);
-        List<JetType> result = Lists.newArrayList();
-        for (TypeProjection typeProjection : type.getArguments()) {
-            result.add(typeProjection.getType());
-        }
-        return result;
-    }
-
-    @NotNull
-    @Deprecated
-    public ClassDescriptor getTuple(int size) {
-        return getBuiltInClassByName("Tuple" + size);
-    }
-
-    @Deprecated
-    public boolean isTupleType(@NotNull JetType type) {
-        return setContainsClassOf(tupleClassesSet, type);
-    }
-
-    @NotNull
-    @Deprecated
-    public JetType getTupleType(@NotNull List<JetType> arguments) {
-        return getTupleType(Collections.<AnnotationDescriptor>emptyList(), arguments);
-    }
-
-    @NotNull
-    @Deprecated
-    public JetType getTupleType(@NotNull JetType... arguments) {
-        return getTupleType(Collections.<AnnotationDescriptor>emptyList(), Arrays.asList(arguments));
-    }
-
-    @Deprecated
-    private JetType getTupleType(List<AnnotationDescriptor> annotations, List<JetType> arguments) {
-        if (annotations.isEmpty() && arguments.isEmpty()) {
-            return getUnitType();
-        }
-        ClassDescriptor tuple = getTuple(arguments.size());
-        List<TypeProjection> typeArguments = toProjections(arguments);
-        return new JetTypeImpl(annotations, tuple.getTypeConstructor(), false, typeArguments, tuple.getMemberScope(typeArguments));
-    }
-
-    private static List<TypeProjection> toProjections(List<JetType> arguments) {
-        List<TypeProjection> result = new ArrayList<TypeProjection>();
-        for (JetType argument : arguments) {
-            result.add(new TypeProjection(Variance.OUT_VARIANCE, argument));
-        }
-        return result;
     }
 
     private static boolean setContainsClassOf(ImmutableSet<ClassDescriptor> set, JetType type) {
