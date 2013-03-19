@@ -5,7 +5,7 @@
 
     <mirrors>
         <mirror>
-            <mirrorOf>*</mirrorOf>
+            <mirrorOf>central</mirrorOf>
             <name>repo</name>
             <url>http://repository.jetbrains.com/remote-repos</url>
             <id>repo</id>
