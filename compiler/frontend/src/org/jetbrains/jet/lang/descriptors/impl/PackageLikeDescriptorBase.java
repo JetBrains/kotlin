@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FqNamed;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
@@ -31,7 +32,7 @@ public abstract class PackageLikeDescriptorBase extends DeclarationDescriptorImp
     private final FqName fqName;
 
     public PackageLikeDescriptorBase(@NotNull FqName fqName) {
-        super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortName());
+        super(Collections.<AnnotationDescriptor>emptyList(), fqName.isRoot() ? FqNameUnsafe.ROOT_NAME : fqName.shortName());
         this.fqName = fqName;
     }
 
