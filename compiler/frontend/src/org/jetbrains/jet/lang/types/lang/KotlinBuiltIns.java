@@ -55,7 +55,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
 
 public class KotlinBuiltIns {
-    public static final Name UNIT_ALIAS = Name.identifier("Unit");
     public static final JetScope STUB = JetScope.EMPTY;
 
     public static final String BUILT_INS_DIR = "jet";

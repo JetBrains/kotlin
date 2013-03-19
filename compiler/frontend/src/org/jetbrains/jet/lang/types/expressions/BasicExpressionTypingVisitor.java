@@ -641,7 +641,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             assert returnType != null : "returnType is null for " + resolutionResults.getResultingDescriptor();
             if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, KotlinBuiltIns.getInstance().getUnitType())) {
-                result = ErrorUtils.createErrorType(KotlinBuiltIns.UNIT_ALIAS.getName());
+                result = ErrorUtils.createErrorType(KotlinBuiltIns.getInstance().getUnit().getName().getName());
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {

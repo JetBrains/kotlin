@@ -397,7 +397,7 @@ public class JetPsiUtil {
             return false;
         }
 
-        return KotlinBuiltIns.UNIT_ALIAS.getName().equals(typeReference.getText());
+        return KotlinBuiltIns.getInstance().getUnit().getName().getName().equals(typeReference.getText());
     }
 
     public static boolean isSafeCall(@NotNull Call call) {

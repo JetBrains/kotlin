@@ -95,11 +95,6 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         String shortName = type.getReferenceExpression().getReferencedName();
         String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
 
-        // TODO remove this code when Unit will be not a synonym for Tuple0
-        if (KotlinBuiltIns.UNIT_ALIAS.getName().equals(longName)) {
-            return visitCommonType(KotlinBuiltIns.getInstance().getUnit(), type);
-        }
-
         return visitCommonType(longName, type);
     }
 

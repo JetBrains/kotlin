@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -55,8 +54,6 @@ import java.util.List;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
-
-    private final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(KotlinBuiltIns.getInstance().getUnit()).toSafe();
 
     public BuiltInsReferenceResolver(
             Project project,
@@ -88,25 +85,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         jetNamespace.setMemberScope(scope);
 
-        Predicate<JetFile> jetFilesIndependentOfUnit = new Predicate<JetFile>() {
-            @Override
-            public boolean apply(@Nullable JetFile file) {
-                return "Unit.jet".equals(file.getName());
-            }
-        };
         TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
-                                                        getJetFiles("jet", jetFilesIndependentOfUnit));
-
-        ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
-        assert tuple0 != null : "Can't find the declaration for Tuple0. Please invoke File -> Invalidate Caches...";
-        scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
-                                      "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        scope.addClassifierAlias(KotlinBuiltIns.UNIT_ALIAS, tuple0);
-        jetNamespace.setMemberScope(scope);
-
-        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
-                                                        getJetFiles("jet", Predicates.not(jetFilesIndependentOfUnit)));
+                                                        getJetFiles("jet", Predicates.<JetFile>alwaysTrue()));
 
         bindingContext = context.getBindingContext();
     }
@@ -165,8 +145,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             descriptors = memberScope.getAllDescriptors();
         }
         for (DeclarationDescriptor member : descriptors) {
-            if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
-                                                                                       KotlinBuiltIns.UNIT_ALIAS.getName()))) {
+            if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member))) {
                 return member;
             }
         }

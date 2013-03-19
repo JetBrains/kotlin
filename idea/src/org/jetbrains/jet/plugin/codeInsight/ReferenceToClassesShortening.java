@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
@@ -82,10 +81,6 @@ public class ReferenceToClassesShortening {
                 }
 
                 private void compactReferenceToClass(JetUserType userType, ClassDescriptor targetClass) {
-                    if (targetClass == KotlinBuiltIns.getInstance().getUnitType().getConstructor().getDeclarationDescriptor()) {
-                        // do not replace "Unit" with "Tuple0"
-                        return;
-                    }
                     String name = targetClass.getName().getName();
                     DeclarationDescriptor parent = targetClass.getContainingDeclaration();
                     while (parent instanceof ClassDescriptor) {
