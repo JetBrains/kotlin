@@ -21,19 +21,17 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 
 public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<JetTypeReference> {
     private JetClass classDeclaration;
@@ -48,16 +46,21 @@ public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<Jet
             return false;
         }
 
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
-        JetType type = context.get(BindingContext.TYPE, element);
-        if (type == null) return false;
-        DeclarationDescriptor typeDeclarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (typeDeclarationDescriptor == null) return false;
-        PsiElement typeDeclaration = BindingContextUtils.descriptorToDeclaration(context, typeDeclarationDescriptor);
-        if (typeDeclaration instanceof JetClass && typeDeclaration.isWritable()) {
-            this.classDeclaration = (JetClass) typeDeclaration;
+        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(element, JetSimpleNameExpression.class);
+        if (referenceExpression == null) {
+            return false;
         }
-        return classDeclaration != null && !classDeclaration.isEnum() && !classDeclaration.isTrait();
+
+        PsiReference reference = referenceExpression.getReference();
+        if (reference != null) {
+            PsiElement target = reference.resolve();
+            if (target instanceof JetClass && target.isWritable()) {
+                classDeclaration = (JetClass) target;
+                return !(classDeclaration.isEnum() || classDeclaration.isTrait());
+            }
+        }
+
+        return false;
     }
 
     @NotNull
