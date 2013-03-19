@@ -399,7 +399,7 @@ public class IdeModuleManager implements KotlinModuleManager {
                 GlobalSearchScope allLibrariesScope
         ) {
             InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
-                    project, trace, subModule.getContainingDeclaration(), classResolutionFacade, storageManager, subModule, allLibrariesScope
+                    project, trace, classResolutionFacade, storageManager, subModule, allLibrariesScope
             );
             PsiClassFinderImpl psiClassFinder = injector.getPsiClassFinder();
             JavaPackageFragmentProvider provider = new JavaPackageFragmentProvider(

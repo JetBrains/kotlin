@@ -109,7 +109,6 @@ public class GenerateInjectors {
         // Parameters
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(BindingTrace.class);
-        generator.addPublicParameter(ModuleDescriptor.class);
         generator.addParameter(JavaClassResolutionFacade.class);
         generator.addParameter(StorageManager.class);
         generator.addParameter(SubModuleDescriptor.class);
@@ -181,7 +180,6 @@ public class GenerateInjectors {
         generator.addField(true, BindingTrace.class, null,
                            new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
         generator.addField(JavaBridgeConfiguration.class);
-        generator.addField(JavaClassResolutionFacadeImpl.class);
         generator.addField(JavaDependencyByQualifiedNameResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, ModuleDescriptor.class, null,
@@ -190,7 +188,7 @@ public class GenerateInjectors {
 
         // Parameters
         generator.addPublicParameter(Project.class);
-        generator.addParameter(KotlinLightClassResolver.class);
+        generator.addParameter(JavaClassResolutionFacade.class);
         generator.addParameter(StorageManager.class);
         generator.addParameter(SubModuleDescriptor.class);
         generator.addParameter(GlobalSearchScope.class);

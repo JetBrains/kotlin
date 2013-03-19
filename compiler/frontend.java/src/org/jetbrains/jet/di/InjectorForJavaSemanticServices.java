@@ -19,12 +19,11 @@ package org.jetbrains.jet.di;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDependencyByQualifiedNameResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.java.KotlinLightClassResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -51,12 +50,11 @@ public class InjectorForJavaSemanticServices {
     private JavaDescriptorResolver javaDescriptorResolver;
     private BindingTrace bindingTrace;
     private JavaBridgeConfiguration javaBridgeConfiguration;
-    private JavaClassResolutionFacadeImpl javaClassResolutionFacade;
     private JavaDependencyByQualifiedNameResolver javaDependencyByQualifiedNameResolver;
     private PsiClassFinderImpl psiClassFinder;
     private ModuleDescriptor moduleDescriptor;
     private final Project project;
-    private final KotlinLightClassResolver kotlinLightClassResolver;
+    private final JavaClassResolutionFacade javaClassResolutionFacade;
     private final StorageManager storageManager;
     private final SubModuleDescriptor subModuleDescriptor;
     private final GlobalSearchScope globalSearchScope;
@@ -77,7 +75,7 @@ public class InjectorForJavaSemanticServices {
     
     public InjectorForJavaSemanticServices(
         @NotNull Project project,
-        @NotNull KotlinLightClassResolver kotlinLightClassResolver,
+        @NotNull JavaClassResolutionFacade javaClassResolutionFacade,
         @NotNull StorageManager storageManager,
         @NotNull SubModuleDescriptor subModuleDescriptor,
         @NotNull GlobalSearchScope globalSearchScope
@@ -85,12 +83,11 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
-        this.javaClassResolutionFacade = new JavaClassResolutionFacadeImpl(kotlinLightClassResolver);
         this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(getPsiClassFinder(), javaClassResolutionFacade);
         this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
         this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"), org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap.getInstance());
         this.project = project;
-        this.kotlinLightClassResolver = kotlinLightClassResolver;
+        this.javaClassResolutionFacade = javaClassResolutionFacade;
         this.storageManager = storageManager;
         this.subModuleDescriptor = subModuleDescriptor;
         this.globalSearchScope = globalSearchScope;

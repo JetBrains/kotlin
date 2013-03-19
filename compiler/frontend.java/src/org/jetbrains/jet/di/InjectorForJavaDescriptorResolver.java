@@ -18,7 +18,6 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
@@ -49,7 +48,6 @@ public class InjectorForJavaDescriptorResolver {
     
     private final Project project;
     private final BindingTrace bindingTrace;
-    private final ModuleDescriptor moduleDescriptor;
     private final JavaClassResolutionFacade javaClassResolutionFacade;
     private final StorageManager storageManager;
     private final SubModuleDescriptor subModuleDescriptor;
@@ -76,7 +74,6 @@ public class InjectorForJavaDescriptorResolver {
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptor moduleDescriptor,
         @NotNull JavaClassResolutionFacade javaClassResolutionFacade,
         @NotNull StorageManager storageManager,
         @NotNull SubModuleDescriptor subModuleDescriptor,
@@ -84,7 +81,6 @@ public class InjectorForJavaDescriptorResolver {
     ) {
         this.project = project;
         this.bindingTrace = bindingTrace;
-        this.moduleDescriptor = moduleDescriptor;
         this.javaClassResolutionFacade = javaClassResolutionFacade;
         this.storageManager = storageManager;
         this.subModuleDescriptor = subModuleDescriptor;
@@ -177,10 +173,6 @@ public class InjectorForJavaDescriptorResolver {
     
     public BindingTrace getBindingTrace() {
         return this.bindingTrace;
-    }
-    
-    public ModuleDescriptor getModuleDescriptor() {
-        return this.moduleDescriptor;
     }
     
     public JavaDescriptorResolver getJavaDescriptorResolver() {
