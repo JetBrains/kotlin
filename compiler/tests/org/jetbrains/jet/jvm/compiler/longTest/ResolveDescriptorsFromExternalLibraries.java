@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.PsiClass;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -152,7 +154,7 @@ public class ResolveDescriptorsFromExternalLibraries {
         }
 
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject(), null, null, null, null);
 
         boolean hasErrors;
         try {
@@ -184,7 +186,10 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
 
                 try {
-                    ClassDescriptor clazz = injector.getJavaDescriptorResolver().resolveClass(new FqName(className), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+                    PsiClass psiClass =
+                            injector.getPsiClassFinder().findPsiClass(new FqName(className), PsiClassFinder.RuntimeClassesHandleMode.THROW);
+                    ClassDescriptor clazz = injector.getJavaDescriptorResolver()
+                            .resolveClass(psiClass, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }

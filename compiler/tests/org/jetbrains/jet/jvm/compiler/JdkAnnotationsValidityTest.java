@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
+import com.intellij.psi.PsiClass;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
@@ -43,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.TypeTransformingVisitor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -82,7 +84,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
     public void testNoErrorsInAlternativeSignatures() {
         List<FqName> affectedClasses = getAffectedClasses("file://jdk-annotations");
 
-        final Map<String, List<String>> errors = Maps.newLinkedHashMap();
+        Map<String, List<String>> errors = Maps.newLinkedHashMap();
 
         for (int chunkIndex = 0; chunkIndex < affectedClasses.size() / CLASSES_IN_CHUNK + 1; chunkIndex++) {
             Disposable parentDisposable = CompileEnvironmentUtil.createMockDisposable();
@@ -90,7 +92,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
             try {
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
-                InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(commonEnvironment.getProject());
+                InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(commonEnvironment.getProject(), null, null, null, null);
 
                 BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
                 JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
@@ -99,7 +101,9 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
+                    PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(javaClass, PsiClassFinder.RuntimeClassesHandleMode.THROW);
+                    if (psiClass == null) continue;
+                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(psiClass);
                     PackageViewDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
                     if (topLevelClass == null) {
                         continue;

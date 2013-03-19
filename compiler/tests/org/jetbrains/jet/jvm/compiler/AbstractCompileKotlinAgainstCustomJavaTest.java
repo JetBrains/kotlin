@@ -25,9 +25,11 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -61,13 +63,16 @@ public abstract class AbstractCompileKotlinAgainstCustomJavaTest extends TestCas
         JetCoreEnvironment environment = getEnvironment(ktFile);
         Project project = environment.getProject();
 
-        List<JetFile> jetFiles = Collections.singletonList(JetTestUtils.loadJetFile(project, ktFile));
+        JetFile file = JetTestUtils.loadJetFile(project, ktFile);
+        List<JetFile> jetFiles = Collections.singletonList(file);
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+        AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project, jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
+                Predicates.<PsiFile>alwaysTrue());
+        BindingContext bindingContext = exhaust.getBindingContext();
+        SubModuleDescriptor subModule = exhaust.getModuleSourcesManager().getSubModuleForFile(file);
 
-        PackageViewDescriptor packageViewDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceFqn);
+        PackageViewDescriptor packageViewDescriptor = subModule.getPackageView(namespaceFqn);
         assertNotNull("Failed to find namespace: " + namespaceFqn, packageViewDescriptor);
 
         compareNamespaceWithFile(packageViewDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);

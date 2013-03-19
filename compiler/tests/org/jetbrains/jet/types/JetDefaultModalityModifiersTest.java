@@ -22,8 +22,10 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -60,12 +62,12 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     }
 
     public class JetDefaultModalityModifiersTestCase  {
-        private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
+        private ModuleDescriptor root = new MutableModuleDescriptor(Name.special("<test_root>"), PlatformToKotlinClassMap.EMPTY);
         private DescriptorResolver descriptorResolver;
         private JetScope scope;
 
         public void setUp() throws Exception {
-            InjectorForTests injector = new InjectorForTests(getProject());
+            InjectorForTests injector = new InjectorForTests(getProject(), getModuleSourcesManager());
             KotlinBuiltIns builtIns = injector.getKotlinBuiltIns();
             descriptorResolver = injector.getDescriptorResolver();
             scope = createScope(builtIns.getBuiltInsScope());

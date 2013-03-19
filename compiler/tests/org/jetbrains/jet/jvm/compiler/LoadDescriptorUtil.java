@@ -20,11 +20,13 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -34,12 +36,15 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.KotlinLightClassResolver;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -77,12 +82,36 @@ public final class LoadDescriptorUtil {
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
     ) throws IOException {
+        JetFileAndExhaust fileAndExhaust = compileKotlinToDirAndGetFileAndExhaust(kotlinFile, outDir, disposable, configurationKind);
+        return fileAndExhaust.getExhaust();
+    }
+
+    @NotNull
+    public static SubModuleDescriptor compileKotlinToDirAndGetSubModule(
+            @NotNull File kotlinFile,
+            @NotNull File outDir,
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind
+    ) throws IOException {
+        JetFileAndExhaust fileAndExhaust = compileKotlinToDirAndGetFileAndExhaust(kotlinFile, outDir, disposable, configurationKind);
+        return fileAndExhaust.getExhaust().getModuleSourcesManager().getSubModuleForFile(fileAndExhaust.getJetFile());
+    }
+
+    @NotNull
+    private static JetFileAndExhaust compileKotlinToDirAndGetFileAndExhaust(
+            File kotlinFile,
+            File outDir,
+            Disposable disposable,
+            ConfigurationKind configurationKind
+    ) throws IOException {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable, configurationKind);
-        GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(), Collections.singletonList(
-                fileAndExhaust.getJetFile()));
+        GenerationState state = GenerationUtils
+                .compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(),
+                                                Collections.singletonList(
+                                                        fileAndExhaust.getJetFile()));
         ClassFileFactory classFileFactory = state.getFactory();
         CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, outDir);
-        return fileAndExhaust.getExhaust();
+        return fileAndExhaust;
     }
 
     @NotNull
@@ -100,7 +129,15 @@ public final class LoadDescriptorUtil {
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
         JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());
+        KotlinLightClassResolver lightClassResolver =
+                CliLightClassGenerationSupport.getInstanceForCli(jetCoreEnvironment.getProject()).getLightClassResolver();
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                jetCoreEnvironment.getProject(),
+                null, // TODO
+                new LockBasedStorageManager(),
+                null, // TODO
+                GlobalSearchScope.allScope(jetCoreEnvironment.getProject())
+        );
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         PackageViewDescriptor packageViewDescriptor =
                 javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
@@ -132,10 +169,11 @@ public final class LoadDescriptorUtil {
     @NotNull
     public static PackageViewDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) throws Exception {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable, configurationKind);
-        PackageViewDescriptor namespace =
-                fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
-        assert namespace != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
-        return namespace;
+        PackageViewDescriptor packageView = fileAndExhaust.getExhaust().getModuleSourcesManager().getSubModuleForFile(
+                fileAndExhaust.getJetFile())
+                .getPackageView(TEST_PACKAGE_FQNAME);
+        assert packageView != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
+        return packageView;
     }
 
     private static class JetFileAndExhaust {

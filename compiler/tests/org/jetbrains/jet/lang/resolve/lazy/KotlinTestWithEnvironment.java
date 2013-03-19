@@ -20,6 +20,10 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
+import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
     private JetCoreEnvironment environment;
@@ -46,5 +50,20 @@ public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmen
     @NotNull
     public Project getProject() {
         return getEnvironment().getProject();
+    }
+
+    @NotNull
+    public ModuleSourcesManager getModuleSourcesManager() {
+        return KotlinModuleManager.SERVICE.getService(getProject()).getSourcesManager();
+    }
+
+    @NotNull
+    public ModuleDescriptor getModuleDescriptor() {
+        return KotlinModuleManager.SERVICE.getService(getProject()).getModules().iterator().next();
+    }
+
+    @NotNull
+    public SubModuleDescriptor getSubModuleDescriptor() {
+        return getModuleDescriptor().getSubModules().iterator().next();
     }
 }

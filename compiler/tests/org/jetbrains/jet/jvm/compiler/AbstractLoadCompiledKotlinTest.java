@@ -19,16 +19,15 @@ package org.jetbrains.jet.jvm.compiler;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME;
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetSubModule;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
 /**
@@ -39,11 +38,9 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
     public void doTest(@NotNull String ktFileName) throws Exception {
         File ktFile = new File(ktFileName);
         File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
-        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(),
-                                                                        ConfigurationKind.JDK_ONLY);
+        SubModuleDescriptor subModule = compileKotlinToDirAndGetSubModule(ktFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        PackageViewDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                                                                                  TEST_PACKAGE_FQNAME);
+        PackageViewDescriptor namespaceFromSource = subModule.getPackageView(TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().getName());
         PackageViewDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(

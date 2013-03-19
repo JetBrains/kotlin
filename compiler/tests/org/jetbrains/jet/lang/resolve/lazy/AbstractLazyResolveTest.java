@@ -26,7 +26,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.resolve.ExpectedResolveData;
 import org.jetbrains.jet.resolve.JetExpectedResolveDataUtil;
 
@@ -73,7 +73,7 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
 
         KotlinCodeAnalyzer resolveSession = LazyResolveTestUtil.resolveLazilyWithSession(files, getEnvironment());
 
-        PackageViewDescriptor actual = resolveSession.getPackageDescriptor(Name.identifier("test"));
+        PackageViewDescriptor actual = getSubModuleDescriptor().getPackageView(new FqName("test"));
         Assert.assertNotNull("Package 'test' was not found", actual);
 
         resolveSession.forceResolveAll();

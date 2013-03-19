@@ -95,7 +95,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
                 fileProject,
                 javaResolverTrace,
-                javaModule,
                 null, // TODO light class resolver
                 new LockBasedStorageManager(),
                 subModule,

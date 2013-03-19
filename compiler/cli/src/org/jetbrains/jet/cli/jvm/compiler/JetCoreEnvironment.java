@@ -47,6 +47,9 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -59,6 +62,7 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -101,7 +105,7 @@ public class JetCoreEnvironment {
         project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
         project.registerService(CliIndexManager.class, new CliIndexManager(this));
 
-        SimpleKotlinModuleManager moduleManager = new SimpleKotlinModuleManager(this, "cli", JavaToKotlinClassMap.getInstance());
+        SimpleKotlinModuleManager moduleManager = new SimpleKotlinModuleManager(this, "cli", createLazyJavaClassMap());
         project.registerService(KotlinModuleManager.class, moduleManager);
 
         CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport(project);
@@ -132,6 +136,22 @@ public class JetCoreEnvironment {
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
         KotlinBuiltIns.initialize(project);
+    }
+
+    private static PlatformToKotlinClassMap createLazyJavaClassMap() {
+        return new PlatformToKotlinClassMap() {
+            @NotNull
+            @Override
+            public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {
+                return JavaToKotlinClassMap.getInstance().mapPlatformClass(classDescriptor);
+            }
+
+            @NotNull
+            @Override
+            public Collection<ClassDescriptor> mapPlatformClassesInside(@NotNull DeclarationDescriptor containingDeclaration) {
+                return JavaToKotlinClassMap.getInstance().mapPlatformClassesInside(containingDeclaration);
+            }
+        };
     }
 
     public CompilerConfiguration getConfiguration() {

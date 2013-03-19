@@ -79,7 +79,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         builtIns = KotlinBuiltIns.getInstance();
 
-        InjectorForTests injector = new InjectorForTests(getProject());
+        InjectorForTests injector = new InjectorForTests(getProject(), getModuleSourcesManager());
         descriptorResolver = injector.getDescriptorResolver();
         typeResolver = injector.getTypeResolver();
         expressionTypingServices = injector.getExpressionTypingServices();
@@ -621,14 +621,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        PackageViewDescriptor testData = moduleDescriptor.getRootNamespace().getMemberScope().getPackage(Name.identifier("testData"));
+        PackageViewDescriptor testData = getSubModuleDescriptor().getPackageView(FqName.ROOT).getMemberScope().getPackage(Name.identifier("testData"));
         return addImports(testData.getMemberScope());
     }
 
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject(), null, null, null, null);
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());

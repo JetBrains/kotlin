@@ -34,12 +34,11 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.util.NamespaceComparator;
@@ -229,20 +228,20 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
             configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(new File(dir, "kotlin").getAbsolutePath()));
             JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
-            ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<test module>"));
+            ModuleDescriptor moduleDescriptor = new MutableModuleDescriptor(Name.special("<test module>"), JavaToKotlinClassMap.getInstance());
 
             // we need the same binding trace for resolve from Java and Kotlin
             BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
 
             InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(),
                                                                                                     trace,
-                                                                                                    moduleDescriptor);
+                                                                                                    null, null, null, null);
 
             InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                     environment.getProject(),
                     new TopDownAnalysisParameters(Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
                     trace,
-                    moduleDescriptor);
+                    KotlinModuleManager.SERVICE.getService(environment.getProject()).getSourcesManager());
 
             injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 

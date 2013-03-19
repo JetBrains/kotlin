@@ -22,8 +22,10 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
@@ -33,7 +35,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class JetOverloadTest extends JetLiteFixture {
 
-    private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
+    private ModuleDescriptor root = new MutableModuleDescriptor(Name.special("<test_root>"), PlatformToKotlinClassMap.EMPTY);
     private KotlinBuiltIns builtIns;
     private DescriptorResolver descriptorResolver;
 
@@ -45,7 +47,7 @@ public class JetOverloadTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        InjectorForTests injector = new InjectorForTests(getProject());
+        InjectorForTests injector = new InjectorForTests(getProject(), getModuleSourcesManager());
         builtIns = injector.getKotlinBuiltIns();
         descriptorResolver = injector.getDescriptorResolver();
     }

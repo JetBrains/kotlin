@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -24,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.AnnotationValue;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -207,7 +209,8 @@ public class AnnotationJavaDescriptorResolverTest extends AbstractJavaResolverDe
 
     @NotNull
     private ValueParameterDescriptor getValueParameterDescriptor(@NotNull String annotationTypeName, @NotNull String parameterName) {
-        ClassDescriptor clazz = javaDescriptorResolver.resolveClass(new FqName(annotationTypeName));
+        FqName fqName = new FqName(annotationTypeName);
+        ClassDescriptor clazz = resolveClass(fqName);
         assertNotNull("Cannot resolve class with name " + annotationTypeName, clazz);
         ValueParameterDescriptor valueParameterDescriptor =
                 getValueParameterDescriptorForAnnotationParameter(Name.identifier(parameterName), clazz);
@@ -215,9 +218,14 @@ public class AnnotationJavaDescriptorResolverTest extends AbstractJavaResolverDe
         return valueParameterDescriptor;
     }
 
+    private ClassDescriptor resolveClass(FqName fqName) {
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
+        return javaDescriptorResolver.resolveClass(psiClass);
+    }
+
     @NotNull
     private AnnotationDescriptor getAnnotationInClassByType(@NotNull String className, @NotNull String type) throws IOException {
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName(DEFAULT_PACKAGE + "." + className));
+        ClassDescriptor classDescriptor = resolveClass(new FqName(DEFAULT_PACKAGE + "." + className));
         assertNotNull("Cannot resolve class with name " + className, classDescriptor);
         List<AnnotationDescriptor> annotations = classDescriptor.getAnnotations();
         assertEquals(annotations.size(), 1);

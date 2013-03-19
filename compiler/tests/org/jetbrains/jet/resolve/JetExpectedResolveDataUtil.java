@@ -116,7 +116,7 @@ public class JetExpectedResolveDataUtil {
 
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project, null, null, null, null);
         PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.THROW);
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, psiClass);
         return psiClass;
@@ -129,7 +129,7 @@ public class JetExpectedResolveDataUtil {
             Project project,
             JetType... parameterTypes
     ) {
-        ExpressionTypingServices expressionTypingServices = new InjectorForTests(project).getExpressionTypingServices();
+        ExpressionTypingServices expressionTypingServices = new InjectorForTests(project, null).getExpressionTypingServices();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),

@@ -27,7 +27,9 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -54,9 +56,9 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         JetFile psiFile = JetPsiFactory.createFile(getProject(), FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
-        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        ModuleDescriptor lazyModule = new MutableModuleDescriptor(Name.special("<lazy module>"), JavaToKotlinClassMap.getInstance());
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
-        final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule, injectorForTopDownAnalyzer.getModuleConfiguration(),
+        final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule, null /*TODO*/,
                                                     new FileBasedDeclarationProviderFactory(storageManager, files));
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
