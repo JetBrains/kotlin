@@ -15,7 +15,7 @@ JetFile: ShebangIncorrect.ktscript
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace(' ')
       BINARY_EXPRESSION
-        TUPLE
+        PsiErrorElement:Tuples are not supported. Use data classes instead.
           PsiElement(HASH)('#')
           PsiElement(EXCL)('!')
           PsiErrorElement:Expecting an expression
@@ -26,7 +26,7 @@ JetFile: ShebangIncorrect.ktscript
           PsiElement(IDENTIFIER)('usr')
       PsiWhiteSpace('\n\n')
       BINARY_EXPRESSION
-        TUPLE
+        PsiErrorElement:Tuples are not supported. Use data classes instead.
           PsiElement(HASH)('#')
           PsiElement(EXCL)('!')
           PsiErrorElement:Expecting an expression

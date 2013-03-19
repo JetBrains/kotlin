@@ -1564,7 +1564,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "#" "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
      *   ;
      */
-    @Deprecated // Tuples are to be removed in Kotlin M4
+    @Deprecated // Tuples are dropped, but parsing is left to minimize surprising. This code should be removed some time (in Kotlin 1.0?)
     private void parseTupleType() {
         assert _at(HASH);
 
@@ -1572,7 +1572,7 @@ public class JetParsing extends AbstractJetParsing {
 
         myBuilder.disableNewlines();
         advance(); // HASH
-        expect(LPAR, "Expecting a tuple type in the form of '#(...)");
+        consumeIf(LPAR);
 
         if (!at(RPAR)) {
             while (true) {
@@ -1581,11 +1581,9 @@ public class JetParsing extends AbstractJetParsing {
                 }
 
                 if (at(IDENTIFIER) && lookahead(1) == COLON) {
-                    PsiBuilder.Marker labeledEntry = mark();
                     advance(); // IDENTIFIER
                     advance(); // COLON
                     parseTypeRef();
-                    labeledEntry.done(LABELED_TUPLE_TYPE_ENTRY);
                 }
                 else if (TYPE_REF_FIRST.contains(tt())) {
                     parseTypeRef();
@@ -1599,10 +1597,10 @@ public class JetParsing extends AbstractJetParsing {
             }
         }
 
-        expect(RPAR, "Expecting ')");
+        consumeIf(RPAR);
         myBuilder.restoreNewlinesState();
 
-        tuple.done(TUPLE_TYPE);
+        tuple.error("Tuples are not supported. Use data classes instead.");
     }
 
     /*

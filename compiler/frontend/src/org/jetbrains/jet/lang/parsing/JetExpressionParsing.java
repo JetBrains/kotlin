@@ -1608,7 +1608,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : "#" "(" (((SimpleName "=")? expression){","})? ")"
      *   ;
      */
-    @Deprecated // Tuples are to be removed in Kotlin M4
+    @Deprecated // Tuples are dropped, but parsing is left to minimize surprising. This code should be removed some time (in Kotlin 1.0?)
     private void parseTupleExpression() {
         assert _at(HASH);
         PsiBuilder.Marker mark = mark();
@@ -1619,15 +1619,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (!at(RPAR)) {
             while (true) {
                 while (at(COMMA)) {
-                    errorAndAdvance("Expecting a tuple entry (element)");
+                    advance();
                 }
 
                 if (at(IDENTIFIER) && lookahead(1) == EQ) {
-                    PsiBuilder.Marker entry = mark();
                     advance(); // IDENTIFIER
                     advance(); // EQ
                     parseExpression();
-                    entry.done(LABELED_TUPLE_ENTRY);
                 }
                 else {
                     parseExpression();
@@ -1637,16 +1635,15 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 advance(); // COMMA
 
                 if (at(RPAR)) {
-                    error("Expecting a tuple entry (element)");
                     break;
                 }
             }
 
         }
-        expect(RPAR, "Expecting ')'");
+        consumeIf(RPAR);
         myBuilder.restoreNewlinesState();
 
-        mark.done(TUPLE);
+        mark.error("Tuples are not supported. Use data classes instead.");
     }
 
     /*
