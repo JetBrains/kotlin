@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -174,7 +173,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
 
-    private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType, JetType actualType) {
+    private static boolean checkBinaryWithTypeRHS(
+            JetBinaryExpressionWithTypeRHS expression,
+            ExpressionTypingContext context,
+            @NotNull JetType targetType,
+            JetType actualType
+    ) {
         JetSimpleNameExpression operationSign = expression.getOperationSign();
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.COLON) {
@@ -194,7 +198,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
     }
 
-    private void checkForCastImpossibility(JetBinaryExpressionWithTypeRHS expression, JetType actualType, JetType targetType, ExpressionTypingContext context) {
+    private static void checkForCastImpossibility(
+            JetBinaryExpressionWithTypeRHS expression,
+            JetType actualType,
+            JetType targetType,
+            ExpressionTypingContext context
+    ) {
         if (actualType == null || targetType == NO_EXPECTED_TYPE) return;
 
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
@@ -362,18 +371,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return false;
     }
 
-    @NotNull
-    private List<JetType> checkArgumentTypes(@NotNull List<JetType> argumentTypes, @NotNull List<JetExpression> arguments, @NotNull List<TypeProjection> expectedArgumentTypes, @NotNull ExpressionTypingContext context) {
-        if (arguments.size() == 0 || argumentTypes.size() != arguments.size() || expectedArgumentTypes.size() != arguments.size()) {
-            return argumentTypes;
-        }
-        List<JetType> result = Lists.newArrayListWithCapacity(arguments.size());
-        for (int i = 0, argumentTypesSize = argumentTypes.size(); i < argumentTypesSize; i++) {
-            result.add(DataFlowUtils.checkType(argumentTypes.get(i), arguments.get(i), context.replaceExpectedType(expectedArgumentTypes.get(i).getType())));
-        }
-        return result;
-    }
-
     @Override
     public JetTypeInfo visitThisExpression(JetThisExpression expression, ExpressionTypingContext context) {
         JetType result = null;
@@ -419,7 +416,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         throw new IllegalStateException("Unknown code: " + resolutionResult.getCode());
     }
 
-    private JetTypeInfo errorInSuper(JetSuperExpression expression, ExpressionTypingContext context) {
+    private static JetTypeInfo errorInSuper(JetSuperExpression expression, ExpressionTypingContext context) {
         JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
         if (superTypeQualifier != null) {
             context.expressionTypingServices.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
@@ -427,7 +424,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
-    private JetType checkPossiblyQualifiedSuper(
+    private static JetType checkPossiblyQualifiedSuper(
             JetSuperExpression expression,
             ExpressionTypingContext context,
             ReceiverParameterDescriptor thisReceiver
@@ -507,7 +504,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull // No class receivers
-    private LabelResolver.LabeledReceiverResolutionResult resolveToReceiver(
+    private static LabelResolver.LabeledReceiverResolutionResult resolveToReceiver(
             JetLabelQualifiedInstanceExpression expression,
             ExpressionTypingContext context,
             boolean onlyClassReceivers
@@ -544,7 +541,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
     }
 
-    private boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
+    private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
         return receiver.getContainingDeclaration() instanceof ClassDescriptor;
     }
 
@@ -553,7 +550,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return visitBlockExpression(expression, context, false);
     }
 
-    public JetTypeInfo visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
+    public static JetTypeInfo visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
         return context.expressionTypingServices.getBlockReturnedType(context.scope, expression, isStatement
                                                                                                 ? CoercionStrategy.COERCION_TO_UNIT
                                                                                                 : CoercionStrategy.NO_COERCION, context, context.trace);
@@ -642,6 +639,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType returnType = resolutionResults.getResultingDescriptor().getReturnType();
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
+            assert returnType != null : "returnType is null for " + resolutionResults.getResultingDescriptor();
             if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, KotlinBuiltIns.getInstance().getUnitType())) {
                 result = ErrorUtils.createErrorType(KotlinBuiltIns.UNIT_ALIAS.getName());
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
@@ -710,18 +708,18 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
     }
 
-    private boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
+    private static boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
         JetType type = context.trace.get(EXPRESSION_TYPE, expression);
         assert type != null : "This method is only supposed to be called when the type is not null";
         DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext());
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
-    public void checkLValue(BindingTrace trace, JetExpression expression) {
+    public static void checkLValue(BindingTrace trace, JetExpression expression) {
         checkLValue(trace, expression, false);
     }
 
-    private void checkLValue(BindingTrace trace, JetExpression expressionWithParenthesis, boolean canBeThis) {
+    private static void checkLValue(BindingTrace trace, JetExpression expressionWithParenthesis, boolean canBeThis) {
         JetExpression expression = JetPsiUtil.deparenthesizeWithNoTypeResolution(expressionWithParenthesis);
         if (expression instanceof JetArrayAccessExpression) {
             checkLValue(trace, ((JetArrayAccessExpression) expression).getArrayExpression(), true);
@@ -998,7 +996,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-        /*package*/ OverloadResolutionResults<FunctionDescriptor> getResolutionResultsForBinaryCall(JetScope scope, Name name, ExpressionTypingContext context, JetBinaryExpression binaryExpression, ExpressionReceiver receiver) {
+    static
+        /*package*/ OverloadResolutionResults<FunctionDescriptor> getResolutionResultsForBinaryCall(
+            JetScope scope,
+            Name name,
+            ExpressionTypingContext context,
+            JetBinaryExpression binaryExpression,
+            ExpressionReceiver receiver
+    ) {
 //        ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
         return context.replaceScope(scope).resolveCallWithGivenName(
                 CallMaker.makeCall(receiver, binaryExpression),

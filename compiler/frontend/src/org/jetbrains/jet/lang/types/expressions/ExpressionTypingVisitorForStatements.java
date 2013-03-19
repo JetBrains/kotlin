@@ -69,7 +69,11 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Nullable
-    private JetType checkAssignmentType(@Nullable JetType assignmentType, @NotNull JetBinaryExpression expression, @NotNull ExpressionTypingContext context) {
+    private static JetType checkAssignmentType(
+            @Nullable JetType assignmentType,
+            @NotNull JetBinaryExpression expression,
+            @NotNull ExpressionTypingContext context
+    ) {
         if (assignmentType != null && !KotlinBuiltIns.getInstance().isUnit(assignmentType) && context.expectedType != TypeUtils.NO_EXPECTED_TYPE &&
             TypeUtils.equalTypes(context.expectedType, assignmentType)) {
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
@@ -227,13 +231,15 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         // Check for '+='
         Name name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
         TemporaryBindingTrace assignmentOperationTrace = TemporaryBindingTrace.create(context.trace, "trace to check assignment operation like '+=' for", expression);
-        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = basic.getResolutionResultsForBinaryCall(scope, name, context.replaceBindingTrace(assignmentOperationTrace), expression, receiver);
+        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
+                scope, name, context.replaceBindingTrace(assignmentOperationTrace), expression, receiver);
         JetType assignmentOperationType = OverloadResolutionResultsUtil.getResultType(assignmentOperationDescriptors);
 
         // Check for '+'
         Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
         TemporaryBindingTrace binaryOperationTrace = TemporaryBindingTrace.create(context.trace, "trace to check binary operation like '+' for", expression);
-        OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = basic.getResolutionResultsForBinaryCall(scope, counterpartName, context.replaceBindingTrace(binaryOperationTrace), expression, receiver);
+        OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
+                scope, counterpartName, context.replaceBindingTrace(binaryOperationTrace), expression, receiver);
         JetType binaryOperationType = OverloadResolutionResultsUtil.getResultType(binaryOperationDescriptors);
 
         JetType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
@@ -265,7 +271,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
             dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
-            basic.checkLValue(context.trace, expression.getLeft());
+            BasicExpressionTypingVisitor.checkLValue(context.trace, expression.getLeft());
         }
         temporaryBindingTrace.commit();
         return JetTypeInfo.create(checkAssignmentType(type, expression, contextWithExpectedType), dataFlowInfo);
@@ -280,7 +286,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
             if (right == null) return JetTypeInfo.create(null, context.dataFlowInfo);
             JetTypeInfo typeInfo = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
-            basic.checkLValue(context.trace, arrayAccessExpression);
+            BasicExpressionTypingVisitor.checkLValue(context.trace, arrayAccessExpression);
             return JetTypeInfo.create(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType),
                                       typeInfo.getDataFlowInfo());
         }
@@ -292,7 +298,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             dataFlowInfo = rightInfo.getDataFlowInfo();
         }
         if (leftType != null) { //if leftType == null, some another error has been generated
-            basic.checkLValue(context.trace, expression.getLeft());
+            BasicExpressionTypingVisitor.checkLValue(context.trace, expression.getLeft());
         }
         return DataFlowUtils.checkStatementType(expression, contextWithExpectedType, dataFlowInfo);
     }
@@ -336,7 +342,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context) {
-        return basic.visitBlockExpression(expression, context, true);
+        return BasicExpressionTypingVisitor.visitBlockExpression(expression, context, true);
     }
 
     @Override
