@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Trinity;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
 import org.jetbrains.asm4.Type;
@@ -101,46 +102,34 @@ public class FrameMap {
             return "inconsistent";
         }
 
-        class Tuple3<A, B, C> {
-            private final A _1;
-            private final B _2;
-            private final C _3;
-
-            Tuple3(A _1, B _2, C _3) {
-                this._1 = _1;
-                this._2 = _2;
-                this._3 = _3;
-            }
-        }
-
-        List<Tuple3<DeclarationDescriptor, Integer, Integer>> descriptors = Lists.newArrayList();
+        List<Trinity<DeclarationDescriptor, Integer, Integer>> descriptors = Lists.newArrayList();
 
         for (Object descriptor0 : myVarIndex.keys()) {
             DeclarationDescriptor descriptor = (DeclarationDescriptor) descriptor0;
             int varIndex = myVarIndex.get(descriptor);
             int varSize = myVarSizes.get(descriptor);
-            descriptors.add(new Tuple3<DeclarationDescriptor, Integer, Integer>(descriptor, varIndex, varSize));
+            descriptors.add(Trinity.create(descriptor, varIndex, varSize));
         }
 
-        Collections.sort(descriptors, new Comparator<Tuple3<DeclarationDescriptor, Integer, Integer>>() {
+        Collections.sort(descriptors, new Comparator<Trinity<DeclarationDescriptor, Integer, Integer>>() {
             @Override
             public int compare(
-                    Tuple3<DeclarationDescriptor, Integer, Integer> left,
-                    Tuple3<DeclarationDescriptor, Integer, Integer> right
+                    Trinity<DeclarationDescriptor, Integer, Integer> left,
+                    Trinity<DeclarationDescriptor, Integer, Integer> right
             ) {
-                return left._2 - right._2;
+                return left.second - right.second;
             }
         });
 
         sb.append("size=").append(myMaxIndex);
 
         boolean first = true;
-        for (Tuple3<DeclarationDescriptor, Integer, Integer> t : descriptors) {
+        for (Trinity<DeclarationDescriptor, Integer, Integer> t : descriptors) {
             if (!first) {
                 sb.append(", ");
             }
             first = false;
-            sb.append(t._1).append(",i=").append(t._2).append(",s=").append(t._3);
+            sb.append(t.first).append(",i=").append(t.second).append(",s=").append(t.third);
         }
 
         return sb.toString();
