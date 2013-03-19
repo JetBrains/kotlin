@@ -9,9 +9,6 @@ bq. See [Types]
 Foo<Bar<X>, T, Object> // user type
 (A, Object) -> Foo // function type
 () -> Foo // function with no arguments
-#(A, B, C) // tuple type
-#(a : A, b : B) // tuple type with named entries
-#() // 0-ary tuple type (Unit)
 
 */
 
@@ -24,7 +21,6 @@ typeDescriptor
   : selfType
   : functionType
   : userType
-  : tupleType
   : nullableType
   ;
 
@@ -49,11 +45,6 @@ optionalProjection
 
 functionType
   : (type ".")? "(" (parameter | modifiers /*lazy out ref*/ type){","} ")" "->" type?
-  ;
-
-tupleType
-  : "#" "(" type{","}? ")"
-  : "#" "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
   ;
 
 ////////////////////////////////////////

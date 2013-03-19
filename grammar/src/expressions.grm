@@ -106,7 +106,6 @@ atomicExpression
   : "(" expression ")"
   : literalConstant
   : functionLiteral
-  : tupleLiteral
   : "this" label?
   : "super" ("<" type ">")? label?
   : if
@@ -240,10 +239,6 @@ jump
   : "continue" label?
   : "break" label?
 // yield ?
-  ;
-
-tupleLiteral
-  : "#" "(" (((SimpleName "=")? expression){","})? ")"
   ;
 
 // one can use "it" as a parameter name
