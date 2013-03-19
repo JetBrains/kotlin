@@ -267,7 +267,7 @@ public class CodegenBinding {
         Collection<JetFile> result = Lists.newArrayList();
 
         for (SubModuleDescriptor subModule : module.getSubModules()) {
-            Collection<PackageFragmentDescriptor> fragments = subModule.getPackageFragments(packageFqName);
+            Collection<PackageFragmentDescriptor> fragments = subModule.getPackageFragmentProvider().getPackageFragments(packageFqName);
 
             for (PackageFragmentDescriptor fragment : fragments) {
                 result.addAll(moduleManager.getPackageFragmentSources(fragment));

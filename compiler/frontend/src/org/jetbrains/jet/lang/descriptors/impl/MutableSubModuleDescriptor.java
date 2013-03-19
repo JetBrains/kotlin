@@ -20,11 +20,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
@@ -50,8 +48,8 @@ public class MutableSubModuleDescriptor extends AbstractSubModuleDescriptor {
 
     @NotNull
     @Override
-    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-        return compositePackageFragmentProvider.getPackageFragments(fqName);
+    public PackageFragmentProvider getPackageFragmentProvider() {
+        return compositePackageFragmentProvider;
     }
 
     public void addPackageFragmentProvider(@NotNull PackageFragmentProvider provider) {

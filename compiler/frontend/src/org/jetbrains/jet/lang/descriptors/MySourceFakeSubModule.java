@@ -54,7 +54,7 @@ import java.util.List;
 
     @NotNull
     @Override
-    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+    public PackageFragmentProvider getPackageFragmentProvider() {
         throw new UnsupportedOperationException();
     }
 

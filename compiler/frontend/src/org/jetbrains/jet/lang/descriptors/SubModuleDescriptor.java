@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Submodules roughly correspond to root types, i.e. 'src" and 'test'
  */
-public interface SubModuleDescriptor extends DeclarationDescriptor, PackageFragmentProvider {
+public interface SubModuleDescriptor extends DeclarationDescriptor {
 
     SubModuleDescriptor MY_SOURCE = MySourceFakeSubModule.MY_SOURCE;
 
@@ -35,12 +35,8 @@ public interface SubModuleDescriptor extends DeclarationDescriptor, PackageFragm
     @Override
     ModuleDescriptor getContainingDeclaration();
 
-    /**
-     * @return package fragments for the given fqName as declared in this submodule
-     */
-    @Override
     @NotNull
-    List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
+    PackageFragmentProvider getPackageFragmentProvider();
 
     /**
      * @return a package as seen from this submodule (i.e. including its own declarations and immediate dependencies)
