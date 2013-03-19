@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import com.intellij.util.NotNullFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -65,6 +67,8 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
     private final Predicate<FqNameUnsafe> specialClasses;
     private final Function<FqName, Name> classifierAliases;
 
+    private final MemoizedFunctionToNotNull<FqName, List<PackageFragmentDescriptor>> packageFragments;
+
     @Deprecated // Internal use only
     public LazyCodeAnalyzer(
             @NotNull Project project,
@@ -84,6 +88,28 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
         this.declarationProviderFactory = declarationProviderFactory;
         this.moduleSourcesManager = moduleSourcesManager;
         this.subModule = subModule;
+
+        this.packageFragments = storageManager.createMemoizedFunction(
+                new NotNullFunction<FqName, List<PackageFragmentDescriptor>>() {
+                    @NotNull
+                    @Override
+                    public List<PackageFragmentDescriptor> fun(FqName fqName) {
+                        return createPackageFragments(fqName);
+                    }
+                },
+                StorageManager.ReferenceKind.STRONG
+        );
+    }
+
+    @NotNull
+    private List<PackageFragmentDescriptor> createPackageFragments(@NotNull FqName fqName) {
+        LazyCodeAnalyzer outer = this;
+        PackageMemberDeclarationProvider provider = outer.declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
+        if (provider == null) return Collections.emptyList();
+
+        return Collections.<PackageFragmentDescriptor>singletonList(
+                new LazyPackageDescriptor(outer, outer.subModule, fqName, provider)
+        );
     }
 
     @NotNull
@@ -93,12 +119,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
             @NotNull
             @Override
             public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-                PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
-                if (provider == null) return Collections.emptyList();
-
-                return Collections.<PackageFragmentDescriptor>singletonList(
-                        new LazyPackageDescriptor(LazyCodeAnalyzer.this, subModule, fqName, provider)
-                );
+                return packageFragments.fun(fqName);
             }
         };
     }
