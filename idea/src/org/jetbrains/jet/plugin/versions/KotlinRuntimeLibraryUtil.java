@@ -33,7 +33,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.packaging.impl.elements.ManifestFileUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -54,12 +53,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 
 public class KotlinRuntimeLibraryUtil {
-    public static final String UNKNOWN_VERSION = "UNKNOWN";
-
     private KotlinRuntimeLibraryUtil() {}
 
     @NotNull
@@ -166,20 +161,6 @@ public class KotlinRuntimeLibraryUtil {
                 replaceFile(runtimePath, localJar);
             }
         });
-    }
-
-    @Nullable
-    public static String getLibraryVersion(@Nullable VirtualFile kotlinStdJar) {
-        if (kotlinStdJar == null) return null;
-        VirtualFile manifestFile = kotlinStdJar.findFileByRelativePath(JarFile.MANIFEST_NAME);
-        if (manifestFile != null) {
-            Attributes attributes = ManifestFileUtil.readManifest(manifestFile).getMainAttributes();
-            if (attributes.containsKey(Attributes.Name.IMPLEMENTATION_VERSION)) {
-                return attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
-            }
-        }
-
-        return UNKNOWN_VERSION;
     }
 
     @Nullable
