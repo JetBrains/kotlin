@@ -1003,6 +1003,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/typeMismatch/beforeComponentFunctionReturnTypeMismatch4.kt");
         }
         
+        @TestMetadata("beforeComponentFunctionReturnTypeMismatch5.kt")
+        public void testComponentFunctionReturnTypeMismatch5() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeComponentFunctionReturnTypeMismatch5.kt");
+        }
+        
         @TestMetadata("beforeHasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeHasNextFunctionReturnTypeMismatch.kt");

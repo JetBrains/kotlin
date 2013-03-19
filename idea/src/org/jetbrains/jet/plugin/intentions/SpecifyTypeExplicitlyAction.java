@@ -274,7 +274,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling == null ? null : nextSibling.getNode());
     }
 
-    public static void removeTypeAnnotation(JetProperty property) {
+    public static void removeTypeAnnotation(JetVariableDeclaration property) {
         removeTypeAnnotation(property.getNameIdentifier(), property.getTypeRef());
     }
 

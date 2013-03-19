@@ -91,17 +91,22 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
     }
 
     @NotNull
+    public static JetMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
+        String componentName = ((DiagnosticWithParameters3<JetExpression, Name, JetType, JetType>) diagnostic).getA().getName();
+        int componentIndex = Integer.valueOf(componentName.substring(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX.length()));
+        JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
+        assert multiDeclaration != null : "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration";
+        return multiDeclaration.getEntries().get(componentIndex - 1);
+    }
+
+    @NotNull
     public static JetIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                String componentName = ((DiagnosticWithParameters3<JetExpression, Name, JetType, JetType>) diagnostic).getA().getName();
-                int componentIndex = Integer.valueOf(componentName.substring(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX.length()));
-                JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
-                assert multiDeclaration != null : "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration";
-                JetMultiDeclarationEntry entry = multiDeclaration.getEntries().get(componentIndex - 1);
-                BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) multiDeclaration.getContainingFile().getContainingFile()).getBindingContext();
+                JetMultiDeclarationEntry entry = getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
+                BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) entry.getContainingFile().getContainingFile()).getBindingContext();
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
