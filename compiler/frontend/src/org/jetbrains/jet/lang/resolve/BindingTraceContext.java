@@ -21,10 +21,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.util.slicedmap.MutableSlicedMap;
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.SlicedMapImpl;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +29,8 @@ import java.util.List;
 public class BindingTraceContext implements BindingTrace {
     private final List<Diagnostic> diagnostics = Lists.newArrayList();
 
+    // This line is used for debugging of "Rewrite at slice..." exceptions
+    //private final MutableSlicedMap map = new TrackingSlicedMap(SlicedMapImpl.create());
     private final MutableSlicedMap map = SlicedMapImpl.create();
 
     private final BindingContext bindingContext = new BindingContext() {
