@@ -46,10 +46,10 @@ deprecated("Use sortedSetOf(...) instead")
 public fun sortedSet<T>(comparator: Comparator<T>, vararg values: T) : TreeSet<T> = sortedSetOf(comparator, *values)
 
 /**
- * Returns a new [[HashMap]] populated with the given tuple values where the first value in each tuple
+ * Returns a new [[HashMap]] populated with the given pairs where the first value in each pair
  * is the key and the second value is the value
  *
- * @includeFunctionBody ../../test/MapTest.kt createUsingTuples
+ * @includeFunctionBody ../../test/MapTest.kt createUsingPairs
  */
 public fun <K,V> hashMapOf(vararg values: Pair<K,V>): HashMap<K,V> {
     val answer = HashMap<K,V>(values.size)
@@ -67,7 +67,7 @@ deprecated("Use mapOf(...) or hashMapOf(...) instead")
 public fun <K,V> hashMap(vararg values: Pair<K,V>): HashMap<K,V> = hashMapOf(*values)
 
 /**
- * Returns a new [[SortedMap]] populated with the given tuple values where the first value in each tuple
+ * Returns a new [[SortedMap]] populated with the given pairs where the first value in each pair
  * is the key and the second value is the value
  *
  * @includeFunctionBody ../../test/MapTest.kt createSortedMap
@@ -88,7 +88,7 @@ deprecated("Use sortedMapOf(...) instead")
 public fun <K,V> sortedMap(vararg values: Pair<K, V>): SortedMap<K,V> = sortedMapOf(*values)
 
 /**
- * Returns a new [[LinkedHashMap]] populated with the given tuple values where the first value in each tuple
+ * Returns a new [[LinkedHashMap]] populated with the given pairs where the first value in each pair
  * is the key and the second value is the value. This map preserves insertion order so iterating through
  * the map's entries will be in the same order
  *

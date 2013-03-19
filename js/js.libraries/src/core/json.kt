@@ -14,10 +14,10 @@ public fun Json.set(paramName : String, value : Any?) : Unit = js.noImpl
 library("jsonGet")
 public fun Json.get(paramName : String) : Any? = js.noImpl
 
-library("jsonFromTuples")
+library("jsonFromPairs")
 public fun json(vararg pairs : Pair<String, Any?>) : Json = js.noImpl
 
-library("jsonFromTuples")
+library("jsonFromPairs")
 public fun json2(pairs : Array<Pair<String, Any?>>) : Json = js.noImpl
 
 library("jsonAddProperties")

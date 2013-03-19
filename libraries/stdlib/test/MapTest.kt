@@ -127,7 +127,7 @@ class MapTest {
         assertEquals(arrayList("beer2", "Mells2"), m2.values().toList())
     }
 
-    test fun createUsingTuples() {
+    test fun createUsingPairs() {
         val map = hashMap(Pair("a", 1), Pair("b", 2))
         assertEquals(2, map.size)
         assertEquals(1, map.get("a"))

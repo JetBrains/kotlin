@@ -343,7 +343,7 @@ public trait Traversable<T>: Iterable<T> {
     }
 
     /**
-    * Convert collection of arbitrary elements to collection of tuples of the index and the element
+    * Convert collection of arbitrary elements to collection of pairs of the index and the element
     *
     * @includeFunctionBody ../../test/ListTest.kt withIndices
     */

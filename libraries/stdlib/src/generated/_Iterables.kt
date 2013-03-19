@@ -245,7 +245,7 @@ public inline fun <T> Iterable<T>.withIndices() : Iterator<Pair<Int, T>> {
 
 /**
  * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it._2}) returns list sorted by second element of tuple
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
  */
 public inline fun <T, R: Comparable<R>> Iterable<T>.sortBy(f: (T) -> R) : List<T> {
     val sortedList = toCollection(ArrayList<T>())

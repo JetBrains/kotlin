@@ -106,7 +106,7 @@ native public fun String.getBytes(charset : java.nio.charset.Charset) : ByteArra
 
 native public fun String.getBytes(charsetName : String) : ByteArray = (this as java.lang.String).getBytes(charsetName)!!
 
-native public fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Tuple0 = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)!!
+native public fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)!!
 
 native public fun String.intern() : String = (this as java.lang.String).intern()!!
 

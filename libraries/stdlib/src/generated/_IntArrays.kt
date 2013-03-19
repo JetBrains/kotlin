@@ -333,7 +333,7 @@ public inline fun IntArray.withIndices() : Iterator<Pair<Int, Int>> {
 
 /**
  * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it._2}) returns list sorted by second element of tuple
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
  */
 public inline fun <R: Comparable<R>> IntArray.sortBy(f: (Int) -> R) : List<Int> {
     val sortedList = toCollection(ArrayList<Int>())

@@ -76,9 +76,9 @@ public class LazyResolveDescriptorRendererTestGenerated extends AbstractLazyReso
         doTest("compiler/testData/renderer/KeywordsInNames.kt");
     }
     
-    @TestMetadata("TupleTypes.kt")
-    public void testTupleTypes() throws Exception {
-        doTest("compiler/testData/renderer/TupleTypes.kt");
+    @TestMetadata("UnitType.kt")
+    public void testUnitType() throws Exception {
+        doTest("compiler/testData/renderer/UnitType.kt");
     }
     
 }

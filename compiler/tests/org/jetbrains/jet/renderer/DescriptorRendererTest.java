@@ -61,7 +61,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
         doTest();
     }
 
-    public void testTupleTypes() throws IOException {
+    public void testUnitType() throws IOException {
         doTest();
     }
 

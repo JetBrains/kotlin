@@ -531,7 +531,7 @@ var kotlin = {set:function (receiver, key, value) {
         return obj.toString();
     };
 
-    Kotlin.jsonFromTuples = function (pairArr) {
+    Kotlin.jsonFromPairs = function (pairArr) {
         var i = pairArr.length;
         var res = {};
         while (i > 0) {

@@ -8,10 +8,10 @@ public fun <K, V> MutableMap<K, V>.set(key : K, value : V): Unit {
 }
 
 /**
- * Returns a new [[HashMap]] populated with the given tuple values where the first value in each tuple
+ * Returns a new [[HashMap]] populated with the given pairs where the first value in each pair
  * is the key and the second value is the value
  *
- * @includeFunctionBody ../../test/MapTest.kt createUsingTuples
+ * @includeFunctionBody ../../test/MapTest.kt createUsingPairs
  */
 public inline fun <K,V> hashMap(vararg values: Pair<K,V>): HashMap<K,V> {
     val answer = HashMap<K,V>()
