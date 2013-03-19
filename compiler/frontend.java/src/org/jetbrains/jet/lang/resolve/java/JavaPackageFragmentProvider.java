@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
@@ -37,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -104,12 +106,27 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     @NotNull
     @Override
-    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull final FqName fqName) {
+    public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
         PackageFragmentDescriptor fragment = getPackageFragment(fqName);
         if (fragment == null) {
             return Collections.emptyList();
         }
         return Collections.singletonList(fragment);
+    }
+
+    @NotNull
+    @Override
+    public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+        PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
+        if (psiPackage == null) {
+            return Collections.emptyList();
+        }
+        PsiPackage[] subPackages = psiPackage.getSubPackages(psiClassFinder.getDefiningSearchScope());
+        Collection<FqName> result = Lists.newArrayList();
+        for (PsiPackage subPackage : subPackages) {
+            result.add(new FqName(subPackage.getQualifiedName()));
+        }
+        return result;
     }
 
     // This particular provider creates no more than one fragment per package

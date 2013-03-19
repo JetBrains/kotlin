@@ -47,4 +47,14 @@ public class CompositePackageFragmentProvider implements PackageFragmentProvider
         }
         return result;
     }
+
+    @NotNull
+    @Override
+    public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+        List<FqName> result = Lists.newArrayList();
+        for (PackageFragmentProvider child : children) {
+            result.addAll(child.getSubPackagesOf(fqName));
+        }
+        return result;
+    }
 }

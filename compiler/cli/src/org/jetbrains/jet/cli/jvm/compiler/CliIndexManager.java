@@ -16,17 +16,15 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.impl.PackageIndex;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
 
@@ -58,66 +56,39 @@ public class CliIndexManager {
     }
 
     public boolean packageExists(@NotNull FqName packageFqName) {
-        return index.getValue().getAllPackages().contains(packageFqName);
+        return index.getValue().packageIndex.getAllPackages().contains(packageFqName);
     }
 
     @NotNull
     public Collection<FqName> getSubpackagesOf(@NotNull FqName parent) {
-        return index.getValue().getSubPackagesOf(parent);
+        return index.getValue().packageIndex.getSubPackagesOf(parent);
     }
 
     private static class Index {
-        public static final Name PRESENCE_CHILDREN_MARKER = Name.special("<no children>");
 
         @NotNull
         public static Index compute(@NotNull JetCoreEnvironment jetCoreEnvironment) {
             List<JetFile> files = jetCoreEnvironment.getSourceFiles();
             Multimap<FqName, JetFile> packageToSources = HashMultimap.create();
-            Multimap<FqName, Name> subPackages = HashMultimap.create();
+            PackageIndex.Builder packageIndex = new PackageIndex.Builder();
             for (JetFile jetFile : files) {
                 FqName fqName = JetPsiUtil.getFQName(jetFile);
                 packageToSources.put(fqName, jetFile);
-                addPackageAndParents(fqName, subPackages);
+                packageIndex.addPackage(fqName);
             }
-            return new Index(packageToSources.asMap(), subPackages.asMap());
-        }
-
-        private static void addPackageAndParents(FqName fqName, Multimap<FqName, Name> children) {
-            children.put(fqName, PRESENCE_CHILDREN_MARKER);
-            if (fqName.isRoot()) return;
-            children.put(fqName.parent(), fqName.shortName());
-            addPackageAndParents(fqName.parent(), children);
+            return new Index(packageToSources.asMap(), packageIndex.build());
         }
 
         private final Map<FqName, Collection<JetFile>> packageToSources;
-        // foo -> {foo, foo.bar}
-        private final Map<FqName, Collection<Name>> subPackages;
+        private final PackageIndex packageIndex;
 
         private Index(
                 @NotNull Map<FqName, Collection<JetFile>> packageToSources,
-                @NotNull Map<FqName, Collection<Name>> subPackages
+                @NotNull PackageIndex packageIndex
         ) {
             this.packageToSources = packageToSources;
-            this.subPackages = subPackages;
+            this.packageIndex = packageIndex;
         }
 
-        @NotNull
-        public Set<FqName> getAllPackages() {
-            return subPackages.keySet();
-        }
-
-        @NotNull
-        public Set<FqName> getSubPackagesOf(@NotNull FqName parent) {
-            return doGetSubPackagesOf(parent, Sets.<FqName>newHashSet());
-        }
-
-        private Set<FqName> doGetSubPackagesOf(FqName parent, Set<FqName> result) {
-            Collection<Name> immediateChildren = subPackages.get(parent);
-            for (Name childName : immediateChildren) {
-                if (childName == PRESENCE_CHILDREN_MARKER) continue;
-                result.add(parent.child(childName));
-            }
-            return result;
-        }
     }
 }

@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -120,6 +121,16 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
             @Override
             public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
                 return packageFragments.fun(fqName);
+            }
+
+            @NotNull
+            @Override
+            public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+                PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
+                if (provider == null) {
+                    return Collections.emptyList();
+                }
+                return provider.getAllDeclaredPackages();
             }
         };
     }

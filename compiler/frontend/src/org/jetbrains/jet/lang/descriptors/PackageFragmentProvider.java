@@ -25,4 +25,10 @@ import java.util.List;
 public interface PackageFragmentProvider {
     @NotNull
     List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
+
+    /**
+     * @return declared subpackages of {@code fqName}
+     */
+    @NotNull
+    Collection<FqName> getSubPackagesOf(@NotNull FqName fqName);
 }

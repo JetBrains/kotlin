@@ -32,6 +32,8 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
     private final Multimap<FqName, MutablePackageFragmentDescriptor> packageFragments = ArrayListMultimap.create();
 
     private final SubModuleDescriptor subModule;
+    private final PackageIndex.Builder packageIndexBuilder = new PackageIndex.Builder();
+    private PackageIndex packageIndex;
 
     public MutablePackageFragmentProvider(@NotNull SubModuleDescriptor subModule) {
         this.subModule = subModule;
@@ -45,7 +47,20 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
     }
 
     @NotNull
+    @Override
+    public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+        if (packageIndex == null) {
+            packageIndex = packageIndexBuilder.build();
+        }
+        return packageIndex.getSubPackagesOf(fqName);
+    }
+
+    @NotNull
     public MutablePackageFragmentDescriptor addPackageFragment(@NotNull PackageFragmentKind kind, @NotNull FqName fqName) {
+        if (packageIndex != null) {
+            throw new IllegalStateException("Trying to add a package after getSubpackagesOf() was called: " + fqName);
+        }
+
         // We use one fragment per kind
         Collection<MutablePackageFragmentDescriptor> fragments = packageFragments.get(fqName);
         for (MutablePackageFragmentDescriptor fragment : fragments) {
@@ -54,6 +69,7 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
 
         MutablePackageFragmentDescriptor result = new MutablePackageFragmentDescriptor(subModule, kind, fqName);
         packageFragments.put(fqName, result);
+        packageIndexBuilder.addPackage(fqName);
 
         return result;
     }
