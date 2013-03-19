@@ -23,25 +23,35 @@ import java.io.PrintStream;
 public class GenerateFunctions {
     private static final int MAX_PARAM_COUNT = 22;
 
-    private static void generateFunctions(PrintStream out, int count, boolean extension) {
+    private enum FunctionKind {
+        FUNCTION("Functions.jet", "Function", false),
+        EXTENSION_FUNCTION("ExtensionFunctions.jet", "ExtensionFunction", true);
+
+        private final String fileName;
+        private final String classNamePrefix;
+        private final boolean hasReceiverParameter;
+
+        private FunctionKind(String fileName, String classNamePrefix, boolean hasReceiverParameter) {
+            this.fileName = fileName;
+            this.classNamePrefix = classNamePrefix;
+            this.hasReceiverParameter = hasReceiverParameter;
+        }
+    }
+
+    private static void generateFunctions(PrintStream out, int count, FunctionKind kind) {
         generated(out);
         for (int i = 0; i <= count; i++) {
-            out.print("public abstract class " + (extension ? "ExtensionFunction" : "Function") + i);
+            out.print("public abstract class " + kind.classNamePrefix + i);
             out.print("<");
-            if (extension) {
-                out.print("in T");
-                if (count > 0) {
-                    out.print(", ");
-                }
+            if (kind.hasReceiverParameter) {
+                out.print("in T, ");
             }
             for (int j = 1; j <= i; j++) {
-                out.print("in P" + j);
-                out.print(", ");
+                out.print("in P" + j + ", ");
             }
             out.print("out R> {");
             out.println();
-            out.print("  public abstract fun " + (extension ? "T." : "") +
-                      "invoke(");
+            out.print("  public abstract fun " + (kind.hasReceiverParameter ? "T." : "") + "invoke(");
             for (int j = 1; j <= i; j++) {
                 out.print("p" + j + ": " + "P" + j);
                 if (j < i) {
@@ -65,13 +75,11 @@ public class GenerateFunctions {
         File baseDir = new File("compiler/frontend/src/jet/");
         assert baseDir.exists() : "Base dir does not exist: " + baseDir.getAbsolutePath();
 
-        PrintStream functions = new PrintStream(new File(baseDir, "Functions.jet"));
-        generateFunctions(functions, MAX_PARAM_COUNT, false);
-        functions.close();
-
-        PrintStream extensionFunctions = new PrintStream(new File(baseDir, "ExtensionFunctions.jet"));
-        generateFunctions(extensionFunctions, MAX_PARAM_COUNT, true);
-        extensionFunctions.close();
+        for (FunctionKind kind : FunctionKind.values()) {
+            PrintStream functions = new PrintStream(new File(baseDir, kind.fileName));
+            generateFunctions(functions, MAX_PARAM_COUNT, kind);
+            functions.close();
+        }
     }
 
     private GenerateFunctions() {
