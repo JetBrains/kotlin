@@ -744,14 +744,6 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitTupleExpression(JetTupleExpression expression) {
-            for (JetExpression entry : expression.getEntries()) {
-                generateInstructions(entry, false);
-            }
-            builder.read(expression);
-        }
-
-        @Override
         public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
             IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
             if (operationType == JetTokens.COLON || operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {

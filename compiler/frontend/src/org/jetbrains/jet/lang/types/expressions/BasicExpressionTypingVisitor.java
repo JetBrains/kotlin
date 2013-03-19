@@ -362,12 +362,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return false;
     }
 
-    @Override
-    public JetTypeInfo visitTupleExpression(JetTupleExpression expression, ExpressionTypingContext context) {
-        // TODO: remove this method completely when tuples are droppped
-        throw new IllegalStateException("Tuples are not supported: " + expression.getText());
-    }
-
     @NotNull
     private List<JetType> checkArgumentTypes(@NotNull List<JetType> argumentTypes, @NotNull List<JetExpression> arguments, @NotNull List<TypeProjection> expectedArgumentTypes, @NotNull ExpressionTypingContext context) {
         if (arguments.size() == 0 || argumentTypes.size() != arguments.size() || expectedArgumentTypes.size() != arguments.size()) {

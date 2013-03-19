@@ -151,11 +151,6 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    @Deprecated // Tuples are to be removed in Kotlin M4
-    public void visitTupleExpression(JetTupleExpression expression) {
-        visitExpression(expression);
-    }
-
     public void visitPrefixExpression(JetPrefixExpression expression) {
         visitUnaryExpression(expression);
     }
