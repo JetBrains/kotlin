@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -25,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
 import java.util.List;
 
 public class PackageViewFromSubModule extends PackageViewDescriptorImpl {
@@ -42,6 +45,19 @@ public class PackageViewFromSubModule extends PackageViewDescriptorImpl {
             @NotNull List<PackageFragmentDescriptor> fragments
     ) {
         super(subModule, fqName, fragments);
+    }
+
+    @NotNull
+    @Override
+    protected Collection<PackageViewDescriptor> getSubPackages(@NotNull FqName fqName) {
+        Collection<FqName> subPackages = getViewContext().getPackageFragmentProvider().getSubPackagesOf(fqName);
+        return Collections2.transform(subPackages,
+                                      new Function<FqName, PackageViewDescriptor>() {
+                                          @Override
+                                          public PackageViewDescriptor apply(FqName subPackage) {
+                                              return getViewContext().getPackageView(subPackage);
+                                          }
+                                      });
     }
 
     @NotNull

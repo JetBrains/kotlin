@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
+import com.google.common.collect.Lists;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
+import java.util.Collection;
 import java.util.List;
 
 public abstract class PackageViewDescriptorImpl extends PackageLikeDescriptorBase implements PackageViewDescriptor {
@@ -36,7 +38,7 @@ public abstract class PackageViewDescriptorImpl extends PackageLikeDescriptorBas
     public PackageViewDescriptorImpl(
             @NotNull DeclarationDescriptor viewContext,
             @NotNull FqName fqName,
-            @NotNull List<PackageFragmentDescriptor> fragments
+            @NotNull final List<PackageFragmentDescriptor> fragments
     ) {
         super(fqName);
         this.viewContext = viewContext;
@@ -53,8 +55,21 @@ public abstract class PackageViewDescriptorImpl extends PackageLikeDescriptorBas
             public PackageViewDescriptor getPackage(@NotNull Name name) {
                 return getSubPackage(name);
             }
+
+            @NotNull
+            @Override
+            public Collection<DeclarationDescriptor> getAllDescriptors() {
+                Collection<DeclarationDescriptor> descriptors = Lists.newArrayList(super.getAllDescriptors());
+                for (PackageFragmentDescriptor fragment : fragments) {
+                    descriptors.addAll(getSubPackages(fragment.getFqName()));
+                }
+                return descriptors;
+            }
         };
     }
+
+    @NotNull
+    protected abstract Collection<PackageViewDescriptor> getSubPackages(@NotNull FqName fqName);
 
     @NotNull
     @Override

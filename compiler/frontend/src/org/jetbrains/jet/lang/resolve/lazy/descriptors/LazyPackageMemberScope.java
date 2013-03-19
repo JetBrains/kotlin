@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -78,9 +77,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
 
     @Override
     protected void addExtraDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-        for (FqName packageFqName : declarationProvider.getAllDeclaredPackages()) {
-            result.add(getPackage(packageFqName.shortName()));
-        }
+        // package fragments do not own subpackages
     }
 
     @Override
