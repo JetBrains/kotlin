@@ -2,5 +2,5 @@ package test
 
 public trait LoadIterator</*0*/ T> : java.lang.Object {
     public abstract fun getIterator() : jet.MutableIterator<T>?
-    public abstract fun setIterator(/*0*/ p0 : jet.Iterator<T>?) : Unit
+    public abstract fun setIterator(/*0*/ p0 : jet.Iterator<T>?) : jet.Unit
 }

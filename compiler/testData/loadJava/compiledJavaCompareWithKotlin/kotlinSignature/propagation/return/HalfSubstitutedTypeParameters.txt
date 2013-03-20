@@ -12,10 +12,10 @@ public trait HalfSubstitutedTypeParameters : java.lang.Object {
     
     public trait TrickyList</*0*/ X, /*1*/ E> : jet.MutableList<E> {
         public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e : E) : jet.Boolean
-        public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index : jet.Int, /*1*/ element : E) : Unit
+        public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index : jet.Int, /*1*/ element : E) : jet.Unit
         public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c : jet.Collection<E>) : jet.Boolean
         public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index : jet.Int, /*1*/ c : jet.Collection<E>) : jet.Boolean
-        public abstract override /*1*/ /*fake_override*/ fun clear() : Unit
+        public abstract override /*1*/ /*fake_override*/ fun clear() : jet.Unit
         public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
         public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
         public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index : jet.Int) : E

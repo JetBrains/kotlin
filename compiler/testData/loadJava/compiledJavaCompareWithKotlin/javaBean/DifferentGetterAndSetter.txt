@@ -3,5 +3,5 @@ package test
 public open class DifferentGetterAndSetter : java.lang.Object {
     public constructor DifferentGetterAndSetter()
     public open fun getSomething() : jet.Int
-    public open fun setSomething(/*0*/ p0 : jet.String?) : Unit
+    public open fun setSomething(/*0*/ p0 : jet.String?) : jet.Unit
 }

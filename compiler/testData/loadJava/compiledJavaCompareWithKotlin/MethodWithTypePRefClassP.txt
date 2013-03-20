@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithTypePRefClassP</*0*/ P> : java.lang.Object {
     public constructor MethodWithTypePRefClassP</*0*/ P>()
-    public final fun </*0*/ Q : P> f() : Unit
+    public final fun </*0*/ Q : P> f() : jet.Unit
 }

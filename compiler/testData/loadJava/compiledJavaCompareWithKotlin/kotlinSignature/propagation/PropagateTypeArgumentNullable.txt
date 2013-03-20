@@ -4,19 +4,19 @@ public trait PropagateTypeArgumentNullable : java.lang.Object {
     
     public trait Sub : test.PropagateTypeArgumentNullable.Super {
         public abstract override /*1*/ fun invOutR() : jet.MutableList<jet.List<jet.String?>>
-        public abstract override /*1*/ fun invOutS(/*0*/ p0 : jet.MutableList<jet.List<jet.String?>>) : Unit
+        public abstract override /*1*/ fun invOutS(/*0*/ p0 : jet.MutableList<jet.List<jet.String?>>) : jet.Unit
         public abstract override /*1*/ fun invR() : jet.MutableList<jet.String?>
-        public abstract override /*1*/ fun outOutS(/*0*/ p0 : jet.List<jet.List<jet.String?>>) : Unit
+        public abstract override /*1*/ fun outOutS(/*0*/ p0 : jet.List<jet.List<jet.String?>>) : jet.Unit
         public abstract override /*1*/ fun outR() : jet.List<jet.String?>
-        public abstract override /*1*/ fun outS(/*0*/ p0 : jet.List<jet.String?>) : Unit
+        public abstract override /*1*/ fun outS(/*0*/ p0 : jet.List<jet.String?>) : jet.Unit
     }
     
     public trait Super : java.lang.Object {
         public abstract fun invOutR() : jet.MutableList<jet.List<jet.String?>>
-        public abstract fun invOutS(/*0*/ p0 : jet.MutableList<jet.List<jet.String?>>) : Unit
+        public abstract fun invOutS(/*0*/ p0 : jet.MutableList<jet.List<jet.String?>>) : jet.Unit
         public abstract fun invR() : jet.MutableList<jet.String?>
-        public abstract fun outOutS(/*0*/ p0 : jet.List<jet.List<jet.String?>>) : Unit
+        public abstract fun outOutS(/*0*/ p0 : jet.List<jet.List<jet.String?>>) : jet.Unit
         public abstract fun outR() : jet.List<jet.String?>
-        public abstract fun outS(/*0*/ p0 : jet.List<jet.String?>) : Unit
+        public abstract fun outS(/*0*/ p0 : jet.List<jet.String?>) : jet.Unit
     }
 }

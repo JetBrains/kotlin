@@ -2,5 +2,5 @@ package test
 
 public open class RedundantProjectionKind : java.lang.Object {
     public constructor RedundantProjectionKind()
-    public open fun foo(/*0*/ p0 : jet.List<jet.Number>) : Unit
+    public open fun foo(/*0*/ p0 : jet.List<jet.Number>) : jet.Unit
 }

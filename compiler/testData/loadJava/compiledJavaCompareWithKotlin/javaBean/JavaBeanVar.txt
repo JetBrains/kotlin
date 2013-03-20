@@ -3,5 +3,5 @@ package test
 public open class JavaBeanVar : java.lang.Object {
     public constructor JavaBeanVar()
     public open fun getColor() : jet.String?
-    public open fun setColor(/*0*/ p0 : jet.String?) : Unit
+    public open fun setColor(/*0*/ p0 : jet.String?) : jet.Unit
 }

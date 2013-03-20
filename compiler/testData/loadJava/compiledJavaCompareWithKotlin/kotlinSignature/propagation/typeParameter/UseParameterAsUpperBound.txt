@@ -3,10 +3,10 @@ package test
 public trait UseParameterAsUpperBound : java.lang.Object {
     
     public trait Sub : test.UseParameterAsUpperBound.Super {
-        public abstract override /*1*/ fun </*0*/ B, /*1*/ A : B> foo(/*0*/ p0 : B, /*1*/ p1 : A) : Unit
+        public abstract override /*1*/ fun </*0*/ B, /*1*/ A : B> foo(/*0*/ p0 : B, /*1*/ p1 : A) : jet.Unit
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun </*0*/ A, /*1*/ B : A> foo(/*0*/ p0 : A, /*1*/ p1 : B) : Unit
+        public abstract fun </*0*/ A, /*1*/ B : A> foo(/*0*/ p0 : A, /*1*/ p1 : B) : jet.Unit
     }
 }

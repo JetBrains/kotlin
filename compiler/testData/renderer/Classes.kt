@@ -37,13 +37,13 @@ public trait TwoUpperBounds<T> where T: Number, T: Any
 //<X> defined in rendererTest.TheClass
 //private final val privateVal : jet.Int defined in rendererTest.TheClass
 //internal final val shouldBeFinal : jet.Int defined in rendererTest.TheClass
-//protected abstract fun foo() : Unit defined in rendererTest.TheClass
+//protected abstract fun foo() : jet.Unit defined in rendererTest.TheClass
 //private final class Inner defined in rendererTest.TheClass
 //public constructor Inner() defined in rendererTest.TheClass.Inner
 //internal final class InternalClass defined in rendererTest
 //public constructor InternalClass() defined in rendererTest.InternalClass
 //internal trait TheTrait defined in rendererTest
-//internal abstract fun abstractFun() : Unit defined in rendererTest.TheTrait
+//internal abstract fun abstractFun() : jet.Unit defined in rendererTest.TheTrait
 //internal class object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
 //private constructor <class-object-for-TheTrait>() defined in rendererTest.TheTrait.<class-object-for-TheTrait>
 //internal final fun classObjectFunction() : jet.Int defined in rendererTest.TheTrait.<class-object-for-TheTrait>

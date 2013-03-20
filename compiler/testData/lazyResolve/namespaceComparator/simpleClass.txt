@@ -5,23 +5,23 @@ internal final class A {
 }
 
 package p {
-    internal fun foo() : Unit
-    internal fun foo(/*0*/ a : test.p.C) : Unit
+    internal fun foo() : jet.Unit
+    internal fun foo(/*0*/ a : test.p.C) : jet.Unit
     
     internal final class C {
         /*primary*/ public constructor C()
-        internal final fun f() : Unit
+        internal final fun f() : jet.Unit
     }
     
     internal open class G</*0*/ T> {
         /*primary*/ public constructor G</*0*/ T>()
-        internal final fun a() : Unit
+        internal final fun a() : jet.Unit
         internal open fun f() : T
     }
     
     internal final class G2</*0*/ E> : test.p.G<E> {
         /*primary*/ public constructor G2</*0*/ E>()
-        internal final override /*1*/ /*fake_override*/ fun a() : Unit
+        internal final override /*1*/ /*fake_override*/ fun a() : jet.Unit
         internal open override /*1*/ fun f() : E
         internal final fun g() : E
     }

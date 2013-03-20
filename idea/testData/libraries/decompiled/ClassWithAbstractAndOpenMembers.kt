@@ -16,7 +16,7 @@ package testData.libraries
 
     [public open var openVarWithGetter : jet.String] /* compiled code */
 
-    [public abstract fun abstractFun() : Unit]
+    [public abstract fun abstractFun() : jet.Unit]
 
-    [public open fun openFun() : Unit { /* compiled code */ }]
+    [public open fun openFun() : jet.Unit { /* compiled code */ }]
 }]]

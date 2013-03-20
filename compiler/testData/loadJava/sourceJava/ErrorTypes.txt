@@ -3,13 +3,13 @@ package test
 public trait ErrorTypes : java.lang.Object {
     
     public trait Sub : test.ErrorTypes.Super {
-        public abstract fun errorTypeInParameter(/*0*/ list : jet.List<jet.Array<[ERROR : Unresolved java class: T]>?>?) : Unit
-        public abstract override /*1*/ /*fake_override*/ fun errorTypeInParameter(/*0*/ list : jet.List<jet.Array<[ERROR : Unresolved java class: T]>?>?) : Unit
+        public abstract fun errorTypeInParameter(/*0*/ list : jet.List<jet.Array<[ERROR : Unresolved java class: T]>?>?) : jet.Unit
+        public abstract override /*1*/ /*fake_override*/ fun errorTypeInParameter(/*0*/ list : jet.List<jet.Array<[ERROR : Unresolved java class: T]>?>?) : jet.Unit
         public abstract override /*1*/ fun returnErrorType() : [ERROR : Unresolved java class: T]
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun errorTypeInParameter(/*0*/ list : jet.List<jet.Array<[ERROR : Unresolved java class: T]>?>?) : Unit
+        public abstract fun errorTypeInParameter(/*0*/ list : jet.List<jet.Array<[ERROR : Unresolved java class: T]>?>?) : jet.Unit
         public abstract fun returnErrorType() : [ERROR : Unresolved java class: T]
     }
 }

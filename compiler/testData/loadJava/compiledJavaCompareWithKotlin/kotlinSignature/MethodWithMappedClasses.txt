@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithMappedClasses : java.lang.Object {
     public constructor MethodWithMappedClasses()
-    public open fun </*0*/ T> copy(/*0*/ p0 : jet.MutableList<in T>, /*1*/ p1 : jet.List<T>) : Unit
+    public open fun </*0*/ T> copy(/*0*/ p0 : jet.MutableList<in T>, /*1*/ p1 : jet.List<T>) : jet.Unit
 }

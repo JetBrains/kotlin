@@ -20,7 +20,7 @@ fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 deprecated("") fun deprecatedFun()
 
 //package rendererTest defined in root package
-//public fun pub() : Unit defined in rendererTest
+//public fun pub() : jet.Unit defined in rendererTest
 //internal fun int() : jet.String defined in rendererTest
 //internal fun int2(vararg ints : jet.Int) : jet.Int defined in rendererTest
 //value-parameter vararg val ints : jet.Int defined in rendererTest.int2
@@ -35,4 +35,4 @@ deprecated("") fun deprecatedFun()
 //internal trait Bar defined in rendererTest
 //internal fun <P> funTypeParameterWithTwoUpperBounds() : jet.Int where P : rendererTest.Foo, P : rendererTest.Bar defined in rendererTest
 //<P : rendererTest.Foo & rendererTest.Bar> defined in rendererTest.funTypeParameterWithTwoUpperBounds
-//jet.deprecated internal fun deprecatedFun() : Unit defined in rendererTest
+//jet.deprecated internal fun deprecatedFun() : jet.Unit defined in rendererTest

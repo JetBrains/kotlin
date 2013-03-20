@@ -2,5 +2,5 @@ package test
 
 public open class MethodTypePTwoUpperBounds : java.lang.Object {
     public constructor MethodTypePTwoUpperBounds()
-    public open fun </*0*/ T> foo() : Unit where T : java.lang.Cloneable?, T : java.lang.Runnable?
+    public open fun </*0*/ T> foo() : jet.Unit where T : java.lang.Cloneable?, T : java.lang.Runnable?
 }

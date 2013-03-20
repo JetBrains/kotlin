@@ -2,5 +2,5 @@ package test
 
 public open class ProtectedPackageFun : java.lang.Object {
     public constructor ProtectedPackageFun()
-    protected/*protected and package*/ open fun foo() : Unit
+    protected/*protected and package*/ open fun foo() : jet.Unit
 }

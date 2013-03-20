@@ -16,7 +16,7 @@ public final enum class StaticMembersInEnum : jet.Enum<test.StaticMembersInEnum>
 package StaticMembersInEnum {
     public val CONSTANT : test.StaticMembersInEnum
     public var STATIC_FIELD : jet.Int
-    public open fun foo() : Unit
-    public open fun valueOf(/*0*/ p0 : jet.Int) : Unit
-    public open fun values(/*0*/ p0 : jet.Int) : Unit
+    public open fun foo() : jet.Unit
+    public open fun valueOf(/*0*/ p0 : jet.Int) : jet.Unit
+    public open fun values(/*0*/ p0 : jet.Int) : jet.Unit
 }

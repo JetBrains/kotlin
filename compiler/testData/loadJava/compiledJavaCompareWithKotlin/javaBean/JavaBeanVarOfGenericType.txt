@@ -3,5 +3,5 @@ package test
 public open class JavaBeanVarOfGenericType</*0*/ P> : java.lang.Object {
     public constructor JavaBeanVarOfGenericType</*0*/ P>()
     public open fun getCharacters() : java.util.ArrayList<P>?
-    public open fun setCharacters(/*0*/ p0 : java.util.ArrayList<P>?) : Unit
+    public open fun setCharacters(/*0*/ p0 : java.util.ArrayList<P>?) : jet.Unit
 }

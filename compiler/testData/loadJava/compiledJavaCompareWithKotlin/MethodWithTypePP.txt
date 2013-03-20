@@ -2,5 +2,5 @@ package test
 
 public final class MethodWithTypePP : java.lang.Object {
     public constructor MethodWithTypePP()
-    public final fun </*0*/ P, /*1*/ Q : P> f() : Unit
+    public final fun </*0*/ P, /*1*/ Q : P> f() : jet.Unit
 }

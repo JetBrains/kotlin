@@ -3,7 +3,7 @@ package test
 public trait SubclassOfCollection</*0*/ E> : jet.MutableCollection<E> {
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e : E) : jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c : jet.Collection<E>) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun clear() : Unit
+    public abstract override /*1*/ /*fake_override*/ fun clear() : jet.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun isEmpty() : jet.Boolean

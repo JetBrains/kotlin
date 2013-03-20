@@ -5,7 +5,7 @@ internal final class B {
     
     internal final class B {
         /*primary*/ public constructor B()
-        internal final fun foo(/*0*/ b : test.B.B.C) : Unit
+        internal final fun foo(/*0*/ b : test.B.B.C) : jet.Unit
         
         internal final class C {
             /*primary*/ public constructor C()

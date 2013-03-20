@@ -2,5 +2,5 @@ package test
 
 public open class VarargReplacedWithNotVararg : java.lang.Object {
     public constructor VarargReplacedWithNotVararg()
-    public open fun foo(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : Unit
+    public open fun foo(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : jet.Unit
 }

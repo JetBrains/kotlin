@@ -3,10 +3,10 @@ package test
 public trait InheritVarargPrimitive : java.lang.Object {
     
     public trait Sub : test.InheritVarargPrimitive.Super {
-        public abstract override /*1*/ fun foo(/*0*/ vararg p0 : jet.Int /*jet.IntArray*/) : Unit
+        public abstract override /*1*/ fun foo(/*0*/ vararg p0 : jet.Int /*jet.IntArray*/) : jet.Unit
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun foo(/*0*/ vararg p0 : jet.Int /*jet.IntArray*/) : Unit
+        public abstract fun foo(/*0*/ vararg p0 : jet.Int /*jet.IntArray*/) : jet.Unit
     }
 }

@@ -5,15 +5,15 @@ public open class DeeplyInnerClass : java.lang.Object {
     
     public/*package*/ open inner class A : java.lang.Object {
         public/*package*/ constructor A()
-        public/*package*/ open fun a() : Unit
+        public/*package*/ open fun a() : jet.Unit
         
         public/*package*/ open inner class B : java.lang.Object {
             public/*package*/ constructor B()
-            public/*package*/ open fun b() : Unit
+            public/*package*/ open fun b() : jet.Unit
             
             public/*package*/ open inner class C : java.lang.Object {
                 public/*package*/ constructor C()
-                public/*package*/ open fun c() : Unit
+                public/*package*/ open fun c() : jet.Unit
             }
         }
     }

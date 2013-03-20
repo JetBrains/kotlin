@@ -2,5 +2,5 @@ package test
 
 public open class WrongTypeParameterBoundStructure1 : java.lang.Object {
     public constructor WrongTypeParameterBoundStructure1()
-    public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0 : A?, /*1*/ p1 : jet.List<B>?) : Unit where B : java.lang.Runnable?, B : jet.List<java.lang.Cloneable>?
+    public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0 : A?, /*1*/ p1 : jet.List<B>?) : jet.Unit where B : java.lang.Runnable?, B : jet.List<java.lang.Cloneable>?
 }
