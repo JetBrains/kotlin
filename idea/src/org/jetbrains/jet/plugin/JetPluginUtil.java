@@ -24,10 +24,13 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.LinkedList;
@@ -69,11 +72,9 @@ public class JetPluginUtil {
         if (ErrorUtils.isError(declaration)) {
             return false;
         }
-        while (!(declaration instanceof PackageViewDescriptor)) {
-            declaration = declaration.getContainingDeclaration();
-            assert declaration != null;
-        }
-        return libraryScope == ((PackageViewDescriptor) declaration).getMemberScope();
+        PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(declaration, PackageFragmentDescriptor.class);
+        assert packageFragment != null;
+        return libraryScope == DescriptorUtils.getCorrespondingPackageView(packageFragment).getMemberScope();
     }
 
     @NotNull

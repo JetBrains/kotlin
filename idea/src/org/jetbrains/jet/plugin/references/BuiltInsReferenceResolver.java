@@ -157,7 +157,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @Nullable
     private DeclarationDescriptor findCurrentDescriptorForMember(@NotNull MemberDescriptor originalDescriptor) {
-        DeclarationDescriptor containingDeclaration = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
+        DeclarationDescriptor packageViewParent = DescriptorUtils.getParentInPackageViewHierarchy(originalDescriptor);
+        DeclarationDescriptor containingDeclaration = findCurrentDescriptor(packageViewParent);
         JetScope memberScope = getMemberScope(containingDeclaration);
         if (memberScope == null) return null;
 

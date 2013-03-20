@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -263,7 +262,7 @@ public class AsmUtil {
                 return ACC_PROTECTED;
             }
         }
-        if (containingDeclaration instanceof PackageViewDescriptor) {
+        if (DescriptorUtils.isTopLevelDeclaration(memberDescriptor)) {
             return ACC_PUBLIC;
         }
         return null;

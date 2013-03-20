@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -372,7 +373,7 @@ public class CodegenBinding {
 
         String baseName = getJvmInternalName(bindingTrace, container).getInternalName();
         if (!baseName.isEmpty()) {
-            return baseName + (container instanceof PackageViewDescriptor ? "/" : "$") + name.getIdentifier();
+            return baseName + (DescriptorUtils.isTopLevelDeclaration(descriptor) ? "/" : "$") + name.getIdentifier();
         }
 
         return name.getIdentifier();

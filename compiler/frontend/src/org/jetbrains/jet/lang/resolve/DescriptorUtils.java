@@ -105,6 +105,9 @@ public class DescriptorUtils {
 
     @NotNull
     public static FqNameUnsafe getFQName(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof FqNamed) {
+            return ((FqNamed) descriptor).getFqName().toUnsafe();
+        }
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         if (descriptor instanceof ModuleDescriptor || containingDeclaration instanceof ModuleDescriptor) {
@@ -112,15 +115,6 @@ public class DescriptorUtils {
         }
 
         if (containingDeclaration == null) {
-            if (descriptor instanceof PackageViewDescriptor) {
-                // TODO: namespace must always have parent
-                if (descriptor.getName().equals(Name.identifier("jet"))) {
-                    return FqNameUnsafe.topLevel(Name.identifier("jet"));
-                }
-                if (descriptor.getName().equals(Name.special("<java_root>"))) {
-                    return FqName.ROOT.toUnsafe();
-                }
-            }
             throw new IllegalStateException("descriptor is not module descriptor and has null containingDeclaration: " + containingDeclaration);
         }
 
@@ -135,6 +129,31 @@ public class DescriptorUtils {
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
         return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
+    }
+
+    public static DeclarationDescriptor getParentInPackageViewHierarchy(@NotNull DeclarationDescriptor descriptor) {
+        assert !(descriptor instanceof ModuleDescriptor || descriptor instanceof SubModuleDescriptor)
+                : "Package view hierarchy does not make sense for modules and sub-modules";
+
+        if (descriptor instanceof PackageFragmentDescriptor) {
+            PackageFragmentDescriptor fragmentDescriptor = (PackageFragmentDescriptor) descriptor;
+            return getCorrespondingPackageView(fragmentDescriptor).getContainingDeclaration();
+        }
+
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            PackageFragmentDescriptor fragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
+            return getCorrespondingPackageView(fragmentDescriptor);
+        }
+
+        return containingDeclaration;
+    }
+
+    @NotNull
+    public static PackageViewDescriptor getCorrespondingPackageView(@NotNull PackageFragmentDescriptor descriptor) {
+        PackageViewDescriptor packageView = descriptor.getContainingDeclaration().getPackageView(descriptor.getFqName());
+        assert packageView != null : "No package view foudn for an existing package fragment";
+        return packageView;
     }
 
     public static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
@@ -236,7 +255,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isRootNamespace(@NotNull PackageViewDescriptor packageViewDescriptor) {
-        return packageViewDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
+        return packageViewDescriptor.getContainingDeclaration() == null;
     }
 
     @NotNull
@@ -247,8 +266,10 @@ public class DescriptorUtils {
             if (current instanceof PackageViewDescriptor && isRootNamespace((PackageViewDescriptor) current)) {
                 return Lists.reverse(path);
             }
+            assert current != null : "Something has a null parent, but is not a root package";
+
             path.add(current);
-            current = current.getContainingDeclaration();
+            current = getParentInPackageViewHierarchy(current);
         }
     }
 
@@ -299,10 +320,10 @@ public class DescriptorUtils {
     }
 
     public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof PackageViewDescriptor) {
+        if (isTopLevelDeclaration(descriptor)) {
             return true;
         }
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 

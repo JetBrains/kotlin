@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
@@ -110,12 +111,12 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
     // differs from DescriptorUtils - fails if reach PackageViewDescriptor
     public static boolean isAncestor(@NotNull DeclarationDescriptor ancestor,
             @NotNull DeclarationDescriptor declarationDescriptor) {
-        DeclarationDescriptor descriptor = declarationDescriptor.getContainingDeclaration();
-        while (descriptor != null && !(descriptor instanceof PackageViewDescriptor)) {
-            if (ancestor == descriptor) {
+        DeclarationDescriptor parent = declarationDescriptor.getContainingDeclaration();
+        while (!(DescriptorUtils.isTopLevelDeclaration(declarationDescriptor)) && parent != null) {
+            if (ancestor == parent) {
                 return true;
             }
-            descriptor = descriptor.getContainingDeclaration();
+            parent = parent.getContainingDeclaration();
         }
         return false;
     }

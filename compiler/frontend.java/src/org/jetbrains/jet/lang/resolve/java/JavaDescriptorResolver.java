@@ -78,8 +78,8 @@ public class JavaDescriptorResolver {
             }
             // protected static function or property
             else {
-                DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
-                assert whatDeclarationDescriptor instanceof PackageViewDescriptor : "Only static declarations can have protected_static visibility";
+                assert DescriptorUtils.isTopLevelDeclaration(what) : "Only static declarations can have protected_static visibility";
+                DeclarationDescriptor whatDeclarationDescriptor = DescriptorUtils.getParentInPackageViewHierarchy(what);
                 whatClass = DescriptorUtils.getClassForCorrespondingJavaNamespace((PackageViewDescriptor) whatDeclarationDescriptor);
             }
 

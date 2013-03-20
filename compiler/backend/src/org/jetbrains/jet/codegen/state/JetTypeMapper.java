@@ -65,7 +65,7 @@ public class JetTypeMapper extends BindingTraceAware {
         JetTypeMapperMode mapTypeMode = ownerKindToMapTypeMode(kind);
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof PackageViewDescriptor) {
+        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             return jvmClassNameForNamespace((PackageViewDescriptor) containingDeclaration);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
@@ -130,7 +130,7 @@ public class JetTypeMapper extends BindingTraceAware {
         for (DeclarationDescriptor pathElement : path) {
             PackageViewDescriptor ns = (PackageViewDescriptor) pathElement;
             if (r.length() > 0) {
-                JavaNamespaceKind nsKind = getNsKind((PackageViewDescriptor) ns.getContainingDeclaration());
+                JavaNamespaceKind nsKind = getNsKind(ns.getContainingDeclaration());
                 if (nsKind == JavaNamespaceKind.PROPER) {
                     r.append("/");
                 }
@@ -448,7 +448,7 @@ public class JetTypeMapper extends BindingTraceAware {
         JvmClassName ownerForDefaultParam;
         int invokeOpcode;
         JvmClassName thisClass;
-        if (functionParent instanceof PackageViewDescriptor) {
+        if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor.getOriginal())) {
             assert !superCall;
             owner = jvmClassNameForNamespace((PackageViewDescriptor) functionParent);
             ownerForDefaultImpl = ownerForDefaultParam = owner;

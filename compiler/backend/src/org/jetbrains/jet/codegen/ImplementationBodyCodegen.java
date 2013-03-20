@@ -189,7 +189,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isObjectLiteral = descriptor.getName().isSpecial() && descriptor.getKind() == ClassKind.OBJECT;
 
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
-                                          !(parentDescriptor instanceof PackageViewDescriptor || parentDescriptor instanceof ClassDescriptor);
+                                          !(DescriptorUtils.isTopLevelDeclaration(descriptor) || parentDescriptor instanceof ClassDescriptor);
         if (isLocalOrAnonymousClass) {
             String outerClassName = getOuterClassName(descriptor, typeMapper, bindingContext, state);
             FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);

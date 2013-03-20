@@ -96,7 +96,7 @@ public class OverloadResolver {
 
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             MutableClassDescriptor klass = entry.getValue();
-            DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
+            DeclarationDescriptor containingDeclaration = DescriptorUtils.getParentInPackageViewHierarchy(klass);
             if (containingDeclaration instanceof PackageViewDescriptor) {
                 PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
                 inNamespaces.put(new Key(packageViewDescriptor, klass.getName()), klass.getConstructors());
@@ -118,17 +118,17 @@ public class OverloadResolver {
         MultiMap<Key, CallableMemberDescriptor> functionsByName = MultiMap.create();
 
         for (SimpleFunctionDescriptor function : context.getFunctions().values()) {
-            DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
-            if (containingDeclaration instanceof PackageViewDescriptor) {
-                PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
+            if (DescriptorUtils.isTopLevelDeclaration(function)) {
+                PackageViewDescriptor packageViewDescriptor =
+                        (PackageViewDescriptor) DescriptorUtils.getParentInPackageViewHierarchy(function);
                 functionsByName.putValue(new Key(packageViewDescriptor, function.getName()), function);
             }
         }
         
         for (PropertyDescriptor property : context.getProperties().values()) {
-            DeclarationDescriptor containingDeclaration = property.getContainingDeclaration();
-            if (containingDeclaration instanceof PackageViewDescriptor) {
-                PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) containingDeclaration;
+            if (DescriptorUtils.isTopLevelDeclaration(property)) {
+                PackageViewDescriptor packageViewDescriptor =
+                        (PackageViewDescriptor) DescriptorUtils.getParentInPackageViewHierarchy(property);
                 functionsByName.putValue(new Key(packageViewDescriptor, property.getName()), property);
             }
         }

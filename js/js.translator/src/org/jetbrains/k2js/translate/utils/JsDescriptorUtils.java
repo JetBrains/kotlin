@@ -76,7 +76,7 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static DeclarationDescriptor getContainingDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        DeclarationDescriptor containing = DescriptorUtils.getParentInPackageViewHierarchy(descriptor);
         assert containing != null : "Should be called on objects that have containing declaration.";
         return containing;
     }

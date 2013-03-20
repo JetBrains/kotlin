@@ -33,7 +33,7 @@ public class Visibilities {
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
                 if ((parent instanceof ClassDescriptor && !DescriptorUtils.isClassObject(parent)) ||
-                    parent instanceof PackageViewDescriptor) {
+                    parent instanceof PackageFragmentDescriptor) {
                     break;
                 }
             }

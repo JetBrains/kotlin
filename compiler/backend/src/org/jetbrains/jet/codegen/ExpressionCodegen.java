@@ -1571,7 +1571,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            boolean isStatic = container instanceof PackageViewDescriptor;
+            boolean isStatic = DescriptorUtils.isTopLevelDeclaration(descriptor);
             final boolean directToField =
                     expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
             JetExpression r = getReceiverForSelector(expression);
@@ -1715,7 +1715,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert containingDeclaration != null;
         containingDeclaration = containingDeclaration.getOriginal();
 
-        boolean isStatic = containingDeclaration instanceof PackageViewDescriptor;
+        boolean isStatic = DescriptorUtils.isTopLevelDeclaration(propertyDescriptor);
         boolean overridesTrait = isOverrideForTrait(propertyDescriptor);
         boolean isFakeOverride = propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         PropertyDescriptor initialDescriptor = propertyDescriptor;
