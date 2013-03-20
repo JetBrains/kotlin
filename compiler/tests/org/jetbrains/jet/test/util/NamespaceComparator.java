@@ -76,7 +76,7 @@ public class NamespaceComparator {
         boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
         printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", RENDERER.render(descriptor));
 
-        if (descriptor instanceof ClassOrPackageDescriptor) {
+        if (descriptor instanceof ClassDescriptor || descriptor instanceof PackageViewDescriptor) {
             if (!topLevel) {
                 printer.printlnWithNoIndent(" {").pushIndent();
             }
