@@ -178,7 +178,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         }
 
         @Override
-        public Void visitNamespaceDescriptor(PackageViewDescriptor descriptor, Void data) {
+        public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
             return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
         }
 

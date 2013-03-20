@@ -60,7 +60,7 @@ public class ExpectedLoadErrorsUtil {
 
         namespaceFromJava.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
             @Override
-            public Void visitNamespaceDescriptor(PackageViewDescriptor descriptor, Void data) {
+            public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
                 return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
             }
 

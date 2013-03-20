@@ -352,19 +352,13 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
-            public Void visitNamespaceDescriptor(PackageViewDescriptor descriptor, Void data) {
+            public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
                 ForceResolveUtil.forceResolveAllContents(descriptor);
                 return null;
             }
 
             @Override
             public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                ForceResolveUtil.forceResolveAllContents(descriptor);
-                return null;
-            }
-
-            @Override
-            public Void visitModuleDeclaration(ModuleDescriptor descriptor, Void data) {
                 ForceResolveUtil.forceResolveAllContents(descriptor);
                 return null;
             }

@@ -688,13 +688,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         @Override
-        public Void visitNamespaceDescriptor(PackageViewDescriptor packageViewDescriptor, StringBuilder builder) {
-            renderNamespace(packageViewDescriptor, builder);
+        public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, StringBuilder builder) {
+            renderNamespace(descriptor, builder);
             return null;
         }
 
         @Override
-        public Void visitModuleDeclaration(ModuleDescriptor descriptor, StringBuilder builder) {
+        public Void visitModuleDescriptor(ModuleDescriptor descriptor, StringBuilder builder) {
             renderModuleOrScript(descriptor, builder);
             return null;
         }
