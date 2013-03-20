@@ -1,3 +1,3 @@
-class Some() {
+class   Some()   {
 val a : Int
 }
