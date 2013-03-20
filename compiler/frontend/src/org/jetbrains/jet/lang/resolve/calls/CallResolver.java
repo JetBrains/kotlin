@@ -320,10 +320,8 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         if (results.isSingleResult()) {
-            ResolvedCall<D> call = results.getResultingCall();
-            if (call instanceof ResolvedCallImpl) {
-                argumentTypeResolver.checkUnmappedArgumentTypes(context, ((ResolvedCallImpl<D>)call).getUnmappedArguments());
-            }
+            argumentTypeResolver.checkUnmappedArgumentTypes(
+                    context, results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments());
         }
 
         if (!results.isSingleResult()) return results;
@@ -436,13 +434,10 @@ public class CallResolver {
 
     private <D extends CallableDescriptor> OverloadResolutionResults<D> resolveFunctionArguments(
             @NotNull BasicCallResolutionContext context,
-            @NotNull OverloadResolutionResults<D> results
+            @NotNull OverloadResolutionResultsImpl<D> results
     ) {
         if (results.isSingleResult()) {
-            ResolvedCall<D> resolvedCall = results.getResultingCall();
-            if (resolvedCall instanceof ResolvedCallImpl) {
-                argumentTypeResolver.checkTypesForFunctionArguments(context, (ResolvedCallImpl<D>) resolvedCall);
-            }
+            argumentTypeResolver.checkTypesForFunctionArguments(context, results.getResultingCall().getCallToCompleteTypeArgumentInference());
         }
         else {
             argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(context);
