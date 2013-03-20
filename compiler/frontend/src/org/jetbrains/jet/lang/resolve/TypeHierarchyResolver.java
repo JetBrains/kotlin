@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -128,6 +129,8 @@ public class TypeHierarchyResolver {
             }
         }
 
+        resolvePackageHeaders();
+
         importsResolver.processTypeImports(outerScope);
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
@@ -144,6 +147,23 @@ public class TypeHierarchyResolver {
         //        computeSuperclasses();
 
         checkTypesInClassHeaders(); // Check bounds in the types used in generic bounds and supertype lists
+    }
+
+    private void resolvePackageHeaders() {
+        for (JetFile file : context.getFiles()) {
+            JetNamespaceHeader header = file.getNamespaceHeader();
+            if (header != null) {
+                SubModuleDescriptor subModule = moduleManager.getSubModuleForFile(file);
+
+                FqName fqName = FqName.ROOT;
+                for (JetSimpleNameExpression packageName : header.getPackageNameAsNameList()) {
+                    fqName = fqName.child(packageName.getReferencedNameAsName());
+                    PackageViewDescriptor packageView = subModule.getPackageView(fqName);
+                    assert packageView != null : "Package view not found: " + fqName;
+                    trace.record(BindingContext.REFERENCE_TARGET, packageName, packageView);
+                }
+            }
+        }
     }
 
     /**

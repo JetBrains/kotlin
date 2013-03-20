@@ -38,15 +38,18 @@ public class JetNamespaceHeader extends JetReferenceExpression {
 
     @NotNull
     public List<JetSimpleNameExpression> getParentNamespaceNames() {
-        List<JetSimpleNameExpression> parentParts = findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
-        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
-        parentParts.remove(lastPart);
-        return parentParts;
+        List<JetSimpleNameExpression> parentParts = getPackageNameAsNameList();
+        return parentParts.subList(0, parentParts.size() - 1);
     }
 
     @Nullable
     public JetSimpleNameExpression getLastPartExpression() {
         return (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    }
+
+    @NotNull
+    public List<JetSimpleNameExpression> getPackageNameAsNameList() {
+        return findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @NotNull
