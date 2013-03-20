@@ -18,8 +18,10 @@ package org.jetbrains.jet.plugin.framework;
 
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.*;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,17 +36,33 @@ public abstract class CachingLibraryPresentationProvider<T extends LibraryProper
     }
 
     public boolean isDetected(@NotNull List<VirtualFile> classesRoots) {
-        return cachedDetect(classesRoots, getKind());
+        return cachedDetect(classesRoots, getKind()) != null;
     }
 
-    private static boolean cachedDetect(@NotNull List<VirtualFile> classesRoots, @NotNull final LibraryKind libraryKind) {
-        return !LibraryDetectionManager.getInstance().processProperties(
+    @Nullable
+    public T getLibraryProperties(@NotNull Library library) {
+        return cachedDetect(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), getKind());
+    }
+
+    @Nullable
+    private T cachedDetect(@NotNull List<VirtualFile> classesRoots, @NotNull final LibraryKind libraryKind) {
+        final Ref<T> propertiesRef = new Ref<T>();
+
+        LibraryDetectionManager.getInstance().processProperties(
                 classesRoots,
                 new LibraryDetectionManager.LibraryPropertiesProcessor() {
                     @Override
                     public <P extends LibraryProperties> boolean processProperties(@NotNull LibraryKind processedKind, @NotNull P properties) {
-                        return !libraryKind.equals(processedKind);
+                        if (libraryKind.equals(processedKind)) {
+                            //noinspection unchecked
+                            propertiesRef.set((T)properties);
+                            return false;
+                        }
+
+                        return true;
                     }
                 });
+
+        return propertiesRef.get();
     }
 }

@@ -150,10 +150,7 @@ public class KotlinRuntimeLibraryUtil {
         return null;
     }
 
-    public static void updateRuntime(
-            @NotNull final Project project,
-            @NotNull final Runnable jarNotFoundHandler
-    ) {
+    public static void updateRuntime(@NotNull final Project project, @NotNull final Runnable jarNotFoundHandler) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -163,26 +160,12 @@ public class KotlinRuntimeLibraryUtil {
                     return;
                 }
 
-                VirtualFile runtimeJar = getLocalKotlinRuntimeJar(project);
-                assert runtimeJar != null;
+                VirtualFile localJar = getLocalKotlinRuntimeJar(project);
+                assert localJar != null;
 
-                try {
-                    File libraryJarPath = new File(runtimeJar.getPath());
-                    assert !FileUtil.filesEqual(runtimePath, libraryJarPath) : "Shouldn't be called for updating same file";
-
-                    FileUtil.copy(runtimePath, libraryJarPath);
-                }
-                catch (IOException e) {
-                    throw new AssertionError(e);
-                }
-                runtimeJar.refresh(true, true);
+                replaceFile(runtimePath, localJar);
             }
         });
-    }
-
-    @Nullable
-    public static String getRuntimeVersion(@NotNull Project project) {
-        return getLibraryVersion(getKotlinRuntimeJar(project));
     }
 
     @Nullable
@@ -207,7 +190,6 @@ public class KotlinRuntimeLibraryUtil {
         VirtualFile virtualFile = markerClass.getContainingFile().getVirtualFile();
         if (virtualFile == null) return null;
 
-
         ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
         return projectFileIndex.getClassRootForFile(virtualFile);
     }
@@ -222,5 +204,25 @@ public class KotlinRuntimeLibraryUtil {
             return localJarFile;
         }
         return kotlinRuntimeJar;
+    }
+
+    static void replaceFile(File updatedFile, VirtualFile replacedFile) {
+        try {
+            String localPath = com.intellij.util.PathUtil.getLocalPath(replacedFile);
+            assert localPath != null;
+
+            File libraryJarPath = new File(localPath);
+
+            if (FileUtil.filesEqual(updatedFile, libraryJarPath)) {
+                throw new IllegalArgumentException("Shouldn't be called for updating same file: " + updatedFile);
+            }
+
+            FileUtil.copy(updatedFile, libraryJarPath);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+
+        replacedFile.refresh(true, true);
     }
 }

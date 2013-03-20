@@ -17,6 +17,8 @@
 package org.jetbrains.jet.plugin.framework;
 
 import com.intellij.framework.library.LibraryVersionProperties;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,7 @@ import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class JavaRuntimePresentationProvider extends CachingLibraryPresentationProvider<LibraryVersionProperties> {
@@ -46,12 +49,27 @@ public class JavaRuntimePresentationProvider extends CachingLibraryPresentationP
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
+        VirtualFile stdJar = getRuntimeJar(classesRoots);
+        if (stdJar != null) {
+            return new LibraryVersionProperties(KotlinRuntimeLibraryUtil.getLibraryVersion(stdJar));
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static VirtualFile getRuntimeJar(@NotNull List<VirtualFile> classesRoots) {
         for (VirtualFile root : classesRoots) {
             if (root.getName().equals(PathUtil.KOTLIN_JAVA_RUNTIME_JAR)) {
-                return new LibraryVersionProperties(KotlinRuntimeLibraryUtil.getLibraryVersion(root));
+                return root;
             }
         }
 
         return null;
+    }
+
+    @Nullable
+    public static VirtualFile getRuntimeJar(@NotNull Library library) {
+        return getRuntimeJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
     }
 }
