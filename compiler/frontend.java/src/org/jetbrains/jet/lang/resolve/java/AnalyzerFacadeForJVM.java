@@ -217,6 +217,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         MutableModuleDescriptor module = new MutableModuleDescriptor(Name.special("<module>"), JavaToKotlinClassMap.getInstance());
         MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<submodule>"));
         module.addSubModule(subModule);
+        subModule.addDependency(KotlinBuiltIns.getInstance().getBuiltInsSubModule());
         for (JetFile file : files) {
             sourcesManager.registerRoot(subModule, PackageFragmentKind.SOURCE, file.getVirtualFile());
         }
@@ -250,7 +251,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
-            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, null /*get rid of ModuleConfiguration*/);
+            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, sourcesManager);
         } finally {
             injector.destroy();
         }
