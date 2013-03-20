@@ -1,0 +1,2 @@
+import test.A<caret>
+

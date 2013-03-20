@@ -1,0 +1,3 @@
+<node text="Object (java.lang)">
+  <node text="MyClass in Base ()" base="true"/>
+</node>

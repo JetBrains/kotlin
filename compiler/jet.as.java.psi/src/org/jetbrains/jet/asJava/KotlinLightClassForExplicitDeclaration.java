@@ -233,6 +233,13 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
 
     @Nullable
     @Override
+    public PsiElement getParent() {
+        if (classOrObject.getParent() == classOrObject.getContainingFile()) return getContainingFile();
+        return getContainingClass();
+    }
+
+    @Nullable
+    @Override
     public PsiTypeParameterList getTypeParameterList() {
         return typeParameterList.getValue();
     }
