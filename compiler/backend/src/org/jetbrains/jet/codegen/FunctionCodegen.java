@@ -81,7 +81,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
 
     public void generateMethod(
-            @NotNull PsiElement declaration,
+            @NotNull JetDeclaration declaration,
             @NotNull JvmMethodSignature jvmSignature,
             boolean needJetAnnotations,
             @Nullable String propertyTypeSignature,
@@ -112,7 +112,7 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     private void generateMethodHeaderAndBody(
-            @NotNull PsiElement declaration,
+            @NotNull JetDeclaration declaration,
             @NotNull JvmMethodSignature jvmSignature,
             boolean needJetAnnotations,
             @Nullable String propertyTypeSignature,
@@ -152,7 +152,7 @@ public class FunctionCodegen extends GenerationStateAware {
         if (expectedThisObject != null) {
             thisType = typeMapper.mapType(expectedThisObject.getType());
         }
-        else if (declaration instanceof JetFunctionLiteralExpression || isLocalFun(bindingContext, functionDescriptor)) {
+        else if (declaration instanceof JetFunctionLiteral || isLocalFun(bindingContext, functionDescriptor)) {
             thisType = typeMapper.mapType(context.getThisDescriptor());
         }
         else {
@@ -167,7 +167,7 @@ public class FunctionCodegen extends GenerationStateAware {
     @NotNull
     private MethodBounds generateMethodBody(
             @NotNull MethodVisitor mv,
-            @NotNull PsiElement funOrProperty,
+            @NotNull JetDeclaration funOrProperty,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext context,
             @NotNull Method asmMethod,
@@ -206,7 +206,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
             boolean hasBodyExpression = hasBodyExpression(funOrProperty);
             if (hasBodyExpression) {
-                JetDeclarationWithBody fun = (JetDeclarationWithBody)funOrProperty;
+                JetDeclarationWithBody fun = (JetDeclarationWithBody) funOrProperty;
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, asmMethod.getReturnType(), context, state);
                 codegen.returnExpression(fun.getBodyExpression());
 
@@ -229,9 +229,9 @@ public class FunctionCodegen extends GenerationStateAware {
         return new MethodBounds(methodBegin, methodEnd);
     }
 
-    private static boolean hasBodyExpression(PsiElement funOrProperty) {
+    private static boolean hasBodyExpression(JetDeclaration funOrProperty) {
         return (funOrProperty instanceof JetDeclarationWithBody
-                && ((JetDeclarationWithBody)funOrProperty).getBodyExpression() != null);
+                && ((JetDeclarationWithBody) funOrProperty).getBodyExpression() != null);
     }
 
 

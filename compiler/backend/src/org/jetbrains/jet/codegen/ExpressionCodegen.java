@@ -1246,18 +1246,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return gen(expression.getFunctionLiteral().getBodyExpression());
         }
         else {
-            return genClosure(expression);
+            return genClosure(expression.getFunctionLiteral());
         }
     }
 
-    private StackValue genClosure(JetExpression expression) {
-        FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, expression);
+    private StackValue genClosure(JetDeclarationWithBody declaration) {
+        FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
         ClassDescriptor classDescriptor =
                 bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
         //noinspection SuspiciousMethodCalls
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure).gen(expression, context, this);
+        ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure).gen(declaration, context, this);
 
         JvmClassName className = closureCodegen.name;
         Type asmType = className.getAsmType();

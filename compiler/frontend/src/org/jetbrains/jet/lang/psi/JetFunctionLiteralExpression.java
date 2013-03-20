@@ -18,11 +18,13 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.List;
 
-public class JetFunctionLiteralExpression extends JetExpressionImpl implements JetDeclarationWithBody {
+public class JetFunctionLiteralExpression extends JetExpressionImpl {
     public JetFunctionLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -43,30 +45,24 @@ public class JetFunctionLiteralExpression extends JetExpressionImpl implements J
     }
 
     @NotNull
-    @Override
     public List<JetParameter> getValueParameters() {
         return getFunctionLiteral().getValueParameters();
     }
 
-    @Override
     public JetBlockExpression getBodyExpression() {
         return getFunctionLiteral().getBodyExpression();
     }
 
-    @Override
     public boolean hasBlockBody() {
         return getFunctionLiteral().hasBlockBody();
     }
 
-    @Override
     public boolean hasDeclaredReturnType() {
         return getFunctionLiteral().getReturnTypeRef() != null;
     }
 
     @NotNull
-    @Override
     public JetElement asElement() {
         return this;
     }
-
 }

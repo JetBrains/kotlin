@@ -227,10 +227,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetScope conditionScope = context.scope;
         if (body instanceof JetFunctionLiteralExpression) {
             JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
-            if (!function.getFunctionLiteral().hasParameterSpecification()) {
+            JetFunctionLiteral functionLiteral = function.getFunctionLiteral();
+            if (!functionLiteral.hasParameterSpecification()) {
                 WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
                 conditionScope = writableScope;
-                context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
+                context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, functionLiteral.getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
                 context.trace.record(BindingContext.BLOCK, function);
             }
             else {
@@ -479,10 +480,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression returnedExpression = expression.getReturnedExpression();
 
         JetType expectedType = TypeUtils.NO_EXPECTED_TYPE;
-        JetExpression parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
-        if (parentDeclaration instanceof JetFunctionLiteral) {
-            parentDeclaration = (JetFunctionLiteralExpression) parentDeclaration.getParent();
-        }
+        JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
+
         if (parentDeclaration instanceof JetParameter) {
             context.trace.report(RETURN_NOT_ALLOWED.on(expression));
         }
@@ -494,11 +493,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (containingFunctionDescriptor != null) {
                 PsiElement containingFunction = BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor);
                 assert containingFunction != null;
-                if (containingFunction instanceof JetFunctionLiteralExpression) {
+                if (containingFunction instanceof JetFunctionLiteral) {
                     do {
                         containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
                         containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
-                    } while (containingFunction instanceof JetFunctionLiteralExpression);
+                    } while (containingFunction instanceof JetFunctionLiteral);
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }
                 if (containingFunctionDescriptor != null) {

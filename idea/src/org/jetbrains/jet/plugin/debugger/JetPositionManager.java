@@ -134,13 +134,13 @@ public class JetPositionManager implements PositionManager {
                 JetFile namespace = (JetFile) sourcePosition.getFile();
                 JetTypeMapper typeMapper = prepareTypeMapper(namespace);
 
-                PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
+                PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
                 if (element instanceof JetClassOrObject) {
                     result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element));
                 }
-                else if (element instanceof JetFunctionLiteralExpression) {
+                else if (element instanceof JetFunctionLiteral) {
                     result.set(classNameForAnonymousClass(typeMapper.getBindingContext(),
-                                                          (JetFunctionLiteralExpression) element).getInternalName());
+                                                          ((JetFunctionLiteral) element)).getInternalName());
                 }
                 else if (element instanceof JetNamedFunction) {
                     PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);

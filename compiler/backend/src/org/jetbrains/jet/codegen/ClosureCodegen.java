@@ -33,9 +33,7 @@ import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -63,7 +61,7 @@ public class ClosureCodegen extends GenerationStateAware {
         this.closure = closure;
     }
 
-    public ClosureCodegen gen(JetExpression fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
+    public ClosureCodegen gen(JetDeclarationWithBody fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
         SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, fun);
         assert descriptor != null;
 
@@ -97,7 +95,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
 
         generateBridge(name.getInternalName(), funDescriptor, fun, cv);
-        generateBody(funDescriptor, cv, (JetDeclarationWithBody) fun, context, expressionCodegen);
+        generateBody(funDescriptor, cv, fun, context, expressionCodegen);
 
         constructor = generateConstructor(funClass, fun, cv, closure);
 

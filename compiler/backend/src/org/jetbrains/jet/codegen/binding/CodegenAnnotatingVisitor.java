@@ -224,14 +224,15 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+        JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         FunctionDescriptor functionDescriptor =
-                (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, expression);
+                (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, functionLiteral);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
         String name = inventAnonymousClassName(expression);
         ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-        recordClosure(bindingTrace, expression, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
+        recordClosure(bindingTrace, functionLiteral, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
 
         classStack.push(classDescriptor);
         nameStack.push(name);

@@ -44,26 +44,27 @@ public class LabelResolver {
     public LabelResolver() {}
 
     public void enterLabeledElement(@NotNull LabelName labelName, @NotNull JetExpression labeledExpression) {
-        JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(labeledExpression);
-        if (deparenthesized != null) {
+        JetExpression cacheExpression = getCachingExpression(labeledExpression);
+        if (cacheExpression != null) {
             Stack<JetElement> stack = labeledElements.get(labelName);
             if (stack == null) {
                 stack = new Stack<JetElement>();
                 labeledElements.put(labelName, stack);
             }
-            stack.push(deparenthesized);
+            stack.push(cacheExpression);
         }
     }
 
     public void exitLabeledElement(@NotNull JetExpression expression) {
-        JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression);
+        JetExpression cacheExpression = getCachingExpression(expression);
+
         // TODO : really suboptimal
         for (Iterator<Map.Entry<LabelName,Stack<JetElement>>> mapIter = labeledElements.entrySet().iterator(); mapIter.hasNext(); ) {
             Map.Entry<LabelName, Stack<JetElement>> entry = mapIter.next();
             Stack<JetElement> stack = entry.getValue();
             for (Iterator<JetElement> stackIter = stack.iterator(); stackIter.hasNext(); ) {
                 JetElement recorded = stackIter.next();
-                if (recorded == deparenthesized) {
+                if (recorded == cacheExpression) {
                     stackIter.remove();
                 }
             }
@@ -71,6 +72,15 @@ public class LabelResolver {
                 mapIter.remove();
             }
         }
+    }
+
+    @NotNull
+    private JetExpression getCachingExpression(@NotNull JetExpression labeledExpression) {
+        JetExpression expression = JetPsiUtil.deparenthesizeWithNoTypeResolution(labeledExpression);
+        if (expression instanceof JetFunctionLiteralExpression) {
+            expression = ((JetFunctionLiteralExpression) expression).getFunctionLiteral();
+        }
+        return expression;
     }
 
     @Nullable
@@ -163,8 +173,9 @@ public class LabelResolver {
         }
         else if (size == 0) {
             JetElement element = resolveNamedLabel(labelName, targetLabel, false, context);
-            if (element instanceof JetFunctionLiteralExpression) {
-                DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+            if (element instanceof JetFunctionLiteral) {
+                DeclarationDescriptor declarationDescriptor =
+                        context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                 if (declarationDescriptor instanceof FunctionDescriptor) {
                     ReceiverParameterDescriptor thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
                     if (thisReceiver != null) {

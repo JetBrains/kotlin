@@ -147,8 +147,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                       Visibilities.LOCAL,
                                       /*isInline = */ false
         );
-        context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, expression, functionDescriptor);
+        context.trace.record(BindingContext.FUNCTION, functionLiteral, functionDescriptor);
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor);
         return functionDescriptor;
     }
 
@@ -275,7 +275,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
         if (returnTypeRef != null) {
             JetType returnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
-            context.expressionTypingServices.checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).
+            context.expressionTypingServices.checkFunctionReturnType(expression.getFunctionLiteral(), context.replaceScope(functionInnerScope).
                     replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace);
             if (expectedReturnType != null) {
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(expectedReturnType, returnType)) {

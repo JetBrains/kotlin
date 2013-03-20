@@ -180,9 +180,9 @@ public class ExpressionTypingServices {
                 ? context.replaceExpectedType(NO_EXPECTED_TYPE)
                 : context;
 
-        if (function instanceof JetFunctionLiteralExpression) {
-            JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) function;
-            JetBlockExpression blockExpression = functionLiteralExpression.getBodyExpression();
+        if (function instanceof JetFunctionLiteral) {
+            JetFunctionLiteral functionLiteral = (JetFunctionLiteral) function;
+            JetBlockExpression blockExpression = functionLiteral.getBodyExpression();
             assert blockExpression != null;
             getBlockReturnedType(newContext.scope, blockExpression, CoercionStrategy.COERCION_TO_UNIT, context, trace);
         }

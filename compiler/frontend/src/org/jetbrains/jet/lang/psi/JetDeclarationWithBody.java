@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface JetDeclarationWithBody extends PsiElement {
+public interface JetDeclarationWithBody extends JetDeclaration {
 
     @Nullable
     JetExpression getBodyExpression();

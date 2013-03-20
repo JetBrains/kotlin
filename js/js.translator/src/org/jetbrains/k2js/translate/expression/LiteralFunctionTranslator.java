@@ -57,7 +57,7 @@ public class LiteralFunctionTranslator {
     }
 
     public JsExpression translate(@NotNull JetFunctionLiteralExpression declaration) {
-        FunctionDescriptor descriptor = getFunctionDescriptor(rootContext.bindingContext(), declaration);
+        FunctionDescriptor descriptor = getFunctionDescriptor(rootContext.bindingContext(), declaration.getFunctionLiteral());
 
         JsFunction fun = createFunction();
         TranslationContext funContext;
@@ -75,7 +75,7 @@ public class LiteralFunctionTranslator {
             funContext = rootContext.contextWithScope(fun);
         }
 
-        fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration, funContext).getStatements());
+        fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration.getFunctionLiteral(), funContext).getStatements());
 
         InnerFunctionTranslator translator = null;
         if (!asInner) {
