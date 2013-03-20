@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.LazyCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -50,7 +49,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         // TODO: creating an FqName every time may be a performance problem
-        Name actualName = analyzer.resolveClassifierAlias(DescriptorUtils.getFQName(thisDescriptor).toSafe(), name);
+        Name actualName = analyzer.resolveClassifierAlias(thisDescriptor.getFqName(), name);
         return super.getClassifier(actualName);
     }
 
