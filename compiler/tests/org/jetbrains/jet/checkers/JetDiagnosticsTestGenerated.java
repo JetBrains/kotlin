@@ -1849,6 +1849,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");
             }
             
+            @TestMetadata("unusedLiteral.kt")
+            public void testUnusedLiteral() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/unusedLiteral.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/generics")
