@@ -313,7 +313,7 @@ public class CandidateResolver {
                 if (callExpression == null) continue;
 
                 CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
-                        context.resolutionResultsCache.getDeferredComputation(CallKey.create(context.call.getCallType(), callExpression));
+                        context.resolutionResultsCache.getDeferredComputation(CallKey.create(Call.CallType.DEFAULT, callExpression));
                 if (storedContextForArgument == null) continue;
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
