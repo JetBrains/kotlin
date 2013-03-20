@@ -41,6 +41,7 @@ public class MutablePackageFragmentDescriptor extends PackageLikeDescriptorBase 
         this.kind = kind;
         this.scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING,
                                            "Members of " + fqName + " in " + subModuleDescriptor);
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.builder = new ScopeBasedNamespaceLikeBuilder(this, scope);
     }
 
