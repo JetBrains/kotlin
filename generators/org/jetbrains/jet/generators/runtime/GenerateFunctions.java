@@ -18,7 +18,6 @@ package org.jetbrains.jet.generators.runtime;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.utils.ExceptionUtils;
-import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,12 +40,20 @@ public class GenerateFunctions {
             this.classNamePrefix = classNamePrefix;
             this.hasReceiverParameter = hasReceiverParameter;
         }
+
+        public String getClassName(int i) {
+            return classNamePrefix + i;
+        }
+
+        public String getImplClassName(int i) {
+            return classNamePrefix + "Impl" + i;
+        }
     }
 
     private static void generateBuiltInFunctions(PrintStream out, int count, FunctionKind kind) {
         generated(out);
         for (int i = 0; i <= count; i++) {
-            out.print("public abstract class " + kind.classNamePrefix + i);
+            out.print("public trait " + kind.getClassName(i));
             out.print("<");
             if (kind.hasReceiverParameter) {
                 out.print("in T, ");
@@ -56,7 +63,7 @@ public class GenerateFunctions {
             }
             out.print("out R> {");
             out.println();
-            out.print("  public abstract fun " + (kind.hasReceiverParameter ? "T." : "") + "invoke(");
+            out.print("    public fun " + (kind.hasReceiverParameter ? "T." : "") + "invoke(");
             for (int j = 1; j <= i; j++) {
                 out.print("p" + j + ": " + "P" + j);
                 if (j < i) {
@@ -72,17 +79,14 @@ public class GenerateFunctions {
     private static void generateRuntimeFunction(PrintStream out, int i, FunctionKind kind) {
         generateRuntimeClassHeader(out);
 
-        out.print("public abstract class " + kind.classNamePrefix + i);
-        out.print("<");
-        if (kind.hasReceiverParameter) {
-            out.print("T, ");
-        }
-        for (int j = 1; j <= i; j++) {
-            out.print("P" + j + ", ");
-        }
-        out.print("R> extends DefaultJetObject {");
+        out.println("import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;");
         out.println();
-        out.print("    public abstract R invoke(");
+        out.println("@AssertInvisibleInResolver");
+
+        out.print("public interface " + kind.getClassName(i));
+        generateTypeParameters(out, i, kind);
+        out.println(" {");
+        out.print("    R invoke(");
         if (kind.hasReceiverParameter) {
             out.print("T receiver");
             if (i > 0) {
@@ -95,8 +99,31 @@ public class GenerateFunctions {
                 out.print(", ");
             }
         }
-        out.print(");");
-        out.println();
+        out.println(");");
+        out.println("}");
+    }
+
+    private static void generateTypeParameters(PrintStream out, int i, FunctionKind kind) {
+        out.print("<");
+        if (kind.hasReceiverParameter) {
+            out.print("T, ");
+        }
+        for (int j = 1; j <= i; j++) {
+            out.print("P" + j + ", ");
+        }
+        out.print("R>");
+    }
+
+    private static void generateRuntimeFunctionImpl(PrintStream out, int i, FunctionKind kind) {
+        generateRuntimeClassHeader(out);
+
+        out.print("public abstract class " + kind.getImplClassName(i));
+        generateTypeParameters(out, i, kind);
+        out.print(" extends DefaultJetObject");
+        out.print(" implements " + kind.getClassName(i));
+        generateTypeParameters(out, i, kind);
+        out.println(" {");
+        // TODO: toString()
         out.println("}");
     }
 
@@ -109,9 +136,6 @@ public class GenerateFunctions {
         }
         out.println("package jet;");
         out.println();
-        out.println("import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;");
-        out.println();
-        out.println("@AssertInvisibleInResolver");
     }
 
     private static void generated(PrintStream out) {
@@ -138,9 +162,13 @@ public class GenerateFunctions {
 
         for (FunctionKind kind : FunctionKind.values()) {
             for (int i = 0; i <= MAX_PARAM_COUNT; i++) {
-                PrintStream function = new PrintStream(new File(baseDir, kind.classNamePrefix + i + ".java"));
+                PrintStream function = new PrintStream(new File(baseDir, kind.getClassName(i) + ".java"));
                 generateRuntimeFunction(function, i, kind);
                 function.close();
+
+                PrintStream functionImpl = new PrintStream(new File(baseDir, kind.getImplClassName(i) + ".java"));
+                generateRuntimeFunctionImpl(functionImpl, i, kind);
+                functionImpl.close();
             }
         }
     }

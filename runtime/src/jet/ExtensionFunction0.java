@@ -19,6 +19,6 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public abstract class ExtensionFunction0<T, R> extends DefaultJetObject {
-    public abstract R invoke(T receiver);
+public interface ExtensionFunction0<T, R> {
+    R invoke(T receiver);
 }
