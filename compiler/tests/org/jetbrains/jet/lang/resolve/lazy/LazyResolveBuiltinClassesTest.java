@@ -20,7 +20,6 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.junit.Test;
 
 import java.io.File;
 
@@ -33,7 +32,6 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 
-    @Test
     public void testBuiltIns() throws Exception {
         PackageViewDescriptor builtInsPackage = KotlinBuiltIns.getInstance().getBuiltInsPackage();
         compareNamespaceWithFile(builtInsPackage, RECURSIVE, new File("compiler/testData/builtin-classes.txt"));
