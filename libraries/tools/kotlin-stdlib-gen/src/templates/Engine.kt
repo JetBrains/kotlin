@@ -49,7 +49,7 @@ class GenericFunction(val signature : String) {
     }
 
     fun absentFor(vararg f : Family) {
-        blockedFor.addAll(f.toCollection())
+        blockedFor.addAll(f.toList())
     }
 
     private fun effectiveTypeParams(f : Family) : List<String> {

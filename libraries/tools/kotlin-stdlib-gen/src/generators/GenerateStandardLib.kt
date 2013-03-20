@@ -76,7 +76,7 @@ fun main(args: Array<String>) {
     val otherArrayNames = arrayListOf("Boolean", "Byte", "Char", "Short", "Int", "Long", "Float", "Double")
 
     iterators()
-    templates.writeTo(File(outDir, "Iterators.kt")) {
+    templates.writeTo(File(outDir, "_Iterators.kt")) {
         buildFor(Iterators, "")
     }
 
