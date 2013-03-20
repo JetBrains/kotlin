@@ -282,6 +282,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append(" is a module");
             return;
         }
+        if (descriptor instanceof SubModuleDescriptor) {
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            assert containingDeclaration != null;
+            builder.append(" is a sub-module of ").append(containingDeclaration.getName());
+            return;
+        }
+
         builder.append(" ").append(renderMessage("defined in")).append(" ");
 
         final DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
@@ -638,11 +645,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(moduleOrScript, builder);
     }
 
-    private void renderNamespace(@NotNull PackageViewDescriptor namespace, @NotNull StringBuilder builder) {
+    private void renderPackage(@NotNull DeclarationDescriptor packageViewOrFragment, @NotNull StringBuilder builder) {
         builder.append(renderKeyword(JetTokens.PACKAGE_KEYWORD.getValue())).append(" ");
-        renderName(namespace, builder);
+        renderName(packageViewOrFragment, builder);
     }
-
 
     /* STUPID DISPATCH-ONLY VISITOR */
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, StringBuilder> {
@@ -689,12 +695,24 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         @Override
         public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, StringBuilder builder) {
-            renderNamespace(descriptor, builder);
+            renderPackage(descriptor, builder);
+            return null;
+        }
+
+        @Override
+        public Void visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, StringBuilder builder) {
+            renderPackage(descriptor, builder);
             return null;
         }
 
         @Override
         public Void visitModuleDescriptor(ModuleDescriptor descriptor, StringBuilder builder) {
+            renderModuleOrScript(descriptor, builder);
+            return null;
+        }
+
+        @Override
+        public Void visitSubModuleDescriptor(SubModuleDescriptor descriptor, StringBuilder builder) {
             renderModuleOrScript(descriptor, builder);
             return null;
         }
@@ -709,6 +727,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
             renderClass(descriptor, builder);
             return null;
+        }
+
+        @Override
+        public Void visitDeclarationDescriptor(DeclarationDescriptor descriptor, StringBuilder builder) {
+            throw new IllegalArgumentException("Unknown descriptor class" + descriptor.getClass());
         }
    }
 }
