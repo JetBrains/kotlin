@@ -134,7 +134,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof PackageViewDescriptor;
+        return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
     public static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
