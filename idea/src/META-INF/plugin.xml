@@ -225,6 +225,8 @@
     <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider"/>
     <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JsHeaderLibraryPresentationProvider"/>
 
+    <typeHierarchyProvider language="jet" implementationClass="org.jetbrains.jet.plugin.hierarchy.KotlinTypeHierarchyProvider"/>
+
     <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
 

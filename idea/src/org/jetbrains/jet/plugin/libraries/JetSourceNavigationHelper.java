@@ -19,12 +19,16 @@ package org.jetbrains.jet.plugin.libraries;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -32,13 +36,17 @@ import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.asJava.LightClassUtil;
+import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
@@ -326,5 +334,67 @@ public class JetSourceNavigationHelper {
     @TestOnly
     static void setForceResolve(boolean forceResolve) {
         JetSourceNavigationHelper.forceResolve = forceResolve;
+    }
+
+    @Nullable
+    public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull JetClassOrObject classOrObject) {
+        PsiClass originalClass = getOriginalClass(classOrObject);
+        if (originalClass != null) {
+            return originalClass;
+        }
+        if (!JetPsiUtil.isLocalClass(classOrObject)) {
+            return LightClassUtil.createLightClass(classOrObject);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static PsiClass getOriginalClass(@NotNull JetClassOrObject classOrObject) {
+        // Copied from JavaPsiImplementationHelperImpl:getOriginalClass()
+        JvmClassName className = PsiCodegenPredictor.getPredefinedJvmClassName(classOrObject);
+        if (className == null) {
+            return null;
+        }
+        String fqName = className.getFqName().getFqName();
+
+        JetFile file = (JetFile) classOrObject.getContainingFile();
+
+        VirtualFile vFile = file.getVirtualFile();
+        Project project = file.getProject();
+
+        final ProjectFileIndex idx = ProjectRootManager.getInstance(project).getFileIndex();
+
+        if (vFile == null || !idx.isInLibrarySource(vFile)) return null;
+        final Set<OrderEntry> orderEntries = new THashSet<OrderEntry>(idx.getOrderEntriesForFile(vFile));
+
+        PsiClass original = JavaPsiFacade.getInstance(project).findClass(fqName, new GlobalSearchScope(project) {
+            @Override
+            public int compare(VirtualFile file1, VirtualFile file2) {
+                return 0;
+            }
+
+            @Override
+            public boolean contains(VirtualFile file) {
+                List<OrderEntry> entries = idx.getOrderEntriesForFile(file);
+                //noinspection ForLoopReplaceableByForEach
+                for (int i = 0; i < entries.size(); i++) {
+                    final OrderEntry entry = entries.get(i);
+                    if (orderEntries.contains(entry)) return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean isSearchInModuleContent(@NotNull Module aModule) {
+                return false;
+            }
+
+            @Override
+            public boolean isSearchInLibraries() {
+                return true;
+            }
+        });
+
+        return original;
     }
 }

@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparing
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
+import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
@@ -83,7 +84,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "BlackBoxMultiFileCodegenTestGenerated",
                 AbstractBlackBoxCodegenTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/codegen/boxMultiFile"), false, Pattern.compile("^(.+)$"), "doTestMultiFile")
+                testModelWithDirectories(("compiler/testData/codegen/boxMultiFile"), "doTestMultiFile")
         );
 
         generateTest(
@@ -111,7 +112,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "TopLevelMembersInvocationTestGenerated",
                 AbstractTopLevelMembersInvocationTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/codegen/topLevelMemberInvocation"), false, Pattern.compile("^(.+)$"), "doTest")
+                testModelWithDirectories("compiler/testData/codegen/topLevelMemberInvocation", "doTest")
         );
 
         generateTest(
@@ -248,6 +249,15 @@ public class GenerateTests {
                 testModel("idea/testData/codeInsight/surroundWith/tryFinally", "doTestWithTryFinallySurrounder"),
                 testModel("idea/testData/codeInsight/surroundWith/functionLiteral", "doTestWithFunctionLiteralSurrounder")
         );
+
+        generateTest(
+                "idea/tests/",
+                "HierarchyTestGenerated",
+                AbstractHierarchyTest.class,
+                testModelWithDirectories("idea/testData/hierarchy/class/type", "doTypeClassHierarchyTest"),
+                testModelWithDirectories("idea/testData/hierarchy/class/super", "doSuperClassHierarchyTest"),
+                testModelWithDirectories("idea/testData/hierarchy/class/sub", "doSubClassHierarchyTest")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
@@ -256,6 +266,10 @@ public class GenerateTests {
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath, @NotNull String methodName) {
         return testModel(rootPath, true, "kt", methodName);
+    }
+
+    private static SimpleTestClassModel testModelWithDirectories(@NotNull String rootPath, @NotNull String methodName) {
+        return new SimpleTestClassModel(new File(rootPath), false,  Pattern.compile("^(.+)$"), methodName);
     }
 
     private static SimpleTestClassModel testModel(
