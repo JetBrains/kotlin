@@ -353,12 +353,12 @@ public class CallResolver {
             @NotNull DelegatingBindingTrace traceToResolveCall,
             @NotNull TracingStrategy tracing
     ) {
+        CallKey callKey = CallResolverUtil.createCallKey(context);
+        if (callKey == null) return;
+
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
                 new BindingTraceContext().getBindingContext(), "delta trace for caching resolve of", context.call);
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
-
-        CallKey callKey = CallResolverUtil.createCallKey(context);
-        if (callKey == null) return;
 
         context.resolutionResultsCache.recordResolutionResults(callKey, memberType, results);
         context.resolutionResultsCache.recordResolutionTrace(callKey, deltasTraceToCacheResolve);
