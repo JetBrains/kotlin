@@ -1,3 +1,5 @@
 package test
 
 internal var jet.Int.ggg : jet.Int
+    internal fun jet.Int.<get-ggg>() : jet.Int
+    internal fun jet.Int.<set-ggg>(/*0*/ p : jet.Int) : Unit

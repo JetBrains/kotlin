@@ -2,13 +2,19 @@ package test
 
 internal trait A {
     public open var p : jet.Int
+        public open fun <get-p>() : jet.Int
+        internal open fun <set-p>(/*0*/ value : jet.Int) : Unit
     internal open val v : jet.Int
+        internal open fun <get-v>() : jet.Int
     internal open fun f() : jet.Int
 }
 
 internal final class B : test.A {
     /*primary*/ public constructor B()
     public open override /*1*/ /*fake_override*/ var p : jet.Int
+        public open override /*1*/ /*fake_override*/ fun <get-p>() : jet.Int
+        internal open override /*1*/ /*fake_override*/ fun <set-p>(/*0*/ value : jet.Int) : Unit
     internal open override /*1*/ /*fake_override*/ val v : jet.Int
+        internal open override /*1*/ /*fake_override*/ fun <get-v>() : jet.Int
     internal open override /*1*/ /*fake_override*/ fun f() : jet.Int
 }

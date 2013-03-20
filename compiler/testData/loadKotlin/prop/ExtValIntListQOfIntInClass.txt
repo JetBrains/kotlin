@@ -3,4 +3,5 @@ package test
 internal final class ExtValInClass {
     /*primary*/ public constructor ExtValInClass()
     internal final val jet.Int.asas : java.util.List<jet.Int>?
+        internal final fun jet.Int.<get-asas>() : java.util.List<jet.Int>?
 }

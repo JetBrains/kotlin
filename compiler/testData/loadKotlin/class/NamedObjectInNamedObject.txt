@@ -9,6 +9,7 @@ public object Outer {
     public object Obj {
         /*primary*/ private constructor Obj()
         public final val v : jet.String
+            public final fun <get-v>() : jet.String
         public final fun f() : jet.String
     }
 }

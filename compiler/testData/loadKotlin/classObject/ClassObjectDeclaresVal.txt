@@ -6,5 +6,6 @@ internal final class ClassObjectDeclaresProperty {
     internal class object <class-object-for-ClassObjectDeclaresProperty> {
         /*primary*/ private constructor <class-object-for-ClassObjectDeclaresProperty>()
         internal final val i : jet.Int
+            internal final fun <get-i>() : jet.Int
     }
 }

@@ -2,9 +2,11 @@ package test
 
 public val Obj : test.Obj
 internal val x : jet.Int
+    internal fun <get-x>() : jet.Int
 
 public object Obj {
     /*primary*/ private constructor Obj()
     public final val v : jet.String
+        public final fun <get-v>() : jet.String
     public final fun f() : jet.String
 }

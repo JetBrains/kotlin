@@ -3,7 +3,10 @@ package test
 jet.data() internal final class DataClass {
     /*primary*/ public constructor DataClass(/*0*/ x : jet.String, /*1*/ y : jet.Int, /*2*/ z : jet.Double)
     internal final var x : jet.String
+        internal final fun <get-x>() : jet.String
+        internal final fun <set-x>(/*0*/ <set-?> : jet.String) : Unit
     internal final val z : jet.Double
+        internal final fun <get-z>() : jet.Double
     internal final /*synthesized*/ fun component1() : jet.String
     internal final /*synthesized*/ fun component2() : jet.Double
     internal final /*synthesized*/ fun copy(/*0*/ x : jet.String = ..., /*1*/ y : jet.Int, /*2*/ z : jet.Double = ...) : test.DataClass

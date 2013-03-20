@@ -3,4 +3,6 @@ package test
 internal final class ExtPropInClass {
     /*primary*/ public constructor ExtPropInClass()
     internal final var jet.Int.itIs : jet.Int
+        internal final fun jet.Int.<get-itIs>() : jet.Int
+        internal final fun jet.Int.<set-itIs>(/*0*/ p : jet.Int) : Unit
 }

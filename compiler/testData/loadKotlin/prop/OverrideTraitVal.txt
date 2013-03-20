@@ -3,8 +3,10 @@ package test
 internal open class Subclass : test.Trait {
     /*primary*/ public constructor Subclass()
     internal open override /*1*/ val shape : jet.String
+        internal open override /*1*/ fun <get-shape>() : jet.String
 }
 
 internal trait Trait {
     internal abstract val shape : jet.String
+        internal abstract fun <get-shape>() : jet.String
 }

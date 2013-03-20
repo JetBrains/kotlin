@@ -1,3 +1,4 @@
 package test
 
 internal val jet.Int.itIs : jet.Int
+    internal fun jet.Int.<get-itIs>() : jet.Int
