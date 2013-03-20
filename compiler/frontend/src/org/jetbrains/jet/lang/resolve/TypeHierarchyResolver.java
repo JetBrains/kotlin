@@ -129,7 +129,7 @@ public class TypeHierarchyResolver {
             }
         }
 
-        resolvePackageHeaders();
+        resolvePackageHeaders(); // Can't resolve package headers before, because some of the package fragments may not be created yet
 
         importsResolver.processTypeImports(outerScope);
 
