@@ -49,7 +49,6 @@ import java.util.Set;
 
 public class KotlinFrameworkDetector {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
-    private static final Key<CachedValue<Boolean>> IS_KOTLIN_JAVA_MODULE = Key.create("IS_KOTLIN_JAVA_MODULE");
 
     private KotlinFrameworkDetector() {
     }
@@ -59,23 +58,9 @@ public class KotlinFrameworkDetector {
         return module != null && isJsKotlinModule(module);
     }
 
-    public static boolean isJavaKotlinModule(@NotNull final Module module) {
-        CachedValue<Boolean> result = module.getUserData(IS_KOTLIN_JAVA_MODULE);
-        if (result == null) {
-            result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
-                @Override
-                public Result<Boolean> compute() {
-                    GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-                    boolean javaMarkerClassFound = KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null;
-
-                    return Result.create(javaMarkerClassFound, ProjectRootModificationTracker.getInstance(module.getProject()));
-                }
-            }, false);
-
-            module.putUserData(IS_KOTLIN_JAVA_MODULE, result);
-        }
-
-        return result.getValue();
+    public static boolean isJavaKotlinModule(@NotNull Module module) {
+        GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
+        return KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null;
     }
 
     public static boolean isJsKotlinModule(@NotNull final Module module) {
