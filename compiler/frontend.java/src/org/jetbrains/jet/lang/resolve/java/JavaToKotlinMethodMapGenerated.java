@@ -41,7 +41,7 @@ class JavaToKotlinMethodMapGenerated {
         put(b, "java.lang.Throwable", "Throwable",
             pair("java.lang.Throwable java.lang.Throwable getCause()", "public final fun getCause() : jet.Throwable? defined in jet.Throwable"),            
             pair("java.lang.Throwable java.lang.String getMessage()", "public final fun getMessage() : jet.String? defined in jet.Throwable"),            
-            pair("java.lang.Throwable void printStackTrace()", "public final fun printStackTrace() : Unit defined in jet.Throwable")            
+            pair("java.lang.Throwable void printStackTrace()", "public final fun printStackTrace() : jet.Unit defined in jet.Throwable")            
         );
         
         put(b, "java.lang.Comparable", "Comparable",
@@ -69,7 +69,7 @@ class JavaToKotlinMethodMapGenerated {
         put(b, "java.util.Iterator", "MutableIterator",
             pair("java.util.Iterator boolean hasNext()", "public abstract fun hasNext() : jet.Boolean defined in jet.MutableIterator"),            
             pair("java.util.Iterator E next()", "public abstract fun next() : T defined in jet.MutableIterator"),            
-            pair("java.util.Iterator void remove()", "public abstract fun remove() : Unit defined in jet.MutableIterator")            
+            pair("java.util.Iterator void remove()", "public abstract fun remove() : jet.Unit defined in jet.MutableIterator")            
         );
         
         put(b, "java.util.Collection", "Collection",
@@ -87,7 +87,7 @@ class JavaToKotlinMethodMapGenerated {
         put(b, "java.util.Collection", "MutableCollection",
             pair("java.util.Collection boolean add(E)", "public abstract fun add(e : E) : jet.Boolean defined in jet.MutableCollection"),            
             pair("java.util.Collection boolean addAll(java.util.Collection<? extends E>)", "public abstract fun addAll(c : jet.Collection<E>) : jet.Boolean defined in jet.MutableCollection"),            
-            pair("java.util.Collection void clear()", "public abstract fun clear() : Unit defined in jet.MutableCollection"),            
+            pair("java.util.Collection void clear()", "public abstract fun clear() : jet.Unit defined in jet.MutableCollection"),            
             pair("java.util.Collection boolean contains(java.lang.Object)", "public abstract fun contains(o : jet.Any?) : jet.Boolean defined in jet.MutableCollection"),            
             pair("java.util.Collection boolean containsAll(java.util.Collection<?>)", "public abstract fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean defined in jet.MutableCollection"),            
             pair("java.util.Collection boolean equals(java.lang.Object)", "public abstract fun equals(other : jet.Any?) : jet.Boolean defined in jet.MutableCollection"),            
@@ -122,10 +122,10 @@ class JavaToKotlinMethodMapGenerated {
         
         put(b, "java.util.List", "MutableList",
             pair("java.util.List boolean add(E)", "public abstract fun add(e : E) : jet.Boolean defined in jet.MutableList"),            
-            pair("java.util.List void add(int, E)", "public abstract fun add(index : jet.Int, element : E) : Unit defined in jet.MutableList"),            
+            pair("java.util.List void add(int, E)", "public abstract fun add(index : jet.Int, element : E) : jet.Unit defined in jet.MutableList"),            
             pair("java.util.List boolean addAll(int, java.util.Collection<? extends E>)", "public abstract fun addAll(index : jet.Int, c : jet.Collection<E>) : jet.Boolean defined in jet.MutableList"),            
             pair("java.util.List boolean addAll(java.util.Collection<? extends E>)", "public abstract fun addAll(c : jet.Collection<E>) : jet.Boolean defined in jet.MutableList"),            
-            pair("java.util.List void clear()", "public abstract fun clear() : Unit defined in jet.MutableList"),            
+            pair("java.util.List void clear()", "public abstract fun clear() : jet.Unit defined in jet.MutableList"),            
             pair("java.util.List boolean contains(java.lang.Object)", "public abstract fun contains(o : jet.Any?) : jet.Boolean defined in jet.MutableList"),            
             pair("java.util.List boolean containsAll(java.util.Collection<?>)", "public abstract fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean defined in jet.MutableList"),            
             pair("java.util.List boolean equals(java.lang.Object)", "public abstract fun equals(other : jet.Any?) : jet.Boolean defined in jet.MutableList"),            
@@ -163,7 +163,7 @@ class JavaToKotlinMethodMapGenerated {
         put(b, "java.util.Set", "MutableSet",
             pair("java.util.Set boolean add(E)", "public abstract fun add(e : E) : jet.Boolean defined in jet.MutableSet"),            
             pair("java.util.Set boolean addAll(java.util.Collection<? extends E>)", "public abstract fun addAll(c : jet.Collection<E>) : jet.Boolean defined in jet.MutableSet"),            
-            pair("java.util.Set void clear()", "public abstract fun clear() : Unit defined in jet.MutableSet"),            
+            pair("java.util.Set void clear()", "public abstract fun clear() : jet.Unit defined in jet.MutableSet"),            
             pair("java.util.Set boolean contains(java.lang.Object)", "public abstract fun contains(o : jet.Any?) : jet.Boolean defined in jet.MutableSet"),            
             pair("java.util.Set boolean containsAll(java.util.Collection<?>)", "public abstract fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean defined in jet.MutableSet"),            
             pair("java.util.Set boolean equals(java.lang.Object)", "public abstract fun equals(other : jet.Any?) : jet.Boolean defined in jet.MutableSet"),            
@@ -190,7 +190,7 @@ class JavaToKotlinMethodMapGenerated {
         );
         
         put(b, "java.util.Map", "MutableMap",
-            pair("java.util.Map void clear()", "public abstract fun clear() : Unit defined in jet.MutableMap"),            
+            pair("java.util.Map void clear()", "public abstract fun clear() : jet.Unit defined in jet.MutableMap"),            
             pair("java.util.Map boolean containsKey(java.lang.Object)", "public abstract fun containsKey(key : jet.Any?) : jet.Boolean defined in jet.MutableMap"),            
             pair("java.util.Map boolean containsValue(java.lang.Object)", "public abstract fun containsValue(value : jet.Any?) : jet.Boolean defined in jet.MutableMap"),            
             pair("java.util.Map java.util.Set<java.util.Map.Entry<K,V>> entrySet()", "public abstract fun entrySet() : jet.MutableSet<jet.MutableMap.MutableEntry<K, V>> defined in jet.MutableMap"),            
@@ -198,7 +198,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("java.util.Map boolean isEmpty()", "public abstract fun isEmpty() : jet.Boolean defined in jet.MutableMap"),            
             pair("java.util.Map java.util.Set<K> keySet()", "public abstract fun keySet() : jet.MutableSet<K> defined in jet.MutableMap"),            
             pair("java.util.Map V put(K, V)", "public abstract fun put(key : K, value : V) : V? defined in jet.MutableMap"),            
-            pair("java.util.Map void putAll(java.util.Map<? extends K,? extends V>)", "public abstract fun putAll(m : jet.Map<out K, V>) : Unit defined in jet.MutableMap"),            
+            pair("java.util.Map void putAll(java.util.Map<? extends K,? extends V>)", "public abstract fun putAll(m : jet.Map<out K, V>) : jet.Unit defined in jet.MutableMap"),            
             pair("java.util.Map V remove(java.lang.Object)", "public abstract fun remove(key : jet.Any?) : V? defined in jet.MutableMap"),            
             pair("java.util.Map int size()", "public abstract fun size() : jet.Int defined in jet.MutableMap"),            
             pair("java.util.Map java.util.Collection<V> values()", "public abstract fun values() : jet.MutableCollection<V> defined in jet.MutableMap")            
@@ -229,15 +229,15 @@ class JavaToKotlinMethodMapGenerated {
         );
         
         put(b, "java.util.ListIterator", "MutableListIterator",
-            pair("java.util.ListIterator void add(E)", "public abstract fun add(e : T) : Unit defined in jet.MutableListIterator"),            
+            pair("java.util.ListIterator void add(E)", "public abstract fun add(e : T) : jet.Unit defined in jet.MutableListIterator"),            
             pair("java.util.ListIterator boolean hasNext()", "public abstract fun hasNext() : jet.Boolean defined in jet.MutableListIterator"),            
             pair("java.util.ListIterator boolean hasPrevious()", "public abstract fun hasPrevious() : jet.Boolean defined in jet.MutableListIterator"),            
             pair("java.util.ListIterator E next()", "public abstract fun next() : T defined in jet.MutableListIterator"),            
             pair("java.util.ListIterator int nextIndex()", "public abstract fun nextIndex() : jet.Int defined in jet.MutableListIterator"),            
             pair("java.util.ListIterator E previous()", "public abstract fun previous() : T defined in jet.MutableListIterator"),            
             pair("java.util.ListIterator int previousIndex()", "public abstract fun previousIndex() : jet.Int defined in jet.MutableListIterator"),            
-            pair("java.util.ListIterator void remove()", "public abstract fun remove() : Unit defined in jet.MutableListIterator"),            
-            pair("java.util.ListIterator void set(E)", "public abstract fun set(e : T) : Unit defined in jet.MutableListIterator")            
+            pair("java.util.ListIterator void remove()", "public abstract fun remove() : jet.Unit defined in jet.MutableListIterator"),            
+            pair("java.util.ListIterator void set(E)", "public abstract fun set(e : T) : jet.Unit defined in jet.MutableListIterator")            
         );
         
         map = b.build();
