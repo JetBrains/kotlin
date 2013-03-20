@@ -115,7 +115,7 @@ public class KotlinFrameworkDetector {
                 ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
                     @Override
                     public boolean process(Library library) {
-                        if (JsHeaderLibraryPresentationProvider.getInstance().isDetected(library)) {
+                        if (LibraryPresentationProviderUtil.isDetected(JsHeaderLibraryPresentationProvider.getInstance(), library)) {
                             for (VirtualFile file : library.getRootProvider().getFiles(OrderRootType.SOURCES)) {
                                 pathsToJSLib.add(PathUtil.getLocalPath(file));
                             }

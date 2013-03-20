@@ -44,6 +44,7 @@ import com.sun.istack.internal.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
+import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.event.HyperlinkEvent;
@@ -168,7 +169,8 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
 
         for (Library library : libraries) {
             VirtualFile libraryJar = JavaRuntimePresentationProvider.getRuntimeJar(library);
-            assert JavaRuntimePresentationProvider.getInstance().isDetected(library) && libraryJar != null : "Only java runtime libraries are expected";
+            assert LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library) &&
+                   libraryJar != null : "Only java runtime libraries are expected";
 
             KotlinRuntimeLibraryUtil.replaceFile(runtimePath, libraryJar);
         }
@@ -208,7 +210,8 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                         continue;
                     }
 
-                    LibraryVersionProperties javaRuntimeProperties = JavaRuntimePresentationProvider.getInstance().getLibraryProperties(library);
+                    LibraryVersionProperties javaRuntimeProperties = LibraryPresentationProviderUtil.getLibraryProperties(
+                            JavaRuntimePresentationProvider.getInstance(), library);
                     if (javaRuntimeProperties != null) {
                         libraries.add(new VersionedLibrary(library, javaRuntimeProperties.getVersionString()));
                     }

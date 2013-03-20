@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class JavaRuntimePresentationProvider extends CachingLibraryPresentationProvider<LibraryVersionProperties> {
+public class JavaRuntimePresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
     public static JavaRuntimePresentationProvider getInstance() {
         return LibraryPresentationProvider.EP_NAME.findExtension(JavaRuntimePresentationProvider.class);
     }

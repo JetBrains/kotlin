@@ -31,7 +31,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 
-public class JSLibraryStdPresentationProvider extends CachingLibraryPresentationProvider<LibraryVersionProperties> {
+public class JSLibraryStdPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
     public static JSLibraryStdPresentationProvider getInstance() {
         return LibraryPresentationProvider.EP_NAME.findExtension(JSLibraryStdPresentationProvider.class);
     }

@@ -26,36 +26,34 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class CachingLibraryPresentationProvider<T extends LibraryProperties> extends LibraryPresentationProvider<T> {
-    protected CachingLibraryPresentationProvider(@NotNull LibraryKind kind) {
-        super(kind);
+public class LibraryPresentationProviderUtil {
+    private LibraryPresentationProviderUtil() {}
+
+    public static <LP extends LibraryProperties> boolean isDetected(@NotNull LibraryPresentationProvider<LP> provider, @NotNull Library library) {
+        return getLibraryProperties(provider, library) != null;
     }
 
-    public boolean isDetected(@NotNull Library library) {
-        return isDetected(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
-    }
-
-    public boolean isDetected(@NotNull List<VirtualFile> classesRoots) {
-        return cachedDetect(classesRoots, getKind()) != null;
-    }
-
-    @Nullable
-    public T getLibraryProperties(@NotNull Library library) {
-        return cachedDetect(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), getKind());
+    public static <LP extends LibraryProperties> boolean isDetected(@NotNull LibraryPresentationProvider<LP> provider, @NotNull List<VirtualFile> classesRoots) {
+        return cachedDetect(provider, classesRoots) != null;
     }
 
     @Nullable
-    private T cachedDetect(@NotNull List<VirtualFile> classesRoots, @NotNull final LibraryKind libraryKind) {
-        final Ref<T> propertiesRef = new Ref<T>();
+    public static <LP extends LibraryProperties> LP getLibraryProperties(@NotNull LibraryPresentationProvider<LP> provider, @NotNull Library library) {
+        return cachedDetect(provider, Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
+    }
+
+    @Nullable
+    private static <LP extends LibraryProperties> LP cachedDetect(@NotNull final LibraryPresentationProvider<LP> provider, @NotNull List<VirtualFile> classesRoots) {
+        final Ref<LP> propertiesRef = new Ref<LP>();
 
         LibraryDetectionManager.getInstance().processProperties(
                 classesRoots,
                 new LibraryDetectionManager.LibraryPropertiesProcessor() {
                     @Override
                     public <P extends LibraryProperties> boolean processProperties(@NotNull LibraryKind processedKind, @NotNull P properties) {
-                        if (libraryKind.equals(processedKind)) {
+                        if (provider.getKind().equals(processedKind)) {
                             //noinspection unchecked
-                            propertiesRef.set((T)properties);
+                            propertiesRef.set((LP)properties);
                             return false;
                         }
 

@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.JetIcons;
 import javax.swing.*;
 import java.util.List;
 
-public class JsHeaderLibraryPresentationProvider extends CachingLibraryPresentationProvider<LibraryVersionProperties> {
+public class JsHeaderLibraryPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
     public static final LibraryKind KOTLIN_JAVASCRIPT_HEADER_KIND = LibraryKind.create("kotlin-js-header");
 
     public static JsHeaderLibraryPresentationProvider getInstance() {
