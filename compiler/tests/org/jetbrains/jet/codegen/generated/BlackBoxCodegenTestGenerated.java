@@ -2728,6 +2728,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("assignmentOperations.kt")
+        public void testAssignmentOperations() throws Exception {
+            doTest("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");
+        }
+        
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
         public static class CompareTo extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInCompareTo() throws Exception {

@@ -3076,6 +3076,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignOperatorAmbiguity.kt");
             }
             
+            @TestMetadata("AssignmentOperations.kt")
+            public void testAssignmentOperations() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignmentOperations.kt");
+            }
+            
             @TestMetadata("IteratorAmbiguity.kt")
             public void testIteratorAmbiguity() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/operatorsOverloading/IteratorAmbiguity.kt");

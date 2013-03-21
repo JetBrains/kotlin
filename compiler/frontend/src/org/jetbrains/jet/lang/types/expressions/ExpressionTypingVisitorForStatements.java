@@ -238,6 +238,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         JetType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
         if (assignmentOperationType != null && binaryOperationType != null) {
+            // Both 'plus()' and 'plusAssign()' available => ambiguity
             OverloadResolutionResults<FunctionDescriptor> ambiguityResolutionResults = OverloadResolutionResultsUtil.ambiguity(assignmentOperationDescriptors, binaryOperationDescriptors);
             context.trace.report(ASSIGN_OPERATOR_AMBIGUITY.on(operationSign, ambiguityResolutionResults.getResultingCalls()));
             Collection<DeclarationDescriptor> descriptors = Sets.newHashSet();
@@ -248,12 +249,14 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);
         }
         else if (assignmentOperationType != null) {
+            // There's 'plusAssign()', so we do a.plusAssign(b)
             assignmentOperationTrace.commit();
             if (!KotlinBuiltIns.getInstance().isUnit(assignmentOperationType)) {
                 context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
             }
         }
         else {
+            // There's only 'plus()', so we try 'a = a + b'
             binaryOperationTrace.commit();
             context.trace.record(VARIABLE_REASSIGNMENT, expression);
             if (left instanceof JetArrayAccessExpression) {
@@ -262,8 +265,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
             dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
+            basic.checkLValue(context.trace, expression.getLeft());
         }
-        basic.checkLValue(context.trace, expression.getLeft());
         temporaryBindingTrace.commit();
         return JetTypeInfo.create(checkAssignmentType(type, expression, contextWithExpectedType), dataFlowInfo);
     }
