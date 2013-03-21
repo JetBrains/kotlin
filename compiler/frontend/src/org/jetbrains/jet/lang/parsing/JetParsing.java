@@ -1729,17 +1729,25 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private boolean parseFunctionParameterRest() {
-        expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
-
         boolean noErrors = true;
 
-        if (at(COLON)) {
-            advance(); // COLON
+        // Recovery for the case 'fun foo(Array<String>) {}'
+        if (at(IDENTIFIER) && lookahead(1) == LT) {
+            error("Parameter name expected");
             parseTypeRef();
+            noErrors = false;
         }
         else {
-            errorWithRecovery("Parameters must have type annotation", PARAMETER_NAME_RECOVERY_SET);
-            noErrors = false;
+            expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
+
+            if (at(COLON)) {
+                advance(); // COLON
+                parseTypeRef();
+            }
+            else {
+                errorWithRecovery("Parameters must have type annotation", PARAMETER_NAME_RECOVERY_SET);
+                noErrors = false;
+            }
         }
 
         if (at(EQ)) {
