@@ -126,10 +126,10 @@ public class CodegenUtil {
     public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
         int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter() != null) {
-            return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
+            return JvmClassName.byInternalName("jet/ExtensionFunctionImpl" + paramCount);
         }
         else {
-            return JvmClassName.byInternalName("jet/Function" + paramCount);
+            return JvmClassName.byInternalName("jet/FunctionImpl" + paramCount);
         }
     }
 

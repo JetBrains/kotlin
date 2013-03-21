@@ -7,7 +7,7 @@ val getter: String
 
 fun f() = { "OK" }()
 
-val obj = object : Function0<String>() {
+val obj = object : Function0<String> {
     override fun invoke() = "OK"
 }
 

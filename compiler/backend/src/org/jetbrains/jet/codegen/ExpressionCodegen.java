@@ -3122,7 +3122,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.dup2();
             v.load(indexIndex, Type.INT_TYPE);
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-            v.invokevirtual("jet/Function1", "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            v.invokeinterface("jet/Function1", "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
             v.load(indexIndex, Type.INT_TYPE);
             v.iinc(indexIndex, 1);
             v.swap();
