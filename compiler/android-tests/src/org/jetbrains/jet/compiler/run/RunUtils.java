@@ -160,7 +160,7 @@ public class RunUtils {
         handler.startNotify();
 
         if (settings.waitForEnd) {
-            handler.waitFor(400000);
+            handler.waitFor(800000);
 
             if (!handler.isProcessTerminated()) {
                 System.out.println("Output before handler.isProcessTerminated() " + settings.commandLine);
