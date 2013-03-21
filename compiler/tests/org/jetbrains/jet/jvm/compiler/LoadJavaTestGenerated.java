@@ -1140,6 +1140,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/FilenameFilter.java");
             }
             
+            @TestMetadata("GenericInterfaceParameterWithSelfBound.java")
+            public void testGenericInterfaceParameterWithSelfBound() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/GenericInterfaceParameterWithSelfBound.java");
+            }
+            
+            @TestMetadata("GenericInterfaceParametersWithBounds.java")
+            public void testGenericInterfaceParametersWithBounds() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/GenericInterfaceParametersWithBounds.java");
+            }
+            
             @TestMetadata("GenericMethodParameters.java")
             public void testGenericMethodParameters() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/GenericMethodParameters.java");

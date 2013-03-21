@@ -94,11 +94,17 @@ public class SingleAbstractMethodUtils {
         JetType returnType = typeParametersSubstitutor.substitute(klass.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParametersSubstitutor;
 
-        for (TypeParameterDescriptorImpl typeParameter : traitToFunTypeParameters.values()) {
-            // TODO copy substituted upper bound
-            // TODO consider recursive upper bound
-            typeParameter.addDefaultUpperBound();
-            typeParameter.setInitialized();
+        for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> mapEntry : traitToFunTypeParameters.entrySet()) {
+            TypeParameterDescriptor traitTypeParameter = mapEntry.getKey();
+            TypeParameterDescriptorImpl funTypeParameter = mapEntry.getValue();
+
+            for (JetType upperBound : traitTypeParameter.getUpperBounds()) {
+                JetType upperBoundSubstituted = typeParametersSubstitutor.substitute(upperBound, Variance.INVARIANT);
+                assert upperBoundSubstituted != null : "couldn't substitute type: " + upperBound + ", substitutor = " + typeParametersSubstitutor;
+                funTypeParameter.addUpperBound(upperBoundSubstituted);
+            }
+
+            funTypeParameter.setInitialized();
         }
 
         result.initialize(
