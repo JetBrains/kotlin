@@ -111,7 +111,7 @@ public open class CaseContainer(val caseStatement: List<Element>, statements: Li
 
     {
         val newStatements = statements.filterNot { it is BreakStatement || it is ContinueStatement }
-        myBlock = Block(newStatements, false)
+        myBlock = Block(newStatements, true)
     }
 
     public override fun toKotlin() = caseStatement.toKotlin(", ") + " -> " + myBlock.toKotlin()

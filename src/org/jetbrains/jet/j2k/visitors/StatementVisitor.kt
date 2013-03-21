@@ -158,31 +158,37 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
         val result = ArrayList<CaseContainer>()
         var pendingLabels = ArrayList<Element>()
         var i: Int = 0
+        var hasDefaultCase: Boolean = false
         for (ls in cases) {
             // TODO assert {(ls?.size()).sure() > 0}
-            var label = ls[0]
-            // TODO assert {(label is PsiSwitchLabelStatement?)}
-            // TODO assert("not a right index") {allSwitchStatements?.get(i) == label}
-            if (ls.size() > 1) {
-                pendingLabels.add(getConverter().statementToStatement(label))
-                val slice: List<PsiElement> = ls.subList(1, (ls.size()))
-                if (!containsBreak(slice)) {
-                    val statements = ArrayList(getConverter().statementsToStatementList(slice))
-                    statements.addAll(getConverter().statementsToStatementList(getAllToNextBreak(allSwitchStatements, i + ls.size())))
-                    result.add(CaseContainer(pendingLabels, statements))
-                    pendingLabels = arrayList()
+            if (ls.size() > 0) {
+                var label = ls[0]
+                hasDefaultCase = hasDefaultCase || (label as PsiSwitchLabelStatement).isDefaultCase()
+                // TODO assert {(label is PsiSwitchLabelStatement?)}
+                // TODO assert("not a right index") {allSwitchStatements?.get(i) == label}
+                if (ls.size() > 1) {
+                    pendingLabels.add(getConverter().statementToStatement(label))
+                    val slice: List<PsiElement> = ls.subList(1, (ls.size()))
+                    if (!containsBreak(slice)) {
+                        val statements = ArrayList(getConverter().statementsToStatementList(slice))
+                        statements.addAll(getConverter().statementsToStatementList(getAllToNextBreak(allSwitchStatements, i + ls.size())))
+                        result.add(CaseContainer(pendingLabels, statements))
+                        pendingLabels = ArrayList()
+                    }
+                    else {
+                        result.add(CaseContainer(pendingLabels, getConverter().statementsToStatementList(slice)))
+                        pendingLabels = ArrayList()
+                    }
                 }
                 else {
-                    result.add(CaseContainer(pendingLabels, getConverter().statementsToStatementList(slice)))
-                    pendingLabels = arrayList()
+                    pendingLabels.add(getConverter().statementToStatement(label))
                 }
+                i += ls.size()
             }
-            else {
-                pendingLabels.add(getConverter().statementToStatement(label))
-            }
-            i += ls.size()
         }
-        return result
+       if (!hasDefaultCase)
+            result.add(CaseContainer(listOf(DefaultSwitchLabelStatement()), ArrayList()))
+       return result
     }
 
     public override fun visitSynchronizedStatement(statement: PsiSynchronizedStatement?): Unit {
@@ -262,7 +268,7 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
                         }
                         else {
                             cases.add(currentCaseStatements)
-                            currentCaseStatements = arrayList()
+                            currentCaseStatements = ArrayList()
                         }
                     }
 
