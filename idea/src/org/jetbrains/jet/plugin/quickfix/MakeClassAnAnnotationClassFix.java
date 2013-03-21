@@ -65,7 +65,7 @@ public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotat
             PsiElement target = reference.resolve();
             if (target instanceof JetClass) {
                 annotationClass = (JetClass) target;
-                return annotationClass.isWritable();
+                return QuickFixUtil.canModifyElement(annotationClass);
             }
         }
 
