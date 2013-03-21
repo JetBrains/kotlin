@@ -217,7 +217,7 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
 
     public override fun visitReturnStatement(statement: PsiReturnStatement?): Unit {
         val returnValue: PsiExpression? = statement?.getReturnValue()
-        val methodReturnType: PsiType? = getConverter().getMethodReturnType()
+        val methodReturnType: PsiType? = getConverter().methodReturnType
         val expression: Expression = (if (returnValue != null && methodReturnType != null)
             this.getConverter().expressionToExpression(returnValue, methodReturnType)
         else

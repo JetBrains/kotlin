@@ -28,47 +28,49 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.jet.lang.resolve.name.FqName
 
 public open class Converter() {
-    private var classIdentifiers: MutableSet<String> = Sets.newHashSet()!!
+
+    private var classIdentifiersSet: MutableSet<String> = Sets.newHashSet()!!
+
     private val dispatcher: Dispatcher = Dispatcher(this)
-    private var methodReturnType: PsiType? = null
+
     private val flags: MutableSet<J2KConverterFlags?>? = Sets.newHashSet()
-    private val jetCoreEnvironment: JetCoreEnvironment
+
+    private val jetCoreEnvironment = JetCoreEnvironment(
+                                                object : Disposable {
+                                                    public override fun dispose() {
+                                                    }
+                                                }, CompilerConfiguration())
+
+
+    private val project = jetCoreEnvironment.getProject();
+
     {
-        val disposable = (object : Disposable {
-            public override fun dispose() {}
-        })
-        jetCoreEnvironment = JetCoreEnvironment(disposable, CompilerConfiguration())
-    }
-    private val project: Project
-    {
-        project = jetCoreEnvironment.getProject()
         KotlinBuiltIns.initialize(project)
     }
-    private val javaToKotlinClassMap: JavaToKotlinClassMap
-    {
-        javaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
-    }
+
+    private val javaToKotlinClassMap: JavaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
+
+    public open var methodReturnType: PsiType? = null
+        private set
+
     public open fun addFlag(flag: J2KConverterFlags): Boolean {
         return flags?.add(flag)!!
     }
+
     public open fun hasFlag(flag: J2KConverterFlags): Boolean {
         return flags?.contains(flag)!!
     }
 
     public open fun setClassIdentifiers(identifiers: MutableSet<String>) {
-        classIdentifiers = identifiers
+        classIdentifiersSet = identifiers
     }
 
     public open fun getClassIdentifiers(): Set<String> {
-        return Collections.unmodifiableSet(classIdentifiers)
-    }
-
-    public open fun getMethodReturnType(): PsiType? {
-        return methodReturnType
+        return Collections.unmodifiableSet(classIdentifiersSet)
     }
 
     public open fun clearClassIdentifiers(): Unit {
-        classIdentifiers.clear()
+        classIdentifiersSet.clear()
     }
 
     public open fun elementToKotlin(element: PsiElement): String {
