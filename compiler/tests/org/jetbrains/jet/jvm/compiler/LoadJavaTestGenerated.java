@@ -1177,6 +1177,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             public void testDeeplyInnerClass() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/DeeplyInnerClass.java");
             }
+
+            @TestMetadata("DeeplyNestedStatic.java")
+            public void testDeeplyNestedStatic() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/DeeplyNestedStatic.java");
+            }
             
             @TestMetadata("Enum.java")
             public void testEnum() throws Exception {
