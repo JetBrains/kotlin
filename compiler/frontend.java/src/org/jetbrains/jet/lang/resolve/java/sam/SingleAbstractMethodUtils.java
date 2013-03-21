@@ -42,7 +42,13 @@ public class SingleAbstractMethodUtils {
         }
 
         List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass);
-        return abstractMembers.size() == 1 && abstractMembers.get(0) instanceof SimpleFunctionDescriptor;
+        if (abstractMembers.size() == 1) {
+            CallableMemberDescriptor member = abstractMembers.get(0);
+            if (member instanceof SimpleFunctionDescriptor) {
+                return member.getTypeParameters().isEmpty();
+            }
+        }
+        return false;
     }
 
     @NotNull
@@ -58,7 +64,6 @@ public class SingleAbstractMethodUtils {
 
     @NotNull
     private static JetType getFunctionalTypeForFunction(@NotNull FunctionDescriptor function) {
-        // TODO substitute type parameters of function with star projections
         JetType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
         List<JetType> parameterTypes = Lists.newArrayList();
