@@ -355,17 +355,14 @@ public final class JavaFunctionResolver {
             @NotNull PackagePsiDeclarationProvider scopeData,
             @NotNull NamespaceDescriptor ownerDescriptor
     ) {
-
         NamedMembers namedMembers = scopeData.getMembersCache().get(functionName);
-        if (namedMembers == null) {
-            return Collections.emptySet();
+        if (namedMembers != null) {
+            SimpleFunctionDescriptor samConstructor = resolveSamConstructor(ownerDescriptor, namedMembers);
+            if (samConstructor != null) {
+                return Collections.<FunctionDescriptor>singleton(samConstructor);
+            }
         }
-
-        SimpleFunctionDescriptor samConstructor = resolveSamConstructor(ownerDescriptor, namedMembers);
-
-        return samConstructor == null
-               ? Collections.<FunctionDescriptor>emptySet()
-               : Collections.<FunctionDescriptor>singleton(samConstructor);
+        return Collections.emptySet();
     }
 
     @NotNull
