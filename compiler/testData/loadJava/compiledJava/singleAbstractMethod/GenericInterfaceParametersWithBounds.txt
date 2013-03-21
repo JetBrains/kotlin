@@ -1,0 +1,7 @@
+package test
+
+public /*synthesized*/ fun </*0*/ A, /*1*/ B : jet.List<A>?> GenericInterfaceParametersWithBounds(/*0*/ function : (jet.Array<out A>?, B?) -> jet.Unit) : test.GenericInterfaceParametersWithBounds<A, B> where A : jet.Comparable<A>?, A : java.lang.Cloneable?
+
+public trait GenericInterfaceParametersWithBounds</*0*/ A, /*1*/ B : jet.List<A>?> : java.lang.Object where A : jet.Comparable<A>?, A : java.lang.Cloneable? {
+    public abstract fun method(/*0*/ p0 : jet.Array<out A>?, /*1*/ p1 : B?) : jet.Unit
+}
