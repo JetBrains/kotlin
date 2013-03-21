@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -40,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
@@ -279,6 +281,13 @@ public final class JavaFunctionResolver {
             }
         }
 
+        if (owner instanceof NamespaceDescriptor) {
+            SimpleFunctionDescriptor samConstructor = resolveSamConstructor((NamespaceDescriptor) owner, namedMembers);
+            if (samConstructor != null) {
+                functionsFromCurrent.add(samConstructor);
+            }
+        }
+
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
@@ -314,21 +323,55 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
+    private static ClassDescriptor findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
+        ClassifierDescriptor classifier = memberScope.getClassifier(name);
+        if (classifier instanceof ClassDescriptor) {
+            return (ClassDescriptor) classifier;
+        }
+        return null;
+    }
+
+    // E.g. we have foo.Bar.Baz class declared in Java. It will produce the following descriptors structure:
+    // namespace foo
+    // +-- class Bar
+    // |    +-- class Baz
+    // +-- namespace Bar
+    // We need to find class 'Baz' in namespace 'foo.Bar'.
+    @Nullable
+    private static ClassDescriptor findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
+        // First, try to find in namespace directly
+        ClassDescriptor found = findClassInScope(namespace.getMemberScope(), name);
+        if (found != null) {
+            return found;
+        }
+
+        // If unsuccessful, try to find class of the same name as current (class 'foo.Bar')
+        NamespaceDescriptorParent parent = namespace.getContainingDeclaration();
+        if (parent instanceof NamespaceDescriptor) {
+            // Calling recursively, looking for 'Bar' in 'foo'
+            ClassDescriptor classForCurrentNamespace = findClassInNamespace((NamespaceDescriptor) parent, namespace.getName());
+            if (classForCurrentNamespace == null) {
+                return null;
+            }
+
+            // Try to find nested class 'Baz' in class 'foo.Bar'
+            return findClassInScope(DescriptorUtils.getStaticNestedClassesScope(classForCurrentNamespace), name);
+        }
+        return null;
+    }
+
+    @Nullable
     private SimpleFunctionDescriptor resolveSamConstructor(
             @NotNull NamespaceDescriptor ownerDescriptor,
             @NotNull NamedMembers namedMembers
     ) {
         PsiClass functionalInterface = namedMembers.getFunctionalInterface();
         if (functionalInterface != null) {
-            ClassifierDescriptor classifier = ownerDescriptor.getMemberScope().getClassifier(namedMembers.getName());
-            if (classifier instanceof ClassDescriptor) {
-                ClassDescriptor klass = (ClassDescriptor) classifier;
-
-                if (SingleAbstractMethodUtils.isFunctionalInterface(klass)) {
-                    SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createConstructorFunction(klass);
-                    trace.record(BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, constructorFunction, klass);
-                    return constructorFunction;
-                }
+            ClassDescriptor klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
+            if (klass != null && SingleAbstractMethodUtils.isFunctionalInterface(klass)) {
+                SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createConstructorFunction(ownerDescriptor, klass);
+                trace.record(BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, constructorFunction, klass);
+                return constructorFunction;
             }
         }
         return null;

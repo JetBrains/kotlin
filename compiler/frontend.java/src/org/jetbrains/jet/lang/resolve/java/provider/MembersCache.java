@@ -94,7 +94,7 @@ public final class MembersCache {
                     if (JetClassAnnotation.get(psiClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
                         processObjectClass(psiClass);
                     }
-                    if (!DescriptorResolverUtils.isKotlinClass(psiClass) && psiClass.isInterface()) {
+                    if (!DescriptorResolverUtils.isKotlinClass(psiClass) && isFunctionalInterface(psiClass)) {
                         processFunctionalInterface(psiClass);
                     }
                 }
@@ -132,6 +132,7 @@ public final class MembersCache {
         public void process() {
             processFields();
             processMethods();
+            processNestedClasses();
         }
 
         private boolean includeMember(PsiMemberWrapper member) {
@@ -300,6 +301,18 @@ public final class MembersCache {
         private void createEmptyEntry(@NotNull Name identifier) {
             getOrCreateEmpty(identifier);
         }
+
+        private void processNestedClasses() {
+            if (!staticMembers) {
+                return;
+            }
+            for (PsiClass nested : psiClass.getPsiClass().getInnerClasses()) {
+                if (isFunctionalInterface(nested)) {
+                    NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(nested.getName()));
+                    namedMembers.setFunctionalInterface(nested);
+                }
+            }
+        }
     }
 
     private static boolean isObjectMethodInInterface(@NotNull PsiMember member) {
@@ -313,8 +326,31 @@ public final class MembersCache {
             return false;
         }
 
+        return isObjectMethod((PsiMethod) member);
+    }
+
+    private static boolean isObjectMethod(PsiMethod method) {
         String formattedMethod = PsiFormatUtil.formatMethod(
-                (PsiMethod) member, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+                method, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
         return OBJECT_METHODS.contains(formattedMethod);
     }
+
+    public static boolean isFunctionalInterface(@NotNull PsiClass psiClass) {
+        if (!psiClass.isInterface()) {
+            return false;
+        }
+
+        int foundAbstractMethods = 0;
+        for (PsiMethod method : psiClass.getAllMethods()) {
+            if (!isObjectMethod(method) && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
+                foundAbstractMethods++;
+
+                if (method.hasTypeParameters()) {
+                    return false;
+                }
+            }
+        }
+        return foundAbstractMethods == 1;
+    }
+
 }

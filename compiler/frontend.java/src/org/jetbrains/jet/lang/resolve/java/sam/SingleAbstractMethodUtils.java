@@ -73,9 +73,9 @@ public class SingleAbstractMethodUtils {
         return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
     }
 
-    public static SimpleFunctionDescriptor createConstructorFunction(@NotNull ClassDescriptor klass) {
+    public static SimpleFunctionDescriptor createConstructorFunction(@NotNull ClassOrNamespaceDescriptor owner, @NotNull ClassDescriptor klass) {
         SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
-                klass.getContainingDeclaration(),
+                owner,
                 klass.getAnnotations(),
                 klass.getName(),
                 CallableMemberDescriptor.Kind.SYNTHESIZED

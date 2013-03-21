@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
+import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
@@ -220,6 +221,9 @@ public final class JavaNamespaceResolver {
         }
 
         for (PsiClass nestedClass : psiClass.getInnerClasses()) {
+            if (MembersCache.isFunctionalInterface(nestedClass)) {
+                return true;
+            }
             if (nestedClass.hasModifierProperty(PsiModifier.STATIC) && hasStaticMembers(nestedClass)) {
                 return true;
             }

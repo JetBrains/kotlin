@@ -1160,6 +1160,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/InterfaceWithObjectMethod.java");
             }
             
+            @TestMetadata("Nested.java")
+            public void testNested() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Nested.java");
+            }
+            
             @TestMetadata("Runnable.java")
             public void testRunnable() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
@@ -1177,7 +1182,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             public void testDeeplyInnerClass() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/DeeplyInnerClass.java");
             }
-
+            
             @TestMetadata("DeeplyNestedStatic.java")
             public void testDeeplyNestedStatic() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/static/DeeplyNestedStatic.java");
