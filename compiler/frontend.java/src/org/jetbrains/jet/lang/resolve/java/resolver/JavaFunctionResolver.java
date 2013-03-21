@@ -313,6 +313,27 @@ public final class JavaFunctionResolver {
         return functions;
     }
 
+    @Nullable
+    private SimpleFunctionDescriptor resolveSamConstructor(
+            @NotNull NamespaceDescriptor ownerDescriptor,
+            @NotNull NamedMembers namedMembers
+    ) {
+        PsiClass functionalInterface = namedMembers.getFunctionalInterface();
+        if (functionalInterface != null) {
+            ClassifierDescriptor classifier = ownerDescriptor.getMemberScope().getClassifier(namedMembers.getName());
+            if (classifier instanceof ClassDescriptor) {
+                ClassDescriptor klass = (ClassDescriptor) classifier;
+
+                if (SingleAbstractMethodUtils.isFunctionalInterface(klass)) {
+                    SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createConstructorFunction(klass);
+                    trace.record(BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, constructorFunction, klass);
+                    return constructorFunction;
+                }
+            }
+        }
+        return null;
+    }
+
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(
             @NotNull Name methodName,
@@ -340,21 +361,11 @@ public final class JavaFunctionResolver {
             return Collections.emptySet();
         }
 
-        PsiClass functionalInterface = namedMembers.getFunctionalInterface();
-        if (functionalInterface != null) {
-            ClassifierDescriptor classifier = ownerDescriptor.getMemberScope().getClassifier(functionName);
-            if (classifier instanceof ClassDescriptor) {
-                ClassDescriptor klass = (ClassDescriptor) classifier;
+        SimpleFunctionDescriptor samConstructor = resolveSamConstructor(ownerDescriptor, namedMembers);
 
-                if (SingleAbstractMethodUtils.isFunctionalInterface(klass)) {
-                    SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createConstructorFunction(klass);
-                    trace.record(BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, constructorFunction, klass);
-                    return Collections.<FunctionDescriptor>singleton(constructorFunction);
-                }
-            }
-        }
-
-        return Collections.emptySet();
+        return samConstructor == null
+               ? Collections.<FunctionDescriptor>emptySet()
+               : Collections.<FunctionDescriptor>singleton(samConstructor);
     }
 
     @NotNull
