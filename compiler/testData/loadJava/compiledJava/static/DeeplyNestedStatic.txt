@@ -1,0 +1,23 @@
+package test
+
+public open class DeeplyNestedStatic : java.lang.Object {
+    public constructor DeeplyNestedStatic()
+    
+    public open class Foo : java.lang.Object {
+        public constructor Foo()
+        
+        public open class Bar : java.lang.Object {
+            public constructor Bar()
+        }
+    }
+}
+
+package DeeplyNestedStatic {
+    
+    package Foo {
+        
+        package Bar {
+            public open fun method() : jet.Unit
+        }
+    }
+}
