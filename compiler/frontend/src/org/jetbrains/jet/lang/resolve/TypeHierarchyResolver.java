@@ -131,7 +131,7 @@ public class TypeHierarchyResolver {
 
         resolvePackageHeaders(); // Can't resolve package headers before, because some of the package fragments may not be created yet
 
-        importsResolver.processTypeImports(outerScope);
+        importsResolver.processTypeImports();
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
@@ -501,7 +501,7 @@ public class TypeHierarchyResolver {
             context.getPackageFragmentDescriptors().put(file, fragmentDescriptor);
 
             WriteThroughScope fileScope = new WriteThroughScope(outerScope, fragmentDescriptor.getMemberScope(),
-                                                                     new TraceBasedRedeclarationHandler(trace), "namespace");
+                                                                     new TraceBasedRedeclarationHandler(trace), "Scope for file " + file);
             fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
             context.getFileScopes().put(file, fileScope);
 

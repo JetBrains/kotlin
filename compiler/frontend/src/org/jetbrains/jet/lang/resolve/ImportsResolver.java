@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -71,46 +72,54 @@ public class ImportsResolver {
         this.importsFactory = importsFactory;
     }
 
-    public void processTypeImports(@NotNull JetScope rootScope) {
-        processImports(LookupMode.ONLY_CLASSES, rootScope);
+    public void processTypeImports() {
+        processImports(LookupMode.ONLY_CLASSES);
     }
 
-    public void processMembersImports(@NotNull JetScope rootScope) {
-        processImports(LookupMode.EVERYTHING, rootScope);
+    public void processMembersImports() {
+        processImports(LookupMode.EVERYTHING);
     }
 
-    private void processImports(@NotNull LookupMode lookupMode, @NotNull JetScope rootScope) {
+    private void processImports(@NotNull LookupMode lookupMode) {
         for (JetFile file : context.getPackageFragmentDescriptors().keySet()) {
             WritableScope namespaceScope = context.getFileScopes().get(file);
             SubModuleDescriptor subModule = moduleSourcesManager.getSubModuleForFile(file);
-            processImportsInFile(subModule, lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives()), rootScope);
+            processImportsInFile(subModule, lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives())
+            );
         }
         for (JetScript script : context.getScripts().keySet()) {
             WritableScope scriptScope = context.getScriptScopes().get(script);
             SubModuleDescriptor subModule = moduleSourcesManager.getSubModuleForFile(script.getContainingFile());
-            processImportsInFile(subModule, lookupMode, scriptScope, script.getImportDirectives(), rootScope);
+            processImportsInFile(subModule, lookupMode, scriptScope, script.getImportDirectives());
         }
     }
 
-    private void processImportsInFile(@NotNull SubModuleDescriptor subModule, @NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
-        processImportsInFile(lookupMode, scope, directives, rootScope, subModule, trace, qualifiedExpressionResolver, importsFactory);
+    private void processImportsInFile(
+            @NotNull SubModuleDescriptor subModule,
+            @NotNull LookupMode lookupMode,
+            WritableScope scope,
+            List<JetImportDirective> directives
+    ) {
+        processImportsInFile(lookupMode, scope, directives, subModule, trace, qualifiedExpressionResolver, importsFactory);
     }
 
     public static void processImportsInFile(
             LookupMode lookupMode,
             @NotNull WritableScope namespaceScope,
             @NotNull List<JetImportDirective> importDirectives,
-            @NotNull JetScope rootScope,
             @NotNull SubModuleDescriptor subModule,
             @NotNull BindingTrace trace,
             @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
             @NotNull JetImportsFactory importsFactory
     ) {
-
         Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
         if (lookupMode == LookupMode.EVERYTHING) {
             namespaceScope.clearImports();
         }
+
+        PackageViewDescriptor rootPackage = subModule.getPackageView(FqName.ROOT);
+        assert rootPackage != null : "Root package not found in " + subModule;
+        JetScope rootScope = rootPackage.getMemberScope();
 
         PlatformToKotlinClassMap platformToKotlinClassMap = subModule.getContainingDeclaration().getPlatformToKotlinClassMap();
         for (ImportPath defaultImportPath : subModule.getDefaultImports()) {

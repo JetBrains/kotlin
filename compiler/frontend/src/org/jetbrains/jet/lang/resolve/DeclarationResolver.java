@@ -95,7 +95,7 @@ public class DeclarationResolver {
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
         createFunctionsForDataClasses();
-        importsResolver.processMembersImports(rootScope);
+        importsResolver.processMembersImports();
         checkRedeclarationsInNamespaces();
         checkRedeclarationsInInnerClassNames();
     }
