@@ -18,7 +18,10 @@ package org.jetbrains.jet.plugin.references;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -51,9 +54,11 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
+    private Set<? extends PsiFile> builtInsSources = Sets.newHashSet();
 
     public BuiltInsReferenceResolver(
             Project project,
@@ -85,9 +90,10 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         jetNamespace.setMemberScope(scope);
 
-        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
-                                                        getJetFiles("jet", Predicates.<JetFile>alwaysTrue()));
+        List<JetFile> jetBuiltInsFiles = getJetFiles("jet", Predicates.<JetFile>alwaysTrue());
+        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, jetBuiltInsFiles);
 
+        builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
         bindingContext = context.getBindingContext();
     }
 
@@ -170,9 +176,9 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     @NotNull
-    public Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext originalContext,
-            @Nullable JetReferenceExpression referenceExpression) {
+    public Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext originalContext, @Nullable JetReferenceExpression referenceExpression) {
         if (bindingContext == null) {
+            assert DumbService.getInstance(myProject).isDumb() : "Builtins component wasn't initialized properly";
             return Collections.emptyList();
         }
 
@@ -184,6 +190,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     @NotNull
     public Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (bindingContext == null) {
+            assert DumbService.getInstance(myProject).isDumb() : "Builtins component wasn't initialized properly";
             return Collections.emptyList();
         }
 
@@ -195,6 +202,11 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             return BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
         }
         return Collections.emptyList();
+    }
+
+    public static boolean isFromBuiltIns(@NotNull PsiElement element) {
+        assert ApplicationManager.getApplication().isUnitTestMode() : "In non tested mode element.isWritable() should be sufficient";
+        return element.getProject().getComponent(BuiltInsReferenceResolver.class).builtInsSources.contains(element.getContainingFile());
     }
 
     @Nullable

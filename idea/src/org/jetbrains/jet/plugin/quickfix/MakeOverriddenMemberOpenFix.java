@@ -34,7 +34,9 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lexer.JetTokens.OPEN_KEYWORD;
 
@@ -64,7 +66,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
             if (!overriddenDescriptor.getModality().isOverridable()) {
                 PsiElement overriddenMember =
                         BindingContextUtils.descriptorToDeclaration(resolveSession.getBindingContext(), overriddenDescriptor);
-                if (overriddenMember == null || !overriddenMember.isWritable()) {
+                if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember)) {
                     return false;
                 }
                 String containingDeclarationName = overriddenDescriptor.getContainingDeclaration().getName().getName();

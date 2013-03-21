@@ -18,8 +18,10 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +33,12 @@ import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import java.util.List;
 
 public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+    }
+
     protected void doTest(@NotNull String beforeFileName) throws Exception {
         boolean isWithRuntime = beforeFileName.endsWith("Runtime.kt");
 
