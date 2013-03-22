@@ -156,10 +156,10 @@ public class DescriptorUtils {
         return packageView;
     }
 
-    public static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        PackageViewDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageViewDescriptor.class, false);
-        PackageViewDescriptor fromPackage = DescriptorUtils.getParentOfType(second, PackageViewDescriptor.class, false);
-        return fromPackage != null && whatPackage != null && whatPackage.equals(fromPackage);
+    public static boolean isInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
+        PackageFragmentDescriptor whatPackage = getParentOfType(first, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor fromPackage = getParentOfType(second, PackageFragmentDescriptor.class, false);
+        return fromPackage != null && whatPackage != null && whatPackage.getFqName().equals(fromPackage.getFqName());
     }
 
     @Nullable

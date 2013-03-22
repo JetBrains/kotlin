@@ -41,7 +41,7 @@ public class JavaDescriptorResolver {
     public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            return DescriptorUtils.isInSameNamespace(what, from);
+            return DescriptorUtils.isInSamePackage(what, from);
         }
 
         @Override
@@ -106,7 +106,7 @@ public class JavaDescriptorResolver {
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (DescriptorUtils.isInSameNamespace(what, from)) {
+            if (DescriptorUtils.isInSamePackage(what, from)) {
                 return true;
             }
 
