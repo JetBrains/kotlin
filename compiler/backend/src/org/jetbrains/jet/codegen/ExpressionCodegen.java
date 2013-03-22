@@ -1891,10 +1891,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
                     if (samTrait != null) {
-                        JetFunctionLiteralExpression argumentExpression = (JetFunctionLiteralExpression) ((ExpressionValueArgument) resolvedCall.getValueArgumentsByIndex().get(0)).getValueArgument()
-                                .getArgumentExpression(); // TODO this will fail for Runnable(f) expression
+                        ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
+                        if (!(argument instanceof ExpressionValueArgument)) {
+                            throw new IllegalStateException(
+                                    "argument of SAM constructor is " + argument.getClass().getName() + " " + expression.getText());
+                        }
+                        ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
+                        assert valueArgument != null : "getValueArgument() is null for " + expression.getText();
+                        JetExpression argumentExpression = valueArgument.getArgumentExpression();
 
-                        return genClosure(argumentExpression.getFunctionLiteral(), samTrait);
+                        if (argumentExpression instanceof JetFunctionLiteralExpression) {
+                            return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samTrait);
+                        }
+                        else {
+                            throw new UnsupportedOperationException(); // TODO
+                        }
                     }
                 }
                 return invokeFunction(call, receiver, resolvedCall);
