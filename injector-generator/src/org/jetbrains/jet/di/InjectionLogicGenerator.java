@@ -17,10 +17,12 @@
 package org.jetbrains.jet.di;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.DFS;
 import org.jetbrains.jet.utils.Printer;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class InjectionLogicGenerator {
@@ -68,8 +70,22 @@ public abstract class InjectionLogicGenerator {
     }
 
     protected void generate(@NotNull Printer p, @NotNull Collection<Field> fields) {
+        List<Field> topOrder = DFS.topologicalOrder(fields, new DFS.Neighbors<Field>() {
+            @NotNull
+            @Override
+            public Iterable<Field> getNeighbors(Field current) {
+                Expression initialization = current.getInitialization();
+                if (initialization instanceof ConstructorCall) {
+                    ConstructorCall call = (ConstructorCall) initialization;
+                    return call.getConstructorArguments();
+                }
+                return Collections.emptyList();
+            }
+        });
+        Collections.reverse(topOrder);
+
         // Initialize fields
-        for (Field field : fields) {
+        for (Field field : topOrder) {
             //if (!backsParameter.contains(field) || field.isPublic()) {
             p.println(prefixForInitialization(field), field.getName(), " = ", field.getInitialization().renderAsCode(), ";");
             //}
