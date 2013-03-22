@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.SubPackagesScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.inject.Inject;
@@ -120,6 +121,9 @@ public class ImportsResolver {
         PackageViewDescriptor rootPackage = subModule.getPackageView(FqName.ROOT);
         assert rootPackage != null : "Root package not found in " + subModule;
         JetScope rootScope = rootPackage.getMemberScope();
+
+        // We should be able to resolve top-level packages from anywhere
+        namespaceScope.importScope(new SubPackagesScope(rootPackage));
 
         PlatformToKotlinClassMap platformToKotlinClassMap = subModule.getContainingDeclaration().getPlatformToKotlinClassMap();
         for (ImportPath defaultImportPath : subModule.getDefaultImports()) {
