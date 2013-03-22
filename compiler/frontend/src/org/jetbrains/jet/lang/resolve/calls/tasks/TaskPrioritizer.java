@@ -75,7 +75,7 @@ public class TaskPrioritizer {
     }
 
     @NotNull
-    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(@NotNull BasicCallResolutionContext context, @NotNull Name name,
+    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(@NotNull final BasicCallResolutionContext context, @NotNull Name name,
                                                            @NotNull JetReferenceExpression functionReference, @NotNull List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors) {
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
         final JetScope scope;
@@ -93,7 +93,7 @@ public class TaskPrioritizer {
                 if (call == null) return false;
                 D candidateDescriptor = call.getDescriptor();
                 if (ErrorUtils.isError(candidateDescriptor)) return true;
-                return Visibilities.isVisible(candidateDescriptor, scope.getContainingDeclaration());
+                return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
             }
         };
 
