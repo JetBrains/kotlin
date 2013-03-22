@@ -109,11 +109,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
 
-        JvmClassName className =
-                classNameForAnonymousClass(bindingContext, objectDeclaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(
-                                            className.getInternalName() + ".class",
-                                            literal.getContainingFile());
+        JvmClassName className = classNameForAnonymousClass(bindingContext, objectDeclaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName(), literal.getContainingFile());
 
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
         assert classDescriptor != null;
@@ -278,9 +275,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JvmClassName className =
                 classNameForAnonymousClass(bindingContext, declaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(
-                className.getInternalName() + ".class",
-                declaration.getContainingFile()
+        ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName(), declaration.getContainingFile()
         );
 
         CodegenContext objectContext = context.intoAnonymousClass(descriptor, this);

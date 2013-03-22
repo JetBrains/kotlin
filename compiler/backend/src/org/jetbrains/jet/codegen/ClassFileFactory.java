@@ -51,8 +51,8 @@ public final class ClassFileFactory extends GenerationStateAware {
         this.builderFactory = builderFactory;
     }
 
-    ClassBuilder newVisitor(String outputFilePath, PsiFile sourceFile) {
-        return newVisitor(outputFilePath, Collections.singletonList(sourceFile));
+    ClassBuilder newVisitor(String internalClassName, PsiFile sourceFile) {
+        return newVisitor(internalClassName + ".class", Collections.singletonList(sourceFile));
     }
     
     private ClassBuilder newVisitor(String outputFilePath, Collection<? extends PsiFile> sourceFiles) {
@@ -126,16 +126,16 @@ public final class ClassFileFactory extends GenerationStateAware {
         if (isPrimitive(type)) {
             throw new IllegalStateException("Codegen for primitive type is not possible: " + aClass);
         }
-        return newVisitor(type.getInternalName() + ".class", sourceFile);
+        return newVisitor(type.getInternalName(), sourceFile);
     }
 
     public ClassBuilder forNamespacepart(String internalName, PsiFile sourceFile) {
-        return newVisitor(internalName + ".class", sourceFile);
+        return newVisitor(internalName, sourceFile);
     }
 
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass, GenerationState state, PsiFile sourceFile) {
         return newVisitor(
-                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName() + ".class",
+                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName(),
                 sourceFile);
     }
 
