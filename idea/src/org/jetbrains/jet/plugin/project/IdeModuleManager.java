@@ -32,7 +32,6 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.LibraryScopeCache;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -47,17 +46,15 @@ import com.intellij.util.graph.Graph;
 import com.intellij.util.graph.GraphGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
+import org.jetbrains.jet.asJava.TraceBasedLightClassResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -130,25 +127,9 @@ public class IdeModuleManager implements KotlinModuleManager {
         private ModuleBuilder() {
             this.trace = new BindingTraceContext();
             this.moduleSourcesManager = new MutableModuleSourcesManager(project);
-            this.classResolutionFacade = new JavaClassResolutionFacadeImpl(new KotlinLightClassResolver() {
-                @Nullable
-                @Override
-                public ClassDescriptor resolveLightClass(@NotNull PsiClass kotlinLightClass) {
-                    assert kotlinLightClass instanceof KotlinLightClass
-                            : "Wrong light class: " + kotlinLightClass + " " + kotlinLightClass.getClass();
-                    JetClassOrObject sourceElement = ((KotlinLightClass) kotlinLightClass).getSourceElement();
-                    if (sourceElement == null) {
-                        return null; // package class, invisible from Kotlin
-                    }
-                    ClassDescriptor classDescriptor = trace.get(BindingContext.CLASS, sourceElement);
-                    assert classDescriptor != null : "No class descriptor found for" +
-                                                     "\nlight class " + kotlinLightClass.getQualifiedName() +
-                                                     "\nkotlin psi element " + sourceElement +
-                                                     "\nfile:" + sourceElement.getContainingFile() +
-                                                     "\n" + sourceElement.getContainingFile().getText();
-                    return classDescriptor;
-                }
-            });
+            this.classResolutionFacade = new JavaClassResolutionFacadeImpl(
+                    new TraceBasedLightClassResolver(trace.getBindingContext())
+            );
         }
 
         private void registerJavaPackageFragmentProvider(MutableSubModuleDescriptor subModule, JavaPackageFragmentProvider provider) {
