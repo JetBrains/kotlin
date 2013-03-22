@@ -67,8 +67,10 @@ public class Visibilities {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(what, ModuleDescriptor.class, false);
+            assert parentModule != null : "No module parent found for [what=]" + what;
             ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(from, ModuleDescriptor.class, false);
-            assert parentModule != null && fromModule != null;
+            assert fromModule != null : "No module parent found for [from=]" + from +
+                                        "\n[what=]" + what;
             return parentModule.equals(fromModule);
         }
     };
