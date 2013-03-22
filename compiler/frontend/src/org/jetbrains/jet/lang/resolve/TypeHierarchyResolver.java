@@ -484,6 +484,7 @@ public class TypeHierarchyResolver {
     private class ClassifierCollector extends JetVisitorVoid {
         private final JetScope outerScope;
         private final NamespaceLikeBuilder owner;
+        private final Collection<JetDeclarationContainer> forDeferredResolve;
 
         public ClassifierCollector(@NotNull JetScope outerScope,
                 @NotNull NamespaceLikeBuilder owner,
@@ -491,6 +492,7 @@ public class TypeHierarchyResolver {
         ) {
             this.outerScope = outerScope;
             this.owner = owner;
+            this.forDeferredResolve = forDeferredResolve;
         }
 
         @Override
@@ -668,6 +670,7 @@ public class TypeHierarchyResolver {
                 @NotNull DeclarationDescriptor descriptorForDeferredResolve,
                 @NotNull JetDeclarationContainer container
         ) {
+            forDeferredResolve.add(container);
             context.normalScope.put(container, outerScope);
             context.forDeferredResolver.put(container, descriptorForDeferredResolve);
         }
