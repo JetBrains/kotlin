@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
         buildFor(Iterators, "")
     }
 
-    val iteratorSignatures = templates.map { it.signature.flat() }.toSet()
+    val iteratorSignatures = templates.map { it.erasedSignature.flat() }.toSet()
     templates.clear()
 
     collections()
@@ -50,15 +50,15 @@ fun main(args: Array<String>) {
     }
 
     templates.writeTo(File(outDir, "_Iterables.kt")) {
-        if (iteratorSignatures contains signature.flat()) "" else buildFor(Iterables, "")
+        if (iteratorSignatures contains erasedSignature.flat()) "" else buildFor(Iterables, "")
     }
 
     templates.writeTo(File(outDir, "_IteratorsCommon.kt")) {
-        if (iteratorSignatures contains signature.flat()) "" else buildFor(Iterators, "")
+        if (iteratorSignatures contains erasedSignature.flat()) "" else buildFor(Iterators, "")
     }
 
     templates.writeTo(File(outDir, "_Collections.kt")) {
-        if (iteratorSignatures contains signature.flat()) buildFor(Collections, "") else ""
+        if (iteratorSignatures contains erasedSignature.flat()) buildFor(Collections, "") else ""
     }
 
     generateDownTos(File(outDir, "_DownTo.kt"), "package kotlin")

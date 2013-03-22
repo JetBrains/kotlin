@@ -15,7 +15,7 @@ enum class Family {
     PrimitiveArrays
 }
 
-class GenericFunction(val signature : String) {
+class GenericFunction(val signature : String, val erasedSignature: String) {
     var doc : String = ""
     var toNullableT : Boolean = false
     val isInline : Boolean = true;
@@ -151,8 +151,8 @@ fun String.trimTrailingSpaces() : String {
 
 val templates = ArrayList<GenericFunction>()
 
-fun f(signature : String, init : GenericFunction.() -> Unit) {
-    val gf = GenericFunction(signature)
+fun f(signature : String, erasedSignature: String = signature, init : GenericFunction.() -> Unit) {
+    val gf = GenericFunction(signature, erasedSignature)
     gf.init()
     templates.add(gf)
 }

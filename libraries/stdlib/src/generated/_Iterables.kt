@@ -91,13 +91,6 @@ public inline fun <T, R, C: MutableCollection<in R>> Iterable<T>.mapTo(result: C
 }
 
 /**
- * Returns the result of transforming each element to one or more values which are concatenated together into a single list
- */
-public inline fun <T, R> Iterable<T>.flatMap(transform: (T)-> Iterable<R>) : List<R> {
-    return flatMapTo(ArrayList<R>(), transform)
-}
-
-/**
  * Returns the result of transforming each element to one or more values which are concatenated together into a single collection
  */
 public inline fun <T, R, C: MutableCollection<in R>> Iterable<T>.flatMapTo(result: C, transform: (T) -> Iterable<R>) : C {
