@@ -70,7 +70,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
     public ClosureCodegen gen(JetDeclarationWithBody fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
         name = classNameForAnonymousClass(state.getBindingContext(), fun);
-        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName() + ".class", fun.getContainingFile());
+        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), fun.getContainingFile());
 
         FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
         assert funDescriptor != null;
