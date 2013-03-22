@@ -52,6 +52,7 @@ public final class JavaClassResolver {
     private JavaClassObjectResolver classObjectResolver;
     private JavaSupertypeResolver supertypesResolver;
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
+    private JavaDescriptorResolver javaDescriptorResolver;
 
     public JavaClassResolver() {
     }
@@ -94,6 +95,11 @@ public final class JavaClassResolver {
     @Inject
     public void setPackageFragmentProvider(JavaPackageFragmentProvider packageFragmentProvider) {
         this.packageFragmentProvider = packageFragmentProvider;
+    }
+
+    @Inject
+    public void setJavaDescriptorResolver(JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @Nullable
@@ -185,7 +191,7 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, classResolutionFacade);
+        JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, javaDescriptorResolver);
         classDescriptor.setScopeForMemberLookup(membersScope);
         classDescriptor.setScopeForConstructorResolve(membersScope);
 

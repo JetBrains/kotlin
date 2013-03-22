@@ -21,9 +21,11 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
@@ -32,17 +34,16 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -232,16 +233,30 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         }
 
         ObservableBindingTrace observableBindingTrace = new ObservableBindingTrace(trace);
-        // TODO
-        //subModule.addPackageFragmentProvider(new JavaPackageFragmentProvider(
-        //        facade,
-        //        trace,
-        //        new LockBasedStorageManager(),
-        //        new PsiDeclarationProviderFactory(finder),
-        //        classResolver,
-        //        finder,
-        //        subModule
-        //));
+
+        StorageManager storageManager = new LockBasedStorageManager();
+        JavaClassResolutionFacadeImpl classResolutionFacade = new JavaClassResolutionFacadeImpl(new KotlinLightClassResolver() {
+            @Nullable
+            @Override
+            public ClassDescriptor resolveLightClass(@NotNull PsiClass kotlinLightClass) {
+                return null; // TODO
+            }
+        });
+        InjectorForJavaDescriptorResolver drInjector = new InjectorForJavaDescriptorResolver(
+                project, trace, classResolutionFacade, storageManager, subModule, GlobalSearchScope.allScope(project)
+        );
+        PsiClassFinderImpl psiClassFinder = drInjector.getPsiClassFinder();
+
+        JavaPackageFragmentProvider javaPackageFragmentProvider = new JavaPackageFragmentProvider(
+                trace,
+                new LockBasedStorageManager(),
+                new PsiDeclarationProviderFactory(psiClassFinder),
+                drInjector.getJavaDescriptorResolver(),
+                psiClassFinder,
+                subModule
+        );
+        subModule.addPackageFragmentProvider(javaPackageFragmentProvider);
+        classResolutionFacade.addPackageFragmentProvider(javaPackageFragmentProvider);
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);

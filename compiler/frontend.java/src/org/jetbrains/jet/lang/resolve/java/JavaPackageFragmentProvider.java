@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.impl.PackageLikeDescriptorBase;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaScopeForKotlinNamespace;
@@ -53,26 +52,23 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         }
     };
 
-    private final JavaClassResolutionFacade classResolutionFacade;
     private final DiagnosticHolder diagnosticHolder;
     private final PsiDeclarationProviderFactory declarationProviderFactory;
     private final PsiClassFinder psiClassFinder;
-    private final JavaClassResolver javaClassResolver;
+    private final JavaDescriptorResolver javaDescriptorResolver;
     private final SubModuleDescriptor subModule;
     private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
     public JavaPackageFragmentProvider(
-            @NotNull JavaClassResolutionFacade classResolutionFacade,
             @NotNull DiagnosticHolder diagnosticHolder,
             @NotNull StorageManager storageManager,
             @NotNull PsiDeclarationProviderFactory declarationProviderFactory,
-            @NotNull JavaClassResolver javaClassResolver,
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
             @NotNull PsiClassFinder psiClassFinder,
             @NotNull SubModuleDescriptor subModule
     ) {
-        this.classResolutionFacade = classResolutionFacade;
         this.diagnosticHolder = diagnosticHolder;
-        this.javaClassResolver = javaClassResolver;
+        this.javaDescriptorResolver = javaDescriptorResolver;
         this.packageFragments = storageManager.createMemoizedFunctionWithNullableValues(
                 new NullableFunction<FqName, PackageFragmentDescriptor>() {
                     @Nullable
@@ -95,7 +91,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     @Nullable
     public ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass) {
         assertInMyScope(psiClass);
-        return javaClassResolver.resolveClass(psiClass);
+        return javaDescriptorResolver.resolveClass(psiClass);
     }
 
     protected void assertInMyScope(@NotNull PsiClass psiClass) {
@@ -157,8 +153,8 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         final PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
         if (psiPackage == null) return null;
 
-        PsiClass[] classes = psiPackage.getClasses(psiClassFinder.getDefiningSearchScope());
-        if (classes.length == 0) return null;
+        //PsiClass[] classes = psiPackage.getClasses(psiClassFinder.getDefiningSearchScope());
+        //if (classes.length == 0) return null;
 
         final PsiClass packageClass = psiClassFinder.findPsiClass(PackageClassUtils.getPackageClassFqName(fqName), RuntimeClassesHandleMode.THROW);
 
@@ -181,7 +177,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                                                        declarationProviderFactory.createDeclarationProviderForClassStaticMembers(
                                                                staticClass),
                                                        fqName,
-                                                       classResolutionFacade);
+                                                       javaDescriptorResolver);
                                            }
                                        });
     }
@@ -199,7 +195,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                                                                    fragment,
                                                                    declarationProviderFactory.createDeclarationProviderForNamespaceWithoutMembers(
                                                                            psiPackage),
-                                                                   fqName, classResolutionFacade);
+                                                                   fqName, javaDescriptorResolver);
                                            }
                                        });
     }
@@ -218,7 +214,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
                                                        fragment,
                                                        declarationProviderFactory.createDeclarationForKotlinNamespace(
                                                                psiPackage, packageClass),
-                                                       fqName, classResolutionFacade);
+                                                       fqName, javaDescriptorResolver);
                                            }
                                        });
     }

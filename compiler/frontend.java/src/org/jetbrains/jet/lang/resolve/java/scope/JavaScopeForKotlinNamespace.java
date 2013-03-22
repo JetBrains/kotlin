@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.KotlinPackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -36,9 +36,9 @@ public final class JavaScopeForKotlinNamespace extends JavaPackageScope {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull KotlinPackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
-            @NotNull JavaClassResolutionFacade javaClassResolutionFacade
+            @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, declarationProvider, packageFQN, javaClassResolutionFacade);
+        super(descriptor, declarationProvider, packageFQN, javaDescriptorResolver);
         this.declarationProvider = declarationProvider;
     }
 

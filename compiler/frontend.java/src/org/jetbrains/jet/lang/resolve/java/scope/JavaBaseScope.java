@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacade;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
@@ -33,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -41,11 +39,8 @@ import java.util.Set;
 
 public abstract class JavaBaseScope extends JetScopeImpl {
 
-    // Injected
-    protected JavaDescriptorResolver javaDescriptorResolver;
+    protected final JavaDescriptorResolver javaDescriptorResolver;
 
-    @NotNull
-    protected final JavaClassResolutionFacade classResolutionFacade;
     @NotNull
     protected final PsiDeclarationProvider declarationProvider;
     @NotNull
@@ -62,17 +57,12 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     protected JavaBaseScope(
             @NotNull ClassOrPackageDescriptor descriptor,
-            @NotNull JavaClassResolutionFacade classResolutionFacade,
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
             @NotNull PsiDeclarationProvider declarationProvider
     ) {
-        this.classResolutionFacade = classResolutionFacade;
+        this.javaDescriptorResolver = javaDescriptorResolver;
         this.declarationProvider = declarationProvider;
         this.descriptor = descriptor;
-    }
-
-    @Inject
-    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @NotNull

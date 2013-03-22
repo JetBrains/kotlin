@@ -147,6 +147,7 @@ public class JavaDescriptorResolver {
     private JavaConstructorResolver constructorResolver;
     private JavaFunctionResolver functionResolver;
     private JavaInnerClassResolver innerClassResolver;
+    private JavaClassResolutionFacade classResolutionFacade;
 
     @Inject
     public void setFunctionResolver(JavaFunctionResolver functionResolver) {
@@ -171,6 +172,11 @@ public class JavaDescriptorResolver {
     @Inject
     public void setInnerClassResolver(JavaInnerClassResolver innerClassResolver) {
         this.innerClassResolver = innerClassResolver;
+    }
+
+    @Inject
+    public void setClassResolutionFacade(JavaClassResolutionFacade classResolutionFacade) {
+        this.classResolutionFacade = classResolutionFacade;
     }
 
     @Nullable
@@ -217,6 +223,11 @@ public class JavaDescriptorResolver {
             @NotNull ClassOrPackageDescriptor ownerDescriptor
     ) {
         return propertiesResolver.resolveFieldGroupByName(name, data, ownerDescriptor);
+    }
+
+    @Nullable
+    public ClassDescriptor getClassDescriptor(@NotNull PsiClass psiClass) {
+        return classResolutionFacade.getClassDescriptor(psiClass);
     }
 
     public static class ValueParameterDescriptors {

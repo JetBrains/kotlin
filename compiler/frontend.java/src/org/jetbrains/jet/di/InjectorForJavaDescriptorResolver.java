@@ -86,10 +86,10 @@ public class InjectorForJavaDescriptorResolver {
         this.subModuleDescriptor = subModuleDescriptor;
         this.globalSearchScope = globalSearchScope;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
+        this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
         this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(getPsiClassFinder(), javaClassResolutionFacade);
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.javaClassResolver = new JavaClassResolver();
-        this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
@@ -102,8 +102,9 @@ public class InjectorForJavaDescriptorResolver {
         this.javaClassObjectResolver = new JavaClassObjectResolver();
         this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
         this.javaSupertypeResolver = new JavaSupertypeResolver();
-        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider(javaClassResolutionFacade, getBindingTrace(), storageManager, psiDeclarationProviderFactory, getJavaClassResolver(), getPsiClassFinder(), subModuleDescriptor);
+        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider(getBindingTrace(), storageManager, psiDeclarationProviderFactory, getJavaDescriptorResolver(), getPsiClassFinder(), subModuleDescriptor);
 
+        this.javaDescriptorResolver.setClassResolutionFacade(javaClassResolutionFacade);
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
         this.javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
@@ -113,6 +114,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         this.javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
         this.javaClassResolver.setClassResolutionFacade(javaClassResolutionFacade);
+        this.javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         this.javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
         this.javaClassResolver.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
         this.javaClassResolver.setSignatureResolver(javaSignatureResolver);
@@ -149,12 +151,13 @@ public class InjectorForJavaDescriptorResolver {
         javaPropertyResolver.setTrace(bindingTrace);
         javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
+        javaClassObjectResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassObjectResolver.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
-        javaClassObjectResolver.setSemanticServices(javaClassResolutionFacade);
         javaClassObjectResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassObjectResolver.setTrace(bindingTrace);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
+        javaSupertypeResolver.setProject(project);
         javaSupertypeResolver.setSemanticServices(javaClassResolutionFacade);
         javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);

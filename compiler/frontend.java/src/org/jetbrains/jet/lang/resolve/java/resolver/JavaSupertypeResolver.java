@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
@@ -53,6 +54,7 @@ public final class JavaSupertypeResolver {
     private JavaClassResolutionFacade classResolutionFacade;
     private JavaTypeTransformer typeTransformer;
     private JavaClassResolver classResolver;
+    private Project project;
 
     @Inject
     public void setTrace(BindingTrace trace) {
@@ -72,6 +74,11 @@ public final class JavaSupertypeResolver {
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
+    }
+
+    @Inject
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public Collection<JetType> getSupertypes(
@@ -202,7 +209,7 @@ public final class JavaSupertypeResolver {
 
     @Nullable
     private ClassDescriptor resolveJavaLangObject(@NotNull GlobalSearchScope scope) {
-        JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(scope.getProject());
+        JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
         PsiClass psiClass = javaPsiFacade.findClass(DescriptorResolverUtils.OBJECT_FQ_NAME.getFqName(), scope);
         if (psiClass == null) return null;
 
