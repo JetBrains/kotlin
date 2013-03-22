@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -37,6 +38,7 @@ import org.jetbrains.jet.lang.types.SubstitutionUtils;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
 import org.jetbrains.jet.utils.DFS;
 
 import javax.inject.Inject;
@@ -498,12 +500,11 @@ public class TypeHierarchyResolver {
         @Override
         public void visitJetFile(JetFile file) {
             MutableSubModuleDescriptor subModule = (MutableSubModuleDescriptor) moduleManager.getSubModuleForFile(file);
-            MutablePackageFragmentDescriptor fragmentDescriptor = subModule.getPackageFragmentProviderForKotlinSources()
+            final MutablePackageFragmentDescriptor fragmentDescriptor = subModule.getPackageFragmentProviderForKotlinSources()
                     .addPackageFragment(PackageFragmentKind.SOURCE, JetPsiUtil.getFQName(file));
             context.getPackageFragmentDescriptors().put(file, fragmentDescriptor);
 
-            PackageViewDescriptor packageView = DescriptorUtils.getCorrespondingPackageView(fragmentDescriptor);
-            WriteThroughScope fileScope = new WriteThroughScope(packageView.getMemberScope(), fragmentDescriptor.getMemberScope(),
+            WriteThroughScope fileScope = new WriteThroughScope(createLazyPackageScope(fragmentDescriptor), fragmentDescriptor.getMemberScope(),
                                                                      new TraceBasedRedeclarationHandler(trace), "Scope for file " + file);
             fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
             context.getFileScopes().put(file, fileScope);
@@ -675,5 +676,15 @@ public class TypeHierarchyResolver {
             context.normalScope.put(container, outerScope);
             context.forDeferredResolver.put(container, descriptorForDeferredResolve);
         }
+    }
+
+    private LazyScopeAdapter createLazyPackageScope(final MutablePackageFragmentDescriptor fragmentDescriptor) {
+        return new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
+            @Override
+            protected JetScope compute() {
+                PackageViewDescriptor packageView = DescriptorUtils.getCorrespondingPackageView(fragmentDescriptor);
+                return packageView.getMemberScope();
+            }
+        });
     }
 }
