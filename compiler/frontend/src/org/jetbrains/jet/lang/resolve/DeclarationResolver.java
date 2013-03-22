@@ -90,7 +90,7 @@ public class DeclarationResolver {
         this.moduleManager = moduleManager;
     }
 
-    public void process(@NotNull JetScope rootScope) {
+    public void process() {
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
