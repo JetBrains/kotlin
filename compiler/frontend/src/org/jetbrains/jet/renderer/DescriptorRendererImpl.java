@@ -645,8 +645,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(moduleOrScript, builder);
     }
 
-    private void renderPackage(@NotNull DeclarationDescriptor packageViewOrFragment, @NotNull StringBuilder builder) {
+    private void renderPackage(@NotNull DeclarationDescriptor packageViewOrFragment, @NotNull StringBuilder builder, boolean fragment) {
         builder.append(renderKeyword(JetTokens.PACKAGE_KEYWORD.getValue())).append(" ");
+        if (fragment) {
+            builder.append(renderKeyword("fragment")).append(" ");
+        }
         renderName(packageViewOrFragment, builder);
     }
 
@@ -695,13 +698,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         @Override
         public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, StringBuilder builder) {
-            renderPackage(descriptor, builder);
+            renderPackage(descriptor, builder, false);
             return null;
         }
 
         @Override
         public Void visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, StringBuilder builder) {
-            renderPackage(descriptor, builder);
+            renderPackage(descriptor, builder, true);
             return null;
         }
 
