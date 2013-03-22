@@ -36,6 +36,13 @@ public inline fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {
 }
 
 /**
+ * Returns the result of transforming each element to one or more values which are concatenated together into a single list
+ */
+public inline fun <T, R> Collection<T>.flatMap(transform: (T)-> Iterable<R>) : List<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
  * Returns a list containing the first *n* elements
  */
 public inline fun <T> Collection<T>.take(n: Int) : List<T> {

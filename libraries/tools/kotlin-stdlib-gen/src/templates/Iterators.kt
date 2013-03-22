@@ -40,7 +40,7 @@ fun iterators() {
         }
     }
 
-    f("flatMap(transform: (T) -> Iterator<R>)") {
+    f("flatMap(transform: (T) -> Iterator<R>)", "flatMap(Function1)") {
         doc = "Returns an iterator over the concatenated results of transforming each element to one or more values"
         typeParam("R")
         returns("Iterator<R>")

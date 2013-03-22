@@ -179,7 +179,7 @@ fun collections() {
         }
     }
 
-    f("flatMap(transform: (T)-> Iterable<R>)") {
+    f("flatMap(transform: (T)-> Iterable<R>)", "flatMap(Function1)") {
         doc = "Returns the result of transforming each element to one or more values which are concatenated together into a single list"
         typeParam("R")
         returns("List<R>")

@@ -14,7 +14,7 @@ class IteratorsJVMTest {
             iterate<Char> { if (index < binary.length()) binary.get(index++) else null }
         }
 
-        val expected = arrayList(
+        val expected = arrayListOf(
                       '0', // fibonacci(0) = 0
                       '1', // fibonacci(1) = 1
                       '1', // fibonacci(2) = 1
@@ -24,5 +24,10 @@ class IteratorsJVMTest {
         )
 
         assertEquals(expected, fibonacci().flatMap<Int, Char>(intToBinaryDigits()).take(10).toList())
+    }
+
+    test fun flatMapOnIterator() {
+        val result = listOf(1, 2).iterator().flatMap { i -> (0..i).iterator()}
+        assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
     }
 }
