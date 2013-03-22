@@ -502,7 +502,8 @@ public class TypeHierarchyResolver {
                     .addPackageFragment(PackageFragmentKind.SOURCE, JetPsiUtil.getFQName(file));
             context.getPackageFragmentDescriptors().put(file, fragmentDescriptor);
 
-            WriteThroughScope fileScope = new WriteThroughScope(outerScope, fragmentDescriptor.getMemberScope(),
+            PackageViewDescriptor packageView = DescriptorUtils.getCorrespondingPackageView(fragmentDescriptor);
+            WriteThroughScope fileScope = new WriteThroughScope(packageView.getMemberScope(), fragmentDescriptor.getMemberScope(),
                                                                      new TraceBasedRedeclarationHandler(trace), "Scope for file " + file);
             fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
             context.getFileScopes().put(file, fileScope);
