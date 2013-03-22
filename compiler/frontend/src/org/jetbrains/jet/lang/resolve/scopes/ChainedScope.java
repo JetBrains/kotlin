@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -32,15 +33,15 @@ public class ChainedScope implements JetScope {
     private Collection<DeclarationDescriptor> allDescriptors;
     private List<ReceiverParameterDescriptor> implicitReceiverHierarchy;
 
-    public ChainedScope(@NotNull DeclarationDescriptor containingDeclaration, JetScope... scopes) {
+    public ChainedScope(@Nullable DeclarationDescriptor containingDeclaration, JetScope... scopes) {
         this(containingDeclaration, "Untitled chained scope", scopes);
     }
 
-    public ChainedScope(@NotNull DeclarationDescriptor containingDeclaration, @NotNull String debugName, JetScope... scopes) {
+    public ChainedScope(@Nullable DeclarationDescriptor containingDeclaration, @NotNull String debugName, JetScope... scopes) {
         this(containingDeclaration, debugName, Arrays.asList(scopes));
     }
 
-    public ChainedScope(@NotNull DeclarationDescriptor containingDeclaration, @NotNull String debugName, List<JetScope> scopes) {
+    public ChainedScope(@Nullable DeclarationDescriptor containingDeclaration, @NotNull String debugName, List<JetScope> scopes) {
         this.containingDeclaration = containingDeclaration;
         this.scopeChain = scopes;
 
