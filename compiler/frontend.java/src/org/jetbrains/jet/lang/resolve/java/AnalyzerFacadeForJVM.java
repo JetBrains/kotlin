@@ -218,12 +218,15 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<submodule>"));
         module.addSubModule(subModule);
         subModule.addDependency(KotlinBuiltIns.getInstance().getBuiltInsSubModule());
+
         for (JetFile file : files) {
             sourcesManager.registerRoot(subModule, PackageFragmentKind.SOURCE, file.getVirtualFile());
         }
+
         for (ImportPath path : JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS) {
             subModule.addDefaultImport(path);
         }
+
         for (ImportPath path : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
             subModule.addDefaultImport(path);
         }
@@ -245,14 +248,15 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
-                observableBindingTrace, KotlinModuleManager.SERVICE.getService(project).getSourcesManager());
+                observableBindingTrace, sourcesManager);
         try {
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
             return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, sourcesManager);
-        } finally {
+        }
+        finally {
             injector.destroy();
         }
     }
