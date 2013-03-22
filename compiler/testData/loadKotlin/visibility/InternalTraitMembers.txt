@@ -3,7 +3,7 @@ package test
 internal trait A {
     public abstract var p : jet.Int
         public abstract fun <get-p>() : jet.Int
-        internal abstract fun <set-p>(/*0*/ <set-?> : jet.Int) : Unit
+        internal abstract fun <set-p>(/*0*/ <set-?> : jet.Int) : jet.Unit
     internal abstract val v : jet.Int
         internal abstract fun <get-v>() : jet.Int
     internal abstract fun f() : jet.Int

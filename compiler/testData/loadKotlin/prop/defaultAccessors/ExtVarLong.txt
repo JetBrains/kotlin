@@ -2,13 +2,13 @@ package test
 
 internal var jet.Long.date1 : java.lang.Object
     internal fun jet.Long.<get-date1>() : java.lang.Object
-    internal fun jet.Long.<set-date1>(/*0*/ <set-?> : java.lang.Object) : Unit
+    internal fun jet.Long.<set-date1>(/*0*/ <set-?> : java.lang.Object) : jet.Unit
 internal var jet.Long.date12 : java.lang.Object
     internal fun jet.Long.<get-date12>() : java.lang.Object
-    internal fun jet.Long.<set-date12>(/*0*/ <set-?> : java.lang.Object) : Unit
+    internal fun jet.Long.<set-date12>(/*0*/ <set-?> : java.lang.Object) : jet.Unit
 private var jet.Long.date3 : java.util.Date
     private fun jet.Long.<get-date3>() : java.util.Date
-    private fun jet.Long.<set-date3>(/*0*/ <set-?> : java.util.Date) : Unit
+    private fun jet.Long.<set-date3>(/*0*/ <set-?> : java.util.Date) : jet.Unit
 public var jet.Long.date5 : java.util.Date
     public fun jet.Long.<get-date5>() : java.util.Date
-    public fun jet.Long.<set-date5>(/*0*/ <set-?> : java.util.Date) : Unit
+    public fun jet.Long.<set-date5>(/*0*/ <set-?> : java.util.Date) : jet.Unit

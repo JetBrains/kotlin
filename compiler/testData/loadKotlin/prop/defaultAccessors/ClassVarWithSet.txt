@@ -4,35 +4,35 @@ internal final class ClassVal {
     /*primary*/ public constructor ClassVal()
     internal final var property1 : jet.Int
         internal final fun <get-property1>() : jet.Int
-        internal final fun <set-property1>(/*0*/ <set-?> : jet.Int) : Unit
+        internal final fun <set-property1>(/*0*/ <set-?> : jet.Int) : jet.Unit
     public final var property10 : jet.Int
         public final fun <get-property10>() : jet.Int
-        protected final fun <set-property10>(/*0*/ <set-?> : jet.Int) : Unit
+        protected final fun <set-property10>(/*0*/ <set-?> : jet.Int) : jet.Unit
     public final var property11 : jet.Int
         public final fun <get-property11>() : jet.Int
-        internal final fun <set-property11>(/*0*/ <set-?> : jet.Int) : Unit
+        internal final fun <set-property11>(/*0*/ <set-?> : jet.Int) : jet.Unit
     internal final var property2 : java.lang.Object
         internal final fun <get-property2>() : java.lang.Object
-        protected final fun <set-property2>(/*0*/ <set-?> : java.lang.Object) : Unit
+        protected final fun <set-property2>(/*0*/ <set-?> : java.lang.Object) : jet.Unit
     internal final var property3 : java.lang.Object
         internal final fun <get-property3>() : java.lang.Object
-        private final fun <set-property3>(/*0*/ <set-?> : java.lang.Object) : Unit
+        private final fun <set-property3>(/*0*/ <set-?> : java.lang.Object) : jet.Unit
     protected final var property4 : jet.String
         protected final fun <get-property4>() : jet.String
-        protected final fun <set-property4>(/*0*/ <set-?> : jet.String) : Unit
+        protected final fun <set-property4>(/*0*/ <set-?> : jet.String) : jet.Unit
     protected final var property5 : jet.String
         protected final fun <get-property5>() : jet.String
-        private final fun <set-property5>(/*0*/ <set-?> : jet.String) : Unit
+        private final fun <set-property5>(/*0*/ <set-?> : jet.String) : jet.Unit
     protected final var property6 : jet.String
         protected final fun <get-property6>() : jet.String
-        internal final fun <set-property6>(/*0*/ <set-?> : jet.String) : Unit
+        internal final fun <set-property6>(/*0*/ <set-?> : jet.String) : jet.Unit
     protected final var property7 : java.util.Date
         protected final fun <get-property7>() : java.util.Date
-        public final fun <set-property7>(/*0*/ <set-?> : java.util.Date) : Unit
+        public final fun <set-property7>(/*0*/ <set-?> : java.util.Date) : jet.Unit
     public final var property8 : jet.Int
         public final fun <get-property8>() : jet.Int
-        public final fun <set-property8>(/*0*/ <set-?> : jet.Int) : Unit
+        public final fun <set-property8>(/*0*/ <set-?> : jet.Int) : jet.Unit
     public final var property9 : jet.Int
         public final fun <get-property9>() : jet.Int
-        private final fun <set-property9>(/*0*/ <set-?> : jet.Int) : Unit
+        private final fun <set-property9>(/*0*/ <set-?> : jet.Int) : jet.Unit
 }

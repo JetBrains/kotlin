@@ -7,6 +7,6 @@ internal final class ClassObjectDeclaresProperty {
         /*primary*/ private constructor <class-object-for-ClassObjectDeclaresProperty>()
         internal final var s : jet.String
             internal final fun <get-s>() : jet.String
-            internal final fun <set-s>(/*0*/ <set-?> : jet.String) : Unit
+            internal final fun <set-s>(/*0*/ <set-?> : jet.String) : jet.Unit
     }
 }

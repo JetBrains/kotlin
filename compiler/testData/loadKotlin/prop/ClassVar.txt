@@ -4,5 +4,5 @@ internal final class ClassVar {
     /*primary*/ public constructor ClassVar()
     internal final var aa : jet.Int
         internal final fun <get-aa>() : jet.Int
-        internal final fun <set-aa>(/*0*/ <set-?> : jet.Int) : Unit
+        internal final fun <set-aa>(/*0*/ <set-?> : jet.Int) : jet.Unit
 }

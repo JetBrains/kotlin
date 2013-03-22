@@ -2,4 +2,4 @@ package test
 
 internal var </*0*/ P, /*1*/ Q> jet.Map<P, Q>.asas : jet.Int
     internal fun jet.Map<P, Q>.<get-asas>() : jet.Int
-    internal fun jet.Map<P, Q>.<set-asas>(/*0*/ i : jet.Int) : Unit
+    internal fun jet.Map<P, Q>.<set-asas>(/*0*/ i : jet.Int) : jet.Unit

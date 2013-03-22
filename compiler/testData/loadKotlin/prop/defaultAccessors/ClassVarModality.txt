@@ -4,21 +4,21 @@ internal open class ClassVarModality {
     /*primary*/ public constructor ClassVarModality()
     internal open var property1 : jet.Int
         internal open fun <get-property1>() : jet.Int
-        internal open fun <set-property1>(/*0*/ <set-?> : jet.Int) : Unit
+        internal open fun <set-property1>(/*0*/ <set-?> : jet.Int) : jet.Unit
     internal final var property2 : jet.Int
         internal final fun <get-property2>() : jet.Int
-        internal final fun <set-property2>(/*0*/ <set-?> : jet.Int) : Unit
+        internal final fun <set-property2>(/*0*/ <set-?> : jet.Int) : jet.Unit
     internal open var property3 : jet.Int
         internal open fun <get-property3>() : jet.Int
-        private open fun <set-property3>(/*0*/ <set-?> : jet.Int) : Unit
+        private open fun <set-property3>(/*0*/ <set-?> : jet.Int) : jet.Unit
     internal final var property4 : jet.Int
         internal final fun <get-property4>() : jet.Int
-        private final fun <set-property4>(/*0*/ <set-?> : jet.Int) : Unit
+        private final fun <set-property4>(/*0*/ <set-?> : jet.Int) : jet.Unit
 }
 
 internal abstract class ClassVarModalityAbstract {
     /*primary*/ public constructor ClassVarModalityAbstract()
     internal abstract var property1 : java.util.Date
         internal abstract fun <get-property1>() : java.util.Date
-        public abstract fun <set-property1>(/*0*/ <set-?> : java.util.Date) : Unit
+        public abstract fun <set-property1>(/*0*/ <set-?> : java.util.Date) : jet.Unit
 }

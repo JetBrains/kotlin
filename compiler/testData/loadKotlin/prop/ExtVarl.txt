@@ -2,6 +2,6 @@ package test
 
 internal var jet.Int.junk : jet.Short
     internal fun jet.Int.<get-junk>() : jet.Short
-    internal fun jet.Int.<set-junk>(/*0*/ p : jet.Short) : Unit
+    internal fun jet.Int.<set-junk>(/*0*/ p : jet.Short) : jet.Unit
 internal val jet.String.junk : jet.Int
     internal fun jet.String.<get-junk>() : jet.Int

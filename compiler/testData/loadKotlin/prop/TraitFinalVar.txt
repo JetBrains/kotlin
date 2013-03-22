@@ -3,5 +3,5 @@ package test
 internal trait A {
     internal open var v : jet.String
         internal open fun <get-v>() : jet.String
-        internal open fun <set-v>(/*0*/ value : jet.String) : Unit
+        internal open fun <set-v>(/*0*/ value : jet.String) : jet.Unit
 }

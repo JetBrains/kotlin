@@ -2,4 +2,4 @@ package test
 
 internal var nsVal : jet.Int
     internal fun <get-nsVal>() : jet.Int
-    internal fun <set-nsVal>(/*0*/ <set-?> : jet.Int) : Unit
+    internal fun <set-nsVal>(/*0*/ <set-?> : jet.Int) : jet.Unit

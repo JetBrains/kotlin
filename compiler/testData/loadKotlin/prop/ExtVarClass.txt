@@ -2,4 +2,4 @@ package test
 
 internal var </*0*/ P> P.anotherJavaClass : java.lang.Class<P>
     internal fun P.<get-anotherJavaClass>() : java.lang.Class<P>
-    internal fun P.<set-anotherJavaClass>(/*0*/ p : java.lang.Class<P>) : Unit
+    internal fun P.<set-anotherJavaClass>(/*0*/ p : java.lang.Class<P>) : jet.Unit
