@@ -55,10 +55,6 @@ public class JsHeaderLibraryPresentationProvider extends LibraryPresentationProv
             return null;
         }
 
-        if (JSLibraryStdPresentationProvider.isOldJSStandardLibrary(classesRoots)) {
-            return new LibraryVersionProperties(null);
-        }
-
         for (VirtualFile file : classesRoots) {
             CommonProcessors.FindFirstProcessor<VirtualFile> findKTProcessor = new CommonProcessors.FindFirstProcessor<VirtualFile>() {
                 @Override

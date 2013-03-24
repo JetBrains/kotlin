@@ -54,10 +54,6 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
             return null;
         }
 
-        if (isOldJSStandardLibrary(classesRoots)) {
-            return new LibraryVersionProperties(null);
-        }
-
         for (VirtualFile root : classesRoots) {
             if (root.getName().equals(PathUtil.JS_LIB_JAR_NAME)) {
                 assert JsHeaderLibraryPresentationProvider.getInstance().detect(classesRoots) != null : "StdLib should also be detected as headers library";
@@ -74,10 +70,5 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
         }
 
         return null;
-    }
-
-    // TODO: Deprecated - remove after some iterations
-    static boolean isOldJSStandardLibrary(@NotNull List<VirtualFile> classesRoots) {
-        return classesRoots.isEmpty();
     }
 }
