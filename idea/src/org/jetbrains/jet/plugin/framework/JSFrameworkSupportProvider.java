@@ -68,6 +68,8 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
                         rootModel,
                         new JavaRuntimeLibraryDescription(),
                         JavaFrameworkType.getInstance());
+
+                FrameworksCompatibilityUtils.suggestRemoveOldJsLibrary(rootModel);
             }
         };
     }

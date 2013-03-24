@@ -17,7 +17,9 @@
 package org.jetbrains.jet.plugin.framework;
 
 import com.intellij.framework.library.LibraryVersionProperties;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.JarVersionDetectionUtil;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
 import com.intellij.openapi.vfs.JarFile;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -70,5 +72,20 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
         }
 
         return null;
+    }
+
+    /**
+     * Detect js standard library according to M5.1 rules.
+     */
+    public static boolean detectOld(@NotNull Library library) {
+        if (library.getFiles(OrderRootType.CLASSES).length == 0) {
+            for (VirtualFile file : library.getFiles(OrderRootType.SOURCES)) {
+                if (file.getName().equals(PathUtil.JS_LIB_JAR_NAME)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
