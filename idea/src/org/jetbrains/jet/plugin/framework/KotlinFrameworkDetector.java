@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.k2js.config.EcmaVersion;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -126,7 +125,7 @@ public class KotlinFrameworkDetector {
                 ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
                     @Override
                     public boolean process(Library library) {
-                        if (JSLibraryStdPresentationProvider.getInstance().detect(Arrays.asList(library.getFiles(OrderRootType.CLASSES))) != null) {
+                        if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
                             jsLibrary.set(library);
                             return false;
                         }
