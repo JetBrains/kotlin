@@ -20,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.tree.IElementType;
@@ -533,5 +534,29 @@ public class JetPsiUtil {
         if (blockExpression == null) return null;
         List<JetElement> statements = blockExpression.getStatements();
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
+    }
+
+    @Nullable
+    public static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        JetClassOrObject current = classOrObject;
+        while (true) {
+            PsiElement parent = current.getParent();
+            assert classOrObject.getParent() != null : "Class with no parent: " + classOrObject.getText();
+
+            if (parent instanceof PsiFile) {
+                return current;
+            }
+            if (parent instanceof JetClassObject) {
+                // current class IS the class object declaration
+                parent = parent.getParent();
+                assert parent instanceof JetClassBody : "Parent of class object is not a class body: " + parent;
+            }
+            if (!(parent instanceof JetClassBody)) {
+                // It is a local class, no legitimate outer
+                return null;
+            }
+
+            current = (JetClassOrObject) parent.getParent();
+        }
     }
 }
