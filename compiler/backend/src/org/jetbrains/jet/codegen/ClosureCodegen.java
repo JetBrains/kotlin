@@ -175,7 +175,7 @@ public class ClosureCodegen extends GenerationStateAware {
         }
 
         MethodVisitor mv = cv.newMethod(
-                fun, ACC_PUBLIC | ACC_BRIDGE | ACC_VOLATILE, interfaceFunction.getName().getName(),
+                fun, ACC_PUBLIC | ACC_BRIDGE, interfaceFunction.getName().getName(),
                 bridge.getDescriptor(), null, new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
