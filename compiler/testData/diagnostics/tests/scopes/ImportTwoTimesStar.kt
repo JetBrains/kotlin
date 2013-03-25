@@ -1,10 +1,10 @@
-// FILE: a.jet
+// FILE: a.kt
 
 package weatherForecast
 
 fun weatherToday() = "snow"
 
-// FILE: b.jet
+// FILE: b.kt
 
 package myApp
 
