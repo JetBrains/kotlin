@@ -25,9 +25,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -68,9 +68,15 @@ public class CheckerTestUtil {
     private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!\\w+(,\\s*\\w+)*!>)|(<!>)");
     private static final Pattern INDIVIDUAL_DIAGNOSTIC_PATTERN = Pattern.compile("\\w+");
 
-    public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(BindingContext bindingContext, PsiElement root) {
+    public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(BindingContext bindingContext, final PsiElement root) {
         ArrayList<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
-        diagnostics.addAll(bindingContext.getDiagnostics());
+        diagnostics.addAll(Collections2.filter(bindingContext.getDiagnostics(),
+                                               new Predicate<Diagnostic>() {
+                                                   @Override
+                                                   public boolean apply(Diagnostic diagnostic) {
+                                                       return  PsiTreeUtil.isAncestor(root, diagnostic.getPsiElement(), false);
+                                                   }
+                                               }));
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
             diagnostics.add(new SyntaxErrorDiagnostic(errorElement));
         }
@@ -105,12 +111,17 @@ public class CheckerTestUtil {
     }
 
     public interface DiagnosticDiffCallbacks {
-        @NotNull PsiFile getFile();
         void missingDiagnostic(String type, int expectedStart, int expectedEnd);
         void unexpectedDiagnostic(String type, int actualStart, int actualEnd);
     }
 
-    public static void diagnosticsDiff(List<DiagnosedRange> expected, Collection<Diagnostic> actual, DiagnosticDiffCallbacks callbacks) {
+    public static void diagnosticsDiff(
+            List<DiagnosedRange> expected,
+            Collection<Diagnostic> actual,
+            DiagnosticDiffCallbacks callbacks
+    ) {
+        assertSameFile(actual);
+
         Iterator<DiagnosedRange> expectedDiagnostics = expected.iterator();
         List<DiagnosticDescriptor> sortedDiagnosticDescriptors = getSortedDiagnosticDescriptors(actual);
         Iterator<DiagnosticDescriptor> actualDiagnostics = sortedDiagnosticDescriptors.iterator();
@@ -155,7 +166,7 @@ public class CheckerTestUtil {
                             expectedCopy.removeAll(actualDiagnosticTypes);
                             Multiset<String> actualCopy = HashMultiset.create(actualDiagnosticTypes);
                             actualCopy.removeAll(expectedDiagnosticTypes);
-                            
+
                             for (String type : expectedCopy) {
                                 callbacks.missingDiagnostic(type, expectedStart, expectedEnd);
                             }
@@ -166,7 +177,6 @@ public class CheckerTestUtil {
                         currentExpected = safeAdvance(expectedDiagnostics);
                         currentActual = safeAdvance(actualDiagnostics);
                     }
-
                 }
             }
             else {
@@ -178,14 +188,20 @@ public class CheckerTestUtil {
                     break;
                 }
             }
+        }
+    }
 
-//            assert expectedDiagnostics.hasNext() || actualDiagnostics.hasNext();
+    private static void assertSameFile(Collection<Diagnostic> actual) {
+        if (actual.isEmpty()) return;
+        PsiFile file = actual.iterator().next().getPsiElement().getContainingFile();
+        for (Diagnostic diagnostic : actual) {
+            assert diagnostic.getPsiFile().equals(file)
+                    : "All diagnostics should come from the same file: " + diagnostic.getPsiFile() + ", " + file;
         }
     }
 
     private static void unexpectedDiagnostics(List<Diagnostic> actual, DiagnosticDiffCallbacks callbacks) {
         for (Diagnostic diagnostic : actual) {
-            if (!diagnostic.getPsiFile().equals(callbacks.getFile())) continue;
             List<TextRange> textRanges = diagnostic.getTextRanges();
             for (TextRange textRange : textRanges) {
                 callbacks.unexpectedDiagnostic(diagnostic.getFactory().getName(), textRange.getStartOffset(), textRange.getEndOffset());
@@ -195,7 +211,6 @@ public class CheckerTestUtil {
 
     private static void missingDiagnostics(DiagnosticDiffCallbacks callbacks, DiagnosedRange currentExpected) {
         for (String type : currentExpected.getDiagnostics()) {
-            if (!currentExpected.getFile().equals(callbacks.getFile())) return;
             callbacks.missingDiagnostic(type, currentExpected.getStart(), currentExpected.getEnd());
         }
     }
@@ -240,9 +255,8 @@ public class CheckerTestUtil {
         String text = psiFile.getText();
         diagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {
             @Override
-            public boolean apply(@Nullable Diagnostic diagnostic) {
-                if (diagnostic == null || !psiFile.equals(diagnostic.getPsiFile())) return false;
-                return true;
+            public boolean apply(Diagnostic diagnostic) {
+                return psiFile.equals(diagnostic.getPsiFile());
             }
         });
         if (!diagnostics.isEmpty()) {

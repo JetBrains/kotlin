@@ -123,11 +123,6 @@ public class CheckerTestUtilTest extends JetLiteFixture {
             final List<String> actualMessages = Lists.newArrayList();
 
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
-                @NotNull
-                @Override
-                public PsiFile getFile() {
-                    return psiFile;
-                }
 
                 @Override
                 public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
