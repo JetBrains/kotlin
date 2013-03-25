@@ -536,6 +536,10 @@ public class JetPsiUtil {
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
     }
 
+    public static boolean isLocalClass(@NotNull JetClassOrObject classOrObject) {
+        return getOutermostClassOrObject(classOrObject) == null;
+    }
+
     @Nullable
     public static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetClassOrObject current = classOrObject;

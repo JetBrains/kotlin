@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import junit.framework.Assert;
 import org.jetbrains.jet.JetLiteFixture;
@@ -25,8 +26,11 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+
 public class JetPsiUtilTest extends JetLiteFixture {
-    
     public void testUnquotedIdentifier() {
         Assert.assertEquals("", JetPsiUtil.unquoteIdentifier(""));
         Assert.assertEquals("a2", JetPsiUtil.unquoteIdentifier("a2"));
@@ -61,6 +65,24 @@ public class JetPsiUtilTest extends JetLiteFixture {
         Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.    Test"));
 
         Assert.assertNotSame(new ImportPath(new FqName("some.test"), false), getImportPathFromParsed("import some.Test"));
+    }
+
+    public void testIsLocalClass() throws IOException {
+        String text = FileUtil.loadFile(new File(getTestDataPath() + "/psiUtil/isLocalClass.kt"));
+        JetClass aClass = JetPsiFactory.createClass(getProject(), text);
+
+        @SuppressWarnings("unchecked")
+        Collection<JetClassOrObject> classOrObjects = PsiTreeUtil.collectElementsOfType(aClass, JetClassOrObject.class);
+
+        for (JetClassOrObject classOrObject : classOrObjects) {
+            String classOrObjectName = classOrObject.getName();
+            if (classOrObjectName != null && classOrObjectName.contains("Local")) {
+                assertTrue("JetPsiUtil.isLocalClass should return true for " + classOrObjectName, JetPsiUtil.isLocalClass(classOrObject));
+            }
+            else {
+                assertFalse("JetPsiUtil.isLocalClass should return false for " + classOrObjectName, JetPsiUtil.isLocalClass(classOrObject));
+            }
+        }
     }
 
     @Override
