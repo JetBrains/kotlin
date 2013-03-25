@@ -62,7 +62,7 @@ public class AsmUtil {
     );
 
     private static final int NO_FLAG_LOCAL = 0;
-    private static final int NO_FLAG_PACKAGE_PRIVATE = 0;
+    public static final int NO_FLAG_PACKAGE_PRIVATE = 0;
 
     @NotNull
     private static final Map<Visibility, Integer> visibilityToAccessFlag = ImmutableMap.<Visibility, Integer>builder()

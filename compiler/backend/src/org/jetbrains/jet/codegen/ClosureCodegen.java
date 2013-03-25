@@ -101,7 +101,7 @@ public class ClosureCodegen extends GenerationStateAware {
                                    : new String[] {JvmClassName.byClassDescriptor(samInterface).getInternalName()};
         cv.defineClass(fun,
                        V1_6,
-                       ACC_PUBLIC | ACC_FINAL/*|ACC_SUPER*/,
+                       ACC_FINAL,
                        name.getInternalName(),
                        null,
                        superclass.getInternalName(),
@@ -127,10 +127,10 @@ public class ClosureCodegen extends GenerationStateAware {
     }
 
     private void generateConstInstance(PsiElement fun, ClassBuilder cv) {
-        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, new String[0]);
+        MethodVisitor mv = cv.newMethod(fun, ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, new String[0]);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
-        cv.newField(fun, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, name.getDescriptor(), null, null);
+        cv.newField(fun, ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, name.getDescriptor(), null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
@@ -222,7 +222,7 @@ public class ClosureCodegen extends GenerationStateAware {
         Type[] argTypes = fieldListToTypeArray(args);
 
         Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
+        MethodVisitor mv = cv.newMethod(fun, NO_FLAG_PACKAGE_PRIVATE, "<init>", constructor.getDescriptor(), null, new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
