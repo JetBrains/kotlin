@@ -20,9 +20,10 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public interface KotlinLightClass extends PsiClass {
+public interface KotlinLightClass extends PsiClass, JetJavaMirrorMarker {
     @NotNull
     FqName getFqName();
 
