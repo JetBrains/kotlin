@@ -1,4 +1,6 @@
-// FILE: A.java
+// FILE: vvv/A.java
+package vvv;
+
 public enum A {
     ENTRY("1"),
     ANOTHER("2");

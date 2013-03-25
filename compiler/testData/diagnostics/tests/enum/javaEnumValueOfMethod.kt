@@ -1,4 +1,6 @@
-// FILE: A.java
+// FILE: test/A.java
+package test;
+
 public enum A {
     ENTRY;
 }
