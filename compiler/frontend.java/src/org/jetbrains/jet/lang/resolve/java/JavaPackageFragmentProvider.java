@@ -133,8 +133,6 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     @Nullable
     private PackageFragmentDescriptor createPackageFragment(@NotNull FqName fqName) {
-        //JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(psiClassFinder.getProject());
-
         final PsiClass staticClass = psiClassFinder.findPsiClass(fqName, RuntimeClassesHandleMode.THROW);
         if (staticClass != null) {
             if (staticClass.isEnum()) {
@@ -152,9 +150,6 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
         final PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
         if (psiPackage == null) return null;
-
-        //PsiClass[] classes = psiPackage.getClasses(psiClassFinder.getDefiningSearchScope());
-        //if (classes.length == 0) return null;
 
         final PsiClass packageClass = psiClassFinder.findPsiClass(PackageClassUtils.getPackageClassFqName(fqName), RuntimeClassesHandleMode.THROW);
 
