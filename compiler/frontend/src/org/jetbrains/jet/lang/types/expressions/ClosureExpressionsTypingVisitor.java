@@ -147,7 +147,6 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                       Visibilities.LOCAL,
                                       /*isInline = */ false
         );
-        context.trace.record(BindingContext.FUNCTION, functionLiteral, functionDescriptor);
         BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor);
         return functionDescriptor;
     }
