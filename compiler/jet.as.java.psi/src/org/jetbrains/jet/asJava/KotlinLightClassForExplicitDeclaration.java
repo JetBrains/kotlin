@@ -150,25 +150,12 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
 
     @NotNull
     private static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        JetClassOrObject current = classOrObject;
-        while (true) {
-            PsiElement parent = current.getParent();
-            assert classOrObject.getParent() != null : "Class with no parent: " + classOrObject.getText();
-
-            if (parent instanceof PsiFile) {
-                return current;
-            }
-            if (parent instanceof JetClassObject) {
-                // current class IS the class object declaration
-                parent = parent.getParent();
-                assert parent instanceof JetClassBody : "Parent of class object is not a class body: " + parent;
-            }
-            if (!(parent instanceof JetClassBody)) {
-                // It is a local class, no legitimate outer
-                throw new IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.getText());
-            }
-
-            current = (JetClassOrObject) parent.getParent();
+        JetClassOrObject outermostClass = JetPsiUtil.getOutermostClassOrObject(classOrObject);
+        if (outermostClass == null) {
+            throw new IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.getText());
+        }
+        else {
+            return outermostClass;
         }
     }
 
