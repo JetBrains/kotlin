@@ -17,4 +17,8 @@
 package jet;
 
 public abstract class ExtensionFunctionImpl5<T, P1, P2, P3, P4, P5, R> extends DefaultJetObject implements ExtensionFunction5<T, P1, P2, P3, P4, P5, R> {
+    @Override
+    public String toString() {
+        return getClass().getGenericSuperclass().toString();
+    }
 }

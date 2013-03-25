@@ -123,8 +123,15 @@ public class GenerateFunctions {
         out.print(" implements " + kind.getClassName(i));
         generateTypeParameters(out, i, kind);
         out.println(" {");
-        // TODO: toString()
+        generateToStringForFunctionImpl(out);
         out.println("}");
+    }
+
+    private static void generateToStringForFunctionImpl(PrintStream out) {
+        out.println("    @Override");
+        out.println("    public String toString() {");
+        out.println("        return getClass().getGenericSuperclass().toString();");
+        out.println("    }");
     }
 
     private static void generateRuntimeClassHeader(PrintStream out) {

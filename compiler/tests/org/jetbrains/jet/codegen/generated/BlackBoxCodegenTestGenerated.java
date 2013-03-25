@@ -1764,6 +1764,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/functions/functionExpression.kt");
         }
         
+        @TestMetadata("functionNtoString.kt")
+        public void testFunctionNtoString() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/functionNtoString.kt");
+        }
+        
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
             doTest("compiler/testData/codegen/box/functions/invoke.kt");

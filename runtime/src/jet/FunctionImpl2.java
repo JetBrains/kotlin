@@ -17,4 +17,8 @@
 package jet;
 
 public abstract class FunctionImpl2<P1, P2, R> extends DefaultJetObject implements Function2<P1, P2, R> {
+    @Override
+    public String toString() {
+        return getClass().getGenericSuperclass().toString();
+    }
 }

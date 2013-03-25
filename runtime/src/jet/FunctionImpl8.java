@@ -17,4 +17,8 @@
 package jet;
 
 public abstract class FunctionImpl8<P1, P2, P3, P4, P5, P6, P7, P8, R> extends DefaultJetObject implements Function8<P1, P2, P3, P4, P5, P6, P7, P8, R> {
+    @Override
+    public String toString() {
+        return getClass().getGenericSuperclass().toString();
+    }
 }

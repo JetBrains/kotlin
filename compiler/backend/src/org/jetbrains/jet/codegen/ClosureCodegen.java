@@ -308,14 +308,15 @@ public class ClosureCodegen extends GenerationStateAware {
             signatureWriter.visitArrayType();
             rawRetType = rawRetType.getElementType();
         }
+
         if (rawRetType.getSort() == Type.OBJECT) {
             signatureWriter.visitClassType(rawRetType.getInternalName());
+            signatureWriter.visitEnd();
         }
         else {
-            // rawRetType is primitive
+            assert isPrimitive(rawRetType);
             signatureWriter.visitBaseType(rawRetType.getDescriptor().charAt(0));
         }
-        signatureWriter.visitEnd();
     }
 
     private static FunctionDescriptor getInvokeFunction(FunctionDescriptor funDescriptor) {
