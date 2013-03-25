@@ -110,9 +110,6 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
             List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-            for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
-                diagnosedRange.setFile(psiFile);
-            }
 
             List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile);
             Collections.sort(diagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);

@@ -28,10 +28,12 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.test.util.NamespaceComparator.*;
+import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE;
+import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
 public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
 
@@ -39,7 +41,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
 
     @Override
     protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files) {
-        List<JetFile> jetFiles = getJetFiles(files);
+        Collection<JetFile> jetFiles = getJetFiles(files).values();
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, getEnvironment());
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
 

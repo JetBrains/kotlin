@@ -479,7 +479,6 @@ public class CheckerTestUtil {
         private final int start;
         private int end;
         private final Multiset<String> diagnostics = HashMultiset.create();
-        private PsiFile file;
 
         private DiagnosedRange(int start) {
             this.start = start;
@@ -503,15 +502,6 @@ public class CheckerTestUtil {
         
         public void addDiagnostic(String diagnostic) {
             diagnostics.add(diagnostic);
-        }
-
-        public void setFile(@NotNull PsiFile file) {
-            this.file = file;
-        }
-
-        @NotNull
-        public PsiFile getFile() {
-            return file;
         }
     }
 }

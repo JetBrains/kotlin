@@ -16,14 +16,13 @@
 
 package org.jetbrains.jet.checkers;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
@@ -32,7 +31,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -40,6 +38,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
@@ -96,11 +96,12 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
     protected abstract void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files);
 
-    protected static List<JetFile> getJetFiles(List<TestFile> testFiles) {
-        List<JetFile> jetFiles = Lists.newArrayList();
+    protected Map<TestFile, JetFile> getJetFiles(List<TestFile> testFiles) {
+        Set<String> kotlinExtensions = ImmutableSet.of("kt", "ktscript");
+        Map<TestFile, JetFile> jetFiles = Maps.newLinkedHashMap();
         for (TestFile testFile : testFiles) {
-            if (testFile.getJetFile() != null) {
-                jetFiles.add(testFile.getJetFile());
+            if (kotlinExtensions.contains(FileUtil.getExtension(testFile.getFileName()))) {
+                jetFiles.put(testFile, createCheckAndReturnPsiFile(null, testFile.getFileName(), testFile.getTextWithoutMarkers()));
             }
         }
         return jetFiles;
@@ -108,41 +109,26 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
     protected class TestFile {
         private final List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
+        private final String fileName;
         private final String expectedText;
-        private final String clearText;
-        private final JetFile jetFile;
+        private final String textWithoutMarkers;
 
         public TestFile(String fileName, String textWithMarkers) {
-            if (fileName.endsWith(".java")) {
-                PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
-                // TODO: check there's not syntax errors
-                this.jetFile = null;
-                this.expectedText = this.clearText = textWithMarkers;
-            }
-            else {
-                expectedText = textWithMarkers;
-                clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-                this.jetFile = createCheckAndReturnPsiFile(null, fileName, clearText);
-                for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
-                    diagnosedRange.setFile(jetFile);
-                }
-            }
+            this.fileName = fileName;
+            this.expectedText = textWithMarkers;
+            this.textWithoutMarkers = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
         }
 
-        @Nullable
-        public JetFile getJetFile() {
-            return jetFile;
+        public String getFileName() {
+            return fileName;
         }
 
-        public boolean getActualText(BindingContext bindingContext, StringBuilder actualText) {
-            if (this.jetFile == null) {
-                // TODO: check java files too
-                actualText.append(this.clearText);
-                return true;
-            }
+        public String getTextWithoutMarkers() {
+            return textWithoutMarkers;
+        }
 
+        public boolean getActualText(final JetFile jetFile, List<Diagnostic> diagnostics, StringBuilder actualText) {
             final boolean[] ok = { true };
-            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile);
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
 
                 @Override

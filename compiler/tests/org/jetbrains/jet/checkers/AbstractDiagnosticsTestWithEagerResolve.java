@@ -19,6 +19,7 @@ package org.jetbrains.jet.checkers;
 import com.google.common.base.Predicates;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -26,14 +27,17 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJetDiagnosticsTest {
 
     @Override
     protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> testFiles) {
-        List<JetFile> jetFiles = getJetFiles(testFiles);
+        Map<TestFile,JetFile> fileMap = getJetFiles(testFiles);
+        Collection<JetFile> jetFiles = fileMap.values();
 
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
 
@@ -45,7 +49,15 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
 
         StringBuilder actualText = new StringBuilder();
         for (TestFile testFile : testFiles) {
-            ok &= testFile.getActualText(bindingContext, actualText);
+            if (testFile.getFileName().endsWith(".java")) {
+                actualText.append(testFile.getTextWithoutMarkers());
+                continue;
+            }
+
+            JetFile jetFile = fileMap.get(testFile);
+            assertNotNull("No jet file for " + testFile.getFileName(), jetFile);
+            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile);
+            ok &= testFile.getActualText(jetFile, diagnostics, actualText);
         }
 
         assertEquals(expectedText, actualText.toString());

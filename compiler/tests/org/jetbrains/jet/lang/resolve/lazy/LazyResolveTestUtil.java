@@ -51,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -84,14 +85,14 @@ public class LazyResolveTestUtil {
         return new InjectorForTopDownAnalyzerForJvm(project, params, sharedTrace, sourcesManager);
     }
 
-    public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
+    public static ModuleDescriptor resolveEagerly(Collection<JetFile> files, JetCoreEnvironment environment) {
         ModuleDescriptor module = createModule("<test module>");
         InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
         return module;
     }
 
-    public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment) {
+    public static KotlinCodeAnalyzer resolveLazilyWithSession(Collection<JetFile> files, JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
         ModuleDescriptor javaModule = createModule("<java module>");
@@ -155,13 +156,13 @@ public class LazyResolveTestUtil {
         return new ResolveSession(project, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, sharedTrace);
     }
 
-    public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
+    public static ModuleDescriptor resolveLazily(Collection<JetFile> files, JetCoreEnvironment environment) {
         resolveLazilyWithSession(files, environment);
         return KotlinModuleManager.SERVICE.getService(environment.getProject()).getModules().iterator().next();
     }
 
     @NotNull
-    public static Set<Name> getTopLevelPackagesFromFileList(@NotNull List<JetFile> files) {
+    public static Set<Name> getTopLevelPackagesFromFileList(@NotNull Collection<JetFile> files) {
         Set<Name> shortNames = Sets.newLinkedHashSet();
         for (JetFile file : files) {
             JetNamespaceHeader header = file.getNamespaceHeader();
