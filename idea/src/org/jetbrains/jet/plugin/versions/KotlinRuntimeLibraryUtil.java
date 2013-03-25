@@ -187,9 +187,9 @@ public class KotlinRuntimeLibraryUtil {
         return kotlinRuntimeJar;
     }
 
-    static void replaceFile(File updatedFile, VirtualFile replacedFile) {
+    static void replaceFile(File updatedFile, VirtualFile replacedJarFile) {
         try {
-            String localPath = com.intellij.util.PathUtil.getLocalPath(replacedFile);
+            String localPath = com.intellij.util.PathUtil.getLocalPath(replacedJarFile);
             assert localPath != null;
 
             File libraryJarPath = new File(localPath);
@@ -199,11 +199,14 @@ public class KotlinRuntimeLibraryUtil {
             }
 
             FileUtil.copy(updatedFile, libraryJarPath);
+
+            VirtualFile localFile = JarFileSystem.getInstance().getLocalVirtualFileFor(replacedJarFile);
+            if (localFile != null) {
+                localFile.refresh(false, true);
+            }
         }
         catch (IOException e) {
             throw new AssertionError(e);
         }
-
-        replacedFile.refresh(true, true);
     }
 }
