@@ -1233,7 +1233,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
                     }
                     constructorContext.lookupInContext(descriptor, null, state, true);
-                } else if (descriptor instanceof CallableMemberDescriptor) {
+                } else if (isLocalNamedFun(descriptor)) {
                     MutableClassDescriptor classDescriptor =
                             (MutableClassDescriptor) constructorContext.getParentContext().getContextDescriptor();
 

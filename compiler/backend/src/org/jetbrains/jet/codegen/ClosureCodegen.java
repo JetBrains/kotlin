@@ -255,7 +255,7 @@ public class ClosureCodegen extends GenerationStateAware {
                                   : typeMapper.mapType((VariableDescriptor) descriptor);
                 args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().getName()));
             }
-            else if (isLocalNamedFun(state.getBindingContext(), descriptor)) {
+            else if (isLocalNamedFun(descriptor)) {
                 Type type =
                         classNameForAnonymousClass(bindingContext,
                                                    (JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))

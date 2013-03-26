@@ -916,6 +916,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/closures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("closureInsideConstrucor.kt")
+        public void testClosureInsideConstrucor() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/closureInsideConstrucor.kt");
+        }
+        
         @TestMetadata("closureWithParameter.kt")
         public void testClosureWithParameter() throws Exception {
             doTest("compiler/testData/codegen/box/closures/closureWithParameter.kt");
@@ -1683,6 +1688,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
     
     @TestMetadata("compiler/testData/codegen/box/functions")
+    @InnerTestClasses({Functions.LocalFunctions.class})
     public static class Functions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFunctions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1731,6 +1737,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("ea33909.kt")
         public void testEa33909() throws Exception {
             doTest("compiler/testData/codegen/box/functions/ea33909.kt");
+        }
+        
+        @TestMetadata("fakeDescriptorWithSeveralOverridenOne.kt")
+        public void testFakeDescriptorWithSeveralOverridenOne() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/fakeDescriptorWithSeveralOverridenOne.kt");
         }
         
         @TestMetadata("functionExpression.kt")
@@ -1838,6 +1849,25 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
+        public static class LocalFunctions extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInLocalFunctions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("localFunctionInConstructor.kt")
+            public void testLocalFunctionInConstructor() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/localFunctions/localFunctionInConstructor.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Functions");
+            suite.addTestSuite(Functions.class);
+            suite.addTestSuite(LocalFunctions.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/codegen/box/innerNested")
@@ -3464,7 +3494,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         suite.addTestSuite(ExclExcl.class);
         suite.addTestSuite(ExtensionFunctions.class);
         suite.addTestSuite(ExtensionProperties.class);
-        suite.addTestSuite(Functions.class);
+        suite.addTest(Functions.innerSuite());
         suite.addTestSuite(InnerNested.class);
         suite.addTest(Instructions.innerSuite());
         suite.addTestSuite(Intrinsics.class);
