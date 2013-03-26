@@ -51,7 +51,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalFun;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -152,7 +152,7 @@ public class FunctionCodegen extends GenerationStateAware {
         if (expectedThisObject != null) {
             thisType = typeMapper.mapType(expectedThisObject.getType());
         }
-        else if (declaration instanceof JetFunctionLiteral || isLocalFun(bindingContext, functionDescriptor)) {
+        else if (declaration instanceof JetFunctionLiteral || isLocalNamedFun(functionDescriptor)) {
             thisType = typeMapper.mapType(context.getThisDescriptor());
         }
         else {

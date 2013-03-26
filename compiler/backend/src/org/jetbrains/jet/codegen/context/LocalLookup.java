@@ -72,7 +72,7 @@ public interface LocalLookup {
         LOCAL_NAMED_FUNCTION {
             @Override
             public boolean isCase(DeclarationDescriptor d, GenerationState state) {
-                return isLocalNamedFun(state.getBindingContext(), d);
+                return isLocalNamedFun(d);
             }
 
             @Override
@@ -85,7 +85,7 @@ public interface LocalLookup {
             ) {
                 FunctionDescriptor vd = (FunctionDescriptor) d;
 
-                boolean idx = localLookup.lookupLocal(vd);
+                boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
                 JetElement expression = (JetElement) callableDescriptorToDeclaration(state.getBindingContext(), vd);
