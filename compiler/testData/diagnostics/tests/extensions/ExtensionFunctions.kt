@@ -1,4 +1,4 @@
-// FILE: b.kt
+// FILE: _.kt
 package outer
 
 fun Int?.optint() : Unit {}
@@ -40,7 +40,7 @@ val Int.abs : Int
 
 fun Int.foo() = this
 
-// FILE: b.kt
+// FILE: _.kt
 package null_safety
 
 import outer.*

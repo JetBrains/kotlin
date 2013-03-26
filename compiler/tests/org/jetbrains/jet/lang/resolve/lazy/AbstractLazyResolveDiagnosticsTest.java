@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE;
@@ -40,10 +39,10 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
     public static final File TEST_DATA_DIR = new File("compiler/testData/diagnostics/tests");
 
     @Override
-    protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files) {
-        Collection<JetFile> jetFiles = getJetFiles(files).values();
-        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, getEnvironment());
-        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
+    protected void analyzeAndCheck(File testDataFile, String expectedText, TestEnvironment testEnvironment) {
+        Collection<JetFile> jetFiles = testEnvironment.getJetCoreEnvironment().getSourceFiles();
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, testEnvironment.getJetCoreEnvironment());
+        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, testEnvironment.getJetCoreEnvironment());
 
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
         PackageViewDescriptor expected = eagerModule.getSubModules().iterator().next().getPackageView(FqName.ROOT);

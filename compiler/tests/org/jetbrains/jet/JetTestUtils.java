@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -315,13 +317,20 @@ public class JetTestUtils {
     @NotNull
     public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind, File... extraClasspath) {
-        return compilerConfigurationForTests(configurationKind, jdkKind, Arrays.asList(extraClasspath), Collections.<File>emptyList());
+        return compilerConfigurationForTests(configurationKind, jdkKind, Collections.<File>emptyList(), Arrays.asList(extraClasspath),
+                                             Collections.<File>emptyList());
     }
 
     @NotNull
-    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind,
-            @NotNull TestJdkKind jdkKind, @NotNull Collection<File> extraClasspath, @NotNull Collection<File> priorityClasspath) {
+    public static CompilerConfiguration compilerConfigurationForTests(
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind,
+            @NotNull Collection<File> kotlinSourceRoots,
+            @NotNull Collection<File> extraClasspath,
+            @NotNull Collection<File> priorityClasspath
+    ) {
         CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, paths(kotlinSourceRoots));
         configuration.addAll(CLASSPATH_KEY, priorityClasspath);
         configuration.add(CLASSPATH_KEY, jdkKind == TestJdkKind.MOCK_JDK ? findMockJdkRtJar() : PathUtil.findRtJar());
         if (configurationKind == ALL) {
@@ -334,6 +343,15 @@ public class JetTestUtils {
         }
 
         return configuration;
+    }
+
+    private static Collection<String> paths(Collection<File> kotlinSourceRoots) {
+        return Collections2.transform(kotlinSourceRoots, new Function<File, String>() {
+            @Override
+            public String apply(File file) {
+                return file.getAbsolutePath();
+            }
+        });
     }
 
     public static void newTrace(@NotNull JetCoreEnvironment environment) {

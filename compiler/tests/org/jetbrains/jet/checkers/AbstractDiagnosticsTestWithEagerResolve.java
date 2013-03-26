@@ -17,6 +17,7 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicates;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -27,37 +28,36 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJetDiagnosticsTest {
 
     @Override
-    protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> testFiles) {
-        Map<TestFile,JetFile> fileMap = getJetFiles(testFiles);
-        Collection<JetFile> jetFiles = fileMap.values();
+    protected void analyzeAndCheck(File testDataFile, String expectedText, TestEnvironment testEnvironment) {
+        Project project = testEnvironment.getProject();
 
-        BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
+        BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(project).getTrace();
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, trace,
+                project, testEnvironment.getJetCoreEnvironment().getSourceFiles(), trace,
                 Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), false).getBindingContext();
 
         boolean ok = true;
 
         StringBuilder actualText = new StringBuilder();
-        for (TestFile testFile : testFiles) {
-            if (testFile.getFileName().endsWith(".java")) {
-                actualText.append(testFile.getTextWithoutMarkers());
-                continue;
-            }
+        for (TestFile testFile : testEnvironment.getTestFiles()) {
+            PsiFile psiFile = testFile.getPsiFile();
 
-            JetFile jetFile = fileMap.get(testFile);
-            assertNotNull("No jet file for " + testFile.getFileName(), jetFile);
-            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile);
-            ok &= testFile.getActualText(jetFile, diagnostics, actualText);
+            if (psiFile instanceof JetFile) {
+                JetFile jetFile = (JetFile) psiFile;
+                assertNotNull("No jet file for " + testFile.getFileName(), jetFile);
+                List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile);
+                ok &= testFile.getActualText(jetFile, diagnostics, actualText);
+            }
+            else {
+                actualText.append(testFile.getTextWithoutMarkers());
+            }
         }
 
         assertEquals(expectedText, actualText.toString());

@@ -1,4 +1,4 @@
-// FILE: f.kt
+// FILE: _.kt
 
 import java.*
 import java.util.*
@@ -49,6 +49,6 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
 }
 
 
-// FILE: f.kt
+// FILE: _.kt
 package xxx
   import java.lang.Class;

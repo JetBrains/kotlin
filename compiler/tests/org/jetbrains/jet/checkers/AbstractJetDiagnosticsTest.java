@@ -20,12 +20,19 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.util.NullableFunction;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -36,16 +43,13 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
+public abstract class AbstractJetDiagnosticsTest extends KotlinTestWithEnvironmentManagement {
 
-    @Override
-    protected JetCoreEnvironment createEnvironment() {
-        File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
+    public static final Set<String> KOTLIN_EXTENSIONS = ImmutableSet.of("kt", "ktscript");
+
+    private JetCoreEnvironment createEnvironment(File javaFilesDir, Collection<File> kotlinSourceFiles) {
         try {
             JetTestUtils.mkdirs(javaFilesDir);
         }
@@ -57,54 +61,104 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                 JetTestUtils.compilerConfigurationForTests(
                         ConfigurationKind.JDK_AND_ANNOTATIONS,
                         TestJdkKind.MOCK_JDK,
+                        kotlinSourceFiles,
                         Arrays.asList(JetTestUtils.getAnnotationsJar()),
                         Arrays.asList(javaFilesDir)
                 )
         );
     }
 
-    private static boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {
+    private static File writeFile(@NotNull String fileName, @NotNull String content, @NotNull File dir) {
         try {
-            File javaFile = new File(javaFilesDir, fileName);
-            JetTestUtils.mkdirs(javaFile.getParentFile());
-            Files.write(content, javaFile, Charset.forName("utf-8"));
-            return true;
-        } catch (Exception e) {
+            File file = new File(dir, fileName);
+            JetTestUtils.mkdirs(file.getParentFile());
+            Files.write(content, file, Charset.forName("utf-8"));
+            return file;
+        }
+        catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
         }
     }
 
     protected void doTest(String filePath) throws IOException {
-        File file = new File(filePath);
-        final File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
+        File testDataFile = new File(filePath);
 
-        String expectedText = JetTestUtils.doLoadFile(file);
+        String expectedText = JetTestUtils.doLoadFile(testDataFile);
 
-        List<TestFile> testFiles =
-                JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
-                    @Override
-                    public TestFile create(String fileName, String text) {
-                        if (fileName.endsWith(".java")) {
-                            writeJavaFile(fileName, text, javaFilesDir);
-                        }
-                        return new TestFile(fileName, text);
-                    }
-                });
 
-        analyzeAndCheck(file, expectedText, testFiles);
+        final TestEnvironment testEnvironment = new TestEnvironment(JetTestUtils.tmpDirForTest(this));
+        JetTestUtils.createTestFiles(testDataFile.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
+            @Override
+            public TestFile create(String fileName, String text) {
+                return testEnvironment.createTestFile(fileName, text);
+            }
+        });
+
+        analyzeAndCheck(testDataFile, expectedText, testEnvironment);
     }
 
-    protected abstract void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files);
+    protected abstract void analyzeAndCheck(File testDataFile, String expectedText, TestEnvironment testEnvironment);
 
-    protected Map<TestFile, JetFile> getJetFiles(List<TestFile> testFiles) {
-        Set<String> kotlinExtensions = ImmutableSet.of("kt", "ktscript");
-        Map<TestFile, JetFile> jetFiles = Maps.newLinkedHashMap();
-        for (TestFile testFile : testFiles) {
-            if (kotlinExtensions.contains(FileUtil.getExtension(testFile.getFileName()))) {
-                jetFiles.put(testFile, createCheckAndReturnPsiFile(null, testFile.getFileName(), testFile.getTextWithoutMarkers()));
-            }
+    private static boolean isKotlinFile(String fileName) {
+        return KOTLIN_EXTENSIONS.contains(FileUtil.getExtension(fileName));
+    }
+
+    protected class TestEnvironment {
+        private JetCoreEnvironment jetCoreEnvironment;
+        private final File rootDir;
+        private final Map<String, TestFile> testFiles = Maps.newLinkedHashMap();
+        private int nameCount = 0;
+
+        public TestEnvironment(@NotNull File rootDir) {
+            this.rootDir = rootDir;
         }
-        return jetFiles;
+
+        @NotNull
+        public JetCoreEnvironment getJetCoreEnvironment() {
+            if (jetCoreEnvironment == null) {
+                jetCoreEnvironment = createEnvironment(rootDir, kotlinFiles(testFiles.values()));
+            }
+            return jetCoreEnvironment;
+        }
+
+        private Collection<File> kotlinFiles(Collection<TestFile> testFiles) {
+            return ContainerUtil.mapNotNull(testFiles, new NullableFunction<TestFile, File>() {
+                @Nullable
+                @Override
+                public File fun(TestFile testFile) {
+                    if (isKotlinFile(testFile.getFileName())) return testFile.getIoFile();
+                    return null;
+                }
+            });
+        }
+
+        @NotNull
+        public Project getProject() {
+            return getJetCoreEnvironment().getProject();
+        }
+
+        @NotNull
+        public Collection<TestFile> getTestFiles() {
+            return testFiles.values();
+        }
+
+        public TestFile createTestFile(String name, String textWithMarkers) {
+            File file = new File(name);
+            if ("_".equals(FileUtil.getNameWithoutExtension(file))) {
+                name = freshFileName(file);
+            }
+            assert !testFiles.containsKey(name) : "Duplicate file name: " + name + "Use '_.ext' to get a freshly generated name automatically";
+            TestFile testFile = new TestFile(this, name, textWithMarkers);
+            testFiles.put(name, testFile);
+            writeFile(testFile.getFileName(), testFile.getTextWithoutMarkers(), rootDir);
+            return testFile;
+        }
+
+        @NotNull
+        private String freshFileName(@NotNull File file) {
+            String freshName = (nameCount++) + "." + FileUtil.getExtension(file.getName());
+            return new File(file.getParentFile(), freshName).getPath();
+        }
     }
 
     protected class TestFile {
@@ -112,11 +166,13 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         private final String fileName;
         private final String expectedText;
         private final String textWithoutMarkers;
+        private TestEnvironment testEnvironment;
 
-        public TestFile(String fileName, String textWithMarkers) {
+        public TestFile(TestEnvironment testEnvironment, String fileName, String textWithMarkers) {
+            this.testEnvironment = testEnvironment;
             this.fileName = fileName;
             this.expectedText = textWithMarkers;
-            this.textWithoutMarkers = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
+            this.textWithoutMarkers = CheckerTestUtil.parseDiagnosedRanges(textWithMarkers, diagnosedRanges);
         }
 
         public String getFileName() {
@@ -125,6 +181,10 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
         public String getTextWithoutMarkers() {
             return textWithoutMarkers;
+        }
+
+        public String getExpectedText() {
+            return expectedText;
         }
 
         public boolean getActualText(final JetFile jetFile, List<Diagnostic> diagnostics, StringBuilder actualText) {
@@ -150,6 +210,18 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
             return ok[0];
         }
 
-    }
+        @NotNull
+        public PsiFile getPsiFile() {
+            File ioFile = getIoFile();
+            VirtualFile virtualFile = testEnvironment.getJetCoreEnvironment().getVirtualFileSystem().findFileByIoFile(ioFile);
+            assert virtualFile != null : "Virtual file not found: " + ioFile;
 
+            return PsiManager.getInstance(testEnvironment.getProject()).findFile(virtualFile);
+        }
+
+        @NotNull
+        public File getIoFile() {
+            return new File(testEnvironment.rootDir, getFileName());
+        }
+    }
 }

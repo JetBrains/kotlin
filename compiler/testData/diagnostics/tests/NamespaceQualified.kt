@@ -1,4 +1,4 @@
-// FILE: b.kt
+// FILE: _.kt
 
 
 package foobar.a
@@ -7,21 +7,21 @@ package foobar.a
     val a : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>util.List<Int><!>? = null
     val a1 : <!UNRESOLVED_REFERENCE!>ArrayList<!><Int>? = null
 
-// FILE: b.kt
+// FILE: _.kt
 package foobar
 
 abstract class Foo<T>() {
     abstract val x : T<Int>
 }
 
-// FILE: b.kt
+// FILE: _.kt
 package foobar.a
     import java.util.*
 
     val b : List<Int>? = <!TYPE_MISMATCH!>a<!>
     val b1 : <!UNRESOLVED_REFERENCE!>util<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>List<!><Int>? = a
 
-// FILE: b.kt
+// FILE: _.kt
 package foobar
 val x1 = a.a
 

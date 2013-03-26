@@ -1,11 +1,11 @@
-// FILE: f.kt
+// FILE: _.kt
 class A {
 }
 
-// FILE: f.kt
+// FILE: _.kt
 package n
   class B
-// FILE: f.kt
+// FILE: _.kt
 abstract class XXX() {
     abstract val a : Int
     abstract val a2 : n.B

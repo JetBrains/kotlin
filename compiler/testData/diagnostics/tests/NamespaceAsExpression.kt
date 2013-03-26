@@ -1,7 +1,7 @@
-// FILE: b.kt
+// FILE: _.kt
 package root.a
 
-// FILE: b.kt
+// FILE: _.kt
 package root
 
 val x = <!EXPRESSION_EXPECTED_NAMESPACE_FOUND!>a<!>
