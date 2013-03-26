@@ -101,7 +101,13 @@ public class KotlinFrameworkDetector {
                     public boolean process(Library library) {
                         if (LibraryPresentationProviderUtil.isDetected(JsHeaderLibraryPresentationProvider.getInstance(), library)) {
                             for (VirtualFile file : library.getRootProvider().getFiles(OrderRootType.SOURCES)) {
-                                pathsToJSLib.add(PathUtil.getLocalPath(file));
+                                String path = PathUtil.getLocalPath(PathUtil.getLocalFile(file));
+                                if (path != null) {
+                                    pathsToJSLib.add(path);
+                                }
+                                else {
+                                    assert !file.isValid() : "Path is expected to be null only for invalid file: " + file;
+                                }
                             }
                         }
 
