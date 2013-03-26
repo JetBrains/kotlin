@@ -230,9 +230,13 @@ public class AsmUtil {
             return ACC_PUBLIC;
         }
         Visibility memberVisibility = memberDescriptor.getVisibility();
+        if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
+            return ACC_PUBLIC;
+        }
         if (memberVisibility != Visibilities.PRIVATE) {
             return null;
         }
+        // the following code is only for PRIVATE visibility of member
         if (isClassObject(containingDeclaration)) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
