@@ -23,10 +23,7 @@ import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
+import org.jetbrains.jet.lang.resolve.*;
 
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class GenerationState {
     private final List<JetFile> files;
 
     @NotNull
-    private final ModuleSourcesManager moduleSourcesManager = null; // TODO
+    private final ModuleSourcesManager moduleSourcesManager;
 
     @NotNull
     private final ClassBuilderMode classBuilderMode;
@@ -73,7 +70,8 @@ public class GenerationState {
     private final boolean generateDeclaredClasses;
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, BindingContext bindingContext, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, bindingContext, files, BuiltinToJavaTypesMapping.ENABLED, true, false, true);
+        this(project, builderFactory, Progress.DEAF, bindingContext,
+             files, BuiltinToJavaTypesMapping.ENABLED, true, false, true);
     }
 
     public GenerationState(
@@ -88,6 +86,7 @@ public class GenerationState {
             boolean generateDeclaredClasses
     ) {
         this.project = project;
+        this.moduleSourcesManager = KotlinModuleManager.SERVICE.getModuleSourcesManager(project);
         this.progress = progress;
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();

@@ -16,21 +16,27 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.asJava.TraceBasedLightClassResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
-import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
+import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -64,32 +70,42 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
             @NotNull String baseName,
             @NotNull PlatformToKotlinClassMap classMap
     ) {
-        MutableModuleDescriptor mutableModule = new MutableModuleDescriptor(Name.special("<" + baseName + " module>"), classMap);
-        final MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(mutableModule, Name.special("<" + baseName + " sub-module>"));
-        mutableModule.addSubModule(subModule);
-
+        Project project = jetCoreEnvironment.getProject();
+        MutableModuleSourcesManager sourcesManager = new MutableModuleSourcesManager(project);
+        MutableModuleDescriptor module = new MutableModuleDescriptor(Name.special("<" + baseName + " module>"), classMap);
+        MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<" + baseName + " sub-module>"));
+        module.addSubModule(subModule);
         subModule.addDependency(KotlinBuiltIns.getInstance().getBuiltInsSubModule());
+
+        for (JetFile file : jetCoreEnvironment.getSourceFiles()) {
+            sourcesManager.registerRoot(subModule, PackageFragmentKind.SOURCE, file.getVirtualFile());
+        }
 
         addDefaultImports(subModule, JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS);
         addDefaultImports(subModule, DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
 
-        final CliIndexManager index = CliIndexManager.getInstance(jetCoreEnvironment.getProject());
-        ModuleSourcesManager moduleSourcesManager = new ModuleSourcesManager() {
+        BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(project).getTrace();
 
-            @NotNull
-            @Override
-            public SubModuleDescriptor getSubModuleForFile(@NotNull PsiFile file) {
-                return subModule;
-            }
+        StorageManager storageManager = new LockBasedStorageManager();
+        JavaClassResolutionFacadeImpl classResolutionFacade = new JavaClassResolutionFacadeImpl(
+                new TraceBasedLightClassResolver(trace.getBindingContext()));
+        InjectorForJavaDescriptorResolver drInjector = new InjectorForJavaDescriptorResolver(
+                project, trace, classResolutionFacade, storageManager, subModule, GlobalSearchScope.allScope(project)
+        );
+        PsiClassFinderImpl psiClassFinder = drInjector.getPsiClassFinder();
 
-            @NotNull
-            @Override
-            public Collection<JetFile> getPackageFragmentSources(@NotNull PackageFragmentDescriptor packageFragment) {
-                return index.getPackageSources(packageFragment.getFqName());
-            }
-        };
+        JavaPackageFragmentProvider javaPackageFragmentProvider = new JavaPackageFragmentProvider(
+                trace,
+                new LockBasedStorageManager(),
+                new PsiDeclarationProviderFactory(psiClassFinder),
+                drInjector.getJavaDescriptorResolver(),
+                psiClassFinder,
+                subModule
+        );
+        subModule.addPackageFragmentProvider(javaPackageFragmentProvider);
+        classResolutionFacade.addPackageFragmentProvider(javaPackageFragmentProvider);
 
-        return new Modules(mutableModule, moduleSourcesManager);
+        return new Modules(module, sourcesManager);
     }
 
     private static void addDefaultImports(MutableSubModuleDescriptor subModule, List<ImportPath> imports) {

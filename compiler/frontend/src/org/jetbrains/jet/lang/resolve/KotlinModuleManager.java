@@ -30,6 +30,11 @@ public interface KotlinModuleManager {
             return ServiceManager.getService(project, KotlinModuleManager.class);
         }
 
+        @NotNull
+        public static ModuleSourcesManager getModuleSourcesManager(@NotNull Project project) {
+            return ServiceManager.getService(project, KotlinModuleManager.class).getSourcesManager();
+        }
+
         private SERVICE() {}
     }
 
