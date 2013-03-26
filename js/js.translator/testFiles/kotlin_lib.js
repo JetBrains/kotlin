@@ -75,7 +75,6 @@ var kotlin = {set:function (receiver, key, value) {
 
     Kotlin.Exception = Kotlin.$createClass();
     Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
@@ -205,15 +204,11 @@ var kotlin = {set:function (receiver, key, value) {
             this.$size = 0;
         },
         get: function (index) {
-            if (index < 0 || index >= this.$size) {
-                throw Kotlin.IndexOutOfBounds;
-            }
+            this.checkRange(index);
             return this.array[index];
         },
         set: function (index, value) {
-            if (index < 0 || index >= this.$size) {
-                throw Kotlin.IndexOutOfBounds;
-            }
+            this.checkRange(index);
             this.array[index] = value;
         },
         toArray: function () {
@@ -241,8 +236,9 @@ var kotlin = {set:function (receiver, key, value) {
             this.$size += collection.size();
         },
         removeAt: function (index) {
-            this.array.splice(index, 1);
+            this.checkRange(index);
             this.$size--;
+            return this.array.splice(index, 1)[0];
         },
         clear: function () {
             this.array.length = 0;
@@ -261,6 +257,11 @@ var kotlin = {set:function (receiver, key, value) {
         },
         toJSON: function () {
             return this.array;
+        },
+        checkRange: function(index) {
+            if (index < 0 || index >= this.$size) {
+                throw new Kotlin.IndexOutOfBoundsException();
+            }
         }
     });
 
