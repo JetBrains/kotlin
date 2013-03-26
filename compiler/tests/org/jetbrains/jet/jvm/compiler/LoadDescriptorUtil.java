@@ -30,9 +30,9 @@ import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
@@ -50,10 +50,11 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
-import static org.jetbrains.jet.lang.psi.JetPsiFactory.createFile;
 
 public final class LoadDescriptorUtil {
 
@@ -182,7 +183,7 @@ public final class LoadDescriptorUtil {
         public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind)
                 throws IOException {
             JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            JetFile jetFile = createFile(jetCoreEnvironment.getProject(), kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true));
+            JetFile jetFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true));
             AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                     jetFile, Collections.<AnalyzerScriptParameter>emptyList());
             return new JetFileAndExhaust(jetFile, exhaust);

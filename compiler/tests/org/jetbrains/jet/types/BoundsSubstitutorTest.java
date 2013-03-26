@@ -18,11 +18,11 @@ package org.jetbrains.jet.types;
 
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -70,7 +70,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     //}
 
     private void doTest(String text, String expected) {
-        JetFile jetFile = JetPsiFactory.createFile(getProject(), "fun.kt", text);
+        JetFile jetFile = JetTestUtils.createFile(getProject(), "fun.kt", text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         Collection<FunctionDescriptor> functions = getSubModuleDescriptor().getPackageView(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"));
         assert functions.size() == 1 : "Many functions defined";

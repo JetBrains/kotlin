@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -71,7 +72,7 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
             @NotNull PlatformToKotlinClassMap classMap
     ) {
         Project project = jetCoreEnvironment.getProject();
-        MutableModuleSourcesManager sourcesManager = new MutableModuleSourcesManager(project);
+        MutableModuleSourcesManager sourcesManager = createModuleSourcesManager(project);
         MutableModuleDescriptor module = new MutableModuleDescriptor(Name.special("<" + baseName + " module>"), classMap);
         MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<" + baseName + " sub-module>"));
         module.addSubModule(subModule);
@@ -106,6 +107,12 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
         classResolutionFacade.addPackageFragmentProvider(javaPackageFragmentProvider);
 
         return new Modules(module, sourcesManager);
+    }
+
+    private static MutableModuleSourcesManager createModuleSourcesManager(@NotNull Project project) {
+        return ApplicationManager.getApplication().isUnitTestMode()
+                    ? new MutableModuleSourcesManagerForTests(project)
+                    : new MutableModuleSourcesManager(project);
     }
 
     private static void addDefaultImports(MutableSubModuleDescriptor subModule, List<ImportPath> imports) {

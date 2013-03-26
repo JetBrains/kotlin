@@ -38,7 +38,7 @@ import java.util.HashMap;
 public class MutableModuleSourcesManager implements ModuleSourcesManager {
 
     private final Project project;
-    private final RootBasedFileMap<RootData> roots = new RootBasedFileMap<RootData>(new HashMap<VirtualFile, RootData>());
+    protected final RootBasedFileMap<RootData> roots = new RootBasedFileMap<RootData>(new HashMap<VirtualFile, RootData>());
     private final Multimap<PackageFragmentDescriptor, JetFile> sourceFiles = LinkedHashMultimap.create();
 
     public MutableModuleSourcesManager(@NotNull Project project) {
@@ -113,6 +113,10 @@ public class MutableModuleSourcesManager implements ModuleSourcesManager {
         if (!(file instanceof JetFile)) return;
 
         JetFile jetFile = (JetFile) file;
+        addJetFile(subModule, kind, jetFile);
+    }
+
+    public void addJetFile(@NotNull MutableSubModuleDescriptor subModule, @NotNull PackageFragmentKind kind, @NotNull JetFile jetFile) {
         FqName fqName = JetPsiUtil.getFQName(jetFile);
 
         MutablePackageFragmentDescriptor fragment = subModule.getPackageFragmentProviderForKotlinSources().addPackageFragment(kind, fqName);

@@ -24,7 +24,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -55,7 +54,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
                                  new JetTestUtils.TestFileFactory<JetFile>() {
                                      @Override
                                      public JetFile create(String fileName, String text) {
-                                         return JetPsiFactory.createFile(getProject(), fileName, text);
+                                         return JetTestUtils.createFile(getProject(), fileName, text);
                                      }
                                  });
 
