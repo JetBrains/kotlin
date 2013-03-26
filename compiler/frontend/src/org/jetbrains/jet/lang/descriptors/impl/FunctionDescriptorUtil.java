@@ -137,14 +137,4 @@ public class FunctionDescriptorUtil {
     public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {
         return (D) candidate.substitute(MAKE_TYPE_PARAMETERS_FRESH);
     }
-
-    public static FunctionDescriptor getInvokeFunction(@NotNull JetType functionType) {
-        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(functionType);
-
-        ClassifierDescriptor classDescriptorForFunction = functionType.getConstructor().getDeclarationDescriptor();
-        assert classDescriptorForFunction instanceof ClassDescriptor;
-        Collection<FunctionDescriptor> invokeFunctions = ((ClassDescriptor) classDescriptorForFunction).getMemberScope(functionType.getArguments()).getFunctions(Name.identifier("invoke"));
-        assert invokeFunctions.size() == 1;
-        return invokeFunctions.iterator().next();
-    }
 }
