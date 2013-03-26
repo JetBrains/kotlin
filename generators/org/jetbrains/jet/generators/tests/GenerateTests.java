@@ -149,6 +149,7 @@ public class GenerateTests {
                 "LoadJavaTestGenerated",
                 AbstractLoadJavaTest.class,
                 testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", true, "java", "doTest"),
+                testModel("compiler/testData/loadJava/compiledJavaIncludeObjectMethods", true, "java", "doTestCompiledJavaIncludeObjectMethods"),
                 testModel("compiler/testData/loadJava/compiledJava", true, "java", "doTestCompiledJava"),
                 testModel("compiler/testData/loadJava/sourceJava", true, "java", "doTestSourceJava"),
                 testModel("compiler/testData/loadJava/javaAgainstKotlin", true, "txt", "doTestJavaAgainstKotlin")

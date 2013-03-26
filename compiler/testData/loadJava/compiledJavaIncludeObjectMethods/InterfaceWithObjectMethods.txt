@@ -1,0 +1,15 @@
+package test
+
+public trait InterfaceWithObjectMethods : java.lang.Object {
+    public abstract override /*1*/ fun clone() : jet.Any?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ p0 : jet.Any?) : jet.Boolean
+    public abstract override /*1*/ fun finalize() : jet.Unit
+    public final override /*1*/ /*fake_override*/ fun getClass() : java.lang.Class<out jet.Any?>?
+    public open override /*1*/ /*fake_override*/ fun hashCode() : jet.Int
+    public final override /*1*/ /*fake_override*/ fun notify() : jet.Unit
+    public final override /*1*/ /*fake_override*/ fun notifyAll() : jet.Unit
+    public open override /*1*/ /*fake_override*/ fun toString() : jet.String?
+    public final override /*1*/ /*fake_override*/ fun wait() : jet.Unit
+    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0 : jet.Long) : jet.Unit
+    public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0 : jet.Long, /*1*/ p1 : jet.Int) : jet.Unit
+}
