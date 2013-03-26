@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 public class MethodContext extends CodegenContext {
     public MethodContext(
             @NotNull FunctionDescriptor contextType,
-            OwnerKind contextKind,
-            CodegenContext parentContext
+            @NotNull OwnerKind contextKind,
+            @NotNull CodegenContext parentContext
     ) {
         super(contextType instanceof PropertyAccessorDescriptor
               ? ((PropertyAccessorDescriptor) contextType).getCorrespondingProperty()

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -29,8 +28,8 @@ public class ConstructorContext extends MethodContext {
     private static final StackValue local1 = StackValue.local(1, OBJECT_TYPE);
 
     public ConstructorContext(
-            ConstructorDescriptor contextDescriptor,
-            OwnerKind kind,
+            @NotNull ConstructorDescriptor contextDescriptor,
+            @NotNull OwnerKind kind,
             @NotNull CodegenContext parent
     ) {
         super(contextDescriptor, kind, parent);
