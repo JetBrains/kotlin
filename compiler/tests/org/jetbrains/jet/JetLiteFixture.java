@@ -72,7 +72,7 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
             Assert.assertNotNull(testName);
             fileName = testName + ".jet";
         }
-        return JetTestUtils.createFile(fileName, text, getProject());
+        return JetTestUtils.createFile(getProject(), fileName, text);
     }
 
     protected JetFile loadPsiFile(String name) {

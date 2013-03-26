@@ -81,7 +81,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
     protected void runTest() throws Throwable {
         String text = FileUtil.loadFile(ktFile);
 
-        JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
+        JetFile psiFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), ktFile.getName(), text);
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 

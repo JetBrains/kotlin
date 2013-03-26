@@ -86,7 +86,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
             throw ExceptionUtils.rethrow(e);
         }
 
-        return JetTestUtils.createFile(file.getName(), text, environment.getProject());
+        return JetTestUtils.createFile(environment.getProject(), file.getName(), text);
     }
 
     private void doTest(@NotNull String filename, boolean custom) {

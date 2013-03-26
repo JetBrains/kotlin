@@ -89,7 +89,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
         String text = FileUtil.loadFile(file);
 
-        JetFile psiFile = JetTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
+        JetFile psiFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), file.getName(), text);
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 

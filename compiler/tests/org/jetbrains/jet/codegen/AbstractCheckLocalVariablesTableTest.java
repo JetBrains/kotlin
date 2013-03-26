@@ -62,7 +62,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         ktFile = new File(ktFileName);
         String text = FileUtil.loadFile(ktFile);
 
-        JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
+        JetFile psiFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), ktFile.getName(), text);
         assert psiFile != null;
 
         final ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);

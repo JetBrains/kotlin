@@ -62,7 +62,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
 
         String fileText = FileUtil.loadFile(ktFile);
 
-        JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
+        JetFile psiFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), ktFile.getName(), fileText);
         assertTrue("Cannot create JetFile from text", psiFile != null);
 
         final ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
