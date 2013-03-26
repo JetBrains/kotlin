@@ -163,6 +163,6 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     public KotlinLightClassResolver getLightClassResolver() {
-        return new TraceBasedLightClassResolver(trace.getBindingContext());
+        return new TraceBasedLightClassResolver(getTrace().getBindingContext());
     }
 }
