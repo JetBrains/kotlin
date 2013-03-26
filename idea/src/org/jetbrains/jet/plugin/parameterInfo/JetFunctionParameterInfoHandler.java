@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.awt.*;
@@ -210,7 +210,7 @@ public class JetFunctionParameterInfoHandler implements
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
 
         JetFile file = (JetFile) argumentList.getContainingFile();
-        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(file);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         List<JetValueArgument> valueArguments = argumentList.getArguments();
 
@@ -381,7 +381,7 @@ public class JetFunctionParameterInfoHandler implements
             return null;
         }
 
-        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)file);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         DeclarationDescriptor placeDescriptor = null;
         if (scope != null) {
