@@ -46,7 +46,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
-import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
@@ -140,7 +140,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
 
     private static boolean hasPublicMemberDiagnostic(@NotNull JetNamedDeclaration declaration) {
-        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile) declaration.getContainingFile());
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             //noinspection ConstantConditions
             if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && declaration == diagnostic.getPsiElement()) {
@@ -152,7 +152,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @NotNull
     public static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
-        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile) declaration.getContainingFile());
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         JetType type;

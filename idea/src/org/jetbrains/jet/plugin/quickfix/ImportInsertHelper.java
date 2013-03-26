@@ -37,12 +37,11 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.List;
-
-import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
 public class ImportInsertHelper {
     private ImportInsertHelper() {
@@ -58,7 +57,7 @@ public class ImportInsertHelper {
         if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || ErrorUtils.isErrorType(type)) {
             return;
         }
-        BindingContext bindingContext = getContextForSingleFile(file);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
         PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, type.getMemberScope().getContainingDeclaration());
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
             return;
