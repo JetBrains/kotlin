@@ -30,6 +30,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -186,7 +187,7 @@ public class JetCoreEnvironment {
             }
         }
         else {
-            VirtualFile fileByPath = applicationEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
+            VirtualFile fileByPath = getVirtualFileSystem().findFileByPath(file.getAbsolutePath());
             if (fileByPath != null) {
                 PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(fileByPath);
                 if (psiFile instanceof JetFile) {
@@ -201,7 +202,7 @@ public class JetCoreEnvironment {
             return;
         }
 
-        VirtualFile vFile = applicationEnvironment.getLocalFileSystem().findFileByPath(path);
+        VirtualFile vFile = getVirtualFileSystem().findFileByPath(path);
         if (vFile == null) {
             report(ERROR, "Source file or directory not found: " + path);
             return;
@@ -224,7 +225,7 @@ public class JetCoreEnvironment {
             projectEnvironment.addJarToClassPath(path);
         }
         else {
-            final VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
+            final VirtualFile root = getVirtualFileSystem().findFileByPath(path.getAbsolutePath());
             if (root == null) {
                 report(WARNING, "Classpath entry points to a non-existent location: " + path);
                 return;
@@ -235,6 +236,11 @@ public class JetCoreEnvironment {
 
     public List<JetFile> getSourceFiles() {
         return sourceFiles;
+    }
+
+    @NotNull
+    public CoreLocalFileSystem getVirtualFileSystem() {
+        return applicationEnvironment.getLocalFileSystem();
     }
 
     private void report(@NotNull CompilerMessageSeverity severity, @NotNull String message) {
