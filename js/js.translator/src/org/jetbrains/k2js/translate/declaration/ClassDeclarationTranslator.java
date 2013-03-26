@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
-import gnu.trove.TLinkable;
 import gnu.trove.TLinkableAdaptor;
 import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.NotNull;
@@ -29,19 +28,20 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.utils.DFS;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.general.Translation.translateClassDeclaration;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
-import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 
 /**
  * Generates a big block where are all the classes(objects representing them) are created.
@@ -54,6 +54,9 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     private final TLinkedList<FinalListItem> openList = new TLinkedList<FinalListItem>();
     private final List<Pair<JetClassOrObject, JsInvocation>> finalList = new ArrayList<Pair<JetClassOrObject, JsInvocation>>();
+
+    @NotNull
+    private final ClassDescriptorToLabel classDescriptorToLabel = new ClassDescriptorToLabel();
 
     @NotNull
     private final JsFunction dummyFunction;
@@ -70,7 +73,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         declarationsObjectRef = declarationsObject.makeRef();
     }
 
-    private final class OpenClassRefProvider implements ClassAliasingMap {
+    private final class ClassDescriptorToLabel implements ClassAliasingMap {
         @Override
         @Nullable
         public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
@@ -80,19 +83,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
                 return null;
             }
 
-            addAfter(item, openClassDescriptorToItem.get(referencedDescriptor));
             return item.label;
-        }
-
-        private void addAfter(@NotNull FinalListItem item, @NotNull FinalListItem referencedItem) {
-            for (TLinkable link = item.getNext(); link != null; link = link.getNext()) {
-                if (link == referencedItem) {
-                    return;
-                }
-            }
-
-            openList.remove(referencedItem);
-            openList.addBefore((FinalListItem) item.getNext(), referencedItem);
         }
     }
 
@@ -100,8 +91,6 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         private final JetClass declaration;
         private final JsNameRef label;
         private final JsNameRef qualifiedLabel;
-
-        private JsExpression translatedDeclaration;
 
         private FinalListItem(JetClass declaration, JsNameRef label, JsNameRef qualifiedLabel) {
             this.declaration = declaration;
@@ -134,17 +123,35 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     private void generateOpenClassDeclarations(@NotNull List<JsVar> vars, @NotNull List<JsPropertyInitializer> propertyInitializers) {
-        ClassAliasingMap classAliasingMap = new OpenClassRefProvider();
         // first pass: set up list order
-        for (FinalListItem item : openList) {
-            item.translatedDeclaration = translateClassDeclaration(item.declaration, classAliasingMap, context());
-        }
+        LinkedList<FinalListItem> sortedOpenClasses =
+                (LinkedList<FinalListItem>) DFS.topologicalOrder(openList, new DFS.Neighbors<FinalListItem>() {
+                    @NotNull
+                    @Override
+                    public Iterable<FinalListItem> getNeighbors(FinalListItem current) {
+                        TLinkedList<FinalListItem> parents = new TLinkedList<FinalListItem>();
+                        ClassDescriptor classDescriptor = getClassDescriptor(context().bindingContext(), current.declaration);
+                        Collection<JetType> superTypes = classDescriptor.getTypeConstructor().getSupertypes();
+
+                        for (JetType type : superTypes) {
+                            ClassDescriptor descriptor = getClassDescriptorForType(type);
+                            FinalListItem item = openClassDescriptorToItem.get(descriptor);
+                            if (item == null) {
+                                continue;
+                            }
+
+                            parents.add(item);
+                        }
+
+                        return parents;
+                    }
+                });
+
         // second pass: generate
-        for (FinalListItem item : openList) {
-            JsExpression translatedDeclaration = item.translatedDeclaration;
-            if (translatedDeclaration == null) {
-                throw new IllegalStateException(message(item.declaration, "Could not translate class declaration)"));
-            }
+        Iterator<FinalListItem> it = sortedOpenClasses.descendingIterator();
+        while (it.hasNext()) {
+            FinalListItem item = it.next();
+            JsExpression translatedDeclaration = translateClassDeclaration(item.declaration, classDescriptorToLabel, context());
             generate(item, propertyInitializers, translatedDeclaration, vars);
         }
     }
