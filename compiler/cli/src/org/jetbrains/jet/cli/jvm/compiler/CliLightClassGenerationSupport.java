@@ -21,7 +21,6 @@ import com.google.common.collect.Collections2;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchScopeUtil;
@@ -29,10 +28,9 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
+import org.jetbrains.jet.asJava.TraceBasedLightClassResolver;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -165,16 +163,6 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     public KotlinLightClassResolver getLightClassResolver() {
-        return new KotlinLightClassResolver() {
-            @Nullable
-            @Override
-            public ClassDescriptor resolveLightClass(@NotNull PsiClass kotlinLightClass) {
-                if (kotlinLightClass instanceof KotlinLightClass) {
-                    KotlinLightClass lightClass = (KotlinLightClass) kotlinLightClass;
-                    return trace.get(BindingContext.CLASS, lightClass.getSourceElement());
-                }
-                return null;
-            }
-        };
+        return new TraceBasedLightClassResolver(trace.getBindingContext());
     }
 }
