@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -29,11 +30,11 @@ class ClosureContext extends CodegenContext {
     private final ClassDescriptor classDescriptor;
 
     public ClosureContext(
-            JetTypeMapper typeMapper,
-            FunctionDescriptor contextDescriptor,
-            ClassDescriptor classDescriptor,
-            CodegenContext parentContext,
-            LocalLookup localLookup
+            @NotNull JetTypeMapper typeMapper,
+            @NotNull FunctionDescriptor contextDescriptor,
+            @NotNull ClassDescriptor classDescriptor,
+            @Nullable CodegenContext parentContext,
+            @Nullable LocalLookup localLookup
     ) {
         //noinspection SuspiciousMethodCalls
         super(contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext,

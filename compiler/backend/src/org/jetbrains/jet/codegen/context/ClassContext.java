@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen.context;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -24,17 +26,15 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 
 public class ClassContext extends CodegenContext {
     public ClassContext(
-            JetTypeMapper typeMapper,
-            ClassDescriptor contextDescriptor,
-            OwnerKind contextKind,
-            CodegenContext parentContext,
-            LocalLookup localLookup
+            @NotNull JetTypeMapper typeMapper,
+            @NotNull ClassDescriptor contextDescriptor,
+            @NotNull OwnerKind contextKind,
+            @Nullable CodegenContext parentContext,
+            @Nullable LocalLookup localLookup
     ) {
         //noinspection SuspiciousMethodCalls
-        super(contextDescriptor, contextKind, parentContext, typeMapper.getBindingContext().get(CLOSURE,
-                                                                                                                 contextDescriptor),
-              contextDescriptor,
-              localLookup);
+        super(contextDescriptor, contextKind, parentContext, typeMapper.getBindingContext().get(CLOSURE, contextDescriptor),
+              contextDescriptor, localLookup);
         initOuterExpression(typeMapper, contextDescriptor);
     }
 

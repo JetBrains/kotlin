@@ -17,11 +17,12 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
 public class NamespaceContext extends CodegenContext {
-    public NamespaceContext(@NotNull NamespaceDescriptor contextDescriptor, CodegenContext parent, @NotNull OwnerKind kind) {
+    public NamespaceContext(@NotNull NamespaceDescriptor contextDescriptor, @Nullable CodegenContext parent, @NotNull OwnerKind kind) {
         super(contextDescriptor, kind, parent, null, null, null);
     }
 
