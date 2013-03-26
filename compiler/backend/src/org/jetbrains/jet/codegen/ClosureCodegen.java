@@ -101,7 +101,7 @@ public class ClosureCodegen extends GenerationStateAware {
                                    : new String[] {JvmClassName.byClassDescriptor(samInterface).getInternalName()};
         cv.defineClass(fun,
                        V1_6,
-                       ACC_FINAL,
+                       ACC_FINAL | ACC_SUPER,
                        name.getInternalName(),
                        null,
                        superclass.getInternalName(),

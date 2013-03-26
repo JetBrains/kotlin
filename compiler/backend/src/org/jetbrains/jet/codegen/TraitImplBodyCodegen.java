@@ -31,7 +31,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateDeclaration() {
         v.defineClass(myClass, V1_6,
-                      ACC_PUBLIC | ACC_FINAL/*| Opcodes.ACC_SUPER*/,
+                      ACC_PUBLIC | ACC_FINAL,
                       jvmName(),
                       null,
                       "java/lang/Object",
