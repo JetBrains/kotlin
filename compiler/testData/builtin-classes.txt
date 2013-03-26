@@ -791,6 +791,282 @@ public trait Iterator</*0*/ out T> {
     public abstract fun next() : T
 }
 
+public trait KExtensionFunction0</*0*/ in T, /*1*/ out R> : T.() -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke() : R
+}
+
+public trait KExtensionFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : T.(P1) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1) : R
+}
+
+public trait KExtensionFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+}
+
+public trait KExtensionFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+}
+
+public trait KExtensionFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+}
+
+public trait KExtensionFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+}
+
+public trait KExtensionFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+}
+
+public trait KExtensionFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+}
+
+public trait KExtensionFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+}
+
+public trait KExtensionFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+}
+
+public trait KExtensionFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+}
+
+public trait KExtensionFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+}
+
+public trait KExtensionFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : T.(P1, P2) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+}
+
+public trait KExtensionFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+}
+
+public trait KExtensionFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+}
+
+public trait KExtensionFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+}
+
+public trait KExtensionFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : T.(P1, P2, P3) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+}
+
+public trait KExtensionFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : T.(P1, P2, P3, P4) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+}
+
+public trait KExtensionFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : T.(P1, P2, P3, P4, P5) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+}
+
+public trait KExtensionFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : T.(P1, P2, P3, P4, P5, P6) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+}
+
+public trait KExtensionFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+}
+
+public trait KExtensionFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+}
+
+public trait KExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+}
+
+public trait KFunction0</*0*/ out R> : () -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke() : R
+}
+
+public trait KFunction1</*0*/ in P1, /*1*/ out R> : (P1) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1) : R
+}
+
+public trait KFunction10</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+}
+
+public trait KFunction11</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+}
+
+public trait KFunction12</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+}
+
+public trait KFunction13</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+}
+
+public trait KFunction14</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+}
+
+public trait KFunction15</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+}
+
+public trait KFunction16</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+}
+
+public trait KFunction17</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+}
+
+public trait KFunction18</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+}
+
+public trait KFunction19</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+}
+
+public trait KFunction2</*0*/ in P1, /*1*/ in P2, /*2*/ out R> : (P1, P2) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+}
+
+public trait KFunction20</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+}
+
+public trait KFunction21</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+}
+
+public trait KFunction22</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ in P22, /*22*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+}
+
+public trait KFunction3</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ out R> : (P1, P2, P3) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+}
+
+public trait KFunction4</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ out R> : (P1, P2, P3, P4) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+}
+
+public trait KFunction5</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ out R> : (P1, P2, P3, P4, P5) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+}
+
+public trait KFunction6</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ out R> : (P1, P2, P3, P4, P5, P6) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+}
+
+public trait KFunction7</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ out R> : (P1, P2, P3, P4, P5, P6, P7) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+}
+
+public trait KFunction8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+}
+
+public trait KFunction9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+}
+
+public trait KMemberFunction0</*0*/ in T, /*1*/ out R> : T.() -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke() : R
+}
+
+public trait KMemberFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : T.(P1) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1) : R
+}
+
+public trait KMemberFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+}
+
+public trait KMemberFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+}
+
+public trait KMemberFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+}
+
+public trait KMemberFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+}
+
+public trait KMemberFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+}
+
+public trait KMemberFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+}
+
+public trait KMemberFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+}
+
+public trait KMemberFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+}
+
+public trait KMemberFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+}
+
+public trait KMemberFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+}
+
+public trait KMemberFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : T.(P1, P2) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+}
+
+public trait KMemberFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+}
+
+public trait KMemberFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+}
+
+public trait KMemberFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+}
+
+public trait KMemberFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : T.(P1, P2, P3) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+}
+
+public trait KMemberFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : T.(P1, P2, P3, P4) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+}
+
+public trait KMemberFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : T.(P1, P2, P3, P4, P5) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+}
+
+public trait KMemberFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : T.(P1, P2, P3, P4, P5, P6) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+}
+
+public trait KMemberFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+}
+
+public trait KMemberFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+}
+
+public trait KMemberFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+}
+
 public trait List</*0*/ out E> : jet.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean

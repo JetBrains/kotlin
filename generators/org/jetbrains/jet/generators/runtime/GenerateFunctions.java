@@ -17,6 +17,7 @@
 package org.jetbrains.jet.generators.runtime;
 
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -38,15 +39,21 @@ public class GenerateFunctions {
     }
 
     private enum FunctionKind {
-        FUNCTION("Function", false),
-        EXTENSION_FUNCTION("ExtensionFunction", true);
+        FUNCTION("Function", false, null),
+        EXTENSION_FUNCTION("ExtensionFunction", true, null),
+
+        K_FUNCTION("KFunction", false, "Function"),
+        K_MEMBER_FUNCTION("KMemberFunction", true, "ExtensionFunction"),
+        K_EXTENSION_FUNCTION("KExtensionFunction", true, "ExtensionFunction");
 
         private final String classNamePrefix;
         private final boolean hasReceiverParameter;
+        private final String superClassNamePrefix;
 
-        private FunctionKind(String classNamePrefix, boolean hasReceiverParameter) {
+        private FunctionKind(String classNamePrefix, boolean hasReceiverParameter, String superClassNamePrefix) {
             this.classNamePrefix = classNamePrefix;
             this.hasReceiverParameter = hasReceiverParameter;
+            this.superClassNamePrefix = superClassNamePrefix;
         }
 
         public String getJetFileName() {
@@ -60,6 +67,11 @@ public class GenerateFunctions {
         public String getImplClassName(int i) {
             return classNamePrefix + "Impl" + i;
         }
+
+        @Nullable
+        public String getSuperClassName(int i) {
+            return superClassNamePrefix != null ? superClassNamePrefix + i : null;
+        }
     }
 
     private void generateBuiltInFunctions() {
@@ -67,9 +79,49 @@ public class GenerateFunctions {
         for (int i = 0; i <= MAX_PARAM_COUNT; i++) {
             out.print("public trait " + kind.getClassName(i));
             generateTypeParameters(i, true);
-            out.println(" {");
-            generateKotlinInvokeSignature(i);
-            out.println("}");
+            generateSuperClass(i, true);
+            generateFunctionClassBody(i, true);
+        }
+    }
+
+    private void generateSuperClass(int i, boolean kotlin) {
+        String name = kind.getSuperClassName(i);
+        if (name == null) return;
+
+        out.print(kotlin ? " : " : " extends ");
+        out.print(name);
+        generateTypeParameters(i, false);
+    }
+
+    private void generateFunctionClassBody(int i, boolean kotlin) {
+        switch (kind) {
+            case FUNCTION:
+            case EXTENSION_FUNCTION: {
+                out.println(" {");
+                if (kotlin) {
+                    generateKotlinInvokeSignature(i);
+                } else {
+                    generateJavaInvokeSignature(i);
+                }
+                out.println("}");
+                break;
+            }
+
+            case K_FUNCTION:
+            case K_MEMBER_FUNCTION:
+            case K_EXTENSION_FUNCTION: {
+                if (kotlin) {
+                    out.println();
+                }
+                else {
+                    out.println(" {");
+                    out.println("}");
+                }
+                break;
+            }
+
+            default:
+                throw new IllegalStateException("Unknown kind: " + kind);
         }
     }
 
@@ -93,9 +145,8 @@ public class GenerateFunctions {
 
         out.print("public interface " + kind.getClassName(i));
         generateTypeParameters(i, false);
-        out.println(" {");
-        generateJavaInvokeSignature(i);
-        out.println("}");
+        generateSuperClass(i, false);
+        generateFunctionClassBody(i, false);
     }
 
     private void generateJavaInvokeSignature(int i) {

@@ -76,6 +76,9 @@ public class KotlinBuiltIns {
             BUILT_INS_DIR + "/Any.jet",
             BUILT_INS_DIR + "/ExtensionFunctions.jet",
             BUILT_INS_DIR + "/Functions.jet",
+            BUILT_INS_DIR + "/KFunctions.jet",
+            BUILT_INS_DIR + "/KMemberFunctions.jet",
+            BUILT_INS_DIR + "/KExtensionFunctions.jet",
             BUILT_INS_DIR + "/Nothing.jet",
             BUILT_INS_DIR + "/Unit.jet"
     );
@@ -416,6 +419,21 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getExtensionFunction(int parameterCount) {
         return getBuiltInClassByName("ExtensionFunction" + parameterCount);
+    }
+
+    @NotNull
+    public ClassDescriptor getKFunction(int parameterCount) {
+        return getBuiltInClassByName("KFunction" + parameterCount);
+    }
+
+    @NotNull
+    public ClassDescriptor getKMemberFunction(int parameterCount) {
+        return getBuiltInClassByName("KMemberFunction" + parameterCount);
+    }
+
+    @NotNull
+    public ClassDescriptor getKExtensionFunction(int parameterCount) {
+        return getBuiltInClassByName("KExtensionFunction" + parameterCount);
     }
 
     @NotNull
