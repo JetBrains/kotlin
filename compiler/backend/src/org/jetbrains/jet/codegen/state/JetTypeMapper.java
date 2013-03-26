@@ -816,6 +816,16 @@ public class JetTypeMapper extends BindingTraceAware {
                     signatureWriter.writeAsmType(sharedVarType, false);
                     signatureWriter.writeParameterTypeEnd();
                 }
+                else if (isLocalNamedFun(bindingContext, variableDescriptor)) {
+                    Type type = classNameForAnonymousClass(
+                            bindingContext,
+                           (JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, variableDescriptor)
+                    ).getAsmType();
+
+                    signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
+                    signatureWriter.writeAsmType(type, false);
+                    signatureWriter.writeParameterTypeEnd();
+                }
             }
 
             JetDelegatorToSuperCall superCall = closure.getSuperCall();

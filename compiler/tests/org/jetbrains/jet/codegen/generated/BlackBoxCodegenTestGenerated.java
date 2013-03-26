@@ -951,6 +951,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/closures/kt2151.kt");
         }
         
+        @TestMetadata("localFunctionInFunction.kt")
+        public void testLocalFunctionInFunction() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
+        }
+        
+        @TestMetadata("localFunctionInInitializer.kt")
+        public void testLocalFunctionInInitializer() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/localFunctionInInitializer.kt");
+        }
+        
         @TestMetadata("recursiveClosure.kt")
         public void testRecursiveClosure() throws Exception {
             doTest("compiler/testData/codegen/box/closures/recursiveClosure.kt");
