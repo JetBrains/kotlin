@@ -25,6 +25,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -114,11 +115,23 @@ public final class ClassFileFactory extends GenerationStateAware {
                     );
                 }
             };
-            codegen = new NamespaceCodegen(onDemand, fqName, state, files);
+            codegen = new NamespaceCodegen(onDemand, getSubModule(files), fqName, state, files);
             ns2codegen.put(fqName, codegen);
         }
 
         return codegen;
+    }
+
+    private SubModuleDescriptor getSubModule(Collection<JetFile> files) {
+        assert !files.isEmpty() : "Don't generate namespaces from no files";
+        SubModuleDescriptor subModule = state.getModuleSourcesManager().getSubModuleForFile(files.iterator().next());
+        for (JetFile file : files) {
+            SubModuleDescriptor fileSubModule = state.getModuleSourcesManager().getSubModuleForFile(file);
+            assert fileSubModule.equals(subModule)
+                    : "Attempt to generate namespace from files originating from different sub-modules: " +
+                        fileSubModule + " != " + subModule;
+        }
+        return subModule;
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass, PsiFile sourceFile) {

@@ -51,11 +51,12 @@ public class NamespaceCodegen extends MemberCodegen {
     @NotNull
     private final ClassBuilderOnDemand v;
     @NotNull private final FqName name;
-    private final SubModuleDescriptor subModule = null; // TODO
+    private final SubModuleDescriptor subModule;
     private final Collection<JetFile> files;
 
     public NamespaceCodegen(
             @NotNull ClassBuilderOnDemand v,
+            @NotNull SubModuleDescriptor subModule,
             @NotNull final FqName fqName,
             GenerationState state,
             Collection<JetFile> namespaceFiles
@@ -64,6 +65,7 @@ public class NamespaceCodegen extends MemberCodegen {
         checkAllFilesHaveSameNamespace(namespaceFiles);
 
         this.v = v;
+        this.subModule = subModule;
         name = fqName;
         this.files = namespaceFiles;
 
