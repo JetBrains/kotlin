@@ -10,6 +10,7 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="library" name="js-libs" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>
 
