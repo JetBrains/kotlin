@@ -1,17 +1,13 @@
 package foo
 
-import java.util.ArrayList;
+import java.util.ArrayList
 
 fun box() : Boolean {
-    var i = 0
-    val arr = ArrayList<Int>();
-    while (i++ < 10) {
-        arr.add(i);
+    val arr = ArrayList<Int>()
+    for (i in 0..5) {
+        arr.add(i)
     }
-    arr.remove(2)
-    var sum = 0
-    for (a in arr) {
-        sum += a;
-    }
-    return ((sum == 52)  && (arr[1] == 2) && (arr[2] == 4) && (arr[3] == 5) && (arr[4] == 6) && (arr[8] == 10))
+
+    val removed = arr.remove(2)
+    return arr.size() == 5 && removed == 2 && arr[0] == 0 && arr[1] == 1 && arr[2] == 3 && arr[3] == 4 && arr[4] == 5
 }

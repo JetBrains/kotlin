@@ -48,6 +48,10 @@ public final class ArrayListTest extends JavaClassesTest {
         fooBoxTest();
     }
 
+    public void testRemoveWithIndexOutOfBounds() throws Exception {
+        fooBoxTest();
+    }
+
     public void testToArray() throws Exception {
         fooBoxTest();
     }
