@@ -8,11 +8,15 @@ public interface SubclassFromGenericAndNot {
 
     public interface NonGeneric {
         void foo(@NotNull String s);
+
+        void dummy(); // to avoid loading as SAM interface
     }
 
     public interface Generic<T> {
         @KotlinSignature("fun foo(key : T)")
         public void foo(T key);
+
+        void dummy(); // to avoid loading as SAM interface
     }
 
     public interface Sub extends NonGeneric, Generic<String> {

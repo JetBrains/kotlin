@@ -11,6 +11,8 @@ public interface InheritReadOnlinessOfArgument {
     public interface Super {
         @KotlinSignature("fun foo(): List<List<String>>>")
         List<List<String>> foo();
+
+        void dummy(); // to avoid loading as SAM interface
     }
 
     public interface Sub extends Super {

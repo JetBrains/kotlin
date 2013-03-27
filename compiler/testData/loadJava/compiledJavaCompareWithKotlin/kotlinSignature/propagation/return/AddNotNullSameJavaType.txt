@@ -3,10 +3,12 @@ package test
 public trait AddNotNullSameJavaType : java.lang.Object {
     
     public trait Sub : test.AddNotNullSameJavaType.Super {
+        public abstract override /*1*/ /*fake_override*/ fun dummy() : jet.Unit
         public abstract override /*1*/ fun foo() : jet.CharSequence
     }
     
     public trait Super : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun foo() : jet.CharSequence?
     }
 }
