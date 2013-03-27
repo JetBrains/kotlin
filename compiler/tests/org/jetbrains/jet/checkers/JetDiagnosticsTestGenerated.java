@@ -459,6 +459,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/SyntaxErrorInTestHighlightingEof.kt");
         }
         
+        @TestMetadata("TraitOverrideObjectMethods.kt")
+        public void testTraitOverrideObjectMethods() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/TraitOverrideObjectMethods.kt");
+        }
+        
         @TestMetadata("TraitSupertypeList.kt")
         public void testTraitSupertypeList() throws Exception {
             doTest("compiler/testData/diagnostics/tests/TraitSupertypeList.kt");
