@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import com.google.common.collect.Lists;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -66,7 +69,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            return jvmClassNameForNamespace((PackageViewDescriptor) containingDeclaration);
+            return jvmClassNameForNamespace((PackageFragmentDescriptor) containingDeclaration);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -100,59 +103,39 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    private JavaNamespaceKind getNsKind(@NotNull PackageViewDescriptor ns) {
-        JavaNamespaceKind javaNamespaceKind = bindingContext.get(JavaBindingContext.JAVA_NAMESPACE_KIND, ns);
-        //Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, ns);
+    private JvmClassName jvmClassNameForNamespace(@NotNull PackageFragmentDescriptor packageFragment) {
 
-        if (javaNamespaceKind == null /*&& src == null*/) {
-            throw new IllegalStateException("unknown namespace origin: " + ns);
+        PsiClass psiClass = bindingContext.get(JavaBindingContext.JAVA_STATIC_CLASS_FOR_PACKAGE, packageFragment);
+        if (psiClass == null) {
+            // It's a normal package
+            FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFragment.getFqName());
+            return JvmClassName.byFqNameWithoutInnerClasses(packageClassFqName);
         }
 
-        if (javaNamespaceKind != null) {
-            if (javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS /*&& src != null*/) {
-                throw new IllegalStateException(
-                        "conflicting namespace " + ns + ": it is both java statics and from src");
-            }
-            return javaNamespaceKind;
-        }
-        else {
-            return JavaNamespaceKind.PROPER;
-        }
+        return getJvmClassNameByPsiClass(psiClass);
     }
 
     @NotNull
-    private JvmClassName jvmClassNameForNamespace(@NotNull PackageViewDescriptor namespace) {
-
-        StringBuilder r = new StringBuilder();
-
-        List<DeclarationDescriptor> path = DescriptorUtils.getPathWithoutRootNsAndModule(namespace);
-
-        for (DeclarationDescriptor pathElement : path) {
-            PackageViewDescriptor ns = (PackageViewDescriptor) pathElement;
-            if (r.length() > 0) {
-                JavaNamespaceKind nsKind = getNsKind(ns.getContainingDeclaration());
-                if (nsKind == JavaNamespaceKind.PROPER) {
-                    r.append("/");
-                }
-                else if (nsKind == JavaNamespaceKind.CLASS_STATICS) {
-                    r.append("$");
-                }
-            }
-            r.append(ns.getName());
+    private static JvmClassName getJvmClassNameByPsiClass(@NotNull PsiClass psiClass) {
+        PsiClass outermost = psiClass;
+        List<String> innerClassNames = Lists.newArrayList();
+        while (outermost.getContainingClass() != null) {
+            innerClassNames.add(outermost.getName());
+            outermost = outermost.getContainingClass();
         }
 
-        if (getNsKind(namespace) == JavaNamespaceKind.PROPER) {
-            if (r.length() > 0) {
-                r.append("/");
-            }
-            r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
+
+        String qualifiedName = outermost.getQualifiedName();
+        assert qualifiedName != null : "A local class shouldn't have made it to here: " +
+                                       "no static methods are allowed in anonymous classes: " + psiClass;
+        StringBuilder result = new StringBuilder(qualifiedName.replace('.', '/'));
+
+        Collections.reverse(innerClassNames);
+        for (String name : innerClassNames) {
+            result.append("$").append(name);
         }
 
-        if (r.length() == 0) {
-            throw new IllegalStateException("internal error: failed to generate classname for " + namespace);
-        }
-
-        return JvmClassName.byInternalName(r.toString());
+        return JvmClassName.byInternalName(result.toString());
     }
 
     @NotNull
@@ -438,7 +421,7 @@ public class JetTypeMapper extends BindingTraceAware {
             boolean isInsideClass,
             OwnerKind kind
     ) {
-        final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
+        final DeclarationDescriptor functionParent = functionDescriptor.getOriginal();
 
         functionDescriptor = unwrapFakeOverride(functionDescriptor);
 
@@ -450,7 +433,7 @@ public class JetTypeMapper extends BindingTraceAware {
         JvmClassName thisClass;
         if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor.getOriginal())) {
             assert !superCall;
-            owner = jvmClassNameForNamespace((PackageViewDescriptor) functionParent);
+            owner = jvmClassNameForNamespace((PackageFragmentDescriptor) functionParent);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;

@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeDescriptorBase;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
@@ -52,7 +52,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         }
     };
 
-    private final DiagnosticHolder diagnosticHolder;
+    private final BindingTrace trace;
     private final PsiDeclarationProviderFactory declarationProviderFactory;
     private final PsiClassFinder psiClassFinder;
     private final JavaDescriptorResolver javaDescriptorResolver;
@@ -60,14 +60,14 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
     public JavaPackageFragmentProvider(
-            @NotNull DiagnosticHolder diagnosticHolder,
+            @NotNull BindingTrace trace,
             @NotNull StorageManager storageManager,
             @NotNull PsiDeclarationProviderFactory declarationProviderFactory,
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
             @NotNull PsiClassFinder psiClassFinder,
             @NotNull SubModuleDescriptor subModule
     ) {
-        this.diagnosticHolder = diagnosticHolder;
+        this.trace = trace;
         this.javaDescriptorResolver = javaDescriptorResolver;
         this.packageFragments = storageManager.createMemoizedFunctionWithNullableValues(
                 new NullableFunction<FqName, PackageFragmentDescriptor>() {
@@ -157,24 +157,27 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
             return createPackageFragmentForPackageWithoutMembers(fqName, psiPackage);
         }
 
-        AbiVersionUtil.checkAbiVersion(packageClass, JetPackageClassAnnotation.get(packageClass), diagnosticHolder);
+        AbiVersionUtil.checkAbiVersion(packageClass, JetPackageClassAnnotation.get(packageClass), trace);
         return createPackageFragmentForPackageWithMembers(fqName, psiPackage, packageClass);
     }
 
     private PackageFragmentDescriptor createPackageFragmentForStaticClass(final FqName fqName, final PsiClass staticClass) {
-        return new JavaPackageFragment(subModule, fqName,
-                                       new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
-                                           @NotNull
-                                           @Override
-                                           public JetScope fun(PackageFragmentDescriptor fragment) {
-                                               return new JavaClassStaticMembersScope(
-                                                       fragment,
-                                                       declarationProviderFactory.createDeclarationProviderForClassStaticMembers(
-                                                               staticClass),
-                                                       fqName,
-                                                       javaDescriptorResolver);
-                                           }
-                                       });
+        JavaPackageFragment fragment = new JavaPackageFragment(subModule, fqName,
+                                                               new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
+                                                                   @NotNull
+                                                                   @Override
+                                                                   public JetScope fun(PackageFragmentDescriptor fragment) {
+                                                                       return new JavaClassStaticMembersScope(
+                                                                               fragment,
+                                                                               declarationProviderFactory
+                                                                                       .createDeclarationProviderForClassStaticMembers(
+                                                                                               staticClass),
+                                                                               fqName,
+                                                                               javaDescriptorResolver);
+                                                                   }
+                                                               });
+        trace.record(JavaBindingContext.JAVA_STATIC_CLASS_FOR_PACKAGE, fragment, staticClass);
+        return fragment;
     }
 
     private PackageFragmentDescriptor createPackageFragmentForPackageWithoutMembers(

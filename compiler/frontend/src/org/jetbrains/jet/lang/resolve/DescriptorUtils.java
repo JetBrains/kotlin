@@ -258,21 +258,6 @@ public class DescriptorUtils {
         return packageViewDescriptor.getContainingDeclaration() == null;
     }
 
-    @NotNull
-    public static List<DeclarationDescriptor> getPathWithoutRootNsAndModule(@NotNull DeclarationDescriptor descriptor) {
-        List<DeclarationDescriptor> path = Lists.newArrayList();
-        DeclarationDescriptor current = descriptor;
-        while (true) {
-            if (current instanceof PackageViewDescriptor && isRootNamespace((PackageViewDescriptor) current)) {
-                return Lists.reverse(path);
-            }
-            assert current != null : "Something has a null parent, but is not a root package";
-
-            path.add(current);
-            current = getParentInPackageViewHierarchy(current);
-        }
-    }
-
     public static boolean isClassObject(@NotNull DeclarationDescriptor descriptor) {
         return descriptor instanceof ClassDescriptor
                && ((ClassDescriptor) descriptor).getKind() == ClassKind.CLASS_OBJECT;

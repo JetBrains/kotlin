@@ -16,7 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import com.intellij.psi.PsiClass;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -26,11 +27,8 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
  */
 public class JavaBindingContext {
 
-    /**
-     * @see BindingContext#NAMESPACE_IS_SRC
-     */
-    public static final WritableSlice<PackageViewDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND =
-            Slices.createSimpleSlice();
+    // Static members of this class constitute the package
+    public static final WritableSlice<PackageFragmentDescriptor, PsiClass> JAVA_STATIC_CLASS_FOR_PACKAGE = Slices.createSimpleSlice();
 
     private JavaBindingContext() {
     }
