@@ -42,7 +42,7 @@ public final class NamedMembers {
     private final List<PropertyPsiDataElement> propertyPsiDataElements = Lists.newArrayList();
 
     @Nullable
-    private PsiClass functionalInterface;
+    private PsiClass samInterface;
 
     void addMethod(@NotNull PsiMethodWrapper method) {
         methods.add(method);
@@ -52,8 +52,8 @@ public final class NamedMembers {
         propertyPsiDataElements.add(propertyPsiDataElement);
     }
 
-    void setFunctionalInterface(@NotNull PsiClass functionalInterface) {
-        this.functionalInterface = functionalInterface;
+    void setSamInterface(@NotNull PsiClass samInterface) {
+        this.samInterface = samInterface;
     }
 
     @NotNull
@@ -72,7 +72,7 @@ public final class NamedMembers {
     }
 
     @Nullable
-    public PsiClass getFunctionalInterface() {
-        return functionalInterface;
+    public PsiClass getSamInterface() {
+        return samInterface;
     }
 }

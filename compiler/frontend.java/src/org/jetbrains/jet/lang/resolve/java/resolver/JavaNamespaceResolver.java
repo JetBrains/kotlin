@@ -221,7 +221,7 @@ public final class JavaNamespaceResolver {
         }
 
         for (PsiClass nestedClass : psiClass.getInnerClasses()) {
-            if (MembersCache.isFunctionalInterface(nestedClass)) {
+            if (MembersCache.isSamInterface(nestedClass)) {
                 return true;
             }
             if (nestedClass.hasModifierProperty(PsiModifier.STATIC) && hasStaticMembers(nestedClass)) {

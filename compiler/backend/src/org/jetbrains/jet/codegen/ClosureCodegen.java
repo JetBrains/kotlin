@@ -80,7 +80,7 @@ public class ClosureCodegen extends GenerationStateAware {
             interfaceFunction = getInvokeFunction(funDescriptor);
         }
         else {
-            interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfFunctionalInterface(samInterface);
+            interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
         }
 
         SignatureWriter signatureWriter = new SignatureWriter();
