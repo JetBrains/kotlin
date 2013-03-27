@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.plugin.caches.resolve.AnalyzeExhaustAsKotlinDeclarationsCache;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCacheImpl;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
 import org.jetbrains.jet.plugin.util.ApplicationUtils;
@@ -120,7 +120,7 @@ public final class AnalyzerFacadeWithCache {
 
     private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull JetFile fileToCache) {
         KotlinDeclarationsCache cache = KotlinCacheManager.getInstance(fileToCache.getProject()).getDeclarationsFromProject();
-        return ((AnalyzeExhaustAsKotlinDeclarationsCache) cache).getAnalyzeExhaust();
+        return ((KotlinDeclarationsCacheImpl) cache).getAnalyzeExhaust();
     }
 
     private static AnalyzeExhaust analyzeBodies(AnalyzeExhaust analyzeExhaustHeaders, JetFile file) {

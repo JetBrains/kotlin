@@ -18,41 +18,26 @@ package org.jetbrains.jet.plugin.caches.resolve;
 
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 
-public class AnalyzeExhaustAsKotlinDeclarationsCache implements KotlinDeclarationsCache {
+public class KotlinDeclarationsCacheImpl implements KotlinDeclarationsCache {
 
-    private static final Logger LOG = Logger.getInstance(AnalyzeExhaustAsKotlinDeclarationsCache.class);
+    private static final Logger LOG = Logger.getInstance(KotlinDeclarationsCacheImpl.class);
 
     private final AnalyzeExhaust exhaust;
 
-    public AnalyzeExhaustAsKotlinDeclarationsCache(@NotNull AnalyzeExhaust exhaust) {
+    public KotlinDeclarationsCacheImpl(@NotNull AnalyzeExhaust exhaust) {
         this.exhaust = exhaust;
         if (exhaust.isError()) {
             LOG.error(exhaust.getError());
         }
     }
 
-    @Nullable
-    @Override
-    public BodiesResolveContext getBodiesResolveContext() {
-        return exhaust.getBodiesResolveContext();
-    }
-
     @Override
     @NotNull
     public BindingContext getBindingContext() {
         return exhaust.getBindingContext();
-    }
-
-    @Override
-    @NotNull
-    public ModuleConfiguration getModuleConfiguration() {
-        return exhaust.getModuleConfiguration();
     }
 
     @NotNull
