@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -655,16 +654,11 @@ public class SignaturesPropagationData {
     private static void reportCantFindSuperFunction(PsiMethodWrapper method) {
         String errorMessage = "Can't find super function for " + method.getPsiMethod() +
                               " defined in " + method.getPsiMethod().getContainingClass();
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            throw new IllegalStateException(errorMessage);
+        if (SystemInfo.isMac) {
+            LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
         }
         else {
-            if (SystemInfo.isMac) {
-                LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
-            }
-            else {
-                LOG.error(errorMessage);
-            }
+            LOG.error(errorMessage);
         }
     }
 

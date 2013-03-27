@@ -134,9 +134,6 @@ public class JetPsiChecker implements Annotator {
                 // For failing tests and to notify about idea internal error in -ea mode
                 holder.createErrorAnnotation(element, e.getClass().getCanonicalName() + ": " + e.getMessage());
                 LOG.error(e);
-                if (ApplicationManager.getApplication().isUnitTestMode()) {
-                    throw ExceptionUtils.rethrow(e);
-                }
             }
         }
     }
