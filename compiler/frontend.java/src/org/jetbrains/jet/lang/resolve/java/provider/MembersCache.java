@@ -94,8 +94,8 @@ public final class MembersCache {
                     if (JetClassAnnotation.get(psiClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
                         processObjectClass(psiClass);
                     }
-                    if (!DescriptorResolverUtils.isKotlinClass(psiClass) && isFunctionalInterface(psiClass)) {
-                        processFunctionalInterface(psiClass);
+                    if (!DescriptorResolverUtils.isKotlinClass(psiClass) && isSamInterface(psiClass)) {
+                        processSamInterface(psiClass);
                     }
                 }
             }
@@ -111,9 +111,9 @@ public final class MembersCache {
             }
         }
 
-        private void processFunctionalInterface(@NotNull PsiClass psiClass) {
+        private void processSamInterface(@NotNull PsiClass psiClass) {
             NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(psiClass.getName()));
-            namedMembers.setFunctionalInterface(psiClass);
+            namedMembers.setSamInterface(psiClass);
         }
     }
 
@@ -307,9 +307,9 @@ public final class MembersCache {
                 return;
             }
             for (PsiClass nested : psiClass.getPsiClass().getInnerClasses()) {
-                if (isFunctionalInterface(nested)) {
+                if (isSamInterface(nested)) {
                     NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(nested.getName()));
-                    namedMembers.setFunctionalInterface(nested);
+                    namedMembers.setSamInterface(nested);
                 }
             }
         }
@@ -335,7 +335,7 @@ public final class MembersCache {
         return OBJECT_METHODS.contains(formattedMethod);
     }
 
-    public static boolean isFunctionalInterface(@NotNull PsiClass psiClass) {
+    public static boolean isSamInterface(@NotNull PsiClass psiClass) {
         if (!psiClass.isInterface()) {
             return false;
         }

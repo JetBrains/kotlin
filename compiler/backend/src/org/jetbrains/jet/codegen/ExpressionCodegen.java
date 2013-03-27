@@ -1882,10 +1882,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
             else {
                 if (funDescriptor instanceof SimpleFunctionDescriptor) {
-                    ClassDescriptor samTrait = bindingContext.get(
-                            BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
+                    ClassDescriptor samInterface = bindingContext.get(
+                            BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
-                    if (samTrait != null) {
+                    if (samInterface != null) {
                         ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
                         if (!(argument instanceof ExpressionValueArgument)) {
                             throw new IllegalStateException(
@@ -1896,7 +1896,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         JetExpression argumentExpression = valueArgument.getArgumentExpression();
 
                         if (argumentExpression instanceof JetFunctionLiteralExpression) {
-                            return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samTrait);
+                            return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
                         }
                         else {
                             throw new UnsupportedOperationException(); // TODO

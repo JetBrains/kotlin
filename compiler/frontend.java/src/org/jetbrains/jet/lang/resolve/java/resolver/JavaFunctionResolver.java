@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
@@ -358,12 +357,13 @@ public final class JavaFunctionResolver {
             @NotNull NamespaceDescriptor ownerDescriptor,
             @NotNull NamedMembers namedMembers
     ) {
-        PsiClass functionalInterface = namedMembers.getFunctionalInterface();
-        if (functionalInterface != null) {
+        PsiClass samInterface = namedMembers.getSamInterface();
+        if (samInterface != null) {
             ClassDescriptor klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
-            if (klass != null && SingleAbstractMethodUtils.isFunctionalInterface(klass)) {
-                SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createConstructorFunction(ownerDescriptor, klass);
-                trace.record(BindingContext.SAM_CONSTRUCTOR_TO_TRAIT, constructorFunction, klass);
+            if (klass != null && SingleAbstractMethodUtils.isSamInterface(klass)) {
+                SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createSamConstructorFunction(ownerDescriptor,
+                                                                                                                      klass);
+                trace.record(BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
                 return constructorFunction;
             }
         }

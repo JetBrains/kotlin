@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SingleAbstractMethodUtils {
-    public static boolean isFunctionalInterface(@NotNull ClassDescriptor klass) {
+    public static boolean isSamInterface(@NotNull ClassDescriptor klass) {
         if (klass.getKind() != ClassKind.TRAIT) {
             return false;
         }
@@ -63,7 +63,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    private static JetType getFunctionalTypeForFunction(@NotNull FunctionDescriptor function) {
+    private static JetType getFunctionTypeForFunction(@NotNull FunctionDescriptor function) {
         JetType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
         List<JetType> parameterTypes = Lists.newArrayList();
@@ -73,25 +73,28 @@ public class SingleAbstractMethodUtils {
         return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
     }
 
-    public static SimpleFunctionDescriptor createConstructorFunction(@NotNull ClassOrNamespaceDescriptor owner, @NotNull ClassDescriptor klass) {
+    public static SimpleFunctionDescriptor createSamConstructorFunction(
+            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull ClassDescriptor samInterface
+    ) {
         SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
                 owner,
-                klass.getAnnotations(),
-                klass.getName(),
+                samInterface.getAnnotations(),
+                samInterface.getName(),
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
 
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
-                SignaturesUtil.recreateTypeParametersAndReturnMapping(klass.getTypeConstructor().getParameters(), result);
+                SignaturesUtil.recreateTypeParametersAndReturnMapping(samInterface.getTypeConstructor().getParameters(), result);
         TypeSubstitutor typeParametersSubstitutor = SignaturesUtil.createSubstitutorForTypeParameters(traitToFunTypeParameters);
 
-        JetType parameterTypeUnsubstituted = getFunctionalTypeForFunction(getAbstractMethodOfFunctionalInterface(klass));
+        JetType parameterTypeUnsubstituted = getFunctionTypeForFunction(getAbstractMethodOfSamInterface(samInterface));
         JetType parameterType = typeParametersSubstitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParametersSubstitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
                 result, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("function"), parameterType, false, null);
 
-        JetType returnType = typeParametersSubstitutor.substitute(klass.getDefaultType(), Variance.OUT_VARIANCE);
+        JetType returnType = typeParametersSubstitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParametersSubstitutor;
 
         for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> mapEntry : traitToFunTypeParameters.entrySet()) {
@@ -114,7 +117,7 @@ public class SingleAbstractMethodUtils {
                 Arrays.asList(parameter),
                 returnType,
                 Modality.FINAL,
-                klass.getVisibility(),
+                samInterface.getVisibility(),
                 false
         );
 
@@ -122,8 +125,8 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SimpleFunctionDescriptor getAbstractMethodOfFunctionalInterface(@NotNull ClassDescriptor klass) {
-        return (SimpleFunctionDescriptor) getAbstractMembers(klass).get(0);
+    public static SimpleFunctionDescriptor getAbstractMethodOfSamInterface(@NotNull ClassDescriptor samInterface) {
+        return (SimpleFunctionDescriptor) getAbstractMembers(samInterface).get(0);
     }
     
     private SingleAbstractMethodUtils() {
