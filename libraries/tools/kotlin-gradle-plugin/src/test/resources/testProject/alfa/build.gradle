@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.*
 buildscript {
   repositories {
     mavenCentral()
@@ -11,7 +10,7 @@ buildscript {
   }
 }
 
-apply plugin: KotlinPlugin
+apply plugin: "kotlin"
 
 sourceSets {
  deploy
