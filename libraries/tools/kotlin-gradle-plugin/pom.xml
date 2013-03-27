@@ -76,6 +76,9 @@
                 <includes><include>kotlin-jdk-annotations.jar</include></includes>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
         </resources>
 
         <plugins>
