@@ -315,7 +315,7 @@ public final class MembersCache {
         }
     }
 
-    private static boolean isObjectMethodInInterface(@NotNull PsiMember member) {
+    public static boolean isObjectMethodInInterface(@NotNull PsiMember member) {
         if (!(member instanceof PsiMethod)) {
             return false;
         }
