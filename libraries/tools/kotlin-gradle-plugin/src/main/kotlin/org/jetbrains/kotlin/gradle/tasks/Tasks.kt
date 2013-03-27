@@ -30,12 +30,16 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.apache.commons.io.FileUtils
 import java.io.IOException
+import org.apache.commons.lang.StringUtils
 
 public open class KotlinCompile(): AbstractCompile() {
 
     val srcDirsRoots = HashSet<File>()
     val compiler = K2JVMCompiler()
     val logger = getLogger()
+
+    public val kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments()
+
 
     // override setSource to track source directory sets
     override fun setSource(source: Any?) {
@@ -70,7 +74,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
     override fun compile() {
 
-        val args = K2JVMCompilerArguments()
+        val args = kotlinOptions
 
         val javaSrcRoots = HashSet<File>()
         val sources = ArrayList<File>()
@@ -92,19 +96,21 @@ public open class KotlinCompile(): AbstractCompile() {
             return
         }
 
-        args.setSourceDirs(sources.map { it.getAbsolutePath() })
+        val customSources = args.getSourceDirs();
+        if (customSources == null || customSources.isEmpty()) {
+            args.setSourceDirs(sources.map { it.getAbsolutePath() })
+        }
 
-        val gradleClasspath = getClasspath()
-        val effectiveClassPath = (javaSrcRoots + gradleClasspath).makeString(File.pathSeparator)
 
-        args.setClasspath(effectiveClassPath)
+        if (StringUtils.isEmpty(kotlinOptions.classpath)) {
+            val gradleClasspath = getClasspath()
+            val effectiveClassPath = (javaSrcRoots + gradleClasspath).makeString(File.pathSeparator)
+            args.setClasspath(effectiveClassPath)
+        }
 
         val embeddedAnnotations = getAnnotations()
-
-        args.outputDir = getDestinationDir()?.getPath()
-        args.noJdkAnnotations = true
-        args.annotations = embeddedAnnotations.getPath()
-        args.noStdlib = true
+        args.outputDir =if (StringUtils.isEmpty(kotlinOptions.outputDir)) { getDestinationDir()?.getPath() } else { kotlinOptions.outputDir }
+        args.annotations = if (StringUtils.isEmpty(kotlinOptions.annotations)) { embeddedAnnotations.getPath() } else { kotlinOptions.annotations }
 
         val logger = Logging.getLogger(getClass())
         val messageCollector = GradleMessageCollector(logger)
@@ -127,7 +133,7 @@ public open class KotlinCompile(): AbstractCompile() {
     fun getAnnotations(): File {
         val jdkAnnotations: String = "kotlin-jdk-annotations.jar"
         val jdkAnnotationsResource = Resources.getResource(jdkAnnotations) ?:
-                                     throw GradleException(jdkAnnotations + " not found in Kotlin gradle plugin classpath")
+        throw GradleException(jdkAnnotations + " not found in Kotlin gradle plugin classpath")
 
         val jdkAnnotationsTempDir = Files.createTempDir()
         val jdkAnnotationsFile = File(jdkAnnotationsTempDir, jdkAnnotations)
@@ -231,10 +237,10 @@ class GradleMessageCollector(val logger : Logger): MessageCollector {
         val text = position + message
 
         when (severity) {
-          in CompilerMessageSeverity.VERBOSE -> logger.debug(text)
-          in CompilerMessageSeverity.ERRORS -> logger.error(text)
-          CompilerMessageSeverity.INFO -> logger.info(text)
-          else -> logger.warn(text)
+            in CompilerMessageSeverity.VERBOSE -> logger.debug(text)
+            in CompilerMessageSeverity.ERRORS -> logger.error(text)
+            CompilerMessageSeverity.INFO -> logger.info(text)
+            else -> logger.warn(text)
         }
     }
 }
