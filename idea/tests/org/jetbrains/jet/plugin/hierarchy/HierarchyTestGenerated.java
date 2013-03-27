@@ -133,6 +133,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinForKotlinClass");
         }
         
+        @TestMetadata("JetInt")
+        public void testJetInt() throws Exception {
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JetInt");
+        }
+        
         @TestMetadata("KJKHierarchy")
         public void testKJKHierarchy() throws Exception {
             doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KJKHierarchy");
@@ -159,6 +164,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     public static class Super extends AbstractHierarchyTest {
         public void testAllFilesPresentInSuper() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/hierarchy/class/super"), Pattern.compile("^(.+)$"), false);
+        }
+        
+        @TestMetadata("JetList")
+        public void testJetList() throws Exception {
+            doSuperClassHierarchyTest("idea/testData/hierarchy/class/super/JetList");
         }
         
         @TestMetadata("TwoTraits")
