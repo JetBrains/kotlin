@@ -77,7 +77,7 @@ public class KotlinCacheManager {
                     Predicates.<PsiFile>alwaysFalse()
             );
             return Result.<KotlinDeclarationsCache>create(
-                    new AnalyzeExhaustAsKotlinDeclarationsCache(analyzeExhaust),
+                    new KotlinDeclarationsCacheImpl(analyzeExhaust),
                     PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
             );
         }
