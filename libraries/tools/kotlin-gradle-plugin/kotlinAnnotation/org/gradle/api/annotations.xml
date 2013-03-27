@@ -10,4 +10,9 @@
     <item name='org.gradle.api.Project org.gradle.api.plugins.Convention getConvention()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.gradle.api.Project org.gradle.api.initialization.dsl.ScriptHandler getBuildscript()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getBuildscript() : ScriptHandler&quot;"/>
+        </annotation>
+    </item>
 </root>
