@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.versions;
 
 import com.intellij.ProjectTopics;
+import com.intellij.framework.addSupport.impl.AddSupportForSingleFrameworkDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -37,10 +38,9 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.framework.JSFrameworkSupportProvider;
 import org.jetbrains.jet.plugin.framework.JavaFrameworkSupportProvider;
-import org.jetbrains.jet.plugin.framework.ui.AddSupportForSingleFrameworkDialogFixed;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
 public class KotlinLibrariesNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
@@ -122,8 +122,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
             @Override
             public void run() {
-                DialogWrapper dialog = AddSupportForSingleFrameworkDialogFixed.createDialog(
-                        module, new JavaFrameworkSupportProvider());
+                DialogWrapper dialog = AddSupportForSingleFrameworkDialog.createDialog(module, new JavaFrameworkSupportProvider());
                 if (dialog != null) {
                     dialog.show();
                 }
@@ -133,8 +132,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         answer.createActionLabel("Set up module '" + module.getName() + "' as JavaScript Kotlin module", new Runnable() {
             @Override
             public void run() {
-                DialogWrapper dialog = AddSupportForSingleFrameworkDialogFixed.createDialog(
-                        module, new JSFrameworkSupportProvider());
+                DialogWrapper dialog = AddSupportForSingleFrameworkDialog.createDialog(module, new JSFrameworkSupportProvider());
                 if (dialog != null) {
                     dialog.show();
                 }
