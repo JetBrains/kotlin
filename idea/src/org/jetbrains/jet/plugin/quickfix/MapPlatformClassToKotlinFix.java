@@ -87,14 +87,15 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
             if (diagnostic.getFactory() != Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) continue;
             JetReferenceExpression refExpr = getImportOrUsageFromDiagnostic(diagnostic);
             if (refExpr == null) continue;
-            DeclarationDescriptor descriptor = context.get(BindingContext.REFERENCE_TARGET, refExpr);
+            ClassDescriptor descriptor = resolveToClass(refExpr, context);
             if (descriptor == null || !(descriptor.equals(platformClass))) continue;
             JetImportDirective imp = PsiTreeUtil.getParentOfType(refExpr, JetImportDirective.class);
             if (imp == null) {
                 JetUserType type = PsiTreeUtil.getParentOfType(refExpr, JetUserType.class);
                 if (type == null) continue;
                 usages.add(type);
-            } else {
+            }
+            else {
                 imports.add(imp);
             }
         }
@@ -193,9 +194,8 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
 
                 Project project = diagnostic.getPsiFile().getProject();
                 BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
-                DeclarationDescriptor descriptor = context.get(BindingContext.REFERENCE_TARGET, typeExpr);
-                if (descriptor == null || !(descriptor instanceof ClassDescriptor)) return null;
-                ClassDescriptor platformClass = (ClassDescriptor) descriptor;
+                ClassDescriptor platformClass = resolveToClass(typeExpr, context);
+                if (platformClass == null) return null;
 
                 assert diagnostic.getFactory() == Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN;
                 @SuppressWarnings("unchecked")
@@ -205,5 +205,23 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
                 return new MapPlatformClassToKotlinFix(typeExpr, platformClass, parametrizedDiagnostic.getA());
             }
         };
+    }
+
+    @Nullable
+    private static ClassDescriptor resolveToClass(@NotNull JetReferenceExpression referenceExpression, @NotNull BindingContext context) {
+        DeclarationDescriptor descriptor = context.get(BindingContext.REFERENCE_TARGET, referenceExpression);
+        Collection<? extends DeclarationDescriptor> ambiguousTargets =
+                context.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression);
+        if (descriptor instanceof ClassDescriptor) {
+            return (ClassDescriptor) descriptor;
+        }
+        else if (ambiguousTargets != null) {
+            for (DeclarationDescriptor target : ambiguousTargets) {
+                if (target instanceof ClassDescriptor) {
+                    return (ClassDescriptor) target;
+                }
+            }
+        }
+        return null;
     }
 }
