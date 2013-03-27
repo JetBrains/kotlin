@@ -37,7 +37,6 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
@@ -54,6 +53,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
+import static com.intellij.util.PathUtil.getLocalFile;
+import static com.intellij.util.PathUtil.getLocalPath;
+
 public class KotlinRuntimeLibraryUtil {
     private KotlinRuntimeLibraryUtil() {}
 
@@ -67,29 +69,20 @@ public class KotlinRuntimeLibraryUtil {
                 return !AbiVersionUtil.isAbiVersionCompatible(abiVersion);
             }
         }));
-        final Collection<VirtualFile> badRoots = Sets.newHashSet();
-        final ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-        FileBasedIndex.getInstance().getFilesWithKey(
-                id,
-                badAbiVersions,
-                new Processor<VirtualFile>() {
-                    @Override
-                    public boolean process(VirtualFile file) {
-                        assert file != null;
-                        if (!file.isValid()) return true;
-                        VirtualFile root = fileIndex.getClassRootForFile(file);
-                        if (root != null) {
-                            VirtualFile jarFile = JarFileSystem.getInstance().getVirtualFileForJar(root);
-                            badRoots.add(jarFile != null ? jarFile : root);
-                        }
-                        else {
-                            badRoots.add(file);
-                        }
-                        return true;
-                    }
-                },
-                ProjectScope.getLibrariesScope(project)
-        );
+        Set<VirtualFile> badRoots = Sets.newHashSet();
+        ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+
+        for (Integer version : badAbiVersions) {
+            Collection<VirtualFile> indexedFiles = FileBasedIndex.getInstance().getContainingFiles(id, version, ProjectScope.getLibrariesScope(project));
+
+            for (VirtualFile indexedFile : indexedFiles) {
+                VirtualFile libraryRoot = fileIndex.getClassRootForFile(indexedFile);
+                assert libraryRoot != null : "Only library roots were requested, " +
+                                             "and only class files should be indexed with KotlinAbiVersionIndex key. " +
+                                             "File: " + libraryRoot;
+                badRoots.add(getLocalFile(libraryRoot));
+            }
+        }
 
         return badRoots;
     }
@@ -189,8 +182,10 @@ public class KotlinRuntimeLibraryUtil {
 
     static void replaceFile(File updatedFile, VirtualFile replacedJarFile) {
         try {
-            String localPath = com.intellij.util.PathUtil.getLocalPath(replacedJarFile);
-            assert localPath != null;
+            VirtualFile replacedFile = getLocalFile(replacedJarFile);
+
+            String localPath = getLocalPath(replacedFile);
+            assert localPath != null : "Should be called for replacing valid root file: " + replacedJarFile;
 
             File libraryJarPath = new File(localPath);
 
@@ -199,11 +194,7 @@ public class KotlinRuntimeLibraryUtil {
             }
 
             FileUtil.copy(updatedFile, libraryJarPath);
-
-            VirtualFile localFile = JarFileSystem.getInstance().getLocalVirtualFileFor(replacedJarFile);
-            if (localFile != null) {
-                localFile.refresh(false, true);
-            }
+            replacedFile.refresh(false, true);
         }
         catch (IOException e) {
             throw new AssertionError(e);
