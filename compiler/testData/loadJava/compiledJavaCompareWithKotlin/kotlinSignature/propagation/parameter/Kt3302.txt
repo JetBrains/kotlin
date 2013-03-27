@@ -3,14 +3,17 @@ package test
 public trait Kt3302 : java.lang.Object {
     
     public trait BSONObject : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun put(/*0*/ p0 : jet.String, /*1*/ p1 : jet.Any) : jet.Any?
     }
     
     public trait BasicBSONObject : test.Kt3302.LinkedHashMap<jet.String, jet.Any>, test.Kt3302.BSONObject {
+        public abstract override /*2*/ /*fake_override*/ fun dummy() : jet.Unit
         public abstract override /*2*/ fun put(/*0*/ p0 : jet.String, /*1*/ p1 : jet.Any) : jet.Any?
     }
     
     public trait LinkedHashMap</*0*/ K, /*1*/ V> : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun put(/*0*/ p0 : K, /*1*/ p1 : V) : V?
     }
 }

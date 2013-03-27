@@ -3,14 +3,17 @@ package test
 public trait TwoSuperclassesReturnSameJavaType : java.lang.Object {
     
     public trait Sub : test.TwoSuperclassesReturnSameJavaType.Super1, test.TwoSuperclassesReturnSameJavaType.Super2 {
+        public abstract override /*2*/ /*fake_override*/ fun dummy() : jet.Unit
         public abstract override /*2*/ fun foo() : jet.CharSequence
     }
     
     public trait Super1 : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun foo() : jet.CharSequence?
     }
     
     public trait Super2 : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun foo() : jet.CharSequence
     }
 }

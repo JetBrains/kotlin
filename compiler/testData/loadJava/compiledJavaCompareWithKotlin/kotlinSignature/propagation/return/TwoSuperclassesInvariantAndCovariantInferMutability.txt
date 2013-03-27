@@ -3,14 +3,17 @@ package test
 public trait TwoSuperclassesInvariantAndCovariantInferMutability : java.lang.Object {
     
     public trait Sub : test.TwoSuperclassesInvariantAndCovariantInferMutability.Super1, test.TwoSuperclassesInvariantAndCovariantInferMutability.Super2 {
+        public abstract override /*2*/ /*fake_override*/ fun dummy() : jet.Unit
         public abstract override /*2*/ fun foo() : jet.MutableList<jet.MutableList<jet.String>>
     }
     
     public trait Super1 : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun foo() : jet.List<jet.List<jet.String>>
     }
     
     public trait Super2 : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun foo() : jet.MutableList<jet.MutableList<jet.String>>
     }
 }

@@ -11,6 +11,8 @@ public interface CantMakeImmutableInSubclass {
     public interface Super {
         @KotlinSignature("fun foo(): MutableCollection<String>")
         Collection<String> foo();
+
+        void dummy(); // to avoid loading as SAM interface
     }
 
     public interface Sub extends Super {

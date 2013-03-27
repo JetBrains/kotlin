@@ -11,6 +11,8 @@ public interface InheritProjectionKind {
     public interface Super {
         @KotlinSignature("fun foo(): MutableCollection<out Number>")
         Collection<Number> foo();
+
+        void dummy(); // to avoid loading as SAM interface
     }
 
     public interface Sub extends Super {

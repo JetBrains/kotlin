@@ -3,10 +3,12 @@ package test
 public trait InheritNullabilityJavaSubtype : java.lang.Object {
     
     public trait Sub : test.InheritNullabilityJavaSubtype.Super {
+        public abstract override /*1*/ /*fake_override*/ fun dummy() : jet.Unit
         public abstract override /*1*/ fun foo() : jet.String
     }
     
     public trait Super : java.lang.Object {
+        public abstract fun dummy() : jet.Unit
         public abstract fun foo() : jet.CharSequence
     }
 }

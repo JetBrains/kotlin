@@ -10,6 +10,8 @@ public interface InheritProjectionKind {
     public interface Super {
         @KotlinSignature("fun foo(p: MutableList<in String>)")
         void foo(List<String> p);
+
+        void dummy(); // to avoid loading as SAM interface
     }
 
     public interface Sub extends Super {

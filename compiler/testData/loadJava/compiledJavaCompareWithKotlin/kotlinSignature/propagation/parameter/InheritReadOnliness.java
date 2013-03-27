@@ -10,6 +10,8 @@ public interface InheritReadOnliness {
     public interface Super {
         @KotlinSignature("fun foo(p: List<String>)")
         void foo(List<String> p);
+
+        void dummy(); // to avoid loading as SAM interface
     }
 
     public interface Sub extends Super {
