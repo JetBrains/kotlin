@@ -39,8 +39,12 @@ public open class KotlinCompile(): AbstractCompile() {
     val compiler = K2JVMCompiler()
     val logger = Logging.getLogger(getClass())
 
-    public val kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments()
+    public val kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
 
+    {
+        kotlinOptions.noStdlib = true
+        kotlinOptions.noJdkAnnotations = true
+    }
 
     // override setSource to track source directory sets
     override fun setSource(source: Any?) {
@@ -104,8 +108,8 @@ public open class KotlinCompile(): AbstractCompile() {
 
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
-            val gradleClasspath = getClasspath()
-            val effectiveClassPath = (javaSrcRoots + gradleClasspath).makeString(File.pathSeparator)
+            val existingClasspathEntries =  getClasspath().filter(KSpec<File?>({ it != null && it.exists() }))
+            val effectiveClassPath = (javaSrcRoots + existingClasspathEntries).makeString(File.pathSeparator)
             args.setClasspath(effectiveClassPath)
         }
 
