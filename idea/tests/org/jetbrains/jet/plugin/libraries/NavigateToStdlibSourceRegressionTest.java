@@ -22,15 +22,24 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 import java.io.File;
+import java.io.IOException;
 
 public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegressionTest {
     /**
@@ -39,6 +48,57 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
     public void testRefToAssertEquals() {
         PsiElement navigationElement = configureAndResolve("import kotlin.test.assertEquals; val x = <caret>assertEquals(1, 2)");
         assertEquals("Test.kt", navigationElement.getContainingFile().getName());
+    }
+
+    public void testJavaClass() throws IOException {
+        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/Iterators.kt", "Collections", "java.util.Collections");
+    }
+
+    public void testKotlinClass() throws IOException {
+        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/Iterators.kt", "FunctionIterator", "kotlin.FunctionIterator");
+    }
+
+    public void testClassWithJavaAnalog() throws IOException {
+        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/Iterators.kt", "Iterator", "jet.Iterator");
+    }
+
+    public void testNavigationInKotlinBuiltIns() throws IOException {
+        doNavigationInSourcesTest("libraries/stdlib/src/generated/_Arrays.kt", "Array", "jet.Array");
+    }
+
+    private void doNavigationInSourcesTest(@NotNull String path, @NotNull String element, @NotNull String expectedFqName) throws IOException {
+        File file = new File(path);
+        PsiFile psiFile = getPsiFileForFileFromSources(file);
+        String text = psiFile.getText();
+        int index = text.indexOf(element);
+        PsiReference ref = psiFile.findReferenceAt(index);
+        assertNotNull("Cannot find reference at " + index + ",  " +
+                      text.substring(index - 20, index) + "<caret>" + text.substring(index, index + 20), ref);
+        PsiElement resolvedElement = ref.resolve();
+        assertNotNull("Cannot resolve reference: " + ref.getElement().getText(), resolvedElement);
+        PsiElement navigationElement = resolvedElement.getNavigationElement();
+        checkNavigationElement(navigationElement, expectedFqName);
+    }
+
+    @NotNull
+    private PsiFile getPsiFileForFileFromSources(@NotNull File file) {
+        VirtualFile virtualFile = VfsUtil.findFileByIoFile(file, false);
+        assertNotNull("Cannot find virtual file for " + file.getAbsolutePath(), virtualFile);
+        PsiFile psiFile = getPsiManager().findFile(virtualFile);
+        assertNotNull("Cannot find psi file for " + virtualFile.getCanonicalPath(), psiFile);
+        return psiFile;
+    }
+
+    private void checkNavigationElement(@NotNull PsiElement element, @NotNull String expectedName) {
+        if (element instanceof PsiClass) {
+            assertEquals(expectedName, ((PsiClass) element).getQualifiedName());
+        }
+        else if (element instanceof JetClass) {
+            assertEquals(expectedName, JetPsiUtil.getFQName((JetClass) element).getFqName());
+        }
+        else {
+            fail("Navigation element should be JetClass or PsiClass: " + element.getClass() + ", " + element.getText());
+        }
     }
 
     @Override
