@@ -133,6 +133,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinForKotlinClass");
         }
         
+        @TestMetadata("KJKHierarchy")
+        public void testKJKHierarchy() throws Exception {
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KJKHierarchy");
+        }
+        
         @TestMetadata("KotlinFromJava")
         public void testKotlinFromJava() throws Exception {
             doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromJava");
