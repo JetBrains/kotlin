@@ -363,13 +363,13 @@ public class CodegenBinding {
             }
         }
 
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-
-        if (container == null) {
-            throw new IllegalStateException("descriptor has no container: " + descriptor);
-        }
+        DeclarationDescriptor container = DescriptorUtils.getParentInPackageViewHierarchy(descriptor);
 
         Name name = descriptor.getName();
+
+        if (container instanceof PackageViewDescriptor && DescriptorUtils.isRootNamespace((PackageViewDescriptor) container)) {
+            return name.getIdentifier();
+        }
 
         String baseName = getJvmInternalName(bindingTrace, container).getInternalName();
         if (!baseName.isEmpty()) {

@@ -128,7 +128,8 @@ public class DescriptorUtils {
     }
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
+        return descriptor instanceof PackageViewDescriptor ||
+               descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
     public static DeclarationDescriptor getParentInPackageViewHierarchy(@NotNull DeclarationDescriptor descriptor) {
