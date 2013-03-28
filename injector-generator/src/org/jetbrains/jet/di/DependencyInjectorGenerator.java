@@ -19,7 +19,6 @@ package org.jetbrains.jet.di;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,21 +51,6 @@ public class DependencyInjectorGenerator {
         String outputFileName = targetSourceRoot + "/" + injectorPackageName.replace(".", "/") + "/" + injectorClassName + ".java";
 
         File file = new File(outputFileName);
-
-        // Windows prohibits rename of open files by default.
-        // http://teamcity.jetbrains.com/viewLog.html?buildId=62376&buildTypeId=bt345&tab=buildLog
-        boolean useTmpfile = !SystemInfo.isWindows;
-
-        File tmpfile = useTmpfile ? new File(outputFileName + ".tmp") : file;
-        File parentFile = file.getParentFile();
-        if (!parentFile.exists()) {
-            if (parentFile.mkdirs()) {
-                System.out.println("Directory created: " + parentFile.getAbsolutePath());
-            }
-            else {
-                throw new IllegalStateException("Cannot create directory: " + parentFile);
-            }
-        }
 
         fields.addAll(dependencies.satisfyDependencies());
 
@@ -105,15 +89,7 @@ public class DependencyInjectorGenerator {
         text.append(imports);
         text.append(body);
 
-        FileUtil.writeToFile(tmpfile, text.toString());
-        System.out.println("File written: " + tmpfile.getAbsolutePath());
-        if (useTmpfile) {
-            if (!tmpfile.renameTo(file)) {
-                throw new RuntimeException("failed to rename " + tmpfile + " to " + file);
-            }
-            System.out.println("Renamed " + tmpfile + " to " + file);
-        }
-        System.out.println();
+        GeneratorsFileUtil.writeFileIfContentChanged(file, text.toString());
     }
 
     private void generatePreamble(String injectorPackageName, Printer p) throws IOException {
