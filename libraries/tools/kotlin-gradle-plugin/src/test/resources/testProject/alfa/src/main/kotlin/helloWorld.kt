@@ -13,8 +13,8 @@ class KotlinGreetingJoiner(val greeter : Greeter) {
     }
 
   fun getJoinedGreeting() : String? {
-    val joiner = Joiner.on(" and ")?.skipNulls();
-    return "${greeter.getGreeting()} ${joiner?.join(names)}"
+    val joiner = Joiner.on(" and ").skipNulls();
+    return "${greeter.getGreeting()} ${joiner.join(names)}"
   }
 }
 
