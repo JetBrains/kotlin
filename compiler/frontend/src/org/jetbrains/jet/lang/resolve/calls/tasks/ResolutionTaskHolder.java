@@ -17,11 +17,11 @@
 package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -31,9 +31,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
+    private static final int MIN_PRIORITY = 0;
+    private static final int MAX_PRIORITY = 1;
+
     private final JetReferenceExpression reference;
     private final BasicCallResolutionContext basicCallResolutionContext;
-    private final Predicate<ResolutionCandidate<D>> visibleStrategy;
+    private final PriorityProvider<ResolutionCandidate<D>> priorityProvider;
     private final boolean isSafeCall;
 
     private final Collection<Collection<ResolutionCandidate<D>>> localExtensions = Sets.newLinkedHashSet();
@@ -44,10 +47,11 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
 
     public ResolutionTaskHolder(@NotNull JetReferenceExpression reference,
             @NotNull BasicCallResolutionContext basicCallResolutionContext,
-            @NotNull Predicate<ResolutionCandidate<D>> visibleStrategy) {
+            @NotNull PriorityProvider<ResolutionCandidate<D>> priorityProvider
+    ) {
         this.reference = reference;
         this.basicCallResolutionContext = basicCallResolutionContext;
-        this.visibleStrategy = visibleStrategy;
+        this.priorityProvider = priorityProvider;
         this.isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call);
     }
 
@@ -93,9 +97,15 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
             }
             candidateList.addAll(nonLocalExtensions);
 
-            for (Predicate<ResolutionCandidate<D>> visibilityStrategy : Lists.newArrayList(visibleStrategy, Predicates.not(visibleStrategy))) {
+            for (int priority = MAX_PRIORITY; priority >= MIN_PRIORITY; priority--) {
+                final int finalPriority = priority;
                 for (Collection<ResolutionCandidate<D>> candidates : candidateList) {
-                    Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, visibilityStrategy);
+                    Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, new Predicate<ResolutionCandidate<D>>() {
+                        @Override
+                        public boolean apply(@Nullable ResolutionCandidate<D> input) {
+                            return finalPriority == priorityProvider.getPriority(input);
+                        }
+                    });
                     if (!filteredCandidates.isEmpty()) {
                         tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicCallResolutionContext));
                     }
@@ -103,5 +113,9 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
             }
         }
         return tasks;
+    }
+
+    public interface PriorityProvider<D> {
+        int getPriority(D candidate);
     }
 }
