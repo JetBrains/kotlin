@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MutablePackageFragmentProvider implements PackageFragmentProvider {
@@ -30,7 +31,6 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
 
     private final SubModuleDescriptor subModule;
     private final PackageIndex.Builder packageIndexBuilder = new PackageIndex.Builder();
-    private PackageIndex packageIndex;
 
     public MutablePackageFragmentProvider(@NotNull SubModuleDescriptor subModule) {
         this.subModule = subModule;
@@ -39,35 +39,25 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
     @NotNull
     @Override
     public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-        getPackageIndex();
-        return packageFragments.get(fqName);
+        List<PackageFragmentDescriptor> descriptors = packageFragments.get(fqName);
+        if (descriptors.isEmpty()) {
+            if (packageIndexBuilder.getAllPackages().contains(fqName)) {
+                EmptyPackageFragment emptyFragment = new EmptyPackageFragment(subModule, PackageFragmentKind.SOURCE, fqName);
+                packageFragments.put(fqName, emptyFragment);
+                return Collections.<PackageFragmentDescriptor>singletonList(emptyFragment);
+            }
+        }
+        return descriptors;
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
-        return getPackageIndex().getSubPackagesOf(fqName);
-    }
-
-    @NotNull
-    private PackageIndex getPackageIndex() {
-        if (packageIndex == null) {
-            packageIndex = packageIndexBuilder.build();
-            for (FqName fqName : packageIndex.getAllPackages()) {
-                if (!packageFragments.containsKey(fqName)) {
-                    packageFragments.put(fqName, new EmptyPackageFragment(subModule, PackageFragmentKind.SOURCE, fqName));
-                }
-            }
-        }
-        return packageIndex;
+        return packageIndexBuilder.getSubPackagesOf(fqName);
     }
 
     @NotNull
     public MutablePackageFragmentDescriptor addPackageFragment(@NotNull PackageFragmentKind kind, @NotNull FqName fqName) {
-        if (packageIndex != null) {
-            throw new IllegalStateException("Trying to add a package after getPackageIndex() was called: " + fqName);
-        }
-
         // We use one fragment per kind
         Collection<PackageFragmentDescriptor> fragments = packageFragments.get(fqName);
         for (PackageFragmentDescriptor fragment : fragments) {
@@ -81,4 +71,8 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "for " + subModule;
+    }
 }

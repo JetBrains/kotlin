@@ -16,25 +16,32 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class PackageIndex {
+public interface PackageIndex {
 
-    public static final Name PRESENCE_MARKER = Name.special("<no children>");
+    @NotNull
+    Set<FqName> getAllPackages();
 
-    public static class Builder {
+    @NotNull
+    Set<FqName> getSubPackagesOf(@NotNull FqName parent);
+
+    class Builder implements PackageIndex {
+        private static final Name PRESENCE_MARKER = Name.special("<no children>");
+
         // foo -> {foo, foo.bar}
-        private final Multimap<FqName, Name> subPackages = HashMultimap.create();
+        private final SetMultimap<FqName, Name> subPackages = CommonSuppliers.newLinkedHashSetHashSetMultimap();
+        private final PackageIndex delegate = new PackageIndexImpl(subPackages.asMap());
 
         public void addPackage(@NotNull FqName fqName) {
             subPackages.put(fqName, PRESENCE_MARKER);
@@ -45,36 +52,56 @@ public class PackageIndex {
 
         @NotNull
         public PackageIndex build() {
-            return new PackageIndex(subPackages.asMap());
+            return new PackageIndexImpl(ImmutableMap.copyOf(subPackages.asMap()));
+        }
+
+        @NotNull
+        @Override
+        public Set<FqName> getAllPackages() {
+            return delegate.getAllPackages();
+        }
+
+        @NotNull
+        @Override
+        public Set<FqName> getSubPackagesOf(@NotNull FqName parent) {
+            return delegate.getSubPackagesOf(parent);
+        }
+
+        private static class PackageIndexImpl implements  PackageIndex {
+
+            // foo -> {foo, foo.bar}
+            private final Map<FqName, Collection<Name>> subPackages;
+
+            public PackageIndexImpl(Map<FqName, Collection<Name>> subPackages) {
+                this.subPackages = subPackages;
+            }
+
+            @Override
+            @NotNull
+            public Set<FqName> getAllPackages() {
+                return subPackages.keySet();
+            }
+
+            @Override
+            @NotNull
+            public Set<FqName> getSubPackagesOf(@NotNull FqName parent) {
+                return doGetSubPackagesOf(parent, Sets.<FqName>newHashSet());
+            }
+
+            private Set<FqName> doGetSubPackagesOf(FqName parent, Set<FqName> result) {
+                Collection<Name> immediateChildren = subPackages.get(parent);
+                if (immediateChildren == null) {
+                    return result;
+                }
+                for (Name childName : immediateChildren) {
+                    if (childName == PRESENCE_MARKER) continue;
+                    result.add(parent.child(childName));
+                }
+                return result;
+            }
+
         }
     }
 
-    // foo -> {foo, foo.bar}
-    private final ImmutableMap<FqName, Collection<Name>> subPackages;
 
-    public PackageIndex(Map<FqName, Collection<Name>> subPackages) {
-        this.subPackages = ImmutableMap.copyOf(subPackages);
-    }
-
-    @NotNull
-    public Set<FqName> getAllPackages() {
-        return subPackages.keySet();
-    }
-
-    @NotNull
-    public Set<FqName> getSubPackagesOf(@NotNull FqName parent) {
-        return doGetSubPackagesOf(parent, Sets.<FqName>newHashSet());
-    }
-
-    private Set<FqName> doGetSubPackagesOf(FqName parent, Set<FqName> result) {
-        Collection<Name> immediateChildren = subPackages.get(parent);
-        if (immediateChildren == null) {
-            return result;
-        }
-        for (Name childName : immediateChildren) {
-            if (childName == PRESENCE_MARKER) continue;
-            result.add(parent.child(childName));
-        }
-        return result;
-    }
 }
