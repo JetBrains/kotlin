@@ -60,8 +60,8 @@ public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProvi
     @Nullable
     @Override
     public PsiClass getPsiClass(@NotNull Name name) {
-        return psiClassFinder.findPsiClass(new FqName(psiPackage.getQualifiedName()).child(name),
-                                           PsiClassFinder.RuntimeClassesHandleMode.THROW);
+        return psiClassFinder.findPsiClass(new FqName(psiPackage.getQualifiedName()).child(name)
+        );
     }
 
     @NotNull

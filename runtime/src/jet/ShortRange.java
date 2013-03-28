@@ -16,9 +16,7 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-@AssertInvisibleInResolver
 public final class ShortRange implements Range<Short>, Progression<Short> {
     public static final ShortRange EMPTY = new ShortRange((short) 1, (short) 0);
 

@@ -16,9 +16,7 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-@AssertInvisibleInResolver
 public interface Progression<N> extends Iterable<N> {
     N getStart();
     N getEnd();

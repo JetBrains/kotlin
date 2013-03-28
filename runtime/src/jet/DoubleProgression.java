@@ -16,9 +16,7 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-@AssertInvisibleInResolver
 public class DoubleProgression implements Progression<Double> {
     private final double start;
     private final double end;

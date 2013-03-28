@@ -16,9 +16,7 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-@AssertInvisibleInResolver
 public class LongProgression implements Progression<Long> {
     private final long start;
     private final long end;

@@ -41,8 +41,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.PsiClassFinder.RuntimeClassesHandleMode;
-
 public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     public static final PackageFragmentKind JAVA = new PackageFragmentKind() {
@@ -133,7 +131,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
 
     @Nullable
     private PackageFragmentDescriptor createPackageFragment(@NotNull FqName fqName) {
-        final PsiClass staticClass = psiClassFinder.findPsiClass(fqName, RuntimeClassesHandleMode.THROW);
+        final PsiClass staticClass = psiClassFinder.findPsiClass(fqName);
         if (staticClass != null) {
             if (staticClass.isEnum()) {
                 // TODO: this is a bug. but reproduces the existing behavior
@@ -151,7 +149,7 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         final PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
         if (psiPackage == null) return null;
 
-        final PsiClass packageClass = psiClassFinder.findPsiClass(PackageClassUtils.getPackageClassFqName(fqName), RuntimeClassesHandleMode.THROW);
+        final PsiClass packageClass = psiClassFinder.findPsiClass(PackageClassUtils.getPackageClassFqName(fqName));
 
         if (packageClass == null) {
             return createPackageFragmentForPackageWithoutMembers(fqName, psiPackage);

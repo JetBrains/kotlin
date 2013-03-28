@@ -16,9 +16,7 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-@AssertInvisibleInResolver
 public abstract class ExtensionFunction5<E, D1, D2, D3, D4, D5, R> extends DefaultJetObject {
     protected ExtensionFunction5() {
         super();

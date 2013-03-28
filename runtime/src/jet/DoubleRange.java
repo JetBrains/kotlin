@@ -16,9 +16,7 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-@AssertInvisibleInResolver
 public final class DoubleRange implements Range<Double>, Progression<Double> {
     public static final DoubleRange EMPTY = new DoubleRange(1, 0);
 

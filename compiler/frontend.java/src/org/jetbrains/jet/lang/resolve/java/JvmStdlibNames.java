@@ -82,8 +82,6 @@ public class JvmStdlibNames {
     public static final JvmClassName JET_OBJECT = JvmClassName.byFqNameWithoutInnerClasses("jet.JetObject");
 
 
-    public static final JvmClassName ASSERT_INVISIBLE_IN_RESOLVER = JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver");
-
     public static final JvmClassName KOTLIN_SIGNATURE = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.KotlinSignature");
     public static final String KOTLIN_SIGNATURE_VALUE_METHOD = "value";
 

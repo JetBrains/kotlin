@@ -16,9 +16,7 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-@AssertInvisibleInResolver
 public final class IntRange implements Range<Integer>, Progression<Integer> {
     public static final IntRange EMPTY = new IntRange(1, 0);
 

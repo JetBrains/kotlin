@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.AnnotationValue;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -219,7 +218,7 @@ public class AnnotationJavaDescriptorResolverTest extends AbstractJavaResolverDe
     }
 
     private ClassDescriptor resolveClass(FqName fqName) {
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
         return javaDescriptorResolver.resolveClass(psiClass);
     }
 

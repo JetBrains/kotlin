@@ -16,11 +16,9 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 import java.util.Iterator;
 
-@AssertInvisibleInResolver
 public abstract class LongIterator implements Iterator<Long> {
     @Override
     public final Long next() {

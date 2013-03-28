@@ -16,11 +16,8 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
-
 import java.util.Iterator;
 
-@AssertInvisibleInResolver
 public abstract class ByteIterator implements Iterator<Byte> {
     @Override
     public final Byte next() {

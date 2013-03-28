@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.TypeTransformingVisitor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -101,7 +100,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(javaClass, PsiClassFinder.RuntimeClassesHandleMode.THROW);
+                    PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(javaClass);
                     if (psiClass == null) continue;
                     ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(psiClass);
                     PackageViewDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);

@@ -51,7 +51,7 @@ public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQ
     @Nullable
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName fqName) {
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
         if (psiClass == null) {
             return null;
         }

@@ -26,16 +26,12 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.List;
 
 public interface PsiClassFinder {
-    enum RuntimeClassesHandleMode {
-        THROW,
-        IGNORE,
-    }
 
     @NotNull
     GlobalSearchScope getDefiningSearchScope();
 
     @Nullable
-    PsiClass findPsiClass(@NotNull FqName fqName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode);
+    PsiClass findPsiClass(@NotNull FqName fqName);
 
     @Nullable
     PsiPackage findPsiPackage(@NotNull FqName fqName);

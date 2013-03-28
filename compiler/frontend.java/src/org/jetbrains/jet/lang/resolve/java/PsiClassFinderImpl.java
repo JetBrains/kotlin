@@ -27,9 +27,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.List;
@@ -80,7 +78,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
 
     @Override
     @Nullable
-    public PsiClass findPsiClass(@NotNull FqName qualifiedName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode) {
+    public PsiClass findPsiClass(@NotNull FqName qualifiedName) {
         PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
 
         if (original != null) {
@@ -99,27 +97,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
             return null;
         }
 
-        if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            if (isInvisibleRuntimeClass(original)) {
-                if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
-                    return null;
-                }
-                else if (runtimeClassesHandleMode == RuntimeClassesHandleMode.THROW) {
-                    throw new IllegalStateException(
-                            "classpath is configured incorrectly:" +
-                            " class " + qualifiedName + " from runtime must not be loaded by compiler");
-                }
-                else {
-                    throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
-                }
-            }
-        }
-
         return original;
-    }
-
-    private static boolean isInvisibleRuntimeClass(@NotNull PsiClass psiClass) {
-        return JavaAnnotationResolver.findOwnAnnotation(psiClass, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName()) != null;
     }
 
     @Override
