@@ -65,7 +65,7 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     public void testObjectLiteralInPackageClass() throws Exception {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$src$outerClassInfo$", null, null);
-        doCustomTest("foo$packageObjectLiteral$1", expectedInfo);
+        doCustomTest("foo.FooPackage$packageObjectLiteral$1", expectedInfo);
     }
 
     public void testLocalClassInTopLevelFunction() throws Exception {
