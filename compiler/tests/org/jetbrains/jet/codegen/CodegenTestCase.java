@@ -160,6 +160,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                     DxChecker.check(classFileFactory);
                 }
             } catch (Throwable e) {
+                JetTestUtils.newTrace(myEnvironment);
                 System.out.println(generateToText());
                 throw ExceptionUtils.rethrow(e);
             }

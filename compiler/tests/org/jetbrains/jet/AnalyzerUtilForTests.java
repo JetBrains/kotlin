@@ -21,10 +21,11 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.util.Collection;
@@ -78,9 +79,13 @@ public class AnalyzerUtilForTests {
     }
 
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve) {
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
+            Project project,
+            Collection<JetFile> files,
+            List<AnalyzerScriptParameter> scriptParameters,
+            Predicate<PsiFile> filesToAnalyzeCompletely,
+            boolean storeContextForBodiesResolve
+    ) {
+        BindingTrace bindingTraceContext = CliLightClassGenerationSupport.getInstanceForCli(project).getTrace();
 
         return AnalyzerFacadeForJVM
                 .analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, scriptParameters, filesToAnalyzeCompletely,
