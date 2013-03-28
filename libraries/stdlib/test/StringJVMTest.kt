@@ -236,4 +236,22 @@ class StringJVMTest {
         assertEquals("", data.take(-7))
         assertEquals(data, data.take(data.length + 42))
     }
+
+    test fun trimLeading() {
+        assertEquals("a", "a".trimLeading())
+        assertEquals("a", " a".trimLeading())
+        assertEquals("a", "  a".trimLeading())
+        assertEquals("a  ", "  a  ".trimLeading())
+        assertEquals("a b", "  a b".trimLeading())
+        assertEquals("a b ", "  a b ".trimLeading())
+    }
+
+    test fun trimTrailing() {
+        assertEquals("a", "a".trimTrailing())
+        assertEquals("a", "a ".trimTrailing())
+        assertEquals("a", "a  ".trimTrailing())
+        assertEquals("  a", "  a  ".trimTrailing())
+        assertEquals("a b", "a b  ".trimTrailing())
+        assertEquals(" a b", " a b  ".trimTrailing())
+    }
 }
