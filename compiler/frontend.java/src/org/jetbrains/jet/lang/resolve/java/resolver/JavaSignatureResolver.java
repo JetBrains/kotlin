@@ -50,8 +50,8 @@ public final class JavaSignatureResolver {
     private JavaTypeTransformer typeTransformer;
 
     @Inject
-    public void setJavaSemanticServices(@NotNull DependencyClassByQualifiedNameResolver javaClassClassResolutionFacade) {
-        this.classByQualifiedNameResolver = javaClassClassResolutionFacade;
+    public void setDependencyClassByQualifiedNameResolver(@NotNull DependencyClassByQualifiedNameResolver classByQualifiedNameResolver) {
+        this.classByQualifiedNameResolver = classByQualifiedNameResolver;
     }
 
     @Inject

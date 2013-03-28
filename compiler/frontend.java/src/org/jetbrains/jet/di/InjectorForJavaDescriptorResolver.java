@@ -142,7 +142,7 @@ public class InjectorForJavaDescriptorResolver {
         javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
         javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
 
-        javaSignatureResolver.setJavaSemanticServices(javaDependencyByQualifiedNameResolver);
+        javaSignatureResolver.setDependencyClassByQualifiedNameResolver(javaDependencyByQualifiedNameResolver);
         javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
 
         javaInnerClassResolver.setClassResolver(javaClassResolver);

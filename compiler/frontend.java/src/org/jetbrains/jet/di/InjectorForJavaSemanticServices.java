@@ -143,7 +143,7 @@ public class InjectorForJavaSemanticServices {
         javaTypeTransformer.setClassResolutionFacade(javaClassResolutionFacade);
         javaTypeTransformer.setProject(project);
 
-        javaSignatureResolver.setJavaSemanticServices(javaDependencyByQualifiedNameResolver);
+        javaSignatureResolver.setDependencyClassByQualifiedNameResolver(javaDependencyByQualifiedNameResolver);
         javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
 
         javaConstructorResolver.setTrace(bindingTrace);
