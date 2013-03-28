@@ -38,6 +38,13 @@ import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 public class DefaultErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP);
+    public static final DispatchingDiagnosticRenderer RENDERER_FOR_EXCEPTIONS = new DispatchingDiagnosticRenderer(MAP) {
+        @NotNull
+        @Override
+        protected String unknownDiagnosticType(@NotNull Diagnostic diagnostic) {
+            return diagnostic.toString();
+        }
+    };
 
     static {
 

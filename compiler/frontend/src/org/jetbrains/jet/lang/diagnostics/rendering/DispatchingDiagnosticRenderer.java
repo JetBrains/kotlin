@@ -36,6 +36,11 @@ public class DispatchingDiagnosticRenderer implements DiagnosticRenderer<Diagnos
                 return renderer.render(diagnostic);
             }
         }
+        return unknownDiagnosticType(diagnostic);
+    }
+
+    @NotNull
+    protected String unknownDiagnosticType(@NotNull Diagnostic diagnostic) {
         throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName());
     }
 }

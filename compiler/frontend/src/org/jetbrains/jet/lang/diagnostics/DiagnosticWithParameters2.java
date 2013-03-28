@@ -16,15 +16,12 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class DiagnosticWithParameters2<E extends PsiElement, A, B> extends AbstractDiagnostic<E> {
-    private A a;
-    private B b;
+    private final A a;
+    private final B b;
 
     public DiagnosticWithParameters2(@NotNull E psiElement,
             @NotNull A a,
@@ -50,5 +47,10 @@ public class DiagnosticWithParameters2<E extends PsiElement, A, B> extends Abstr
     @NotNull
     public B getB() {
         return b;
+    }
+
+    @Override
+    public String toString() {
+        return "(a = " + a + ", b = " + b + ")";
     }
 }
