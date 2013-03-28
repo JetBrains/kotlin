@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
@@ -49,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -66,7 +64,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely) {
-        return analyzeFilesWithJavaIntegration(project, files, scriptParameters, filesToAnalyzeCompletely, true);
+        BindingTraceContext bindingTraceContext = new BindingTraceContext();
+
+        return analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, scriptParameters, filesToAnalyzeCompletely,
+                                               true);
     }
 
     @NotNull
@@ -150,60 +151,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         return new ResolveSession(fileProject, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
     }
 
-    public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-            JetFile file, List<AnalyzerScriptParameter> scriptParameters) {
-        AnalyzingUtils.checkForSyntacticErrors(file);
-
-        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, scriptParameters);
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-
-        return analyzeExhaust;
-    }
-
-    public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(
-            JetFile file, List<AnalyzerScriptParameter> scriptParameters) {
-        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), scriptParameters,
-                                               Predicates.<PsiFile>alwaysTrue());
-    }
-
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationAndCheckForErrors(
-            Project project,
-            Collection<JetFile> files,
-            List<AnalyzerScriptParameter> scriptParameters,
-            Predicate<PsiFile> filesToAnalyzeCompletely
-    ) {
-        for (JetFile file : files) {
-            AnalyzingUtils.checkForSyntacticErrors(file); 
-        }
-       
-        AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
-                project, files, scriptParameters, filesToAnalyzeCompletely, false);
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-
-        return analyzeExhaust;
-    }
-
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project,
-            Collection<JetFile> files,
-            List<AnalyzerScriptParameter> scriptParameters,
-            Predicate<PsiFile> filesToAnalyzeCompletely
-    ) {
-        return analyzeFilesWithJavaIntegration(
-                project, files, scriptParameters, filesToAnalyzeCompletely, false);
-    }
-
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve) {
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-
-        return analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, scriptParameters, filesToAnalyzeCompletely,
-                                               storeContextForBodiesResolve);
-    }
-
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project,
             Collection<JetFile> files,
@@ -233,12 +180,4 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         }
     }
 
-    public static AnalyzeExhaust shallowAnalyzeFiles(Collection<JetFile> files) {
-        assert files.size() > 0;
-
-        Project project = files.iterator().next().getProject();
-
-        return analyzeFilesWithJavaIntegration(project,
-                files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysFalse());
-    }
 }

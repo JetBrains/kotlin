@@ -220,7 +220,11 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         private final SubModuleDescriptor subModule;
         private final JetScope memberScope;
 
-        public JavaPackageFragment(@NotNull SubModuleDescriptor subModule, @NotNull FqName fqName, @NotNull NotNullFunction<PackageFragmentDescriptor, JetScope> memberScope) {
+        public JavaPackageFragment(
+                @NotNull SubModuleDescriptor subModule,
+                @NotNull FqName fqName,
+                @NotNull NotNullFunction<PackageFragmentDescriptor, JetScope> memberScope
+        ) {
             super(fqName);
             this.subModule = subModule;
             this.memberScope = memberScope.fun(this);

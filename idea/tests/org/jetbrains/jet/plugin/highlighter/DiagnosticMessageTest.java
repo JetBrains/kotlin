@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.jet.AnalyzerUtilForTests;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -30,11 +31,9 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +52,8 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         String fileName = name + ".kt";
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
 
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
+        AnalyzeExhaust analyzeExhaust = AnalyzerUtilForTests
+                .analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
         final Set<AbstractDiagnosticFactory> factoriesSet = Sets.newHashSet(diagnosticFactories);

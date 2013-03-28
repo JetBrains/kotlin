@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.AnalyzerUtilForTests;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -40,7 +41,6 @@ import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.KotlinLightClassResolver;
@@ -184,7 +184,7 @@ public final class LoadDescriptorUtil {
                 throws IOException {
             JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
             JetFile jetFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true));
-            AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+            AnalyzeExhaust exhaust = AnalyzerUtilForTests.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                     jetFile, Collections.<AnalyzerScriptParameter>emptyList());
             return new JetFileAndExhaust(jetFile, exhaust);
         }

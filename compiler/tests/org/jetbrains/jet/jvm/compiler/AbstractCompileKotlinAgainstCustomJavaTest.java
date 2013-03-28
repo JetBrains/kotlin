@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.jet.AnalyzerUtilForTests;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -33,7 +34,6 @@ import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.NamespaceComparator;
@@ -66,7 +66,7 @@ public abstract class AbstractCompileKotlinAgainstCustomJavaTest extends TestCas
         JetFile file = JetTestUtils.loadJetFile(project, ktFile);
         List<JetFile> jetFiles = Collections.singletonList(file);
 
-        AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+        AnalyzeExhaust exhaust = AnalyzerUtilForTests.analyzeFilesWithJavaIntegration(
                 project, jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
                 Predicates.<PsiFile>alwaysTrue());
         BindingContext bindingContext = exhaust.getBindingContext();

@@ -20,11 +20,11 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.AnalyzerUtilForTests;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,14 +41,14 @@ public class GenerationUtils {
 
     @NotNull
     public static GenerationState compileFileGetGenerationStateForTest(@NotNull JetFile psiFile) {
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+        final AnalyzeExhaust analyzeExhaust = AnalyzerUtilForTests.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 psiFile, Collections.<AnalyzerScriptParameter>emptyList());
         return compileFilesGetGenerationState(psiFile.getProject(), analyzeExhaust, Collections.singletonList(psiFile));
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
+        final AnalyzeExhaust analyzeExhaust = AnalyzerUtilForTests.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 project, files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue());
         return compileFilesGetGenerationState(project,analyzeExhaust, files);
     }
