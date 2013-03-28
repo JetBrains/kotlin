@@ -160,8 +160,15 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                     DxChecker.check(classFileFactory);
                 }
             } catch (Throwable e) {
-                JetTestUtils.newTrace(myEnvironment);
-                System.out.println(generateToText());
+                try {
+                    JetTestUtils.newTrace(myEnvironment);
+                    System.out.println(generateToText());
+                }
+                catch (Throwable e1) {
+                    System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
+                    e1.printStackTrace();
+                    System.err.println("-----------------------------------------------------------------------------");
+                }
                 throw ExceptionUtils.rethrow(e);
             }
         }
