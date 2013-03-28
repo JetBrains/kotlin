@@ -17,6 +17,8 @@
 package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.util.containers.Stack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
@@ -243,7 +245,17 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitProperty(JetProperty property) {
-        nameStack.push(peekFromStack(nameStack) + '$' + property.getName());
+        DeclarationDescriptor propertyDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
+        // working around a problem with shallow analysis
+        if (propertyDescriptor == null) return;
+
+        String nameForClassOrNamespaceMember = getNameForClassOrNamespaceMember(propertyDescriptor);
+        if (nameForClassOrNamespaceMember != null) {
+            nameStack.push(nameForClassOrNamespaceMember);
+        }
+        else {
+            nameStack.push(peekFromStack(nameStack) + '$' + property.getName());
+        }
         super.visitProperty(property);
         nameStack.pop();
     }
@@ -254,23 +266,10 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
-        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof ClassDescriptor) {
-            nameStack.push(peekFromStack(nameStack) + '$' + function.getName());
-            super.visitNamedFunction(function);
-            nameStack.pop();
-        }
-        else if (containingDeclaration instanceof NamespaceDescriptor) {
-            String peek = peekFromStack(nameStack);
-            FqName qualifiedName = ((NamespaceDescriptor) containingDeclaration).getFqName();
-            String packageClassName = PackageClassUtils.getPackageClassName(qualifiedName);
-            if (peek.isEmpty()) {
-                peek = packageClassName;
-            }
-            else {
-                peek += "/" + packageClassName;
-            }
-            nameStack.push(peek + '$' + function.getName());
+
+        String nameForClassOrNamespaceMember = getNameForClassOrNamespaceMember(functionDescriptor);
+        if (nameForClassOrNamespaceMember != null) {
+            nameStack.push(nameForClassOrNamespaceMember);
             super.visitNamedFunction(function);
             nameStack.pop();
         }
@@ -284,6 +283,26 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitNamedFunction(function);
             nameStack.pop();
             classStack.pop();
+        }
+    }
+
+    @Nullable
+    private String getNameForClassOrNamespaceMember(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+
+        String peek = peekFromStack(nameStack);
+        String name = descriptor.getName().getName();
+        if (containingDeclaration instanceof ClassDescriptor) {
+            return peek + '$' + name;
+        }
+        else if (containingDeclaration instanceof NamespaceDescriptor) {
+            FqName qualifiedName = ((NamespaceDescriptor) containingDeclaration).getFqName();
+            String packageClassShortName = PackageClassUtils.getPackageClassName(qualifiedName);
+            String packageClassName = peek.isEmpty() ? packageClassShortName : peek + "/" + packageClassShortName;
+            return packageClassName + '$' + name;
+        }
+        else {
+            return null;
         }
     }
 }

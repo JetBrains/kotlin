@@ -921,6 +921,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/closures/closureInsideConstrucor.kt");
         }
         
+        @TestMetadata("closureOnTopLevel1.kt")
+        public void testClosureOnTopLevel1() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/closureOnTopLevel1.kt");
+        }
+        
+        @TestMetadata("closureOnTopLevel2.kt")
+        public void testClosureOnTopLevel2() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/closureOnTopLevel2.kt");
+        }
+        
         @TestMetadata("closureWithParameter.kt")
         public void testClosureWithParameter() throws Exception {
             doTest("compiler/testData/codegen/box/closures/closureWithParameter.kt");
