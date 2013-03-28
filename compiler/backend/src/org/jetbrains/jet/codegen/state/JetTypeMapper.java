@@ -421,7 +421,7 @@ public class JetTypeMapper extends BindingTraceAware {
             boolean isInsideClass,
             OwnerKind kind
     ) {
-        final DeclarationDescriptor functionParent = functionDescriptor.getOriginal();
+        final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
         functionDescriptor = unwrapFakeOverride(functionDescriptor);
 
@@ -499,7 +499,7 @@ public class JetTypeMapper extends BindingTraceAware {
             thisClass = JvmClassName.byType(mapType(receiver.getDefaultType()));
         }
         else {
-            throw new UnsupportedOperationException("unknown function parent");
+            throw new UnsupportedOperationException("unknown function parent: " + functionParent);
         }
 
 
