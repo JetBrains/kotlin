@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
 
 public abstract class ClassBuilder {
+    private String thisName;
+
     public static class Concrete extends ClassBuilder {
         private final ClassVisitor v;
 
@@ -78,6 +80,7 @@ public abstract class ClassBuilder {
             String superName,
             String[] interfaces
     ) {
+        thisName = name;
         getVisitor().visit(version, access, name, signature, superName, interfaces);
     }
 
@@ -91,5 +94,9 @@ public abstract class ClassBuilder {
 
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
         getVisitor().visitInnerClass(name, outerName, innerName, access);
+    }
+
+    public String getThisName() {
+        return thisName;
     }
 }

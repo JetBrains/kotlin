@@ -1899,7 +1899,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
                         }
                         else {
-                            throw new UnsupportedOperationException(); // TODO
+                            JvmClassName className = new SamWrapperCodegen(state, samInterface).genWrapper(expression, argumentExpression);
+
+                            v.anew(className.getAsmType());
+                            v.dup();
+
+                            JetType functionType = ((SimpleFunctionDescriptor) funDescriptor).getValueParameters().get(0).getType();
+                            gen(argumentExpression, typeMapper.mapType(functionType));
+
+                            v.invokespecial(className.getInternalName(), "<init>",
+                                            Type.getMethodDescriptor(Type.VOID_TYPE, typeMapper.mapType(functionType)));
+                            return StackValue.onStack(className.getAsmType());
                         }
                     }
                 }
