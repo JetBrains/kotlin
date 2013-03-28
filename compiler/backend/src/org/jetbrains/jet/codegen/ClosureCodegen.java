@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
@@ -97,7 +98,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
         JvmClassName superclass = samInterface == null ? funClass : JvmClassName.byType(OBJECT_TYPE);
         String[] superInterfaces = samInterface == null
-                                   ? new String[0]
+                                   ? ArrayUtil.EMPTY_STRING_ARRAY
                                    : new String[] {JvmClassName.byClassDescriptor(samInterface).getInternalName()};
         cv.defineClass(fun,
                        V1_6,
@@ -127,7 +128,7 @@ public class ClosureCodegen extends GenerationStateAware {
     }
 
     private void generateConstInstance(PsiElement fun, ClassBuilder cv) {
-        MethodVisitor mv = cv.newMethod(fun, ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, new String[0]);
+        MethodVisitor mv = cv.newMethod(fun, ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         cv.newField(fun, ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, name.getDescriptor(), null, null);
@@ -156,6 +157,7 @@ public class ClosureCodegen extends GenerationStateAware {
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunctionName, funDescriptor);
         fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor);
+        assert closureContext.closure != null;
         return closureContext.closure.getCaptureThis();
     }
 
@@ -174,9 +176,8 @@ public class ClosureCodegen extends GenerationStateAware {
             return;
         }
 
-        MethodVisitor mv = cv.newMethod(
-                fun, ACC_PUBLIC | ACC_BRIDGE, interfaceFunction.getName().getName(),
-                bridge.getDescriptor(), null, new String[0]);
+        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE, interfaceFunction.getName().getName(),
+                                        bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
@@ -215,14 +216,13 @@ public class ClosureCodegen extends GenerationStateAware {
             ClassBuilder cv,
             CalculatedClosure closure
     ) {
-
-        List<FieldInfo> args = calculateConstructorParameters(typeMapper, bindingContext, state, closure,
-                                                                        Type.getObjectType(name.getInternalName()));
+        List<FieldInfo> args = calculateConstructorParameters(typeMapper, bindingContext, closure, name.getAsmType());
 
         Type[] argTypes = fieldListToTypeArray(args);
 
         Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        MethodVisitor mv = cv.newMethod(fun, NO_FLAG_PACKAGE_PRIVATE, "<init>", constructor.getDescriptor(), null, new String[0]);
+        MethodVisitor mv = cv.newMethod(fun, NO_FLAG_PACKAGE_PRIVATE, "<init>", constructor.getDescriptor(), null,
+                                        ArrayUtil.EMPTY_STRING_ARRAY);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
@@ -251,7 +251,6 @@ public class ClosureCodegen extends GenerationStateAware {
     public static List<FieldInfo> calculateConstructorParameters(
             @NotNull JetTypeMapper typeMapper,
             @NotNull BindingContext bindingContext,
-            GenerationState state,
             CalculatedClosure closure,
             Type ownerType
     ) {
