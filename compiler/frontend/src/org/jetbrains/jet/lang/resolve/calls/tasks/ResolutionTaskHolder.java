@@ -32,7 +32,7 @@ import java.util.List;
 
 public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private static final int MIN_PRIORITY = 0;
-    private static final int MAX_PRIORITY = 1;
+    private static final int MAX_PRIORITY = 3;
 
     private final JetReferenceExpression reference;
     private final BasicCallResolutionContext basicCallResolutionContext;
