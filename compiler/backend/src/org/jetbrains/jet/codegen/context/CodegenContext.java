@@ -90,7 +90,7 @@ public abstract class CodegenContext {
         while (true) {
             assert c != null;
             DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
-            if (!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof PackageFragmentDescriptor)) {
+            if (!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof PackageViewDescriptor)) {
                 c = c.getParentContext();
             }
             else {
