@@ -27,6 +27,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+        	<groupId>commons-lang</groupId>
+        	<artifactId>commons-lang</artifactId>
+        	<version>2.3</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>12.0</version>
@@ -45,6 +50,11 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-jdk-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -70,6 +80,9 @@
                 <directory>${kotlin-sdk}/lib</directory>
                 <includes><include>kotlin-jdk-annotations.jar</include></includes>
                 <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
 

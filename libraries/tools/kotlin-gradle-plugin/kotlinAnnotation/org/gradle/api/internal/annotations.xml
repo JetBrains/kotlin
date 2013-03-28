@@ -7,4 +7,9 @@
     <item name='org.gradle.api.internal.AbstractTask org.gradle.api.logging.Logger getLogger()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.gradle.api.internal.AbstractTask org.gradle.api.Project getProject()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getProject() : Project&quot;"/>
+        </annotation>
+    </item>
 </root>
