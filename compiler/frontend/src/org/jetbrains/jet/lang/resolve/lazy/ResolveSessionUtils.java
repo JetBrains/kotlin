@@ -280,8 +280,7 @@ public class ResolveSessionUtils {
             // Inside import
             if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class, false) != null) {
 
-                PackageViewDescriptor rootPackage = subModule.getPackageView(FqName.ROOT);
-                assert rootPackage != null;
+                PackageViewDescriptor rootPackage = DescriptorUtils.getRootPackage(subModule);
 
                 if (expression.getParent() instanceof JetDotQualifiedExpression) {
                     JetExpression element = ((JetDotQualifiedExpression) expression.getParent()).getReceiverExpression();

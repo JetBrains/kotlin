@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
@@ -621,7 +622,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        PackageViewDescriptor testData = getSubModuleDescriptor().getPackageView(FqName.ROOT).getMemberScope().getPackage(Name.identifier("testData"));
+        PackageViewDescriptor testData = DescriptorUtils.getRootPackage(getSubModuleDescriptor()).getMemberScope().getPackage(Name.identifier("testData"));
         return addImports(testData.getMemberScope());
     }
 

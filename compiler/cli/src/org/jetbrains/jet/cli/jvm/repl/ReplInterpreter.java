@@ -276,8 +276,7 @@ public class ReplInterpreter {
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        PackageViewDescriptor rootPackage = subModule.getPackageView(FqName.ROOT);
-        assert rootPackage != null : "Root package not found in " + subModule;
+        PackageViewDescriptor rootPackage = DescriptorUtils.getRootPackage(subModule);
 
         // map "jet" namespace into KotlinBuiltIns
         // @see DefaultModuleConfiguraiton#extendNamespaceScope

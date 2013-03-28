@@ -163,6 +163,13 @@ public class DescriptorUtils {
         return fromPackage != null && whatPackage != null && whatPackage.getFqName().equals(fromPackage.getFqName());
     }
 
+    @NotNull
+    public static PackageViewDescriptor getRootPackage(@NotNull SubModuleDescriptor subModuleDescriptor) {
+        PackageViewDescriptor packageView = subModuleDescriptor.getPackageView(FqName.ROOT);
+        assert packageView != null : "No root package in " + subModuleDescriptor;
+        return packageView;
+    }
+
     @Nullable
     public static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
         DeclarationDescriptor descriptor = declarationDescriptor;

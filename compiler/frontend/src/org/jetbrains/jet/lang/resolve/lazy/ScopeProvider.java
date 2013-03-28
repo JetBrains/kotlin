@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
@@ -74,10 +75,7 @@ public class ScopeProvider {
     private JetScope createFileScope(JetFile file) {
         SubModuleDescriptor subModule = analyzer.getModuleSourcesManager().getSubModuleForFile(file);
 
-        PackageViewDescriptor rootPackageDescriptor = subModule.getPackageView(FqName.ROOT);
-        if (rootPackageDescriptor == null) {
-            throw new IllegalStateException("Root package not found");
-        }
+        PackageViewDescriptor rootPackageDescriptor = DescriptorUtils.getRootPackage(subModule);
 
         PackageViewDescriptor packageDescriptor = getFilePackageDescriptor(file);
 
@@ -98,10 +96,7 @@ public class ScopeProvider {
     }
 
     private JetScope createScopeWithDefaultImports(@NotNull SubModuleDescriptor subModuleDescriptor) {
-        PackageViewDescriptor rootPackageDescriptor = subModuleDescriptor.getPackageView(FqName.ROOT);
-        if (rootPackageDescriptor == null) {
-            throw new IllegalStateException("Root package not found");
-        }
+        PackageViewDescriptor rootPackageDescriptor = DescriptorUtils.getRootPackage(subModuleDescriptor);
 
         JetImportsFactory importsFactory = analyzer.getInjector().getJetImportsFactory();
         List<ImportPath> defaultImports = subModuleDescriptor.getDefaultImports();
