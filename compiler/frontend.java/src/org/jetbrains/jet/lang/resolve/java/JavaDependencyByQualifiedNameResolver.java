@@ -29,11 +29,10 @@ public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQ
 
     @NotNull
     public static JavaDependencyByQualifiedNameResolver createFromSearchScope(
+            @NotNull Project project,
             @NotNull GlobalSearchScope searchScope,
             @NotNull JavaClassResolutionFacade classResolutionFacade
     ) {
-        Project project = searchScope.getProject();
-        assert project != null : "Project must not be null: " + searchScope;
         return new JavaDependencyByQualifiedNameResolver(new PsiClassFinderImpl(project, searchScope), classResolutionFacade);
     }
 

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -44,10 +45,16 @@ public class JavaTypeTransformer {
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
     private JavaClassResolutionFacade classResolutionFacade;
+    private Project project;
 
     @Inject
     public void setClassResolutionFacade(JavaClassResolutionFacade classResolutionFacade) {
         this.classResolutionFacade = classResolutionFacade;
+    }
+
+    @Inject
+    public void setProject(@NotNull Project project) {
+        this.project = project;
     }
 
     @NotNull
@@ -85,7 +92,7 @@ public class JavaTypeTransformer {
 
     @NotNull
     public JetType transformToType(@NotNull GlobalSearchScope searchScope, @NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
-        JavaDependencyByQualifiedNameResolver resolver = JavaDependencyByQualifiedNameResolver.createFromSearchScope(searchScope, classResolutionFacade);
+        JavaDependencyByQualifiedNameResolver resolver = JavaDependencyByQualifiedNameResolver.createFromSearchScope(project, searchScope, classResolutionFacade);
         final JetType[] r = new JetType[1];
         JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, KotlinBuiltIns.getInstance(), typeVariableResolver) {
             @Override

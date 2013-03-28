@@ -130,7 +130,7 @@ public final class JavaSupertypeResolver {
             @Override
             public JetSignatureVisitor visitSuperclass() {
                 JavaDependencyByQualifiedNameResolver resolver = JavaDependencyByQualifiedNameResolver
-                        .createFromSearchScope(psiClass.getPsiClass().getResolveScope(), classResolutionFacade);
+                        .createFromSearchScope(project, psiClass.getPsiClass().getResolveScope(), classResolutionFacade);
                 return new JetTypeJetSignatureReader(resolver, KotlinBuiltIns.getInstance(), typeVariableResolver) {
                     @Override
                     protected void done(@NotNull JetType jetType) {

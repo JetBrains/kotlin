@@ -126,6 +126,7 @@ public class InjectorForJavaDescriptorResolver {
         javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
 
         javaTypeTransformer.setClassResolutionFacade(javaClassResolutionFacade);
+        javaTypeTransformer.setProject(project);
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
