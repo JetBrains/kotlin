@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -51,19 +52,14 @@ import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOT
 public final class JavaSupertypeResolver {
 
     private BindingTrace trace;
-    private JavaClassResolutionFacade classResolutionFacade;
     private JavaTypeTransformer typeTransformer;
     private JavaClassResolver classResolver;
     private Project project;
+    private SubModuleDescriptor subModule;
 
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
-    }
-
-    @Inject
-    public void setSemanticServices(JavaClassResolutionFacade classResolutionFacade) {
-        this.classResolutionFacade = classResolutionFacade;
     }
 
     @Inject
@@ -79,6 +75,11 @@ public final class JavaSupertypeResolver {
     @Inject
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    @Inject
+    public void setSubModule(@NotNull SubModuleDescriptor subModule) {
+        this.subModule = subModule;
     }
 
     public Collection<JetType> getSupertypes(
@@ -129,8 +130,7 @@ public final class JavaSupertypeResolver {
 
             @Override
             public JetSignatureVisitor visitSuperclass() {
-                JavaDependencyByQualifiedNameResolver resolver = JavaDependencyByQualifiedNameResolver
-                        .createFromSearchScope(project, psiClass.getPsiClass().getResolveScope(), classResolutionFacade);
+                JavaDependencyByQualifiedNameResolver resolver = new JavaDependencyByQualifiedNameResolver(subModule);
                 return new JetTypeJetSignatureReader(resolver, KotlinBuiltIns.getInstance(), typeVariableResolver) {
                     @Override
                     protected void done(@NotNull JetType jetType) {

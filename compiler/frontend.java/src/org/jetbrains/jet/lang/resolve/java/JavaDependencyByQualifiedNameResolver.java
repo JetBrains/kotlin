@@ -16,44 +16,71 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
+
+import java.util.Iterator;
 
 public class JavaDependencyByQualifiedNameResolver implements DependencyClassByQualifiedNameResolver {
 
-    @NotNull
-    public static JavaDependencyByQualifiedNameResolver createFromSearchScope(
-            @NotNull Project project,
-            @NotNull GlobalSearchScope searchScope,
-            @NotNull JavaClassResolutionFacade classResolutionFacade
-    ) {
-        return new JavaDependencyByQualifiedNameResolver(new PsiClassFinderImpl(project, searchScope), classResolutionFacade);
-    }
+    private final JetScope rootScope;
 
-    private final PsiClassFinder psiClassFinder;
-    private final JavaClassResolutionFacade classResolutionFacade;
-
-    public JavaDependencyByQualifiedNameResolver(
-            @NotNull PsiClassFinder psiClassFinder,
-            @NotNull JavaClassResolutionFacade classResolutionFacade
-    ) {
-        this.psiClassFinder = psiClassFinder;
-        this.classResolutionFacade = classResolutionFacade;
+    public JavaDependencyByQualifiedNameResolver(@NotNull SubModuleDescriptor subModule) {
+        this.rootScope = DescriptorUtils.getRootPackage(subModule).getMemberScope();
     }
 
     @Nullable
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName fqName) {
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
-        if (psiClass == null) {
-            return null;
+        assert !fqName.isRoot() : "A class can not have an empty fqName";
+
+        if (fqName.parent().isRoot()) {
+            return getClass(rootScope, fqName.shortName());
         }
-        return classResolutionFacade.getClassDescriptor(psiClass);
+
+        JetScope currentScope = rootScope;
+        for (Iterator<Name> iterator = fqName.pathSegments().iterator(); iterator.hasNext(); ) {
+            Name name = iterator.next();
+
+            ClassDescriptor classDescriptor = getClass(currentScope, name);
+            if (!iterator.hasNext()) return classDescriptor;
+
+            PackageViewDescriptor packageView = currentScope.getPackage(name);
+
+
+            if (packageView == null && classDescriptor == null) {
+                return null;
+            }
+            if (packageView != null && classDescriptor != null) {
+                currentScope = new ChainedScope(null, packageView.getMemberScope(), classDescriptor.getUnsubstitutedInnerClassesScope());
+            }
+            else if (packageView != null) {
+                currentScope = packageView.getMemberScope();
+            }
+            else {
+                currentScope = classDescriptor.getUnsubstitutedInnerClassesScope();
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static ClassDescriptor getClass(@NotNull JetScope scope, @NotNull Name name) {
+        ClassifierDescriptor classifier = scope.getClassifier(name);
+        if (classifier != null) {
+            assert classifier instanceof ClassDescriptor : "Only classes should appear as classifiers in this context: " + classifier;
+        }
+        return (ClassDescriptor) classifier;
     }
 }

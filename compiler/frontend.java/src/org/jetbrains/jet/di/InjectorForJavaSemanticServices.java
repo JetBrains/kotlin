@@ -83,14 +83,14 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
+        this.subModuleDescriptor = subModuleDescriptor;
+        this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(subModuleDescriptor);
         this.project = project;
         this.globalSearchScope = globalSearchScope;
         this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
-        this.javaClassResolutionFacade = javaClassResolutionFacade;
-        this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(getPsiClassFinder(), javaClassResolutionFacade);
         this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"), org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap.getInstance());
+        this.javaClassResolutionFacade = javaClassResolutionFacade;
         this.storageManager = storageManager;
-        this.subModuleDescriptor = subModuleDescriptor;
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
@@ -136,12 +136,13 @@ public class InjectorForJavaSemanticServices {
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setProject(project);
-        javaSupertypeResolver.setSemanticServices(javaClassResolutionFacade);
+        javaSupertypeResolver.setSubModule(subModuleDescriptor);
         javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaTypeTransformer.setClassResolutionFacade(javaClassResolutionFacade);
         javaTypeTransformer.setProject(project);
+        javaTypeTransformer.setSubModule(subModuleDescriptor);
 
         javaSignatureResolver.setDependencyClassByQualifiedNameResolver(javaDependencyByQualifiedNameResolver);
         javaSignatureResolver.setTypeTransformer(javaTypeTransformer);

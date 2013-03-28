@@ -86,10 +86,10 @@ public class InjectorForJavaDescriptorResolver {
         this.subModuleDescriptor = subModuleDescriptor;
         this.globalSearchScope = globalSearchScope;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
-        this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
-        this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(getPsiClassFinder(), javaClassResolutionFacade);
+        this.javaDependencyByQualifiedNameResolver = new JavaDependencyByQualifiedNameResolver(subModuleDescriptor);
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.javaClassResolver = new JavaClassResolver();
+        this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
@@ -127,6 +127,7 @@ public class InjectorForJavaDescriptorResolver {
 
         javaTypeTransformer.setClassResolutionFacade(javaClassResolutionFacade);
         javaTypeTransformer.setProject(project);
+        javaTypeTransformer.setSubModule(subModuleDescriptor);
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
@@ -159,7 +160,7 @@ public class InjectorForJavaDescriptorResolver {
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setProject(project);
-        javaSupertypeResolver.setSemanticServices(javaClassResolutionFacade);
+        javaSupertypeResolver.setSubModule(subModuleDescriptor);
         javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 

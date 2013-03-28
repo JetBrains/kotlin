@@ -24,6 +24,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -46,6 +47,7 @@ public class JavaTypeTransformer {
 
     private JavaClassResolutionFacade classResolutionFacade;
     private Project project;
+    private SubModuleDescriptor subModule;
 
     @Inject
     public void setClassResolutionFacade(JavaClassResolutionFacade classResolutionFacade) {
@@ -55,6 +57,11 @@ public class JavaTypeTransformer {
     @Inject
     public void setProject(@NotNull Project project) {
         this.project = project;
+    }
+
+    @Inject
+    public void setSubModule(SubModuleDescriptor subModule) {
+        this.subModule = subModule;
     }
 
     @NotNull
@@ -92,7 +99,7 @@ public class JavaTypeTransformer {
 
     @NotNull
     public JetType transformToType(@NotNull GlobalSearchScope searchScope, @NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
-        JavaDependencyByQualifiedNameResolver resolver = JavaDependencyByQualifiedNameResolver.createFromSearchScope(project, searchScope, classResolutionFacade);
+        JavaDependencyByQualifiedNameResolver resolver = new JavaDependencyByQualifiedNameResolver(subModule);
         final JetType[] r = new JetType[1];
         JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, KotlinBuiltIns.getInstance(), typeVariableResolver) {
             @Override
