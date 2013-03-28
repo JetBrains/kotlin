@@ -19,6 +19,7 @@ package org.jetbrains.jet.generators.tests;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
+import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
 import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
@@ -205,6 +206,13 @@ public class GenerateTests {
                 testModel("idea/testData/checker/regression"),
                 testModel("idea/testData/checker/rendering"),
                 testModel("idea/testData/checker/infos", false, "kt", "doTestWithInfos")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "JetJsCheckerTestGenerated",
+                AbstractJetJsCheckerTest.class,
+                testModel("idea/testData/checker/js", false, "kt", "doTest")
         );
 
         generateTest(
