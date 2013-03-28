@@ -29,8 +29,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
@@ -547,33 +545,9 @@ public interface Errors {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // This field is needed to make the Initializer class load (interfaces cannot have static initializers)
+    // This field is needed to make its initializer run (write names to factory constants)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @SuppressWarnings("UnusedDeclaration")
-    Initializer __initializer = Initializer.INSTANCE;
-
-    class Initializer {
-        static {
-            for (Field field : Errors.class.getFields()) {
-                if (Modifier.isStatic(field.getModifiers())) {
-                    try {
-                        Object value = field.get(null);
-                        if (value instanceof AbstractDiagnosticFactory) {
-                            AbstractDiagnosticFactory factory = (AbstractDiagnosticFactory)value;
-                            factory.setName(field.getName());
-                        }
-                    }
-                    catch (IllegalAccessException e) {
-                        throw new IllegalStateException(e);
-                    }
-                }
-            }
-        }
-
-        private static final Initializer INSTANCE = new Initializer();
-
-        private Initializer() {
-        }
-    }
+    Void __initializer = AbstractDiagnosticFactory.writeFieldNamesToDiagnostics(Errors.class);
 }

@@ -16,11 +16,35 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 public abstract class AbstractDiagnosticFactory {
 
     private String name = null;
-    
-    /*package*/ void setName(String name) {
+
+    public static Void writeFieldNamesToDiagnostics(@NotNull Class<?> declaringClass) {
+        for (Field field : declaringClass.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                try {
+                    Object value = field.get(null);
+                    if (value instanceof AbstractDiagnosticFactory) {
+                        AbstractDiagnosticFactory factory = (AbstractDiagnosticFactory)value;
+                        factory.setName(field.getName());
+                    }
+                }
+                catch (IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setName(String name) {
+        assert this.name == null;
         this.name = name;
     }
 

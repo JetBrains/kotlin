@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -25,6 +26,9 @@ import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithAbiVersion;
 
 public class AbiVersionUtil {
     public static final DiagnosticFactory1<PsiClass, Integer> INCOMPATIBLE_ABI_VERSION = DiagnosticFactory1.create(Severity.ERROR);
+    static {
+        AbstractDiagnosticFactory.writeFieldNamesToDiagnostics(AbiVersionUtil.class);
+    }
 
     public static final int INVALID_VERSION = -1;
 
