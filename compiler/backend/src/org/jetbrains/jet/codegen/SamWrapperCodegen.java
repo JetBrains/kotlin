@@ -25,7 +25,10 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -75,7 +78,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
                        ACC_FINAL,
                        name.getInternalName(),
                        null,
-                       JvmClassName.byType(OBJECT_TYPE).getInternalName(),
+                       OBJECT_TYPE.getInternalName(),
                        new String[]{JvmClassName.byClassDescriptor(samInterface).getInternalName()}
         );
         cv.visitSource(callExpression.getContainingFile().getName(), null);

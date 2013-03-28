@@ -303,13 +303,11 @@ public class ClosureCodegen extends GenerationStateAware {
     }
 
     private static FunctionDescriptor getInvokeFunction(FunctionDescriptor funDescriptor) {
-        FunctionDescriptor interfaceFunction;
         int paramCount = funDescriptor.getValueParameters().size();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         ClassDescriptor funClass = funDescriptor.getReceiverParameter() == null
                                    ? builtIns.getFunction(paramCount)
                                    : builtIns.getExtensionFunction(paramCount);
-        interfaceFunction = funClass.getDefaultType().getMemberScope().getFunctions(Name.identifier("invoke")).iterator().next();
-        return interfaceFunction;
+        return funClass.getDefaultType().getMemberScope().getFunctions(Name.identifier("invoke")).iterator().next();
     }
 }
