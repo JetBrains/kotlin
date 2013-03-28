@@ -59,7 +59,7 @@ public class CodegenBinding {
     private CodegenBinding() {
     }
 
-    public static void initTrace(ModuleSourcesManager moduleManager, BindingTrace bindingTrace, Collection<JetFile> files) {
+    public static void initTrace(@NotNull ModuleSourcesManager moduleManager, @NotNull BindingTrace bindingTrace, @NotNull Collection<JetFile> files) {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(bindingTrace);
         for (JetFile file : allFilesInNamespaces(moduleManager, files)) {
             file.accept(visitor);
@@ -219,7 +219,7 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static Collection<JetFile> allFilesInNamespaces(ModuleSourcesManager moduleManager, Collection<JetFile> files) {
+    public static Collection<JetFile> allFilesInNamespaces(@NotNull ModuleSourcesManager moduleManager, @NotNull Collection<JetFile> files) {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 
