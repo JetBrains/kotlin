@@ -31,9 +31,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
-    private static final int MIN_PRIORITY = 0;
-    private static final int MAX_PRIORITY = 3;
-
     private final JetReferenceExpression reference;
     private final BasicCallResolutionContext basicCallResolutionContext;
     private final PriorityProvider<ResolutionCandidate<D>> priorityProvider;
@@ -97,7 +94,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
             }
             candidateList.addAll(nonLocalExtensions);
 
-            for (int priority = MAX_PRIORITY; priority >= MIN_PRIORITY; priority--) {
+            for (int priority = priorityProvider.getMaxPriority(); priority >= 0; priority--) {
                 final int finalPriority = priority;
                 for (Collection<ResolutionCandidate<D>> candidates : candidateList) {
                     Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, new Predicate<ResolutionCandidate<D>>() {
@@ -117,5 +114,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
 
     public interface PriorityProvider<D> {
         int getPriority(D candidate);
+
+        int getMaxPriority();
     }
 }
