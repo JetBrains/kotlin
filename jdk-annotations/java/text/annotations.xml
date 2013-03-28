@@ -541,7 +541,7 @@
   </item>
   <item name="java.text.MessageFormat java.lang.String format(java.lang.String, java.lang.Object...)">
     <annotation name="jet.runtime.typeinfo.KotlinSignature">
-      <val name="value" val="&quot;fun format(pattern : String, vararg arguments : Any) : String&quot;" />
+      <val name="value" val="&quot;fun format(pattern : String, vararg arguments : Any?) : String&quot;" />
     </annotation>
   </item>
 </root>
