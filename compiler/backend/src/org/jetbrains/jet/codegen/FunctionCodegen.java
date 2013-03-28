@@ -846,9 +846,7 @@ public class FunctionCodegen extends GenerationStateAware {
                 reg += argTypes[i].getSize();
             }
 
-            iv.invokevirtual(state.getTypeMapper().mapType(
-                    (ClassDescriptor) owner.getContextDescriptor()).getInternalName(),
-                             jvmSignature.getName(), jvmSignature.getDescriptor());
+            iv.invokevirtual(v.getThisName(), jvmSignature.getName(), jvmSignature.getDescriptor());
 
             StackValue.onStack(jvmSignature.getReturnType()).put(overridden.getReturnType(), iv);
 

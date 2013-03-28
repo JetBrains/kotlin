@@ -3179,6 +3179,26 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/sam/filenameFilter.kt");
         }
         
+        @TestMetadata("nonLiteralComparator.kt")
+        public void testNonLiteralComparator() throws Exception {
+            doTest("compiler/testData/codegen/box/sam/nonLiteralComparator.kt");
+        }
+        
+        @TestMetadata("nonLiteralFilenameFilter.kt")
+        public void testNonLiteralFilenameFilter() throws Exception {
+            doTest("compiler/testData/codegen/box/sam/nonLiteralFilenameFilter.kt");
+        }
+        
+        @TestMetadata("nonLiteralRunnable.kt")
+        public void testNonLiteralRunnable() throws Exception {
+            doTest("compiler/testData/codegen/box/sam/nonLiteralRunnable.kt");
+        }
+        
+        @TestMetadata("nonTrivialRunnable.kt")
+        public void testNonTrivialRunnable() throws Exception {
+            doTest("compiler/testData/codegen/box/sam/nonTrivialRunnable.kt");
+        }
+        
         @TestMetadata("runnable.kt")
         public void testRunnable() throws Exception {
             doTest("compiler/testData/codegen/box/sam/runnable.kt");

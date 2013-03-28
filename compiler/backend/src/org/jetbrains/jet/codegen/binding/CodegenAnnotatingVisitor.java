@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -53,6 +54,30 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     public CodegenAnnotatingVisitor(BindingTrace bindingTrace) {
         this.bindingTrace = bindingTrace;
         this.bindingContext = bindingTrace.getBindingContext();
+    }
+
+    @Override
+    public void visitCallExpression(JetCallExpression expression) {
+        super.visitCallExpression(expression);
+
+        JetExpression callee = expression.getCalleeExpression();
+        assert callee != null : "not found callee for " + expression.getText();
+
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callee);
+        if (resolvedCall == null) {
+            return;
+        }
+
+        DeclarationDescriptor funDescriptor = resolvedCall.getResultingDescriptor();
+
+        if (funDescriptor instanceof SimpleFunctionDescriptor) {
+            ClassDescriptor samTrait = bindingContext.get(
+                    BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
+            if (samTrait != null) {
+                String name = inventAnonymousClassName(expression);
+                bindingTrace.record(FQN_FOR_SAM_CONSTRUCTOR, expression, JvmClassName.byInternalName(name));
+            }
+        }
     }
 
     private ClassDescriptor recordClassForFunction(FunctionDescriptor funDescriptor) {
@@ -90,11 +115,12 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (descriptor == null) {
             if (declaration instanceof JetFunctionLiteralExpression ||
                 declaration instanceof JetNamedFunction ||
-                declaration instanceof JetObjectLiteralExpression) {
+                declaration instanceof JetObjectLiteralExpression ||
+                declaration instanceof JetCallExpression) {
             }
             else {
                 throw new IllegalStateException(
-                        "Class-less declaration which is not JetFunctionLiteralExpression|JetNamedFunction|JetObjectLiteralExpression : " +
+                        "Class-less declaration which is not JetFunctionLiteralExpression|JetNamedFunction|JetObjectLiteralExpression|JetCallExpression : " +
                         declaration.getClass().getName());
             }
         }

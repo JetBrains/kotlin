@@ -41,7 +41,7 @@ public class SingleAbstractMethodUtils {
             return false;
         }
 
-        List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass);
+        List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass.getDefaultType());
         if (abstractMembers.size() == 1) {
             CallableMemberDescriptor member = abstractMembers.get(0);
             if (member instanceof SimpleFunctionDescriptor) {
@@ -52,9 +52,9 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    private static List<CallableMemberDescriptor> getAbstractMembers(@NotNull ClassDescriptor klass) {
+    private static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
         List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
-        for (DeclarationDescriptor member : klass.getDefaultType().getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
                 abstractMembers.add((CallableMemberDescriptor) member);
             }
@@ -88,7 +88,7 @@ public class SingleAbstractMethodUtils {
                 SignaturesUtil.recreateTypeParametersAndReturnMapping(samInterface.getTypeConstructor().getParameters(), result);
         TypeSubstitutor typeParametersSubstitutor = SignaturesUtil.createSubstitutorForTypeParameters(traitToFunTypeParameters);
 
-        JetType parameterTypeUnsubstituted = getFunctionTypeForFunction(getAbstractMethodOfSamInterface(samInterface));
+        JetType parameterTypeUnsubstituted = getFunctionTypeForFunction(getAbstractMethodOfSamType(samInterface.getDefaultType()));
         JetType parameterType = typeParametersSubstitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParametersSubstitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
@@ -125,10 +125,15 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SimpleFunctionDescriptor getAbstractMethodOfSamInterface(@NotNull ClassDescriptor samInterface) {
-        return (SimpleFunctionDescriptor) getAbstractMembers(samInterface).get(0);
+    public static SimpleFunctionDescriptor getAbstractMethodOfSamType(@NotNull JetType type) {
+        return (SimpleFunctionDescriptor) getAbstractMembers(type).get(0);
     }
-    
+
+    @NotNull
+    public static SimpleFunctionDescriptor getAbstractMethodOfSamInterface(@NotNull ClassDescriptor samInterface) {
+        return getAbstractMethodOfSamType(samInterface.getDefaultType());
+    }
+
     private SingleAbstractMethodUtils() {
     }
 }

@@ -1051,7 +1051,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (closure != null) {
-            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, bindingContext, state, closure, classAsmType);
+            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, bindingContext, closure, classAsmType);
             int k = 1;
             for (FieldInfo info : argsFromClosure) {
                 k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
