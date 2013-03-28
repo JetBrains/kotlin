@@ -502,18 +502,24 @@ public class DescriptorUtils {
             @NotNull FqName fqName
     ) {
         List<PackageFragmentDescriptor> fragments = Lists.newArrayList();
-        PackageFragmentProvider provider = subModule.getPackageFragmentProvider();
-        fragments.addAll(provider.getPackageFragments(fqName));
+        PackageFragmentProvider myProvider = subModule.getPackageFragmentProvider();
 
+        boolean mySourcePresent = false;
         for (SubModuleDescriptor dependency : subModule.getDependencies()) {
             if (dependency == SubModuleDescriptor.MY_SOURCE) {
                 // The sources of this submodule
-                fragments.addAll(provider.getPackageFragments(fqName));
+                fragments.addAll(myProvider.getPackageFragments(fqName));
+                mySourcePresent = true;
             }
             else {
                 fragments.addAll(dependency.getPackageFragmentProvider().getPackageFragments(fqName));
             }
         }
+
+        if (!mySourcePresent) {
+            fragments.addAll(0, myProvider.getPackageFragments(fqName));
+        }
+
         return fragments;
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -77,6 +78,7 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
         MutableSubModuleDescriptor subModule = new MutableSubModuleDescriptor(module, Name.special("<" + baseName + " sub-module>"));
         module.addSubModule(subModule);
         subModule.addDependency(KotlinBuiltIns.getInstance().getBuiltInsSubModule());
+        subModule.addDependency(SubModuleDescriptor.MY_SOURCE);
 
         for (JetFile file : jetCoreEnvironment.getSourceFiles()) {
             sourcesManager.registerRoot(subModule, PackageFragmentKind.SOURCE, file.getVirtualFile());
