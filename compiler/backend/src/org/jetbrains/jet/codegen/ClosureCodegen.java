@@ -111,10 +111,10 @@ public class ClosureCodegen extends GenerationStateAware {
         cv.visitSource(fun.getContainingFile().getName(), null);
 
 
-        generateBridge(interfaceFunction, name.getInternalName(), funDescriptor, fun, cv);
+        generateBridge(interfaceFunction, funDescriptor, fun, cv);
         generateBody(interfaceFunction.getName(), funDescriptor, cv, fun, context, expressionCodegen);
 
-        constructor = generateConstructor(funClass, fun, cv, closure);
+        constructor = generateConstructor(superclass, fun, cv);
 
         if (isConst(closure)) {
             generateConstInstance(fun, cv);
@@ -163,7 +163,6 @@ public class ClosureCodegen extends GenerationStateAware {
 
     private void generateBridge(
             FunctionDescriptor interfaceFunction,
-            String className,
             FunctionDescriptor funDescriptor,
             JetExpression fun,
             ClassBuilder cv
@@ -186,7 +185,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            iv.load(0, Type.getObjectType(className));
+            iv.load(0, name.getAsmType());
 
             ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
             int count = 1;
@@ -201,7 +200,7 @@ public class ClosureCodegen extends GenerationStateAware {
                 count++;
             }
 
-            iv.invokevirtual(className, interfaceFunction.getName().getName(), delegate.getDescriptor());
+            iv.invokevirtual(name.getInternalName(), interfaceFunction.getName().getName(), delegate.getDescriptor());
             StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), iv);
 
             iv.areturn(bridge.getReturnType());
@@ -211,10 +210,9 @@ public class ClosureCodegen extends GenerationStateAware {
     }
 
     private Method generateConstructor(
-            JvmClassName funClass,
+            JvmClassName superclass,
             JetExpression fun,
-            ClassBuilder cv,
-            CalculatedClosure closure
+            ClassBuilder cv
     ) {
         List<FieldInfo> args = calculateConstructorParameters(typeMapper, bindingContext, closure, name.getAsmType());
 
@@ -230,10 +228,8 @@ public class ClosureCodegen extends GenerationStateAware {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            Type superAsmType = samInterface == null ? funClass.getAsmType() : OBJECT_TYPE;
-
-            iv.load(0, superAsmType);
-            iv.invokespecial(superAsmType.getInternalName(), "<init>", "()V");
+            iv.load(0, superclass.getAsmType());
+            iv.invokespecial(superclass.getInternalName(), "<init>", "()V");
 
             int k = 1;
             for (FieldInfo fieldInfo : args) {
