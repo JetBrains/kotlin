@@ -92,6 +92,11 @@ public class TaskPrioritizer {
                 return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 1 : 0);
             }
 
+            @Override
+            public int getMaxPriority() {
+                return 3;
+            }
+
             private boolean isVisible(ResolutionCandidate<D> call) {
                 if (call == null) return false;
                 D candidateDescriptor = call.getDescriptor();
