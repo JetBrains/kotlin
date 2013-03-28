@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.di.GeneratorsFileUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -41,7 +42,6 @@ import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -88,12 +88,8 @@ public class GenerateJavaToKotlinMethodMap {
         printer.popIndent().println("}");
         printer.popIndent().println("}");
 
-        //noinspection IOResourceOpenedButNotSafelyClosed
-        FileWriter out =
-                new FileWriter("compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/JavaToKotlinMethodMapGenerated.java");
-
-        out.write(buf.toString());
-        out.close();
+        File file = new File("compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/JavaToKotlinMethodMapGenerated.java");
+        GeneratorsFileUtil.writeFileIfContentChanged(file, buf.toString());
     }
 
     private static class MyMapBuilder extends JavaToKotlinClassMapBuilder {
