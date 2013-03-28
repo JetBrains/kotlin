@@ -89,7 +89,7 @@ public class TaskPrioritizer {
         ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> visibleStrategy = new ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>() {
             @Override
             public int getPriority(ResolutionCandidate<D> call) {
-                return isVisible(call) ? 1 : 0;
+                return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 1 : 0);
             }
 
             private boolean isVisible(ResolutionCandidate<D> call) {
@@ -97,6 +97,12 @@ public class TaskPrioritizer {
                 D candidateDescriptor = call.getDescriptor();
                 if (ErrorUtils.isError(candidateDescriptor)) return true;
                 return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
+            }
+
+            private boolean isSynthesized(ResolutionCandidate<D> call) {
+                D descriptor = call.getDescriptor();
+                return descriptor instanceof CallableMemberDescriptor &&
+                       ((CallableMemberDescriptor) descriptor).getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED;
             }
         };
 

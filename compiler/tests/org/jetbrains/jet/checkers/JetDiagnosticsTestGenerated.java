@@ -3174,6 +3174,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/overload/OverloadVarAndFunInClass.kt");
             }
             
+            @TestMetadata("SyntheticAndNotSynthetic.kt")
+            public void testSyntheticAndNotSynthetic() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/overload/SyntheticAndNotSynthetic.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/override")
