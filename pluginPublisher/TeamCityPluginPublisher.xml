@@ -1,5 +1,5 @@
 <project name="Plugin Publisher" default="verifyAndPublish">
-  <property name="idea.download.page.url" value="http://confluence.jetbrains.com/display/IDEADEV/IDEA+12+EAP"/>
+  <property name="idea.download.page.url" value="http://confluence.jetbrains.com/display/IDEADEV/IDEA+12.1+EAP"/>
   <property name="plugin.repository.url" value="http://www.jetbrains.com/kotlin/eap-plugin-repository"/>
 
   <property name="updatePlugins.xml" value="updatePlugins.xml"/>
@@ -24,7 +24,6 @@
   <target name="verifyAndPublish">
     <!-- IDEA Download URL -> ${download.url} -->
     <!-- Fetch from EAP page -->
-    <!--
     <loadresource property="download.url">
       <url url="${idea.download.page.url}"/>
       <filterchain>
@@ -35,8 +34,8 @@
         </tokenfilter>
       </filterchain>
     </loadresource>
-    -->
-    <property name="download.url" value="http://download.jetbrains.com/idea/ideaIC-12.0.tar.gz" />
+
+    <!-- <property name="download.url" value="http://download.jetbrains.com/idea/ideaIC-12.0.tar.gz" /> -->
 
     <!-- Download and extract IDEA -->
     <echo message="Downloading IDEA from ${download.url}"/>
@@ -98,10 +97,10 @@
 
     <!-- Verify both plugins -->
     <verifyPlugin verifier.jar="plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kotlin.plugin.path}" />
-    <!-- <verifyPlugin verifier.jar="plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kannotator.plugin.path}" /> -->
+    <verifyPlugin verifier.jar="plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kannotator.plugin.path}" />
 
     <!-- Everything is ok, publish plugin and xml descriptor -->
-    <echo message="##teamcity[buildStatus text='${kotlin.plugin.filename} has been verified against ${idea.version}']"/>
+    <echo message="##teamcity[buildStatus text='kotlin-${kotlin.plugin.version} and kannotator-${kannotator.plugin.version} have been verified against ${idea.version}']"/>
     <echo message="##teamcity[publishArtifacts '${kotlin.plugin.path}']"/>
     <echo message="##teamcity[publishArtifacts '${kannotator.plugin.path}']"/>
   </target>
