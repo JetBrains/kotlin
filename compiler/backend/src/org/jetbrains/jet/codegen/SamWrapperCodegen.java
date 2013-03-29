@@ -55,21 +55,28 @@ public class SamWrapperCodegen extends GenerationStateAware {
     }
 
     public JvmClassName genWrapper(JetCallExpression callExpression, JetExpression argumentExpression) {
+        // Example: we generate SAM constructor call Comparator(f), where f: (Int, Int) -> Int
+
+        // Name for generated class, in form of whatever$1
         JvmClassName name = bindingContext.get(CodegenBinding.FQN_FOR_SAM_CONSTRUCTOR, callExpression);
         assert name != null : "internal class name not found for " + callExpression.getText();
 
+        // e.g. (Int, Int) -> Int
         JetType functionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
         assert functionType != null && KotlinBuiltIns.getInstance().isFunctionType(functionType) :
                 "not a function type of " + argumentExpression.getText() + ": " + functionType;
 
+        // SAM constructor call
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 bindingContext.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
         assert resolvedCall != null : "couldn't find resolved call for " + callExpression.getText();
 
+        // e.g. Comparator<Int, Int>
         JetType resultType = resolvedCall.getResultingDescriptor().getReturnType();
         assert resultType != null && resultType.getConstructor() == samInterface.getTypeConstructor() :
                 "unexpected result type: " + resultType;
 
+        // e.g. compare(Int, Int)
         SimpleFunctionDescriptor interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamType(resultType);
 
         ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), callExpression.getContainingFile());
@@ -83,7 +90,9 @@ public class SamWrapperCodegen extends GenerationStateAware {
         );
         cv.visitSource(callExpression.getContainingFile().getName(), null);
 
+        // e.g. ASM type for Function2
         Type functionAsmType = state.getTypeMapper().mapType(functionType, JetTypeMapperMode.VALUE);
+
         cv.newField(null,
                     ACC_SYNTHETIC | ACC_PRIVATE | ACC_FINAL,
                     FUNCTION_FIELD_NAME,
