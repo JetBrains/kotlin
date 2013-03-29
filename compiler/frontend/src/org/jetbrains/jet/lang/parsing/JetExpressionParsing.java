@@ -24,7 +24,9 @@ import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -242,26 +244,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
 
     private final JetParsing myJetParsing;
-    private TokenSet decomposerExpressionFollow = null;
 
     public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
         super(builder);
         myJetParsing = jetParsing;
-    }
-
-    private TokenSet getDecomposerExpressionFollow() {
-        // TODO : memoize
-        if (decomposerExpressionFollow == null) {
-            List<IElementType> elvisFollow = new ArrayList<IElementType>();
-            Precedence precedence = Precedence.ELVIS;
-            while (precedence != null) {
-                IElementType[] types = precedence.getOperations().getTypes();
-                Collections.addAll(elvisFollow, types);
-                precedence = precedence.higher;
-            }
-            decomposerExpressionFollow = TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(elvisFollow.toArray(new IElementType[elvisFollow.size()])));
-        }
-        return decomposerExpressionFollow;
     }
 
     /*
