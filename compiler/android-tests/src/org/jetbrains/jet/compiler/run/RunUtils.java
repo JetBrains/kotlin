@@ -125,7 +125,7 @@ public class RunUtils {
         handler.addProcessListener(new ProcessAdapter() {
             @Override
             public void processTerminated(ProcessEvent event) {
-                System.out.println("TERMINATED: " + settings.commandLine);
+                System.out.println("TERMINATED: " + settings.commandLine + " exitCode " + event.getExitCode());
                 super.processTerminated(event);
             }
 
@@ -160,7 +160,7 @@ public class RunUtils {
         handler.startNotify();
 
         if (settings.waitForEnd) {
-            handler.waitFor(800000);
+            handler.waitFor(400000);
 
             if (!handler.isProcessTerminated()) {
                 System.out.println("Output before handler.isProcessTerminated() " + settings.commandLine);

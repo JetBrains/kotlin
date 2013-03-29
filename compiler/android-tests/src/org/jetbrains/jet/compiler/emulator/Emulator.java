@@ -61,10 +61,12 @@ public class Emulator {
         GeneralCommandLine commandLine = new GeneralCommandLine();
         String emulatorCmdName = SystemInfo.isWindows ? "emulator.exe" : "emulator";
         commandLine.setExePath(pathManager.getToolsFolderInAndroidSdk() + "/" + emulatorCmdName);
+        commandLine.addParameter("-verbose");
         commandLine.addParameter("-avd");
         commandLine.addParameter("my_avd");
         commandLine.addParameter("-no-audio");
         commandLine.addParameter("-no-window");
+        commandLine.addParameter("-wipe-data");
         return commandLine;
     }
 
@@ -85,13 +87,13 @@ public class Emulator {
     }
 
     @Nullable
-    private GeneralCommandLine getStopCommand() {
+    private GeneralCommandLine getStopCommand(boolean is64) {
         if (SystemInfo.isWindows) {
             GeneralCommandLine commandLine = new GeneralCommandLine();
             commandLine.setExePath("taskkill");
             commandLine.addParameter("/F");
             commandLine.addParameter("/IM");
-            commandLine.addParameter("emulator-arm.exe");
+            commandLine.addParameter("emulator"+ (is64 ? "64" : "")+ "-arm.exe");
             return commandLine;
         }
         return null;
@@ -113,9 +115,9 @@ public class Emulator {
 
     public void startEmulator() {
         startServer();
+        printLog();
         System.out.println("Starting emulator...");
         RunUtils.executeOnSeparateThread(new RunUtils.RunSettings(getStartCommand(), null, false, "START: ", true));
-        printLog();
     }
 
     public void printLog() {
@@ -137,9 +139,11 @@ public class Emulator {
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
         if (SystemInfo.isWindows) {
-            OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
+            OutputUtils.checkResult(RunUtils.execute(getStopCommand(false)));
+            OutputUtils.checkResult(RunUtils.execute(getStopCommand(true)));
         }
         finishProcess("emulator-arm");
+        finishProcess("emulator64-arm");
     }
 
     //Only for Unix
@@ -151,11 +155,11 @@ public class Emulator {
             listOfEmulatorProcess.addParameter("ps aux | grep emulator");
             RunResult runResult = RunUtils.execute(listOfEmulatorProcess);
             OutputUtils.checkResult(runResult);
-            String pidFromPsCommand = OutputUtils.getPidFromPsCommand(runResult.getOutput());
-            if (pidFromPsCommand != null) {
+            List<String> pidFromPsCommand = OutputUtils.getPidFromPsCommand(runResult.getOutput());
+            for (String pid : pidFromPsCommand) {
                 GeneralCommandLine killCommand = new GeneralCommandLine();
                 killCommand.setExePath("kill");
-                killCommand.addParameter(pidFromPsCommand);
+                killCommand.addParameter(pid);
                 RunUtils.execute(killCommand);
             }
         }

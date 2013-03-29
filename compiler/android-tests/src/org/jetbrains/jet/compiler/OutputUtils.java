@@ -16,12 +16,11 @@
 
 package org.jetbrains.jet.compiler;
 
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.run.RunUtils;
 import org.jetbrains.jet.compiler.run.result.RunResult;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,14 +40,15 @@ public class OutputUtils {
     }
 
     @Nullable
-    public static String getPidFromPsCommand(String output) {
+    public static List<String> getPidFromPsCommand(String output) {
+        List<String> result = new ArrayList();
         if (!output.isEmpty()) {
             Matcher matcher = EMULATOR_PROCESS_PATTERN.matcher(output);
             if (matcher.find()) {
-                return matcher.group(1);
+                result.add(matcher.group(1));
             }
         }
-        return null;
+        return result;
     }
 
     private OutputUtils() {

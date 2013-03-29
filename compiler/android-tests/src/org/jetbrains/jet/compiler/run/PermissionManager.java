@@ -20,6 +20,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.jet.compiler.PathManager;
 
+import java.io.File;
 
 public class PermissionManager {
     private PermissionManager() {
@@ -27,15 +28,31 @@ public class PermissionManager {
 
     public static void setPermissions(PathManager pathManager) {
         if (!SystemInfo.isWindows) {
-            RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/aapt"));
-            RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/adb"));
-            RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/dx"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/ddms"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/android"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator-arm"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/zipalign"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/aapt"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/adb"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/dx"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/ddms"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/android"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator-arm"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator64-arm"));
+            //RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/zipalign"));
+
             RunUtils.execute(generateChmodCmd(pathManager.getAntBinDirectory() + "/ant"));
+
+            File file = new File(pathManager.getPlatformToolsFolderInAndroidSdk() + "/");
+            File [] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File file1 = files[i];
+                file1.setExecutable(true);
+            }
+
+            file = new File(pathManager.getToolsFolderInAndroidSdk() + "/");
+            files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File file1 = files[i];
+                file1.setExecutable(true);
+            }
         }
     }
 
