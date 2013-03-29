@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -267,4 +268,18 @@ public class JavaTypeTransformer {
         return classType.isRaw() || argumentsExpected && classType.getParameterCount() == 0;
     }
 
+    public static TypeUsage adjustTypeUsageWithMutabilityAnnotations(PsiModifierListOwner owner, TypeUsage originalTypeUsage) {
+        EnumSet<TypeUsage> signatureTypeUsages =
+                EnumSet.of(TypeUsage.MEMBER_SIGNATURE_COVARIANT, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, TypeUsage.MEMBER_SIGNATURE_INVARIANT);
+        if (!signatureTypeUsages.contains(originalTypeUsage)) {
+            return originalTypeUsage;
+        }
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_MUTABLE_ANNOTATION.getFqName().getFqName()) != null) {
+            return TypeUsage.MEMBER_SIGNATURE_COVARIANT;
+        }
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_READONLY_ANNOTATION.getFqName().getFqName()) != null) {
+            return TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
+        }
+        return originalTypeUsage;
+    }
 }

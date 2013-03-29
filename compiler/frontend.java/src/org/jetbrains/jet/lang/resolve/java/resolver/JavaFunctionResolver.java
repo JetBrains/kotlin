@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,10 +46,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.*;
@@ -142,7 +140,6 @@ public final class JavaFunctionResolver {
         TypeVariableResolver methodTypeVariableResolver = TypeVariableResolvers.typeVariableResolverFromTypeParameters(methodTypeParameters,
                                                                                                                        functionDescriptorImpl,
                                                                                                                        context);
-
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
@@ -414,8 +411,8 @@ public final class JavaFunctionResolver {
             transformedType = typeTransformer.transformToType(returnTypeFromAnnotation, typeVariableResolver);
         }
         else {
-            transformedType = typeTransformer.transformToType(
-                    returnType, TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
+            TypeUsage typeUsage = JavaTypeTransformer.adjustTypeUsageWithMutabilityAnnotations(method.getPsiMethod(), TypeUsage.MEMBER_SIGNATURE_COVARIANT);
+            transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
         }
 
         if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=

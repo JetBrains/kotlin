@@ -71,8 +71,8 @@ public final class JavaValueParameterResolver {
             outType = getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
         }
         else {
-            outType = getTypeTransformer().transformToType(psiType, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT,
-                                                           typeVariableResolver);
+            TypeUsage typeUsage = JavaTypeTransformer.adjustTypeUsageWithMutabilityAnnotations(parameter.getPsiParameter(), TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
+            outType = getTypeTransformer().transformToType(psiType, typeUsage, typeVariableResolver);
         }
 
         JetType varargElementType;
