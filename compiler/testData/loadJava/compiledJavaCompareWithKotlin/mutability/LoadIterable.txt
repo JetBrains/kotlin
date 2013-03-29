@@ -1,0 +1,8 @@
+package test
+
+public trait LoadIterable</*0*/ T> : java.lang.Object {
+    public abstract fun getIterable() : jet.MutableIterable<T>?
+    public abstract fun getReadOnlyIterable() : jet.Iterable<T>?
+    public abstract fun setIterable(/*0*/ p0 : jet.MutableIterable<T>?) : jet.Unit
+    public abstract fun setReadOnlyIterable(/*0*/ p0 : jet.Iterable<T>?) : jet.Unit
+}

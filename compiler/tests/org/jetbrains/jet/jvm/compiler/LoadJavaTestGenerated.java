@@ -33,7 +33,7 @@ import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest;
 @InnerTestClasses({LoadJavaTestGenerated.CompiledJavaCompareWithKotlin.class, LoadJavaTestGenerated.CompiledJavaIncludeObjectMethods.class, LoadJavaTestGenerated.CompiledJava.class, LoadJavaTestGenerated.SourceJava.class, LoadJavaTestGenerated.JavaAgainstKotlin.class})
 public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/compiledJavaCompareWithKotlin")
-    @InnerTestClasses({CompiledJavaCompareWithKotlin.Annotation.class, CompiledJavaCompareWithKotlin.Constructor.class, CompiledJavaCompareWithKotlin.JavaBean.class, CompiledJavaCompareWithKotlin.KotlinSignature.class, CompiledJavaCompareWithKotlin.Library.class, CompiledJavaCompareWithKotlin.Modality.class, CompiledJavaCompareWithKotlin.NotNull.class, CompiledJavaCompareWithKotlin.Vararg.class})
+    @InnerTestClasses({CompiledJavaCompareWithKotlin.Annotation.class, CompiledJavaCompareWithKotlin.Constructor.class, CompiledJavaCompareWithKotlin.JavaBean.class, CompiledJavaCompareWithKotlin.KotlinSignature.class, CompiledJavaCompareWithKotlin.Library.class, CompiledJavaCompareWithKotlin.Modality.class, CompiledJavaCompareWithKotlin.Mutability.class, CompiledJavaCompareWithKotlin.NotNull.class, CompiledJavaCompareWithKotlin.Vararg.class})
     public static class CompiledJavaCompareWithKotlin extends AbstractLoadJavaTest {
         public void testAllFilesPresentInCompiledJavaCompareWithKotlin() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJavaCompareWithKotlin"), Pattern.compile("^(.+)\\.java$"), true);
@@ -914,6 +914,34 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             
         }
         
+        @TestMetadata("compiler/testData/loadJava/compiledJavaCompareWithKotlin/mutability")
+        public static class Mutability extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInMutability() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJavaCompareWithKotlin/mutability"), Pattern.compile("^(.+)\\.java$"), true);
+            }
+            
+            @TestMetadata("LoadIterable.java")
+            public void testLoadIterable() throws Exception {
+                doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/mutability/LoadIterable.java");
+            }
+            
+            @TestMetadata("LoadIterableWithConflict.java")
+            public void testLoadIterableWithConflict() throws Exception {
+                doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/mutability/LoadIterableWithConflict.java");
+            }
+            
+            @TestMetadata("LoadIterableWithNullability.java")
+            public void testLoadIterableWithNullability() throws Exception {
+                doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/mutability/LoadIterableWithNullability.java");
+            }
+            
+            @TestMetadata("LoadIterableWithPropagation.java")
+            public void testLoadIterableWithPropagation() throws Exception {
+                doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/mutability/LoadIterableWithPropagation.java");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/loadJava/compiledJavaCompareWithKotlin/notNull")
         public static class NotNull extends AbstractLoadJavaTest {
             public void testAllFilesPresentInNotNull() throws Exception {
@@ -964,6 +992,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             suite.addTest(KotlinSignature.innerSuite());
             suite.addTestSuite(Library.class);
             suite.addTestSuite(Modality.class);
+            suite.addTestSuite(Mutability.class);
             suite.addTestSuite(NotNull.class);
             suite.addTestSuite(Vararg.class);
             return suite;

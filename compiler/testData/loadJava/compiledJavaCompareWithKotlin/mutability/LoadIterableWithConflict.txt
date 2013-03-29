@@ -1,0 +1,6 @@
+package test
+
+public trait LoadIterableWithConflict</*0*/ T> : java.lang.Object {
+    public abstract fun getIterable() : jet.MutableIterable<T>?
+    public abstract fun setIterable(/*0*/ p0 : jet.MutableIterable<T>?) : jet.Unit
+}
