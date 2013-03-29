@@ -71,6 +71,8 @@ public class SpecialFiles {
         excludedFiles.add("kt529.kt");  // Bug
         excludedFiles.add("kt344.kt");  // Bug
 
+        excludedFiles.add("filenameFilter.kt");  // Work with FileSystem
+
         excludedFiles.add("comparisonWithNullCallsFun.kt"); // java.lang.NoClassDefFoundError: jet.Nothing
     }
 
