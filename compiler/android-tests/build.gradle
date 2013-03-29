@@ -1,0 +1,36 @@
+apply plugin: 'java'
+sourceCompatibility = 1.6
+
+kotlin_root="../.."
+
+sourceSets {
+  main {
+    java {
+      srcDir './tests/'
+    }
+    java {
+      srcDir './src/'
+
+    }
+  }
+}
+
+
+task runGenerator(dependsOn: 'classes', type: JavaExec) {
+  main = 'org.jetbrains.jet.compiler.android.CodegenTestsOnAndroidGenerator'
+  classpath = sourceSets.main.runtimeClasspath
+  workingDir "${kotlin_root}"
+  args "android.tests.dependencies", "android.tests.dependencies/temp"
+}
+
+task runJar(dependsOn: 'runGenerator') << {
+  ant.jar(basedir: "../../android.tests.dependencies/temp/libs/codegen-test-output", destfile:"../../android.tests.dependencies/temp/libs/test.jar")
+}
+
+dependencies {
+  compile fileTree(dir: "${kotlin_root}/ideaSDK/lib/", include: '**/*.jar')
+  compile fileTree(dir: "${kotlin_root}/ideaSDK/jps/", include: '**/*.jar')
+  compile fileTree(dir: "${kotlin_root}/dist/kotlinc/lib/", include: '*.jar')
+
+  compile files("${kotlin_root}/out/test/compiler-tests")
+}

@@ -1,0 +1,84 @@
+testRoot = '../../../android.tests.dependencies/'
+downloadFolder = testRoot + 'download/'
+androidSdkFolder = testRoot +"/android-sdk/"
+
+OS_NAME = System.getProperty("os.name").toLowerCase();
+isWindows = OS_NAME.startsWith("windows")
+isMac = OS_NAME.startsWith("mac")
+isLinux = !isWindows && !isMac
+os_type = isWindows ? "windows" : (isMac ? "macosx" : "linux")
+
+ext.tools="tools.zip"
+ext.platform_tools="platform-tools.zip"
+ext.system_image="system_image.zip"
+ext.platform="platform.zip"
+ext.antext="ant-1.8.0.zip"
+ext.usetimestamp=true
+
+task downloadAndroid() << {
+  println "Uploading ${tools}"
+
+  ant.get(src:"https://dl-ssl.google.com/android/repository/tools_r21.1-${os_type}.zip",
+    dest: downloadFolder + tools, usetimestamp:usetimestamp)
+
+  println "Uploading ${platform_tools}"
+  ant.get(src:"http://dl-ssl.google.com/android/repository/platform-tools_r16.0.2-${os_type}.zip",
+          dest: downloadFolder + platform_tools, usetimestamp:usetimestamp)
+
+  println "Uploading ${system_image}"
+  ant.get(src:"http://dl.google.com/android/repository/sysimg_armv7a-17_r02.zip",
+          dest: downloadFolder + system_image, usetimestamp:usetimestamp)
+
+  println "Uploading ${platform}"
+  ant.get(src:"http://dl-ssl.google.com/android/repository/android-17_r02.zip",
+          dest: downloadFolder + platform, usetimestamp:usetimestamp)
+
+  println "Uploading ${antext}"
+  ant.get(src:"http://archive.apache.org/dist/ant/binaries/apache-ant-1.8.0-bin.zip",
+          dest: downloadFolder + antext, usetimestamp:usetimestamp)
+}
+
+
+task unpackAndroid(dependsOn: downloadAndroid) << {
+  println "Unpacking ${tools}"
+
+  ant.unzip(src: downloadFolder + tools, dest:androidSdkFolder)
+
+  println "Unpacking ${platform_tools}"
+  ant.unzip(src: downloadFolder + platform_tools, dest:androidSdkFolder)
+
+  println "Unpacking ${system_image}"
+  ant.unzip(src: downloadFolder + system_image, dest:androidSdkFolder + "/system-images/android-16/")
+
+  println "Unpacking ${platform}"
+  ant.unzip(src: downloadFolder + platform, dest:androidSdkFolder + "/platforms" )
+
+  println "Unpacking ${antext}"
+  ant.unzip(src: downloadFolder + antext, dest:androidSdkFolder + "/..")
+
+  //set permissions
+  if (isLinux) {
+    ant.chmod(dir: androidSdkFolder + "/platform-tools", includes: "*", type:"file", perm: "u+x")
+    ant.chmod(dir: androidSdkFolder + "/tools", includes: "*", type:"file", perm: "u+x")
+  }
+}
+
+task copyAndroidProject() << {
+  copy {
+    from "${testRoot}/temp/libs/test.jar"
+    into "libs"
+  }
+
+  copy {
+    from "${testRoot}/temp/src"
+    into "s"
+  }
+
+  copy {
+    from "${testRoot}/../dist/kotlinc/lib/kotlin-runtime.jar"
+    into "libs"
+  }
+
+
+
+}

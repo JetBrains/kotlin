@@ -1,0 +1,114 @@
+testRoot = '../../../android.tests.dependencies/'
+androidSdkFolder = testRoot +"android-sdk/"
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.3'
+    }
+}
+
+apply plugin: 'android'
+
+android {
+
+  sourceSets {
+    main {
+      manifest {
+        srcFile 'tested-module/AndroidManifest.xml'
+      }
+      java {
+        srcDir 'src'
+      }
+      res {
+        srcDir 'res'
+      }
+      assets {
+        srcDir 'assets'
+      }
+      resources {
+        srcDir 'src'
+      }
+    }
+
+    //instrumentTest.java.srcDir "${testRoot}/temp/src"
+    instrumentTest.setRoot(".")
+    instrumentTest.java.srcDir "src/"
+
+  }
+
+
+  compileSdkVersion 17
+    testBuildType "debug"
+
+
+    defaultConfig {
+        versionCode 1
+        versionName "1.0"
+        minSdkVersion 10
+        targetSdkVersion 17
+
+        buildConfig "private final static boolean DEFAULT = true;"
+
+    }
+
+    buildTypes {
+        debug {
+            packageNameSuffix ".debug"
+        }
+    }
+
+}
+
+dependencies {
+  //compile files("libs/test.jar", "libs/kotlin-runtime.jar")
+  instrumentTestCompile files("libs/test.jar", "libs/kotlin-runtime.jar")
+}
+
+
+task startEmulator() << {
+    //
+    println "Creating avd"
+    ant.exec(executable:"${androidSdkFolder}/tools/android", failOnError:true, logError: true, inputString : "no") {
+      arg(value: '--silent')
+      arg(value: 'create')
+      arg(value: 'avd')
+      arg(value: '--force')
+      arg(value: '--name')
+      arg(value: 'my-avd')
+      arg(value: '--path')
+      arg(value: "${androidSdkFolder}/emulator")
+      arg(value: '--target')
+      arg(value: '1')
+    }
+
+    println "Starting avd"
+    ant.exec(executable:"${androidSdkFolder}/tools/emulator", spawn: true) {
+      arg(value: '-avd')
+      arg(value: 'my-avd')
+      arg(value: '-no-audio')
+      //arg(value: '-no-window')
+      //arg(value: '-memory')
+      //arg(value: '512')
+    }
+    Thread.sleep(60000)
+}
+
+def stopEmulator()  {
+  //TODO
+}
+
+gradle.taskGraph.afterTask {Task task, TaskState state ->
+  if (state.failure) {
+    println "Stopping emulator"
+    stopEmulator()
+  }
+}
+
+
+afterEvaluate { project ->
+  project.tasks['instrumentTest'].dependsOn('startEmulator')
+}
