@@ -395,6 +395,27 @@
         </jar>
     </target>
 
+    <target name="annotationsExt">
+        <cleandir dir="${output}/classes/annotations-ext"/>
+
+        <javac destdir="${output}/classes/annotations-ext" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <src path="${basedir}/compiler/annotations-ext/src"/>
+        </javac>
+
+        <jar destfile="${kotlin-home}/lib/kotlin-annotations-ext.jar">
+            <fileset dir="${output}/classes/annotations-ext"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Extended Annotations"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
+    </target>
+
     <target name="runtime">
         <cleandir dir="${output}/classes/runtime"/>
         <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
@@ -459,7 +480,7 @@
     </target>
 
     <target name="dist"
-            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,runtime,jslib,j2kConverter"/>
+            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations, annotationsExt, runtime,jslib,j2kConverter"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
