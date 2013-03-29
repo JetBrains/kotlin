@@ -121,7 +121,9 @@ public final class LoadDescriptorUtil {
     }
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
-        String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
+        String classPath = "out/production/runtime" +
+                           File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath() +
+                           File.pathSeparator + JetTestUtils.getAnnotationsExtJar().getPath();
         JetTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
                 "-classpath", classPath,
                 "-sourcepath", "compiler/tests", // for @ExpectLoadError annotation
