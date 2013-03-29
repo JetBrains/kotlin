@@ -30,20 +30,16 @@
             <artifactId>kotlin-compiler</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-jdk-annotations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-
-        <resources>
-            <resource>
-                <!-- jdkAnnotations -->
-                <directory>${kotlin-sdk}/lib</directory>
-                <includes><include>kotlin-jdk-annotations.jar</include></includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
 
         <plugins>
             <plugin>

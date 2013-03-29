@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import com.google.common.base.Joiner;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
+import com.intellij.openapi.util.text.StringUtil;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,9 +34,9 @@ import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -286,9 +285,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         String jdkAnnotation = getJdkAnnotations().getPath();
 
         List<String> list = new ArrayList<String>();
-        if (jdkAnnotation != null && jdkAnnotation.length() > 0) {
-            list.add(jdkAnnotation);
-        }
+        list.add(jdkAnnotation);
+
         if (annotations != null) {
             for (String annotationPath : annotations) {
                 if (new File(annotationPath).exists()) {
@@ -301,38 +299,25 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         return join(list, File.pathSeparator);
     }
 
-
-    private File jdkAnnotationsPath;
-
     protected File getJdkAnnotations() {
-        if (jdkAnnotationsPath != null)
-            return jdkAnnotationsPath;
-
-        try {
-            jdkAnnotationsPath = extractJdkAnnotations();
-
-            if (jdkAnnotationsPath == null)
-                throw new RuntimeException("Can't find kotlin jdk annotations in maven plugin resources");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        final ClassLoader classLoader = getClass().getClassLoader();
+        if (!(classLoader instanceof URLClassLoader)) {
+            throw new RuntimeException("Kotlin plugin`s classloader is not URLClassLoader");
         }
 
-        return jdkAnnotationsPath;
-    }
+        final URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
+        for (URL url : urlClassLoader.getURLs()) {
+            final String path = url.getPath();
+            if (StringUtil.isEmpty(path)) {
+                continue;
+            }
 
-    private File extractJdkAnnotations() throws IOException {
-        final String kotlin_jdk_annotations = "kotlin-jdk-annotations.jar";
+            final File file = new File(path);
+            if (file.getName().startsWith("kotlin-jdk-annotations")) {
+                return file;
+            }
+        }
 
-        final URL jdkAnnotationsResource = Resources.getResource(kotlin_jdk_annotations);
-        if (jdkAnnotationsResource == null)
-            return null;
-
-        final File jdkAnnotationsTempDir = Files.createTempDir();
-        jdkAnnotationsTempDir.deleteOnExit();
-
-        final File jdkAnnotationsFile = new File(jdkAnnotationsTempDir, kotlin_jdk_annotations);
-        Files.copy(Resources.newInputStreamSupplier(jdkAnnotationsResource), jdkAnnotationsFile);
-
-        return jdkAnnotationsFile;
+        throw new RuntimeException("Could not get jdk annotations from Kotlin plugin`s classpath");
     }
 }
