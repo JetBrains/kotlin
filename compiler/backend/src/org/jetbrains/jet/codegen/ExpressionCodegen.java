@@ -1886,35 +1886,44 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
                     if (samInterface != null) {
-                        ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
-                        if (!(argument instanceof ExpressionValueArgument)) {
-                            throw new IllegalStateException(
-                                    "argument of SAM constructor is " + argument.getClass().getName() + " " + expression.getText());
-                        }
-                        ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
-                        assert valueArgument != null : "getValueArgument() is null for " + expression.getText();
-                        JetExpression argumentExpression = valueArgument.getArgumentExpression();
-
-                        if (argumentExpression instanceof JetFunctionLiteralExpression) {
-                            return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
-                        }
-                        else {
-                            JvmClassName className = new SamWrapperCodegen(state, samInterface).genWrapper(expression, argumentExpression);
-
-                            v.anew(className.getAsmType());
-                            v.dup();
-
-                            JetType functionType = ((SimpleFunctionDescriptor) funDescriptor).getValueParameters().get(0).getType();
-                            gen(argumentExpression, typeMapper.mapType(functionType));
-
-                            v.invokespecial(className.getInternalName(), "<init>",
-                                            Type.getMethodDescriptor(Type.VOID_TYPE, typeMapper.mapType(functionType)));
-                            return StackValue.onStack(className.getAsmType());
-                        }
+                        return invokeSamConstructor(expression, resolvedCall, (SimpleFunctionDescriptor) funDescriptor, samInterface);
                     }
                 }
                 return invokeFunction(call, receiver, resolvedCall);
             }
+        }
+    }
+
+    private StackValue invokeSamConstructor(
+            JetCallExpression expression,
+            ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            SimpleFunctionDescriptor funDescriptor,
+            ClassDescriptor samInterface
+    ) {
+        ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
+        if (!(argument instanceof ExpressionValueArgument)) {
+            throw new IllegalStateException(
+                    "argument of SAM constructor is " + argument.getClass().getName() + " " + expression.getText());
+        }
+        ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
+        assert valueArgument != null : "getValueArgument() is null for " + expression.getText();
+        JetExpression argumentExpression = valueArgument.getArgumentExpression();
+
+        if (argumentExpression instanceof JetFunctionLiteralExpression) {
+            return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
+        }
+        else {
+            JvmClassName className = new SamWrapperCodegen(state, samInterface).genWrapper(expression, argumentExpression);
+
+            v.anew(className.getAsmType());
+            v.dup();
+
+            JetType functionType = funDescriptor.getValueParameters().get(0).getType();
+            gen(argumentExpression, typeMapper.mapType(functionType));
+
+            v.invokespecial(className.getInternalName(), "<init>",
+                            Type.getMethodDescriptor(Type.VOID_TYPE, typeMapper.mapType(functionType)));
+            return StackValue.onStack(className.getAsmType());
         }
     }
 
