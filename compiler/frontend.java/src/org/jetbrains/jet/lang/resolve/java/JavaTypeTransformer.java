@@ -269,6 +269,7 @@ public class JavaTypeTransformer {
     }
 
     public static TypeUsage adjustTypeUsageWithMutabilityAnnotations(PsiModifierListOwner owner, TypeUsage originalTypeUsage) {
+        // Overrides type usage in method signature depending on mutability annotation present
         EnumSet<TypeUsage> signatureTypeUsages =
                 EnumSet.of(TypeUsage.MEMBER_SIGNATURE_COVARIANT, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, TypeUsage.MEMBER_SIGNATURE_INVARIANT);
         if (!signatureTypeUsages.contains(originalTypeUsage)) {
