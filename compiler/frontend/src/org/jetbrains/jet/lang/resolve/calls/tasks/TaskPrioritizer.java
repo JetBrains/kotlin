@@ -89,7 +89,7 @@ public class TaskPrioritizer {
         ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> visibleStrategy = new ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>() {
             @Override
             public int getPriority(ResolutionCandidate<D> call) {
-                return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 1 : 0);
+                return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 0 : 1);
             }
 
             @Override
