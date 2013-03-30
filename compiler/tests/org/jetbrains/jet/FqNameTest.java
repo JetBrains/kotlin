@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -99,5 +100,26 @@ public class FqNameTest {
     public void unsafeSafe() {
         FqNameUnsafe fqName = new FqNameUnsafe("ru.yandex");
         Assert.assertSame(fqName, fqName.toSafe().toUnsafe());
+    }
+
+    @Test
+    public void isValidJavaFqName() {
+        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName(""));
+        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("a"));
+        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("1"));
+        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("a.a"));
+        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("org.jetbrains"));
+        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("$"));
+        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("org.A$B"));
+
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("."));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName(".."));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a."));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName(".a"));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a..b"));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b.."));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b."));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b...)"));
+        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b.<special>"));
     }
 }

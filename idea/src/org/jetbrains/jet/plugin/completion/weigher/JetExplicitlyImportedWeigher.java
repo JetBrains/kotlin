@@ -23,10 +23,10 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 // class ExplicitlyImportedWeigher extends ProximityWeigher {
 public class JetExplicitlyImportedWeigher extends LookupElementWeigher {
@@ -55,7 +55,7 @@ public class JetExplicitlyImportedWeigher extends LookupElementWeigher {
             if (descriptor != null) {
                 FqNameUnsafe fqName = DescriptorUtils.getFQName(descriptor);
                 // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
-                if (FqName.isValid(fqName.toString())) {
+                if (QualifiedNamesUtil.isValidJavaFqName(fqName.toString())) {
                     ImportPath importPath = new ImportPath(fqName.toString());
                     if (ImportInsertHelper.doNeedImport(importPath, file)) {
                         return MyResult.notImported;

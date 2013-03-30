@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -77,7 +78,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     @NotNull
     @Override
     public PsiClass[] findClasses(@NotNull String qualifiedNameString, @NotNull GlobalSearchScope scope) {
-        if (!FqName.isValid(qualifiedNameString)) {
+        if (!QualifiedNamesUtil.isValidJavaFqName(qualifiedNameString)) {
             return PsiClass.EMPTY_ARRAY;
         }
 
@@ -162,7 +163,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
     @Override
     public PsiPackage findPackage(@NotNull String qualifiedNameString) {
-        if (!FqName.isValid(qualifiedNameString)) {
+        if (!QualifiedNamesUtil.isValidJavaFqName(qualifiedNameString)) {
             return null;
         }
 
