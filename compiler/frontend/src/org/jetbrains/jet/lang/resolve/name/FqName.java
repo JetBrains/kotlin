@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.name;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -68,12 +67,6 @@ public class FqName extends FqNameBase {
     /*package*/ static boolean isValidAfterUnsafeCheck(@NotNull String qualifiedName) {
         // TODO: There's a valid name with escape char ``
         return qualifiedName.indexOf('<') < 0;
-    }
-
-    public static boolean isValid(@Nullable String qualifiedName) {
-        return qualifiedName != null &&
-               FqNameUnsafe.isValid(qualifiedName) &&
-               isValidAfterUnsafeCheck(qualifiedName);
     }
 
     @Override
