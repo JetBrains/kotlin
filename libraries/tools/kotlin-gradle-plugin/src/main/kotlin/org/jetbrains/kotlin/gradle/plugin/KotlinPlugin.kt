@@ -62,20 +62,23 @@ open class KotlinPlugin: Plugin<Project> {
                     val kotlinTask: KotlinCompile = project.getTasks().add(kotlinTaskName, javaClass<KotlinCompile>())!!
 
                     javaBasePlugin.configureForSourceSet(sourceSet, kotlinTask)
+                    // store kotlin classes in separate directory. They will serve as class-path to java compiler
+                    val kotlinOutputDir = File(project.getBuildDir(), "kotlin-classes/${sourceSetName}")
+                    // builtBy allows to correctly run kotlinTask as a transitive dependency on anything,
+                    // that wants to use sourceSet output (e.g., 'jar' task
+                    sourceSet.getOutput()?.dir(mapOf(Pair("builtBy", kotlinTask)), kotlinOutputDir)
+                    kotlinTask.setDestinationDir(kotlinOutputDir);
 
                     kotlinTask.setDescription("Compiles the $sourceSet.kotlin.")
                     kotlinTask.source(kotlinDirSet)
 
                     val javaTask = project.getTasks().findByName(sourceSet.getCompileJavaTaskName()) as AbstractCompile?
-                    javaTask?.dependsOn(kotlinTaskName)
 
-                    val sourceSetCompileConfigurationName = if (sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
-                        "compile"
-                    } else {
-                        "${sourceSetName}Compile"
+                    if (javaTask != null) {
+                        javaTask.dependsOn(kotlinTaskName)
+                        val javacClassPath = javaTask.getClasspath() + project.files(kotlinTask.getDestinationDir());
+                        javaTask.setClasspath(javacClassPath)
                     }
-
-                    project.getDependencies()?.add(sourceSetCompileConfigurationName, project.files(kotlinTask.getDestinationDir()))
                 }
             }
         })
