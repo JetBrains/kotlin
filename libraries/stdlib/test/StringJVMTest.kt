@@ -236,4 +236,8 @@ class StringJVMTest {
         assertEquals("", data.take(-7))
         assertEquals(data, data.take(data.length + 42))
     }
+
+    test fun formatter() {
+        assertEquals("12", "%d%d".format(1, 2))
+    }
 }
