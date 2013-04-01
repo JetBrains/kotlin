@@ -34,6 +34,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.MapDataContext;
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
@@ -128,7 +129,7 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
             }
         });
         Collections.sort(files);
-        return files.toArray(new String[files.size()]);
+        return ArrayUtil.toStringArray(files);
     }
 
     @Override
