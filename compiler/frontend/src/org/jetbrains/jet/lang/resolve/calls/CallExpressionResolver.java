@@ -26,10 +26,8 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -183,12 +181,7 @@ public class CallExpressionResolver {
             checkSuper(receiver, results, context.trace, callExpression);
             result[0] = true;
             if (results.isSingleResult() && resolveMode == ResolveMode.TOP_LEVEL_CALL) {
-                ResolvedCallImpl<FunctionDescriptor> callToComplete = results.getResultingCall().getCallToCompleteTypeArgumentInference();
-                if (CallResolverUtil.hasReturnTypeDependentOnNotInferredParams(callToComplete)) return null;
-
-                // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
-                ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
-                if (constraintSystem != null && constraintSystem.hasOnlyExpectedTypeMismatch()) return null;
+                if (!CallResolverUtil.hasInferredReturnType(results.getResultingCall())) return null;
             }
 
             return results.isSingleResult() ? results.getResultingCall() : null;
