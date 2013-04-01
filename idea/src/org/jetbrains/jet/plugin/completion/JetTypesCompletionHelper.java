@@ -34,7 +34,8 @@ import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
 public class JetTypesCompletionHelper {
-    private JetTypesCompletionHelper() {}
+    private JetTypesCompletionHelper() {
+    }
 
     static void addJetTypes(
             @NotNull CompletionParameters parameters,
@@ -48,7 +49,7 @@ public class JetTypesCompletionHelper {
                 jetCompletionResult.getShortNameFilter(), jetCompletionResult.getResolveSession()));
 
         if (!KotlinFrameworkDetector.isJsKotlinModule((JetFile) parameters.getOriginalFile())) {
-            addAdaptedJavaCompletion(parameters,jetCompletionResult);
+            addAdaptedJavaCompletion(parameters, jetCompletionResult);
         }
     }
 
@@ -80,7 +81,6 @@ public class JetTypesCompletionHelper {
                         }
                     }
                 });
-
     }
 
     private static boolean addJavaClassAsJetLookupElement(PsiClass aClass, JetCompletionResultSet jetCompletionResult) {
