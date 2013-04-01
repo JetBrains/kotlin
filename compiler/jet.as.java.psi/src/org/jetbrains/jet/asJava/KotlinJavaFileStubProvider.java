@@ -28,6 +28,7 @@ import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
@@ -55,13 +56,28 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
 
     @NotNull
     public static KotlinJavaFileStubProvider createForPackageClass(
-            @NotNull Project project,
+            @NotNull final Project project,
             @NotNull final FqName packageFqName,
-            @NotNull final Collection<JetFile> files
+            @NotNull final GlobalSearchScope searchScope
     ) {
-        return new KotlinJavaFileStubProvider(project, packageFqName, files, new StubGenerationStrategy.NoDeclaredClasses() {
+        return new KotlinJavaFileStubProvider(project, new StubGenerationStrategy.NoDeclaredClasses() {
+
+            @NotNull
             @Override
-            public void generate(GenerationState state) {
+            public Collection<JetFile> getFiles() {
+                // Don't memoize this, it can be called again after an out-of-code-block modification occurs,
+                // and the set of files changes
+                return LightClassGenerationSupport.getInstance(project).findFilesForPackage(packageFqName, searchScope);
+            }
+
+            @NotNull
+            @Override
+            public FqName getPackageFqName() {
+                return packageFqName;
+            }
+
+            @Override
+            public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
                 NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
                 codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                 state.getFactory().files();
@@ -73,16 +89,29 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     public static KotlinJavaFileStubProvider createForDeclaredTopLevelClass(
             @NotNull final JetClassOrObject classOrObject
     ) {
-        JetFile file = (JetFile) classOrObject.getContainingFile();
-        assert classOrObject.getParent() == file : "Not a top-level class: " + classOrObject.getText();
+        return new KotlinJavaFileStubProvider(classOrObject.getProject(), new StubGenerationStrategy.WithDeclaredClasses() {
+            private JetFile getFile() {
+                JetFile file = (JetFile) classOrObject.getContainingFile();
+                assert classOrObject.getParent() == file : "Not a top-level class: " + classOrObject.getText();
+                return file;
+            }
 
-        final FqName packageFqName = JetPsiUtil.getFQName(file);
-
-        return new KotlinJavaFileStubProvider(classOrObject.getProject(), packageFqName, Collections.singletonList(file), new StubGenerationStrategy.WithDeclaredClasses() {
+            @NotNull
             @Override
-            public void generate(GenerationState state) {
+            public Collection<JetFile> getFiles() {
+                return Collections.singletonList(getFile());
+            }
 
-                NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(packageFqName, state.getFiles());
+            @NotNull
+            @Override
+            public FqName getPackageFqName() {
+                return JetPsiUtil.getFQName(getFile());
+            }
+
+            @Override
+            public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                FqName packageFqName = getPackageFqName();
+                NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(packageFqName, files);
                 NamespaceDescriptor namespaceDescriptor =
                         state.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, packageFqName);
                 assert namespaceDescriptor != null : "No package descriptor for " + packageFqName + " for class " + classOrObject.getText();
@@ -95,19 +124,13 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
 
     private static final Logger LOG = Logger.getInstance(KotlinJavaFileStubProvider.class);
 
-    private final Collection<JetFile> files;
-    private final FqName packageFqName;
     private final Project project;
     private final StubGenerationStrategy stubGenerationStrategy;
 
     private KotlinJavaFileStubProvider(
             @NotNull Project project,
-            @NotNull FqName packageFqName,
-            @NotNull Collection<JetFile> files,
             @NotNull StubGenerationStrategy stubGenerationStrategy
     ) {
-        this.files = files;
-        this.packageFqName = packageFqName;
         this.project = project;
         this.stubGenerationStrategy = stubGenerationStrategy;
     }
@@ -115,6 +138,9 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     @Nullable
     @Override
     public Result<PsiJavaFileStub> compute() {
+        FqName packageFqName = stubGenerationStrategy.getPackageFqName();
+        Collection<JetFile> files = stubGenerationStrategy.getFiles();
+
         checkForBuiltIns(packageFqName, files);
 
         LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(files);
@@ -124,7 +150,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             throw new IllegalStateException("failed to analyze: " + error, error);
         }
 
-        PsiJavaFileStub javaFileStub = createJavaFileStub(getRepresentativeVirtualFile(files));
+        PsiJavaFileStub javaFileStub = createJavaFileStub(packageFqName, getRepresentativeVirtualFile(files));
         try {
             Stack<StubElement> stubStack = new Stack<StubElement>();
             stubStack.push(javaFileStub);
@@ -140,7 +166,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
                     /*generateDeclaredClasses=*/stubGenerationStrategy.generateDeclaredClasses());
             state.beforeCompile();
 
-            stubGenerationStrategy.generate(state);
+            stubGenerationStrategy.generate(state, files);
 
             StubElement pop = stubStack.pop();
             if (pop != javaFileStub) {
@@ -160,7 +186,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     }
 
     @NotNull
-    private PsiJavaFileStub createJavaFileStub(VirtualFile virtualFile) {
+    private PsiJavaFileStub createJavaFileStub(@NotNull final FqName packageFqName, @NotNull VirtualFile virtualFile) {
         PsiManager manager = PsiManager.getInstance(project);
 
         final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.getFqName(), true);
@@ -214,8 +240,10 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     }
 
     private interface StubGenerationStrategy {
+        @NotNull Collection<JetFile> getFiles();
+        @NotNull FqName getPackageFqName();
         boolean generateDeclaredClasses();
-        void generate(GenerationState state);
+        void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files);
 
         abstract class NoDeclaredClasses implements StubGenerationStrategy {
             @Override
