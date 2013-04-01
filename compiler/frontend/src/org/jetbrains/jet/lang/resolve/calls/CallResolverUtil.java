@@ -59,7 +59,7 @@ public class CallResolverUtil {
 
     private CallResolverUtil() {}
 
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> copy(@NotNull ResolvedCallImpl<D> call, @NotNull CallResolutionContext context) {
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> copy(@NotNull ResolvedCallImpl<D> call, @NotNull CallResolutionContext<?> context) {
         ResolutionCandidate<D> candidate = ResolutionCandidate.create(call.getCandidateDescriptor(), call.getThisObject(),
                                                                       call.getReceiverArgument(), call.getExplicitReceiverKind(),
                                                                       call.isSafeCall());

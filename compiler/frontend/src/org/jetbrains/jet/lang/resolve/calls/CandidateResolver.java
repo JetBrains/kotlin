@@ -472,12 +472,12 @@ public class CandidateResolver {
         return OTHER_ERROR.combine(argumentsStatus);
     }
 
-    private <D extends CallableDescriptor> void addConstraintForValueArgument(
+    private void addConstraintForValueArgument(
             @NotNull ValueArgument valueArgument,
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull TypeSubstitutor substitutor,
             @NotNull ConstraintSystem constraintSystem,
-            @NotNull CallCandidateResolutionContext<D> context,
+            @NotNull CallCandidateResolutionContext<?> context,
             @Nullable boolean[] isErrorType,
             @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
 
@@ -486,7 +486,7 @@ public class CandidateResolver {
         TemporaryBindingTrace traceToResolveArgument = TemporaryBindingTrace.create(
                 context.trace, "transient trace to resolve argument", argumentExpression);
         JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
-        CallResolutionContext newContext = context.replaceBindingTrace(traceToResolveArgument).replaceExpectedType(expectedType);
+        CallResolutionContext<?> newContext = context.replaceBindingTrace(traceToResolveArgument).replaceExpectedType(expectedType);
         JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext,
                                                                                resolveFunctionArgumentBodies, traceToResolveArgument);
         JetType type = typeInfoForCall.getType();
@@ -558,7 +558,7 @@ public class CandidateResolver {
                 if (TypeUtils.dependsOnTypeParameters(expectedType, candidateCall.getCandidateDescriptor().getTypeParameters())) {
                     expectedType = NO_EXPECTED_TYPE;
                 }
-                CallResolutionContext newContext = context.replaceDataFlowInfo(candidateCall.getDataFlowInfo()).replaceBindingTrace(trace)
+                CallResolutionContext<?> newContext = context.replaceDataFlowInfo(candidateCall.getDataFlowInfo()).replaceBindingTrace(trace)
                         .replaceExpectedType(expectedType);
                 JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
                         expression, newContext, resolveFunctionArgumentBodies, null);

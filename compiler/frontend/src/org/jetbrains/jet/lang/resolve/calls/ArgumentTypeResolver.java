@@ -85,11 +85,11 @@ public class ArgumentTypeResolver {
         return KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(supertype) || ErrorUtils.isErrorType(supertype);
     }
 
-    public void checkTypesWithNoCallee(@NotNull CallResolutionContext context) {
+    public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {
         checkTypesWithNoCallee(context, SKIP_FUNCTION_ARGUMENTS);
     }
 
-    public void checkTypesWithNoCallee(@NotNull CallResolutionContext context, @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
+    public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context, @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && !(argumentExpression instanceof JetFunctionLiteralExpression)) {
@@ -112,7 +112,7 @@ public class ArgumentTypeResolver {
         }
     }
 
-    public void checkTypesForFunctionArgumentsWithNoCallee(@NotNull CallResolutionContext context) {
+    public void checkTypesForFunctionArgumentsWithNoCallee(@NotNull CallResolutionContext<?> context) {
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && (argumentExpression instanceof JetFunctionLiteralExpression)) {
@@ -125,7 +125,7 @@ public class ArgumentTypeResolver {
         }
     }
 
-    public void checkUnmappedArgumentTypes(CallResolutionContext context, Set<ValueArgument> unmappedArguments) {
+    public void checkUnmappedArgumentTypes(CallResolutionContext<?> context, Set<ValueArgument> unmappedArguments) {
         for (ValueArgument valueArgument : unmappedArguments) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
@@ -134,7 +134,7 @@ public class ArgumentTypeResolver {
         }
     }
 
-    public <D extends CallableDescriptor> void checkTypesForFunctionArguments(CallResolutionContext context, ResolvedCallImpl<D> resolvedCall) {
+    public <D extends CallableDescriptor> void checkTypesForFunctionArguments(CallResolutionContext<?> context, ResolvedCallImpl<D> resolvedCall) {
         Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = resolvedCall.getValueArguments();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : arguments.entrySet()) {
             ValueParameterDescriptor valueParameterDescriptor = entry.getKey();
@@ -160,7 +160,7 @@ public class ArgumentTypeResolver {
     @NotNull
     public JetTypeInfo getArgumentTypeInfo(
             @Nullable JetExpression expression,
-            @NotNull CallResolutionContext context,
+            @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode,
             @Nullable TemporaryBindingTrace traceToCommitForCall
     ) {
@@ -202,7 +202,7 @@ public class ArgumentTypeResolver {
     @NotNull
     public JetTypeInfo getFunctionLiteralTypeInfo(
             @NotNull JetFunctionLiteralExpression functionLiteralExpression,
-            @NotNull CallResolutionContext context,
+            @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (resolveArgumentsMode == SKIP_FUNCTION_ARGUMENTS) {
