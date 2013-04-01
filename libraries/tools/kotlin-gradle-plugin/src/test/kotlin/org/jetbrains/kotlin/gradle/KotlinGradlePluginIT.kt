@@ -38,7 +38,6 @@ class BasicKotlinGradleIT {
 
         val builder = ProcessBuilder(cmd)
         builder.directory(projectDir)
-
         builder.redirectErrorStream(true)
         val process = builder.start()
 
@@ -59,6 +58,32 @@ class BasicKotlinGradleIT {
         assertTrue(buildOutput.contains(":compileKotlin"), "Should contain ':compileKotlin'")
         assertTrue(buildOutput.contains(":compileTestKotlin"), "Should contain ':compileTestKotlin'")
         assertTrue(buildOutput.contains(":compileDeployKotlin"), "Should contain ':compileDeployKotlin'")
+
+        // Run the build second time, assert everything is up-to-date
+
+        val up2dateBuilder = ProcessBuilder(cmd)
+        up2dateBuilder.directory(projectDir)
+        up2dateBuilder.redirectErrorStream(true)
+        val up2dateProcess = up2dateBuilder.start()
+
+        val up2dateProcessScanner = Scanner(up2dateProcess.getInputStream()!!)
+        val up2dateText = StringBuilder()
+        while (up2dateProcessScanner.hasNextLine()) {
+            up2dateText append up2dateProcessScanner.nextLine()
+            up2dateText append "\n"
+        }
+        up2dateProcessScanner.close()
+
+        val up2dateResult = up2dateProcess.waitFor()
+        val up2dateBuildOutput = up2dateText.toString()
+
+        println(up2dateBuildOutput)
+
+        assertEquals(up2dateResult, 0)
+        assertTrue(up2dateBuildOutput.contains(":compileKotlin UP-TO-DATE"), "Should contain ':compileKotlin UP-TO-DATE'")
+        assertTrue(up2dateBuildOutput.contains(":compileTestKotlin UP-TO-DATE"), "Should contain ':compileTestKotlin UP-TO-DATE'")
+        assertTrue(up2dateBuildOutput.contains(":compileDeployKotlin UP-TO-DATE"), "Should contain ':compileDeployKotlin UP-TO-DATE'")
+        assertTrue(up2dateBuildOutput.contains(":compileJava UP-TO-DATE"), "Should contain ':compileJava UP-TO-DATE'")
     }
 
 
