@@ -216,7 +216,7 @@ public class CandidateResolver {
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
     }
 
-    public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
+    public <D extends CallableDescriptor> JetType completeTypeInferenceDependentOnExpectedTypeForCall(
             @NotNull CallCandidateResolutionContext<D> context,
             boolean isInnerCall
     ) {
@@ -239,7 +239,8 @@ public class CandidateResolver {
 
             context.tracing.typeInferenceFailed(context.trace, errorData);
             resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
-            return;
+            if (!CallResolverUtil.hasInferredReturnType(resolvedCall)) return null;
+            return resolvedCall.getResultingDescriptor().getReturnType();
         }
 
         boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true);
@@ -271,9 +272,11 @@ public class CandidateResolver {
                 DataFlowUtils.checkType(resolvedCall.getResultingDescriptor().getReturnType(), (JetCallExpression) callElement, context, context.dataFlowInfo);
             }
         }
+        return resolvedCall.getResultingDescriptor().getReturnType();
     }
 
-    public <D extends CallableDescriptor> void completeNestedCallsInference(
+    @Nullable
+    public <D extends CallableDescriptor> JetType completeNestedCallsInference(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
@@ -318,16 +321,20 @@ public class CandidateResolver {
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
                         storedContextForArgument.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
+                JetType type;
                 if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
-                    completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
+                    type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
                 }
                 else {
-                    completeNestedCallsInference(contextForArgument);
+                    type = completeNestedCallsInference(contextForArgument);
                     checkValueArgumentTypes(contextForArgument);
                 }
+
+                DataFlowUtils.checkType(type, expression, contextForArgument);
             }
         }
         recordReferenceForInvokeFunction(context);
+        return resolvedCall.getResultingDescriptor().getReturnType();
     }
 
     private static <D extends CallableDescriptor> void recordReferenceForInvokeFunction(CallCandidateResolutionContext<D> context) {

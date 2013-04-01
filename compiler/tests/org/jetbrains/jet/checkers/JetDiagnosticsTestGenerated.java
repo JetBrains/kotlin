@@ -2195,6 +2195,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/kt3395.kt");
                 }
                 
+                @TestMetadata("kt3461checkTypes.kt")
+                public void testKt3461checkTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/kt3461checkTypes.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/inference/regressions")

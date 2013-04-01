@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.types.*;
@@ -113,9 +115,7 @@ public class CallResolverUtil {
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
     }
 
-    public static <D extends CallableDescriptor> boolean hasReturnTypeDependentOnNotInferredParams(
-            @NotNull ResolvedCallImpl<D> callToComplete
-    ) {
+    private static boolean hasReturnTypeDependentOnNotInferredParams(@NotNull ResolvedCallImpl<?> callToComplete) {
         ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
         if (constraintSystem == null) return false;
 
@@ -132,6 +132,17 @@ public class CallResolverUtil {
             }
         }
         return false;
+    }
+
+    public static boolean hasInferredReturnType(ResolvedCallWithTrace<?> call) {
+        boolean isKnownReturnType = true;
+        ResolvedCallImpl<?> callToComplete = call.getCallToCompleteTypeArgumentInference();
+        if (hasReturnTypeDependentOnNotInferredParams(callToComplete)) { isKnownReturnType = false; }
+
+        // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
+        ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
+        if (constraintSystem != null && constraintSystem.hasOnlyExpectedTypeMismatch()) { isKnownReturnType = false; }
+        return isKnownReturnType;
     }
 
     @Nullable
