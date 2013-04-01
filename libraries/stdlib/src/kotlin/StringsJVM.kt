@@ -36,7 +36,7 @@ public inline fun String.toCharArray() : CharArray = (this as java.lang.String).
 
 public inline fun String.toCharList(): List<Char> = toCharArray().toList()
 
-public inline fun String.format(format : String, vararg args : Any?) : String = java.lang.String.format(format, args)
+public inline fun String.format(vararg args : Any?) : String = java.lang.String.format(this, *args)
 
 public inline fun String.split(regex : String) : Array<String> = (this as java.lang.String).split(regex)
 
