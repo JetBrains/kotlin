@@ -26,6 +26,7 @@ import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import com.intellij.openapi.Disposable
 import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.util.QualifiedNamesUtil
 
 public open class Converter() {
 
@@ -104,7 +105,7 @@ public open class Converter() {
         else
             ArrayList(importsToImportList(importList.getAllImportStatements()) filter {
                 // If name is invalid, like with star imports, don't try to filter
-                if (!FqName.isValid(it.name))
+                if (!QualifiedNamesUtil.isValidJavaFqName(it.name))
                     true
                 else {
                     // If imported class has a kotlin analog, drop the import
