@@ -24,6 +24,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
@@ -38,27 +39,39 @@ import java.util.Collection;
 
 public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase implements KotlinLightClass, JetJavaMirrorMarker {
     @Nullable
-    public static KotlinLightClassForPackage create(@NotNull PsiManager manager, @NotNull FqName qualifiedName, @NotNull Collection<JetFile> files) {
+    public static KotlinLightClassForPackage create(
+            @NotNull PsiManager manager,
+            @NotNull FqName qualifiedName,
+            @NotNull GlobalSearchScope searchScope,
+            @NotNull Collection<JetFile> files // this is redundant, but computing it multiple times is costly
+    ) {
         for (JetFile file : files) {
             if (LightClassUtil.belongsToKotlinBuiltIns(file)) return null;
         }
-        return new KotlinLightClassForPackage(manager, qualifiedName, files);
+        return new KotlinLightClassForPackage(manager, qualifiedName, searchScope, files);
     }
 
     private final FqName packageFqName;
     private final FqName packageClassFqName; // derived from packageFqName
+    private final GlobalSearchScope searchScope;
     private final Collection<JetFile> files;
     private final int hashCode;
     private final CachedValue<PsiJavaFileStub> javaFileStub;
 
-    private KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
+    private KotlinLightClassForPackage(
+            @NotNull PsiManager manager,
+            @NotNull FqName packageFqName,
+            @NotNull GlobalSearchScope searchScope,
+            @NotNull Collection<JetFile> files
+    ) {
         super(manager);
         this.packageFqName = packageFqName;
         this.packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
+        this.searchScope = searchScope;
         assert !files.isEmpty() : "No files for package " + packageFqName;
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
-        KotlinJavaFileStubProvider stubProvider = KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, files);
+        KotlinJavaFileStubProvider stubProvider = KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, searchScope);
         this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
     }
 
@@ -95,7 +108,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @NotNull
     @Override
     public PsiElement copy() {
-        return new KotlinLightClassForPackage(getManager(), packageFqName, files);
+        return new KotlinLightClassForPackage(getManager(), packageFqName, searchScope, files);
     }
 
     @NotNull

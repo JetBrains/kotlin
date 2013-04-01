@@ -115,7 +115,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         Collection<JetFile> filesForPackage = lightClassGenerationSupport.findFilesForPackage(qualifiedName, scope);
 
         if (!filesForPackage.isEmpty() && NamespaceCodegen.shouldGenerateNSClass(filesForPackage)) {
-            KotlinLightClassForPackage lightClass = KotlinLightClassForPackage.create(psiManager, qualifiedName, filesForPackage);
+            KotlinLightClassForPackage lightClass = KotlinLightClassForPackage.create(psiManager, qualifiedName, scope, filesForPackage);
             if (lightClass != null) {
                 answer.add(lightClass);
 
