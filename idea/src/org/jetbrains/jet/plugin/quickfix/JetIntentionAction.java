@@ -25,6 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetFile;
 
 public abstract class JetIntentionAction<T extends PsiElement> implements IntentionAction {
     protected @NotNull T element;
@@ -35,7 +36,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid() && file.getManager().isInProject(file);
+        return element.isValid() && file.getManager().isInProject(file) && (file instanceof JetFile);
     }
 
     @Override

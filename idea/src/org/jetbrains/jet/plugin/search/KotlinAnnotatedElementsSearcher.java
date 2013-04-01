@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.search;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -44,16 +43,12 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * User: Natalia.Ukhorskaya
- */
 public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
     private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher");
 
@@ -73,13 +68,12 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
             ApplicationManager.getApplication().runReadAction(new Runnable() {
                 @Override
                 public void run() {
-                    //TODO LazyResolve
-                    Project project = elt.getProject();
-                    KotlinDeclarationsCache declarations = KotlinCacheManager.getInstance(project).getDeclarationsFromProject();
-                    BindingContext context = declarations.getBindingContext();
-
                     JetDeclaration parentOfType = PsiTreeUtil.getParentOfType(elt, JetDeclaration.class);
                     if (parentOfType == null) return;
+
+                    //TODO LazyResolve
+                    BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(parentOfType);
+
                     AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, (JetAnnotationEntry) elt);
                     if (annotationDescriptor == null) return;
 
