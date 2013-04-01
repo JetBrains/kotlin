@@ -16,17 +16,7 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-
-public final class AnalyzerFacadeProvider {
-    private AnalyzerFacadeProvider() {
-    }
-
-    @NotNull
-    public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
-        return TargetPlatformDetector.getPlatform(file) == TargetPlatform.JVM ? AnalyzerFacadeForJVM.INSTANCE : JSAnalyzerFacadeForIDEA.INSTANCE;
-    }
+public interface TargetPlatform {
+    TargetPlatform JVM = new TargetPlatformImpl("JVM");
+    TargetPlatform JS = new TargetPlatformImpl("JS");
 }
