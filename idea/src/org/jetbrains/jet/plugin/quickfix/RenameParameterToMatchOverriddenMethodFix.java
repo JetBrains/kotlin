@@ -24,12 +24,13 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 
 public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionAction<JetParameter>{
     private final JetParameter parameter;
@@ -46,7 +47,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionActio
             return false;
         }
 
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
+        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(parameter);
         VariableDescriptor parameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, parameter);
         if (parameterDescriptor == null) {
             return false;

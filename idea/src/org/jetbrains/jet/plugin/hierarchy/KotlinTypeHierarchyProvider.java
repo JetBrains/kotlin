@@ -36,8 +36,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -47,7 +46,7 @@ import java.util.Collection;
 public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
 
     @Override
-    public PsiElement getTarget(@NotNull final DataContext dataContext) {
+    public PsiElement getTarget(@NotNull DataContext dataContext) {
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
         if (project == null) return null;
 
@@ -69,7 +68,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             else if (target instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) target;
                 String functionName = function.getName();
-                FunctionDescriptor functionDescriptor = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext()
+                FunctionDescriptor functionDescriptor = KotlinCacheManagerUtil.getDeclarationsBindingContext(function)
                         .get(BindingContext.FUNCTION, target);
                 if (functionDescriptor != null) {
                     JetType type = functionDescriptor.getReturnType();

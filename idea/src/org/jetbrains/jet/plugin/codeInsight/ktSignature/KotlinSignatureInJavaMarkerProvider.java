@@ -25,7 +25,6 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -49,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -67,8 +67,6 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             }
         }
     };
-    private static final Logger LOG = Logger.getInstance(KotlinSignatureInJavaMarkerProvider.class);
-
 
     @Override
     @Nullable
@@ -87,7 +85,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(project).getDeclarationsFromProject();
+        KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(TargetPlatform.JVM);
         BindingContext bindingContext = declarationsCache.getBindingContext();
         DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(bindingContext, "wrapped context of declarations cache");
 

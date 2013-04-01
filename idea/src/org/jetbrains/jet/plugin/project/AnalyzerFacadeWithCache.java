@@ -46,9 +46,9 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCacheImpl;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCacheImpl;
 import org.jetbrains.jet.plugin.util.ApplicationUtils;
 
 import java.util.Collection;
@@ -136,7 +136,8 @@ public final class AnalyzerFacadeWithCache {
                     Predicates.<PsiFile>alwaysFalse()
             );
         }
-        KotlinDeclarationsCache cache = KotlinCacheManager.getInstance(fileToCache.getProject()).getDeclarationsFromProject();
+
+        KotlinDeclarationsCache cache = KotlinCacheManagerUtil.getDeclarationsFromProject(fileToCache);
         return ((KotlinDeclarationsCacheImpl) cache).getAnalyzeExhaust();
     }
 

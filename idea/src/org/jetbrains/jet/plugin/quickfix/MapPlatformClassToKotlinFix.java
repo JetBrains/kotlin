@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -62,7 +62,6 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
     @NotNull
     @Override
     public String getText() {
-
         String platformClassQualifiedName = DescriptorRenderer.TEXT.renderType(platformClass.getDefaultType());
         return possibleClasses.size() == 1
                ? JetBundle.message("map.platform.class.to.kotlin", platformClassQualifiedName,
@@ -78,7 +77,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
+        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext((JetFile) file);
         Collection<Diagnostic> diagnostics = context.getDiagnostics();
         List<JetImportDirective> imports = new ArrayList<JetImportDirective>();
         List<JetUserType> usages = new ArrayList<JetUserType>();
@@ -192,8 +191,10 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
                 JetReferenceExpression typeExpr = getImportOrUsageFromDiagnostic(diagnostic);
                 if (typeExpr == null) return null;
 
-                Project project = diagnostic.getPsiFile().getProject();
-                BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
+                PsiFile psiFile = diagnostic.getPsiFile();
+                if (!(psiFile instanceof JetFile)) return null;
+
+                BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext((JetFile) psiFile);
                 ClassDescriptor platformClass = resolveToClass(typeExpr, context);
                 if (platformClass == null) return null;
 
