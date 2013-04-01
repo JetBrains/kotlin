@@ -7,20 +7,13 @@ import org.jetbrains.kotlin.gradle.plugin.KSpec
 import java.io.File
 import org.gradle.api.GradleException
 import org.jetbrains.jet.cli.common.ExitCode
-import org.gradle.api.Task
 import org.gradle.api.tasks.SourceTask
 import org.jetbrains.kotlin.doc.KDocArguments
-import org.jetbrains.kotlin.doc.KDocConfig
 import java.util.HashMap
 import java.util.HashSet
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
-import java.util.LinkedList
-import com.google.common.io.Resources
-import java.net.URL
-import com.google.common.io.Files
 import org.gradle.api.file.SourceDirectorySet
-import com.google.common.base.Joiner
 import java.util.ArrayList
 import org.apache.commons.io.FilenameUtils
 import org.jetbrains.jet.cli.common.messages.MessageCollector
@@ -28,8 +21,6 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.apache.commons.io.FileUtils
-import java.io.IOException
 import org.apache.commons.lang.StringUtils
 import org.gradle.api.initialization.dsl.ScriptHandler
 
@@ -40,11 +31,6 @@ public open class KotlinCompile(): AbstractCompile() {
     val logger = Logging.getLogger(getClass())
 
     public val kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
-
-    {
-        kotlinOptions.noStdlib = true
-        kotlinOptions.noJdkAnnotations = true
-    }
 
     // override setSource to track source directory sets
     override fun setSource(source: Any?) {
@@ -78,7 +64,6 @@ public open class KotlinCompile(): AbstractCompile() {
 
 
     override fun compile() {
-
         val args = kotlinOptions
 
         val javaSrcRoots = HashSet<File>()
@@ -113,9 +98,15 @@ public open class KotlinCompile(): AbstractCompile() {
             args.setClasspath(effectiveClassPath)
         }
 
+        args.outputDir = if (StringUtils.isEmpty(kotlinOptions.outputDir)) { getDestinationDir()?.getPath() } else { kotlinOptions.outputDir }
+
         val embeddedAnnotations = getAnnotations()
-        args.outputDir =if (StringUtils.isEmpty(kotlinOptions.outputDir)) { getDestinationDir()?.getPath() } else { kotlinOptions.outputDir }
-        args.annotations = if (StringUtils.isEmpty(kotlinOptions.annotations)) { embeddedAnnotations.getPath() } else { kotlinOptions.annotations }
+        val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
+        val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.getPath())
+        args.annotations = allAnnotations.makeString(File.pathSeparator)
+
+        args.noStdlib = true
+        args.noJdkAnnotations = true
 
         val messageCollector = GradleMessageCollector(logger)
         val exitCode = compiler.exec(messageCollector, args)
