@@ -17,16 +17,16 @@
 package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
-public final class AnalyzerFacadeProvider {
-    private AnalyzerFacadeProvider() {
+public class TargetPlatformImpl implements TargetPlatform {
+    @NotNull private final String platformName;
+
+    public TargetPlatformImpl(@NotNull String platformName) {
+        this.platformName = platformName;
     }
 
-    @NotNull
-    public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
-        return TargetPlatformDetector.getPlatform(file) == TargetPlatform.JVM ? AnalyzerFacadeForJVM.INSTANCE : JSAnalyzerFacadeForIDEA.INSTANCE;
+    @Override
+    public String toString() {
+        return platformName;
     }
 }
