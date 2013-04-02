@@ -58,10 +58,15 @@ public class JSLibraryStdDescription extends CustomLibraryDescription {
         CreateJavaScriptLibraryDialog dialog = new CreateJavaScriptLibraryDialog(null, "Create Kotlin JavaScript Library", contextDirectory);
         dialog.show();
 
-        if (!dialog.isOK()) return null;
+        if (dialog.isOK()) {
+            return createNewLibrary(parentComponent, PathUtil.getKotlinPathsForIdeaPlugin(), dialog);
+        }
 
-        KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
+        return null;
+    }
 
+    @Nullable
+    public NewLibraryConfiguration createNewLibrary(@Nullable JComponent parentComponent, @NotNull KotlinPaths paths, @NotNull JSLibraryCreateOptions options) {
         File libraryFile = paths.getJsLibJarPath();
         if (!libraryFile.exists()) {
             Messages.showErrorDialog(String.format("JavaScript standard library was not found in %s", paths.getLibPath()),
@@ -70,28 +75,26 @@ public class JSLibraryStdDescription extends CustomLibraryDescription {
         }
 
         Map<File, String> copyToPaths = new HashMap<File, String>();
-        if (dialog.isCopyLibraryFiles()) {
-            String copyIntoPath = dialog.getCopyLibraryIntoPath();
-            assert copyIntoPath != null;
 
-            copyToPaths.put(libraryFile, copyIntoPath);
+        String copyLibraryIntoPath = options.getCopyLibraryIntoPath();
+        if (copyLibraryIntoPath != null) {
+            copyToPaths.put(libraryFile, copyLibraryIntoPath);
         }
 
-        if (dialog.isCopyJS()) {
-            String copyIntoPath = dialog.getCopyJsIntoPath();
-            assert copyIntoPath != null;
-
-            copyToPaths.put(paths.getJsLibJsPath(), copyIntoPath);
+        String copyJsIntoPath = options.getCopyJsIntoPath();
+        if (copyJsIntoPath != null) {
+            copyToPaths.put(paths.getJsLibJsPath(), copyJsIntoPath);
         }
 
         if (!copyToPaths.isEmpty()) {
-            Map<File,File> copiedFiles =
-                    FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_SCRIPT_LIBRARY_CREATION, copyToPaths);
+            assert parentComponent != null : "Copying should be performed only when executed in GUI";
+
+            Map<File,File> copiedFiles = FileUIUtils.copyWithOverwriteDialog(parentComponent, JAVA_SCRIPT_LIBRARY_CREATION, copyToPaths);
             if (copiedFiles == null) {
                 return null;
             }
 
-            if (dialog.isCopyLibraryFiles()) {
+            if (copyLibraryIntoPath != null) {
                 libraryFile = copiedFiles.get(libraryFile);
             }
         }

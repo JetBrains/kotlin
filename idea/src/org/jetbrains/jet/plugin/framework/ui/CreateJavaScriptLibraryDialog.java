@@ -22,13 +22,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.JSLibraryCreateOptions;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CreateJavaScriptLibraryDialog extends DialogWrapper {
+public class CreateJavaScriptLibraryDialog extends DialogWrapper implements JSLibraryCreateOptions {
     private final CopyIntoPanel copyJSIntoPanel;
     private final CopyIntoPanel copyLibraryIntoPanel;
 
@@ -48,7 +49,7 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
 
         compilerTextLabel.setText(compilerTextLabel.getText() + " - " + JetPluginUtil.getPluginVersion());
 
-        copyJSIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "script"), "&Script directory:");
+        copyJSIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "script"), "Script directory:");
         copyJSIntoPanel.addValidityListener(new ValidityListener() {
             @Override
             public void validityChanged(boolean isValid) {
@@ -79,22 +80,16 @@ public class CreateJavaScriptLibraryDialog extends DialogWrapper {
         updateComponents();
     }
 
+    @Override
     @Nullable
     public String getCopyJsIntoPath() {
         return copyJSIntoPanel.getPath();
     }
 
+    @Override
     @Nullable
     public String getCopyLibraryIntoPath() {
         return copyLibraryIntoPanel.getPath();
-    }
-
-    public boolean isCopyLibraryFiles() {
-        return copyLibraryCheckbox.isSelected();
-    }
-
-    public boolean isCopyJS() {
-        return copyJSRuntimeCheckbox.isSelected();
     }
 
     private void updateComponents() {
