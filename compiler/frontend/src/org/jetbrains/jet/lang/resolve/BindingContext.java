@@ -226,6 +226,8 @@ public interface BindingContext {
     ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR = Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
 
+    WritableSlice<PsiElement, FunctionDescriptor> CALLABLE_REFERENCE = Slices.createSimpleSlice();
+
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
     WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET =
             Slices.<JetReferenceExpression, Collection<? extends PsiElement>>sliceBuilder().build();

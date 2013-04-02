@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -32,13 +34,17 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
+import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCache;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
@@ -46,17 +52,21 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.ThrowingList;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
@@ -564,8 +574,142 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitCallableReferenceExpression(JetCallableReferenceExpression expression, ExpressionTypingContext context) {
-        context.trace.report(UNSUPPORTED.on(expression, getClass().getCanonicalName()));
-        return JetTypeInfo.create(null, context.dataFlowInfo);
+        JetTypeReference typeReference = expression.getTypeReference();
+
+        JetType receiverType =
+                typeReference == null
+                ? null
+                : context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, false);
+
+        JetSimpleNameExpression callableReference = expression.getCallableReference();
+        if (callableReference.getReferencedName().isEmpty()) {
+            context.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference));
+            JetType errorType = ErrorUtils.createErrorType("Empty callable reference");
+            return DataFlowUtils.checkType(errorType, expression, context, context.dataFlowInfo);
+        }
+
+        JetType result = getCallableReferenceType(expression, receiverType, context);
+        return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
+    }
+
+    @Nullable
+    private static JetType getCallableReferenceType(
+            @NotNull JetCallableReferenceExpression expression,
+            @Nullable JetType lhsType,
+            @NotNull ExpressionTypingContext context
+    ) {
+        JetSimpleNameExpression reference = expression.getCallableReference();
+
+        boolean[] result = new boolean[1];
+        FunctionDescriptor descriptor = resolveCallableReferenceTarget(lhsType, context, expression, result);
+
+        if (!result[0]) {
+            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+        }
+        if (descriptor == null) return null;
+
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
+        if (receiverParameter != null && expectedThisObject != null) {
+            // TODO: report "extensions in classes" are not supported
+            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+            return null;
+        }
+
+        JetType receiverType = null;
+        if (receiverParameter != null) {
+            receiverType = receiverParameter.getType();
+        }
+        else if (expectedThisObject != null) {
+            receiverType = expectedThisObject.getType();
+        }
+
+        //noinspection ConstantConditions
+        JetType type = KotlinBuiltIns.getInstance().getKFunctionType(
+                Collections.<AnnotationDescriptor>emptyList(),
+                receiverType,
+                DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                descriptor.getReturnType(),
+                receiverParameter != null
+        );
+
+        ExpressionAsFunctionDescriptor functionDescriptor = new ExpressionAsFunctionDescriptor(
+                context.scope.getContainingDeclaration(),
+                Name.special("<callable-reference>")
+        );
+        FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);
+
+        context.trace.record(CALLABLE_REFERENCE, expression, functionDescriptor);
+
+        return type;
+    }
+
+    @Nullable
+    private static FunctionDescriptor resolveCallableReferenceTarget(
+            @Nullable JetType lhsType,
+            @NotNull ExpressionTypingContext context,
+            @NotNull JetCallableReferenceExpression expression,
+            @NotNull boolean[] result
+    ) {
+        JetSimpleNameExpression reference = expression.getCallableReference();
+
+        if (lhsType == null) {
+            return resolveCallableNotCheckingArguments(reference, NO_RECEIVER, context, result);
+        }
+
+        ClassifierDescriptor classifier = lhsType.getConstructor().getDeclarationDescriptor();
+        // TODO: report an error if the classifier is not a class
+        assert classifier instanceof ClassDescriptor : "TODO";
+
+        ReceiverValue receiver = new TransientReceiver(lhsType);
+        TemporaryBindingTrace traceWithReceiver = TemporaryBindingTrace.create(context.trace,
+                "trace to resolve callable reference with receiver", reference);
+        FunctionDescriptor descriptor =
+                resolveCallableNotCheckingArguments(reference, receiver, context.replaceBindingTrace(traceWithReceiver), result);
+        if (result[0]) {
+            traceWithReceiver.commit();
+            return descriptor;
+        }
+
+        JetScope staticScope = getStaticNestedClassesScope((ClassDescriptor) classifier);
+        TemporaryBindingTrace traceForStatic = TemporaryBindingTrace.create(context.trace,
+                "trace to resolve callable reference in static scope", reference);
+        FunctionDescriptor possibleStaticNestedClassConstructor = resolveCallableNotCheckingArguments(reference, NO_RECEIVER,
+                context.replaceBindingTrace(traceForStatic).replaceScope(staticScope), result);
+        if (result[0]) {
+            traceForStatic.commit();
+            return possibleStaticNestedClassConstructor;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static FunctionDescriptor resolveCallableNotCheckingArguments(
+            @NotNull JetSimpleNameExpression reference,
+            @NotNull ReceiverValue receiver,
+            @NotNull ExpressionTypingContext context,
+            @NotNull boolean[] result
+    ) {
+        Call call = CallMaker.makeCall(reference, receiver, null, reference, ThrowingList.<ValueArgument>instance());
+
+        TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", reference);
+
+        ExpressionTypingContext contextForResolve = context.replaceBindingTrace(trace).replaceExpectedType(NO_EXPECTED_TYPE);
+        ResolvedCallWithTrace<FunctionDescriptor> function = contextForResolve.expressionTypingServices.getCallExpressionResolver()
+                .getResolvedCallForFunction(call, reference, contextForResolve, ResolveMode.TOP_LEVEL_CALL,
+                                            CheckValueArgumentsMode.DISABLED, ResolutionResultsCache.create(), result);
+        if (!result[0]) return null;
+
+        if (function instanceof VariableAsFunctionResolvedCall) {
+            // TODO: KProperty
+            context.trace.report(UNSUPPORTED.on(reference, "References to variables aren't supported yet"));
+            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+            return null;
+        }
+
+        trace.commit();
+        return function != null ? function.getResultingDescriptor() : null;
     }
 
     @Override
