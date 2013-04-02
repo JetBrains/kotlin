@@ -1,9 +1,13 @@
 import java.io.*
 
 fun box(): String {
-    val filter = FilenameFilter { dir, name -> if (name == null) false else (name as java.lang.String).endsWith(".md") }
-    val listFiles = File(".").listFiles(filter)!!
-    if (listFiles.size != 1) return "Wrong size: $listFiles.size"
-    val name = listFiles[0].getName()
-    return if (name == "ReadMe.md") "OK" else "Wrong name: $name"
+    val ACCEPT_NAME = "test"
+    val WRONG_NAME = "wrong"
+
+    val filter = FileFilter { file -> ACCEPT_NAME == file?.getName() }
+
+    if (!filter.accept(File(ACCEPT_NAME))) return "Wrong answer for $ACCEPT_NAME"
+    if (filter.accept(File(WRONG_NAME))) return "Wrong answer for $WRONG_NAME"
+
+    return "OK"
 }
