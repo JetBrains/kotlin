@@ -18,8 +18,10 @@ package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -60,4 +62,7 @@ public abstract class LightClassGenerationSupport {
 
     @NotNull
     public abstract Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope);
+
+    @Nullable
+    public abstract PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject);
 }

@@ -19,18 +19,26 @@ package org.jetbrains.jet.plugin.caches.resolve;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
+import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.stubindex.*;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -111,6 +119,17 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         }
 
         return result;
+    }
+
+    @Nullable
+    @Override
+    public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
+        VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
+        if (virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, classOrObject.getProject()) != null) {
+            return JetSourceNavigationHelper.getOriginalClass(classOrObject);
+        }
+
+        return  KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
     }
 
     @NotNull

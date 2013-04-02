@@ -67,6 +67,11 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
     }
 
     private void doNavigationInSourcesTest(@NotNull String path, @NotNull String element, @NotNull String expectedFqName) throws IOException {
+        PsiElement navigationElement = getNavigationElement(path, element);
+        checkNavigationElement(navigationElement, expectedFqName);
+    }
+
+    protected PsiElement getNavigationElement(String path, String element) {
         File file = new File(path);
         PsiFile psiFile = getPsiFileForFileFromSources(file);
         String text = psiFile.getText();
@@ -76,8 +81,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
                       text.substring(index - 20, index) + "<caret>" + text.substring(index, index + 20), ref);
         PsiElement resolvedElement = ref.resolve();
         assertNotNull("Cannot resolve reference: " + ref.getElement().getText(), resolvedElement);
-        PsiElement navigationElement = resolvedElement.getNavigationElement();
-        checkNavigationElement(navigationElement, expectedFqName);
+        return resolvedElement.getNavigationElement();
     }
 
     @NotNull

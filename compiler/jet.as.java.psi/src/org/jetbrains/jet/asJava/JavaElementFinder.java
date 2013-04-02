@@ -34,14 +34,11 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import static org.jetbrains.jet.codegen.CodegenUtil.getLocalNameForObject;
 
 public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacadeKotlinHacks.KotlinFinderMarker {
 
@@ -102,8 +99,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         for (JetClassOrObject declaration : classOrObjectDeclarations) {
             if (!(declaration instanceof JetEnumEntry)) {
-                KotlinLightClassForExplicitDeclaration
-                        lightClass = KotlinLightClassForExplicitDeclaration.create(psiManager, qualifiedName, declaration);
+                PsiClass lightClass = LightClassUtil.createLightClass(declaration);
                 if (lightClass != null) {
                     answer.add(lightClass);
                 }
@@ -127,18 +123,6 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
                 }
             }
         }
-    }
-
-    @Nullable
-    private static String getLocalName(JetDeclaration declaration) {
-        String given = declaration.getName();
-        if (given != null) return given;
-
-        if (declaration instanceof JetObjectDeclaration) {
-            return getLocalNameForObject((JetObjectDeclaration) declaration);
-        }
-
-        return null;
     }
 
     @NotNull
@@ -205,13 +189,9 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
         for (JetClassOrObject declaration : declarations) {
-            String localName = getLocalName(declaration);
-            if (localName != null) {
-                KotlinLightClassForExplicitDeclaration aClass = KotlinLightClassForExplicitDeclaration
-                        .create(psiManager, packageFQN.child(Name.identifier(localName)), declaration);
-                if (aClass != null) {
-                    answer.add(aClass);
-                }
+            PsiClass aClass = LightClassUtil.createLightClass(declaration);
+            if (aClass != null) {
+                answer.add(aClass);
             }
         }
 

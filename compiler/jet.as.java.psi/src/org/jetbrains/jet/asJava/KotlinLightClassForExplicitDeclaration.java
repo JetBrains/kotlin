@@ -39,10 +39,12 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -59,11 +61,15 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     @Nullable
-    public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull FqName qualifiedName, @NotNull JetClassOrObject classOrObject) {
+    public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull JetClassOrObject classOrObject) {
         if (LightClassUtil.belongsToKotlinBuiltIns((JetFile) classOrObject.getContainingFile())) {
             return null;
         }
-        return new KotlinLightClassForExplicitDeclaration(manager, qualifiedName, classOrObject);
+
+        JvmClassName jvmClassName = PsiCodegenPredictor.getPredefinedJvmClassName(classOrObject);
+        if (jvmClassName == null) return null;
+
+        return new KotlinLightClassForExplicitDeclaration(manager, jvmClassName.getFqName(), classOrObject);
     }
 
     private final FqName classFqName; // FqName of (possibly inner) class

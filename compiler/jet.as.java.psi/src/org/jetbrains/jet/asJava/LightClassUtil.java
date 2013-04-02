@@ -111,13 +111,9 @@ public class LightClassUtil {
     }
 
     @Nullable
-    public static KotlinLightClass createLightClass(@Nullable JetClassOrObject classOrObject) {
+    public static PsiClass createLightClass(@Nullable JetClassOrObject classOrObject) {
         if (classOrObject == null) return null;
-
-        JvmClassName jvmClassName = PsiCodegenPredictor.getPredefinedJvmClassName(classOrObject);
-        if (jvmClassName == null) return null;
-
-        return  KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), jvmClassName.getFqName(), classOrObject);
+        return LightClassGenerationSupport.getInstance(classOrObject.getProject()).getPsiClass(classOrObject);
     }
 
     @Nullable

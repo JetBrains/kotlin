@@ -24,7 +24,6 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.impl.MarkerType;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -37,7 +36,6 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -81,11 +79,11 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 return null;
             }
         }
-        KotlinLightClass lightClass = LightClassUtil.createLightClass((JetClass) element);
+        PsiClass lightClass = LightClassUtil.createLightClass((JetClass) element);
         if (lightClass == null) {
             return null;
         }
-        PsiElement[] children = lightClass.getDelegate().getChildren();
+        PsiElement[] children = lightClass.getChildren();
         return children.length > 0 ? children[0] : null;
     }
 
