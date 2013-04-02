@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator
 import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -745,7 +744,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
-            IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
+            IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             if (operationType == JetTokens.COLON || operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
                 generateInstructions(expression.getLeft(), false);
                 builder.read(expression);
