@@ -36,7 +36,7 @@ public open class KotlinCompile(): AbstractCompile() {
     override fun setSource(source: Any?) {
         srcDirsRoots.clear()
         if (source is SourceDirectorySet) {
-            srcDirsRoots.addAll(source.getSrcDirs())
+            srcDirsRoots.addAll(source.getSrcDirs()!!)
         }
         super.setSource(source)
     }
@@ -45,7 +45,7 @@ public open class KotlinCompile(): AbstractCompile() {
     override fun source(vararg sources: Any?): SourceTask? {
         for (source in sources) {
             if (source is SourceDirectorySet) {
-                srcDirsRoots.addAll(source.getSrcDirs())
+                srcDirsRoots.addAll(source.getSrcDirs()!!)
             }
         }
         return super.source(sources)
