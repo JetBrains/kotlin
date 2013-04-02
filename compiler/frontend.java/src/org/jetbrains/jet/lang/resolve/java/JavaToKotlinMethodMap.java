@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -34,6 +35,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.intellij.psi.util.PsiFormatUtilBase.*;
 
 public class JavaToKotlinMethodMap {
     public static final JavaToKotlinMethodMap INSTANCE = new JavaToKotlinMethodMap();
@@ -87,14 +90,13 @@ public class JavaToKotlinMethodMap {
 
     @NotNull
     public static String serializePsiMethod(@NotNull PsiMethod psiMethod) {
-        String externalName = PsiFormatUtil.getExternalName(psiMethod, false);
-        assert externalName != null : "couldn't find external name for " + psiMethod.getText();
-        return externalName;
+        return PsiFormatUtil.formatMethod(
+                psiMethod, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
     }
 
     @NotNull
     public static String serializeFunction(@NotNull FunctionDescriptor fun) {
-        return DescriptorRenderer.TEXT.render(fun);
+        return DescriptorRenderer.COMPACT.render(fun);
     }
 
     // used in generated code
