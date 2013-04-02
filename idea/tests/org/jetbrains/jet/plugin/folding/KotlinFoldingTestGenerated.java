@@ -56,4 +56,9 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         doTest("idea/testData/folding/object.kt");
     }
     
+    @TestMetadata("oneImport.kt")
+    public void testOneImport() throws Exception {
+        doTest("idea/testData/folding/oneImport.kt");
+    }
+    
 }

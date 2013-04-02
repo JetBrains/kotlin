@@ -45,7 +45,7 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
         JetFile file = (JetFile) root;
 
         List<JetImportDirective> importList = file.getImportDirectives();
-        if (importList != null && !importList.isEmpty()) {
+        if (importList != null && importList.size() > 1) {
             JetImportDirective firstImport = importList.get(0);
             PsiElement importKeyword = firstImport.getFirstChild();
             int startOffset = importKeyword.getTextRange().getEndOffset() + 1;
