@@ -87,7 +87,7 @@ public class JavaToKotlinMethodMap {
 
     @NotNull
     public static String serializePsiMethod(@NotNull PsiMethod psiMethod) {
-        String externalName = PsiFormatUtil.getExternalName(psiMethod);
+        String externalName = PsiFormatUtil.getExternalName(psiMethod, false);
         assert externalName != null : "couldn't find external name for " + psiMethod.getText();
         return externalName;
     }
