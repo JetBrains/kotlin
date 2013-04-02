@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -74,7 +73,7 @@ public class JetPsiUtil {
     ) {
         if (expression instanceof JetBinaryExpressionWithTypeRHS) {
             JetBinaryExpressionWithTypeRHS binaryExpression = (JetBinaryExpressionWithTypeRHS) expression;
-            JetSimpleNameExpression operationSign = binaryExpression.getOperationSign();
+            JetSimpleNameExpression operationSign = binaryExpression.getOperationReference();
             if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
                 expression = binaryExpression.getLeft();
                 JetTypeReference typeReference = binaryExpression.getRight();
