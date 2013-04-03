@@ -82,7 +82,7 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path));
-        String isApplicableString = InTextDirectivesUtils.findStringWithPrefix(fileText, "// IS_APPLICABLE: ");
+        String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
 
         if (isApplicableString != null) {
             boolean isApplicableExpected = toString().equals("true");

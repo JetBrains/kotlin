@@ -59,7 +59,7 @@ public class QuickFixActionsUtils {
             }
         });
 
-        List<String> expectedErrorStrings = InTextDirectivesUtils.findLinesWithPrefixRemoved(file.getText(), "// ERROR:");
+        List<String> expectedErrorStrings = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ERROR:");
         Collections.sort(expectedErrorStrings);
 
         UsefulTestCase.assertOrderedEquals(
@@ -69,7 +69,7 @@ public class QuickFixActionsUtils {
 
     public static void checkAvailableActionsAreExpected(JetFile file, Collection<IntentionAction> availableActions) {
         List<String> validActions = Ordering.natural().sortedCopy(
-                Sets.newHashSet(InTextDirectivesUtils.findLinesWithPrefixRemoved(file.getText(), "// ACTION:")));
+                Sets.newHashSet(InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:")));
 
         Collection<String> actualActions = Ordering.natural().sortedCopy(
                 Collections2.transform(availableActions, new Function<IntentionAction, String>() {

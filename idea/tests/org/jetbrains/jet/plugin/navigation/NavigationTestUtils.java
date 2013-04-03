@@ -49,7 +49,7 @@ public final class NavigationTestUtils {
 
     public static void assertGotoImplementations(Editor editor, GotoTargetHandler.GotoData gotoData) {
         // Get expected references from the tested document
-        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefix(editor.getDocument().getText(), "// REF:");
+        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
         Collections.sort(expectedReferences);
 
         if (gotoData != null) {
@@ -72,11 +72,11 @@ public final class NavigationTestUtils {
 
     public static void assertGotoSymbol(@NotNull Project project, @NotNull Editor editor) {
 
-        List<String> searchTextList = InTextDirectivesUtils.findListWithPrefix(editor.getDocument().getText(), "// SEARCH_TEXT:");
+        List<String> searchTextList = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// SEARCH_TEXT:");
         Assert.assertFalse("There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
                            searchTextList.isEmpty());
 
-        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefix(editor.getDocument().getText(), "// REF:");
+        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
 
         String searchText = searchTextList.get(0);
 

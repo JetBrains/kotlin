@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefix;
+import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefixes;
 
 public abstract class AbstractDefaultConstructorCodegenTest extends CodegenTestCase {
 
@@ -64,7 +64,7 @@ public abstract class AbstractDefaultConstructorCodegenTest extends CodegenTestC
     }
 
     private String loadInstructionValue(String fileContent, String instructionName) {
-        List<String> testedClass = findListWithPrefix(fileContent, "// " + instructionName + ": ");
+        List<String> testedClass = findListWithPrefixes(fileContent, "// " + instructionName + ": ");
         assertTrue("Cannot find " + instructionName + " instruction", !testedClass.isEmpty());
         assertTrue(instructionName + " instruction must have only one element", testedClass.size() == 1);
         return testedClass.get(0);

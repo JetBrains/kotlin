@@ -167,7 +167,7 @@ public class ExpectedCompletionUtils {
 
     public static CompletionProposal[] processProposalAssertions(String fileText, String... prefixes) {
         Collection<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
-        for (String proposalStr : InTextDirectivesUtils.findListWithPrefix(fileText, prefixes)) {
+        for (String proposalStr : InTextDirectivesUtils.findListWithPrefixes(fileText, prefixes)) {
             Matcher matcher = CompletionProposal.PATTERN.matcher(proposalStr);
             matcher.find();
             proposals.add(new CompletionProposal(matcher.group(CompletionProposal.LOOKUP_STRING_GROUP_INDEX),

@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefix;
-import static org.jetbrains.jet.InTextDirectivesUtils.findStringWithPrefix;
+import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefixes;
+import static org.jetbrains.jet.InTextDirectivesUtils.findStringWithPrefixes;
 
 /*
  * Test correctness of written flags in class file
@@ -94,7 +94,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
 
     private static TestedObject parseExpectedTestedObject(String fileText) {
         TestedObject result = new TestedObject();
-        List<String> testedObjects = findListWithPrefix(fileText, "// TESTED_OBJECTS: ");
+        List<String> testedObjects = findListWithPrefixes(fileText, "// TESTED_OBJECTS: ");
         assertTrue("Cannot find TESTED_OBJECTS instruction", !testedObjects.isEmpty());
         result.containingClass = testedObjects.get(0);
         if (testedObjects.size() == 1) {
@@ -108,8 +108,8 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
                     "TESTED_OBJECTS instruction must contains one (for class) or two (for function and property) values");
         }
 
-        result.kind = findStringWithPrefix(fileText, "// TESTED_OBJECT_KIND: ");
-        List<String> isFullName = findListWithPrefix(fileText, "// IS_FULL_CONTAINING_CLASS_NAME: ");
+        result.kind = findStringWithPrefixes(fileText, "// TESTED_OBJECT_KIND: ");
+        List<String> isFullName = findListWithPrefixes(fileText, "// IS_FULL_CONTAINING_CLASS_NAME: ");
         if (isFullName.size() == 1) {
             result.isFullContainingClassName = Boolean.parseBoolean(isFullName.get(0));
         }
@@ -150,7 +150,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
     private static int getExpectedFlags(String text) {
         int expectedAccess = 0;
         Class klass = Opcodes.class;
-        List<String> flags = findListWithPrefix(text, "// FLAGS: ");
+        List<String> flags = findListWithPrefixes(text, "// FLAGS: ");
         for (String flag : flags) {
             try {
                 Field field = klass.getDeclaredField(flag);

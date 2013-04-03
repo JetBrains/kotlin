@@ -36,7 +36,7 @@ public final class InTextDirectivesUtils {
 
     @Nullable
     public static Integer getPrefixedInt(String fileText, String prefix) {
-        String[] numberStrings = findArrayWithPrefix(fileText, prefix);
+        String[] numberStrings = findArrayWithPrefixes(fileText, prefix);
         if (numberStrings.length > 0) {
             return Integer.parseInt(numberStrings[0]);
         }
@@ -45,15 +45,15 @@ public final class InTextDirectivesUtils {
     }
 
     @NotNull
-    public static String[] findArrayWithPrefix(String fileText, String... prefixes) {
-        return ArrayUtil.toStringArray(findListWithPrefix(fileText, prefixes));
+    public static String[] findArrayWithPrefixes(String fileText, String... prefixes) {
+        return ArrayUtil.toStringArray(findListWithPrefixes(fileText, prefixes));
     }
 
     @NotNull
-    public static List<String> findListWithPrefix(String fileText, String... prefixes) {
+    public static List<String> findListWithPrefixes(String fileText, String... prefixes) {
         List<String> result = new ArrayList<String>();
 
-        for (String line : findLinesWithPrefixRemoved(fileText, prefixes)) {
+        for (String line : findLinesWithPrefixesRemoved(fileText, prefixes)) {
             String[] variants = line.split(",");
 
             for (String variant : variants) {
@@ -65,18 +65,18 @@ public final class InTextDirectivesUtils {
     }
 
     @Nullable
-    public static String findStringWithPrefix(String fileText, String... prefixes) {
-        List<String> strings = findListWithPrefix(fileText, prefixes);
+    public static String findStringWithPrefixes(String fileText, String... prefixes) {
+        List<String> strings = findListWithPrefixes(fileText, prefixes);
         if (strings.isEmpty()) {
             return null;
         }
         assert strings.size() == 1 : "There is more than one string with given prefixes " +
-                                     Arrays.toString(prefixes) + ". Use findListWithPrefix() instead.";
+                                     Arrays.toString(prefixes) + ". Use findListWithPrefixes() instead.";
         return strings.get(0);
     }
 
     @NotNull
-    public static List<String> findLinesWithPrefixRemoved(String fileText, String... prefixes) {
+    public static List<String> findLinesWithPrefixesRemoved(String fileText, String... prefixes) {
         List<String> result = new ArrayList<String>();
         List<String> cleanedPrefixes = cleanDirectivesFromComments(Arrays.asList(prefixes));
 

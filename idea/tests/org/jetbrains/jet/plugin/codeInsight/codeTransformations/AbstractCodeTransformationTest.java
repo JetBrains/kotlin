@@ -37,7 +37,7 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path));
-        String isApplicableString = InTextDirectivesUtils.findStringWithPrefix(fileText, "// IS_APPLICABLE: ");
+        String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
         assert isApplicableExpected == intentionAction.isAvailable(getProject(), getEditor(), getFile())

@@ -49,7 +49,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
 
     private void doJUnit3test() throws IOException {
         myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// CLASS: ");
+        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile())), "// CLASS: ");
         assertFalse("Specify CLASS directive in test file", directives.isEmpty());
         String superClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(superClassName);
@@ -58,7 +58,8 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
 
     private void doJUnit4test() throws IOException {
         myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// ANNOTATION: ");
+        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile())),
+                                                                             "// ANNOTATION: ");
         assertFalse("Specify ANNOTATION directive in test file", directives.isEmpty());
         String annotationClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(annotationClassName);

@@ -38,7 +38,7 @@ public class ClassInheritorsSearchTest extends AbstractSearcherTest {
 
     private void doTest() throws IOException {
         myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// CLASS: ");
+        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile())), "// CLASS: ");
         assertFalse("Specify CLASS directive in test file", directives.isEmpty());
         String superClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(superClassName);

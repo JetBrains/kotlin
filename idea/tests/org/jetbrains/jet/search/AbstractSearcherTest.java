@@ -50,7 +50,7 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
     }
 
     protected void checkResult(Query<?> actual) throws IOException {
-        List<String> expected = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// SEARCH: ");
+        List<String> expected = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile())), "// SEARCH: ");
         List<String> actualModified = new ArrayList<String>();
         for (Object member : actual) {
             actualModified.add(member.toString());
