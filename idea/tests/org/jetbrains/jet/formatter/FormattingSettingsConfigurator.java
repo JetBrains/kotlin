@@ -18,9 +18,9 @@ package org.jetbrains.jet.formatter;
 
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
-import org.jetbrains.jet.InTextDirectivesUtils;
 import org.junit.Assert;
 
 import java.lang.reflect.Field;
@@ -30,8 +30,8 @@ public class FormattingSettingsConfigurator {
     private final String[] settingsToFalse;
 
     public FormattingSettingsConfigurator(String fileText) {
-        settingsToTrue = InTextDirectivesUtils.findArrayWithPrefix("// SET_TRUE:", fileText);
-        settingsToFalse = InTextDirectivesUtils.findArrayWithPrefix("// SET_FALSE:", fileText);
+        settingsToTrue = InTextDirectivesUtils.findArrayWithPrefix(fileText, "// SET_TRUE:");
+        settingsToFalse = InTextDirectivesUtils.findArrayWithPrefix(fileText, "// SET_FALSE:");
     }
 
     public void configureSettings(CodeStyleSettings settings) {

@@ -27,7 +27,10 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.*;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinNotSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinParenthesesSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinStringTemplateSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinWhenSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.*;
 
 import java.io.File;
@@ -79,7 +82,7 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path));
-        String isApplicableString = InTextDirectivesUtils.findStringWithPrefix("// IS_APPLICABLE: ", fileText);
+        String isApplicableString = InTextDirectivesUtils.findStringWithPrefix(fileText, "// IS_APPLICABLE: ");
 
         if (isApplicableString != null) {
             boolean isApplicableExpected = toString().equals("true");

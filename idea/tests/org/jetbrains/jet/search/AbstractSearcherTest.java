@@ -24,8 +24,8 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
     }
 
     protected void checkResult(Query<?> actual) throws IOException {
-        List<String> expected = InTextDirectivesUtils.findListWithPrefix("// SEARCH: ", FileUtil.loadFile(new File(getPathToFile())));
+        List<String> expected = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// SEARCH: ");
         List<String> actualModified = new ArrayList<String>();
         for (Object member : actual) {
             actualModified.add(member.toString());

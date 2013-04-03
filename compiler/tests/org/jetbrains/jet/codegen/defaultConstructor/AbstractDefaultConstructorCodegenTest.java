@@ -64,7 +64,7 @@ public abstract class AbstractDefaultConstructorCodegenTest extends CodegenTestC
     }
 
     private String loadInstructionValue(String fileContent, String instructionName) {
-        List<String> testedClass = findListWithPrefix("// " + instructionName + ": ", fileContent);
+        List<String> testedClass = findListWithPrefix(fileContent, "// " + instructionName + ": ");
         assertTrue("Cannot find " + instructionName + " instruction", !testedClass.isEmpty());
         assertTrue(instructionName + " instruction must have only one element", testedClass.size() == 1);
         return testedClass.get(0);

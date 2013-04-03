@@ -34,7 +34,7 @@ public final class InTextDirectivesUtils {
 
     @Nullable
     public static Integer getPrefixedInt(String fileText, String prefix) {
-        String[] numberStrings = findArrayWithPrefix(prefix, fileText);
+        String[] numberStrings = findArrayWithPrefix(fileText, prefix);
         if (numberStrings.length > 0) {
             return Integer.parseInt(numberStrings[0]);
         }
@@ -43,15 +43,15 @@ public final class InTextDirectivesUtils {
     }
 
     @NotNull
-    public static String[] findArrayWithPrefix(String prefix, String fileText) {
-        return ArrayUtil.toStringArray(findListWithPrefix(prefix, fileText));
+    public static String[] findArrayWithPrefix(String fileText, String prefix) {
+        return ArrayUtil.toStringArray(findListWithPrefix(fileText, prefix));
     }
 
     @NotNull
-    public static List<String> findListWithPrefix(String prefix, String fileText) {
+    public static List<String> findListWithPrefix(String fileText, String prefix) {
         ArrayList<String> result = new ArrayList<String>();
 
-        for (String line : findLinesWithPrefixRemoved(prefix, fileText)) {
+        for (String line : findLinesWithPrefixRemoved(fileText, prefix)) {
             String[] variants = line.split(",");
 
             for (String variant : variants) {
@@ -63,8 +63,8 @@ public final class InTextDirectivesUtils {
     }
 
     @Nullable
-    public static String findStringWithPrefix(String prefix, String fileText) {
-        List<String> strings = findListWithPrefix(prefix, fileText);
+    public static String findStringWithPrefix(String fileText, String prefix) {
+        List<String> strings = findListWithPrefix(fileText, prefix);
         if (strings.isEmpty()) {
             return null;
         }
@@ -73,7 +73,7 @@ public final class InTextDirectivesUtils {
     }
 
     @NotNull
-    public static List<String> findLinesWithPrefixRemoved(String prefix, String fileText) {
+    public static List<String> findLinesWithPrefixRemoved(String fileText, String prefix) {
         ArrayList<String> result = new ArrayList<String>();
 
         for (String line : fileNonEmptyLines(fileText)) {

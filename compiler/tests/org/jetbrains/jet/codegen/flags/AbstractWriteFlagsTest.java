@@ -94,7 +94,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
 
     private static TestedObject parseExpectedTestedObject(String fileText) {
         TestedObject result = new TestedObject();
-        List<String> testedObjects = findListWithPrefix("// TESTED_OBJECTS: ", fileText);
+        List<String> testedObjects = findListWithPrefix(fileText, "// TESTED_OBJECTS: ");
         assertTrue("Cannot find TESTED_OBJECTS instruction", !testedObjects.isEmpty());
         result.containingClass = testedObjects.get(0);
         if (testedObjects.size() == 1) {
@@ -108,8 +108,8 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
                     "TESTED_OBJECTS instruction must contains one (for class) or two (for function and property) values");
         }
 
-        result.kind = findStringWithPrefix("// TESTED_OBJECT_KIND: ", fileText);
-        List<String> isFullName = findListWithPrefix("// IS_FULL_CONTAINING_CLASS_NAME: ", fileText);
+        result.kind = findStringWithPrefix(fileText, "// TESTED_OBJECT_KIND: ");
+        List<String> isFullName = findListWithPrefix(fileText, "// IS_FULL_CONTAINING_CLASS_NAME: ");
         if (isFullName.size() == 1) {
             result.isFullContainingClassName = Boolean.parseBoolean(isFullName.get(0));
         }
@@ -150,7 +150,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
     private static int getExpectedFlags(String text) {
         int expectedAccess = 0;
         Class klass = Opcodes.class;
-        List<String> flags = findListWithPrefix("// FLAGS: ", text);
+        List<String> flags = findListWithPrefix(text, "// FLAGS: ");
         for (String flag : flags) {
             try {
                 Field field = klass.getDeclaredField(flag);

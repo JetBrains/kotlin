@@ -19,8 +19,8 @@ package org.jetbrains.jet.search;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.searches.AnnotatedMembersSearch;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class AnnotatedMembersSearchTest extends AbstractSearcherTest {
 
     private void doTest() throws IOException {
         myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefix("// ANNOTATION: ", FileUtil.loadFile(new File(getPathToFile())));
+        List<String> directives = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// ANNOTATION: ");
         assertFalse("Specify ANNOTATION directive in test file", directives.isEmpty());
         String annotationClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(annotationClassName);

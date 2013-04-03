@@ -23,9 +23,9 @@ import com.intellij.psi.search.searches.AnnotatedMembersSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.InTextDirectivesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
 
     private void doJUnit3test() throws IOException {
         myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefix("// CLASS: ", FileUtil.loadFile(new File(getPathToFile())));
+        List<String> directives = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// CLASS: ");
         assertFalse("Specify CLASS directive in test file", directives.isEmpty());
         String superClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(superClassName);
@@ -58,7 +58,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
 
     private void doJUnit4test() throws IOException {
         myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefix("// ANNOTATION: ", FileUtil.loadFile(new File(getPathToFile())));
+        List<String> directives = InTextDirectivesUtils.findListWithPrefix(FileUtil.loadFile(new File(getPathToFile())), "// ANNOTATION: ");
         assertFalse("Specify ANNOTATION directive in test file", directives.isEmpty());
         String annotationClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(annotationClassName);
