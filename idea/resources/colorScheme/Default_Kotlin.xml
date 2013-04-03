@@ -6,13 +6,13 @@
   </option>
   <option name="KOTLIN_MUTABLE_VARIABLE">
     <value>
-      <option name="EFFECT_COLOR" value="bca5c4" />
+      <option name="EFFECT_COLOR" value="000000" />
       <option name="EFFECT_TYPE" value="1" />
     </value>
   </option>
   <option name="KOTLIN_PROPERTY_WITH_BACKING_FIELD">
     <value>
-      <option name="BACKGROUND" value="3f3045" />
+      <option name="BACKGROUND" value="f5d7ef" />
     </value>
   </option>
   <option name="KOTLIN_CLOSURE_DEFAULT_PARAMETER">
@@ -22,19 +22,19 @@
   </option>
   <option name="KOTLIN_AUTO_CASTED_VALUE">
     <value>
-      <option name="BACKGROUND" value="223c23" />
+      <option name="BACKGROUND" value="dbffdb" />
     </value>
   </option>
   <option name="KOTLIN_LABEL">
     <value>
-      <option name="FOREGROUND" value="467cda" />
+      <option name="FOREGROUND" value="4a86e8" />
     </value>
   </option>
   <option name="KOTLIN_DEBUG_INFO">
     <value>
-      <option name="EFFECT_COLOR" value="ffffff"/>
+      <option name="EFFECT_COLOR" value="000000"/>
       <option name="EFFECT_TYPE" value="0" />
-      <option name="ERROR_STRIPE_COLOR" value="ffffff" />
+      <option name="ERROR_STRIPE_COLOR" value="000000" />
     </value>
   </option>
   <option name="KOTLIN_RESOLVED_TO_ERROR">
