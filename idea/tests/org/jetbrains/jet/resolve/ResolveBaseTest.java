@@ -50,6 +50,10 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
         doSingleResolveTest("test1");
     }
 
+    public void testSamConstructor() throws Exception {
+        doSingleResolveTest("(java.util).Comparator");
+    }
+
     public void testSeveralOverrides() throws Exception {
         doMultiResolveTest();
     }

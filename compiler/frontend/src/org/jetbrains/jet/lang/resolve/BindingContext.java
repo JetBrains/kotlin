@@ -256,6 +256,7 @@ public interface BindingContext {
 
     WritableSlice<CallableDescriptor, Boolean> IS_DECLARED_IN_JAVA = Slices.createSimpleSlice();
     WritableSlice<SimpleFunctionDescriptor, ClassDescriptor> SAM_CONSTRUCTOR_TO_INTERFACE = Slices.createSimpleSlice();
+    WritableSlice<CallableMemberDescriptor, DeclarationDescriptor> SOURCE_DESCRIPTOR_FOR_SYNTHESIZED = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer
