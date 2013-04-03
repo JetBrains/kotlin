@@ -169,16 +169,6 @@
       <option name="ERROR_STRIPE_COLOR" />
     </value>
   </option>
-  <option name="KOTLIN_VARIABLE_AS_FUNCTION">
-    <value>
-      <option name="FOREGROUND" />
-      <option name="BACKGROUND" value="223c23" />
-      <option name="FONT_TYPE" value="0" />
-      <option name="EFFECT_COLOR" />
-      <option name="EFFECT_TYPE" value="0" />
-      <option name="ERROR_STRIPE_COLOR" />
-    </value>
-  </option>
   <option name="KOTLIN_WRAPPED_INTO_REF">
     <value>
       <option name="FOREGROUND" value="b389c5" />

@@ -238,7 +238,7 @@ public class JetHighlightingColors {
 
     public static final TextAttributesKey VARIABLE_AS_FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_VARIABLE_AS_FUNCTION",
-        new TextAttributes(null, new Color(0xdbffdb), null, null, Font.PLAIN)
+        new TextAttributes()
     );
 
     public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
