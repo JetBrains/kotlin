@@ -216,6 +216,7 @@ public class CandidateResolver {
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
     }
 
+    @Nullable
     public <D extends CallableDescriptor> JetType completeTypeInferenceDependentOnExpectedTypeForCall(
             @NotNull CallCandidateResolutionContext<D> context,
             boolean isInnerCall
