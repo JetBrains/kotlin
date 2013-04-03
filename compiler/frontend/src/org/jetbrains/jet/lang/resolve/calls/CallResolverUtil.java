@@ -135,14 +135,13 @@ public class CallResolverUtil {
     }
 
     public static boolean hasInferredReturnType(ResolvedCallWithTrace<?> call) {
-        boolean isKnownReturnType = true;
         ResolvedCallImpl<?> callToComplete = call.getCallToCompleteTypeArgumentInference();
-        if (hasReturnTypeDependentOnNotInferredParams(callToComplete)) { isKnownReturnType = false; }
+        if (hasReturnTypeDependentOnNotInferredParams(callToComplete)) return false;
 
         // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
         ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
-        if (constraintSystem != null && constraintSystem.hasOnlyExpectedTypeMismatch()) { isKnownReturnType = false; }
-        return isKnownReturnType;
+        if (constraintSystem != null && constraintSystem.hasOnlyExpectedTypeMismatch()) return false;
+        return true;
     }
 
     @Nullable
