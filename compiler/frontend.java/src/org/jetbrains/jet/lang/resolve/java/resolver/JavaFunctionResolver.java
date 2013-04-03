@@ -361,6 +361,7 @@ public final class JavaFunctionResolver {
                 SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createSamConstructorFunction(ownerDescriptor,
                                                                                                                       klass);
                 trace.record(BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
+                trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
                 return constructorFunction;
             }
         }

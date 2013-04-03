@@ -177,7 +177,8 @@ public class BindingContextUtils {
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            return null;
+            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable);
+            return source != null ? descriptorToDeclaration(context, source) : null;
         }
 
         if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
@@ -196,7 +197,8 @@ public class BindingContextUtils {
     @NotNull
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            return Collections.emptyList();
+            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable);
+            return source != null ? descriptorToDeclarations(context, source) : Collections.<PsiElement>emptyList();
         }
 
         if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
