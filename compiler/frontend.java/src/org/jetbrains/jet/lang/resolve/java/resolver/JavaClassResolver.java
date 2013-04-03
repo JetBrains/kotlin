@@ -166,13 +166,19 @@ public final class JavaClassResolver {
         return doResolveClass(qualifiedName, tasks);
     }
 
-    @Nullable
     private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
         PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
         if (psiClass == null) {
             cacheNegativeValue(javaClassToKotlinFqName(qualifiedName));
             return null;
         }
+
+        // Class may have been resolved previously by different Java resolver instance, and we are reusing its trace
+        ClassDescriptor alreadyResolved = trace.get(BindingContext.CLASS, psiClass);
+        if (alreadyResolved != null) {
+            return alreadyResolved;
+        }
+
         return createJavaClassDescriptor(qualifiedName, psiClass, tasks);
     }
 
