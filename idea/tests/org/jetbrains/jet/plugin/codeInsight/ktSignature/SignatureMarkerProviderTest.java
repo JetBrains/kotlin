@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase {
 
@@ -45,7 +46,7 @@ public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase
         myFixture.configureByText(JetFileType.INSTANCE, "val t: Thread? = null");
 
         PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass("java.lang.Thread", GlobalSearchScope.allScope(project));
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
+        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(TargetPlatform.JVM).getBindingContext();
         ClassDescriptor preResolvedClass = context.get(BindingContext.CLASS, psiClass);
 
         InjectorForJavaDescriptorResolver injector = KotlinSignatureInJavaMarkerProvider.createInjector(project);
