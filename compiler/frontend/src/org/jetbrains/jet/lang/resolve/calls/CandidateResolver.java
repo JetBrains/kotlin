@@ -310,7 +310,7 @@ public class CandidateResolver {
                                        : effectiveExpectedType;
 
                 //todo inner calls should be analyzed, for parenthesized, labeled, if, when expressions as well
-                JetVisitor<JetExpression, Void> callExpressionFinder = new JetVisitor<JetExpression, Void>() {
+                JetVisitor<JetExpression, Void> selectorExpressionFinder = new JetVisitor<JetExpression, Void>() {
                     @Override
                     public JetExpression visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
                         JetExpression selector = expression.getSelectorExpression();
@@ -323,15 +323,30 @@ public class CandidateResolver {
                     }
 
                     @Override
+                    public JetExpression visitSimpleNameExpression(JetSimpleNameExpression expression, Void data) {
+                        return expression;
+                    }
+
+                    @Override
                     public JetExpression visitJetElement(JetElement element, Void data) {
                         return null;
                     }
                 };
-                JetExpression callExpression = expression.accept(callExpressionFinder, null);
-                if (callExpression == null) continue;
+                // selector expression is callExpression or simpleNameExpression (if it's inside qualified expression)
+                JetExpression selectorExpression = expression.accept(selectorExpressionFinder, null);
+                if (selectorExpression == null) continue;
 
+                if (selectorExpression instanceof JetSimpleNameExpression) {
+                    if (expression instanceof JetQualifiedExpression) {
+                        //todo get rid of this hack, 'checkType' once at the end of the analysis
+                        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, selectorExpression);
+                        DataFlowUtils.checkType(type, expression, context.replaceExpectedType(expectedType));
+                    }
+                    continue;
+                }
                 CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
-                        context.resolutionResultsCache.getDeferredComputation(CallKey.create(Call.CallType.DEFAULT, callExpression));
+                        context.resolutionResultsCache.getDeferredComputation(CallKey.create(Call.CallType.DEFAULT, selectorExpression));
+                //todo assert storedContextForArgument != null
                 if (storedContextForArgument == null) continue;
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
