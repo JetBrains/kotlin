@@ -229,29 +229,22 @@ public class CandidateResolver {
 
         constraintSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(), ConstraintPosition.EXPECTED_TYPE_POSITION);
 
-        if (!constraintSystem.isSuccessful()) {
-            resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
-            completeNestedCallsInference(context);
-            List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace,
-                                                                  RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
-            JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
-            InferenceErrorData.ExtendedInferenceErrorData errorData = InferenceErrorData
-                    .create(descriptor, constraintSystem, argumentTypes, receiverType, context.expectedType);
-
-            context.tracing.typeInferenceFailed(context.trace, errorData);
-            resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
-            if (!CallResolverUtil.hasInferredReturnType(resolvedCall)) return null;
-            return resolvedCall.getResultingDescriptor().getReturnType();
+        if (constraintSystem.hasContradiction()) {
+            return reportInferenceError(context);
         }
 
         boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true);
-        if (!boundsAreSatisfied) {
+        if (!boundsAreSatisfied || constraintSystem.hasUnknownParameters()) {
             ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
             copy.processDeclaredBoundConstraints();
             boundsAreSatisfied = copy.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true);
             if (boundsAreSatisfied) {
                 constraintSystem = copy;
+                resolvedCall.setConstraintSystem(constraintSystem);
             }
+        }
+        if (!constraintSystem.isSuccessful()) {
+            return reportInferenceError(context);
         }
         if (!boundsAreSatisfied) {
             context.tracing.upperBoundViolated(context.trace, InferenceErrorData.create(resolvedCall.getCandidateDescriptor(), constraintSystem));
@@ -267,12 +260,33 @@ public class CandidateResolver {
         if (status == ResolutionStatus.UNKNOWN_STATUS || status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
             resolvedCall.setStatusToSuccess();
         }
+        JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         if (isInnerCall) {
             PsiElement callElement = context.call.getCallElement();
             if (callElement instanceof JetCallExpression) {
-                DataFlowUtils.checkType(resolvedCall.getResultingDescriptor().getReturnType(), (JetCallExpression) callElement, context, context.dataFlowInfo);
+                DataFlowUtils.checkType(returnType, (JetCallExpression) callElement, context, context.dataFlowInfo);
             }
         }
+        return returnType;
+    }
+
+    private <D extends CallableDescriptor> JetType reportInferenceError(
+            @NotNull CallCandidateResolutionContext<D> context
+    ) {
+        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
+        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
+
+        resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
+        completeNestedCallsInference(context);
+        List<JetType> argumentTypes = checkValueArgumentTypes(
+                context, resolvedCall, context.trace, RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
+        JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
+        InferenceErrorData.ExtendedInferenceErrorData errorData = InferenceErrorData
+                .create(resolvedCall.getCandidateDescriptor(), constraintSystem, argumentTypes, receiverType, context.expectedType);
+
+        context.tracing.typeInferenceFailed(context.trace, errorData);
+        resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
+        if (!CallResolverUtil.hasInferredReturnType(resolvedCall)) return null;
         return resolvedCall.getResultingDescriptor().getReturnType();
     }
 
