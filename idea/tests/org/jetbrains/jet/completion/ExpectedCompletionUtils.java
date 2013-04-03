@@ -38,6 +38,14 @@ import java.util.regex.Pattern;
  * should be asserted during test execution.
  */
 public class ExpectedCompletionUtils {
+    private ExpectedCompletionUtils() {
+    }
+
+    enum Platform {
+        JAVA,
+        JS,
+        ALL
+    }
 
     public static class CompletionProposal {
         public static final Pattern PATTERN = Pattern.compile("([^~@]*)(@([^~]*))?(~(.*))?");
@@ -90,43 +98,61 @@ public class ExpectedCompletionUtils {
     }
     
     public static final String EXIST_LINE_PREFIX = "// EXIST:";
+    public static final String EXIST_JS_LINE_PREFIX = "// EXIST_JS:";
+    public static final String EXIST_JAVA_LINE_PREFIX = "// EXIST_JAVA:";
+
     public static final String ABSENT_LINE_PREFIX = "// ABSENT:";
+    public static final String ABSENT_JS_LINE_PREFIX = "// ABSENT_JS:";
+    public static final String ABSENT_JAVA_LINE_PREFIX = "// ABSENT_JAVA:";
+
     public static final String NUMBER_LINE_PREFIX = "// NUMBER:";
+    public static final String NUMBER_JS_LINE_PREFIX = "// NUMBER_JS:";
+    public static final String NUMBER_JAVA_LINE_PREFIX = "// NUMBER_JAVA:";
+
     public static final String EXECUTION_TIME_PREFIX = "// TIME:";
     public static final String WITH_ORDER_PREFIX = "// WITH_ORDER:";
 
-    private final String existLinePrefix;
-    private final String absentLinePrefix;
-    private final String numberLinePrefix;
-    private final String executionTimePrefix;
-    private final String withOrderPrefix;
+    @NotNull
+    public static CompletionProposal[] itemsShouldExist(String fileText, Platform platform) {
+        switch (platform) {
+            case ALL:
+                return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_LINE_PREFIX, EXIST_JS_LINE_PREFIX);
+            case JAVA:
+                return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_LINE_PREFIX);
+            case JS:
+                return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_LINE_PREFIX);
+        }
 
-    public ExpectedCompletionUtils() {
-        this(EXIST_LINE_PREFIX, ABSENT_LINE_PREFIX, NUMBER_LINE_PREFIX, EXECUTION_TIME_PREFIX, WITH_ORDER_PREFIX);
-    }
-    
-    public ExpectedCompletionUtils(String existLinePrefix, String absentLinePrefix,
-            String numberLinePrefix, String executionTimePrefix, String withOrderPrefix) {
-        this.existLinePrefix = existLinePrefix;
-        this.absentLinePrefix = absentLinePrefix;
-        this.numberLinePrefix = numberLinePrefix;
-        this.executionTimePrefix = executionTimePrefix;
-        this.withOrderPrefix = withOrderPrefix;
+        throw new IllegalArgumentException("platform");
     }
 
     @NotNull
-    public CompletionProposal[] itemsShouldExist(String fileText) {
-        return processProposalAssertions(existLinePrefix, fileText);
+    public static CompletionProposal[] itemsShouldAbsent(String fileText, Platform platform) {
+        switch (platform) {
+            case ALL:
+                return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, EXIST_JAVA_LINE_PREFIX, EXIST_JS_LINE_PREFIX);
+            case JAVA:
+                return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX);
+            case JS:
+                return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX);
+        }
+
+        throw new IllegalArgumentException("platform");
     }
 
     @NotNull
-    public CompletionProposal[] itemsShouldAbsent(String fileText) {
-        return processProposalAssertions(absentLinePrefix, fileText);
+    public static CompletionProposal[] itemsShouldExist(String fileText) {
+        return itemsShouldExist(fileText, Platform.ALL);
     }
 
-    public static CompletionProposal[] processProposalAssertions(String prefix, String fileText) {
+    @NotNull
+    public static CompletionProposal[] itemsShouldAbsent(String fileText) {
+        return itemsShouldAbsent(fileText, Platform.ALL);
+    }
+
+    public static CompletionProposal[] processProposalAssertions(String fileText, String... prefixes) {
         Collection<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
-        for (String proposalStr : InTextDirectivesUtils.findListWithPrefix(fileText, prefix)) {
+        for (String proposalStr : InTextDirectivesUtils.findListWithPrefix(fileText, prefixes)) {
             Matcher matcher = CompletionProposal.PATTERN.matcher(proposalStr);
             matcher.find();
             proposals.add(new CompletionProposal(matcher.group(CompletionProposal.LOOKUP_STRING_GROUP_INDEX),
@@ -138,17 +164,31 @@ public class ExpectedCompletionUtils {
     }
 
     @Nullable
-    public Integer getExpectedNumber(String fileText) {
-        return InTextDirectivesUtils.getPrefixedInt(fileText, numberLinePrefix);
+    public static Integer getExpectedNumber(String fileText) {
+        return getExpectedNumber(fileText, Platform.ALL);
     }
 
     @Nullable
-    public Integer getExecutionTime(String fileText) {
-        return InTextDirectivesUtils.getPrefixedInt(fileText, executionTimePrefix);
+    public static Integer getExpectedNumber(String fileText, Platform platform) {
+        switch (platform) {
+            case ALL:
+                return InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX);
+            case JAVA:
+                return getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX);
+            case JS:
+                return getPlatformExpectedNumber(fileText, NUMBER_JS_LINE_PREFIX);
+        }
+
+        throw new IllegalArgumentException("platform");
     }
 
-    public boolean isWithOrder(String fileText) {
-        return InTextDirectivesUtils.getPrefixedInt(fileText, withOrderPrefix) != null;
+    @Nullable
+    public static Integer getExecutionTime(String fileText) {
+        return InTextDirectivesUtils.getPrefixedInt(fileText, EXECUTION_TIME_PREFIX);
+    }
+
+    public static boolean isWithOrder(String fileText) {
+        return InTextDirectivesUtils.getPrefixedInt(fileText, WITH_ORDER_PREFIX) != null;
     }
 
     protected static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items, boolean checkOrder) {
@@ -176,6 +216,18 @@ public class ExpectedCompletionUtils {
 
             Assert.assertTrue("Expected '" + expectedProposal + "' not found in " + allItemsString, isFound);
         }
+    }
+
+    private static Integer getPlatformExpectedNumber(String fileText, String platformNumberPrefix) {
+        Integer prefixedInt = InTextDirectivesUtils.getPrefixedInt(fileText, platformNumberPrefix);
+        if (prefixedInt != null) {
+            Assert.assertNull(String.format("There shouldn't be %s and %s prefixes set in same time", NUMBER_LINE_PREFIX,
+                                            platformNumberPrefix),
+                              InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX));
+            return prefixedInt;
+        }
+
+        return InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX);
     }
 
     protected static void assertNotContainsRenderedItems(CompletionProposal[] unexpected,LookupElement[] items) {

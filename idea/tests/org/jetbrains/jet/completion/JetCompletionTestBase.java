@@ -25,15 +25,12 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.apache.commons.lang.SystemUtils;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
-import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 public abstract class JetCompletionTestBase extends LightCompletionTestCase {
-
-    private final ExpectedCompletionUtils completionUtils = new ExpectedCompletionUtils();
-
     private CompletionType type;
 
     @Override
@@ -54,13 +51,13 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
                     ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
                 }
 
-                Integer completionTime = completionUtils.getExecutionTime(fileText);
+                Integer completionTime = ExpectedCompletionUtils.getExecutionTime(fileText);
 
                 complete(completionTime == null ? 1 : completionTime);
 
-                ExpectedCompletionUtils.CompletionProposal[] expected = completionUtils.itemsShouldExist(fileText);
-                ExpectedCompletionUtils.CompletionProposal[] unexpected = completionUtils.itemsShouldAbsent(fileText);
-                Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
+                ExpectedCompletionUtils.CompletionProposal[] expected = ExpectedCompletionUtils.itemsShouldExist(fileText);
+                ExpectedCompletionUtils.CompletionProposal[] unexpected = ExpectedCompletionUtils.itemsShouldAbsent(fileText);
+                Integer itemsNumber = ExpectedCompletionUtils.getExpectedNumber(fileText);
 
                 assertTrue("Should be some assertions about completion",
                            expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
@@ -69,7 +66,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
                     myItems = new LookupElement[0];
                 }
 
-                ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems, completionUtils.isWithOrder(fileText));
+                ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems, ExpectedCompletionUtils.isWithOrder(fileText));
                 ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, myItems);
 
                 if (itemsNumber != null) {
