@@ -1582,16 +1582,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             else {
                 if (!isStatic) {
                     if (receiver == StackValue.none()) {
-                        if (resolvedCall == null) {
-                            receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration(), false);
+                        if (resolvedCall != null && resolvedCall.getThisObject() instanceof ExtensionReceiver) {
+                            receiver = generateReceiver(((ExtensionReceiver) resolvedCall.getThisObject()).getDeclarationDescriptor());
                         }
                         else {
-                            if (resolvedCall.getThisObject() instanceof ExtensionReceiver) {
-                                receiver = generateReceiver(((ExtensionReceiver) resolvedCall.getThisObject()).getDeclarationDescriptor());
-                            }
-                            else {
-                                receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration(), false);
-                            }
+                            receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration(), false);
                         }
                     }
                     if (directToField) {
@@ -2433,8 +2428,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitDotQualifiedExpression(JetDotQualifiedExpression expression, StackValue receiver) {
-        JetExpression receiverExpression = expression.getReceiverExpression();
-        StackValue receiverValue = receiverExpression instanceof JetSuperExpression ? gen(receiverExpression) : StackValue.none();
+        StackValue receiverValue = StackValue.none();
         return genQualified(receiverValue, expression.getSelectorExpression());
     }
 
