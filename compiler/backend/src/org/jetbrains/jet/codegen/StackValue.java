@@ -836,16 +836,14 @@ public abstract class StackValue {
     }
 
 
-    static class Field extends StackValue {
+    static class Field extends StackValueWithSimpleReceiver {
         final JvmClassName owner;
         final String name;
-        private final boolean isStatic;
 
         public Field(Type type, JvmClassName owner, String name, boolean isStatic) {
-            super(type);
+            super(type, isStatic);
             this.owner = owner;
             this.name = name;
-            this.isStatic = isStatic;
         }
 
         @Override
@@ -855,25 +853,13 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v) {
-            if (!isStatic) {
-                v.dup();
-            }
-        }
-
-        @Override
-        public int receiverSize() {
-            return isStatic ? 0 : 1;
-        }
-
-        @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
     }
 
-    static class Property extends StackValue {
+    static class Property extends StackValueWithSimpleReceiver {
         @Nullable
         private final Method getter;
         @Nullable
@@ -882,7 +868,7 @@ public abstract class StackValue {
         public final JvmClassName methodOwner;
         @NotNull
         private final JvmClassName methodOwnerParam;
-        private final boolean isStatic;
+
         private final boolean isInterface;
         private final boolean isSuper;
         private final int getterInvokeOpcode;
@@ -897,12 +883,11 @@ public abstract class StackValue {
                 @Nullable Method getter, @Nullable Method setter, boolean isStatic, boolean isInterface, boolean isSuper,
                 @NotNull Type type, int getterInvokeOpcode, int setterInvokeOpcode, @NotNull GenerationState state
         ) {
-            super(type);
+            super(type, isStatic);
             this.methodOwner = methodOwner;
             this.methodOwnerParam = methodOwnerParam;
             this.getter = getter;
             this.setter = setter;
-            this.isStatic = isStatic;
             this.isInterface = isInterface;
             this.isSuper = isSuper;
             this.getterInvokeOpcode = getterInvokeOpcode;
@@ -952,18 +937,6 @@ public abstract class StackValue {
             else {
                 v.visitMethodInsn(setterInvokeOpcode, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor());
             }
-        }
-
-        @Override
-        public void dupReceiver(InstructionAdapter v) {
-            if (!isStatic) {
-                v.dup();
-            }
-        }
-
-        @Override
-        public int receiverSize() {
-            return isStatic ? 0 : 1;
         }
     }
 
@@ -1068,24 +1041,14 @@ public abstract class StackValue {
         return type;
     }
 
-    static class FieldForSharedVar extends StackValue {
+    static class FieldForSharedVar extends StackValueWithSimpleReceiver {
         final JvmClassName owner;
         final String name;
 
         public FieldForSharedVar(Type type, JvmClassName owner, String name) {
-            super(type);
+            super(type, false);
             this.owner = owner;
             this.name = name;
-        }
-
-        @Override
-        public void dupReceiver(InstructionAdapter v) {
-            v.dup();
-        }
-
-        @Override
-        public int receiverSize() {
-            return 1;
         }
 
         @Override
@@ -1301,6 +1264,28 @@ public abstract class StackValue {
             else {
                 receiver.moveToTopOfStack(type, v, depth);
             }
+        }
+    }
+
+    abstract static class StackValueWithSimpleReceiver extends StackValue {
+
+        protected final boolean isStatic;
+
+        public StackValueWithSimpleReceiver(@NotNull Type type, boolean isStatic) {
+            super(type);
+            this.isStatic = isStatic;
+        }
+
+        @Override
+        public void dupReceiver(InstructionAdapter v) {
+            if (!isStatic) {
+                v.dup();
+            }
+        }
+
+        @Override
+        public int receiverSize() {
+            return isStatic ? 0 : 1;
         }
     }
 }
