@@ -1,0 +1,11 @@
+public class MyClass {
+    public method(a: Int): String {
+        var res: String
+
+        if (a == 1) res = "one";
+        else if (a == 2) res = "two";
+        else res = "too many";
+
+        return res;
+    }
+}

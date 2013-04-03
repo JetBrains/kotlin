@@ -283,6 +283,16 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.IfStatementWithAssignmentsToExpressionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.AssignmentWithIfExpressionToStatementIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>

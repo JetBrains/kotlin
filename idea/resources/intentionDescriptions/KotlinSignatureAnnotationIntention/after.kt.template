@@ -1,8 +1,0 @@
-import jet.runtime.typeinfo.KotlinSignature;
-
-public class MyClass {
-    <spot>@KotlinSignature("fun method() : jet.String?")</spot>
-    public String method() {
-        return "";
-    }
-}
