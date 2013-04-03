@@ -22,6 +22,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     public FunctionsHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
@@ -58,33 +63,72 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     public void visitCallExpression(JetCallExpression expression) {
         JetExpression callee = expression.getCalleeExpression();
         if (callee instanceof JetReferenceExpression) {
-            DeclarationDescriptor calleeDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression)callee);
-            if (calleeDescriptor != null) {
-                if (calleeDescriptor instanceof ConstructorDescriptor) {
-                    JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
+            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                    bindingContext.get(BindingContext.RESOLVED_CALL, (JetReferenceExpression) callee);
+            if (resolvedCall != null) {
+                if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+                    highlightVariableAsFunctionCall(callee, (VariableAsFunctionResolvedCall) resolvedCall);
                 }
-                else if (calleeDescriptor instanceof FunctionDescriptor) {
-                    FunctionDescriptor fun = (FunctionDescriptor)calleeDescriptor;
-                    JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
-                    if (DescriptorUtils.isTopLevelDeclaration(fun)) {
-                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.NAMESPACE_FUNCTION_CALL);
+                else {
+                    DeclarationDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
+                    if (calleeDescriptor instanceof ConstructorDescriptor) {
+                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
                     }
-                    if (fun.getReceiverParameter() != null) {
-                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
+                    else if (calleeDescriptor instanceof FunctionDescriptor) {
+                        FunctionDescriptor fun = (FunctionDescriptor) calleeDescriptor;
+                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
+                        if (DescriptorUtils.isTopLevelDeclaration(fun)) {
+                            JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.NAMESPACE_FUNCTION_CALL);
+                        }
+                        if (fun.getReceiverParameter() != null) {
+                            JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
+                        }
                     }
-                }
-                else if (calleeDescriptor instanceof VariableDescriptor) {
-                    String kind = calleeDescriptor instanceof ValueParameterDescriptor
-                                  ? "parameter"
-                                  : calleeDescriptor instanceof PropertyDescriptor
-                                    ? "property"
-                                    : "variable";
-                    holder.createInfoAnnotation(callee, "Calling " + kind + " as function").setTextAttributes(
-                            JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL);
                 }
             }
         }
 
         super.visitCallExpression(expression);
+    }
+
+    private void highlightVariableAsFunctionCall(JetExpression callee, VariableAsFunctionResolvedCall resolvedCall) {
+        VariableDescriptor variableDescriptor = resolvedCall.getVariableCall().getResultingDescriptor();
+
+        String kind = variableDescriptor instanceof ValueParameterDescriptor
+                      ? "parameter"
+                      : variableDescriptor instanceof PropertyDescriptor
+                        ? "property"
+                        : "variable";
+
+        if (containedInFunctionClassOrSubclass(resolvedCall.getFunctionCall().getResultingDescriptor())) {
+            holder.createInfoAnnotation(callee, "Calling " + kind + " as function").setTextAttributes(
+                    JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL);
+        }
+        else {
+            holder.createInfoAnnotation(callee, "Calling " + kind + " as function-like").setTextAttributes(
+                    JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
+        }
+    }
+
+    private static boolean containedInFunctionClassOrSubclass(DeclarationDescriptor calleeDescriptor) {
+        DeclarationDescriptor parent = calleeDescriptor.getContainingDeclaration();
+        if (!(parent instanceof ClassDescriptor)) {
+            return false;
+        }
+
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        JetType defaultType = ((ClassDescriptor) parent).getDefaultType();
+
+        if (builtIns.isFunctionOrExtensionFunctionType(defaultType)) {
+            return true;
+        }
+
+        for (JetType supertype : TypeUtils.getAllSupertypes(defaultType)) {
+            if (builtIns.isFunctionOrExtensionFunctionType(supertype)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
