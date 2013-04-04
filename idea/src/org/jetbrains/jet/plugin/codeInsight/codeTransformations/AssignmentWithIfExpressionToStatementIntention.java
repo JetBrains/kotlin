@@ -46,7 +46,8 @@ public class AssignmentWithIfExpressionToStatementIntention extends BaseIntentio
 
         while (element != null) {
             if (CodeTransformationUtils.checkAssignmentWithIfExpression(element)) return (JetBinaryExpression)element;
-            element = PsiTreeUtil.getParentOfType(element, JetBinaryExpression.class, false);
+            PsiElement parent = PsiTreeUtil.getParentOfType(element, JetBinaryExpression.class, false);
+            element = (element != parent) ? parent : null;
         }
 
         return null;
