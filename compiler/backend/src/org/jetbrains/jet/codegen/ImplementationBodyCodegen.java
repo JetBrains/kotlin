@@ -1620,8 +1620,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION, isCallInsideSameModuleAsDeclared(propertyDescriptor, codegen.context));
                         Type propType = typeMapper.mapType(jetType);
-                        StackValue.property(propertyDescriptor, owner, owner,
-                                            propType, false, false, false, null, null, 0, 0, state).store(propType, iv);
+                        StackValue.property(propertyDescriptor, owner,
+                                            propType, false, null, null, 0, 0, state).store(propType, iv);
                     }
                 }
             }

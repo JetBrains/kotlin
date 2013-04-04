@@ -159,6 +159,9 @@ public class DescriptorUtils {
     @Nullable
     public static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
         DeclarationDescriptor descriptor = declarationDescriptor;
+        if (declarationDescriptor instanceof PropertyAccessorDescriptor) {
+            descriptor = ((PropertyAccessorDescriptor)descriptor).getCorrespondingProperty();
+        }
         while (!(descriptor == null || isTopLevelDeclaration(descriptor))) {
             descriptor = descriptor.getContainingDeclaration();
         }
