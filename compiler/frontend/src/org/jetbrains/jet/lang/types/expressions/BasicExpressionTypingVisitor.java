@@ -20,11 +20,13 @@ import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -83,6 +85,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context, boolean isStatement) {
+        if (JetExpressionParsing.areParenthesesUseless(expression)) {
+            context.trace.report(USELESS_PARENTHESES.on(expression));
+        }
         JetExpression innerExpression = expression.getExpression();
         if (innerExpression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
@@ -137,7 +142,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (right != null) {
             JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
-            IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
+            IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
 
             boolean tryWithNoExpectedType = true;
             if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
@@ -179,7 +184,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetType targetType,
             JetType actualType
     ) {
-        JetSimpleNameExpression operationSign = expression.getOperationSign();
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.COLON) {
             if (targetType != NO_EXPECTED_TYPE && !JetTypeChecker.INSTANCE.isSubtypeOf(actualType, targetType)) {
@@ -209,16 +214,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
         if (!typeChecker.isSubtypeOf(targetType, actualType)) {
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationSign()));
+                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationReference()));
             }
             else {
                 // See JET-58 Make 'as never succeeds' a warning, or even never check for Java (external) types
-                context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationSign()));
+                context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
             }
         }
         else {
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                context.trace.report(USELESS_CAST.on(expression.getOperationSign()));
+                context.trace.report(USELESS_CAST.on(expression.getOperationReference()));
             }
             else {
                 if (isCastErased(actualType, targetType, typeChecker)) {

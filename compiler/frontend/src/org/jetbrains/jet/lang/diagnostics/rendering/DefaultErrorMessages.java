@@ -56,6 +56,8 @@ public class DefaultErrorMessages {
         MAP.put(REDECLARATION, "Redeclaration: {0}", NAME);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", NAME);
 
+        MAP.put(USELESS_PARENTHESES, "Parentheses can be skipped");
+
         MAP.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_MODIFIERS, "Incompatible modifiers: ''{0}''", new Renderer<Collection<JetKeywordToken>>() {
             @NotNull

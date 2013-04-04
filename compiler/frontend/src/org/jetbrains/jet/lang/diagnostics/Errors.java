@@ -296,6 +296,8 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, String> NAME_SHADOWING = DiagnosticFactory1.create(WARNING, PositioningStrategies.FOR_REDECLARATION);
 
+    DiagnosticFactory0<JetParenthesizedExpression> USELESS_PARENTHESES = DiagnosticFactory0.create(WARNING);
+
     DiagnosticFactory0<JetExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = DiagnosticFactory0.create(ERROR);
 
     // Checking call arguments

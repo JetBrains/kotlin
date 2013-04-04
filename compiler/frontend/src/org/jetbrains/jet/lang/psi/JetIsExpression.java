@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetIsExpression extends JetExpressionImpl {
+public class JetIsExpression extends JetExpressionImpl implements JetOperationExpression {
     public JetIsExpression(@NotNull ASTNode node) {
         super(node);
     }
