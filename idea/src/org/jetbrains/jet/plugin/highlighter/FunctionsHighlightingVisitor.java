@@ -66,11 +66,13 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             ResolvedCall<? extends CallableDescriptor> resolvedCall =
                     bindingContext.get(BindingContext.RESOLVED_CALL, (JetReferenceExpression) callee);
             if (resolvedCall != null) {
+                DeclarationDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
                 if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                    highlightVariableAsFunctionCall(callee, (VariableAsFunctionResolvedCall) resolvedCall);
+                    JetPsiChecker.highlightName(holder, callee, containedInFunctionClassOrSubclass(calleeDescriptor)
+                                                                ? JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL
+                                                                : JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
                 }
                 else {
-                    DeclarationDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
                     if (calleeDescriptor instanceof ConstructorDescriptor) {
                         JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
                     }
@@ -89,25 +91,6 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
         }
 
         super.visitCallExpression(expression);
-    }
-
-    private void highlightVariableAsFunctionCall(JetExpression callee, VariableAsFunctionResolvedCall resolvedCall) {
-        VariableDescriptor variableDescriptor = resolvedCall.getVariableCall().getResultingDescriptor();
-
-        String kind = variableDescriptor instanceof ValueParameterDescriptor
-                      ? "parameter"
-                      : variableDescriptor instanceof PropertyDescriptor
-                        ? "property"
-                        : "variable";
-
-        if (containedInFunctionClassOrSubclass(resolvedCall.getFunctionCall().getResultingDescriptor())) {
-            holder.createInfoAnnotation(callee, "Calling " + kind + " as function").setTextAttributes(
-                    JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL);
-        }
-        else {
-            holder.createInfoAnnotation(callee, "Calling " + kind + " as function-like").setTextAttributes(
-                    JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
-        }
     }
 
     private static boolean containedInFunctionClassOrSubclass(DeclarationDescriptor calleeDescriptor) {
