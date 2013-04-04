@@ -117,7 +117,7 @@ public class JetExpectedResolveDataUtil {
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
-        PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.THROW);
+        PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.REPORT_ERROR);
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, psiClass);
         return psiClass;
     }
