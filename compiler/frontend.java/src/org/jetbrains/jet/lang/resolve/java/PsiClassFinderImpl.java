@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -39,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 public class PsiClassFinderImpl implements PsiClassFinder {
+    private static final Logger LOG = Logger.getInstance(PsiClassFinderImpl.class);
 
     @NotNull
     private Project project;
@@ -106,17 +109,19 @@ public class PsiClassFinderImpl implements PsiClassFinder {
                     original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
 
             if (assertInvisibleAnnotation != null) {
-                if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
-                    return null;
+                switch (runtimeClassesHandleMode) {
+                    case IGNORE:
+                        break;
+                    case REPORT_ERROR:
+                        if (ApplicationManager.getApplication().isInternal()) {
+                            LOG.error("classpath is configured incorrectly:" +
+                                      " class " + qualifiedName + " from runtime must not be loaded by compiler");
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
                 }
-                else if (runtimeClassesHandleMode == RuntimeClassesHandleMode.THROW) {
-                    throw new IllegalStateException(
-                            "classpath is configured incorrectly:" +
-                            " class " + qualifiedName + " from runtime must not be loaded by compiler");
-                }
-                else {
-                    throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
-                }
+                return null;
             }
         }
 

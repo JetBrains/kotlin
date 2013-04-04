@@ -26,7 +26,7 @@ import java.util.List;
 
 public interface PsiClassFinder {
     enum RuntimeClassesHandleMode {
-        THROW,
+        REPORT_ERROR,
         IGNORE,
     }
 
