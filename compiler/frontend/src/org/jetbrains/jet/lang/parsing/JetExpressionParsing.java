@@ -124,7 +124,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     );
 
     @SuppressWarnings({"UnusedDeclaration"})
-    private enum Precedence {
+    public enum Precedence {
         POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
 //                HASH,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess

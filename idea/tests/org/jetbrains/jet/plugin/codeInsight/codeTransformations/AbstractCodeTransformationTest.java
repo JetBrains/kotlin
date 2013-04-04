@@ -33,6 +33,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTest(path, new AssignmentWithIfExpressionToStatementIntention());
     }
 
+    public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
+        doTest(path, new RemoveUnnecessaryParenthesesIntention());
+    }
+
     private void doTest(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
