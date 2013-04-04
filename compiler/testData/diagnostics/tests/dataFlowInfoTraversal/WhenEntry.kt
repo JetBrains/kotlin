@@ -17,7 +17,7 @@ fun bar(x: Number) {
 
 fun whenWithoutSubject(x: Number) {
     when {
-        (x as Int) == 42 -> x : Int
+        x as Int == 42 -> x : Int
         else -> {}
     }
     x : Int

@@ -42,7 +42,7 @@ fun t3() {
 fun t4() {
     return
 
-    <!UNREACHABLE_CODE!>(43)<!>
+    <!USELESS_PARENTHESES, UNREACHABLE_CODE!>(43)<!>
 }
 
 fun doSmth() {}

@@ -21,7 +21,7 @@ fun foo(_x: Foo) : Any {
     (x++).inc()
     +<!USELESS_PARENTHESES!>(x++)<!>
     <!USELESS_PARENTHESES!>(x++)<!> <!USELESS_CAST!>as<!> Foo
-    <!USELESS_PARENTHESES!>(x--)<!> <!USELESS_CAST!>as<!> Foo
+    <!USELESS_PARENTHESES!>(--x)<!> <!USELESS_CAST!>as<!> Foo
     <!USELESS_PARENTHESES!>(x++)<!> * <!USELESS_PARENTHESES!>(--x)<!>
     <!USELESS_PARENTHESES!>(x++)<!> + <!USELESS_PARENTHESES!>(--x)<!>
     <!USELESS_PARENTHESES!>(x++)<!>..<!USELESS_PARENTHESES!>(--x)<!>

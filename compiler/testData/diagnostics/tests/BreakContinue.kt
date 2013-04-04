@@ -1,23 +1,23 @@
 class C {
 
     fun f (<!UNUSED_PARAMETER!>a<!> : Boolean, <!UNUSED_PARAMETER!>b<!> : Boolean) {
-        @b (while (true)
+        @b <!USELESS_PARENTHESES!>(while (true)
           @a {
             <!NOT_A_LOOP_LABEL!>break@f<!>
             break
             break@b
             <!NOT_A_LOOP_LABEL!>break@a<!>
-          })
+        })<!>
 
         <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>
 
-        @b (while (true)
+        @b <!USELESS_PARENTHESES!>(while (true)
           @a {
             <!NOT_A_LOOP_LABEL!>continue@f<!>
             continue
             continue@b
             <!NOT_A_LOOP_LABEL!>continue@a<!>
-          })
+        })<!>
 
         <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break<!>
 

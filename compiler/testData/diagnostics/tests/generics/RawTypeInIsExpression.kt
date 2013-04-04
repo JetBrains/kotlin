@@ -10,7 +10,7 @@ public fun foo(a: Any) {
     a is <!NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION!>List<!>
     a is Int
 
-    (a <!USELESS_CAST!>as<!> <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>) is Int
+    a <!USELESS_CAST!>as<!> <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!> is Int
 }
 
 
