@@ -1,5 +1,14 @@
 <project name="Plugin Publisher" default="verifyAndPublish">
-  <property name="idea.download.page.url" value="http://confluence.jetbrains.com/display/IDEADEV/IDEA+12.1+EAP"/>
+  <!--
+  External params:
+  eap - for getting idea from eap page
+  release - for getting idea from download site
+  version - idea version
+  -->
+
+  <property name="idea.eap.download.page.url" value="http://confluence.jetbrains.com/display/IDEADEV/IDEA+${version}+EAP"/>
+  <property name="idea.release.download.page.url" value="http://download.jetbrains.com/idea/ideaIC-${version}.tar.gz"/>
+
   <property name="plugin.repository.url" value="http://www.jetbrains.com/kotlin/eap-plugin-repository"/>
 
   <property name="updatePlugins.xml" value="updatePlugins.xml"/>
@@ -21,11 +30,9 @@
     </sequential>
   </macrodef>
 
-  <target name="verifyAndPublish">
-    <!-- IDEA Download URL -> ${download.url} -->
-    <!-- Fetch from EAP page -->
+  <target name="setEapDownload" if="eap">
     <loadresource property="download.url">
-      <url url="${idea.download.page.url}"/>
+      <url url="${idea.eap.download.page.url}"/>
       <filterchain>
         <tokenfilter>
           <filetokenizer/>
@@ -34,8 +41,14 @@
         </tokenfilter>
       </filterchain>
     </loadresource>
+  </target>
 
-    <!-- <property name="download.url" value="http://download.jetbrains.com/idea/ideaIC-12.0.tar.gz" /> -->
+  <target name="setReleasedDownload" if="release">
+    <property name="download.url" value="${idea.release.download.page.url}" />
+  </target>
+
+  <target name="verifyAndPublish" depends="setEapDownload, setReleasedDownload">
+    <echo message="External parameters: ${eap} Release ${release} Version ${version}" />
 
     <!-- Download and extract IDEA -->
     <echo message="Downloading IDEA from ${download.url}"/>
