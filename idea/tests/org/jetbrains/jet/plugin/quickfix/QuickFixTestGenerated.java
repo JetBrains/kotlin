@@ -775,6 +775,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/override/nothingToOverride/beforeAddParameter.kt");
             }
             
+            @TestMetadata("beforeAddParameterMultiple.kt")
+            public void testAddParameterMultiple() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeAddParameterMultiple.kt");
+            }
+            
             @TestMetadata("beforeAddParameterPreserveVisibility.kt")
             public void testAddParameterPreserveVisibility() throws Exception {
                 doTest("idea/testData/quickfix/override/nothingToOverride/beforeAddParameterPreserveVisibility.kt");

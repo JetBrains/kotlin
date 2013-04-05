@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.command.CommandProcessor;
@@ -26,19 +28,20 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.VisibilityUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetChangeFunctionSignatureAction;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.codeInsight.OverrideUtil;
 
 import java.util.*;
@@ -47,7 +50,7 @@ import java.util.*;
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunction> {
-    private final List<SimpleFunctionDescriptor> possibleSignatures;
+    private final List<FunctionDescriptor> possibleSignatures;
 
     public ChangeMemberFunctionSignatureFix(@NotNull JetNamedFunction element) {
         super(element);
@@ -72,8 +75,8 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @NotNull
-    private String getFunctionSignatureString(@NotNull SimpleFunctionDescriptor functionSignature, boolean shortTypeNames) {
-        return OverrideUtil.createOverridedFunctionSignatureStringFromDescriptor(
+    private String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature, boolean shortTypeNames) {
+        return OverrideUtil.createOverridenFunctionSignatureStringFromDescriptor(
                 element.getProject(), functionSignature, shortTypeNames);
     }
 
@@ -103,45 +106,41 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
      * Computes all the signatures a 'functionElement' could be changed to in order to remove NOTHING_TO_OVERRIDE error.
      */
     @NotNull
-    private List<SimpleFunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
-        Project project = functionElement.getProject();
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
-        SimpleFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
-        assert functionDescriptor != null;
-        List<SimpleFunctionDescriptor> superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor);
-        Map<String, SimpleFunctionDescriptor> possibleSignatures = Maps.newHashMap();
-        for (SimpleFunctionDescriptor superFunction : superFunctions) {
+    private List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
+        BindingContext context = KotlinCacheManagerUtil.getDeclarationsFromProject(functionElement).getBindingContext();
+        FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
+        if (functionDescriptor == null) return Lists.newArrayList();
+        List<FunctionDescriptor> superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor);
+        Map<String, FunctionDescriptor> possibleSignatures = Maps.newHashMap();
+        for (FunctionDescriptor superFunction : superFunctions) {
             if (!superFunction.getKind().isReal()) continue;
-            SimpleFunctionDescriptor signature = changeSignatureToMatch(functionDescriptor, superFunction);
+            FunctionDescriptor signature = changeSignatureToMatch(functionDescriptor, superFunction);
             possibleSignatures.put(getFunctionSignatureString(signature, /* shortTypeNames = */ false), signature);
         }
-        return new ArrayList<SimpleFunctionDescriptor>(possibleSignatures.values());
+        return Lists.newArrayList(possibleSignatures.values());
     }
 
     /**
      *  Changes function's signature to match superFunction's signature. Returns new descriptor.
      */
-    private static SimpleFunctionDescriptor changeSignatureToMatch(SimpleFunctionDescriptor function, SimpleFunctionDescriptor superFunction) {
+    private static FunctionDescriptor changeSignatureToMatch(FunctionDescriptor function, FunctionDescriptor superFunction) {
         List<ValueParameterDescriptor> superParameters = superFunction.getValueParameters();
         List<ValueParameterDescriptor> parameters = function.getValueParameters();
-        List<ValueParameterDescriptor> newParameters = new ArrayList<ValueParameterDescriptor>(superParameters);
+        List<ValueParameterDescriptor> newParameters = Lists.newArrayList(superParameters);
 
         // Parameters in superFunction, which are matched in new function signature:
-        ArrayList<Boolean> matched = new ArrayList<Boolean>(Collections.nCopies(superParameters.size(), false));
+        BitSet matched = new BitSet(superParameters.size());
         // Parameters in this function, which are used in new function signature:
-        ArrayList<Boolean> used = new ArrayList<Boolean>(Collections.nCopies(parameters.size(), false));
+        BitSet used = new BitSet(superParameters.size());
 
-        matchParametersWithTheSameName(superParameters, parameters, newParameters, matched, used);
+        matchParameters(MATCH_NAMES, superParameters, parameters, newParameters, matched, used);
+        matchParameters(MATCH_TYPES, superParameters, parameters, newParameters, matched, used);
 
-        matchParametersWithTheSameType(superParameters, parameters, newParameters, matched, used);
-
-        Visibility newVisibility = getVisibility(function, superFunction);
-
-        return CodegenUtil.replaceFunctionParameters(
+        return FunctionDescriptorUtil.replaceFunctionParameters(
                 superFunction.copy(
                         function.getContainingDeclaration(),
                         Modality.OPEN,
-                        newVisibility,
+                        getVisibility(function, superFunction),
                         CallableMemberDescriptor.Kind.DELEGATION,
                         /* copyOverrides = */ true),
                 newParameters);
@@ -150,85 +149,74 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     /**
      * Returns new visibility for 'function' modified to override 'superFunction'.
      */
-    private static Visibility getVisibility(SimpleFunctionDescriptor function, SimpleFunctionDescriptor superFunction) {
-        Visibility superVisibility = superFunction.getVisibility();
-        Visibility visibility = function.getVisibility();
-        Visibility newVisibility = superVisibility;
-        // If function has greater visibility than super function, keep function's visibility:
-        Integer compareVisibilities = Visibilities.compare(visibility, superVisibility);
-        if (compareVisibilities != null && compareVisibilities > 0) {
-            newVisibility = visibility;
-        }
-        return newVisibility;
+    private static Visibility getVisibility(FunctionDescriptor function, FunctionDescriptor superFunction) {
+        ArrayDeque<CallableMemberDescriptor> descriptors =
+                Queues.<CallableMemberDescriptor>newArrayDeque(Arrays.asList(superFunction, function));
+        return VisibilityUtil.findMemberWithMaxVisibility(descriptors).getVisibility();
     }
 
+    /** Helper interface for matchParameters(..) method. */
+    private interface ParameterChooser {
+        /**
+         * Checks if 'parameter' may be used to match 'superParameter'.
+         * If so, returns (possibly modified) descriptor to be used as the new parameter.
+         * If not, returns null.
+         */
+        @Nullable
+        ValueParameterDescriptor choose(@NotNull ValueParameterDescriptor parameter, @NotNull ValueParameterDescriptor superParameter);
+    }
+
+    private static final ParameterChooser MATCH_NAMES = new ParameterChooser() {
+        @Nullable
+        @Override
+        public ValueParameterDescriptor choose(
+                @NotNull ValueParameterDescriptor parameter,
+                @NotNull ValueParameterDescriptor superParameter
+        ) {
+            return parameter.getName().equals(superParameter.getName()) ? superParameter : null;
+        }
+    };
+
+    private static final ParameterChooser MATCH_TYPES = new ParameterChooser() {
+        @Nullable
+        @Override
+        public ValueParameterDescriptor choose(
+                @NotNull ValueParameterDescriptor parameter,
+                @NotNull ValueParameterDescriptor superParameter
+        ) {
+            return JetTypeChecker.INSTANCE.equalTypes(parameter.getType(), superParameter.getType()) ? parameter : null;
+        }
+    };
+
     /**
-     * Match function's parameters with super function's parameters of the same type (but possibly different names). Preserve ordering.
+     * Match function's parameters with super function's parameters using parameterChooser.
+     * Doesn't have to preserve ordering, parameter names or types.
      * @param superParameters - super function's parameters
      * @param parameters - function's parameters
      * @param newParameters - new parameters (may be modified by this function)
      * @param matched - true iff this parameter in super function is matched by some parameter in function (may be modified by this function)
      * @param used - true iff this parameter in function is used to match some parameter in super function (may be modified by this function)
      */
-    private static void matchParametersWithTheSameType(
-            List<ValueParameterDescriptor> superParameters,
-            List<ValueParameterDescriptor> parameters,
-            List<ValueParameterDescriptor> newParameters,
-            ArrayList<Boolean> matched,
-            ArrayList<Boolean> used
+    private static void matchParameters(
+            @NotNull ParameterChooser parameterChooser,
+            @NotNull List<ValueParameterDescriptor> superParameters,
+            @NotNull List<ValueParameterDescriptor> parameters,
+            @NotNull List<ValueParameterDescriptor> newParameters,
+            @NotNull BitSet matched,
+            @NotNull BitSet used
     ) {
-        int superIdx = 0;
         for (ValueParameterDescriptor superParameter : superParameters) {
-            if (!matched.get(superIdx)) {
-                int idx = 0;
-                JetType superParameterType = superParameter.getType();
+            if (!matched.get(superParameter.getIndex())) {
                 for (ValueParameterDescriptor parameter : parameters) {
-                    JetType parameterType = parameter.getType();
-                    if (!used.get(idx) && JetTypeChecker.INSTANCE.equalTypes(superParameterType, parameterType)) {
-                        used.set(idx, true);
-                        matched.set(superIdx, true);
-                        newParameters.set(superIdx, parameter);
+                    ValueParameterDescriptor choice = parameterChooser.choose(parameter, superParameter);
+                    if (!used.get(parameter.getIndex()) && choice != null) {
+                        used.set(parameter.getIndex(), true);
+                        matched.set(superParameter.getIndex(), true);
+                        newParameters.set(superParameter.getIndex(), choice);
                         break;
                     }
-                    idx++;
                 }
             }
-            superIdx++;
-        }
-    }
-
-    /**
-     * Match function's parameters with super function's parameters of the same name (but possibly different types). Don't preserver ordering.
-     * @param superParameters - super function's parameters
-     * @param parameters - function's parameters
-     * @param newParameters - new parameters (may be modified by this function)
-     * @param matched - true iff this parameter in super function is matched by some parameter in function (may be modified by this function)
-     * @param used - true iff this parameter in function is used to match some parameter in super function (may be modified by this function)
-     */
-    private static void matchParametersWithTheSameName(
-            List<ValueParameterDescriptor> superParameters,
-            List<ValueParameterDescriptor> parameters,
-            List<ValueParameterDescriptor> newParameters,
-            ArrayList<Boolean> matched,
-            ArrayList<Boolean> used
-    ) {
-        int superIdx = 0;
-        for (ValueParameterDescriptor superParameter : superParameters) {
-            if (!matched.get(superIdx)) {
-                int idx = 0;
-                Name superName = superParameter.getName();
-                for (ValueParameterDescriptor parameter : parameters) {
-                    Name name = parameter.getName();
-                    if (!used.get(idx) && name.equals(superName)) {
-                        used.set(idx, true);
-                        matched.set(superIdx, true);
-                        newParameters.set(superIdx, superParameter);
-                        break;
-                    }
-                    idx++;
-                }
-            }
-            superIdx++;
         }
     }
 
@@ -237,9 +225,9 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
      * different parameters/return type).
      */
     @NotNull
-    private static List<SimpleFunctionDescriptor> getPossibleSuperFunctionsDescriptors(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+    private static List<FunctionDescriptor> getPossibleSuperFunctionsDescriptors(@NotNull FunctionDescriptor functionDescriptor) {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        List<SimpleFunctionDescriptor> superFunctions = new LinkedList<SimpleFunctionDescriptor>();
+        List<FunctionDescriptor> superFunctions = Lists.newArrayList();
         if (!(containingDeclaration instanceof ClassDescriptor)) return superFunctions;
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
@@ -249,10 +237,8 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
             JetScope scope = type.getMemberScope();
             for (FunctionDescriptor function : scope.getFunctions(name)) {
                 if (!function.getKind().isReal()) continue;
-                assert function instanceof SimpleFunctionDescriptor;
-                SimpleFunctionDescriptor simpleFunctionDescriptor = (SimpleFunctionDescriptor) function;
-                if (simpleFunctionDescriptor.getModality().isOverridable()) 
-                    superFunctions.add(simpleFunctionDescriptor);
+                if (function.getModality().isOverridable())
+                    superFunctions.add(function);
             }
         }
         return superFunctions;

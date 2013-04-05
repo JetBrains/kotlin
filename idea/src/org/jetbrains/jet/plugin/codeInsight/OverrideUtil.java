@@ -34,7 +34,11 @@ import java.util.Set;
 
 public class OverrideUtil {
 
-    public static JetElement createOverridedPropertyElementFromDescriptor(Project project, PropertyDescriptor descriptor) {
+    private OverrideUtil() {
+    }
+
+    @NotNull
+    public static JetElement createOverridenPropertyElementFromDescriptor(@NotNull Project project, @NotNull PropertyDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append(displayableVisibility(descriptor)).append("override ");
         if (descriptor.isVar()) {
@@ -76,22 +80,22 @@ public class OverrideUtil {
     }
 
     @NotNull
-    public static String createOverridedFunctionSignatureStringFromDescriptor(
+    public static String createOverridenFunctionSignatureStringFromDescriptor(
             @NotNull Project project,
-            @NotNull SimpleFunctionDescriptor descriptor,
+            @NotNull FunctionDescriptor descriptor,
             boolean shortTypeNames
     ) {
-        JetNamedFunction functionElement = createOverridedFunctionElementFromDescriptor(project, descriptor, shortTypeNames);
+        JetNamedFunction functionElement = createOverridenFunctionElementFromDescriptor(project, descriptor, shortTypeNames);
         JetExpression bodyExpression = functionElement.getBodyExpression();
-        assert bodyExpression != null;
+        assert bodyExpression != null : "createOverridenFunctionElementFromDescriptor should always return function with body.";
         bodyExpression.replace(JetPsiFactory.createWhiteSpace(project));
         return functionElement.getText().trim();
     }
 
     @NotNull
-    public static JetNamedFunction createOverridedFunctionElementFromDescriptor(
+    public static JetNamedFunction createOverridenFunctionElementFromDescriptor(
             @NotNull Project project,
-            @NotNull SimpleFunctionDescriptor descriptor,
+            @NotNull FunctionDescriptor descriptor,
             boolean shortNames
     ) {
         StringBuilder bodyBuilder = new StringBuilder();
