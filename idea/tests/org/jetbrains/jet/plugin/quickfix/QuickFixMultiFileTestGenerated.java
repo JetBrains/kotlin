@@ -205,6 +205,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
             }
             
+            @TestMetadata("import.before.Main.kt")
+            public void testImport() throws Exception {
+                doTestWithExtraFile("idea/testData/quickfix/override/nothingToOverride/import.before.Main.kt");
+            }
+            
             @TestMetadata("twoPackages.before.Main.kt")
             public void testTwoPackages() throws Exception {
                 doTestWithExtraFile("idea/testData/quickfix/override/nothingToOverride/twoPackages.before.Main.kt");
