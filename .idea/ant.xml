@@ -1,13 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AntConfiguration">
-    <buildFile url="file://$PROJECT_DIR$/grammar/buildGrammarLexer.xml" />
-    <buildFile url="file://$PROJECT_DIR$/compiler/frontend/buildLexer.xml" />
-    <buildFile url="file://$PROJECT_DIR$/build.xml">
-      <maximumHeapSize value="512" />
+    <defaultAnt bundledAnt="true" />
+    <buildFile url="file://$PROJECT_DIR$/grammar/buildGrammarLexer.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <maximumStackSize value="2" />
+      <properties />
     </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml" />
-    <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml" />
+    <buildFile url="file://$PROJECT_DIR$/compiler/frontend/buildLexer.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <maximumStackSize value="2" />
+      <properties />
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/build.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="512" />
+      <maximumStackSize value="2" />
+      <properties />
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <maximumStackSize value="2" />
+      <properties />
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <maximumStackSize value="2" />
+      <properties />
+    </buildFile>
   </component>
 </project>
 

@@ -118,21 +118,16 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         for (DescriptorClassMember selectedElement : selectedElements) {
             DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor) descriptor));
+                overridingMembers.add(OverrideUtil.createOverridenFunctionElementFromDescriptor(file.getProject(),
+                                                                                                (SimpleFunctionDescriptor) descriptor, /* shortTypeNames = */
+                                                                                                false));
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
+                overridingMembers.add(
+                        OverrideUtil.createOverridenPropertyElementFromDescriptor(file.getProject(), (PropertyDescriptor) descriptor));
             }
         }
         return overridingMembers;
-    }
-
-    private static JetElement overrideProperty(Project project, PropertyDescriptor descriptor) {
-        return OverrideUtil.createOverridedPropertyElementFromDescriptor(project, descriptor);
-    }
-
-    private static JetElement overrideFunction(Project project, SimpleFunctionDescriptor descriptor) {
-        return OverrideUtil.createOverridedFunctionElementFromDescriptor(project, descriptor, /* shortTypeNames = */ false);
     }
 
     @NotNull
