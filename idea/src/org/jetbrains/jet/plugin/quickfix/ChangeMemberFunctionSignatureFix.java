@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetChangeFunctionSignatureAction;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
-import org.jetbrains.jet.plugin.codeInsight.OverrideUtil;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 
 import java.util.*;
 
@@ -76,8 +76,8 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
 
     @NotNull
     private String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature, boolean shortTypeNames) {
-        return OverrideUtil.createOverridenFunctionSignatureStringFromDescriptor(
-                element.getProject(), functionSignature, shortTypeNames);
+        return CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
+                functionSignature, shortTypeNames);
     }
 
     @NotNull
@@ -136,7 +136,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         matchParameters(MATCH_NAMES, superParameters, parameters, newParameters, matched, used);
         matchParameters(MATCH_TYPES, superParameters, parameters, newParameters, matched, used);
 
-        return FunctionDescriptorUtil.replaceFunctionParameters(
+        FunctionDescriptor newFunction = FunctionDescriptorUtil.replaceFunctionParameters(
                 superFunction.copy(
                         function.getContainingDeclaration(),
                         Modality.OPEN,
@@ -144,6 +144,8 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                         CallableMemberDescriptor.Kind.DELEGATION,
                         /* copyOverrides = */ true),
                 newParameters);
+        newFunction.addOverriddenDescriptor(superFunction);
+        return newFunction;
     }
 
     /**

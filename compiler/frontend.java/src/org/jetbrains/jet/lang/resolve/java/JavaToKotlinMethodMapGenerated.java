@@ -29,215 +29,215 @@ class JavaToKotlinMethodMapGenerated {
         ImmutableMultimap.Builder<String, JavaToKotlinMethodMap.ClassData> b = ImmutableMultimap.builder();
         
         put(b, "java.lang.String", "String",
-            pair("compareTo(java.lang.String)", "fun compareTo(that : jet.String) : jet.Int"),            
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("toString()", "fun toString() : jet.String")            
+            pair("compareTo(java.lang.String)", "fun compareTo(that: jet.String): jet.Int"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("toString()", "fun toString(): jet.String")            
         );
         
         put(b, "java.lang.CharSequence", "CharSequence",
-            pair("toString()", "fun toString() : jet.String")            
+            pair("toString()", "fun toString(): jet.String")            
         );
         
         put(b, "java.lang.Throwable", "Throwable",
-            pair("getCause()", "fun getCause() : jet.Throwable?"),            
-            pair("getMessage()", "fun getMessage() : jet.String?"),            
-            pair("printStackTrace()", "fun printStackTrace() : jet.Unit")            
+            pair("getCause()", "fun getCause(): jet.Throwable?"),            
+            pair("getMessage()", "fun getMessage(): jet.String?"),            
+            pair("printStackTrace()", "fun printStackTrace(): jet.Unit")            
         );
         
         put(b, "java.lang.Comparable", "Comparable",
-            pair("compareTo(T)", "fun compareTo(other : T) : jet.Int")            
+            pair("compareTo(T)", "fun compareTo(other: T): jet.Int")            
         );
         
         put(b, "java.lang.Enum", "Enum",
-            pair("name()", "fun name() : jet.String"),            
-            pair("ordinal()", "fun ordinal() : jet.Int")            
+            pair("name()", "fun name(): jet.String"),            
+            pair("ordinal()", "fun ordinal(): jet.Int")            
         );
         
         put(b, "java.lang.Iterable", "Iterable",
-            pair("iterator()", "fun iterator() : jet.Iterator<T>")            
+            pair("iterator()", "fun iterator(): jet.Iterator<T>")            
         );
         
         put(b, "java.lang.Iterable", "MutableIterable",
-            pair("iterator()", "fun iterator() : jet.MutableIterator<T>")            
+            pair("iterator()", "fun iterator(): jet.MutableIterator<T>")            
         );
         
         put(b, "java.util.Iterator", "Iterator",
-            pair("hasNext()", "fun hasNext() : jet.Boolean"),            
-            pair("next()", "fun next() : T")            
+            pair("hasNext()", "fun hasNext(): jet.Boolean"),            
+            pair("next()", "fun next(): T")            
         );
         
         put(b, "java.util.Iterator", "MutableIterator",
-            pair("hasNext()", "fun hasNext() : jet.Boolean"),            
-            pair("next()", "fun next() : T"),            
-            pair("remove()", "fun remove() : jet.Unit")            
+            pair("hasNext()", "fun hasNext(): jet.Boolean"),            
+            pair("next()", "fun next(): T"),            
+            pair("remove()", "fun remove(): jet.Unit")            
         );
         
         put(b, "java.util.Collection", "Collection",
-            pair("contains(java.lang.Object)", "fun contains(o : jet.Any?) : jet.Boolean"),            
-            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("hashCode()", "fun hashCode() : jet.Int"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("iterator()", "fun iterator() : jet.Iterator<E>"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("toArray()", "fun toArray() : jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a : jet.Array<out T>) : jet.Array<T>")            
+            pair("contains(java.lang.Object)", "fun contains(o: jet.Any?): jet.Boolean"),            
+            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("iterator()", "fun iterator(): jet.Iterator<E>"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
+            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
         );
         
         put(b, "java.util.Collection", "MutableCollection",
-            pair("add(E)", "fun add(e : E) : jet.Boolean"),            
-            pair("addAll(java.util.Collection<? extends E>)", "fun addAll(c : jet.Collection<E>) : jet.Boolean"),            
-            pair("clear()", "fun clear() : jet.Unit"),            
-            pair("contains(java.lang.Object)", "fun contains(o : jet.Any?) : jet.Boolean"),            
-            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("hashCode()", "fun hashCode() : jet.Int"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("iterator()", "fun iterator() : jet.MutableIterator<E>"),            
-            pair("remove(java.lang.Object)", "fun remove(o : jet.Any?) : jet.Boolean"),            
-            pair("removeAll(java.util.Collection<?>)", "fun removeAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("retainAll(java.util.Collection<?>)", "fun retainAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("toArray()", "fun toArray() : jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a : jet.Array<out T>) : jet.Array<T>")            
+            pair("add(E)", "fun add(e: E): jet.Boolean"),            
+            pair("addAll(java.util.Collection<? extends E>)", "fun addAll(c: jet.Collection<E>): jet.Boolean"),            
+            pair("clear()", "fun clear(): jet.Unit"),            
+            pair("contains(java.lang.Object)", "fun contains(o: jet.Any?): jet.Boolean"),            
+            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("iterator()", "fun iterator(): jet.MutableIterator<E>"),            
+            pair("remove(java.lang.Object)", "fun remove(o: jet.Any?): jet.Boolean"),            
+            pair("removeAll(java.util.Collection<?>)", "fun removeAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("retainAll(java.util.Collection<?>)", "fun retainAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
+            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
         );
         
         put(b, "java.util.List", "List",
-            pair("contains(java.lang.Object)", "fun contains(o : jet.Any?) : jet.Boolean"),            
-            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("get(int)", "fun get(index : jet.Int) : E"),            
-            pair("hashCode()", "fun hashCode() : jet.Int"),            
-            pair("indexOf(java.lang.Object)", "fun indexOf(o : jet.Any?) : jet.Int"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("iterator()", "fun iterator() : jet.Iterator<E>"),            
-            pair("lastIndexOf(java.lang.Object)", "fun lastIndexOf(o : jet.Any?) : jet.Int"),            
-            pair("listIterator()", "fun listIterator() : jet.ListIterator<E>"),            
-            pair("listIterator(int)", "fun listIterator(index : jet.Int) : jet.ListIterator<E>"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("subList(int, int)", "fun subList(fromIndex : jet.Int, toIndex : jet.Int) : jet.List<E>"),            
-            pair("toArray()", "fun toArray() : jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a : jet.Array<out T>) : jet.Array<T>")            
+            pair("contains(java.lang.Object)", "fun contains(o: jet.Any?): jet.Boolean"),            
+            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("get(int)", "fun get(index: jet.Int): E"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("indexOf(java.lang.Object)", "fun indexOf(o: jet.Any?): jet.Int"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("iterator()", "fun iterator(): jet.Iterator<E>"),            
+            pair("lastIndexOf(java.lang.Object)", "fun lastIndexOf(o: jet.Any?): jet.Int"),            
+            pair("listIterator()", "fun listIterator(): jet.ListIterator<E>"),            
+            pair("listIterator(int)", "fun listIterator(index: jet.Int): jet.ListIterator<E>"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("subList(int, int)", "fun subList(fromIndex: jet.Int, toIndex: jet.Int): jet.List<E>"),            
+            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
+            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
         );
         
         put(b, "java.util.List", "MutableList",
-            pair("add(E)", "fun add(e : E) : jet.Boolean"),            
-            pair("add(int, E)", "fun add(index : jet.Int, element : E) : jet.Unit"),            
-            pair("addAll(int, java.util.Collection<? extends E>)", "fun addAll(index : jet.Int, c : jet.Collection<E>) : jet.Boolean"),            
-            pair("addAll(java.util.Collection<? extends E>)", "fun addAll(c : jet.Collection<E>) : jet.Boolean"),            
-            pair("clear()", "fun clear() : jet.Unit"),            
-            pair("contains(java.lang.Object)", "fun contains(o : jet.Any?) : jet.Boolean"),            
-            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("get(int)", "fun get(index : jet.Int) : E"),            
-            pair("hashCode()", "fun hashCode() : jet.Int"),            
-            pair("indexOf(java.lang.Object)", "fun indexOf(o : jet.Any?) : jet.Int"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("iterator()", "fun iterator() : jet.Iterator<E>"),            
-            pair("lastIndexOf(java.lang.Object)", "fun lastIndexOf(o : jet.Any?) : jet.Int"),            
-            pair("listIterator()", "fun listIterator() : jet.MutableListIterator<E>"),            
-            pair("listIterator(int)", "fun listIterator(index : jet.Int) : jet.MutableListIterator<E>"),            
-            pair("remove(int)", "fun remove(index : jet.Int) : E"),            
-            pair("remove(java.lang.Object)", "fun remove(o : jet.Any?) : jet.Boolean"),            
-            pair("removeAll(java.util.Collection<?>)", "fun removeAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("retainAll(java.util.Collection<?>)", "fun retainAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("set(int, E)", "fun set(index : jet.Int, element : E) : E"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("subList(int, int)", "fun subList(fromIndex : jet.Int, toIndex : jet.Int) : jet.MutableList<E>"),            
-            pair("toArray()", "fun toArray() : jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a : jet.Array<out T>) : jet.Array<T>")            
+            pair("add(E)", "fun add(e: E): jet.Boolean"),            
+            pair("add(int, E)", "fun add(index: jet.Int, element: E): jet.Unit"),            
+            pair("addAll(int, java.util.Collection<? extends E>)", "fun addAll(index: jet.Int, c: jet.Collection<E>): jet.Boolean"),            
+            pair("addAll(java.util.Collection<? extends E>)", "fun addAll(c: jet.Collection<E>): jet.Boolean"),            
+            pair("clear()", "fun clear(): jet.Unit"),            
+            pair("contains(java.lang.Object)", "fun contains(o: jet.Any?): jet.Boolean"),            
+            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("get(int)", "fun get(index: jet.Int): E"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("indexOf(java.lang.Object)", "fun indexOf(o: jet.Any?): jet.Int"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("iterator()", "fun iterator(): jet.Iterator<E>"),            
+            pair("lastIndexOf(java.lang.Object)", "fun lastIndexOf(o: jet.Any?): jet.Int"),            
+            pair("listIterator()", "fun listIterator(): jet.MutableListIterator<E>"),            
+            pair("listIterator(int)", "fun listIterator(index: jet.Int): jet.MutableListIterator<E>"),            
+            pair("remove(int)", "fun remove(index: jet.Int): E"),            
+            pair("remove(java.lang.Object)", "fun remove(o: jet.Any?): jet.Boolean"),            
+            pair("removeAll(java.util.Collection<?>)", "fun removeAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("retainAll(java.util.Collection<?>)", "fun retainAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("set(int, E)", "fun set(index: jet.Int, element: E): E"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("subList(int, int)", "fun subList(fromIndex: jet.Int, toIndex: jet.Int): jet.MutableList<E>"),            
+            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
+            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
         );
         
         put(b, "java.util.Set", "Set",
-            pair("contains(java.lang.Object)", "fun contains(o : jet.Any?) : jet.Boolean"),            
-            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("hashCode()", "fun hashCode() : jet.Int"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("iterator()", "fun iterator() : jet.Iterator<E>"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("toArray()", "fun toArray() : jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a : jet.Array<out T>) : jet.Array<T>")            
+            pair("contains(java.lang.Object)", "fun contains(o: jet.Any?): jet.Boolean"),            
+            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("iterator()", "fun iterator(): jet.Iterator<E>"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
+            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
         );
         
         put(b, "java.util.Set", "MutableSet",
-            pair("add(E)", "fun add(e : E) : jet.Boolean"),            
-            pair("addAll(java.util.Collection<? extends E>)", "fun addAll(c : jet.Collection<E>) : jet.Boolean"),            
-            pair("clear()", "fun clear() : jet.Unit"),            
-            pair("contains(java.lang.Object)", "fun contains(o : jet.Any?) : jet.Boolean"),            
-            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("hashCode()", "fun hashCode() : jet.Int"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("iterator()", "fun iterator() : jet.MutableIterator<E>"),            
-            pair("remove(java.lang.Object)", "fun remove(o : jet.Any?) : jet.Boolean"),            
-            pair("removeAll(java.util.Collection<?>)", "fun removeAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("retainAll(java.util.Collection<?>)", "fun retainAll(c : jet.Collection<jet.Any?>) : jet.Boolean"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("toArray()", "fun toArray() : jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a : jet.Array<out T>) : jet.Array<T>")            
+            pair("add(E)", "fun add(e: E): jet.Boolean"),            
+            pair("addAll(java.util.Collection<? extends E>)", "fun addAll(c: jet.Collection<E>): jet.Boolean"),            
+            pair("clear()", "fun clear(): jet.Unit"),            
+            pair("contains(java.lang.Object)", "fun contains(o: jet.Any?): jet.Boolean"),            
+            pair("containsAll(java.util.Collection<?>)", "fun containsAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("iterator()", "fun iterator(): jet.MutableIterator<E>"),            
+            pair("remove(java.lang.Object)", "fun remove(o: jet.Any?): jet.Boolean"),            
+            pair("removeAll(java.util.Collection<?>)", "fun removeAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("retainAll(java.util.Collection<?>)", "fun retainAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
+            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
         );
         
         put(b, "java.util.Map", "Map",
-            pair("containsKey(java.lang.Object)", "fun containsKey(key : jet.Any?) : jet.Boolean"),            
-            pair("containsValue(java.lang.Object)", "fun containsValue(value : jet.Any?) : jet.Boolean"),            
-            pair("entrySet()", "fun entrySet() : jet.Set<jet.Map.Entry<K, V>>"),            
-            pair("get(java.lang.Object)", "fun get(key : jet.Any?) : V?"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("keySet()", "fun keySet() : jet.Set<K>"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("values()", "fun values() : jet.Collection<V>")            
+            pair("containsKey(java.lang.Object)", "fun containsKey(key: jet.Any?): jet.Boolean"),            
+            pair("containsValue(java.lang.Object)", "fun containsValue(value: jet.Any?): jet.Boolean"),            
+            pair("entrySet()", "fun entrySet(): jet.Set<jet.Map.Entry<K, V>>"),            
+            pair("get(java.lang.Object)", "fun get(key: jet.Any?): V?"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("keySet()", "fun keySet(): jet.Set<K>"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("values()", "fun values(): jet.Collection<V>")            
         );
         
         put(b, "java.util.Map", "MutableMap",
-            pair("clear()", "fun clear() : jet.Unit"),            
-            pair("containsKey(java.lang.Object)", "fun containsKey(key : jet.Any?) : jet.Boolean"),            
-            pair("containsValue(java.lang.Object)", "fun containsValue(value : jet.Any?) : jet.Boolean"),            
-            pair("entrySet()", "fun entrySet() : jet.MutableSet<jet.MutableMap.MutableEntry<K, V>>"),            
-            pair("get(java.lang.Object)", "fun get(key : jet.Any?) : V?"),            
-            pair("isEmpty()", "fun isEmpty() : jet.Boolean"),            
-            pair("keySet()", "fun keySet() : jet.MutableSet<K>"),            
-            pair("put(K, V)", "fun put(key : K, value : V) : V?"),            
-            pair("putAll(java.util.Map<? extends K,? extends V>)", "fun putAll(m : jet.Map<out K, V>) : jet.Unit"),            
-            pair("remove(java.lang.Object)", "fun remove(key : jet.Any?) : V?"),            
-            pair("size()", "fun size() : jet.Int"),            
-            pair("values()", "fun values() : jet.MutableCollection<V>")            
+            pair("clear()", "fun clear(): jet.Unit"),            
+            pair("containsKey(java.lang.Object)", "fun containsKey(key: jet.Any?): jet.Boolean"),            
+            pair("containsValue(java.lang.Object)", "fun containsValue(value: jet.Any?): jet.Boolean"),            
+            pair("entrySet()", "fun entrySet(): jet.MutableSet<jet.MutableMap.MutableEntry<K, V>>"),            
+            pair("get(java.lang.Object)", "fun get(key: jet.Any?): V?"),            
+            pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
+            pair("keySet()", "fun keySet(): jet.MutableSet<K>"),            
+            pair("put(K, V)", "fun put(key: K, value: V): V?"),            
+            pair("putAll(java.util.Map<? extends K,? extends V>)", "fun putAll(m: jet.Map<out K, V>): jet.Unit"),            
+            pair("remove(java.lang.Object)", "fun remove(key: jet.Any?): V?"),            
+            pair("size()", "fun size(): jet.Int"),            
+            pair("values()", "fun values(): jet.MutableCollection<V>")            
         );
         
         put(b, "java.util.Map.Entry", "Map.Entry",
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("getKey()", "fun getKey() : K"),            
-            pair("getValue()", "fun getValue() : V"),            
-            pair("hashCode()", "fun hashCode() : jet.Int")            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("getKey()", "fun getKey(): K"),            
+            pair("getValue()", "fun getValue(): V"),            
+            pair("hashCode()", "fun hashCode(): jet.Int")            
         );
         
         put(b, "java.util.Map.Entry", "MutableMap.MutableEntry",
-            pair("equals(java.lang.Object)", "fun equals(other : jet.Any?) : jet.Boolean"),            
-            pair("getKey()", "fun getKey() : K"),            
-            pair("getValue()", "fun getValue() : V"),            
-            pair("hashCode()", "fun hashCode() : jet.Int"),            
-            pair("setValue(V)", "fun setValue(value : V) : V")            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("getKey()", "fun getKey(): K"),            
+            pair("getValue()", "fun getValue(): V"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("setValue(V)", "fun setValue(value: V): V")            
         );
         
         put(b, "java.util.ListIterator", "ListIterator",
-            pair("hasNext()", "fun hasNext() : jet.Boolean"),            
-            pair("hasPrevious()", "fun hasPrevious() : jet.Boolean"),            
-            pair("next()", "fun next() : T"),            
-            pair("nextIndex()", "fun nextIndex() : jet.Int"),            
-            pair("previous()", "fun previous() : T"),            
-            pair("previousIndex()", "fun previousIndex() : jet.Int")            
+            pair("hasNext()", "fun hasNext(): jet.Boolean"),            
+            pair("hasPrevious()", "fun hasPrevious(): jet.Boolean"),            
+            pair("next()", "fun next(): T"),            
+            pair("nextIndex()", "fun nextIndex(): jet.Int"),            
+            pair("previous()", "fun previous(): T"),            
+            pair("previousIndex()", "fun previousIndex(): jet.Int")            
         );
         
         put(b, "java.util.ListIterator", "MutableListIterator",
-            pair("add(E)", "fun add(e : T) : jet.Unit"),            
-            pair("hasNext()", "fun hasNext() : jet.Boolean"),            
-            pair("hasPrevious()", "fun hasPrevious() : jet.Boolean"),            
-            pair("next()", "fun next() : T"),            
-            pair("nextIndex()", "fun nextIndex() : jet.Int"),            
-            pair("previous()", "fun previous() : T"),            
-            pair("previousIndex()", "fun previousIndex() : jet.Int"),            
-            pair("remove()", "fun remove() : jet.Unit"),            
-            pair("set(E)", "fun set(e : T) : jet.Unit")            
+            pair("add(E)", "fun add(e: T): jet.Unit"),            
+            pair("hasNext()", "fun hasNext(): jet.Boolean"),            
+            pair("hasPrevious()", "fun hasPrevious(): jet.Boolean"),            
+            pair("next()", "fun next(): T"),            
+            pair("nextIndex()", "fun nextIndex(): jet.Int"),            
+            pair("previous()", "fun previous(): T"),            
+            pair("previousIndex()", "fun previousIndex(): jet.Int"),            
+            pair("remove()", "fun remove(): jet.Unit"),            
+            pair("set(E)", "fun set(e: T): jet.Unit")            
         );
         
         map = b.build();

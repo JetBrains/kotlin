@@ -12,12 +12,14 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,5 +168,14 @@ public class CodeInsightUtils {
     }
 
     private CodeInsightUtils() {
+    }
+
+    @NotNull
+    public static String createFunctionSignatureStringFromDescriptor(
+            @NotNull FunctionDescriptor descriptor,
+            boolean shortTypeNames
+    ) {
+        DescriptorRenderer renderer = shortTypeNames ? DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES : DescriptorRenderer.SOURCE_CODE;
+        return renderer.render(descriptor);
     }
 }
