@@ -55,6 +55,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean debugMode;
     private final boolean classWithPrimaryConstructor;
     private final boolean verbose;
+    private final boolean unitReturnType;
+    private final boolean normalizedVisibilities;
+    private final boolean showInternalKeyword;
     @NotNull
     private final ValueParametersHandler handler;
     @NotNull
@@ -70,6 +73,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean debugMode,
             boolean classWithPrimaryConstructor,
             boolean verbose,
+            boolean unitReturnType,
+            boolean normalizedVisibilities,
+            boolean showInternalKeyword,
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
             @NotNull Collection<FqName> excludedAnnotationClasses
@@ -81,6 +87,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.handler = handler;
         this.classWithPrimaryConstructor = classWithPrimaryConstructor;
         this.verbose = verbose;
+        this.unitReturnType = unitReturnType;
+        this.normalizedVisibilities = normalizedVisibilities;
+        this.showInternalKeyword = showInternalKeyword;
         this.debugMode = debugMode;
         this.textFormat = textFormat;
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
@@ -307,6 +316,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderVisibility(@NotNull Visibility visibility, @NotNull StringBuilder builder) {
         if (!modifiers) return;
+        if (normalizedVisibilities) {
+            visibility = visibility.normalize();
+        }
+        if (!showInternalKeyword && visibility == Visibilities.INTERNAL) return;
         builder.append(renderKeyword(visibility.toString())).append(" ");
     }
 
@@ -325,18 +338,24 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderModalityForCallable(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
         if (!DescriptorUtils.isTopLevelDeclaration(callable) || callable.getModality() != Modality.FINAL) {
+            if (overridesSomething(callable) && callable.getModality() == Modality.OPEN) return;
             renderModality(callable.getModality(), builder);
         }
     }
 
+    private boolean overridesSomething(CallableMemberDescriptor callable) {
+        return !callable.getOverriddenDescriptors().isEmpty();
+    }
+
     private void renderOverrideAndMemberKind(@NotNull CallableMemberDescriptor callableMember, @NotNull StringBuilder builder) {
-        if (verbose) {
-            if (!callableMember.getOverriddenDescriptors().isEmpty()) {
-                builder.append("override /*").append(callableMember.getOverriddenDescriptors().size()).append("*/ ");
+        if (overridesSomething(callableMember)) {
+            builder.append("override ");
+            if (verbose) {
+                builder.append("/*").append(callableMember.getOverriddenDescriptors().size()).append("*/ ");
             }
-            if (callableMember.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-                builder.append("/*").append(callableMember.getKind().name().toLowerCase()).append("*/ ");
-            }
+        }
+        if (verbose && callableMember.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+            builder.append("/*").append(callableMember.getKind().name().toLowerCase()).append("*/ ");
         }
     }
 
@@ -443,7 +462,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(function, builder);
         renderValueParameters(function, builder);
         JetType returnType = function.getReturnType();
-        builder.append(" : ").append(returnType == null ? "[NULL]" : escape(renderType(returnType)));
+        if (unitReturnType || !KotlinBuiltIns.getInstance().isUnit(returnType)) {
+            builder.append(": ").append(returnType == null ? "[NULL]" : escape(renderType(returnType)));
+        }
         renderWhereSuffix(function.getTypeParameters(), builder);
     }
 
@@ -531,7 +552,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         renderName(variable, builder);
-        builder.append(" : ").append(escape(renderType(typeToRender)));
+        builder.append(": ").append(escape(renderType(typeToRender)));
 
         if (verbose && varargElementType != null) {
             builder.append(" /*").append(escape(renderType(realType))).append("*/");
@@ -555,7 +576,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append(escape(renderType(receiver.getType()))).append(".");
         }
         renderName(property, builder);
-        builder.append(" : ").append(escape(renderType(property.getType())));
+        builder.append(": ").append(escape(renderType(property.getType())));
 
         renderWhereSuffix(property.getTypeParameters(), builder);
     }
