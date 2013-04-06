@@ -51,6 +51,7 @@ public class NamespaceComparator {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
+            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
             .setVerbose(true).build();
 
     private static final ImmutableSet<String> JAVA_OBJECT_METHOD_NAMES = ImmutableSet.of(
