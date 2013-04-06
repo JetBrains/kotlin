@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 public class DescriptorRendererBuilder {
     private boolean shortNames = false;
@@ -31,6 +30,8 @@ public class DescriptorRendererBuilder {
     private boolean debugMode = false;
     private boolean classWithPrimaryConstructor = false;
     private boolean verbose = false;
+    private boolean unitReturnType = true;
+    private boolean normalizedVisibilities = false;
     @NotNull
     private DescriptorRenderer.ValueParametersHandler valueParametersHandler = new DescriptorRenderer.DefaultValueParameterHandler();
     @NotNull
@@ -76,6 +77,16 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setUnitReturnType(boolean unitReturnType) {
+        this.unitReturnType = unitReturnType;
+        return this;
+    }
+
+    public DescriptorRendererBuilder setNormalizedVisibilities(boolean normalizedVisibilities) {
+        this.normalizedVisibilities = normalizedVisibilities;
+        return this;
+    }
+
     public DescriptorRendererBuilder setValueParametersHandler(@NotNull DescriptorRenderer.ValueParametersHandler valueParametersHandler) {
         this.valueParametersHandler = valueParametersHandler;
         return this;
@@ -93,6 +104,6 @@ public class DescriptorRendererBuilder {
 
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(shortNames, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor,
-                                          verbose, valueParametersHandler, textFormat, excludedAnnotationClasses);
+                                          verbose, unitReturnType, normalizedVisibilities, valueParametersHandler, textFormat, excludedAnnotationClasses);
     }
 }

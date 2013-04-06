@@ -5,12 +5,12 @@ package testData.libraries
 
 [[public final class WithInnerAndObject() {
     public class object {
-        [internal final fun foo() : jet.Unit { /* compiled code */ }]
+        [final fun foo(): jet.Unit { /* compiled code */ }]
     }
 
-    [[internal final class MyInner() {
-        [internal trait MyInnerInner {
-            [internal abstract fun innerInnerMethod() : jet.Unit]
+    [[final class MyInner() {
+        [trait MyInnerInner {
+            [abstract fun innerInnerMethod(): jet.Unit]
         }]
     }]]
 }]]
