@@ -17,7 +17,6 @@
 package org.jetbrains.jet.renderer;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -26,6 +25,18 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer COMPACT_WITH_MODIFIERS = new DescriptorRendererBuilder().setWithDefinedIn(false).build();
+
+    DescriptorRenderer SOURCE_CODE = new DescriptorRendererBuilder()
+            .setNormalizedVisibilities(true)
+            .setWithDefinedIn(false)
+            .setShortNames(false)
+            .setUnitReturnType(false).build();
+
+    DescriptorRenderer SOURCE_CODE_SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder()
+            .setNormalizedVisibilities(true)
+            .setWithDefinedIn(false)
+            .setShortNames(true)
+            .setUnitReturnType(false).build();
 
     DescriptorRenderer COMPACT = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)

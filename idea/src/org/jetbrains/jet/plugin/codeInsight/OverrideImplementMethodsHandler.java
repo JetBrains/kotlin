@@ -30,14 +30,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,16 +118,76 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         for (DescriptorClassMember selectedElement : selectedElements) {
             DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(OverrideUtil.createOverridenFunctionElementFromDescriptor(file.getProject(),
-                                                                                                (SimpleFunctionDescriptor) descriptor, /* shortTypeNames = */
-                                                                                                false));
+                overridingMembers.add(overrideFunction(file.getProject(),
+                                                       (SimpleFunctionDescriptor) descriptor /* shortTypeNames = */
+                ));
             }
             else if (descriptor instanceof PropertyDescriptor) {
                 overridingMembers.add(
-                        OverrideUtil.createOverridenPropertyElementFromDescriptor(file.getProject(), (PropertyDescriptor) descriptor));
+                        overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
             }
         }
         return overridingMembers;
+    }
+
+    @NotNull
+    private static JetElement overrideProperty(@NotNull Project project, @NotNull PropertyDescriptor descriptor) {
+        PropertyDescriptor newDescriptor = (PropertyDescriptor) descriptor.copy(
+                descriptor.getContainingDeclaration(),
+                Modality.OPEN,
+                descriptor.getVisibility(),
+                descriptor.getKind(),
+                /* copyOverrides = */ true);
+        newDescriptor.addOverriddenDescriptor(descriptor);
+
+        StringBuilder bodyBuilder = new StringBuilder();
+        String initializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
+        if (initializer != null) {
+            bodyBuilder.append(" = ").append(initializer);
+        }
+        else {
+            bodyBuilder.append(" = ?");
+        }
+        return JetPsiFactory.createProperty(project, DescriptorRenderer.SOURCE_CODE.render(newDescriptor) + bodyBuilder.toString());
+    }
+
+    @NotNull
+    private static JetNamedFunction overrideFunction(@NotNull Project project, @NotNull FunctionDescriptor descriptor) {
+        FunctionDescriptor newDescriptor = descriptor.copy(
+                descriptor.getContainingDeclaration(),
+                Modality.OPEN,
+                descriptor.getVisibility(),
+                descriptor.getKind(),
+                /* copyOverrides = */ true);
+        newDescriptor.addOverriddenDescriptor(descriptor);
+
+        boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
+        StringBuilder delegationBuilder = new StringBuilder();
+        if (isAbstractFun) {
+            delegationBuilder.append("throw UnsupportedOperationException()");
+        }
+        else {
+            delegationBuilder.append("super<").append(descriptor.getContainingDeclaration().getName());
+            delegationBuilder.append(">.").append(descriptor.getName()).append("(");
+        }
+        boolean first = true;
+        if (!isAbstractFun) {
+            for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
+                if (!first) {
+                    delegationBuilder.append(", ");
+                }
+                first = false;
+                delegationBuilder.append(parameterDescriptor.getName());
+            }
+            delegationBuilder.append(")");
+        }
+        JetType returnType = descriptor.getReturnType();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+
+        boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
+        String body = "{" + (returnsNotUnit && !isAbstractFun ? "return " : "") + delegationBuilder.toString() + "}";
+
+        return JetPsiFactory.createFunction(project, DescriptorRenderer.SOURCE_CODE.render(newDescriptor) + body);
     }
 
     @NotNull
