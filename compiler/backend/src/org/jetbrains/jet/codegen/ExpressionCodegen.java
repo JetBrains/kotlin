@@ -1249,7 +1249,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue genClosure(JetDeclarationWithBody declaration, @Nullable ClassDescriptor samInterfaceClass) {
         FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
-        ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
+        assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
+        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, descriptor);
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure must be calculated for class: " + classDescriptor;
 
@@ -1624,7 +1625,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert scriptDescriptor != null;
             JvmClassName scriptClassName = classNameForScriptDescriptor(bindingContext, scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
-            ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
+            ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
             StackValue script = StackValue.thisOrOuter(this, scriptClass, false);
             script.put(script.type, v);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor);

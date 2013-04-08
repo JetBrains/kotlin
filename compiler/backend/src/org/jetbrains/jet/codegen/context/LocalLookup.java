@@ -22,14 +22,12 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 
 public interface LocalLookup {
     boolean lookupLocal(DeclarationDescriptor descriptor);
@@ -88,9 +86,7 @@ public interface LocalLookup {
                 boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
-                JetElement expression = (JetElement) callableDescriptorToDeclaration(state.getBindingContext(), vd);
-                JvmClassName cn = classNameForAnonymousClass(state.getBindingContext(), expression);
-                Type localType = cn.getAsmType();
+                Type localType = classNameForAnonymousClass(state.getBindingContext(), vd).getAsmType();
 
                 String fieldName = "$" + vd.getName();
                 StackValue innerValue = StackValue.field(localType, className, fieldName, false);

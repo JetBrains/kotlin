@@ -65,7 +65,7 @@ public class ScriptCodegen extends MemberCodegen {
         ScriptDescriptor scriptDescriptor = state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
 
         assert scriptDescriptor != null;
-        ClassDescriptor classDescriptorForScript = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
+        ClassDescriptor classDescriptorForScript = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
         assert classDescriptorForScript != null;
 
         ScriptContext context =

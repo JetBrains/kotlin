@@ -179,8 +179,7 @@ public abstract class CodegenContext {
             @NotNull LocalLookup localLookup,
             @NotNull JetTypeMapper typeMapper
     ) {
-        ClassDescriptor classDescriptor = typeMapper.getBindingContext().get(CLASS_FOR_FUNCTION, funDescriptor);
-        assert classDescriptor != null : "Closure class for function should be present: " + funDescriptor;
+        ClassDescriptor classDescriptor = anonymousClassForFunction(typeMapper.getBindingContext(), funDescriptor);
         return new ClosureContext(typeMapper, funDescriptor, classDescriptor, this, localLookup);
     }
 

@@ -45,7 +45,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
 
-    public static final WritableSlice<DeclarationDescriptor, ClassDescriptor> CLASS_FOR_FUNCTION = Slices.createSimpleSlice();
+    public static final WritableSlice<FunctionDescriptor, ClassDescriptor> CLASS_FOR_FUNCTION = Slices.createSimpleSlice();
+
+    public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
     public static final WritableSlice<DeclarationDescriptor, JvmClassName> FQN = Slices.createSimpleSlice();
 
@@ -77,9 +79,9 @@ public class CodegenBinding {
 
     @NotNull
     public static JvmClassName classNameForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
-        ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
+        ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
         //noinspection ConstantConditions
-        return bindingContext.get(FQN, classDescriptor);
+        return fqn(bindingContext, classDescriptor);
     }
 
     @NotNull
@@ -96,7 +98,23 @@ public class CodegenBinding {
         return closure == null ? null : closure.getEnclosingClass();
     }
 
-    public static JvmClassName classNameForAnonymousClass(BindingContext bindingContext, JetElement expression) {
+    @NotNull
+    public static ClassDescriptor anonymousClassForFunction(
+            @NotNull BindingContext bindingContext,
+            @NotNull FunctionDescriptor descriptor
+    ) {
+        //noinspection ConstantConditions
+        return bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
+    }
+
+    @NotNull
+    private static JvmClassName fqn(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor descriptor) {
+        //noinspection ConstantConditions
+        return bindingContext.get(FQN, descriptor);
+    }
+
+    @NotNull
+    public static JvmClassName classNameForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull JetElement expression) {
         if (expression instanceof JetObjectLiteralExpression) {
             JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
             expression = jetObjectLiteralExpression.getObjectDeclaration();
@@ -106,9 +124,16 @@ public class CodegenBinding {
         if (descriptor == null) {
             SimpleFunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
             assert functionDescriptor != null;
-            descriptor = bindingContext.get(CLASS_FOR_FUNCTION, functionDescriptor);
+            return classNameForAnonymousClass(bindingContext, functionDescriptor);
         }
-        return bindingContext.get(FQN, descriptor);
+
+        return fqn(bindingContext, descriptor);
+    }
+
+    @NotNull
+    public static JvmClassName classNameForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull FunctionDescriptor descriptor) {
+        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, descriptor);
+        return fqn(bindingContext, classDescriptor);
     }
 
     public static void registerClassNameForScript(
@@ -135,7 +160,7 @@ public class CodegenBinding {
         recordClosure(bindingTrace, null, classDescriptor, null, className, false);
 
         assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingTrace.getBindingContext(), scriptDescriptor, classDescriptor);
-        bindingTrace.record(CLASS_FOR_FUNCTION, scriptDescriptor, classDescriptor);
+        bindingTrace.record(CLASS_FOR_SCRIPT, scriptDescriptor, classDescriptor);
     }
 
     public static boolean canHaveOuter(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {

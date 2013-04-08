@@ -28,7 +28,6 @@ import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -49,7 +48,6 @@ import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 public class JetTypeMapper extends BindingTraceAware {
 
@@ -825,10 +823,7 @@ public class JetTypeMapper extends BindingTraceAware {
                     signatureWriter.writeParameterTypeEnd();
                 }
                 else if (isLocalNamedFun(variableDescriptor)) {
-                    Type type = classNameForAnonymousClass(
-                            bindingContext,
-                           (JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, variableDescriptor)
-                    ).getAsmType();
+                    Type type = classNameForAnonymousClass(bindingContext, (FunctionDescriptor) variableDescriptor).getAsmType();
 
                     signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
                     signatureWriter.writeAsmType(type, false);
@@ -883,7 +878,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         for (ScriptDescriptor importedScript : importedScripts) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            ClassDescriptor descriptor = bindingContext.get(CLASS_FOR_FUNCTION, importedScript);
+            ClassDescriptor descriptor = bindingContext.get(CLASS_FOR_SCRIPT, importedScript);
             assert descriptor != null;
             mapType(descriptor.getDefaultType(), signatureWriter, JetTypeMapperMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
@@ -927,8 +922,7 @@ public class JetTypeMapper extends BindingTraceAware {
                     .sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType()));
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-            PsiElement psiElement = descriptorToDeclaration(bindingContext, descriptor);
-            return classNameForAnonymousClass(bindingContext, (JetElement) psiElement).getAsmType();
+            return classNameForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor).getAsmType();
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return StackValue
