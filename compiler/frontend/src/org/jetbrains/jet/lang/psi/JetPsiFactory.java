@@ -224,4 +224,20 @@ public class JetPsiFactory {
     public static JetExpression createFieldIdentifier(Project project, @NotNull String fieldName) {
         return createExpression(project, "$" + fieldName);
     }
+
+    public static JetBinaryExpression createAssignment(Project project, @NotNull String lhs, @NotNull String rhs) {
+        return (JetBinaryExpression) createExpression(project, lhs + " = " + rhs);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static JetBinaryExpression createAssignment(Project project, @NotNull JetExpression lhs, @NotNull JetExpression rhs) {
+        JetBinaryExpression assignment = createAssignment(project, "_", "_");
+
+        assert assignment.getRight() != null;
+
+        assignment = (JetBinaryExpression)assignment.getLeft().replace(lhs).getParent();
+        assignment = (JetBinaryExpression)assignment.getRight().replace(rhs).getParent();
+
+        return assignment;
+    }
 }

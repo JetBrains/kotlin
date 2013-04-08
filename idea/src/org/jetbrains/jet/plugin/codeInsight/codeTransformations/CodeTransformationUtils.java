@@ -137,10 +137,8 @@ public class CodeTransformationUtils {
         List<JetExpression> outcomes = getIfExpressionOutcomes(ifExpression);
         JetExpression lhs = ((JetBinaryExpression)outcomes.get(0)).getLeft();
 
-        JetBinaryExpression assignment = (JetBinaryExpression)JetPsiFactory.createExpression(project, "a = b");
+        JetBinaryExpression assignment = JetPsiFactory.createAssignment(project, lhs, ifExpression);
 
-        assignment = (JetBinaryExpression)assignment.getLeft().replace(lhs).getParent();
-        assignment = (JetBinaryExpression)assignment.getRight().replace(ifExpression).getParent();
         assignment = (JetBinaryExpression)ifExpression.replace(assignment);
         ifExpression = (JetIfExpression)assignment.getRight();
 
@@ -158,9 +156,7 @@ public class CodeTransformationUtils {
         ifExpression = (JetIfExpression)assignment.replace(ifExpression);
 
         for (JetExpression outcome : getIfExpressionOutcomes(ifExpression)) {
-            JetBinaryExpression localAssignment = (JetBinaryExpression)JetPsiFactory.createExpression(project, "a = b");
-            localAssignment = (JetBinaryExpression)localAssignment.getLeft().replace(JetPsiFactory.createExpression(project, varName)).getParent();
-            localAssignment = (JetBinaryExpression)localAssignment.getRight().replace(outcome).getParent();
+            JetBinaryExpression localAssignment = JetPsiFactory.createAssignment(project, JetPsiFactory.createExpression(project, varName), outcome);
             outcome.replace(localAssignment);
         }
     }
