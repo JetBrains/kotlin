@@ -28,6 +28,7 @@ import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCo
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
 import org.jetbrains.jet.completion.AbstractJavaCompletionTest;
+import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
@@ -240,6 +241,12 @@ public class GenerateTests {
                 testModel("idea/testData/completion/basic", false, "doTest"),
                 testModel("idea/testData/completion/basic/java", false, "doTest")
         );
+
+        generateTest(
+                "idea/tests",
+                "JetJavaLibCompletionTestGenerated",
+                AbstractJavaWithLibCompletionTest.class,
+                testModel("idea/testData/completion/basic/custom", false, "doTestWithJar"));
 
         generateTest(
                 "idea/tests/",

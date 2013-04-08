@@ -19,10 +19,7 @@ package org.jetbrains.jet.completion;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetStdJSProjectDescriptor;
 
 public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightFixtureTestCase {
     private boolean autocompleteSetting;
@@ -78,11 +75,5 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
                             ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(items))),
                     itemsNumber.intValue(), items.length);
         }
-    }
-
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return JetStdJSProjectDescriptor.INSTANCE;
     }
 }
