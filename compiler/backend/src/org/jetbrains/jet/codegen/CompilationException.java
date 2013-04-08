@@ -60,6 +60,7 @@ public class CompilationException extends RuntimeException {
                     message.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
                 }
                 message.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
+                message.append("PsiElement: ").append(element.getText()).append("\n");
                 message.append("The root cause was thrown at: ").append(where());
 
                 return message.toString();
