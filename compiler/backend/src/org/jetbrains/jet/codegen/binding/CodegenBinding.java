@@ -279,7 +279,7 @@ public class CodegenBinding {
     }
 
     public static boolean isMultiFileNamespace(@NotNull ModuleSourcesManager moduleSourcesManager, @NotNull ModuleDescriptor module, @NotNull FqName fqName) {
-        return !getPackageFragmentSources(moduleSourcesManager, module, fqName).isEmpty();
+        return getPackageFragmentSources(moduleSourcesManager, module, fqName).size() > 1;
     }
 
     public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {
