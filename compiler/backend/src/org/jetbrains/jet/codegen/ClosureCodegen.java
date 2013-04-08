@@ -27,19 +27,15 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
-import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.LocalLookup;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
@@ -51,89 +47,111 @@ import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.getInternalClassName;
 import static org.jetbrains.jet.codegen.CodegenUtil.isConst;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplClassName;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
 public class ClosureCodegen extends GenerationStateAware {
-
-    private final MutableClosure closure;
-    @Nullable
+    private final PsiElement fun;
+    private final FunctionDescriptor funDescriptor;
     private final ClassDescriptor samInterface;
+    private final JvmClassName superClass;
+    private final CodegenContext context;
+    private final FunctionGenerationStrategy strategy;
+    private final CalculatedClosure closure;
+    private final JvmClassName name;
 
-    Method constructor;
-    JvmClassName name;
+    private Method constructor;
 
-    public ClosureCodegen(GenerationState state, MutableClosure closure, @Nullable ClassDescriptor samInterface) {
+    public ClosureCodegen(
+            @NotNull GenerationState state,
+            @NotNull PsiElement fun,
+            @NotNull FunctionDescriptor funDescriptor,
+            @Nullable ClassDescriptor samInterface,
+            @NotNull JvmClassName closureSuperClass,
+            @NotNull CodegenContext context,
+            @NotNull LocalLookup localLookup,
+            @NotNull FunctionGenerationStrategy strategy
+    ) {
         super(state);
-        this.closure = closure;
+
+        this.fun = fun;
+        this.funDescriptor = funDescriptor;
         this.samInterface = samInterface;
+        this.superClass = closureSuperClass;
+        this.context = context.intoClosure(funDescriptor, localLookup, typeMapper);
+        this.strategy = strategy;
+
+        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
+        this.closure = bindingContext.get(CLOSURE, classDescriptor);
+        assert closure != null : "Closure must be calculated for class: " + classDescriptor;
+
+        this.name = classNameForAnonymousClass(bindingContext, funDescriptor);
     }
 
-    public ClosureCodegen gen(JetDeclarationWithBody fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
-        name = classNameForAnonymousClass(bindingContext, fun);
+
+    public void gen() {
         ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), fun.getContainingFile());
 
-        FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
-        assert funDescriptor != null;
-
         FunctionDescriptor interfaceFunction;
+        String[] superInterfaces;
+
         if (samInterface == null) {
             interfaceFunction = getInvokeFunction(funDescriptor);
+            superInterfaces = ArrayUtil.EMPTY_STRING_ARRAY;
         }
         else {
             interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
+            superInterfaces = new String[] {JvmClassName.byClassDescriptor(samInterface).getInternalName()};
         }
 
-        SignatureWriter signatureWriter = new SignatureWriter();
-
-        JvmClassName funClass = getInternalClassName(funDescriptor);
-        signatureWriter.visitClassType(funClass.getInternalName());
-        ReceiverParameterDescriptor receiverParameter = funDescriptor.getReceiverParameter();
-        if (receiverParameter != null) {
-            appendType(signatureWriter, receiverParameter.getType(), '=');
-        }
-        for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
-            appendType(signatureWriter, parameter.getType(), '=');
-        }
-
-        appendType(signatureWriter, funDescriptor.getReturnType(), '=');
-        signatureWriter.visitEnd();
-
-        JvmClassName superclass = samInterface == null ? funClass : JvmClassName.byType(OBJECT_TYPE);
-        String[] superInterfaces = samInterface == null
-                                   ? ArrayUtil.EMPTY_STRING_ARRAY
-                                   : new String[] {JvmClassName.byClassDescriptor(samInterface).getInternalName()};
         cv.defineClass(fun,
                        V1_6,
                        ACC_FINAL | ACC_SUPER,
                        name.getInternalName(),
-                       signatureWriter.toString(),
-                       superclass.getInternalName(),
+                       getGenericSignature(),
+                       superClass.getInternalName(),
                        superInterfaces
         );
         cv.visitSource(fun.getContainingFile().getName(), null);
 
 
-        generateBridge(interfaceFunction, funDescriptor, fun, cv);
-        generateBody(interfaceFunction.getName(), funDescriptor, cv, fun, context, expressionCodegen);
+        generateBridge(interfaceFunction, cv);
 
-        constructor = generateConstructor(superclass, fun, cv);
+        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor);
+
+        FunctionCodegen fc = new FunctionCodegen(context, cv, state);
+        fc.generateMethod(fun, jvmMethodSignature, false, null, funDescriptor, strategy);
+
+        this.constructor = generateConstructor(cv);
 
         if (isConst(closure)) {
-            generateConstInstance(fun, cv);
+            generateConstInstance(cv);
         }
 
         genClosureFields(closure, cv, typeMapper);
 
         cv.done();
-
-        return this;
     }
 
-    private void generateConstInstance(PsiElement fun, ClassBuilder cv) {
+    @NotNull
+    public StackValue putInstanceOnStack(@NotNull InstructionAdapter v, @NotNull ExpressionCodegen codegen) {
+        Type asmType = name.getAsmType();
+        if (isConst(closure)) {
+            v.getstatic(name.getInternalName(), JvmAbi.INSTANCE_FIELD, name.getDescriptor());
+        }
+        else {
+            v.anew(asmType);
+            v.dup();
+
+            codegen.pushClosureOnStack(closure, false);
+            v.invokespecial(name.getInternalName(), "<init>", constructor.getDescriptor());
+        }
+        return StackValue.onStack(asmType);
+    }
+
+
+    private void generateConstInstance(@NotNull ClassBuilder cv) {
         MethodVisitor mv = cv.newMethod(fun, ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -150,29 +168,7 @@ public class ClosureCodegen extends GenerationStateAware {
         }
     }
 
-    private ClassDescriptor generateBody(
-            Name interfaceFunctionName,
-            FunctionDescriptor funDescriptor,
-            ClassBuilder cv,
-            JetDeclarationWithBody body,
-            CodegenContext context,
-            ExpressionCodegen expressionCodegen
-    ) {
-
-        CodegenContext closureContext = context.intoClosure(funDescriptor, expressionCodegen);
-        FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
-        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunctionName, funDescriptor);
-        fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor, new FunctionGenerationStrategy.Default(state, body));
-        assert closureContext.closure != null;
-        return closureContext.closure.getCaptureThis();
-    }
-
-    private void generateBridge(
-            FunctionDescriptor interfaceFunction,
-            FunctionDescriptor funDescriptor,
-            JetExpression fun,
-            ClassBuilder cv
-    ) {
+    private void generateBridge(@NotNull FunctionDescriptor interfaceFunction, @NotNull ClassBuilder cv) {
         Method bridge = typeMapper.mapSignature(interfaceFunction).getAsmMethod();
 
         Method delegate = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor).getAsmMethod();
@@ -215,12 +211,9 @@ public class ClosureCodegen extends GenerationStateAware {
         }
     }
 
-    private Method generateConstructor(
-            JvmClassName superclass,
-            JetExpression fun,
-            ClassBuilder cv
-    ) {
-        List<FieldInfo> args = calculateConstructorParameters(typeMapper, bindingContext, closure, name.getAsmType());
+    @NotNull
+    private Method generateConstructor(@NotNull ClassBuilder cv) {
+        List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, name.getAsmType());
 
         Type[] argTypes = fieldListToTypeArray(args);
 
@@ -234,8 +227,8 @@ public class ClosureCodegen extends GenerationStateAware {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            iv.load(0, superclass.getAsmType());
-            iv.invokespecial(superclass.getInternalName(), "<init>", "()V");
+            iv.load(0, superClass.getAsmType());
+            iv.invokespecial(superClass.getInternalName(), "<init>", "()V");
 
             int k = 1;
             for (FieldInfo fieldInfo : args) {
@@ -252,11 +245,10 @@ public class ClosureCodegen extends GenerationStateAware {
     @NotNull
     public static List<FieldInfo> calculateConstructorParameters(
             @NotNull JetTypeMapper typeMapper,
-            @NotNull BindingContext bindingContext,
-            CalculatedClosure closure,
-            Type ownerType
+            @NotNull CalculatedClosure closure,
+            @NotNull Type ownerType
     ) {
-
+        BindingContext bindingContext = typeMapper.getBindingContext();
         List<FieldInfo> args = Lists.newArrayList();
         ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
@@ -278,12 +270,8 @@ public class ClosureCodegen extends GenerationStateAware {
                 args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().getName()));
             }
             else if (isLocalNamedFun(descriptor)) {
-                Type type =
-                        classNameForAnonymousClass(bindingContext,
-                                                   (JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
-                        .getAsmType();
-
-                args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().getName()));
+                JvmClassName className = classNameForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
+                args.add(FieldInfo.createForHiddenField(ownerType, className.getAsmType(), "$" + descriptor.getName().getName()));
             }
             else if (descriptor instanceof FunctionDescriptor) {
                 assert captureReceiver != null;
@@ -298,6 +286,26 @@ public class ClosureCodegen extends GenerationStateAware {
             argTypes[i] = args.get(i).getFieldType();
         }
         return argTypes;
+    }
+
+    @NotNull
+    private String getGenericSignature() {
+        // TODO: obtain the correct funDescriptor and use BothSignatureWriter instead of this code
+        SignatureWriter signatureWriter = new SignatureWriter();
+        JvmClassName funClass = getFunctionImplClassName(funDescriptor);
+        signatureWriter.visitClassType(funClass.getInternalName());
+        ReceiverParameterDescriptor receiverParameter = funDescriptor.getReceiverParameter();
+        if (receiverParameter != null) {
+            appendType(signatureWriter, receiverParameter.getType(), '=');
+        }
+        for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
+            appendType(signatureWriter, parameter.getType(), '=');
+        }
+
+        appendType(signatureWriter, funDescriptor.getReturnType(), '=');
+        signatureWriter.visitEnd();
+
+        return signatureWriter.toString();
     }
 
     private void appendType(SignatureWriter signatureWriter, JetType type, char variance) {

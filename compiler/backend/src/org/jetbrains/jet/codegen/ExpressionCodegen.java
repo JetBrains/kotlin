@@ -1249,14 +1249,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue genClosure(JetDeclarationWithBody declaration, @Nullable ClassDescriptor samInterfaceClass) {
         FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
-        ClassDescriptor classDescriptor =
-                bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
-        //noinspection SuspiciousMethodCalls
+        ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
+        assert closure != null : "Closure must be calculated for class: " + classDescriptor;
 
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure, samInterfaceClass).gen(declaration, context, this);
+        ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure, samInterfaceClass, declaration, context, this);
+        closureCodegen.gen();
 
-        JvmClassName className = closureCodegen.name;
+        JvmClassName className = closureCodegen.getGeneratedClassName();
         Type asmType = className.getAsmType();
         if (isConst(closure)) {
             v.getstatic(className.getInternalName(), JvmAbi.INSTANCE_FIELD, className.getDescriptor());
@@ -1265,7 +1265,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.anew(asmType);
             v.dup();
 
-            Method cons = closureCodegen.constructor;
+            Method cons = closureCodegen.getGeneratedConstructor();
             pushClosureOnStack(closure, false);
             v.invokespecial(className.getInternalName(), "<init>", cons.getDescriptor());
         }

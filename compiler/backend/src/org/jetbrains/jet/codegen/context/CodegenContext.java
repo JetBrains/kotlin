@@ -173,14 +173,15 @@ public abstract class CodegenContext {
         return new ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
     }
 
+    @NotNull
     public CodegenContext intoClosure(
-            FunctionDescriptor funDescriptor,
-            ExpressionCodegen expressionCodegen
+            @NotNull FunctionDescriptor funDescriptor,
+            @NotNull LocalLookup localLookup,
+            @NotNull JetTypeMapper typeMapper
     ) {
-        JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
-        return new ClosureContext(typeMapper, funDescriptor,
-                                  typeMapper.getBindingContext().get(CLASS_FOR_FUNCTION, funDescriptor),
-                                  this, expressionCodegen);
+        ClassDescriptor classDescriptor = typeMapper.getBindingContext().get(CLASS_FOR_FUNCTION, funDescriptor);
+        assert classDescriptor != null : "Closure class for function should be present: " + funDescriptor;
+        return new ClosureContext(typeMapper, funDescriptor, classDescriptor, this, localLookup);
     }
 
     public FrameMap prepareFrame(JetTypeMapper mapper) {
