@@ -109,4 +109,21 @@ public class PackageViewFromSubModule extends PackageLikeDescriptorBase implemen
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPackageViewDescriptor(this, data);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (this == obj) return false;
+        if (this.getClass() != obj.getClass()) return false;
+        PackageViewFromSubModule other = (PackageViewFromSubModule) obj;
+        return this.getFqName().equals(other.getFqName()) && this.subModule.equals(other.subModule);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 13;
+        result = result * 17 + getFqName().hashCode();
+        result = result * 17 + subModule.hashCode();
+        return result;
+    }
 }

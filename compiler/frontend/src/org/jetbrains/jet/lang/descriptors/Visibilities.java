@@ -29,20 +29,20 @@ public class Visibilities {
     public static final Visibility PRIVATE = new Visibility("private", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            DeclarationDescriptor parent = what;
+            DeclarationDescriptor parent = DescriptorUtils.getCorrespondingInPackageViewHierarchy(what);
             while (parent != null) {
-                parent = parent.getContainingDeclaration();
+                parent = DescriptorUtils.getParentInPackageViewHierarchy(parent);
                 if ((parent instanceof ClassDescriptor && !DescriptorUtils.isClassObject(parent)) ||
-                    parent instanceof PackageFragmentDescriptor) {
+                    parent instanceof PackageViewDescriptor) {
                     break;
                 }
             }
-            DeclarationDescriptor fromParent = from;
+            DeclarationDescriptor fromParent = DescriptorUtils.getCorrespondingInPackageViewHierarchy(from);
             while (fromParent != null) {
-                if (parent == fromParent) {
+                if (fromParent.equals(parent)) {
                     return true;
                 }
-                fromParent = fromParent.getContainingDeclaration();
+                fromParent = DescriptorUtils.getParentInPackageViewHierarchy(fromParent);
             }
             return false;
         }

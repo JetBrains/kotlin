@@ -136,18 +136,21 @@ public class DescriptorUtils {
         assert !(descriptor instanceof ModuleDescriptor || descriptor instanceof SubModuleDescriptor)
                 : "Package view hierarchy does not make sense for modules and sub-modules";
 
-        if (descriptor instanceof PackageFragmentDescriptor) {
-            PackageFragmentDescriptor fragmentDescriptor = (PackageFragmentDescriptor) descriptor;
-            return getCorrespondingPackageView(fragmentDescriptor).getContainingDeclaration();
-        }
-
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        DeclarationDescriptor containingDeclaration = getCorrespondingInPackageViewHierarchy(descriptor).getContainingDeclaration();
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             PackageFragmentDescriptor fragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
             return getCorrespondingPackageView(fragmentDescriptor);
         }
 
         return containingDeclaration;
+    }
+
+    public static DeclarationDescriptor getCorrespondingInPackageViewHierarchy(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof PackageFragmentDescriptor) {
+            return getCorrespondingPackageView((PackageFragmentDescriptor) descriptor);
+        }
+
+        return descriptor;
     }
 
     @NotNull
