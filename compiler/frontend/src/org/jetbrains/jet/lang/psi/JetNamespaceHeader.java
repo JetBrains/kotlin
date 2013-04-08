@@ -27,6 +27,7 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collections;
 import java.util.List;
 
 public class JetNamespaceHeader extends JetReferenceExpression {
@@ -39,6 +40,7 @@ public class JetNamespaceHeader extends JetReferenceExpression {
     @NotNull
     public List<JetSimpleNameExpression> getParentNamespaceNames() {
         List<JetSimpleNameExpression> parentParts = getPackageNameAsNameList();
+        if (parentParts.isEmpty()) return Collections.emptyList();
         return parentParts.subList(0, parentParts.size() - 1);
     }
 
