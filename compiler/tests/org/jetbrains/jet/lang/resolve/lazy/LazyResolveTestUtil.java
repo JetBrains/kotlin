@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -68,9 +67,9 @@ public class LazyResolveTestUtil {
         ModuleDescriptor eagerModuleForLazy = createModule("<eager module for lazy>");
 
         InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy, environment);
-        // This line is required fro the 'jet' namespace to be filled in with functions
+        // This line is required for the 'jet' namespace to be filled in with functions
         tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(
-                Collections.singletonList(JetPsiFactory.createFile(environment.getProject(), "")), Collections.<AnalyzerScriptParameter>emptyList());
+                Collections.singletonList(JetTestUtils.createFile(environment.getProject(), "empty.kt", "")), Collections.<AnalyzerScriptParameter>emptyList());
         return tdaInjectorForLazy;
     }
 

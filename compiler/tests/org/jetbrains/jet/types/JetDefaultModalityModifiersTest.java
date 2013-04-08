@@ -79,7 +79,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private JetScope createScope(JetScope libraryScope) {
-            JetFile file = JetPsiFactory.createFile(getProject(), "abstract class C { abstract fun foo(); abstract val a: Int }");
+            JetFile file = JetTestUtils.createFile(getProject(), "dummy.kt", "abstract class C { abstract fun foo(); abstract val a: Int }");
             List<JetDeclaration> declarations = file.getDeclarations();
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
@@ -121,7 +121,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private void testPropertyModality(String classWithProperty, ClassKind kind, Modality expectedPropertyModality) {
-            JetClass aClass = JetPsiFactory.createClass(getProject(), classWithProperty);
+            JetClass aClass = (JetClass) JetTestUtils.createFile(getProject(), "class.kt", classWithProperty).getDeclarations().get(0);
             MutableClassDescriptor classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
@@ -133,7 +133,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
 
         private void testPropertyAccessorModality(String classWithPropertyWithAccessor, ClassKind kind, Modality expectedPropertyAccessorModality, boolean isGetter) {
-            JetClass aClass = JetPsiFactory.createClass(getProject(), classWithPropertyWithAccessor);
+            JetClass aClass = (JetClass) JetTestUtils.createFile(getProject(), "class.kt", classWithPropertyWithAccessor).getDeclarations().get(0);
             MutableClassDescriptor classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();

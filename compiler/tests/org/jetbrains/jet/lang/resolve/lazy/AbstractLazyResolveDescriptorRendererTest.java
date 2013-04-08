@@ -53,7 +53,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
 
         InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = LazyResolveTestUtil.getEagerInjectorForTopDownAnalyzer(getEnvironment());
 
-        JetFile psiFile = JetPsiFactory.createFile(getProject(), FileUtil.loadFile(new File(testFile), true));
+        JetFile psiFile = JetTestUtils.createFile(getProject(), testFile, FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         ModuleDescriptor lazyModule = new MutableModuleDescriptor(Name.special("<lazy module>"), JavaToKotlinClassMap.getInstance());

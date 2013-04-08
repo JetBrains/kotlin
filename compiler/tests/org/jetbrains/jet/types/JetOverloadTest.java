@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverloadUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -183,7 +182,8 @@ public class JetOverloadTest extends JetLiteFixture {
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {
-        JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
+        JetNamedFunction function =
+                (JetNamedFunction) JetTestUtils.createFile(getProject(), "function.kt", funDecl).getDeclarations().get(0);
         return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsScope(), function, JetTestUtils.DUMMY_TRACE);
     }
 }
