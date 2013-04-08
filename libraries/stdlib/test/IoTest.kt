@@ -137,4 +137,14 @@ class IoTest(){
             assertEquals(4, totalFilesWithUnReadableDir)
         }
     }
+
+    test fun testAppendText() {
+        val file = File.createTempFile("temp", System.nanoTime().toString())
+        file.writeText("Hello\n")
+        file.appendText("World")
+
+        assertEquals("Hello\nWorld", file.readText())
+        file.deleteOnExit()
+    }
+
 }
