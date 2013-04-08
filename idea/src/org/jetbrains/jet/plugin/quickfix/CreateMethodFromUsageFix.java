@@ -193,7 +193,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert editor != null;
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             assert file != null && file instanceof JetFile;
-            JetFile jetFile = (JetFile) file;
             PsiElement elementAt = file.findElementAt(offset);
             JetFunction func = PsiTreeUtil.getParentOfType(elementAt, JetFunction.class);
             assert func != null;
@@ -426,16 +425,90 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         caretModel.moveToOffset(file.getNode().getStartOffset());
 
         TemplateBuilderImpl builder = new TemplateBuilderImpl(file);
-
-        // add return type to the template (if it's not a unit function)
         if (!isUnit) {
-            JetTypeReference returnTypeRef = func.getReturnTypeRef();
-            assert returnTypeRef != null;
-            Expression returnTypeExpression = new TypeExpression(returnType.getPossibleTypes());
-            builder.replaceElement(returnTypeRef, returnTypeExpression);
+            setupReturnTypeTemplate(builder, func, returnType);
+        }
+        TypeExpression[] parameterTypeExpressions = setupParameterTypeTemplates(project, builder, parameters, parameterList);
+
+        // add a segment for the parameter list
+        // Note: because TemplateBuilderImpl does not have a replaceElement overload that takes in both a TextRange and alwaysStopAt, we
+        // need to create the segment first and then hack the Expression into the template later. We use this template to update the type
+        // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
+        // it.
+        JetScope scope = getScope(owner, context);
+        TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func, ownerType, parameterTypeExpressions, scope);
+
+        // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
+        TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
+        ArrayList<Variable> variables = template.getVariables();
+        for (int i = 0; i < parameters.size(); i++) {
+            Collections.swap(variables, i * 2, i * 2 + 1);
         }
 
-        // add parameters to the template
+        // fix up the template to include the expression for the type parameter list
+        variables.add(new Variable(TYPE_PARAMETER_LIST_VARIABLE_NAME, expression, expression, false, true));
+
+        // run the template
+        TemplateManager.getInstance(project).startTemplate(editor, template, new TemplateEditingAdapter() {
+            @Override
+            public void templateFinished(Template template, boolean brokenOff) {
+                // TODO: file templates
+
+                caretModel.moveToOffset(oldOffset);
+            }
+        });
+    }
+
+    @NotNull
+    private static TypeExpression setupReturnTypeTemplate(@NotNull TemplateBuilder builder, @NotNull JetNamedFunction func,
+            @NotNull TypeOrExpressionThereof returnType) {
+        JetTypeReference returnTypeRef = func.getReturnTypeRef();
+        assert returnTypeRef != null;
+        TypeExpression returnTypeExpression = new TypeExpression(returnType.getPossibleTypes());
+        builder.replaceElement(returnTypeRef, returnTypeExpression);
+        return returnTypeExpression;
+    }
+
+    @NotNull
+    private static TypeParameterListExpression setupTypeParameterListTemplate(
+            @NotNull TemplateBuilderImpl builder,
+            @NotNull JetNamedFunction func,
+            @NotNull JetType ownerType,
+            @NotNull TypeExpression[] parameterTypeExpressions,
+            @NotNull JetScope scope
+    ) {
+        Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
+        Set<TypeParameterDescriptor> ownerTypeParameters = getTypeParametersInType(ownerType);
+        String[] ownerTypeParameterNames = getTypeParameterNamesNotInScope(ownerTypeParameters, scope);
+        for (TypeExpression parameterTypeExpression : parameterTypeExpressions) {
+            JetType[] parameterTypeOptions = parameterTypeExpression.getOptions();
+            String[] parameterTypeOptionStrings = parameterTypeExpression.getOptionStrings();
+            assert parameterTypeOptions.length == parameterTypeOptionStrings.length;
+            for (int i = 0; i < parameterTypeOptions.length; i++) {
+                Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(parameterTypeOptions[i]);
+                typeParameterMap.put(parameterTypeOptionStrings[i], getTypeParameterNamesNotInScope(typeParameters, scope));
+            }
+        }
+
+        builder.replaceElement(func, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false); // ((3, 3) is after "fun")
+        return new TypeParameterListExpression(ownerTypeParameterNames, typeParameterMap);
+    }
+
+    @NotNull
+    private static JetScope getScope(@NotNull PsiElement owner, @NotNull BindingContext context) {
+        DeclarationDescriptor ownerDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
+        assert ownerDescriptor != null;
+        if (ownerDescriptor instanceof NamespaceDescriptor) {
+            NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) ownerDescriptor;
+            return namespaceDescriptor.getMemberScope();
+        } else {
+            ClassDescriptor classDescriptor = (ClassDescriptor) ownerDescriptor;
+            return classDescriptor.getMemberScope(classDescriptor.getDefaultType().getArguments());
+        }
+    }
+
+    private static TypeExpression[] setupParameterTypeTemplates(@NotNull Project project, @NotNull TemplateBuilder builder,
+            @NotNull List<Parameter> parameters, @NotNull JetParameterList parameterList) {
         List<JetParameter> jetParameters = parameterList.getParameters();
         assert jetParameters.size() == parameters.size();
         TypeExpression[] parameterTypeExpressions = new TypeExpression[parameters.size()];
@@ -477,57 +550,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert parameterNameIdentifier != null;
             builder.replaceElement(parameterNameIdentifier, parameterNameExpression);
         }
-
-        // add a segment for the parameter list
-        // Note: because TemplateBuilderImpl does not have a replaceElement overload that takes in both a TextRange and alwaysStopAt, we
-        // need to create the segment first and then hack the Expression into the template later. We use this template to update the type
-        // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
-        // it.
-        Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
-        DeclarationDescriptor ownerDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
-        JetScope scope;
-        if (ownerDescriptor instanceof NamespaceDescriptor) {
-            NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) ownerDescriptor;
-            scope = namespaceDescriptor.getMemberScope();
-        } else {
-            ClassDescriptor classDescriptor = (ClassDescriptor) ownerDescriptor;
-            scope = classDescriptor.getMemberScope(classDescriptor.getDefaultType().getArguments());
-        }
-
-        Set<TypeParameterDescriptor> ownerTypeParameters = getTypeParametersInType(ownerType);
-        String[] ownerTypeParameterNames = getTypeParameterNamesNotInScope(ownerTypeParameters, scope);
-        for (TypeExpression parameterTypeExpression : parameterTypeExpressions) {
-            JetType[] parameterTypeOptions = parameterTypeExpression.getOptions();
-            String[] parameterTypeOptionStrings = parameterTypeExpression.getOptionStrings();
-            assert parameterTypeOptions.length == parameterTypeOptionStrings.length;
-            for (int i = 0; i < parameterTypeOptions.length; i++) {
-                Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(parameterTypeOptions[i]);
-                typeParameterMap.put(parameterTypeOptionStrings[i], getTypeParameterNamesNotInScope(typeParameters, scope));
-            }
-        }
-
-        Expression expression = new TypeParameterListExpression(ownerTypeParameterNames, typeParameterMap);
-        builder.replaceElement(func, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false); // ((3, 3) is after "fun")
-
-        // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
-        TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
-        ArrayList<Variable> variables = template.getVariables();
-        for (int i = 0; i < parameters.size(); i++) {
-            Collections.swap(variables, i * 2, i * 2 + 1);
-        }
-
-        // fix up the template to include the expression for the type parameter list
-        variables.add(new Variable(TYPE_PARAMETER_LIST_VARIABLE_NAME, expression, expression, false, true));
-
-        // run the template
-        TemplateManager.getInstance(project).startTemplate(editor, template, new TemplateEditingAdapter() {
-            @Override
-            public void templateFinished(Template template, boolean brokenOff) {
-                // TODO: file templates
-
-                caretModel.moveToOffset(oldOffset);
-            }
-        });
+        return parameterTypeExpressions;
     }
 
     @Override
