@@ -29,7 +29,6 @@ import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -66,7 +65,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         super.setUp();
 
         JetCoreEnvironment environment = createEnvironment();
-        JetFile psiFile = JetPsiFactory.createFile(environment.getProject(),
+        JetFile psiFile = JetTestUtils.createFile(environment.getProject(), "dummy.jet",
                                                    "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n");
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
@@ -74,9 +73,8 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private JetFile createPsiFile(@NotNull String filename) {
+    private JetFile createPsiFile(@NotNull JetCoreEnvironment environment, @NotNull String filename) {
         File file = new File(getTestDataPath() + "/" + filename);
-        JetCoreEnvironment environment = createEnvironment();
 
         String text;
         try {
@@ -90,10 +88,11 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     private void doTest(@NotNull String filename, boolean custom) {
-        JetFile psiFile = createPsiFile(filename);
+        JetFile psiFile = createPsiFile(createEnvironment(), filename);
         GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
 
-        List<Integer> expectedLineNumbers, actualLineNumbers;
+        List<Integer> expectedLineNumbers;
+        List<Integer> actualLineNumbers;
         if (custom) {
             expectedLineNumbers = extractCustomLineNumbersFromSource(psiFile);
             actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
@@ -324,8 +323,9 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     public void testStaticDelegate() {
-        JetFile foo = createPsiFile("staticDelegate/foo.kt");
-        JetFile bar = createPsiFile("staticDelegate/bar.kt");
+        JetCoreEnvironment environment = createEnvironment();
+        JetFile foo = createPsiFile(environment, "staticDelegate/foo.kt");
+        JetFile bar = createPsiFile(environment, "staticDelegate/bar.kt");
         GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(foo.getProject(), Arrays.asList(foo, bar));
         ClassReader reader = new ClassReader(state.getFactory().asBytes(PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class"));
 
