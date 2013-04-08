@@ -44,7 +44,9 @@ public class MutableModuleSourcesManagerForTests extends MutableModuleSourcesMan
 
         VirtualFile virtualFile = file.getVirtualFile();
         if (virtualFile == null || roots.getDataForFile(virtualFile) == null) {
-            return extraFiles.get(file);
+            MutableSubModuleDescriptor subModule = extraFiles.get(file);
+            assert subModule != null : "No sub-module for file " + file;
+            return subModule;
         }
 
         return super.getSubModuleForFile(file);
