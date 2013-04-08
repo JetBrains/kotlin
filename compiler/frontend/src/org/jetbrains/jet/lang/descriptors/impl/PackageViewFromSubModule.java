@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -31,13 +30,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class PackageViewFromSubModule extends PackageViewDescriptorImpl {
-
-    public PackageViewFromSubModule(
-            @NotNull SubModuleDescriptor subModule,
-            @NotNull FqName fqName
-    ) {
-        this(subModule, fqName, DescriptorUtils.getPackageFragmentsIncludingDependencies(subModule, fqName));
-    }
 
     public PackageViewFromSubModule(
             @NotNull SubModuleDescriptor subModule,
