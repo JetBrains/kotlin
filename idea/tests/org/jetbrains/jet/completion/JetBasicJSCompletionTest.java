@@ -173,6 +173,16 @@ public class JetBasicJSCompletionTest extends AbstractJetJSCompletionTest {
             doTest("idea/testData/completion/basic/InEmptyImport.kt");
         }
         
+        @TestMetadata("InExpressionNoPrefix.kt")
+        public void testInExpressionNoPrefix() throws Exception {
+            doTest("idea/testData/completion/basic/InExpressionNoPrefix.kt");
+        }
+        
+        @TestMetadata("InExtendTypeAnnotation.kt")
+        public void testInExtendTypeAnnotation() throws Exception {
+            doTest("idea/testData/completion/basic/InExtendTypeAnnotation.kt");
+        }
+        
         @TestMetadata("InFileWithMultiDeclaration.kt")
         public void testInFileWithMultiDeclaration() throws Exception {
             doTest("idea/testData/completion/basic/InFileWithMultiDeclaration.kt");

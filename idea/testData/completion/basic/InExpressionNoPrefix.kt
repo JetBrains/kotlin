@@ -4,6 +4,6 @@ class Test {
     }
 }
 
-// RUNTIME: 1
 // EXIST: Any, Nothing, Unit, Int, Number
-// EXIST: Array, Math, Hashable, OutputStream
+// EXIST: Array, Hashable
+// EXIST_JAVA_ONLY: Math, Thread
