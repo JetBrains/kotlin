@@ -1,5 +1,5 @@
 public class MyClass {
-    public method(a: Int): String {
+    public fun f(a: Int): String {
         var res: String
 
         if (a == 1) res = "one";
