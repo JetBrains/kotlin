@@ -144,14 +144,14 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      * Special <code>Expression</code> for parameter names based on its type.
      */
     private static class ParameterNameExpression extends Expression {
-        private final TypeExpression typeExpression;
         private final String[] names;
+        private final Map<String, String[]> parameterTypeToNamesMap;
 
-        public ParameterNameExpression(@NotNull String[] names, @NotNull TypeExpression typeExpression) {
+        public ParameterNameExpression(@NotNull String[] names, @NotNull Map<String, String[]> parameterTypeToNamesMap) {
             for (String name : names)
                 assert name != null && !name.isEmpty();
             this.names = names;
-            this.typeExpression = typeExpression;
+            this.parameterTypeToNamesMap = parameterTypeToNamesMap;
         }
 
         @Nullable
@@ -195,15 +195,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             if (parameter != null) {
                 JetTypeReference parameterTypeRef = parameter.getTypeReference();
                 assert parameterTypeRef != null;
-                JetType selectedType = typeExpression.getTypeFromSelection(parameterTypeRef.getText());
-                if (selectedType != null) { // user selected a type we suggested
-                    Collections.addAll(names, JetNameSuggester.suggestNamesForType(selectedType, JetNameValidator.getEmptyValidator(project)));
-                } else { // user entered their own type
-                    BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
-                    JetType enteredType = bindingContext.get(BindingContext.TYPE, parameterTypeRef);
-                    if (enteredType != null) {
-                        Collections.addAll(names, JetNameSuggester.suggestNamesForType(enteredType, JetNameValidator.getEmptyValidator(project)));
-                    }
+                String[] suggestedNamesBasedOnType = parameterTypeToNamesMap.get(parameterTypeRef.getText());
+                if (suggestedNamesBasedOnType != null) {
+                    Collections.addAll(names, suggestedNamesBasedOnType);
                 }
             }
 
@@ -235,13 +229,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      * An <code>Expression</code> for type references.
      */
     private static class TypeExpression extends Expression {
-        private final Project project;
-        private final JetType[] types;
-        private LookupElement[] lastCachedLookupElements;
+        private final JetType[] options;
+        private final String[] optionStrings;
 
-        public TypeExpression(@NotNull Project project, @NotNull JetType[] types) {
-            this.project = project;
-            this.types = types;
+        public TypeExpression(@NotNull JetType[] options) {
+            //To change body of created methods use File | Settings | File Templates.
+            this.options = options;
+            optionStrings = renderTypes(options);
         }
 
         @Nullable
@@ -262,22 +256,21 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         @NotNull
         @Override
         public LookupElement[] calculateLookupItems(ExpressionContext context) {
-            LookupElement[] lookupElements = new LookupElement[types.length];
-            for (int i = 0; i < types.length; i++) {
-                lookupElements[i] = LookupElementBuilder.create(DescriptorRenderer.TEXT.renderType(types[i]));
-                // TODO: take into account imports and stuff; how to refer to a type with the simplest name with imports (currently uses fully qualified name)?
+            LookupElement[] lookupElements = new LookupElement[options.length];
+            for (int i = 0; i < options.length; i++) {
+                lookupElements[i] = LookupElementBuilder.create(optionStrings[i]);
             }
-            return lastCachedLookupElements = lookupElements;
+            return lookupElements;
         }
 
-        @Nullable("can't be found")
-        public JetType getTypeFromSelection(String selection) {
-            for (int i = 0; i < lastCachedLookupElements.length; i++) {
-                if (lastCachedLookupElements[i].getLookupString().equals(selection)) {
-                    return types[i];
-                }
-            }
-            return null;
+        @NotNull
+        public JetType[] getOptions() {
+            return options;
+        }
+
+        @NotNull
+        public String[] getOptionStrings() {
+            return optionStrings;
         }
     }
 
@@ -286,14 +279,11 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      */
     private static class TypeParameterListExpression extends Expression {
         private final String[] ownerTypeParameterNames;
-        private final Map<JetType, String[]> typeParameterMap;
-        private final List<TypeExpression> parameterTypeExpressions;
+        private final Map<String, String[]> typeParameterMap;
 
-        public TypeParameterListExpression(@NotNull String[] ownerTypeParameterNames, @NotNull Map<JetType, String[]> typeParameterMap,
-                @NotNull List<TypeExpression> parameterTypeExpressions) {
+        public TypeParameterListExpression(@NotNull String[] ownerTypeParameterNames, @NotNull Map<String, String[]> typeParameterMap) {
             this.ownerTypeParameterNames = ownerTypeParameterNames;
             this.typeParameterMap = typeParameterMap;
-            this.parameterTypeExpressions = parameterTypeExpressions;
         }
 
         @NotNull
@@ -309,25 +299,17 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             PsiElement elementAt = file.findElementAt(offset);
             JetFunction func = PsiTreeUtil.getParentOfType(elementAt, JetFunction.class);
             assert func != null;
-            JetParameterList parameterList = func.getValueParameterList();
-            assert parameterList != null;
-            List<JetParameter> parameters = parameterList.getParameters();
-            assert parameters.size() == parameterTypeExpressions.size();
+            List<JetParameter> parameters = func.getValueParameters();
 
             List<String> typeParameterNames = new ArrayList<String>();
             Collections.addAll(typeParameterNames, ownerTypeParameterNames);
-            int i = 0;
             for (JetParameter parameter : parameters) {
-                TypeExpression parameterTypeExpression = parameterTypeExpressions.get(i);
                 JetTypeReference parameterTypeRef = parameter.getTypeReference();
                 assert parameterTypeRef != null;
-                JetType parameterType = parameterTypeExpression.getTypeFromSelection(parameterTypeRef.getText());
-                if (parameterType != null) { // the user chose a given type
-                    String[] names = typeParameterMap.get(parameterType);
+                String[] names = typeParameterMap.get(parameterTypeRef.getText());
+                if (names != null) {
                     Collections.addAll(typeParameterNames, names);
                 }
-
-                i++;
             }
 
             return typeParameterNames.isEmpty()
@@ -399,13 +381,14 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         boolean isUnit = returnType.isType() && isUnit(returnType.getType());
         String returnTypeString = isUnit ? "" : ": Any";
 
+        String ownerTypeString;
         String methodText;
         JetNamedFunction func;
         PsiElement owner;
         boolean isExtension = !klass.isWritable();
         if (isExtension) { // create as extension function
-            methodText = String.format("fun %s.%s(%s)%s { }", DescriptorRenderer.TEXT.renderType(ownerType),
-                                       methodName, parametersString, returnTypeString);
+            ownerTypeString = renderType(ownerType);
+            methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
             owner = file;
             func = (JetNamedFunction) file.add(func);
@@ -438,24 +421,24 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         if (!isUnit) {
             JetTypeReference returnTypeRef = func.getReturnTypeRef();
             assert returnTypeRef != null;
-            Expression returnTypeExpression = new TypeExpression(project, returnType.getPossibleTypes());
+            Expression returnTypeExpression = new TypeExpression(returnType.getPossibleTypes());
             builder.replaceElement(returnTypeRef, returnTypeExpression);
         }
 
         // add parameters to the template
         List<JetParameter> jetParameters = parameterList.getParameters();
-        List<TypeExpression> parameterTypeExpressions = new ArrayList<TypeExpression>();
         assert jetParameters.size() == parameters.size();
+        TypeExpression[] parameterTypeExpressions = new TypeExpression[parameters.size()];
         for (int i = 0; i < parameters.size(); i++) {
             Parameter parameter = parameters.get(i);
             JetParameter jetParameter = jetParameters.get(i);
 
             // add parameter type to the template
-            TypeExpression parameterTypeExpression = new TypeExpression(project, parameter.getType().getPossibleTypes());
-            parameterTypeExpressions.add(parameterTypeExpression);
+            JetType[] typeOptions = parameter.getType().getPossibleTypes();
+            parameterTypeExpressions[i] = new TypeExpression(typeOptions);
             JetTypeReference parameterTypeRef = jetParameter.getTypeReference();
             assert parameterTypeRef != null;
-            builder.replaceElement(parameterTypeRef, parameterTypeExpression);
+            builder.replaceElement(parameterTypeRef, parameterTypeExpressions[i]);
 
             // add parameter name to the template
             String[] possibleNamesFromExpression = parameter.getType().getPossibleNamesFromExpression();
@@ -468,7 +451,18 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             } else {
                 possibleNames = possibleNamesFromExpression;
             }
-            Expression parameterNameExpression = new ParameterNameExpression(possibleNames, parameterTypeExpression);
+
+            // figure out suggested names for each type option
+            Map<String, String[]> parameterTypeToNamesMap = new HashMap<String, String[]>();
+            String[] typeOptionStrings = parameterTypeExpressions[i].getOptionStrings();
+            assert typeOptions.length == typeOptionStrings.length;
+            for (int j = 0; j < typeOptions.length; j++) {
+                String[] suggestedNames = JetNameSuggester.suggestNamesForType(typeOptions[j], JetNameValidator.getEmptyValidator(project));
+                parameterTypeToNamesMap.put(typeOptionStrings[j], suggestedNames);
+            }
+
+            // add expression to builder
+            Expression parameterNameExpression = new ParameterNameExpression(possibleNames, parameterTypeToNamesMap);
             PsiElement parameterNameIdentifier = jetParameter.getNameIdentifier();
             assert parameterNameIdentifier != null;
             builder.replaceElement(parameterNameIdentifier, parameterNameExpression);
@@ -479,7 +473,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         // need to create the segment first and then hack the Expression into the template later. We use this template to update the type
         // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
         // it.
-        Map<JetType, String[]> typeParameterMap = new HashMap<JetType, String[]>();
+        Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
         DeclarationDescriptor ownerDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
         JetScope scope;
         if (ownerDescriptor instanceof NamespaceDescriptor) {
@@ -490,20 +484,19 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             scope = classDescriptor.getMemberScope(classDescriptor.getDefaultType().getArguments());
         }
 
-        String[] ownerTypeParameterNames = ArrayUtil.EMPTY_STRING_ARRAY;
-        if (isExtension) {
-            Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(ownerType);
-            typeParameterMap.put(ownerType, ownerTypeParameterNames = getTypeParameterNamesNotInScope(typeParameters, scope));
-        }
-        for (Parameter parameter : parameters) {
-            for (JetType type : parameter.getType().getPossibleTypes()) {
-                // get a list of type parameter candidates
-                Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(type);
-                typeParameterMap.put(type, getTypeParameterNamesNotInScope(typeParameters, scope));
+        Set<TypeParameterDescriptor> ownerTypeParameters = getTypeParametersInType(ownerType);
+        String[] ownerTypeParameterNames = getTypeParameterNamesNotInScope(ownerTypeParameters, scope);
+        for (TypeExpression parameterTypeExpression : parameterTypeExpressions) {
+            JetType[] parameterTypeOptions = parameterTypeExpression.getOptions();
+            String[] parameterTypeOptionStrings = parameterTypeExpression.getOptionStrings();
+            assert parameterTypeOptions.length == parameterTypeOptionStrings.length;
+            for (int i = 0; i < parameterTypeOptions.length; i++) {
+                Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(parameterTypeOptions[i]);
+                typeParameterMap.put(parameterTypeOptionStrings[i], getTypeParameterNamesNotInScope(typeParameters, scope));
             }
         }
 
-        Expression expression = new TypeParameterListExpression(ownerTypeParameterNames, typeParameterMap, parameterTypeExpressions);
+        Expression expression = new TypeParameterListExpression(ownerTypeParameterNames, typeParameterMap);
         builder.replaceElement(func, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false); // ((3, 3) is after "fun")
 
         // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
@@ -548,6 +541,21 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
 
         return true;
+    }
+
+    @NotNull
+    private static String renderType(JetType type) {
+        return DescriptorRenderer.TEXT.renderType(type);
+        // TODO: take into account imports and stuff; how to refer to a type with the simplest name with imports (currently uses fully qualified name)?
+    }
+
+    @NotNull
+    private static String[] renderTypes(JetType[] types) {
+        String[] typeStrings = new String[types.length];
+        for (int i = 0; i < types.length; i++) {
+            typeStrings[i] = renderType(types[i]);
+        }
+        return typeStrings;
     }
 
     @NotNull
