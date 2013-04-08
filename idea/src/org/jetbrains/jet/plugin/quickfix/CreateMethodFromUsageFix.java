@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
@@ -98,8 +99,17 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 assert cachedTypeCandidates != null;
                 return cachedTypeCandidates;
             }
-            return cachedTypeCandidates = isType() ? new JetType[] {type} : guessTypeForExpression(expressionOfType, context);
-            // TODO: supertypes/subtypes of all possible types?
+            List<JetType> types = new ArrayList<JetType>();
+            if (isType()) {
+                types.add(type);
+                types.addAll(TypeUtils.getAllSupertypes(type));
+            } else {
+                for (JetType type : guessTypeForExpression(expressionOfType, context)) {
+                    types.add(type);
+                    types.addAll(TypeUtils.getAllSupertypes(type));
+                }
+            }
+            return cachedTypeCandidates = types.toArray(new JetType[types.size()]);
         }
 
         @NotNull
@@ -510,7 +520,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         variables.add(new Variable(TYPE_PARAMETER_LIST_VARIABLE_NAME, expression, expression, false, true));
 
         // run the template
-        TemplateManager.getInstance(project).startTemplate(editor, template, new TemplateEditingAdapter() { // TODO: too slow, speed it up
+        TemplateManager.getInstance(project).startTemplate(editor, template, new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
                 // TODO: file templates
