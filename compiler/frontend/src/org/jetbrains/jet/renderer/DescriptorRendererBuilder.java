@@ -113,5 +113,4 @@ public class DescriptorRendererBuilder {
                                           verbose, unitReturnType, normalizedVisibilities, showInternalKeyword, valueParametersHandler,
                                           textFormat, excludedAnnotationClasses);
     }
-
 }
