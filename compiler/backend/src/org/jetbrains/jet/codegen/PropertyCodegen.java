@@ -24,6 +24,8 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.MethodContext;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
@@ -38,6 +40,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+
+import java.util.Collection;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.getDeprecatedAccessFlag;
@@ -128,11 +132,16 @@ public class PropertyCodegen extends GenerationStateAware {
         getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorResolver.createDefaultGetter(propertyDescriptor);
 
         if (kind != OwnerKind.TRAIT_IMPL || !defaultGetter) {
+            FunctionGenerationStrategy strategy =
+                    defaultGetter
+                    ? new DefaultPropertyAccessorStrategy(getterDescriptor)
+                    : new FunctionGenerationStrategy.Default(state, getter);
             functionCodegen.generateMethod(getter != null ? getter : p,
                                            signature.getJvmMethodSignature(),
                                            true,
                                            signature.getPropertyTypeKotlinSignature(),
-                                           getterDescriptor);
+                                           getterDescriptor,
+                                           strategy);
         }
         //}
     }
@@ -147,22 +156,47 @@ public class PropertyCodegen extends GenerationStateAware {
             setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorResolver.createDefaultSetter(propertyDescriptor);
 
             if (kind != OwnerKind.TRAIT_IMPL || !defaultSetter) {
+                FunctionGenerationStrategy strategy =
+                        defaultSetter
+                        ? new DefaultPropertyAccessorStrategy(setterDescriptor)
+                        : new FunctionGenerationStrategy.Default(state, setter);
                 functionCodegen.generateMethod(setter != null ? setter : p,
                                                signature.getJvmMethodSignature(),
                                                true,
                                                signature.getPropertyTypeKotlinSignature(),
-                                               setterDescriptor);
+                                               setterDescriptor,
+                                               strategy);
             }
         }
     }
 
 
-    public static void generateDefaultAccessor(
+    private class DefaultPropertyAccessorStrategy extends FunctionGenerationStrategy {
+        private final PropertyAccessorDescriptor descriptor;
+
+        public DefaultPropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        @Override
+        public void generateBody(
+                @NotNull MethodVisitor mv,
+                @NotNull JvmMethodSignature signature,
+                @NotNull MethodContext context,
+                @NotNull Collection<String> localVariableNames,
+                @NotNull FrameMap frameMap
+        ) {
+            generateDefaultAccessor(descriptor, new InstructionAdapter(mv), typeMapper, context);
+        }
+    }
+
+    private static void generateDefaultAccessor(
             @NotNull PropertyAccessorDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv,
-            @NotNull OwnerKind kind,
             @NotNull JetTypeMapper typeMapper,
-            @NotNull CodegenContext context) {
+            @NotNull CodegenContext context
+    ) {
+        OwnerKind kind = context.getContextKind();
 
         PropertyDescriptor propertyDescriptor = accessorDescriptor.getCorrespondingProperty();
         Type type = typeMapper.mapType(propertyDescriptor);

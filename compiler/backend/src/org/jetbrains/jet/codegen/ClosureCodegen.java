@@ -35,7 +35,9 @@ import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -49,7 +51,8 @@ import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.getInternalClassName;
+import static org.jetbrains.jet.codegen.CodegenUtil.isConst;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -156,7 +159,7 @@ public class ClosureCodegen extends GenerationStateAware {
         CodegenContext closureContext = context.intoClosure(funDescriptor, expressionCodegen);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunctionName, funDescriptor);
-        fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor);
+        fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor, new FunctionGenerationStrategy.Default(state, body));
         assert closureContext.closure != null;
         return closureContext.closure.getCaptureThis();
     }

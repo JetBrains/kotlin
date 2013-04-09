@@ -37,7 +37,7 @@ import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -67,8 +67,8 @@ public class FunctionCodegen extends GenerationStateAware {
         this.v = v;
     }
 
-    public void gen(JetNamedFunction f) {
-        SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
+    public void gen(@NotNull JetNamedFunction function) {
+        SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
         assert functionDescriptor != null;
 
         OwnerKind kind = owner.getContextKind();
@@ -80,46 +80,29 @@ public class FunctionCodegen extends GenerationStateAware {
                         isCallInsideSameModuleAsDeclared(functionDescriptor, owner),
                         kind).getSignature();
 
-        if (kind != OwnerKind.TRAIT_IMPL || hasBodyExpression(f)) {
+        if (kind != OwnerKind.TRAIT_IMPL || function.getBodyExpression() != null) {
             boolean needJetAnnotations = kind != OwnerKind.TRAIT_IMPL;
-            generateMethod(f, method, needJetAnnotations, null, functionDescriptor);
+            generateMethod(function, method, needJetAnnotations, null, functionDescriptor,
+                           new FunctionGenerationStrategy.Default(state, function));
         }
 
         generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), state, v, method.getAsmMethod(), functionDescriptor, kind,
                                 DefaultParameterValueLoader.DEFAULT);
     }
 
-
     public void generateMethod(
-            @NotNull JetDeclaration declaration,
+            @Nullable PsiElement origin,
             @NotNull JvmMethodSignature jvmSignature,
             boolean needJetAnnotations,
             @Nullable String propertyTypeSignature,
-            @NotNull FunctionDescriptor functionDescriptor
-    ) {
-        assert declaration instanceof JetDeclarationWithBody || declaration instanceof JetProperty || declaration instanceof JetParameter;
-
-        checkMustGenerateCode(functionDescriptor);
-
-        generateMethodHeaderAndBody(declaration, jvmSignature, needJetAnnotations, propertyTypeSignature, functionDescriptor);
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL && !isAbstract(functionDescriptor, owner.getContextKind())) {
-            generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
-        }
-    }
-
-    private void generateMethodHeaderAndBody(
-            @NotNull JetDeclaration declaration,
-            @NotNull JvmMethodSignature jvmSignature,
-            boolean needJetAnnotations,
-            @Nullable String propertyTypeSignature,
-            @NotNull FunctionDescriptor functionDescriptor
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull FunctionGenerationStrategy strategy
     ) {
         MethodContext context = owner.intoFunction(functionDescriptor);
 
         Method asmMethod = jvmSignature.getAsmMethod();
 
-        MethodVisitor mv = v.newMethod(declaration,
+        MethodVisitor mv = v.newMethod(origin,
                                        getMethodAsmFlags(functionDescriptor, context.getContextKind()),
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
@@ -140,14 +123,16 @@ public class FunctionCodegen extends GenerationStateAware {
             return;
         }
 
-        MethodInfo info = generateMethodBody(mv, declaration, functionDescriptor, context, asmMethod);
+        MethodInfo info = generateMethodBody(mv, functionDescriptor, context, jvmSignature, strategy);
 
         info.localVariableNames.addAll(getParameterNamesAsStrings(functionDescriptor));
 
         Type thisType = getThisTypeForFunction(functionDescriptor, context);
         generateLocalVariableTable(typeMapper, mv, functionDescriptor, thisType, info);
 
-        endVisit(mv, null, declaration);
+        endVisit(mv, null, origin);
+
+        generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
     }
 
     @Nullable
@@ -167,10 +152,10 @@ public class FunctionCodegen extends GenerationStateAware {
     @NotNull
     private MethodInfo generateMethodBody(
             @NotNull MethodVisitor mv,
-            @NotNull JetDeclaration funOrProperty,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext context,
-            @NotNull Method asmMethod
+            @NotNull JvmMethodSignature signature,
+            @NotNull FunctionGenerationStrategy strategy
     ) {
         Collection<String> localVariableNames = new ArrayList<String>();
         Map<Name, Label> labelsForSharedVars = new HashMap<Name, Label>();
@@ -182,7 +167,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         OwnerKind kind = context.getContextKind();
         if (kind instanceof OwnerKind.StaticDelegateKind) {
-            generateStaticDelegateMethodBody(mv, asmMethod, (OwnerKind.StaticDelegateKind) kind);
+            generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (OwnerKind.StaticDelegateKind) kind);
         }
         else {
             FrameMap frameMap = context.prepareFrame(typeMapper);
@@ -195,23 +180,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
             genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
 
-            boolean hasBodyExpression = hasBodyExpression(funOrProperty);
-            if (hasBodyExpression) {
-                JetDeclarationWithBody fun = (JetDeclarationWithBody) funOrProperty;
-                ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, asmMethod.getReturnType(), context, state);
-                codegen.returnExpression(fun.getBodyExpression());
-
-                localVariableNames.addAll(codegen.getLocalVariableNamesForExpression());
-            } else {
-                ///generate default accessor
-                assert functionDescriptor instanceof PropertyAccessorDescriptor;
-                PropertyCodegen.generateDefaultAccessor(
-                        (PropertyAccessorDescriptor) functionDescriptor,
-                        new InstructionAdapter(mv),
-                        kind,
-                        typeMapper,
-                        context);
-            }
+            strategy.generateBody(mv, signature, context, localVariableNames, frameMap);
         }
 
         Label methodEnd = new Label();
@@ -219,12 +188,6 @@ public class FunctionCodegen extends GenerationStateAware {
 
         return new MethodInfo(methodBegin, methodEnd, localVariableNames, labelsForSharedVars);
     }
-
-    private static boolean hasBodyExpression(JetDeclaration funOrProperty) {
-        return (funOrProperty instanceof JetDeclarationWithBody
-                && ((JetDeclarationWithBody) funOrProperty).getBodyExpression() != null);
-    }
-
 
     public static class MethodInfo {
         public final Label beginLabel;
@@ -398,7 +361,9 @@ public class FunctionCodegen extends GenerationStateAware {
             kotlinFlags |= DescriptorKindUtils.kindToFlags(functionDescriptor.getKind());
             //noinspection ConstantConditions
             aw.writeFlags(kotlinFlags);
-            aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+            if (jvmSignature.getKotlinTypeParameter() != null) {
+                aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+            }
             aw.writeReturnType(jvmSignature.getKotlinReturnType());
             aw.visitEnd();
         }
