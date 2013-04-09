@@ -30,12 +30,14 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setNormalizedVisibilities(true)
             .setWithDefinedIn(false)
             .setShortNames(false)
+            .setShowInternalKeyword(false)
             .setUnitReturnType(false).build();
 
     DescriptorRenderer SOURCE_CODE_SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder()
             .setNormalizedVisibilities(true)
             .setWithDefinedIn(false)
             .setShortNames(true)
+            .setShowInternalKeyword(false)
             .setUnitReturnType(false).build();
 
     DescriptorRenderer COMPACT = new DescriptorRendererBuilder()

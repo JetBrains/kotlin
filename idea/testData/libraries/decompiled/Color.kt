@@ -16,5 +16,5 @@ package testData.libraries
         public final fun values(): jet.Array<testData.libraries.Color> { /* compiled code */ }
     }
 
-    [final val rgb: jet.Int] /* compiled code */
+    [internal final val rgb: jet.Int] /* compiled code */
 }]]
