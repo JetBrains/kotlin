@@ -24,6 +24,7 @@ import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.codeInsight.template.impl.Variable;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -464,9 +465,14 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Override
             public void templateFinished(Template _, boolean brokenOff) {
                 int offset = template.getSegmentOffset(0);
-                JetNamedFunction func = PsiTreeUtil.findElementOfClassAtOffset(containingFile, offset, JetNamedFunction.class, false);
+                final JetNamedFunction func = PsiTreeUtil.findElementOfClassAtOffset(containingFile, offset, JetNamedFunction.class, false);
                 assert func != null;
-                setupFunctionBody(project, func, isUnit, ownerTypeDescriptor);
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupFunctionBody(project, func, isUnit, ownerTypeDescriptor);
+                    }
+                });
 
                 caretModel.moveToOffset(oldOffset);
             }
