@@ -390,7 +390,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append(renderKeyword(variance)).append(" ");
         }
         renderName(typeParameter, builder);
-        if (typeParameter.getUpperBounds().size() == 1) {
+        if (typeParameter.getUpperBounds().size() >= 1) {
             JetType upperBound = typeParameter.getUpperBounds().iterator().next();
             if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
                 builder.append(" : ").append(renderType(upperBound));
@@ -486,8 +486,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             if (typeParameter.getUpperBounds().size() > 1) {
+                boolean first = true;
                 for (JetType upperBound : typeParameter.getUpperBounds()) {
-                    upperBoundStrings.add(renderName(typeParameter.getName()) + " : " + escape(renderType(upperBound)));
+                    // first parameter is rendered by renderTypeParameter:
+                    if (!first) {
+                        upperBoundStrings.add(renderName(typeParameter.getName()) + " : " + escape(renderType(upperBound)));
+                    }
+                    first = false;
                 }
             }
         }
