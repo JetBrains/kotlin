@@ -22,8 +22,11 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.*;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.codeInsight.template.impl.Variable;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -33,12 +36,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -55,6 +60,7 @@ import java.util.*;
 
 public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private static final String TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList";
+    private static final String TEMPLATE_FROM_USAGE_METHOD_BODY = "New Kotlin Method Body.kt";
 
     /**
      * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -360,7 +366,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         assert file instanceof JetFile;
         JetFile jetFile = (JetFile) file;
         BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
@@ -376,7 +382,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             ownerType = possibleOwnerTypes[0];
         }
 
-        ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
+        final ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
+        assert ownerTypeDescriptor != null;
         PsiElement typeDeclaration = DescriptorToDeclarationUtil.getDeclaration(jetFile, ownerTypeDescriptor, context);
         JetClass klass = (JetClass) typeDeclaration;
 
@@ -387,24 +394,28 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
         String parametersString = StringUtil.join(parameterStrings,", ");
 
-        boolean isUnit = returnType.isType() && isUnit(returnType.getType());
+        final boolean isUnit = returnType.isType() && isUnit(returnType.getType());
         String returnTypeString = isUnit ? "" : ": Any";
 
         String ownerTypeString;
         String methodText;
         JetNamedFunction func;
         PsiElement owner;
+        final JetFile containingFile;
         boolean isExtension = !klass.isWritable();
         if (isExtension) { // create as extension function
             ownerTypeString = renderType(ownerType);
             methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
-            owner = file;
+            owner = containingFile = jetFile;
             func = (JetNamedFunction) file.add(func);
         } else { // create as method
             methodText = String.format("fun %s(%s)%s { }", methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
             owner = klass;
+            PsiFile classContainingFile = klass.getContainingFile();
+            assert classContainingFile instanceof JetFile;
+            containingFile = (JetFile) classContainingFile;
             JetClassBody classBody = klass.getBody();
             assert classBody != null;
             PsiElement rBrace = classBody.getRBrace();
@@ -439,7 +450,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func, ownerType, parameterTypeExpressions, scope);
 
         // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
-        TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
+        final TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
         ArrayList<Variable> variables = template.getVariables();
         for (int i = 0; i < parameters.size(); i++) {
             Collections.swap(variables, i * 2, i * 2 + 1);
@@ -451,12 +462,45 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         // run the template
         TemplateManager.getInstance(project).startTemplate(editor, template, new TemplateEditingAdapter() {
             @Override
-            public void templateFinished(Template template, boolean brokenOff) {
-                // TODO: file templates
+            public void templateFinished(Template _, boolean brokenOff) {
+                int offset = template.getSegmentOffset(0);
+                JetNamedFunction func = PsiTreeUtil.findElementOfClassAtOffset(containingFile, offset, JetNamedFunction.class, false);
+                assert func != null;
+                setupFunctionBody(project, func, isUnit, ownerTypeDescriptor);
 
                 caretModel.moveToOffset(oldOffset);
             }
         });
+    }
+
+    private void setupFunctionBody(@NotNull Project project, @NotNull JetNamedFunction func, boolean isUnit,
+            @NotNull ClassifierDescriptor ownerTypeDescriptor
+    ) {
+        FileTemplate fileTemplate = FileTemplateManager.getInstance().getCodeTemplate(TEMPLATE_FROM_USAGE_METHOD_BODY);
+        Properties properties = new Properties();
+        if (isUnit) {
+            properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, "Unit");
+        } else {
+            JetTypeReference returnTypeRef = func.getReturnTypeRef();
+            assert returnTypeRef != null;
+            properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, returnTypeRef.getText());
+        }
+        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerTypeDescriptor).getFqName());
+        properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerTypeDescriptor.getName().getName());
+        properties.setProperty(FileTemplate.ATTRIBUTE_METHOD_NAME, methodName);
+
+        @NonNls String bodyText;
+        try {
+            bodyText = fileTemplate.getText(properties);
+        } catch (ProcessCanceledException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IncorrectOperationException("Failed to parse file template", e);
+        }
+        JetExpression newBodyExpression = JetPsiFactory.createFunctionBody(project, bodyText);
+        JetExpression oldBodyExpression = func.getBodyExpression();
+        assert oldBodyExpression != null;
+        oldBodyExpression.replace(newBodyExpression);
     }
 
     @NotNull
