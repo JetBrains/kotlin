@@ -3055,6 +3055,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnTypeWithNullableUpperBound.kt");
             }
             
+            @TestMetadata("uselessElvis.kt")
+            public void testUselessElvis() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullableTypes/uselessElvis.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/objects")

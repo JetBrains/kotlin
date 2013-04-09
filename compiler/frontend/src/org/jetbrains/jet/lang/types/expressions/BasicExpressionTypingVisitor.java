@@ -711,7 +711,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     private static boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
         JetType type = context.trace.get(EXPRESSION_TYPE, expression);
         assert type != null : "This method is only supposed to be called when the type is not null";
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext());
+        return isKnownToBeNotNull(expression, type, context);
+    }
+
+    private static boolean isKnownToBeNotNull(JetExpression expression, JetType jetType, ExpressionTypingContext context) {
+        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, jetType, context.trace.getBindingContext());
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
@@ -853,12 +857,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 JetType leftType = leftTypeInfo.getType();
                 dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 
-                ExpressionTypingContext newContext = contextWithExpectedType.replaceDataFlowInfo(dataFlowInfo).replaceScope(context.scope);
-                JetType rightType = right == null ? null : facade.getTypeInfo(right, newContext).getType();
                 if (leftType != null) {
-                    if (!leftType.isNullable()) {
+                    if (isKnownToBeNotNull(left, leftType, context)) {
                         context.trace.report(USELESS_ELVIS.on(left, leftType));
                     }
+
+                    ExpressionTypingContext newContext = contextWithExpectedType.replaceDataFlowInfo(dataFlowInfo).replaceScope(context.scope);
+                    JetType rightType = right == null ? null : facade.getTypeInfo(right, newContext).getType();
+
                     if (rightType != null) {
                         DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
                         return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(
