@@ -343,10 +343,6 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull JetClassOrObject classOrObject) {
-        PsiClass originalClass = getOriginalClass(classOrObject);
-        if (originalClass != null) {
-            return originalClass;
-        }
         if (LightClassUtil.belongsToKotlinBuiltIns((JetFile) classOrObject.getContainingFile())) {
             Name className = classOrObject.getNameAsName();
             assert className != null : "Class from BuiltIns should have a name";
