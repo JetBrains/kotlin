@@ -581,7 +581,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         JvmClassName ownerInternalName;
         if (contextClass instanceof NamespaceDescriptor) {
-            ownerInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(DescriptorUtils.getFQName(contextClass).toSafe());
+            ownerInternalName = state.getTypeMapper().getOwner(functionDescriptor, kind, true);
         }
         else {
             ownerInternalName = JvmClassName.byType(state.getTypeMapper()

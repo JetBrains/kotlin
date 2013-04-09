@@ -77,6 +77,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest("compiler/testData/codegen/bytecodeText/privateDefaultArgs.kt");
     }
     
+    @TestMetadata("topLevelFunWithDefaultArgs.kt")
+    public void testTopLevelFunWithDefaultArgs() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/topLevelFunWithDefaultArgs.kt");
+    }
+    
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
     public static class Statements extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInStatements() throws Exception {
