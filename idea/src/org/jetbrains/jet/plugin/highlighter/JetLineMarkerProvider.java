@@ -79,7 +79,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 return null;
             }
         }
-        PsiClass lightClass = LightClassUtil.createLightClass((JetClass) element);
+        PsiClass lightClass = LightClassUtil.getPsiClass((JetClass) element);
         if (lightClass == null) {
             return null;
         }
@@ -250,7 +250,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
               element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
             return;
         }
-        PsiClass lightClass = LightClassUtil.createLightClass(element);
+        PsiClass lightClass = LightClassUtil.getPsiClass(element);
         if (lightClass == null) {
             return;
         }

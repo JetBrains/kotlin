@@ -81,7 +81,7 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
                     if (!(DescriptorUtils.getFQName(descriptor).getFqName().equals(annotationFQN))) return;
 
                     if (parentOfType instanceof JetClass) {
-                        PsiClass lightClass = LightClassUtil.createLightClass((JetClass) parentOfType);
+                        PsiClass lightClass = LightClassUtil.getPsiClass((JetClass) parentOfType);
                         consumer.process(lightClass);
                     }
                     else if (parentOfType instanceof JetNamedFunction) {

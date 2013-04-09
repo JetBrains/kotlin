@@ -149,7 +149,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         assertInstanceOf(element, JetClass.class);
         JetClass aClass = (JetClass) element;
 
-        PsiClass createdByWrapDelegate = LightClassUtil.createLightClass(aClass);
+        PsiClass createdByWrapDelegate = LightClassUtil.getPsiClass(aClass);
         assertNull(createdByWrapDelegate);
     }
 
@@ -189,7 +189,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         assertNotNull("Caret should be placed to class definition", jetClass);
 
         // Should not fail!
-        KotlinLightClass lightClass = (KotlinLightClass) LightClassUtil.createLightClass(jetClass);
+        KotlinLightClass lightClass = (KotlinLightClass) LightClassUtil.getPsiClass(jetClass);
 
         assertNotNull(String.format("Failed to wrap jetClass '%s' to class", jetClass.getText()), lightClass);
 

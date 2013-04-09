@@ -366,7 +366,7 @@ public class JetSourceNavigationHelper {
             }
         }
         if (!JetPsiUtil.isLocalClass(classOrObject)) {
-            return LightClassUtil.createLightClass(classOrObject);
+            return LightClassUtil.getPsiClass(classOrObject);
         }
         return null;
     }

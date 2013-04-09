@@ -99,7 +99,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         for (JetClassOrObject declaration : classOrObjectDeclarations) {
             if (!(declaration instanceof JetEnumEntry)) {
-                PsiClass lightClass = LightClassUtil.createLightClass(declaration);
+                PsiClass lightClass = LightClassUtil.getPsiClass(declaration);
                 if (lightClass != null) {
                     answer.add(lightClass);
                 }
@@ -189,7 +189,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
         for (JetClassOrObject declaration : declarations) {
-            PsiClass aClass = LightClassUtil.createLightClass(declaration);
+            PsiClass aClass = LightClassUtil.getPsiClass(declaration);
             if (aClass != null) {
                 answer.add(aClass);
             }

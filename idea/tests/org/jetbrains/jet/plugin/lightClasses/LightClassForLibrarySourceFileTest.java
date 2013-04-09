@@ -28,7 +28,7 @@ public class LightClassForLibrarySourceFileTest extends NavigateToStdlibSourceRe
     public void testLightClassForFileFromLibrarySource() throws Exception {
         PsiElement navigationElement = getNavigationElement("libraries/stdlib/src/kotlin/Iterators.kt", "FunctionIterator");
         assertTrue("FunctionIterator should navigate to JetClassOrObject", navigationElement instanceof JetClassOrObject);
-        PsiClass lightClass = LightClassUtil.createLightClass((JetClassOrObject) navigationElement);
+        PsiClass lightClass = LightClassUtil.getPsiClass((JetClassOrObject) navigationElement);
         assertTrue("Do not create Kotlin Light Class for file from library sources", !(lightClass instanceof KotlinLightClass));
     }
 

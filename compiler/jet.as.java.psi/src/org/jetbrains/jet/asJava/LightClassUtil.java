@@ -111,7 +111,7 @@ public class LightClassUtil {
     }
 
     @Nullable
-    public static PsiClass createLightClass(@Nullable JetClassOrObject classOrObject) {
+    public static PsiClass getPsiClass(@Nullable JetClassOrObject classOrObject) {
         if (classOrObject == null) return null;
         return LightClassGenerationSupport.getInstance(classOrObject.getProject()).getPsiClass(classOrObject);
     }
@@ -143,7 +143,7 @@ public class LightClassUtil {
 
             // function in a class
             JetClassOrObject classOrObject = (JetClassOrObject) parent.getParent();
-            psiClass = createLightClass(classOrObject);
+            psiClass = getPsiClass(classOrObject);
         }
 
         if (psiClass == null) return null;

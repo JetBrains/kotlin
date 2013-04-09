@@ -64,7 +64,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
             JetElement owner = PsiTreeUtil.getParentOfType(function, JetFunction.class, JetClass.class);
 
             if (owner instanceof JetClass) {
-                PsiClass delegate = LightClassUtil.createLightClass((JetClass) owner);
+                PsiClass delegate = LightClassUtil.getPsiClass((JetClass) owner);
                 if (delegate != null) {
                     for (PsiMethod method : delegate.getMethods()) {
                         if (method.getNavigationElement() == function) {
@@ -95,7 +95,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
 
         if (jetClass != null) {
             myElement = jetClass;
-            PsiClass delegate = LightClassUtil.createLightClass(jetClass);
+            PsiClass delegate = LightClassUtil.getPsiClass(jetClass);
 
             if (delegate != null && JUnitUtil.isTestClass(delegate)) {
                 RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);

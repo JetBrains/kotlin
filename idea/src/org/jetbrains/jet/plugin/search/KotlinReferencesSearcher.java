@@ -40,7 +40,7 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                 PsiClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
                     @Override
                     public PsiClass compute() {
-                        return LightClassUtil.createLightClass((JetClass) element);
+                        return LightClassUtil.getPsiClass((JetClass) element);
                     }
                 });
                 if (lightClass != null) {

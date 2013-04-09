@@ -35,7 +35,7 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
             PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
                 @Override
                 public PsiClass compute() {
-                    return LightClassUtil.createLightClass((JetClass) queryParameters);
+                    return LightClassUtil.getPsiClass((JetClass) queryParameters);
                 }
             });
             if (psiClass != null) {
