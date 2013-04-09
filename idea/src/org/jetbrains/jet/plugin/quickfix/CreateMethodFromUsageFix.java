@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -552,8 +553,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) ownerDescriptor;
             return namespaceDescriptor.getMemberScope();
         } else {
-            ClassDescriptor classDescriptor = (ClassDescriptor) ownerDescriptor;
-            return classDescriptor.getMemberScope(classDescriptor.getDefaultType().getArguments());
+            assert ownerDescriptor instanceof MutableClassDescriptor;
+            MutableClassDescriptor classDescriptor = (MutableClassDescriptor) ownerDescriptor;
+            return classDescriptor.getScopeForMemberResolution();
         }
     }
 
