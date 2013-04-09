@@ -187,19 +187,8 @@ public class FunctionCodegen extends GenerationStateAware {
         else {
             FrameMap frameMap = context.prepareFrame(typeMapper);
 
-            int add = 0;
-            if (kind == OwnerKind.TRAIT_IMPL) {
-                add++;
-            }
-
-            if (functionDescriptor.getReceiverParameter() != null) {
-                add++;
-            }
-
-            Type[] argTypes = asmMethod.getArgumentTypes();
-            List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-            for (int i = 0; i < parameters.size(); i++) {
-                frameMap.enter(parameters.get(i), argTypes[i + add]);
+            for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
+                frameMap.enter(parameter, typeMapper.mapType(parameter));
             }
 
             labelsForSharedVars.putAll(createSharedVarsForParameters(mv, functionDescriptor, frameMap));
