@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isExternallyAccessible;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class PropertyCodegen extends GenerationStateAware {
@@ -120,31 +119,40 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateGetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor getter) {
+        boolean defaultGetter = getter == null || getter.getBodyExpression() == null;
+
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
-        //if (getter != null && getter.getBodyExpression() != null || isExternallyAccessible(propertyDescriptor)) {
-            JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
-            PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-            getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorResolver.createDefaultGetter(propertyDescriptor);
+        //if (!defaultGetter || isExternallyAccessible(propertyDescriptor)) {
+        JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
+        PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
+        getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorResolver.createDefaultGetter(propertyDescriptor);
+
+        if (kind != OwnerKind.TRAIT_IMPL || !defaultGetter) {
             functionCodegen.generateMethod(getter != null ? getter : p,
                                            signature.getJvmMethodSignature(),
                                            true,
                                            signature.getPropertyTypeKotlinSignature(),
                                            getterDescriptor);
+        }
         //}
     }
 
     private void generateSetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor setter) {
+        boolean defaultSetter = setter == null || setter.getBodyExpression() == null;
+
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
-        if (/*setter != null && setter.getBodyExpression() != null
-            || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
+        if (/*!defaultSetter || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
             JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
             PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
             setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorResolver.createDefaultSetter(propertyDescriptor);
-            functionCodegen.generateMethod(setter != null ? setter : p,
-                                           signature.getJvmMethodSignature(),
-                                           true,
-                                           signature.getPropertyTypeKotlinSignature(),
-                                           setterDescriptor);
+
+            if (kind != OwnerKind.TRAIT_IMPL || !defaultSetter) {
+                functionCodegen.generateMethod(setter != null ? setter : p,
+                                               signature.getJvmMethodSignature(),
+                                               true,
+                                               signature.getPropertyTypeKotlinSignature(),
+                                               setterDescriptor);
+            }
         }
     }
 

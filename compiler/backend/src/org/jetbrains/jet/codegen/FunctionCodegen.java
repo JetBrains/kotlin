@@ -54,6 +54,7 @@ import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class FunctionCodegen extends GenerationStateAware {
@@ -69,14 +70,23 @@ public class FunctionCodegen extends GenerationStateAware {
     public void gen(JetNamedFunction f) {
         SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
+
+        OwnerKind kind = owner.getContextKind();
         JvmMethodSignature method =
                 typeMapper.mapToCallableMethod(
                         functionDescriptor,
                         false,
                         isCallInsideSameClassAsDeclared(functionDescriptor, owner),
                         isCallInsideSameModuleAsDeclared(functionDescriptor, owner),
-                        owner.getContextKind()).getSignature();
-        generateMethod(f, method, true, null, functionDescriptor);
+                        kind).getSignature();
+
+        if (kind != OwnerKind.TRAIT_IMPL || hasBodyExpression(f)) {
+            boolean needJetAnnotations = kind != OwnerKind.TRAIT_IMPL;
+            generateMethod(f, method, needJetAnnotations, null, functionDescriptor);
+        }
+
+        generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), state, v, method.getAsmMethod(), functionDescriptor, kind,
+                                DefaultParameterValueLoader.DEFAULT);
     }
 
 
@@ -91,24 +101,11 @@ public class FunctionCodegen extends GenerationStateAware {
 
         checkMustGenerateCode(functionDescriptor);
 
-        OwnerKind kind = owner.getContextKind();
+        generateMethodHeaderAndBody(declaration, jvmSignature, needJetAnnotations, propertyTypeSignature, functionDescriptor);
 
-        if (kind == OwnerKind.TRAIT_IMPL) {
-            needJetAnnotations = false;
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL && !isAbstract(functionDescriptor, owner.getContextKind())) {
+            generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
         }
-
-        boolean hasBodyExpression = hasBodyExpression(declaration);
-
-        MethodContext context = owner.intoFunction(functionDescriptor);
-        if (kind != OwnerKind.TRAIT_IMPL || hasBodyExpression) {
-            generateMethodHeaderAndBody(declaration, jvmSignature, needJetAnnotations, propertyTypeSignature, functionDescriptor, context);
-
-            if (state.getClassBuilderMode() == ClassBuilderMode.FULL && !isAbstract(functionDescriptor, kind)) {
-                generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
-            }
-        }
-
-        generateDefaultIfNeeded(context, state, v, jvmSignature.getAsmMethod(), functionDescriptor, kind, DefaultParameterValueLoader.DEFAULT);
     }
 
     private void generateMethodHeaderAndBody(
@@ -116,14 +113,14 @@ public class FunctionCodegen extends GenerationStateAware {
             @NotNull JvmMethodSignature jvmSignature,
             boolean needJetAnnotations,
             @Nullable String propertyTypeSignature,
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull MethodContext context
+            @NotNull FunctionDescriptor functionDescriptor
     ) {
-        OwnerKind kind = context.getContextKind();
+        MethodContext context = owner.intoFunction(functionDescriptor);
+
         Method asmMethod = jvmSignature.getAsmMethod();
 
         MethodVisitor mv = v.newMethod(declaration,
-                                       getMethodAsmFlags(functionDescriptor, kind),
+                                       getMethodAsmFlags(functionDescriptor, context.getContextKind()),
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
                                        jvmSignature.getGenericsSignature(),
@@ -136,7 +133,7 @@ public class FunctionCodegen extends GenerationStateAware {
             genJetAnnotations(state, functionDescriptor, jvmSignature, propertyTypeSignature, mv);
         }
 
-        if (isAbstract(functionDescriptor, kind)) return;
+        if (isAbstract(functionDescriptor, context.getContextKind())) return;
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
@@ -147,21 +144,24 @@ public class FunctionCodegen extends GenerationStateAware {
 
         MethodBounds methodBounds = generateMethodBody(mv, declaration, functionDescriptor, context, asmMethod, localVariablesInfo);
 
-        Type thisType;
-        ReceiverParameterDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
-        if (expectedThisObject != null) {
-            thisType = typeMapper.mapType(expectedThisObject.getType());
-        }
-        else if (declaration instanceof JetFunctionLiteral || isLocalNamedFun(functionDescriptor)) {
-            thisType = typeMapper.mapType(context.getThisDescriptor());
-        }
-        else {
-            thisType = null;
-        }
-
+        Type thisType = getThisTypeForFunction(functionDescriptor, context);
         generateLocalVariableTable(typeMapper, mv, functionDescriptor, thisType, localVariablesInfo, methodBounds);
 
         endVisit(mv, null, declaration);
+    }
+
+    @Nullable
+    private Type getThisTypeForFunction(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodContext context) {
+        ReceiverParameterDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
+        if (expectedThisObject != null) {
+            return typeMapper.mapType(expectedThisObject.getType());
+        }
+        else if (isFunctionLiteral(functionDescriptor) || isLocalNamedFun(functionDescriptor)) {
+            return typeMapper.mapType(context.getThisDescriptor());
+        }
+        else {
+            return null;
+        }
     }
 
     @NotNull
