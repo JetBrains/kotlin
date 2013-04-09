@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -42,10 +43,11 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     protected ExpectedResolveData getExpectedResolveData() {
         Project project = getProject();
 
+        TestCoreEnvironment environment = getEnvironment();
         return new ExpectedResolveData(
-                JetExpectedResolveDataUtil.prepareDefaultNameToDescriptors(project),
-                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project),
-                getEnvironment()) {
+                JetExpectedResolveDataUtil.prepareDefaultNameToDescriptors(environment),
+                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(environment),
+                environment) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
                 return createCheckAndReturnPsiFile(fileName, null, text);

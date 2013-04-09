@@ -16,11 +16,7 @@
 
 package org.jetbrains.jet.types;
 
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -39,7 +35,7 @@ public class JetOverridingTest extends JetLiteFixture {
     private DescriptorResolver descriptorResolver;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 

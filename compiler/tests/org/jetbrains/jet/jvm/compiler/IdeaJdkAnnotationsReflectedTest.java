@@ -27,9 +27,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CoreExternalAnnotationsManager;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -41,7 +41,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
     private VirtualFile ideaAnnotationsRoot;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         return JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
     }

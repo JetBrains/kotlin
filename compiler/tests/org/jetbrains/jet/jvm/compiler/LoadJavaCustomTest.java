@@ -22,10 +22,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
-import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -60,7 +57,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
     private static final String PATH = "compiler/testData/loadJavaCustom";
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 

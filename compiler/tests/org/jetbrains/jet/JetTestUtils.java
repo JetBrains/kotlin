@@ -211,25 +211,28 @@ public class JetTestUtils {
         return AnalyzerUtilForTests.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList());
     }
 
-    public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
+    public static TestCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable,
                                                                          ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
     }
 
-    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
+    public static TestCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
         return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }
 
-    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
+    public static TestCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(
+            Disposable disposable,
+            @NotNull ConfigurationKind configurationKind
+    ) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
     }
 
-    public static JetCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+    public static TestCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        return new JetCoreEnvironment(disposable, compilerConfigurationForTests(
+        return new TestCoreEnvironment(disposable, compilerConfigurationForTests(
                 configurationKind, jdkKind, getAnnotationsJar()));
     }
 
@@ -374,7 +377,7 @@ public class JetTestUtils {
         CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).newBindingTrace();
     }
 
-    public static void resolveAllKotlinFiles(JetCoreEnvironment environment) throws IOException {
+    public static void resolveAllKotlinFiles(TestCoreEnvironment environment) throws IOException {
         List<String> paths = environment.getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
         assert paths != null;
         List<JetFile> jetFiles = Lists.newArrayList();

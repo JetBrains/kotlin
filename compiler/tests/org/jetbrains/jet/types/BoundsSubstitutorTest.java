@@ -19,7 +19,7 @@ package org.jetbrains.jet.types;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -34,7 +34,7 @@ import java.util.Collections;
 
 public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 

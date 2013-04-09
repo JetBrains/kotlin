@@ -18,18 +18,17 @@ package org.jetbrains.jet;
 
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase {
     static {
         System.setProperty("java.awt.headless", "true");
     }
 
-    protected JetCoreEnvironment createEnvironmentWithMockJdk(@NotNull ConfigurationKind configurationKind) {
+    protected TestCoreEnvironment createEnvironmentWithMockJdk(@NotNull ConfigurationKind configurationKind) {
         return createEnvironmentWithJdk(configurationKind, TestJdkKind.MOCK_JDK);
     }
 
-    protected JetCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
+    protected TestCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
         return JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(getTestRootDisposable(), configurationKind, jdkKind);
     }
 }

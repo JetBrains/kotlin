@@ -22,7 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.*;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithTmpdir {
 
     private File ktFile;
-    private JetCoreEnvironment jetCoreEnvironment;
+    private TestCoreEnvironment jetCoreEnvironment;
 
     public AbstractCheckLocalVariablesTableTest() {
     }

@@ -19,14 +19,14 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
 import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
-    private JetCoreEnvironment environment;
+    private TestCoreEnvironment environment;
 
     @Override
     protected void setUp() throws Exception {
@@ -40,10 +40,10 @@ public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmen
         super.tearDown();
     }
 
-    protected abstract JetCoreEnvironment createEnvironment();
+    protected abstract TestCoreEnvironment createEnvironment();
 
     @NotNull
-    public JetCoreEnvironment getEnvironment() {
+    public TestCoreEnvironment getEnvironment() {
         return environment;
     }
 

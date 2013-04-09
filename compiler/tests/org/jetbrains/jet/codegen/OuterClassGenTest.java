@@ -22,8 +22,8 @@ import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         File javaClassesTempDirectory = compileJava("outerClassInfo/outerClassInfo.java");
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+        myEnvironment = new TestCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
         javaClassLoader = new UrlClassLoader(new URL[] {javaClassesTempDirectory.toURI().toURL()}, getClass().getClassLoader());
         loadFiles("outerClassInfo/outerClassInfo.kt");

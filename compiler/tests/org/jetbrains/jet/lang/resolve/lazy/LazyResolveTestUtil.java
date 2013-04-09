@@ -24,9 +24,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
@@ -63,7 +62,7 @@ public class LazyResolveTestUtil {
         return new MutableModuleDescriptor(Name.special(name), JavaToKotlinClassMap.getInstance());
     }
 
-    public static InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(JetCoreEnvironment environment) {
+    public static InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(TestCoreEnvironment environment) {
         ModuleDescriptor eagerModuleForLazy = createModule("<eager module for lazy>");
 
         InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy, environment);
@@ -73,8 +72,8 @@ public class LazyResolveTestUtil {
         return tdaInjectorForLazy;
     }
 
-    public static InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptor module, JetCoreEnvironment environment) {
-        JetTestUtils.newTrace(environment);
+    public static InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptor module, TestCoreEnvironment environment) {
+        environment.newTrace();
 
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
@@ -84,31 +83,23 @@ public class LazyResolveTestUtil {
         return new InjectorForTopDownAnalyzerForJvm(project, params, sharedTrace, sourcesManager);
     }
 
-    public static ModuleDescriptor resolveEagerly(Collection<JetFile> files, JetCoreEnvironment environment) {
+    public static ModuleDescriptor resolveEagerly(Collection<JetFile> files, TestCoreEnvironment environment) {
         ModuleDescriptor module = createModule("<test module>");
         InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
         return module;
     }
 
-    public static KotlinCodeAnalyzer resolveLazilyWithSession(Collection<JetFile> files, JetCoreEnvironment environment) {
-        JetTestUtils.newTrace(environment);
+    public static KotlinCodeAnalyzer resolveLazilyWithSession(Collection<JetFile> files, TestCoreEnvironment environment) {
+        environment.newTrace();
 
         ModuleDescriptor javaModule = createModule("<java module>");
 
         final Project project = environment.getProject();
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-        InjectorForJavaDescriptorResolver injector =
-                new InjectorForJavaDescriptorResolver(
-                        project,
-                        sharedTrace,
-                        null, // TODO resolutionFacade,
-                        new LockBasedStorageManager(),
-                        null, // TODO subModule,
-                        null //TODO searchScope
-                );
-        final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
-        final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+
+        final PsiClassFinder psiClassFinder = environment.getPsiClassFinder();
+        final JavaDescriptorResolver javaDescriptorResolver = environment.getJavaDescriptorResolver();
 
 
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
@@ -155,7 +146,7 @@ public class LazyResolveTestUtil {
         return new ResolveSession(project, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, sharedTrace);
     }
 
-    public static ModuleDescriptor resolveLazily(Collection<JetFile> files, JetCoreEnvironment environment) {
+    public static ModuleDescriptor resolveLazily(Collection<JetFile> files, TestCoreEnvironment environment) {
         resolveLazilyWithSession(files, environment);
         return KotlinModuleManager.SERVICE.getService(environment.getProject()).getModules().iterator().next();
     }

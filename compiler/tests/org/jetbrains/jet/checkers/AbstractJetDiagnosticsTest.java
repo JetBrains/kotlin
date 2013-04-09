@@ -30,11 +30,7 @@ import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
-import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -49,14 +45,14 @@ public abstract class AbstractJetDiagnosticsTest extends KotlinTestWithEnvironme
 
     public static final Set<String> KOTLIN_EXTENSIONS = ImmutableSet.of("kt", "ktscript");
 
-    private JetCoreEnvironment createEnvironment(File javaFilesDir, Collection<File> kotlinSourceFiles) {
+    private TestCoreEnvironment createEnvironment(File javaFilesDir, Collection<File> kotlinSourceFiles) {
         try {
             JetTestUtils.mkdirs(javaFilesDir);
         }
         catch (IOException e) {
             throw ExceptionUtils.rethrow(e);
         }
-        return new JetCoreEnvironment(
+        return new TestCoreEnvironment(
                 getTestRootDisposable(),
                 JetTestUtils.compilerConfigurationForTests(
                         ConfigurationKind.JDK_AND_ANNOTATIONS,
@@ -104,7 +100,7 @@ public abstract class AbstractJetDiagnosticsTest extends KotlinTestWithEnvironme
     }
 
     protected class TestEnvironment {
-        private JetCoreEnvironment jetCoreEnvironment;
+        private TestCoreEnvironment coreEnvironment;
         private final File rootDir;
         private final Map<String, TestFile> testFiles = Maps.newLinkedHashMap();
         private int nameCount = 0;
@@ -114,11 +110,11 @@ public abstract class AbstractJetDiagnosticsTest extends KotlinTestWithEnvironme
         }
 
         @NotNull
-        public JetCoreEnvironment getJetCoreEnvironment() {
-            if (jetCoreEnvironment == null) {
-                jetCoreEnvironment = createEnvironment(rootDir, kotlinFiles(testFiles.values()));
+        public TestCoreEnvironment getCoreEnvironment() {
+            if (coreEnvironment == null) {
+                coreEnvironment = createEnvironment(rootDir, kotlinFiles(testFiles.values()));
             }
-            return jetCoreEnvironment;
+            return coreEnvironment;
         }
 
         private Collection<File> kotlinFiles(Collection<TestFile> testFiles) {
@@ -134,7 +130,7 @@ public abstract class AbstractJetDiagnosticsTest extends KotlinTestWithEnvironme
 
         @NotNull
         public Project getProject() {
-            return getJetCoreEnvironment().getProject();
+            return getCoreEnvironment().getProject();
         }
 
         @NotNull
@@ -213,7 +209,7 @@ public abstract class AbstractJetDiagnosticsTest extends KotlinTestWithEnvironme
         @NotNull
         public PsiFile getPsiFile() {
             File ioFile = getIoFile();
-            VirtualFile virtualFile = testEnvironment.getJetCoreEnvironment().getVirtualFileSystem().findFileByIoFile(ioFile);
+            VirtualFile virtualFile = testEnvironment.getCoreEnvironment().getVirtualFileSystem().findFileByIoFile(ioFile);
             assert virtualFile != null : "Virtual file not found: " + ioFile;
 
             return PsiManager.getInstance(testEnvironment.getProject()).findFile(virtualFile);

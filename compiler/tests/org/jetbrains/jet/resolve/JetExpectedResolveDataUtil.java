@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -51,22 +52,25 @@ public class JetExpectedResolveDataUtil {
     private JetExpectedResolveDataUtil() {
     }
 
-    public static Map<String, DeclarationDescriptor> prepareDefaultNameToDescriptors(Project project) {
+    public static Map<String, DeclarationDescriptor> prepareDefaultNameToDescriptors(TestCoreEnvironment environment) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        Project project = environment.getProject();
 
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
-        nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", project, builtIns.getIntType()));
-        FunctionDescriptor descriptorForGet = standardFunction(builtIns.getArray(), "get", project, builtIns.getIntType());
+        nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", environment, builtIns.getIntType()));
+        FunctionDescriptor descriptorForGet = standardFunction(builtIns.getArray(), "get", environment, builtIns.getIntType());
         nameToDescriptor.put("kotlin::Array.get(Int)", descriptorForGet.getOriginal());
-        nameToDescriptor.put("kotlin::Int.compareTo(Double)", standardFunction(builtIns.getInt(), "compareTo", project, builtIns.getDoubleType()));
+        nameToDescriptor.put("kotlin::Int.compareTo(Double)", standardFunction(builtIns.getInt(), "compareTo", environment, builtIns.getDoubleType()));
         @NotNull
-        FunctionDescriptor descriptorForSet = standardFunction(builtIns.getArray(), "set", project, builtIns.getIntType(), builtIns.getIntType());
+        FunctionDescriptor descriptorForSet = standardFunction(builtIns.getArray(), "set", environment, builtIns.getIntType(), builtIns.getIntType());
         nameToDescriptor.put("kotlin::Array.set(Int, Int)", descriptorForSet.getOriginal());
 
         return nameToDescriptor;
     }
 
-    public static Map<String, PsiElement> prepareDefaultNameToDeclaration(Project project) {
+    public static Map<String, PsiElement> prepareDefaultNameToDeclaration(TestCoreEnvironment coreEnvironment) {
+        PsiClassFinder project = coreEnvironment.getPsiClassFinder();
+
         Map<String, PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
 
         PsiClass java_util_Collections = findClass("java.util.Collections", project);
@@ -100,9 +104,8 @@ public class JetExpectedResolveDataUtil {
     }
 
     @NotNull
-    private static PsiElement findPackage(String qualifiedName, Project project) {
-        JavaPsiFacade javaFacade = JavaPsiFacade.getInstance(project);
-        PsiPackage javaFacadePackage = javaFacade.findPackage(qualifiedName);
+    private static PsiElement findPackage(String qualifiedName, PsiClassFinder psiClassFinder) {
+        PsiPackage javaFacadePackage = psiClassFinder.findPsiPackage(new FqName(qualifiedName));
         Assert.assertNotNull("Package wasn't found: " + qualifiedName, javaFacadePackage);
         return javaFacadePackage;
     }
@@ -114,9 +117,8 @@ public class JetExpectedResolveDataUtil {
     }
 
     @NotNull
-    private static PsiClass findClass(String qualifiedName, Project project) {
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project, null, null, null, null);
-        PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(new FqName(qualifiedName));
+    private static PsiClass findClass(String qualifiedName, PsiClassFinder psiClassFinder) {
+        PsiClass psiClass = psiClassFinder.findPsiClass(new FqName(qualifiedName));
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, psiClass);
         return psiClass;
     }
@@ -125,10 +127,11 @@ public class JetExpectedResolveDataUtil {
     private static FunctionDescriptor standardFunction(
             ClassDescriptor classDescriptor,
             String name,
-            Project project,
+            TestCoreEnvironment coreEnvironment,
             JetType... parameterTypes
     ) {
-        ExpressionTypingServices expressionTypingServices = new InjectorForTests(project, null).getExpressionTypingServices();
+        InjectorForTests injectorForTests = new InjectorForTests(coreEnvironment.getProject(), coreEnvironment.getModuleSourcesManager());
+        ExpressionTypingServices expressionTypingServices = injectorForTests.getExpressionTypingServices();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),

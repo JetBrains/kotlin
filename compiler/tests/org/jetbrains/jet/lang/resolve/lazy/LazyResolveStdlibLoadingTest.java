@@ -19,11 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
-import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -40,7 +36,7 @@ import java.util.regex.Pattern;
 public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManagement {
 
     private static final File STD_LIB_SRC = new File("libraries/stdlib/src");
-    private JetCoreEnvironment stdlibEnvironment;
+    private TestCoreEnvironment stdlibEnvironment;
 
     @Override
     protected void setUp() throws Exception {

@@ -23,9 +23,9 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -70,26 +70,26 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     }
 
     private void compileA(@NotNull File ktAFile) throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
+        TestCoreEnvironment testCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
                                                                                                             ConfigurationKind.JDK_ONLY);
-        compileKotlin(ktAFile, aDir, jetCoreEnvironment, getTestRootDisposable());
+        compileKotlin(ktAFile, aDir, testCoreEnvironment, getTestRootDisposable());
     }
 
     private void compileB(@NotNull File ktBFile) throws IOException {
         CompilerConfiguration configurationWithADirInClasspath = JetTestUtils
                 .compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
-        compileKotlin(ktBFile, bDir, new JetCoreEnvironment(getTestRootDisposable(), configurationWithADirInClasspath),
+        compileKotlin(ktBFile, bDir, new TestCoreEnvironment(getTestRootDisposable(), configurationWithADirInClasspath),
                       getTestRootDisposable());
     }
 
     private static void compileKotlin(
-            @NotNull File file, @NotNull File outputDir, @NotNull JetCoreEnvironment jetCoreEnvironment,
+            @NotNull File file, @NotNull File outputDir, @NotNull TestCoreEnvironment coreEnvironment,
             @NotNull Disposable disposable
     ) throws IOException {
 
         String text = FileUtil.loadFile(file);
 
-        JetFile psiFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), file.getName(), text);
+        JetFile psiFile = JetTestUtils.createFile(coreEnvironment.getProject(), file.getName(), text);
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 

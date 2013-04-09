@@ -20,12 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
@@ -70,7 +65,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 
@@ -622,15 +617,15 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        PackageViewDescriptor testData = DescriptorUtils.getRootPackage(getSubModuleDescriptor()).getMemberScope().getPackage(Name.identifier("testData"));
+        PackageViewDescriptor testData = DescriptorUtils.getRootPackage(getSubModuleDescriptor()).getMemberScope().getPackage(
+                Name.identifier("testData"));
         return addImports(testData.getMemberScope());
     }
 
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject(), null, null, null, null);
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        JavaDescriptorResolver javaDescriptorResolver = getEnvironment().getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),

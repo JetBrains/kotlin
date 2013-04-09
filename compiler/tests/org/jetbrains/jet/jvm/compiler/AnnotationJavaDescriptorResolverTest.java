@@ -218,8 +218,8 @@ public class AnnotationJavaDescriptorResolverTest extends AbstractJavaResolverDe
     }
 
     private ClassDescriptor resolveClass(FqName fqName) {
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
-        return javaDescriptorResolver.resolveClass(psiClass);
+        PsiClass psiClass = testCoreEnvironment.getPsiClassFinder().findPsiClass(fqName);
+        return testCoreEnvironment.getJavaDescriptorResolver().resolveClass(psiClass);
     }
 
     @NotNull

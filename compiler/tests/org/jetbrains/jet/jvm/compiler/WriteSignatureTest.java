@@ -27,8 +27,8 @@ import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -54,7 +54,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
     private static final AnnotationVisitor EMPTY_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM4) {};
 
     private final File ktFile;
-    private JetCoreEnvironment jetCoreEnvironment;
+    private TestCoreEnvironment jetCoreEnvironment;
 
     public WriteSignatureTest(File ktFile) {
         this.ktFile = ktFile;

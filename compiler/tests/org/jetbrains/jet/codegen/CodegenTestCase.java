@@ -22,8 +22,8 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -41,7 +41,7 @@ import static org.jetbrains.jet.codegen.CodegenTestUtil.*;
 public abstract class CodegenTestCase extends UsefulTestCase {
 
     // for environment and classloader
-    protected JetCoreEnvironment myEnvironment;
+    protected TestCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
 
     private ClassFileFactory classFileFactory;
@@ -161,7 +161,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 }
             } catch (Throwable e) {
                 try {
-                    JetTestUtils.newTrace(myEnvironment);
+                    myEnvironment.newTrace();
                     System.out.println(generateToText());
                 }
                 catch (Throwable e1) {

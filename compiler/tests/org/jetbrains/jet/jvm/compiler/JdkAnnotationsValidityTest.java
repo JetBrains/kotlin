@@ -32,12 +32,11 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -61,11 +60,11 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
     private static final int CLASSES_IN_CHUNK = 500;
 
-    private static JetCoreEnvironment createEnvironment(Disposable parentDisposable) {
+    private static TestCoreEnvironment createEnvironment(Disposable parentDisposable) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar());
         configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File("ideaSDK/lib/jdkAnnotations.jar"));
-        return new JetCoreEnvironment(parentDisposable, configuration);
+        return new TestCoreEnvironment(parentDisposable, configuration);
     }
 
     @Override
@@ -89,18 +88,18 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
             Disposable parentDisposable = CompileEnvironmentUtil.createMockDisposable();
 
             try {
-                JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
+                TestCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
-                InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(commonEnvironment.getProject(), null, null, null, null);
+                //InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(commonEnvironment.getProject(), null, null, null, null);
 
-                BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
-                JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+                BindingContext bindingContext = commonEnvironment.getBindingTrace().getBindingContext();
+                JavaDescriptorResolver javaDescriptorResolver = commonEnvironment.getJavaDescriptorResolver();
 
                 AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(javaClass);
+                    PsiClass psiClass = commonEnvironment.getPsiClassFinder().findPsiClass(javaClass);
                     if (psiClass == null) continue;
                     ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(psiClass);
                     PackageViewDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);

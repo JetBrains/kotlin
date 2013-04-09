@@ -40,7 +40,7 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(project).getTrace();
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, testEnvironment.getJetCoreEnvironment().getSourceFiles(), trace,
+                project, testEnvironment.getCoreEnvironment().getSourceFiles(), trace,
                 Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), false).getBindingContext();
 
         boolean ok = true;

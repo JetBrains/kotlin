@@ -40,9 +40,9 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
 
     @Override
     protected void analyzeAndCheck(File testDataFile, String expectedText, TestEnvironment testEnvironment) {
-        Collection<JetFile> jetFiles = testEnvironment.getJetCoreEnvironment().getSourceFiles();
-        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, testEnvironment.getJetCoreEnvironment());
-        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, testEnvironment.getJetCoreEnvironment());
+        Collection<JetFile> jetFiles = testEnvironment.getCoreEnvironment().getSourceFiles();
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, testEnvironment.getCoreEnvironment());
+        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, testEnvironment.getCoreEnvironment());
 
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
         PackageViewDescriptor expected = DescriptorUtils.getRootPackage(eagerModule.getSubModules().iterator().next());

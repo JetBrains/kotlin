@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -28,7 +28,7 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWi
 
 public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 

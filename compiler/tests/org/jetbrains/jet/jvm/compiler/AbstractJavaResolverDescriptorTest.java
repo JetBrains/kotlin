@@ -16,17 +16,12 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
 import java.io.File;
@@ -37,8 +32,7 @@ import java.util.List;
 
 public abstract class AbstractJavaResolverDescriptorTest extends TestCaseWithTmpdir {
 
-    protected JavaDescriptorResolver javaDescriptorResolver;
-    protected PsiClassFinder psiClassFinder;
+    protected TestCoreEnvironment testCoreEnvironment;
 
     protected void compileJavaFile(@NotNull String fileRelativePath)
             throws IOException {
@@ -66,29 +60,14 @@ public abstract class AbstractJavaResolverDescriptorTest extends TestCaseWithTmp
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        setUpJavaDescriptorResolver();
+        testCoreEnvironment =
+                new TestCoreEnvironment(myTestRootDisposable, JetTestUtils.compilerConfigurationForTests(
+                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir));
     }
 
     @Override
     public void tearDown() throws Exception {
-        javaDescriptorResolver = null;
-        psiClassFinder = null;
+        testCoreEnvironment = null;
         super.tearDown();
-    }
-
-    private void setUpJavaDescriptorResolver() {
-        JetCoreEnvironment jetCoreEnvironment =
-                new JetCoreEnvironment(myTestRootDisposable, JetTestUtils.compilerConfigurationForTests(
-                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir));
-
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                jetCoreEnvironment.getProject(),
-                null, // TODO classResolutionFacade,
-                new LockBasedStorageManager(),
-                null, // TODO subModule,
-                GlobalSearchScope.allScope(jetCoreEnvironment.getProject())
-                );
-        psiClassFinder = injector.getPsiClassFinder();
-        javaDescriptorResolver = injector.getJavaDescriptorResolver();
     }
 }

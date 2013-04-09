@@ -17,7 +17,7 @@
 package org.jetbrains.jet.asJava;
 
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
@@ -29,14 +29,14 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
     protected JavaElementFinder finder;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         CompilerConfiguration configuration = new CompilerConfiguration();
 
         for (File root : getKotlinSourceRoots()) {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, root.getPath());
         }
 
-        return new JetCoreEnvironment(getTestRootDisposable(), configuration);
+        return new TestCoreEnvironment(getTestRootDisposable(), configuration);
     }
 
     protected abstract List<File> getKotlinSourceRoots();

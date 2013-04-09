@@ -28,9 +28,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.*;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -138,22 +136,20 @@ public class ResolveDescriptorsFromExternalLibraries {
             public void dispose() { }
         };
 
-        JetCoreEnvironment jetCoreEnvironment;
+        TestCoreEnvironment coreEnvironment;
         if (jar != null) {
-            jetCoreEnvironment = new JetCoreEnvironment(junk, JetTestUtils.compilerConfigurationForTests(
+            coreEnvironment = new TestCoreEnvironment(junk, JetTestUtils.compilerConfigurationForTests(
                     ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), jar));
         }
         else {
             CompilerConfiguration configuration =
                     JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
-            jetCoreEnvironment = new JetCoreEnvironment(junk, configuration);
+            coreEnvironment = new TestCoreEnvironment(junk, configuration);
             if (!PathUtil.findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + PathUtil.findRtJar());
             }
         }
 
-
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject(), null, null, null, null);
 
         boolean hasErrors;
         try {
@@ -186,8 +182,8 @@ public class ResolveDescriptorsFromExternalLibraries {
 
                 try {
                     PsiClass psiClass =
-                            injector.getPsiClassFinder().findPsiClass(new FqName(className));
-                    ClassDescriptor clazz = injector.getJavaDescriptorResolver()
+                            coreEnvironment.getPsiClassFinder().findPsiClass(new FqName(className));
+                    ClassDescriptor clazz = coreEnvironment.getJavaDescriptorResolver()
                             .resolveClass(psiClass, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);

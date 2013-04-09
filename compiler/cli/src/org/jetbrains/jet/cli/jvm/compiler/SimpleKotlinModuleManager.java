@@ -108,7 +108,7 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
         subModule.addPackageFragmentProvider(javaPackageFragmentProvider);
         classResolutionFacade.addPackageFragmentProvider(javaPackageFragmentProvider);
 
-        return new Modules(module, sourcesManager);
+        return new Modules(module, sourcesManager, drInjector);
     }
 
     private static MutableModuleSourcesManager createModuleSourcesManager(@NotNull Project project) {
@@ -135,14 +135,20 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
         return modules.getValue().moduleSourcesManager;
     }
 
+    @NotNull
+    public InjectorForJavaDescriptorResolver getInjectorForJavaDescriptorResolver() {
+        return modules.getValue().drInjector;
+    }
+
     private static class Modules {
         private final ModuleDescriptor module;
         private final ModuleSourcesManager moduleSourcesManager;
+        private final InjectorForJavaDescriptorResolver drInjector;
 
-        private Modules(ModuleDescriptor module, ModuleSourcesManager moduleSourcesManager) {
+        private Modules(ModuleDescriptor module, ModuleSourcesManager moduleSourcesManager, InjectorForJavaDescriptorResolver drInjector) {
             this.module = module;
             this.moduleSourcesManager = moduleSourcesManager;
+            this.drInjector = drInjector;
         }
-
     }
 }

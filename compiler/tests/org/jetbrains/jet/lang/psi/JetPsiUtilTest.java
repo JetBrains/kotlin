@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.psi.util.PsiTreeUtil;
 import junit.framework.Assert;
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -64,8 +64,8 @@ public class JetPsiUtilTest extends JetLiteFixture {
     }
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
-        return new JetCoreEnvironment(getTestRootDisposable(), new CompilerConfiguration());
+    protected TestCoreEnvironment createEnvironment() {
+        return new TestCoreEnvironment(getTestRootDisposable(), new CompilerConfiguration());
     }
 
     private ImportPath getImportPathFromParsed(String text) {

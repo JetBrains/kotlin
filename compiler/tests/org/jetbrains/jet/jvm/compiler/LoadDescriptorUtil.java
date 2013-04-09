@@ -20,22 +20,16 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.AnalyzerUtilForTests;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -44,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.KotlinLightClassResolver;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -129,21 +122,12 @@ public final class LoadDescriptorUtil {
                 ForTestCompileRuntime.runtimeJarForTests(),
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
-        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
-        KotlinLightClassResolver lightClassResolver =
-                CliLightClassGenerationSupport.getInstanceForCli(jetCoreEnvironment.getProject()).getLightClassResolver();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                jetCoreEnvironment.getProject(),
-                null, // TODO
-                new LockBasedStorageManager(),
-                null, // TODO
-                GlobalSearchScope.allScope(jetCoreEnvironment.getProject())
-        );
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        TestCoreEnvironment coreEnvironment = new TestCoreEnvironment(disposable, configuration);
+        JavaDescriptorResolver javaDescriptorResolver = coreEnvironment.getJavaDescriptorResolver();
         PackageViewDescriptor packageViewDescriptor =
                 javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         assert packageViewDescriptor != null;
-        return Pair.create(packageViewDescriptor, injector.getBindingTrace().getBindingContext());
+        return Pair.create(packageViewDescriptor, coreEnvironment.getBindingTrace().getBindingContext());
     }
 
     @NotNull
@@ -182,8 +166,9 @@ public final class LoadDescriptorUtil {
         @NotNull
         public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind)
                 throws IOException {
-            JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            JetFile jetFile = JetTestUtils.createFile(jetCoreEnvironment.getProject(), kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true));
+            TestCoreEnvironment coreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
+            JetFile jetFile = JetTestUtils.createFile(coreEnvironment.getProject(), kotlinFile.getName(), FileUtil.loadFile(kotlinFile,
+                                                                                                                               true));
             AnalyzeExhaust exhaust = AnalyzerUtilForTests.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                     jetFile, Collections.<AnalyzerScriptParameter>emptyList());
             return new JetFileAndExhaust(jetFile, exhaust);

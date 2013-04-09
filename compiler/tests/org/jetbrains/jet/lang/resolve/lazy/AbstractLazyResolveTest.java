@@ -16,14 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -37,7 +36,7 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
     private ExpectedResolveData expectedResolveData;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
+    protected TestCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
@@ -48,11 +47,9 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
     }
 
     protected ExpectedResolveData getExpectedResolveData() {
-        Project project = getProject();
-
         return new ExpectedResolveData(
-                JetExpectedResolveDataUtil.prepareDefaultNameToDescriptors(project),
-                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project),
+                JetExpectedResolveDataUtil.prepareDefaultNameToDescriptors(getEnvironment()),
+                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(getEnvironment()),
                 getEnvironment()) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
