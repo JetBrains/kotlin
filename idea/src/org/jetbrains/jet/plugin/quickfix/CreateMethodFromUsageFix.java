@@ -549,6 +549,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
         JetTypeReference returnTypeRef = func.getReturnTypeRef();
         if (returnTypeRef != null) {
+            assert returnTypeExpression != null;
             JetType[] returnTypeOptions = returnTypeExpression.getOptions();
             String[] returnTypeOptionStrings = returnTypeExpression.getOptionStrings();
             assert returnTypeOptions.length == returnTypeOptionStrings.length;
