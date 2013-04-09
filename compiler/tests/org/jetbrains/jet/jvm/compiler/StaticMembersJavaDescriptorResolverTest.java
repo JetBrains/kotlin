@@ -57,11 +57,11 @@ public final class StaticMembersJavaDescriptorResolverTest extends AbstractJavaR
     private void doTest() throws IOException {
         String name = getTestName(false);
         compileJavaFile(name + ".java");
-        PackageViewDescriptor namespaceWithClass = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE));
+        PackageViewDescriptor namespaceWithClass = testCoreEnvironment.getPackageView(new FqName(DEFAULT_PACKAGE));
         Assert.assertNotNull(namespaceWithClass);
         compareNamespaceWithFile(namespaceWithClass, DONT_INCLUDE_METHODS_OF_OBJECT, new File(PATH + name + "_non_static.txt"));
 
-        PackageViewDescriptor namespaceWithStaticMembers = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE + "." + name));
+        PackageViewDescriptor namespaceWithStaticMembers = testCoreEnvironment.getPackageView(new FqName(DEFAULT_PACKAGE + "." + name));
         File fileWithStaticMembers = new File(PATH + name + "_static.txt");
         if (namespaceWithStaticMembers == null) {
             Assert.assertTrue(!fileWithStaticMembers.exists());

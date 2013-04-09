@@ -32,8 +32,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -625,11 +623,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        JavaDescriptorResolver javaDescriptorResolver = getEnvironment().getJavaDescriptorResolver();
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
-                DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),
-                DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN).getMemberScope());
+        writableScope.importScope(getEnvironment().getPackageView(FqName.ROOT).getMemberScope());
+        writableScope.importScope(getEnvironment().getPackageView(new FqName("java.lang")).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         writableScope.importScope(builtIns.getBuiltInsScope());
         return writableScope;

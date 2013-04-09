@@ -24,17 +24,13 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -223,16 +219,12 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
             CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                     ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, new File(dir, "java"));
             configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(new File(dir, "kotlin").getAbsolutePath()));
-            JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
+            TestCoreEnvironment environment = new TestCoreEnvironment(getTestRootDisposable(), configuration);
 
             ModuleDescriptor moduleDescriptor = new MutableModuleDescriptor(Name.special("<test module>"), JavaToKotlinClassMap.getInstance());
 
             // we need the same binding trace for resolve from Java and Kotlin
             BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-
-            InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(),
-                                                                                                    trace,
-                                                                                                    null, null, null, null);
 
             InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                     environment.getProject(),
@@ -242,9 +234,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
 
             injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
-            JavaDescriptorResolver javaDescriptorResolver = injectorForJava.getJavaDescriptorResolver();
-            PackageViewDescriptor packageViewDescriptor = javaDescriptorResolver.resolveNamespace(
-                    LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
+            PackageViewDescriptor packageViewDescriptor = environment.getSubModuleDescriptor().getPackageView(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
             assert packageViewDescriptor != null;
 
             compareNamespaceWithFile(packageViewDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT,

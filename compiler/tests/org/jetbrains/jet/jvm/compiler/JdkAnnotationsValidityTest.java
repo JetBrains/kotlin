@@ -102,7 +102,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                     PsiClass psiClass = commonEnvironment.getPsiClassFinder().findPsiClass(javaClass);
                     if (psiClass == null) continue;
                     ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(psiClass);
-                    PackageViewDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
+                    PackageViewDescriptor topLevelNamespace = commonEnvironment.getPackageView(javaClass);
                     if (topLevelClass == null) {
                         continue;
                     }

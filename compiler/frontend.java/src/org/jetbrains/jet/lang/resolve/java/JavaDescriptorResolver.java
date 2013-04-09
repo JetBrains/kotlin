@@ -200,20 +200,20 @@ public class JavaDescriptorResolver {
     @Nullable
     public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         //return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Deprecated
     public PackageViewDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
         //return namespaceResolver.resolveNamespace(qualifiedName);
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Deprecated
     @Nullable
     public JetScope getJavaPackageScope(@NotNull PackageViewDescriptor packageViewDescriptor) {
         //return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(packageViewDescriptor);
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @NotNull

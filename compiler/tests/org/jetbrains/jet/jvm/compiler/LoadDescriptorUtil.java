@@ -23,7 +23,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.*;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
@@ -35,9 +34,6 @@ import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.KotlinLightClassResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -123,9 +119,8 @@ public final class LoadDescriptorUtil {
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
         TestCoreEnvironment coreEnvironment = new TestCoreEnvironment(disposable, configuration);
-        JavaDescriptorResolver javaDescriptorResolver = coreEnvironment.getJavaDescriptorResolver();
         PackageViewDescriptor packageViewDescriptor =
-                javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+                coreEnvironment.getSubModuleDescriptor().getPackageView(TEST_PACKAGE_FQNAME);
         assert packageViewDescriptor != null;
         return Pair.create(packageViewDescriptor, coreEnvironment.getBindingTrace().getBindingContext());
     }
