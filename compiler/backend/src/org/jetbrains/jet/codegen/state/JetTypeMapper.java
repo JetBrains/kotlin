@@ -446,6 +446,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
     }
 
+    @NotNull
     public CallableMethod mapToCallableMethod(
             @NotNull FunctionDescriptor functionDescriptor,
             boolean superCall,
@@ -596,7 +597,13 @@ public class JetTypeMapper extends BindingTraceAware {
             mapReturnType(returnType, signatureVisitor);
             signatureVisitor.writeReturnTypeEnd();
         }
-        return signatureVisitor.makeJvmMethodSignature(f.getName().getName());
+
+        String name = f.getName().getName();
+        if (f instanceof PropertyAccessorDescriptor) {
+            boolean isGetter = f instanceof PropertyGetterDescriptor;
+            name = getPropertyAccessorName(((PropertyAccessorDescriptor)f).getCorrespondingProperty(), isGetter);
+        }
+        return signatureVisitor.makeJvmMethodSignature(name);
     }
 
     private void writeThisIfNeeded(
@@ -716,12 +723,18 @@ public class JetTypeMapper extends BindingTraceAware {
         }
     }
 
-
-    public JvmPropertyAccessorSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
+    @NotNull
+    public static String getPropertyAccessorName(@NotNull PropertyDescriptor descriptor, boolean isGetter) {
         DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
         boolean isAnnotation = parentDescriptor instanceof ClassDescriptor &&
                                ((ClassDescriptor) parentDescriptor).getKind() == ClassKind.ANNOTATION_CLASS;
-        String name = isAnnotation ? descriptor.getName().getName() : PropertyCodegen.getterName(descriptor.getName());
+        return isAnnotation ? descriptor.getName().getName() :
+               isGetter ? PropertyCodegen.getterName(descriptor.getName()) : PropertyCodegen.setterName(descriptor.getName());
+    }
+
+    @NotNull
+    public JvmPropertyAccessorSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
+        String name = getPropertyAccessorName(descriptor, true);
 
         // TODO: do not genClassOrObject generics if not needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
@@ -742,6 +755,7 @@ public class JetTypeMapper extends BindingTraceAware {
         return new JvmPropertyAccessorSignature(jvmMethodSignature, jvmMethodSignature.getKotlinReturnType());
     }
 
+
     @NotNull
     public JvmPropertyAccessorSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         assert descriptor.isVar();
@@ -759,7 +773,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         signatureWriter.writeVoidReturn();
 
-        String name = PropertyCodegen.setterName(descriptor.getName());
+        String name = getPropertyAccessorName(descriptor, false);
         JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature(name);
         return new JvmPropertyAccessorSignature(jvmMethodSignature,
                                                 jvmMethodSignature.getKotlinParameterType(jvmMethodSignature.getParameterCount() - 1));

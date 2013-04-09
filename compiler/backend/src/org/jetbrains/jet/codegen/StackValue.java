@@ -139,13 +139,11 @@ public abstract class StackValue {
             JvmClassName methodOwner,
             Type type,
             boolean isStatic,
-            @Nullable Method getter,
-            @Nullable Method setter,
-            int getterInvokeOpcode,
-            int setterInvokeOpcode,
+            @Nullable CallableMethod getter,
+            @Nullable CallableMethod setter,
             GenerationState state
     ) {
-        return new Property(descriptor, methodOwner, getter, setter, isStatic, type, getterInvokeOpcode, setterInvokeOpcode,
+        return new Property(descriptor, methodOwner, getter, setter, isStatic, type,
                             state);
     }
 
@@ -858,14 +856,12 @@ public abstract class StackValue {
 
     static class Property extends StackValueWithSimpleReceiver {
         @Nullable
-        private final Method getter;
+        private final CallableMethod getter;
         @Nullable
-        private final Method setter;
+        private final CallableMethod setter;
         @NotNull
         public final JvmClassName methodOwner;
 
-        private final int getterInvokeOpcode;
-        private final int setterInvokeOpcode;
         @NotNull
         private final PropertyDescriptor descriptor;
         @NotNull
@@ -873,23 +869,15 @@ public abstract class StackValue {
 
         public Property(
                 @NotNull PropertyDescriptor descriptor, @NotNull JvmClassName methodOwner,
-                @Nullable Method getter, @Nullable Method setter, boolean isStatic,
-                @NotNull Type type, int getterInvokeOpcode, int setterInvokeOpcode, @NotNull GenerationState state
+                @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStatic,
+                @NotNull Type type, @NotNull GenerationState state
         ) {
             super(type, isStatic);
             this.methodOwner = methodOwner;
             this.getter = getter;
             this.setter = setter;
-            this.getterInvokeOpcode = getterInvokeOpcode;
-            this.setterInvokeOpcode = setterInvokeOpcode;
             this.descriptor = descriptor;
             this.state = state;
-            if (getterInvokeOpcode == 0 && getter != null) {
-                throw new IllegalArgumentException();
-            }
-            if (setterInvokeOpcode == 0 && setter != null) {
-                throw new IllegalArgumentException();
-            }
         }
 
         @Override
@@ -900,7 +888,8 @@ public abstract class StackValue {
                 genNotNullAssertionForField(v, state, descriptor);
             }
             else {
-                v.visitMethodInsn(getterInvokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
+                Method method = getter.getSignature().getAsmMethod();
+                v.visitMethodInsn(getter.getInvokeOpcode(), methodOwner.getInternalName(), method.getName(), method.getDescriptor());
             }
             coerceTo(type, v);
         }
@@ -912,7 +901,8 @@ public abstract class StackValue {
                 v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), descriptor.getName().getName(),
                                  this.type.getDescriptor()); }
             else {
-                v.visitMethodInsn(setterInvokeOpcode, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor());
+                Method method = setter.getSignature().getAsmMethod();
+                v.visitMethodInsn(setter.getInvokeOpcode(), methodOwner.getInternalName(), method.getName(), method.getDescriptor());
             }
         }
     }
@@ -1244,7 +1234,7 @@ public abstract class StackValue {
         }
     }
 
-    abstract static class StackValueWithSimpleReceiver extends StackValue {
+    private abstract static class StackValueWithSimpleReceiver extends StackValue {
 
         protected final boolean isStatic;
 

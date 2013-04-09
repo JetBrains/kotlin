@@ -181,6 +181,7 @@ public class CodegenUtil {
         return KotlinBuiltIns.getInstance().getAnyType();
     }
 
+    @NotNull
     public static <T extends CallableMemberDescriptor> T unwrapFakeOverride(T member) {
         while (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             //noinspection unchecked

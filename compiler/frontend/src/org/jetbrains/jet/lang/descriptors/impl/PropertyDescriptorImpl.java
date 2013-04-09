@@ -64,7 +64,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         this.isVar = isVar;
         this.modality = modality;
         this.visibility = visibility;
-        this.original = original == null ? this : original.getOriginal();
+        this.original = original == null ? this : original;
         this.kind = kind;
     }
 
@@ -205,7 +205,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     private PropertyDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
             DeclarationDescriptor newOwner, Modality newModality, Visibility newVisibility, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
-        PropertyDescriptorImpl substitutedDescriptor = new PropertyDescriptorImpl(preserveOriginal ? getOriginal() : this, newOwner,
+        PropertyDescriptorImpl substitutedDescriptor = new PropertyDescriptorImpl(preserveOriginal ? getOriginal() : null, newOwner,
                 getAnnotations(), newModality, newVisibility, isVar(), getName(), kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
@@ -290,7 +290,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     @NotNull
     @Override
     public PropertyDescriptor getOriginal() {
-        return original;
+        return original == this ? this : original.getOriginal();
     }
 
     @Override
