@@ -328,6 +328,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     Collections.addAll(typeParameterNames, names);
                 }
             }
+            JetTypeReference returnTypeRef = func.getReturnTypeRef();
+            if (returnTypeRef != null) {
+                String[] names = typeParameterMap.get(returnTypeRef.getText());
+                if (names != null) {
+                    Collections.addAll(typeParameterNames, names);
+                }
+            }
 
             return typeParameterNames.isEmpty()
                     ? new TextResult("")
@@ -438,9 +445,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         caretModel.moveToOffset(file.getNode().getStartOffset());
 
         TemplateBuilderImpl builder = new TemplateBuilderImpl(file);
-        if (!isUnit) {
-            setupReturnTypeTemplate(builder, func, returnType);
-        }
+        TypeExpression returnTypeExpression = isUnit ? null : setupReturnTypeTemplate(builder, func, returnType);
         TypeExpression[] parameterTypeExpressions = setupParameterTypeTemplates(project, builder, parameters, parameterList);
 
         // add a segment for the parameter list
@@ -449,7 +454,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
         // it.
         JetScope scope = getScope(owner, context);
-        TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func, ownerType, parameterTypeExpressions, scope);
+        TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func, ownerType, parameterTypeExpressions, returnTypeExpression, scope);
 
         // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
         final TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
@@ -526,6 +531,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @NotNull JetNamedFunction func,
             @NotNull JetType ownerType,
             @NotNull TypeExpression[] parameterTypeExpressions,
+            @Nullable TypeExpression returnTypeExpression,
             @NotNull JetScope scope
     ) {
         Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
@@ -538,6 +544,17 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             for (int i = 0; i < parameterTypeOptions.length; i++) {
                 Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(parameterTypeOptions[i]);
                 typeParameterMap.put(parameterTypeOptionStrings[i], getTypeParameterNamesNotInScope(typeParameters, scope));
+            }
+        }
+
+        JetTypeReference returnTypeRef = func.getReturnTypeRef();
+        if (returnTypeRef != null) {
+            JetType[] returnTypeOptions = returnTypeExpression.getOptions();
+            String[] returnTypeOptionStrings = returnTypeExpression.getOptionStrings();
+            assert returnTypeOptions.length == returnTypeOptionStrings.length;
+            for (int i = 0; i < returnTypeOptions.length; i++) {
+                Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(returnTypeOptions[i]);
+                typeParameterMap.put(returnTypeOptionStrings[i], getTypeParameterNamesNotInScope(typeParameters, scope));
             }
         }
 
