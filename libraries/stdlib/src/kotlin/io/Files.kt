@@ -101,6 +101,14 @@ public fun File.readBytes(): ByteArray {
 public fun File.writeBytes(data: ByteArray): Unit {
     return FileOutputStream(this).use<FileOutputStream,Unit>{ it.write(data) }
 }
+
+/**
+ * Appends bytes to the contents of the file.
+ */
+public fun File.appendBytes(data: ByteArray): Unit {
+   return FileOutputStream(this, true).use<FileOutputStream, Unit>{ it.write(data) }
+}
+
 /**
  * Reads the entire content of the file as a String using the optional
  * character encoding.  The default platform encoding is used if the character
@@ -131,6 +139,22 @@ public fun File.writeText(text: String, encoding:String?=null): Unit { writeByte
  * encoding is not specified or null.
  */
 public fun File.writeText(text: String, encoding:Charset): Unit { writeBytes(text.toByteArray(encoding)) }
+
+/**
+ * Appends text to the contents of the file using a given character encoding.
+ */
+public fun File.appendText(text: String, encoding: Charset): Unit {
+    appendBytes(text.toByteArray(encoding))
+}
+
+/**
+ * Appends text to the contents of the file using optional character encoding.
+ * The default platform encoding is used if the character encoding is
+ * not specified or null.
+ */
+public fun File.appendText(text: String, encoding: String? = null): Unit {
+    appendBytes(text.toByteArray(encoding))
+}
 
 /**
  * Copies this file to the given output file, returning the number of bytes copied
