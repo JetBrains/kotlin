@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.FunctionSignatureUtil;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.quickfix.QuickFixUtil;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -112,7 +112,7 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
             @NotNull
             @Override
             public String getTextFor(FunctionDescriptor aValue) {
-                return FunctionSignatureUtil.createFunctionSignatureStringFromDescriptor(
+                return QuickFixUtil.createFunctionSignatureStringFromDescriptor(
                         aValue,
                         /* shortTypeNames = */ true);
             }
@@ -120,7 +120,7 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
     }
 
     private static void changeSignature(final JetNamedFunction element, final Project project, FunctionDescriptor signature) {
-        final String signatureString = FunctionSignatureUtil.createFunctionSignatureStringFromDescriptor(
+        final String signatureString = QuickFixUtil.createFunctionSignatureStringFromDescriptor(
                 signature,
                 /* shortTypeNames = */ false);
 
