@@ -57,6 +57,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean verbose;
     private final boolean unitReturnType;
     private final boolean normalizedVisibilities;
+    private final boolean showInternalKeyword;
     @NotNull
     private final ValueParametersHandler handler;
     @NotNull
@@ -74,6 +75,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean verbose,
             boolean unitReturnType,
             boolean normalizedVisibilities,
+            boolean showInternalKeyword,
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
             @NotNull Collection<FqName> excludedAnnotationClasses
@@ -87,6 +89,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.verbose = verbose;
         this.unitReturnType = unitReturnType;
         this.normalizedVisibilities = normalizedVisibilities;
+        this.showInternalKeyword = showInternalKeyword;
         this.debugMode = debugMode;
         this.textFormat = textFormat;
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
@@ -316,7 +319,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (normalizedVisibilities) {
             visibility = visibility.normalize();
         }
-        if (!verbose && visibility == Visibilities.INTERNAL) return;
+        if (!showInternalKeyword && visibility == Visibilities.INTERNAL) return;
         builder.append(renderKeyword(visibility.toString())).append(" ");
     }
 

@@ -4,5 +4,5 @@
 package testData.libraries
 
 [[public final class ClassWithConstructor(a: jet.String, b: jet.Any) {
-    [final val a: jet.String] /* compiled code */
+    [internal final val a: jet.String] /* compiled code */
 }]]

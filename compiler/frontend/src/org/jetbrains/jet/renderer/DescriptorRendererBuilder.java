@@ -32,6 +32,7 @@ public class DescriptorRendererBuilder {
     private boolean verbose = false;
     private boolean unitReturnType = true;
     private boolean normalizedVisibilities = false;
+    private boolean showInternalKeyword = true;
     @NotNull
     private DescriptorRenderer.ValueParametersHandler valueParametersHandler = new DescriptorRenderer.DefaultValueParameterHandler();
     @NotNull
@@ -87,6 +88,11 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setShowInternalKeyword(boolean showInternalKeyword) {
+        this.showInternalKeyword = showInternalKeyword;
+        return this;
+    }
+
     public DescriptorRendererBuilder setValueParametersHandler(@NotNull DescriptorRenderer.ValueParametersHandler valueParametersHandler) {
         this.valueParametersHandler = valueParametersHandler;
         return this;
@@ -104,6 +110,8 @@ public class DescriptorRendererBuilder {
 
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(shortNames, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor,
-                                          verbose, unitReturnType, normalizedVisibilities, valueParametersHandler, textFormat, excludedAnnotationClasses);
+                                          verbose, unitReturnType, normalizedVisibilities, showInternalKeyword, valueParametersHandler,
+                                          textFormat, excludedAnnotationClasses);
     }
+
 }
