@@ -17,10 +17,8 @@
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,17 +92,10 @@ public class CodeTransformationUtils {
         );
     }
 
-    public static boolean isAssignment(@NotNull PsiElement element) {
-        if (!(element instanceof JetBinaryExpression)) return false;
-        JetBinaryExpression binaryExpression = (JetBinaryExpression)element;
-        if (binaryExpression.getOperationReference().getReferencedNameElementType() != JetTokens.EQ) return false;
-        return true;
-    }
-
     private static boolean checkAllOutcomesAreCompatibleAssignments(@NotNull List<JetExpression> outcomes) {
         JetExpression lastLhs = null;
         for (JetExpression outcome : outcomes) {
-            if (!isAssignment(outcome)) return false;
+            if (!JetPsiUtil.isAssignment(outcome)) return false;
 
             JetExpression currLhs = ((JetBinaryExpression)outcome).getLeft();
             if (!(currLhs instanceof JetSimpleNameExpression)) return false;
@@ -124,8 +115,8 @@ public class CodeTransformationUtils {
         return !outcomes.isEmpty() && checkAllIfExpressionsAreComplete(ifExpression) && checkAllOutcomesAreCompatibleAssignments(outcomes);
     }
 
-    static boolean checkAssignmentWithIfExpression(@NotNull PsiElement element) {
-        if (!isAssignment(element)) return false;
+    static boolean checkAssignmentWithIfExpression(@NotNull JetElement element) {
+        if (!JetPsiUtil.isAssignment(element)) return false;
         JetBinaryExpression assignment = (JetBinaryExpression)element;
         return (assignment.getLeft() instanceof JetSimpleNameExpression) &&
                (assignment.getRight() instanceof JetIfExpression);

@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -620,5 +621,10 @@ public class JetPsiUtil {
         int innerPrecedence = getPrecedenceOfOperation(innerExpression, innerOperation);
         int parentPrecedence = getPrecedenceOfOperation(parentExpression, parentOperation);
         return innerPrecedence < parentPrecedence;
+    }
+
+    public static boolean isAssignment(@NotNull JetElement element) {
+        return element instanceof JetBinaryExpression &&
+               JetTokens.ALL_ASSIGNMENTS.contains(((JetBinaryExpression) element).getOperationToken());
     }
 }

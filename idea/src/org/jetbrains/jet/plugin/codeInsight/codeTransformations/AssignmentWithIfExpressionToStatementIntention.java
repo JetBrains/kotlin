@@ -26,6 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class AssignmentWithIfExpressionToStatementIntention extends BaseIntentionAction {
@@ -45,7 +46,9 @@ public class AssignmentWithIfExpressionToStatementIntention extends BaseIntentio
         PsiElement element = file.findElementAt(offset);
 
         while (element != null) {
-            if (CodeTransformationUtils.checkAssignmentWithIfExpression(element)) return (JetBinaryExpression)element;
+            if (!(element instanceof JetElement)) return null;
+
+            if (CodeTransformationUtils.checkAssignmentWithIfExpression((JetElement) element)) return (JetBinaryExpression)element;
             PsiElement parent = PsiTreeUtil.getParentOfType(element, JetBinaryExpression.class, false);
             element = (element != parent) ? parent : null;
         }
