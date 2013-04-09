@@ -749,8 +749,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Label methodEnd = new Label();
         mv.visitLabel(methodEnd);
 
-        FunctionCodegen.MethodBounds methodBounds = new FunctionCodegen.MethodBounds(methodBegin, methodEnd);
-        FunctionCodegen.generateLocalVariableTable(typeMapper, mv, function, thisDescriptorType, FunctionCodegen.generateLocalVariablesInfo(function), methodBounds);
+        FunctionCodegen.MethodInfo methodInfo = new FunctionCodegen.MethodInfo(
+                methodBegin,
+                methodEnd,
+                FunctionCodegen.getParameterNamesAsStrings(function),
+                Collections.<Name, Label>emptyMap()
+        );
+        FunctionCodegen.generateLocalVariableTable(typeMapper, mv, function, thisDescriptorType, methodInfo);
 
         FunctionCodegen.endVisit(mv, function.getName().getName(), myClass);
 

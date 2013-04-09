@@ -140,12 +140,12 @@ public class FunctionCodegen extends GenerationStateAware {
             return;
         }
 
-        LocalVariablesInfo localVariablesInfo = generateLocalVariablesInfo(functionDescriptor);
+        MethodInfo info = generateMethodBody(mv, declaration, functionDescriptor, context, asmMethod);
 
-        MethodBounds methodBounds = generateMethodBody(mv, declaration, functionDescriptor, context, asmMethod, localVariablesInfo);
+        info.localVariableNames.addAll(getParameterNamesAsStrings(functionDescriptor));
 
         Type thisType = getThisTypeForFunction(functionDescriptor, context);
-        generateLocalVariableTable(typeMapper, mv, functionDescriptor, thisType, localVariablesInfo, methodBounds);
+        generateLocalVariableTable(typeMapper, mv, functionDescriptor, thisType, info);
 
         endVisit(mv, null, declaration);
     }
@@ -165,14 +165,16 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     @NotNull
-    private MethodBounds generateMethodBody(
+    private MethodInfo generateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull JetDeclaration funOrProperty,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext context,
-            @NotNull Method asmMethod,
-            @NotNull LocalVariablesInfo localVariablesInfo
+            @NotNull Method asmMethod
     ) {
+        Collection<String> localVariableNames = new ArrayList<String>();
+        Map<Name, Label> labelsForSharedVars = new HashMap<Name, Label>();
+
         mv.visitCode();
 
         Label methodBegin = new Label();
@@ -200,7 +202,7 @@ public class FunctionCodegen extends GenerationStateAware {
                 frameMap.enter(parameters.get(i), argTypes[i + add]);
             }
 
-            createSharedVarsForParameters(mv, functionDescriptor, frameMap, localVariablesInfo);
+            labelsForSharedVars.putAll(createSharedVarsForParameters(mv, functionDescriptor, frameMap));
 
             genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
 
@@ -210,7 +212,7 @@ public class FunctionCodegen extends GenerationStateAware {
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, asmMethod.getReturnType(), context, state);
                 codegen.returnExpression(fun.getBodyExpression());
 
-                localVariablesInfo.names.addAll(codegen.getLocalVariableNamesForExpression());
+                localVariableNames.addAll(codegen.getLocalVariableNamesForExpression());
             } else {
                 ///generate default accessor
                 assert functionDescriptor instanceof PropertyAccessorDescriptor;
@@ -226,7 +228,7 @@ public class FunctionCodegen extends GenerationStateAware {
         Label methodEnd = new Label();
         mv.visitLabel(methodEnd);
 
-        return new MethodBounds(methodBegin, methodEnd);
+        return new MethodInfo(methodBegin, methodEnd, localVariableNames, labelsForSharedVars);
     }
 
     private static boolean hasBodyExpression(JetDeclaration funOrProperty) {
@@ -235,29 +237,33 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
 
-    public static class MethodBounds {
-        @NotNull private final Label begin;
+    public static class MethodInfo {
+        public final Label beginLabel;
+        public final Label endLabel;
+        public final Collection<String> localVariableNames;
+        public final Map<Name, Label> labelsForSharedVars;
 
-        @NotNull private final Label end;
-
-        public MethodBounds(@NotNull Label begin, @NotNull Label end) {
-            this.begin = begin;
-            this.end = end;
+        public MethodInfo(
+                @NotNull Label beginLabel,
+                @NotNull Label endLabel,
+                @NotNull Collection<String> localVariableNames,
+                @NotNull Map<Name, Label> labelsForSharedVars
+        ) {
+            this.beginLabel = beginLabel;
+            this.endLabel = endLabel;
+            this.localVariableNames = localVariableNames;
+            this.labelsForSharedVars = labelsForSharedVars;
         }
     }
 
-    public static class LocalVariablesInfo {
-        @NotNull public final Collection<String> names = new HashSet<String>();
-
-        @NotNull public final Map<Name, Label> labelsForSharedVars = new HashMap<Name, Label>();
-    }
-
-    public static LocalVariablesInfo generateLocalVariablesInfo(FunctionDescriptor functionDescriptor) {
-        LocalVariablesInfo localVariablesInfo = new LocalVariablesInfo();
-        for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
-            localVariablesInfo.names.add(parameter.getName().getName());
+    @NotNull
+    public static List<String> getParameterNamesAsStrings(@NotNull FunctionDescriptor functionDescriptor) {
+        List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+        List<String> result = new ArrayList<String>(parameters.size());
+        for (ValueParameterDescriptor parameter : parameters) {
+            result.add(parameter.getName().getName());
         }
-        return localVariablesInfo;
+        return result;
     }
 
     public static void generateLocalVariableTable(
@@ -265,13 +271,14 @@ public class FunctionCodegen extends GenerationStateAware {
             @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable Type thisType,
-            @NotNull LocalVariablesInfo localVariablesInfo,
-            @NotNull MethodBounds methodBounds
+            @NotNull MethodInfo methodInfo
     ) {
         // TODO: specify signatures
 
-        Label methodBegin = methodBounds.begin;
-        Label methodEnd = methodBounds.end;
+        Label methodBegin = methodInfo.beginLabel;
+        Label methodEnd = methodInfo.endLabel;
+
+        Collection<String> localVariableNames = new ArrayList<String>(methodInfo.localVariableNames);
 
         int k = 0;
 
@@ -289,13 +296,13 @@ public class FunctionCodegen extends GenerationStateAware {
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
             Type type = typeMapper.mapType(parameter);
 
-            Label divideLabel = localVariablesInfo.labelsForSharedVars.get(parameter.getName());
+            Label divideLabel = methodInfo.labelsForSharedVars.get(parameter.getName());
             String parameterName = parameter.getName().getName();
             if (divideLabel != null) {
                 mv.visitLocalVariable(parameterName, type.getDescriptor(), null, methodBegin, divideLabel, k);
 
-                String nameForSharedVar = createTmpVariableName(localVariablesInfo.names);
-                localVariablesInfo.names.add(nameForSharedVar);
+                String nameForSharedVar = createTmpVariableName(localVariableNames);
+                localVariableNames.add(nameForSharedVar);
 
                 Type sharedVarType = typeMapper.getSharedVarType(parameter);
                 mv.visitLocalVariable(nameForSharedVar, sharedVarType.getDescriptor(), null, divideLabel, methodEnd, k);
@@ -308,12 +315,14 @@ public class FunctionCodegen extends GenerationStateAware {
         }
     }
 
-    private void createSharedVarsForParameters(
+    @NotNull
+    private Map<Name, Label> createSharedVarsForParameters(
             @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull FrameMap frameMap,
-            @NotNull LocalVariablesInfo localVariablesInfo
+            @NotNull FrameMap frameMap
     ) {
+        Map<Name, Label> labelsForSharedVars = new HashMap<Name, Label>();
+
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
             Type sharedVarType = typeMapper.getSharedVarType(parameter);
             if (sharedVarType == null) {
@@ -331,10 +340,13 @@ public class FunctionCodegen extends GenerationStateAware {
 
             Label labelForSharedVar = new Label();
             mv.visitLabel(labelForSharedVar);
-            localVariablesInfo.labelsForSharedVars.put(parameter.getName(), labelForSharedVar);
+
+            labelsForSharedVars.put(parameter.getName(), labelForSharedVar);
 
             mv.visitVarInsn(sharedVarType.getOpcode(ISTORE), index);
         }
+
+        return labelsForSharedVars;
     }
 
     public static void generateStaticDelegateMethodBody(
