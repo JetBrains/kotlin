@@ -36,7 +36,7 @@ public class IfStatementWithAssignmentsToExpressionIntention extends BaseIntenti
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("kotlin.code.transformations");
+        return JetBundle.message("transform.if.statement.with.assignments.to.expression.family");
     }
 
     @Nullable
