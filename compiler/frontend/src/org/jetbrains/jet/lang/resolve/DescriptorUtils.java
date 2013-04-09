@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
@@ -262,6 +263,10 @@ public class DescriptorUtils {
             path.add(current);
             current = current.getContainingDeclaration();
         }
+    }
+
+    public static boolean isFunctionLiteral(@NotNull FunctionDescriptor descriptor) {
+        return descriptor instanceof AnonymousFunctionDescriptor;
     }
 
     public static boolean isClassObject(@NotNull DeclarationDescriptor descriptor) {

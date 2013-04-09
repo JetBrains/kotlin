@@ -28,7 +28,10 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValueWithDefault;
@@ -98,7 +101,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
                 expectedType);
 
-        SimpleFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
+        AnonymousFunctionDescriptor functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
         JetType safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected);
         functionDescriptor.setReturnType(safeReturnType);
 
@@ -114,15 +117,15 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static SimpleFunctionDescriptorImpl createFunctionDescriptor(
+    private static AnonymousFunctionDescriptor createFunctionDescriptor(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull ExpressionTypingContext context,
             boolean functionTypeExpected
     ) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
-        SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
-                context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), Name.special("<anonymous>"), CallableMemberDescriptor.Kind.DECLARATION);
+        AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
+                context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), CallableMemberDescriptor.Kind.DECLARATION);
 
         List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral, functionDescriptor, functionTypeExpected);
 
