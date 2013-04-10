@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.*;
@@ -143,7 +142,7 @@ public class CallResolver {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
             functionReference = expression;
 
-            ExpressionTypingUtils.checkWrappingInRef(expression, context.trace, context.scope);
+            ExpressionTypingUtils.checkCapturingInClosure(expression, context.trace, context.scope);
 
             Name name = expression.getReferencedNameAsName();
 

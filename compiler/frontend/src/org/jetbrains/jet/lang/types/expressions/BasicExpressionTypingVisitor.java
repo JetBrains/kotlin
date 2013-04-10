@@ -73,7 +73,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
         JetTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
         JetType type = DataFlowUtils.checkType(typeInfo.getType(), expression, context);
-        ExpressionTypingUtils.checkWrappingInRef(expression, context.trace, context.scope);
+        ExpressionTypingUtils.checkCapturingInClosure(expression, context.trace, context.scope);
         return JetTypeInfo.create(type, typeInfo.getDataFlowInfo()); // TODO : Extensions to this
     }
 

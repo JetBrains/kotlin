@@ -139,7 +139,7 @@ public class ExpressionTypingUtils {
         ).contains(expression.getNode().getElementType());
     }
 
-    public static void checkWrappingInRef(JetSimpleNameExpression expression, BindingTrace trace, JetScope scope) {
+    public static void checkCapturingInClosure(JetSimpleNameExpression expression, BindingTrace trace, JetScope scope) {
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
         if (variable != null) {
             DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
