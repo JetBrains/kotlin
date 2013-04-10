@@ -21,8 +21,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
-import com.intellij.util.NotNullFunction;
+import com.intellij.util.NullableFunction;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
@@ -34,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -68,7 +70,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
     private final Predicate<FqNameUnsafe> specialClasses;
     private final Function<FqName, Name> classifierAliases;
 
-    private final MemoizedFunctionToNotNull<FqName, List<PackageFragmentDescriptor>> packageFragments;
+    private final MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> packageFragments;
 
     @Deprecated // Internal use only
     public LazyCodeAnalyzer(
@@ -90,11 +92,10 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
         this.moduleSourcesManager = moduleSourcesManager;
         this.subModule = subModule;
 
-        this.packageFragments = storageManager.createMemoizedFunction(
-                new NotNullFunction<FqName, List<PackageFragmentDescriptor>>() {
-                    @NotNull
+        this.packageFragments = storageManager.createMemoizedFunctionWithNullableValues(
+                new NullableFunction<FqName, PackageFragmentDescriptor>() {
                     @Override
-                    public List<PackageFragmentDescriptor> fun(FqName fqName) {
+                    public PackageFragmentDescriptor fun(FqName fqName) {
                         return createPackageFragments(fqName);
                     }
                 },
@@ -102,15 +103,13 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
         );
     }
 
-    @NotNull
-    private List<PackageFragmentDescriptor> createPackageFragments(@NotNull FqName fqName) {
+    @Nullable
+    private PackageFragmentDescriptor createPackageFragments(@NotNull FqName fqName) {
         LazyCodeAnalyzer outer = this;
         PackageMemberDeclarationProvider provider = outer.declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
-        if (provider == null) return Collections.emptyList();
+        if (provider == null) return null;
 
-        return Collections.<PackageFragmentDescriptor>singletonList(
-                new LazyPackageDescriptor(outer, outer.subModule, fqName, provider)
-        );
+        return new LazyPackageDescriptor(outer, outer.subModule, fqName, provider);
     }
 
     @NotNull
@@ -120,7 +119,7 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
             @NotNull
             @Override
             public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-                return packageFragments.fun(fqName);
+                return ContainerUtil.createMaybeSingletonList(packageFragments.fun(fqName));
             }
 
             @NotNull
@@ -133,6 +132,11 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
                 return provider.getAllDeclaredPackages();
             }
         };
+    }
+
+    @Nullable
+    public PackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName) {
+        return packageFragments.fun(fqName);
     }
 
     @NotNull
@@ -327,35 +331,35 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
         for (FqName packageFqName : packageProvider.getAllDeclaredPackages()) {
             forceResolveAll(packageFqName);
 
-            List<PackageFragmentDescriptor> fragments = packageFragments.fun(packageFqName);
-            for (PackageFragmentDescriptor fragment : fragments) {
-                fragment.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
-                    @Override
-                    public Void visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, Void data) {
-                        ForceResolveUtil.forceResolveAllContents(descriptor);
-                        return null;
-                    }
+            PackageFragmentDescriptor fragment = packageFragments.fun(packageFqName);
+            if (fragment == null) continue;
 
-                    @Override
-                    public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, Void data) {
-                        ForceResolveUtil.forceResolveAllContents(descriptor);
-                        return null;
-                    }
+            fragment.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
+                @Override
+                public Void visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, Void data) {
+                    ForceResolveUtil.forceResolveAllContents(descriptor);
+                    return null;
+                }
 
-                    @Override
-                    public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                        ForceResolveUtil.forceResolveAllContents(descriptor);
-                        return null;
-                    }
+                @Override
+                public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, Void data) {
+                    ForceResolveUtil.forceResolveAllContents(descriptor);
+                    return null;
+                }
 
-                    @Override
-                    public Void visitScriptDescriptor(ScriptDescriptor scriptDescriptor, Void data) {
-                        ForceResolveUtil.forceResolveAllContents(scriptDescriptor);
-                        return null;
-                    }
-                });
+                @Override
+                public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
+                    ForceResolveUtil.forceResolveAllContents(descriptor);
+                    return null;
+                }
 
-            }
+                @Override
+                public Void visitScriptDescriptor(ScriptDescriptor scriptDescriptor, Void data) {
+                    ForceResolveUtil.forceResolveAllContents(scriptDescriptor);
+                    return null;
+                }
+            });
+
         }
     }
 }

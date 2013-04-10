@@ -87,7 +87,7 @@ public class ScopeProvider {
                 analyzer.getTrace(),
                 "Lazy Imports Scope for file " + file.getName());
 
-        return new ChainedScope(packageDescriptor,
+        return new ChainedScope(analyzer.getPackageFragment(packageDescriptor.getFqName()),
                                 "File scope: " + file.getName(),
                                 rootPackageDescriptor.getMemberScope(),
                                 packageDescriptor.getMemberScope(),
