@@ -685,7 +685,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @NotNull MethodVisitor mv,
                     @NotNull JvmMethodSignature signature,
                     @NotNull MethodContext context,
-                    @NotNull Collection<String> localVariableNames,
                     @NotNull FrameMap frameMap
             ) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -711,7 +710,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @NotNull MethodVisitor mv,
                     @NotNull JvmMethodSignature signature,
                     @NotNull MethodContext context,
-                    @NotNull Collection<String> localVariableNames,
                     @NotNull FrameMap frameMap
             ) {
                 InstructionAdapter iv = new InstructionAdapter(mv);

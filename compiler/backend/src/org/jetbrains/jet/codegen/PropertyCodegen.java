@@ -183,7 +183,6 @@ public class PropertyCodegen extends GenerationStateAware {
                 @NotNull MethodVisitor mv,
                 @NotNull JvmMethodSignature signature,
                 @NotNull MethodContext context,
-                @NotNull Collection<String> localVariableNames,
                 @NotNull FrameMap frameMap
         ) {
             generateDefaultAccessor(descriptor, new InstructionAdapter(mv), typeMapper, context);

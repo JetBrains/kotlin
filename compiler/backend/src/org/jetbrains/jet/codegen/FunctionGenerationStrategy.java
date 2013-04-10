@@ -23,17 +23,27 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public abstract class FunctionGenerationStrategy {
+    private final Collection<String> localVariableNames = new ArrayList<String>();
 
     public abstract void generateBody(
             @NotNull MethodVisitor mv,
             @NotNull JvmMethodSignature signature,
             @NotNull MethodContext context,
-            @NotNull Collection<String> localVariableNames,
             @NotNull FrameMap frameMap
     );
+
+    protected void addLocalVariableName(@NotNull String name) {
+        localVariableNames.add(name);
+    }
+
+    @NotNull
+    public Collection<String> getLocalVariableNames() {
+        return localVariableNames;
+    }
 
 
     public static class Default extends FunctionGenerationStrategy {
@@ -50,14 +60,15 @@ public abstract class FunctionGenerationStrategy {
                 @NotNull MethodVisitor mv,
                 @NotNull JvmMethodSignature signature,
                 @NotNull MethodContext context,
-                @NotNull Collection<String> localVariableNames,
                 @NotNull FrameMap frameMap
         ) {
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, signature.getAsmMethod().getReturnType(), context, state);
 
             codegen.returnExpression(declaration.getBodyExpression());
 
-            localVariableNames.addAll(codegen.getLocalVariableNamesForExpression());
+            for (String name : codegen.getLocalVariableNamesForExpression()) {
+                addLocalVariableName(name);
+            }
         }
     }
 }

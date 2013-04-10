@@ -174,7 +174,9 @@ public class FunctionCodegen extends GenerationStateAware {
 
             genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
 
-            strategy.generateBody(mv, signature, context, localVariableNames, frameMap);
+            strategy.generateBody(mv, signature, context, frameMap);
+
+            localVariableNames.addAll(strategy.getLocalVariableNames());
         }
 
         Label methodEnd = new Label();
