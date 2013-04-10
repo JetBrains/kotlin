@@ -209,7 +209,7 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     @NotNull
-    public static List<String> getParameterNamesAsStrings(@NotNull FunctionDescriptor functionDescriptor) {
+    private static List<String> getParameterNamesAsStrings(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
         List<String> result = new ArrayList<String>(parameters.size());
         for (ValueParameterDescriptor parameter : parameters) {
@@ -218,7 +218,7 @@ public class FunctionCodegen extends GenerationStateAware {
         return result;
     }
 
-    public static void generateLocalVariableTable(
+    private static void generateLocalVariableTable(
             @NotNull JetTypeMapper typeMapper,
             @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
@@ -301,7 +301,7 @@ public class FunctionCodegen extends GenerationStateAware {
         return labelsForSharedVars;
     }
 
-    public static void generateStaticDelegateMethodBody(
+    private static void generateStaticDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
             @NotNull OwnerKind.StaticDelegateKind dk

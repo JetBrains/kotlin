@@ -697,67 +697,51 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateCopyFunction(@NotNull final FunctionDescriptor function) {
-        JetType returnType = function.getReturnType();
-        assert returnType != null : "Return type of copy function should not be null: " + function;
-
         JvmMethodSignature methodSignature = typeMapper.mapSignature(function.getName(), function);
-        String methodDesc = methodSignature.getAsmMethod().getDescriptor();
-
-        MethodVisitor mv = v.newMethod(myClass, AsmUtil.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
-                                       function.getName().getName(), methodDesc,
-                                       null, null);
-
-        FunctionCodegen.genJetAnnotations(state, function, null, null, mv);
-
-        mv.visitCode();
-        InstructionAdapter iv = new InstructionAdapter(mv);
-
-        ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
-
-
-        Label methodBegin = new Label();
-        mv.visitLabel(methodBegin);
 
         final Type thisDescriptorType = typeMapper.mapType(descriptor.getDefaultType());
-        iv.anew(thisDescriptorType);
-        iv.dup();
 
-        String thisInternalName = thisDescriptorType.getInternalName();
+        FunctionCodegen fc = new FunctionCodegen(context, v, state);
+        fc.generateMethod(myClass, methodSignature, true, null, function, new FunctionGenerationStrategy() {
+            @Override
+            public void generateBody(
+                    @NotNull MethodVisitor mv,
+                    @NotNull JvmMethodSignature signature,
+                    @NotNull MethodContext context,
+                    @NotNull Collection<String> localVariableNames,
+                    @NotNull FrameMap frameMap
+            ) {
+                InstructionAdapter iv = new InstructionAdapter(mv);
 
-        assert function.getValueParameters().size() == constructor.getValueParameters().size() :
-                "Number of parameters of copy function and constructor are different. Copy: " + function.getValueParameters().size() + ", constructor: " + constructor.getValueParameters().size();
+                iv.anew(thisDescriptorType);
+                iv.dup();
 
-        MutableClosure closure = context.closure;
-        if (closure != null && closure.getCaptureThis() != null) {
-            Type type = typeMapper.mapType(enclosingClassDescriptor(bindingContext, descriptor));
-            iv.load(0, classAsmType);
-            iv.getfield(JvmClassName.byType(classAsmType).getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
-        }
+                ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
+                assert function.getValueParameters().size() == constructor.getValueParameters().size() :
+                        "Number of parameters of copy function and constructor are different. " +
+                        "Copy: " + function.getValueParameters().size() + ", " +
+                        "constructor: " + constructor.getValueParameters().size();
 
-        int parameterIndex = 1; // localVariable 0 = this
-        for (ValueParameterDescriptor parameterDescriptor : function.getValueParameters()) {
-            Type type = typeMapper.mapType(parameterDescriptor.getType());
-            iv.load(parameterIndex, type);
-            parameterIndex += type.getSize();
-        }
+                MutableClosure closure = ImplementationBodyCodegen.this.context.closure;
+                if (closure != null && closure.getCaptureThis() != null) {
+                    Type type = typeMapper.mapType(enclosingClassDescriptor(bindingContext, descriptor));
+                    iv.load(0, classAsmType);
+                    iv.getfield(JvmClassName.byType(classAsmType).getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
+                }
 
-        String constructorJvmDescriptor = typeMapper.mapToCallableMethod(constructor).getSignature().getAsmMethod().getDescriptor();
-        iv.invokespecial(thisInternalName, "<init>", constructorJvmDescriptor);
+                int parameterIndex = 1; // localVariable 0 = this
+                for (ValueParameterDescriptor parameterDescriptor : function.getValueParameters()) {
+                    Type type = typeMapper.mapType(parameterDescriptor.getType());
+                    iv.load(parameterIndex, type);
+                    parameterIndex += type.getSize();
+                }
 
-        iv.areturn(thisDescriptorType);
+                String constructorJvmDescriptor = typeMapper.mapToCallableMethod(constructor).getSignature().getAsmMethod().getDescriptor();
+                iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorJvmDescriptor);
 
-        Label methodEnd = new Label();
-        mv.visitLabel(methodEnd);
-
-        FunctionCodegen.MethodInfo methodInfo = new FunctionCodegen.MethodInfo(
-                methodBegin,
-                methodEnd,
-                FunctionCodegen.getParameterNamesAsStrings(function),
-                Collections.<Name, Label>emptyMap()
-        );
-        FunctionCodegen.generateLocalVariableTable(typeMapper, mv, function, thisDescriptorType, methodInfo);
-
-        FunctionCodegen.endVisit(mv, function.getName().getName(), myClass);
+                iv.areturn(thisDescriptorType);
+            }
+        });
 
         MethodContext functionContext = context.intoFunction(function);
         FunctionCodegen.generateDefaultIfNeeded(functionContext, state, v, methodSignature.getAsmMethod(), function, OwnerKind.IMPLEMENTATION,
