@@ -34,7 +34,6 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -123,12 +122,7 @@ public class FunctionCodegen extends GenerationStateAware {
             return;
         }
 
-        MethodInfo info = generateMethodBody(mv, functionDescriptor, context, jvmSignature, strategy);
-
-        info.localVariableNames.addAll(getParameterNamesAsStrings(functionDescriptor));
-
-        Type thisType = getThisTypeForFunction(functionDescriptor, context);
-        generateLocalVariableTable(typeMapper, mv, functionDescriptor, thisType, info);
+        generateMethodBody(mv, functionDescriptor, context, jvmSignature, strategy);
 
         endVisit(mv, null, origin);
 
@@ -149,15 +143,15 @@ public class FunctionCodegen extends GenerationStateAware {
         }
     }
 
-    @NotNull
-    private MethodInfo generateMethodBody(
+    private void generateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext context,
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-        Collection<String> localVariableNames = new ArrayList<String>();
+        Collection<String> localVariableNames = new HashSet<String>(getParameterNamesAsStrings(functionDescriptor));
+
         Map<Name, Label> labelsForSharedVars = new HashMap<Name, Label>();
 
         mv.visitCode();
@@ -186,26 +180,8 @@ public class FunctionCodegen extends GenerationStateAware {
         Label methodEnd = new Label();
         mv.visitLabel(methodEnd);
 
-        return new MethodInfo(methodBegin, methodEnd, localVariableNames, labelsForSharedVars);
-    }
-
-    public static class MethodInfo {
-        public final Label beginLabel;
-        public final Label endLabel;
-        public final Collection<String> localVariableNames;
-        public final Map<Name, Label> labelsForSharedVars;
-
-        public MethodInfo(
-                @NotNull Label beginLabel,
-                @NotNull Label endLabel,
-                @NotNull Collection<String> localVariableNames,
-                @NotNull Map<Name, Label> labelsForSharedVars
-        ) {
-            this.beginLabel = beginLabel;
-            this.endLabel = endLabel;
-            this.localVariableNames = localVariableNames;
-            this.labelsForSharedVars = labelsForSharedVars;
-        }
+        Type thisType = getThisTypeForFunction(functionDescriptor, context);
+        generateLocalVariableTable(mv, functionDescriptor, thisType, methodBegin, methodEnd, localVariableNames, labelsForSharedVars);
     }
 
     @NotNull
@@ -218,19 +194,16 @@ public class FunctionCodegen extends GenerationStateAware {
         return result;
     }
 
-    private static void generateLocalVariableTable(
-            @NotNull JetTypeMapper typeMapper,
+    private void generateLocalVariableTable(
             @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable Type thisType,
-            @NotNull MethodInfo methodInfo
+            @NotNull Label methodBegin,
+            @NotNull Label methodEnd,
+            @NotNull Collection<String> localVariableNames,
+            @NotNull Map<Name, Label> labelsForSharedVars
     ) {
         // TODO: specify signatures
-
-        Label methodBegin = methodInfo.beginLabel;
-        Label methodEnd = methodInfo.endLabel;
-
-        Collection<String> localVariableNames = new ArrayList<String>(methodInfo.localVariableNames);
 
         int k = 0;
 
@@ -248,7 +221,7 @@ public class FunctionCodegen extends GenerationStateAware {
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
             Type type = typeMapper.mapType(parameter);
 
-            Label divideLabel = methodInfo.labelsForSharedVars.get(parameter.getName());
+            Label divideLabel = labelsForSharedVars.get(parameter.getName());
             String parameterName = parameter.getName().getName();
             if (divideLabel != null) {
                 mv.visitLocalVariable(parameterName, type.getDescriptor(), null, methodBegin, divideLabel, k);
