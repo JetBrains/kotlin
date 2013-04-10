@@ -20,8 +20,8 @@ import com.google.common.base.Predicate;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -41,12 +41,12 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
     @Override
     protected void analyzeAndCheck(File testDataFile, String expectedText, TestEnvironment testEnvironment) {
         Collection<JetFile> jetFiles = testEnvironment.getCoreEnvironment().getSourceFiles();
-        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, testEnvironment.getCoreEnvironment());
-        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, testEnvironment.getCoreEnvironment());
+        SubModuleDescriptor lazySubModule = LazyResolveTestUtil.resolveLazily(testEnvironment.getCoreEnvironment());
+        SubModuleDescriptor eagerSubModule = LazyResolveTestUtil.resolveEagerly(testEnvironment.getCoreEnvironment());
 
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
-        PackageViewDescriptor expected = DescriptorUtils.getRootPackage(eagerModule.getSubModules().iterator().next());
-        PackageViewDescriptor actual = DescriptorUtils.getRootPackage(lazyModule.getSubModules().iterator().next());
+        PackageViewDescriptor expected = DescriptorUtils.getRootPackage(eagerSubModule);
+        PackageViewDescriptor actual = DescriptorUtils.getRootPackage(lazySubModule);
 
         String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
         File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);

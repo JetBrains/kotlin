@@ -22,9 +22,9 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.*;
 import org.jetbrains.jet.di.InjectorForTests;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -610,12 +610,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     private WritableScope getDeclarationsScope(String path) throws IOException {
-        ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolveEagerly(
-                Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path))),
-                getEnvironment()
-        );
+        JetTestUtils.loadJetFile(getProject(), new File(path));
+        SubModuleDescriptor subModuleDescriptor = LazyResolveTestUtil.resolveEagerly(getEnvironment());
 
-        PackageViewDescriptor testData = DescriptorUtils.getRootPackage(getSubModuleDescriptor()).getMemberScope().getPackage(
+        PackageViewDescriptor testData = DescriptorUtils.getRootPackage(subModuleDescriptor).getMemberScope().getPackage(
                 Name.identifier("testData"));
         return addImports(testData.getMemberScope());
     }

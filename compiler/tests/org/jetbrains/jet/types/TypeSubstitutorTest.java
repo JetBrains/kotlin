@@ -28,11 +28,10 @@ import org.jetbrains.jet.TestCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -49,7 +48,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
@@ -80,18 +78,18 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private JetScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"));
-        JetFile jetFile = JetPsiFactory.createFile(getProject(), text);
-        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
+        JetPsiFactory.createFile(getProject(), text);
+        SubModuleDescriptor subModule = LazyResolveTestUtil.resolveLazily(getEnvironment());
         JetScope topLevelDeclarations = DescriptorUtils.getRootPackage(getSubModuleDescriptor()).getMemberScope();
         ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"));
         assert contextClass instanceof ClassDescriptor;
-        WritableScopeImpl typeParameters = new WritableScopeImpl(JetScope.EMPTY, module, RedeclarationHandler.THROW_EXCEPTION,
+        WritableScopeImpl typeParameters = new WritableScopeImpl(JetScope.EMPTY, subModule, RedeclarationHandler.THROW_EXCEPTION,
                                       "Type parameter scope");
         for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
             typeParameters.addClassifierDescriptor(parameterDescriptor);
         }
         typeParameters.changeLockLevel(WritableScope.LockLevel.READING);
-        return new ChainedScope(module,
+        return new ChainedScope(subModule,
                                 topLevelDeclarations,
                                 typeParameters,
                                 contextClass.getDefaultType().getMemberScope(),

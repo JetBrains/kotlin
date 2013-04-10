@@ -30,7 +30,6 @@ import org.jetbrains.jet.resolve.ExpectedResolveData;
 import org.jetbrains.jet.resolve.JetExpectedResolveDataUtil;
 
 import java.io.File;
-import java.util.List;
 
 public abstract class AbstractLazyResolveTest extends JetLiteFixture {
     private ExpectedResolveData expectedResolveData;
@@ -61,14 +60,14 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
     protected void doTest(@NonNls String testFile) throws Exception {
         String text = FileUtil.loadFile(new File(testFile), true);
 
-        List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
+        JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
             @Override
             public JetFile create(String fileName, String text) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
         });
 
-        KotlinCodeAnalyzer resolveSession = LazyResolveTestUtil.resolveLazilyWithSession(files, getEnvironment());
+        KotlinCodeAnalyzer resolveSession = LazyResolveTestUtil.resolveLazilyWithSession(getEnvironment());
 
         PackageViewDescriptor actual = getSubModuleDescriptor().getPackageView(new FqName("test"));
         Assert.assertNotNull("Package 'test' was not found", actual);

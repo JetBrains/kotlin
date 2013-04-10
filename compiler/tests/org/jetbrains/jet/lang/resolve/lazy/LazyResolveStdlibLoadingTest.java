@@ -20,8 +20,8 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.*;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -49,12 +49,12 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
     ) {
         Set<Name> namespaceShortNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(files);
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, stdlibEnvironment);
-        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, stdlibEnvironment);
+        SubModuleDescriptor eagerSubModule = LazyResolveTestUtil.resolveEagerly(stdlibEnvironment);
+        SubModuleDescriptor lazySubModule = LazyResolveTestUtil.resolveLazily(stdlibEnvironment);
 
         for (Name name : namespaceShortNames) {
-            PackageViewDescriptor eager = DescriptorUtils.getRootPackage(module.getSubModules().iterator().next()).getMemberScope().getPackage(name);
-            PackageViewDescriptor lazy = DescriptorUtils.getRootPackage(lazyModule.getSubModules().iterator().next()).getMemberScope().getPackage(name);
+            PackageViewDescriptor eager = DescriptorUtils.getRootPackage(eagerSubModule).getMemberScope().getPackage(name);
+            PackageViewDescriptor lazy = DescriptorUtils.getRootPackage(lazySubModule).getMemberScope().getPackage(name);
             NamespaceComparator.compareNamespaces(eager, lazy, NamespaceComparator.RECURSIVE, null);
         }
     }

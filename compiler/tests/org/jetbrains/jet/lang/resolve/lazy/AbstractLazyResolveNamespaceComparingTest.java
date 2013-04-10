@@ -21,8 +21,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestCoreEnvironment;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -31,7 +31,6 @@ import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTestWithEnvironment {
 
@@ -49,21 +48,20 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
     }
 
     private void doTest(String testFileName, boolean checkPrimaryConstructors) throws IOException {
-        List<JetFile> files = JetTestUtils
-                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
-                                 new JetTestUtils.TestFileFactory<JetFile>() {
-                                     @Override
-                                     public JetFile create(String fileName, String text) {
-                                         return JetTestUtils.createFile(getProject(), fileName, text);
-                                     }
-                                 });
+        JetTestUtils.createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
+                                     new JetTestUtils.TestFileFactory<JetFile>() {
+                                         @Override
+                                         public JetFile create(String fileName, String text) {
+                                             return JetTestUtils.createFile(getProject(), fileName, text);
+                                         }
+                                     });
 
-        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
-        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
+        SubModuleDescriptor eagerSubModule = LazyResolveTestUtil.resolveEagerly(getEnvironment());
+        SubModuleDescriptor lazySubModule = LazyResolveTestUtil.resolveLazily(getEnvironment());
 
         FqName test = new FqName("test");
-        PackageViewDescriptor actual = lazyModule.getSubModules().iterator().next().getPackageView(test);
-        PackageViewDescriptor expected = eagerModule.getSubModules().iterator().next().getPackageView(test);
+        PackageViewDescriptor actual = lazySubModule.getPackageView(test);
+        PackageViewDescriptor expected = eagerSubModule.getPackageView(test);
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
