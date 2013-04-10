@@ -417,6 +417,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTestWithInfos("idea/testData/checker/infos/Autocasts.kt");
         }
         
+        @TestMetadata("CapturedInInlinedClosure.kt")
+        public void testCapturedInInlinedClosure() throws Exception {
+            doTestWithInfos("idea/testData/checker/infos/CapturedInInlinedClosure.kt");
+        }
+        
         @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
             doTestWithInfos("idea/testData/checker/infos/PropertiesWithBackingFields.kt");

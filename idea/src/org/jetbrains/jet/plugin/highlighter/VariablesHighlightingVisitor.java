@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.CaptureKind;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -88,7 +89,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
                 JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
             }
 
-            if (Boolean.TRUE.equals(bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor))) {
+            if (bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) == CaptureKind.NOT_INLINE) {
                 String msg = ((VariableDescriptor) descriptor).isVar()
                              ? "Wrapped into a reference object to be modified when captured in a closure"
                              : "Value captured in a closure";

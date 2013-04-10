@@ -33,14 +33,15 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -139,12 +140,69 @@ public class ExpressionTypingUtils {
         ).contains(expression.getNode().getElementType());
     }
 
+    private static boolean isCapturedInInline(
+            @NotNull BindingContext context,
+            @NotNull DeclarationDescriptor scopeContainer,
+            @NotNull DeclarationDescriptor variableParent
+    ) {
+        PsiElement scopeDeclaration = BindingContextUtils.descriptorToDeclaration(context, scopeContainer);
+        if (!(scopeDeclaration instanceof JetFunctionLiteral)) {
+            return false;
+        }
+
+        PsiElement parent = scopeDeclaration.getParent();
+        assert parent instanceof JetFunctionLiteralExpression : "parent of JetFunctionLiteral is " + parent;
+        JetCallExpression callExpression = getCallExpression((JetFunctionLiteralExpression) parent);
+        if (callExpression == null) {
+            return false;
+        }
+
+        ResolvedCall<? extends CallableDescriptor> call = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
+        if (call == null) {
+            return false;
+        }
+
+        CallableDescriptor callable = call.getResultingDescriptor();
+        if (callable instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) callable).isInline()) {
+            DeclarationDescriptor scopeContainerParent = scopeContainer.getContainingDeclaration();
+            assert scopeContainerParent != null : "parent is null for " + scopeContainer;
+            return scopeContainerParent == variableParent || isCapturedInInline(context, scopeContainerParent, variableParent);
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Nullable
+    private static JetCallExpression getCallExpression(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
+        PsiElement parent = functionLiteralExpression.getParent();
+        if (parent instanceof JetValueArgument) {
+            // foo({ ... })    or     foo(f = { ... })
+
+            PsiElement valueArgumentList = parent.getParent();
+            assert valueArgumentList instanceof JetValueArgumentList : "parent of value argument is " + valueArgumentList;
+
+            if (valueArgumentList.getParent() instanceof JetCallExpression) { // may be argument list of annotation
+                return (JetCallExpression) valueArgumentList.getParent();
+            }
+        }
+        else if (parent instanceof JetCallExpression) {
+            // foo { ... }
+
+            return  (JetCallExpression) parent;
+        }
+        return null;
+    }
     public static void checkCapturingInClosure(JetSimpleNameExpression expression, BindingTrace trace, JetScope scope) {
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
         if (variable != null) {
-            DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
-            if (scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
-                trace.record(CAPTURED_IN_CLOSURE, variable);
+            DeclarationDescriptor variableParent = variable.getContainingDeclaration();
+            DeclarationDescriptor scopeContainer = scope.getContainingDeclaration();
+            if (scopeContainer != variableParent && variableParent instanceof CallableDescriptor) {
+                if (trace.get(CAPTURED_IN_CLOSURE, variable) != CaptureKind.NOT_INLINE) {
+                    boolean inline = isCapturedInInline(trace.getBindingContext(), scopeContainer, variableParent);
+                    trace.record(CAPTURED_IN_CLOSURE, variable, inline ? CaptureKind.INLINE_ONLY : CaptureKind.NOT_INLINE);
+                }
             }
         }
     }

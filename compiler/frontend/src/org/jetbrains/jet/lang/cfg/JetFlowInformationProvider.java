@@ -462,7 +462,7 @@ public class JetFlowInformationProvider {
                     !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) return;
                 PseudocodeVariablesData.VariableUseState variableUseState = in.get(variableDescriptor);
                 if (instruction instanceof WriteValueInstruction) {
-                    if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor)) return;
+                    if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return;
                     JetElement element = ((WriteValueInstruction) instruction).getElement();
                     if (variableUseState != LAST_READ) {
                         if (element instanceof JetBinaryExpression &&
