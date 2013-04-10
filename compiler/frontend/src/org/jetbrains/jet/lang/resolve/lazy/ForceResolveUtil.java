@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
@@ -28,6 +29,10 @@ public class ForceResolveUtil {
         if (descriptor instanceof LazyDescriptor) {
             LazyDescriptor lazyDescriptor = (LazyDescriptor) descriptor;
             lazyDescriptor.forceResolveAllContents();
+        }
+        else if (descriptor instanceof PackageViewDescriptor) {
+            PackageViewDescriptor packageViewDescriptor = (PackageViewDescriptor) descriptor;
+            forceResolveAllContents(packageViewDescriptor.getMemberScope());
         }
     }
 
