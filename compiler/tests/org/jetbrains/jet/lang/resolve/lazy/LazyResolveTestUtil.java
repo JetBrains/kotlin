@@ -31,6 +31,7 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.SubModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
@@ -112,6 +113,9 @@ public class LazyResolveTestUtil {
                 Function.NULL,
                 Predicates.<FqNameUnsafe>alwaysFalse(),
                 sharedTrace);
+
+        ((MutableSubModuleDescriptor) environment.getSubModuleDescriptor()).addPackageFragmentProvider(analyzer.getPackageFragmentProvider());
+
         return analyzer;
     }
 
