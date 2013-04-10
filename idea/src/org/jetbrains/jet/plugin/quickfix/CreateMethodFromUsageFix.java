@@ -476,7 +476,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        setupFunctionBody(project, func, isUnit, ownerTypeDescriptor);
+                        setupFunctionBody(project, func, methodName, isUnit, ownerTypeDescriptor);
                     }
                 });
 
@@ -485,7 +485,11 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         });
     }
 
-    private void setupFunctionBody(@NotNull Project project, @NotNull JetNamedFunction func, boolean isUnit,
+    private static void setupFunctionBody(
+            @NotNull Project project,
+            @NotNull JetNamedFunction func,
+            @NotNull String funcName,
+            boolean isUnit,
             @NotNull ClassifierDescriptor ownerTypeDescriptor
     ) {
         FileTemplate fileTemplate = FileTemplateManager.getInstance().getCodeTemplate(TEMPLATE_FROM_USAGE_METHOD_BODY);
@@ -499,7 +503,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
         properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerTypeDescriptor).getFqName());
         properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerTypeDescriptor.getName().getName());
-        properties.setProperty(FileTemplate.ATTRIBUTE_METHOD_NAME, methodName);
+        properties.setProperty(FileTemplate.ATTRIBUTE_METHOD_NAME, funcName);
 
         @NonNls String bodyText;
         try {
