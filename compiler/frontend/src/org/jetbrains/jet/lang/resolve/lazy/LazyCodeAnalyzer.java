@@ -336,7 +336,8 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
 
             @Override
             public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
-                return super.visitPackageViewDescriptor(descriptor, data); // TODO
+                ForceResolveUtil.forceResolveAllContents(descriptor.getMemberScope());
+                return null;
             }
 
             @Override
