@@ -47,9 +47,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
@@ -69,7 +67,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      */
     private static class TypeOrExpressionThereof {
         private final JetExpression expressionOfType;
-        private final JetType type;
+        private JetType type;
         private JetType[] cachedTypeCandidates;
         private String[] cachedNameCandidatesFromExpression;
 
@@ -134,6 +132,15 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                                                          expressionOfType,
                                                          JetNameValidator.getEmptyValidator(expressionOfType.getProject()));
             return cachedNameCandidatesFromExpression;
+        }
+
+        public void substitute(TypeSubstitution[] substitutions) {
+            if (type != null) {
+                for (TypeSubstitution substitution : substitutions) {
+                    type = substituteType(type, substitution);
+                }
+            }
+            cachedTypeCandidates = substituteTypes(cachedTypeCandidates, substitutions);
         }
     }
 
@@ -336,6 +343,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 }
             }
 
+            // make sure there are no name conflicts
+            for (int i = 0; i < typeParameterNames.size(); i++) {
+                String name = typeParameterNames.get(i);
+                name = getNextAvailableName(name, typeParameterNames.subList(0, i));
+                typeParameterNames.set(i, name);
+            }
+
             return typeParameterNames.isEmpty()
                     ? new TextResult("")
                     : new TextResult(" <" + StringUtil.join(typeParameterNames, ", ") + ">");
@@ -351,6 +365,27 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         @Override
         public LookupElement[] calculateLookupItems(ExpressionContext context) {
             return new LookupElement[0]; // do not offer the user any choices
+        }
+    }
+
+    /**
+     * Encapsulates a single type substitution of a <code>JetType</code> by another <code>JetType</code>.
+     */
+    private static class TypeSubstitution {
+        private final JetType forType;
+        private final JetType byType;
+
+        private TypeSubstitution(JetType forType, JetType byType) {
+            this.forType = forType;
+            this.byType = byType;
+        }
+
+        private JetType getForType() {
+            return forType;
+        }
+
+        private JetType getByType() {
+            return byType;
         }
     }
 
@@ -392,9 +427,23 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
 
         final ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
-        assert ownerTypeDescriptor != null;
+        assert ownerTypeDescriptor != null && ownerTypeDescriptor instanceof ClassDescriptor;
+        ClassDescriptor ownerClassDescriptor = (ClassDescriptor) ownerTypeDescriptor;
         PsiElement typeDeclaration = DescriptorToDeclarationUtil.getDeclaration(jetFile, ownerTypeDescriptor, context);
         JetClass klass = (JetClass) typeDeclaration;
+
+        // figure out type substitutions for type parameters
+        List<TypeProjection> classTypeParameters = ownerClassDescriptor.getDefaultType().getArguments();
+        List<TypeProjection> ownerTypeArguments = ownerType.getArguments();
+        assert ownerTypeArguments.size() == classTypeParameters.size();
+        TypeSubstitution[] substitutions = new TypeSubstitution[classTypeParameters.size()];
+        for (int i = 0; i < substitutions.length; i++) {
+            substitutions[i] = new TypeSubstitution(ownerTypeArguments.get(i).getType(), classTypeParameters.get(i).getType());
+        }
+        returnType.substitute(substitutions);
+        for (Parameter parameter : parameters) {
+            parameter.getType().substitute(substitutions);
+        }
 
         // create method with placeholder types and parameter names
         String[] parameterStrings = new String[parameters.size()];
@@ -413,7 +462,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         final JetFile containingFile;
         boolean isExtension = !klass.isWritable();
         if (isExtension) { // create as extension function
-            ownerTypeString = renderType(ownerType);
+            ownerTypeString = renderType(ownerClassDescriptor.getDefaultType());
             methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
             owner = containingFile = jetFile;
@@ -454,7 +503,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
         // it.
         JetScope scope = getScope(owner, context);
-        TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func, ownerType, parameterTypeExpressions, returnTypeExpression, scope);
+        TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func, ownerClassDescriptor.getDefaultType(),
+                                                                                parameterTypeExpressions, returnTypeExpression, scope);
 
         // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
         final TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
@@ -483,6 +533,34 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 caretModel.moveToOffset(oldOffset);
             }
         });
+    }
+
+    @NotNull
+    private static JetType substituteType(@NotNull JetType type, @NotNull TypeSubstitution substitution) {
+        if (type.equals(substitution.getForType())) {
+            return substitution.getByType();
+        }
+
+        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
+        for (TypeProjection projection : type.getArguments()) {
+            JetType newArgument = substituteType(projection.getType(), substitution);
+            newArguments.add(new TypeProjection(Variance.INVARIANT, newArgument));
+        }
+        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(),
+                               type.isNullable(), newArguments, type.getMemberScope());
+    }
+
+    @NotNull
+    private static JetType[] substituteTypes(@NotNull JetType[] types, @NotNull TypeSubstitution[] substitutions) {
+        JetType[] newTypes = new JetType[types.length];
+        for (int i = 0; i < types.length; i++) {
+            JetType newType = types[i];
+            for (TypeSubstitution substitution : substitutions) {
+                newType = substituteType(newType, substitution);
+            }
+            newTypes[i] = newType;
+        }
+        return newTypes;
     }
 
     private static void setupFunctionBody(
@@ -695,7 +773,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static String getNextAvailableName(@NotNull String name, @NotNull Set<String> existingNames) {
+    private static String getNextAvailableName(@NotNull String name, @NotNull Collection<String> existingNames) {
         if (existingNames.contains(name)) {
             int j = 1;
             while (existingNames.contains(name + j)) j++;
