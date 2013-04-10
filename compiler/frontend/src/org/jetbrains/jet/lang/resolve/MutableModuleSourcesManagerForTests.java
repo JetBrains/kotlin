@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentKind;
 import org.jetbrains.jet.lang.descriptors.impl.MutableSubModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class MutableModuleSourcesManagerForTests extends MutableModuleSourcesManager {
@@ -56,5 +57,11 @@ public class MutableModuleSourcesManagerForTests extends MutableModuleSourcesMan
     public void addExtraFile(@NotNull MutableSubModuleDescriptor subModule, @NotNull JetFile jetFile) {
         extraFiles.put(jetFile, subModule);
         addJetFile(subModule, PackageFragmentKind.SOURCE, jetFile);
+    }
+
+    @TestOnly
+    @NotNull
+    public Collection<JetFile> getExtraFiles() {
+        return extraFiles.keySet();
     }
 }

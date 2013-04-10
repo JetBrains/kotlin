@@ -315,48 +315,47 @@ public class LazyCodeAnalyzer implements KotlinCodeAnalyzer {
 
     @Override
     public void forceResolveAll() {
-        subModule.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
+        forceResolveAll(FqName.ROOT);
+    }
 
-            @Override
-            public Void visitModuleDescriptor(ModuleDescriptor descriptor, Void data) {
-                for (SubModuleDescriptor subModuleDescriptor : descriptor.getSubModules()) {
-                    subModuleDescriptor.acceptVoid(this);
-                }
-                return null;
-            }
+    private void forceResolveAll(@NotNull FqName parentPackage) {
+        PackageMemberDeclarationProvider packageProvider = declarationProviderFactory.getPackageMemberDeclarationProvider(parentPackage);
+        if (packageProvider == null) {
+            return;
+        }
 
-            @Override
-            public Void visitSubModuleDescriptor(SubModuleDescriptor descriptor, Void data) {
-                PackageViewDescriptor packageView = descriptor.getPackageView(FqName.ROOT);
-                if (packageView != null) {
-                    ForceResolveUtil.forceResolveAllContents(packageView.getMemberScope());
-                }
-                return null;
-            }
+        for (FqName packageFqName : packageProvider.getAllDeclaredPackages()) {
+            forceResolveAll(packageFqName);
 
-            @Override
-            public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
-                ForceResolveUtil.forceResolveAllContents(descriptor.getMemberScope());
-                return null;
-            }
+            List<PackageFragmentDescriptor> fragments = packageFragments.fun(packageFqName);
+            for (PackageFragmentDescriptor fragment : fragments) {
+                fragment.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
+                    @Override
+                    public Void visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, Void data) {
+                        ForceResolveUtil.forceResolveAllContents(descriptor);
+                        return null;
+                    }
 
-            @Override
-            public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, Void data) {
-                ForceResolveUtil.forceResolveAllContents(descriptor);
-                return null;
-            }
+                    @Override
+                    public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, Void data) {
+                        ForceResolveUtil.forceResolveAllContents(descriptor);
+                        return null;
+                    }
 
-            @Override
-            public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                ForceResolveUtil.forceResolveAllContents(descriptor);
-                return null;
-            }
+                    @Override
+                    public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
+                        ForceResolveUtil.forceResolveAllContents(descriptor);
+                        return null;
+                    }
 
-            @Override
-            public Void visitScriptDescriptor(ScriptDescriptor scriptDescriptor, Void data) {
-                ForceResolveUtil.forceResolveAllContents(scriptDescriptor);
-                return null;
+                    @Override
+                    public Void visitScriptDescriptor(ScriptDescriptor scriptDescriptor, Void data) {
+                        ForceResolveUtil.forceResolveAllContents(scriptDescriptor);
+                        return null;
+                    }
+                });
+
             }
-        });
+        }
     }
 }

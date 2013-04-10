@@ -103,7 +103,7 @@ public class LazyResolveTestUtil {
                 }
         );
 
-        return new LazyCodeAnalyzer(
+        LazyCodeAnalyzer analyzer = new LazyCodeAnalyzer(
                 project,
                 storageManager,
                 environment.getModuleSourcesManager(),
@@ -112,6 +112,7 @@ public class LazyResolveTestUtil {
                 Function.NULL,
                 Predicates.<FqNameUnsafe>alwaysFalse(),
                 sharedTrace);
+        return analyzer;
     }
 
     public static SubModuleDescriptor resolveLazily(TestCoreEnvironment environment) {

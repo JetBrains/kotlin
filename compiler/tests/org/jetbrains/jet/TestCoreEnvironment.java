@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
@@ -32,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.KotlinModuleManager;
 import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
+import org.jetbrains.jet.lang.resolve.MutableModuleSourcesManagerForTests;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -113,7 +116,12 @@ public class TestCoreEnvironment {
 
     @NotNull
     public Collection<JetFile> getSourceFiles() {
-        return getJetCoreEnvironment().getSourceFiles();
+        MutableModuleSourcesManagerForTests sourcesManager = (MutableModuleSourcesManagerForTests) moduleManager.getSourcesManager();
+
+        Collection<JetFile> extraFiles = sourcesManager.getExtraFiles();
+        if (extraFiles.isEmpty()) return getJetCoreEnvironment().getSourceFiles();
+
+        return Lists.newArrayList(ContainerUtil.concat(getJetCoreEnvironment().getSourceFiles(), extraFiles));
     }
 
     @Nullable

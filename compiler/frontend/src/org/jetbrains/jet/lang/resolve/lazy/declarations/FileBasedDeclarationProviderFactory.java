@@ -18,14 +18,13 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.impl.PackageIndex;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -35,13 +34,12 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.Set;
 
 public class FileBasedDeclarationProviderFactory implements DeclarationProviderFactory {
 
     private static class Index {
         private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
-        private final Set<FqName> declaredPackages = Sets.newHashSet();
+        private final PackageIndex.Builder declaredPackages = new PackageIndex.Builder();
     }
 
     private final Predicate<FqName> isPackageDeclaredExternally;
@@ -86,34 +84,22 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             }
 
             FqName packageFqName = new FqName(header.getQualifiedName());
-            addMeAndParentPackages(index, packageFqName);
             index.filesByPackage.put(packageFqName, file);
+            index.declaredPackages.addPackage(packageFqName);
         }
         return index;
     }
 
-    private static void addMeAndParentPackages(@NotNull Index index, @NotNull FqName name) {
-        index.declaredPackages.add(name);
-        if (!name.isRoot()) {
-            addMeAndParentPackages(index, name.parent());
-        }
-    }
-
     /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
-        return index.compute().declaredPackages.contains(packageFqName);
+        return index.compute().declaredPackages.getAllPackages().contains(packageFqName);
     }
 
     /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
         return isPackageDeclaredExplicitly(packageFqName) || isPackageDeclaredExternally.apply(packageFqName);
     }
 
-    /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
-        return Collections2.filter(index.compute().declaredPackages, new Predicate<FqName>() {
-            @Override
-            public boolean apply(FqName fqName) {
-                return !fqName.isRoot() && fqName.parent().equals(parent);
-            }
-        });
+    /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull FqName parent) {
+        return index.compute().declaredPackages.getSubPackagesOf(parent);
     }
 
     @Override
