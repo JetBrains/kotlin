@@ -997,7 +997,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testChangeReturnTypeWhenValueParameterListIsAbsent() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeChangeReturnTypeWhenValueParameterListIsAbsent.kt");
         }
-
+        
         @TestMetadata("beforeCompareToTypeMismatch.kt")
         public void testCompareToTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeCompareToTypeMismatch.kt");
