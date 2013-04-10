@@ -324,7 +324,7 @@ public class FunctionCodegen extends GenerationStateAware {
         iv.areturn(asmMethod.getReturnType());
     }
 
-    public static void genJetAnnotations(
+    private static void genJetAnnotations(
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable JvmMethodSignature jvmSignature,

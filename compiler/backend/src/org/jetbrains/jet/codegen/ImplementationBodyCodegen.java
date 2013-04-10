@@ -671,29 +671,32 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
+    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {
         JetType returnType = function.getReturnType();
         assert returnType != null : "Return type of component function should not be null: " + function;
-        Type componentType = typeMapper.mapReturnType(returnType);
+        final Type componentType = typeMapper.mapReturnType(returnType);
 
-        String desc = "()" + componentType.getDescriptor();
-        MethodVisitor mv = v.newMethod(myClass,
-                                       AsmUtil.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
-                                       function.getName().getName(),
-                                       desc,
-                                       null, null);
+        JvmMethodSignature signature = typeMapper.mapSignature(function.getName(), function);
 
-        FunctionCodegen.genJetAnnotations(state, function, null, null, mv);
-
-        mv.visitCode();
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        if (!componentType.equals(Type.VOID_TYPE)) {
-            iv.load(0, classAsmType);
-            iv.invokevirtual(classAsmType.getInternalName(), PropertyCodegen.getterName(parameter.getName()), desc);
-        }
-        iv.areturn(componentType);
-
-        FunctionCodegen.endVisit(mv, function.getName().getName(), myClass);
+        FunctionCodegen fc = new FunctionCodegen(context, v, state);
+        fc.generateMethod(myClass, signature, true, null, function, new FunctionGenerationStrategy() {
+            @Override
+            public void generateBody(
+                    @NotNull MethodVisitor mv,
+                    @NotNull JvmMethodSignature signature,
+                    @NotNull MethodContext context,
+                    @NotNull Collection<String> localVariableNames,
+                    @NotNull FrameMap frameMap
+            ) {
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                if (!componentType.equals(Type.VOID_TYPE)) {
+                    iv.load(0, classAsmType);
+                    String desc = "()" + componentType.getDescriptor();
+                    iv.invokevirtual(classAsmType.getInternalName(), PropertyCodegen.getterName(parameter.getName()), desc);
+                }
+                iv.areturn(componentType);
+            }
+        });
     }
 
     private void generateCopyFunction(@NotNull final FunctionDescriptor function) {
