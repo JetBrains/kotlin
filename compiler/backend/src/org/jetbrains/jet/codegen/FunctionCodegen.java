@@ -113,7 +113,7 @@ public class FunctionCodegen extends GenerationStateAware {
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;
 
         if (needJetAnnotations) {
-            genJetAnnotations(state, functionDescriptor, jvmSignature, propertyTypeSignature, mv);
+            genJetAnnotations(mv, functionDescriptor, propertyTypeSignature);
         }
 
         if (isAbstract(functionDescriptor, context.getContextKind())) return;
@@ -324,33 +324,24 @@ public class FunctionCodegen extends GenerationStateAware {
         iv.areturn(asmMethod.getReturnType());
     }
 
-    private static void genJetAnnotations(
-            @NotNull GenerationState state,
+    private void genJetAnnotations(
+            @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
-            @Nullable JvmMethodSignature jvmSignature,
-            @Nullable String propertyTypeSignature,
-            MethodVisitor mv
+            @Nullable String propertyTypeSignature
     ) {
-        if (jvmSignature == null) {
-            jvmSignature = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, false, false, OwnerKind.IMPLEMENTATION).getSignature();
-        }
+        JvmMethodSignature jvmSignature =
+                typeMapper.mapToCallableMethod(functionDescriptor, false, false, false, OwnerKind.IMPLEMENTATION).getSignature();
 
-        List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
-        Modality modality = functionDescriptor.getModality();
-        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
-
-        int start = 0;
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
             assert propertyTypeSignature != null;
             PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter(),
-                                                          ((PropertyAccessorDescriptor) functionDescriptor)
-                                                                  .getCorrespondingProperty(),
-                                                          functionDescriptor.getVisibility());
+                    ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty(), functionDescriptor.getVisibility());
         }
         else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
             if (propertyTypeSignature != null) {
                 throw new IllegalStateException();
             }
+            Modality modality = functionDescriptor.getModality();
             JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
             int kotlinFlags = getFlagsForVisibility(functionDescriptor.getVisibility());
             if (isInterface(functionDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
@@ -359,7 +350,6 @@ public class FunctionCodegen extends GenerationStateAware {
                                 : JvmStdlibNames.FLAG_FORCE_OPEN_BIT;
             }
             kotlinFlags |= DescriptorKindUtils.kindToFlags(functionDescriptor.getKind());
-            //noinspection ConstantConditions
             aw.writeFlags(kotlinFlags);
             if (jvmSignature.getKotlinTypeParameter() != null) {
                 aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
@@ -374,25 +364,25 @@ public class FunctionCodegen extends GenerationStateAware {
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
         assert kotlinParameterTypes != null;
 
+        int start = 0;
+        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         if (receiverParameter != null) {
             JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, start++);
             av.writeName(JvmAbi.RECEIVER_PARAMETER);
             av.writeReceiver();
-            if (kotlinParameterTypes.get(0) != null) {
-                av.writeType(kotlinParameterTypes.get(0).getKotlinSignature());
-            }
+            av.writeType(kotlinParameterTypes.get(0).getKotlinSignature());
             av.visitEnd();
         }
-        for (int i = 0; i != paramDescrs.size(); ++i) {
-            ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-            AnnotationCodegen.forParameter(i, mv, state.getTypeMapper()).genAnnotations(parameterDescriptor);
+
+        List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
+        for (int i = 0; i != valueParameters.size(); ++i) {
+            ValueParameterDescriptor parameterDescriptor = valueParameters.get(i);
+            AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameterDescriptor);
             JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
             av.writeName(parameterDescriptor.getName().getName());
             av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
             av.writeVararg(parameterDescriptor.getVarargElementType() != null);
-            if (kotlinParameterTypes.get(i) != null) {
-                av.writeType(kotlinParameterTypes.get(i + start).getKotlinSignature());
-            }
+            av.writeType(kotlinParameterTypes.get(i + start).getKotlinSignature());
             av.visitEnd();
         }
     }
