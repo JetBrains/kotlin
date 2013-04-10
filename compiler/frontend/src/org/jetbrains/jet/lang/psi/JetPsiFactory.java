@@ -272,4 +272,40 @@ public class JetPsiFactory {
     public static JetExpressionCodeFragment createExpressionCodeFragment(Project project, String text, PsiElement context) {
         return new JetExpressionCodeFragmentImpl(project, "fragment.kt", text, context);
     }
+
+    public static JetReturnExpression createReturn(Project project, @NotNull String text) {
+        return (JetReturnExpression) createExpression(project, "return " + text);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static JetReturnExpression createReturn(Project project, @NotNull JetExpression expression) {
+        JetReturnExpression returnExpr = createReturn(project, "_");
+
+        assert returnExpr.getReturnedExpression() != null;
+
+        return (JetReturnExpression)returnExpr.getReturnedExpression().replace(expression).getParent();
+    }
+
+    public static JetIfExpression createIf(Project project, @NotNull String condText, @NotNull String thenText, @Nullable String elseText) {
+        return (JetIfExpression) createExpression(project, "if (" + condText + ") " + thenText + (elseText != null ? " else " + elseText : ""));
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static JetIfExpression createIf(Project project, @NotNull JetExpression condition, @NotNull JetExpression thenExpr, @Nullable JetExpression elseExpr) {
+        JetIfExpression ifExpr = createIf(project, "_", "_", elseExpr != null ? "_" : null);
+
+        assert ifExpr.getCondition() != null;
+        assert ifExpr.getThen() != null;
+        if (elseExpr != null) {
+            assert ifExpr.getElse() != null;
+        }
+
+        ifExpr = (JetIfExpression)ifExpr.getCondition().replace(condition).getParent().getParent();
+        ifExpr = (JetIfExpression)ifExpr.getThen().replace(thenExpr).getParent().getParent();
+        if (elseExpr != null) {
+            ifExpr = (JetIfExpression)ifExpr.getElse().replace(elseExpr).getParent().getParent();
+        }
+
+        return ifExpr;
+    }
 }
