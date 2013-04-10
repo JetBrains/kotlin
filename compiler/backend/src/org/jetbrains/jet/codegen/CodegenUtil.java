@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,6 @@ import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -173,16 +171,6 @@ public class CodegenUtil {
         return stack.empty() ? null : stack.peek();
     }
 
-    @Nullable
-    public static String getLocalNameForObject(JetObjectDeclaration object) {
-        PsiElement parent = object.getParent();
-        if (parent instanceof JetClassObject) {
-            return JvmAbi.CLASS_OBJECT_CLASS_NAME;
-        }
-
-        return null;
-    }
-
     public static JetType getSuperClass(ClassDescriptor classDescriptor) {
         List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
         for (ClassDescriptor descriptor : superclassDescriptors) {
@@ -199,12 +187,6 @@ public class CodegenUtil {
             member = (T) member.getOverriddenDescriptors().iterator().next();
         }
         return member;
-    }
-
-    public static void checkMustGenerateCode(CallableMemberDescriptor descriptor) {
-        if (descriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-            throw new IllegalStateException("Must not generate code for descriptor: " + descriptor);
-        }
     }
 
     @Nullable

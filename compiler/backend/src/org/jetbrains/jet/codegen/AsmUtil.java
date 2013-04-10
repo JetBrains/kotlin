@@ -462,10 +462,6 @@ public class AsmUtil {
         return expectedType;
     }
 
-    public static void genStubThrow(MethodVisitor mv) {
-        genThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
-    }
-
     public static void genStubCode(MethodVisitor mv) {
         genMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
     }
