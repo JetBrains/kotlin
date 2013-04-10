@@ -51,7 +51,7 @@ fun blockAndAndMismatch1() : Int {
   return <!TYPE_MISMATCH!>true && false<!>
 }
 fun blockAndAndMismatch2() : Int {
-  <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) && (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
+  <!UNREACHABLE_CODE!><!USELESS_PARENTHESES!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>)<!> && <!USELESS_PARENTHESES!>(return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!><!>
 }
 
 fun blockAndAndMismatch3() : Int {
@@ -61,7 +61,7 @@ fun blockAndAndMismatch4() : Int {
   return <!TYPE_MISMATCH!>true || false<!>
 }
 fun blockAndAndMismatch5() : Int {
-  <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) || (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
+  <!UNREACHABLE_CODE!><!USELESS_PARENTHESES!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>)<!> || <!USELESS_PARENTHESES!>(return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!><!>
 }
 fun blockReturnValueTypeMatch1() : Int {
   return if (1 > 2) <!ERROR_COMPILE_TIME_VALUE!>1.0<!> else <!ERROR_COMPILE_TIME_VALUE!>2.0<!>

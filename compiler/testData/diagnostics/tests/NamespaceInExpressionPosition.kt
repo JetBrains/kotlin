@@ -20,7 +20,7 @@ fun main(args : Array<String>) {
     java.lang.<!NO_CLASS_OBJECT!>System<!>!!
     <!NO_CLASS_OBJECT!>System<!> is Int
     <!INVISIBLE_MEMBER!>System<!>()
-    (<!NO_CLASS_OBJECT!>System<!>)
+    <!USELESS_PARENTHESES!>(<!NO_CLASS_OBJECT!>System<!>)<!>
     @foo <!NO_CLASS_OBJECT!>System<!>
     null in <!NO_CLASS_OBJECT!>System<!>
 }

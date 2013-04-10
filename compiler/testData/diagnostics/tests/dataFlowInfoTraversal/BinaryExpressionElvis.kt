@@ -1,7 +1,7 @@
 fun foo(x: Int?): Int = x!!
 
 fun elvis(x: Number?): Int {
-    val result = (x as Int?) ?: foo(x)
+    val result = x as Int? ?: foo(x)
     x : Int?
     return result
 }

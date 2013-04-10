@@ -22,7 +22,7 @@ fun ifThenElse(x: Int?) {
 }
 
 fun ifIs(x: Int?, cond: Boolean) {
-    if ((x is Int) == cond) {
+    if (x is Int == cond) {
         <!TYPE_MISMATCH!>x<!> : Int
     }
     <!TYPE_MISMATCH!>x<!> : Int

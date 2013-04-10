@@ -20,7 +20,10 @@ import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -208,6 +211,61 @@ public class JetExpressionParsing extends AbstractJetParsing {
         public final TokenSet getOperations() {
             return operations;
         }
+    }
+
+    private static IElementType getOperation(@NotNull JetExpression expression) {
+        if (expression instanceof JetQualifiedExpression) {
+            return ((JetQualifiedExpression) expression).getOperationSign();
+        }
+        else if (expression instanceof JetOperationExpression) {
+            return ((JetOperationExpression) expression).getOperationReference().getReferencedNameElementType();
+        }
+        return null;
+    }
+
+    private static int getPrecedenceOfOperation(@NotNull JetExpression expression, @NotNull IElementType operation) {
+        if (expression instanceof JetPostfixExpression) return 0;
+        if (expression instanceof JetQualifiedExpression) return 0;
+        if (expression instanceof JetPrefixExpression) return 1;
+
+        for (Precedence precedence : Precedence.values()) {
+            if (precedence != Precedence.PREFIX && precedence != Precedence.POSTFIX && precedence.getOperations().contains(operation)) {
+                return precedence.ordinal();
+            }
+        }
+        throw new IllegalStateException("Unknown operation");
+    }
+
+    public static boolean areParenthesesUseless(@NotNull JetParenthesizedExpression expression) {
+        JetExpression innerExpression = expression.getExpression();
+        JetExpression parentExpression = PsiTreeUtil.getParentOfType(expression, JetExpression.class, true);
+        if (innerExpression == null || parentExpression == null) return true;
+
+        IElementType innerOperation = getOperation(innerExpression);
+        IElementType parentOperation = getOperation(parentExpression);
+
+        // 'return (@label{...})' case
+        if (parentExpression instanceof JetReturnExpression && innerOperation == JetTokens.LABEL_IDENTIFIER) {
+            return false;
+        }
+
+        // '(x: Int) < y' case
+        if (innerExpression instanceof JetBinaryExpressionWithTypeRHS && parentOperation == JetTokens.LT) {
+            return false;
+        }
+
+        // associative operations
+        if (innerOperation == parentOperation && (innerOperation == JetTokens.OROR || innerOperation == JetTokens.ANDAND)) {
+            return true;
+        }
+
+        if (innerOperation == null) return true;
+        if (parentExpression instanceof JetArrayAccessExpression) return false;
+        if (parentOperation == null) return true;
+
+        int innerPrecedence = getPrecedenceOfOperation(innerExpression, innerOperation);
+        int parentPrecedence = getPrecedenceOfOperation(parentExpression, parentOperation);
+        return innerPrecedence < parentPrecedence;
     }
 
     public static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(DOT, SAFE_ACCESS);

@@ -509,6 +509,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/UnusedVariables.kt");
         }
         
+        @TestMetadata("UselessParentheses.kt")
+        public void testUselessParentheses() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/UselessParentheses.kt");
+        }
+        
         @TestMetadata("ValAndFunOverrideCompatibilityClash.kt")
         public void testValAndFunOverrideCompatibilityClash() throws Exception {
             doTest("compiler/testData/diagnostics/tests/ValAndFunOverrideCompatibilityClash.kt");

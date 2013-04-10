@@ -13,7 +13,7 @@ fun box() : Boolean {
     var c = A()
     val d = c;
     c %= A();
-    return (c != d) && (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>c.p = "yeah"<!>)
+    return c != d && (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>c.p = "yeah"<!>)
 }
 
 

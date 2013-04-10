@@ -126,7 +126,7 @@ fun t8() : Int {
 }
 
 fun blockAndAndMismatch() : Boolean {
-  <error>(return true) || (return false)</error>
+  <error><warning>(return true)</warning> || (return false)</error>
   <error>return true</error>
 }
 

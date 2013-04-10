@@ -127,7 +127,7 @@ fun t8() : Int {
 }
 
 fun blockAndAndMismatch() : Boolean {
-  <!UNREACHABLE_CODE!>(return true) || (return false)<!>
+    <!UNREACHABLE_CODE!><!USELESS_PARENTHESES!>(return true)<!> || <!USELESS_PARENTHESES!>(return false)<!><!>
   <!UNREACHABLE_CODE!>return true<!>
 }
 

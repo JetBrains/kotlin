@@ -33,8 +33,8 @@ fun main(args : Array<String>) {
 
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS, DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED!>{}<!>
-    (foo2()){}
-    (foo2()){<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }
+    <!USELESS_PARENTHESES!>(foo2())<!>{}
+    <!USELESS_PARENTHESES!>(foo2())<!>{<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }
     foo2()({<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>x<!> -> })
 
     val a = fooT1(1)()
@@ -57,8 +57,8 @@ fun main1() {
     {(x : Int) -> x}(1)
     1.{Int.(x : Int) -> x}(1)
     @l{1}()
-    1.({Int.() -> 1})()
-    1.(f())()
+    1.<!USELESS_PARENTHESES!>({Int.() -> 1})<!>()
+    1.<!USELESS_PARENTHESES!>(f())<!>()
     1.if(true){f()}else{f()}()
     1.if(true){Int.() -> 1}else{f()}()
     1.if(true){Int.() -> 1}else{Int.() -> 1}()
