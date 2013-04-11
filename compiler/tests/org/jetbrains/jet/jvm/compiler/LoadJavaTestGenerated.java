@@ -1172,7 +1172,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledJava/singleAbstractMethod")
-        @InnerTestClasses({})
         public static class SingleAbstractMethod extends AbstractLoadJavaTest {
             public void testAllFilesPresentInSingleAbstractMethod() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/singleAbstractMethod"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1218,11 +1217,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
             }
             
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("SingleAbstractMethod");
-                suite.addTestSuite(SingleAbstractMethod.class);
-                return suite;
-            }
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledJava/static")
@@ -1275,7 +1269,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             suite.addTestSuite(ProtectedPackage.class);
             suite.addTestSuite(ProtectedStatic.class);
             suite.addTestSuite(SignaturePropagation.class);
-            suite.addTest(SingleAbstractMethod.innerSuite());
+            suite.addTestSuite(SingleAbstractMethod.class);
             suite.addTestSuite(Static.class);
             return suite;
         }
