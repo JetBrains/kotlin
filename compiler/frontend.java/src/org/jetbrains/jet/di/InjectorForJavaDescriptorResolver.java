@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDependencyByQualifiedNameResolver
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
@@ -39,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassObjectResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -57,6 +57,7 @@ public class InjectorForJavaDescriptorResolver {
     private JavaDescriptorResolver javaDescriptorResolver;
     private JavaClassResolver javaClassResolver;
     private PsiClassFinderImpl psiClassFinder;
+    private JavaPackageFragmentProvider javaPackageFragmentProvider;
     private JavaConstructorResolver javaConstructorResolver;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaValueParameterResolver javaValueParameterResolver;
@@ -69,7 +70,6 @@ public class InjectorForJavaDescriptorResolver {
     private JavaClassObjectResolver javaClassObjectResolver;
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
     private JavaSupertypeResolver javaSupertypeResolver;
-    private JavaPackageFragmentProvider javaPackageFragmentProvider;
     
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,
@@ -90,6 +90,8 @@ public class InjectorForJavaDescriptorResolver {
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.javaClassResolver = new JavaClassResolver();
         this.psiClassFinder = new PsiClassFinderImpl(getProject(), globalSearchScope);
+        this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
+        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider(getBindingTrace(), storageManager, psiDeclarationProviderFactory, getJavaDescriptorResolver(), getPsiClassFinder(), subModuleDescriptor);
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
@@ -100,9 +102,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaInnerClassResolver = new JavaInnerClassResolver();
         this.javaPropertyResolver = new JavaPropertyResolver();
         this.javaClassObjectResolver = new JavaClassObjectResolver();
-        this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
         this.javaSupertypeResolver = new JavaSupertypeResolver();
-        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider(getBindingTrace(), storageManager, psiDeclarationProviderFactory, getJavaDescriptorResolver(), getPsiClassFinder(), subModuleDescriptor);
 
         this.javaDescriptorResolver.setClassResolutionFacade(javaClassResolutionFacade);
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
@@ -190,6 +190,10 @@ public class InjectorForJavaDescriptorResolver {
     
     public PsiClassFinderImpl getPsiClassFinder() {
         return this.psiClassFinder;
+    }
+    
+    public JavaPackageFragmentProvider getJavaPackageFragmentProvider() {
+        return this.javaPackageFragmentProvider;
     }
     
 }

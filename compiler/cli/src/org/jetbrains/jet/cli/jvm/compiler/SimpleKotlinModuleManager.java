@@ -35,8 +35,6 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaClassResolutionFacadeImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -95,16 +93,9 @@ public class SimpleKotlinModuleManager implements KotlinModuleManager {
         InjectorForJavaDescriptorResolver drInjector = new InjectorForJavaDescriptorResolver(
                 project, trace, classResolutionFacade, storageManager, subModule, GlobalSearchScope.allScope(project)
         );
-        PsiClassFinderImpl psiClassFinder = drInjector.getPsiClassFinder();
 
-        JavaPackageFragmentProvider javaPackageFragmentProvider = new JavaPackageFragmentProvider(
-                trace,
-                new LockBasedStorageManager(),
-                new PsiDeclarationProviderFactory(psiClassFinder),
-                drInjector.getJavaDescriptorResolver(),
-                psiClassFinder,
-                subModule
-        );
+        JavaPackageFragmentProvider javaPackageFragmentProvider = drInjector.getJavaPackageFragmentProvider();
+
         subModule.addPackageFragmentProvider(javaPackageFragmentProvider);
         classResolutionFacade.addPackageFragmentProvider(javaPackageFragmentProvider);
 

@@ -120,6 +120,7 @@ public class GenerateInjectors {
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addPublicField(JavaClassResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
+        generator.addPublicField(JavaPackageFragmentProvider.class);
 
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaDescriptorResolver",
                            GenerateInjectors.class);
