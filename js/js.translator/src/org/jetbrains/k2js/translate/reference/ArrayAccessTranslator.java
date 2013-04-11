@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -88,7 +89,9 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
 
     @NotNull
     protected JsExpression translateArrayExpression() {
-        return Translation.translateAsExpression(expression.getArrayExpression(), context());
+        JetExpression arrayExpression = expression.getArrayExpression();
+        assert arrayExpression != null : "Code with parsing errors shouldn't be translated";
+        return Translation.translateAsExpression(arrayExpression, context());
     }
 
     @NotNull

@@ -61,25 +61,24 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
         return visitor.visitArrayAccessExpression(this, data);
     }
 
-    @NotNull
+    @Nullable @IfNotParsed
     public JetExpression getArrayExpression() {
-        JetExpression baseExpression = findChildByClass(JetExpression.class);
-        assert baseExpression != null;
-        return baseExpression;
+        return findChildByClass(JetExpression.class);
     }
 
     @NotNull
     public List<JetExpression> getIndexExpressions() {
-        PsiElement container = getIndicesNode();
-        if (container == null) return Collections.emptyList();
-        return PsiTreeUtil.getChildrenOfTypeAsList(container, JetExpression.class);
+        return PsiTreeUtil.getChildrenOfTypeAsList(getIndicesNode(), JetExpression.class);
     }
 
     @NotNull
     public JetContainerNode getIndicesNode() {
-        return (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
+        JetContainerNode indicesNode = (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
+        assert indicesNode != null : "Can't be null because of parser";
+        return indicesNode;
     }
-    
+
+    @NotNull
     public List<TextRange> getBracketRanges() {
         PsiElement lBracket = getIndicesNode().findChildByType(JetTokens.LBRACKET);
         PsiElement rBracket = getIndicesNode().findChildByType(JetTokens.RBRACKET);

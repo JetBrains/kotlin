@@ -1982,6 +1982,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("arrayExpression.kt")
+                public void testArrayExpression() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/arrayExpression.kt");
+                }
+                
                 @TestMetadata("checkBackingFieldException.kt")
                 public void testCheckBackingFieldException() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/checkBackingFieldException.kt");

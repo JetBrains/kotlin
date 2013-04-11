@@ -719,14 +719,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
-    public static void checkLValue(BindingTrace trace, JetExpression expression) {
+    public static void checkLValue(@NotNull BindingTrace trace, @NotNull JetExpression expression) {
         checkLValue(trace, expression, false);
     }
 
-    private static void checkLValue(BindingTrace trace, JetExpression expressionWithParenthesis, boolean canBeThis) {
+    private static void checkLValue(@NotNull BindingTrace trace, @NotNull JetExpression expressionWithParenthesis, boolean canBeThis) {
         JetExpression expression = JetPsiUtil.deparenthesizeWithNoTypeResolution(expressionWithParenthesis);
         if (expression instanceof JetArrayAccessExpression) {
-            checkLValue(trace, ((JetArrayAccessExpression) expression).getArrayExpression(), true);
+            JetExpression arrayExpression = ((JetArrayAccessExpression) expression).getArrayExpression();
+            if (arrayExpression != null) {
+                checkLValue(trace, arrayExpression, true);
+            }
             return;
         }
         if (canBeThis && expression instanceof JetThisExpression) return;
@@ -1112,13 +1115,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                     @NotNull ExpressionTypingContext oldContext,
                                                     @NotNull BindingTrace traceForResolveResult,
                                                     boolean isGet) {
-        JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayAccessExpression.getArrayExpression(), oldContext);
+        JetExpression arrayExpression = arrayAccessExpression.getArrayExpression();
+        if (arrayExpression == null) return JetTypeInfo.create(null, oldContext.dataFlowInfo);
+
+        JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayExpression, oldContext);
         JetType arrayType = arrayTypeInfo.getType();
         if (arrayType == null) return arrayTypeInfo;
 
         DataFlowInfo dataFlowInfo = arrayTypeInfo.getDataFlowInfo();
         ExpressionTypingContext context = oldContext.replaceDataFlowInfo(dataFlowInfo);
-        ExpressionReceiver receiver = new ExpressionReceiver(arrayAccessExpression.getArrayExpression(), arrayType);
+        ExpressionReceiver receiver = new ExpressionReceiver(arrayExpression, arrayType);
         if (!isGet) assert rightHandSide != null;
 
         OverloadResolutionResults<FunctionDescriptor> functionResults = context.resolveCallWithGivenName(
