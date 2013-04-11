@@ -209,9 +209,7 @@ public class SignaturesPropagationData {
         Multimap<FqName, Pair<FunctionDescriptor, PsiMethod>> superclassToFunctions =
                 getSuperclassToFunctionsMultimap(method, trace.getBindingContext(), containingClass);
 
-        for (HierarchicalMethodSignature superSignature : method.getPsiMethod().getHierarchicalMethodSignature().getSuperSignatures()) {
-            PsiMethod superMethod = superSignature.getMethod();
-
+        for (PsiMethod superMethod : PropagationHeuristics.getSuperMethods(method.getPsiMethod())) {
             PsiClass psiClass = superMethod.getContainingClass();
             assert psiClass != null;
             String classFqNameString = psiClass.getQualifiedName();

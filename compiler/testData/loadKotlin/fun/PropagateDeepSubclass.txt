@@ -1,0 +1,18 @@
+package test
+
+internal trait A {
+    internal open fun bar() : jet.Unit
+    internal open fun foo() : jet.Unit
+}
+
+internal open class B : test.A {
+    /*primary*/ public constructor B()
+    internal open override /*1*/ /*fake_override*/ fun bar() : jet.Unit
+    internal open override /*1*/ /*fake_override*/ fun foo() : jet.Unit
+}
+
+internal final class C : test.B {
+    /*primary*/ public constructor C()
+    internal open override /*1*/ fun bar() : jet.Unit
+    internal open override /*1*/ /*fake_override*/ fun foo() : jet.Unit
+}

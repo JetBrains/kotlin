@@ -409,6 +409,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("PropagateDeepSubclass.kt")
+        public void testPropagateDeepSubclass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/PropagateDeepSubclass.kt");
+        }
+        
         @TestMetadata("PropagateSubclassOfComparable.kt")
         public void testPropagateSubclassOfComparable() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/fun/PropagateSubclassOfComparable.kt");
