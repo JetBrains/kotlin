@@ -16,23 +16,15 @@
 
 package org.jetbrains.jet.completion;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
-
-import java.io.File;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 public abstract class AbstractKeywordCompletionTest extends JetFixtureCompletionBaseTestCase {
     @Override
-    public ExpectedCompletionUtils.Platform getPlatform() {
-        return ExpectedCompletionUtils.Platform.JAVA;
+    public TargetPlatform getPlatform() {
+        return TargetPlatform.JVM;
     }
 
     @NotNull

@@ -19,6 +19,7 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetStdJSProjectDescriptor;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 public abstract class AbstractJetJSCompletionTest extends JetFixtureCompletionBaseTestCase {
     @NotNull
@@ -28,7 +29,7 @@ public abstract class AbstractJetJSCompletionTest extends JetFixtureCompletionBa
     }
 
     @Override
-    public ExpectedCompletionUtils.Platform getPlatform() {
-        return ExpectedCompletionUtils.Platform.JS;
+    public TargetPlatform getPlatform() {
+        return TargetPlatform.JS;
     }
 }

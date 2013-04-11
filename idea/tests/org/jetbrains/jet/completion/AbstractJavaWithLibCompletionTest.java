@@ -29,6 +29,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
@@ -79,7 +80,7 @@ public abstract class AbstractJavaWithLibCompletionTest extends JetFixtureComple
     }
 
     @Override
-    public ExpectedCompletionUtils.Platform getPlatform() {
-        return ExpectedCompletionUtils.Platform.JAVA;
+    public TargetPlatform getPlatform() {
+        return TargetPlatform.JVM;
     }
 }

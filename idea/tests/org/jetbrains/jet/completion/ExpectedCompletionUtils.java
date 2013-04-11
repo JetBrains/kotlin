@@ -27,6 +27,7 @@ import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,12 +41,6 @@ import java.util.regex.Pattern;
  */
 public class ExpectedCompletionUtils {
     private ExpectedCompletionUtils() {
-    }
-
-    enum Platform {
-        JAVA,
-        JS,
-        ALL
     }
 
     public static class CompletionProposal {
@@ -97,6 +92,8 @@ public class ExpectedCompletionUtils {
             return result.toString();
         }
     }
+
+    private static final String UNSUPPORTED_PLATFORM_MESSAGE = String.format("Only %s and %s platforms are supported", TargetPlatform.JVM, TargetPlatform.JS);
     
     private static final String EXIST_LINE_PREFIX = "EXIST:";
 
@@ -128,41 +125,45 @@ public class ExpectedCompletionUtils {
             WITH_ORDER_PREFIX);
 
     @NotNull
-    public static CompletionProposal[] itemsShouldExist(String fileText, Platform platform) {
-        switch (platform) {
-            case ALL:
-                return processProposalAssertions(fileText, EXIST_LINE_PREFIX);
-            case JAVA:
-                return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX);
-            case JS:
-                return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX);
+    public static CompletionProposal[] itemsShouldExist(String fileText, @Nullable TargetPlatform platform) {
+        if (platform == null) {
+            return processProposalAssertions(fileText, EXIST_LINE_PREFIX);
         }
-
-        throw new IllegalArgumentException("platform");
+        else if (platform == TargetPlatform.JVM) {
+            return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX);
+        }
+        else if (platform == TargetPlatform.JS) {
+            return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX);
+        }
+        else {
+            throw new IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE);
+        }
     }
 
     @NotNull
-    public static CompletionProposal[] itemsShouldAbsent(String fileText, Platform platform) {
-        switch (platform) {
-            case ALL:
-                return processProposalAssertions(fileText, ABSENT_LINE_PREFIX);
-            case JAVA:
-                return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX);
-            case JS:
-                return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX);
+    public static CompletionProposal[] itemsShouldAbsent(String fileText, @Nullable TargetPlatform platform) {
+        if (platform == null) {
+            return processProposalAssertions(fileText, ABSENT_LINE_PREFIX);
         }
-
-        throw new IllegalArgumentException("platform");
+        else if (platform == TargetPlatform.JVM) {
+            return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX);
+        }
+        else if (platform == TargetPlatform.JS) {
+            return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX);
+        }
+        else {
+            throw new IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE);
+        }
     }
 
     @NotNull
     public static CompletionProposal[] itemsShouldExist(String fileText) {
-        return itemsShouldExist(fileText, Platform.ALL);
+        return itemsShouldExist(fileText, null);
     }
 
     @NotNull
     public static CompletionProposal[] itemsShouldAbsent(String fileText) {
-        return itemsShouldAbsent(fileText, Platform.ALL);
+        return itemsShouldAbsent(fileText, null);
     }
 
     public static CompletionProposal[] processProposalAssertions(String fileText, String... prefixes) {
@@ -180,21 +181,23 @@ public class ExpectedCompletionUtils {
 
     @Nullable
     public static Integer getExpectedNumber(String fileText) {
-        return getExpectedNumber(fileText, Platform.ALL);
+        return getExpectedNumber(fileText, null);
     }
 
     @Nullable
-    public static Integer getExpectedNumber(String fileText, Platform platform) {
-        switch (platform) {
-            case ALL:
-                return InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX);
-            case JAVA:
-                return getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX);
-            case JS:
-                return getPlatformExpectedNumber(fileText, NUMBER_JS_LINE_PREFIX);
+    public static Integer getExpectedNumber(String fileText, @Nullable TargetPlatform platform) {
+        if (platform == null) {
+            return InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX);
         }
-
-        throw new IllegalArgumentException("platform");
+        else if (platform == TargetPlatform.JVM) {
+            return getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX);
+        }
+        else if (platform == TargetPlatform.JS) {
+            return getPlatformExpectedNumber(fileText, NUMBER_JS_LINE_PREFIX);
+        }
+        else {
+            throw new IllegalArgumentException(UNSUPPORTED_PLATFORM_MESSAGE);
+        }
     }
 
     @Nullable

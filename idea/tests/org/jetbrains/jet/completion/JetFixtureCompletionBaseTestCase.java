@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightFixtureTestCase {
     private boolean autocompleteSetting;
@@ -39,7 +40,7 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
         super.tearDown();
     }
 
-    public abstract ExpectedCompletionUtils.Platform getPlatform();
+    public abstract TargetPlatform getPlatform();
 
     public void doTest(String testPath) {
         myFixture.configureByFile(testPath);
