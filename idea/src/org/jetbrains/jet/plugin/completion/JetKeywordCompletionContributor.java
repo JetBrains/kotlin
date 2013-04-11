@@ -232,8 +232,11 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     public static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
 
         private final Collection<LookupElement> elements;
+        private final String debugName;
 
-        public KeywordsCompletionProvider(String... keywords) {
+        public KeywordsCompletionProvider(String debugName, String... keywords) {
+            this.debugName = debugName;
+
             List<String> elementsList = Lists.newArrayList(keywords);
             elements = Collections2.transform(elementsList, new Function<String, LookupElement>() {
                 @Override
@@ -258,10 +261,15 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                       @NotNull CompletionResultSet result) {
             result.withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements);
         }
+
+        @Override
+        public String toString() {
+            return debugName;
+        }
     }
 
     public JetKeywordCompletionContributor() {
-        registerScopeKeywordsCompletion(new InTopFilter(),
+        registerScopeKeywordsCompletion(InTopFilter.class.getName(), new InTopFilter(),
                                         ABSTRACT_KEYWORD,
                                         FINAL_KEYWORD, GET_KEYWORD,
                                         IMPORT_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
@@ -269,15 +277,15 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
                                         TYPE_KEYWORD);
 
-        // In modifier list but not in parameters
         registerScopeKeywordsCompletion(
+                "In modifier list but not in parameters",
                 new AndFilter(
                         new SuperParentFilter(new ClassFilter(JetModifierList.class)),
                         new NotFilter(new InTypeParameterFirstChildFilter())),
                 ABSTRACT_KEYWORD, FINAL_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
                 OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InClassBodyFilter(),
+        registerScopeKeywordsCompletion(InClassBodyFilter.class.getName(), new InClassBodyFilter(),
                                         ABSTRACT_KEYWORD,
                                         FINAL_KEYWORD, GET_KEYWORD,
                                         INLINE_KEYWORD, INTERNAL_KEYWORD,
@@ -285,7 +293,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
                                         TYPE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
+        registerScopeKeywordsCompletion(InNonClassBlockFilter.class.getName(), new InNonClassBlockFilter(),
                                         AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
                                         CATCH_KEYWORD, CONTINUE_KEYWORD,
                                         ELSE_KEYWORD,
@@ -300,50 +308,51 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         TYPE_KEYWORD,
                                         VARARG_KEYWORD, WHERE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InPropertyBodyFilter(),
+        registerScopeKeywordsCompletion(InPropertyBodyFilter.class.getName(), new InPropertyBodyFilter(),
                                         ELSE_KEYWORD, FALSE_KEYWORD,
                                         NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InTypeParameterFirstChildFilter(), false, IN_KEYWORD, OUT_KEYWORD);
+        registerScopeKeywordsCompletion(InTypeParameterFirstChildFilter.class.getName(), new InTypeParameterFirstChildFilter(), false,
+                                        IN_KEYWORD, OUT_KEYWORD);
 
         // templates
-        registerScopeKeywordsCompletion(new InWhenFilter(),
+        registerScopeKeywordsCompletion(InWhenFilter.class.getName(), new InWhenFilter(),
                                         WHEN_ENTRY_TEMPLATE);
-        registerScopeKeywordsCompletion(new InTopFilter(),
+        registerScopeKeywordsCompletion(InTopFilter.class.getName(), new InTopFilter(),
                                         FUN_TEMPLATE, VAL_WITH_TYPE_TEMPLATE, VAL_WITH_GETTER_TEMPLATE,
                                         VAR_WITH_TYPE_TEMPLATE, VAR_WITH_GETTER_AND_SETTER_TEMPLATE,
                                         TRAIT_TEMPLATE, CLASS_TEMPLATE, ENUM_CLASS_TEMPLATE);
-        registerScopeKeywordsCompletion(new InClassBodyFilter(),
+        registerScopeKeywordsCompletion(InClassBodyFilter.class.getName(), new InClassBodyFilter(),
                                         FUN_TEMPLATE, VAL_WITH_TYPE_TEMPLATE, VAL_WITH_GETTER_TEMPLATE,
                                         VAR_WITH_TYPE_TEMPLATE, VAR_WITH_GETTER_AND_SETTER_TEMPLATE,
                                         TRAIT_TEMPLATE, CLASS_TEMPLATE, CLASS_OBJECT_TEMPLATE,
                                         ENUM_CLASS_TEMPLATE);
-        registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
+        registerScopeKeywordsCompletion(InNonClassBlockFilter.class.getName(), new InNonClassBlockFilter(),
                                         IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONE_LINE_TEMPLATE,
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
                                         TRAIT_TEMPLATE, CLASS_TEMPLATE, FOR_TEMPLATE,
                                         WHEN_TEMPLATE, WHILE_TEMPLATE, DO_WHILE_TEMPLATE, ENUM_CLASS_TEMPLATE);
-        registerScopeKeywordsCompletion(new InPropertyBodyFilter(),
+        registerScopeKeywordsCompletion(InPropertyBodyFilter.class.getName(), new InPropertyBodyFilter(),
                                         IF_ELSE_ONE_LINE_TEMPLATE, WHEN_TEMPLATE);
-        registerScopeKeywordsCompletion(new AfterClassInClassBodyFilter(), false,
+        registerScopeKeywordsCompletion(AfterClassInClassBodyFilter.class.getName(), new AfterClassInClassBodyFilter(), false,
                                         CLASS_OBJECT_WITHOUT_CLASS_TEMPLATE);
     }
 
-    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, boolean notIdentifier, String... keywords) {
+    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, boolean notIdentifier, String... keywords) {
         extend(CompletionType.BASIC, getPlacePattern(placeFilter, notIdentifier),
-               new KeywordsCompletionProvider(keywords));
+               new KeywordsCompletionProvider(debugName, keywords));
     }
 
-    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, boolean notIdentifier, JetToken... keywords) {
-        registerScopeKeywordsCompletion(placeFilter, notIdentifier, convertTokensToStrings(keywords));
+    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, boolean notIdentifier, JetToken... keywords) {
+        registerScopeKeywordsCompletion(debugName, placeFilter, notIdentifier, convertTokensToStrings(keywords));
     }
 
-    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, String... keywords) {
-        registerScopeKeywordsCompletion(placeFilter, true, keywords);
+    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, String... keywords) {
+        registerScopeKeywordsCompletion(debugName, placeFilter, true, keywords);
     }
 
-    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, JetToken... keywords) {
-        registerScopeKeywordsCompletion(placeFilter, convertTokensToStrings(keywords));
+    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, JetToken... keywords) {
+        registerScopeKeywordsCompletion(debugName, placeFilter, convertTokensToStrings(keywords));
     }
 
     private static String[] convertTokensToStrings(JetToken... keywords) {
