@@ -320,12 +320,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      * A sort-of dummy <code>Expression</code> for parameter lists, to allow us to update the parameter list as the user makes selections.
      */
     private static class TypeParameterListExpression extends Expression {
-        private final String[] ownerTypeParameterNames;
-        private final Map<String, String[]> typeParameterMap;
+        private final TypeParameterDescriptor[] typeParametersFromReceiverType;
+        private final Map<String, TypeParameterDescriptor[]> typeParameterMap;
 
-        public TypeParameterListExpression(@NotNull String[] ownerTypeParameterNames, @NotNull Map<String, String[]> typeParameterMap) {
-            this.ownerTypeParameterNames = ownerTypeParameterNames;
-            this.typeParameterMap = typeParameterMap;
+        public TypeParameterListExpression(@NotNull TypeParameterDescriptor[] typeParametersFromReceiverType,
+                @NotNull Map<String, TypeParameterDescriptor[]> typeParametersMap) {
+            this.typeParametersFromReceiverType = typeParametersFromReceiverType;
+            this.typeParameterMap = typeParametersMap;
         }
 
         @NotNull
@@ -343,22 +344,27 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert func != null;
             List<JetParameter> parameters = func.getValueParameters();
 
-            List<String> typeParameterNames = new ArrayList<String>();
-            Collections.addAll(typeParameterNames, ownerTypeParameterNames);
+            Set<TypeParameterDescriptor> typeParameters = new LinkedHashSet<TypeParameterDescriptor>();
+            Collections.addAll(typeParameters, typeParametersFromReceiverType);
             for (JetParameter parameter : parameters) {
                 JetTypeReference parameterTypeRef = parameter.getTypeReference();
                 assert parameterTypeRef != null;
-                String[] names = typeParameterMap.get(parameterTypeRef.getText());
-                if (names != null) {
-                    Collections.addAll(typeParameterNames, names);
+                TypeParameterDescriptor[] typeParametersFromParameter = typeParameterMap.get(parameterTypeRef.getText());
+                if (typeParametersFromParameter != null) {
+                    Collections.addAll(typeParameters, typeParametersFromParameter);
                 }
             }
             JetTypeReference returnTypeRef = func.getReturnTypeRef();
             if (returnTypeRef != null) {
-                String[] names = typeParameterMap.get(returnTypeRef.getText());
-                if (names != null) {
-                    Collections.addAll(typeParameterNames, names);
+                TypeParameterDescriptor[] typeParametersFromReturnType = typeParameterMap.get(returnTypeRef.getText());
+                if (typeParametersFromReturnType != null) {
+                    Collections.addAll(typeParameters, typeParametersFromReturnType);
                 }
+            }
+
+            List<String> typeParameterNames = new ArrayList<String>();
+            for (TypeParameterDescriptor typeParameter : typeParameters) {
+                typeParameterNames.add(typeParameter.getName().getIdentifier());
             }
 
             // make sure there are no name conflicts
@@ -565,9 +571,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         JetParameterList parameterList = func.getValueParameterList();
         assert parameterList != null;
 
-        BindingContext containingFileContext = currentFile.equals(containingFile)
-                                               ? currentFileContext
-                                               : AnalyzerFacadeWithCache.analyzeFileWithCache(containingFile).getBindingContext();
         JetScope scope;
         if (isExtension) {
             NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, containingFile);
@@ -731,9 +734,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable TypeExpression returnTypeExpression,
             @NotNull JetScope scope
     ) {
-        Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
+        Map<String, TypeParameterDescriptor[]> typeParameterMap = new HashMap<String, TypeParameterDescriptor[]>();
         Set<TypeParameterDescriptor> receiverTypeParameters = getTypeParametersInType(receiverType);
-        String[] ownerTypeParameterNames = getTypeParameterNamesNotInScope(receiverTypeParameters, scope);
+        TypeParameterDescriptor[] receiverTypeParametersNotInScope = getTypeParameterNamesNotInScope(receiverTypeParameters, scope);
         for (TypeExpression parameterTypeExpression : parameterTypeExpressions) {
             JetType[] parameterTypeOptions = parameterTypeExpression.getOptions();
             String[] parameterTypeOptionStrings = parameterTypeExpression.getOptionStrings();
@@ -757,7 +760,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
 
         builder.replaceElement(func, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false); // ((3, 3) is after "fun")
-        return new TypeParameterListExpression(ownerTypeParameterNames, typeParameterMap);
+        return new TypeParameterListExpression(receiverTypeParametersNotInScope, typeParameterMap);
     }
 
     private TypeExpression[] setupParameterTypeTemplates(@NotNull Project project, @NotNull TemplateBuilder builder,
@@ -863,25 +866,28 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static String renderTypeShort(JetType type) {
+    private static String renderTypeShort(@NotNull JetType type) {
         return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
     }
 
     @NotNull
-    private static String renderTypeLong(JetType type) {
+    private static String renderTypeLong(@NotNull JetType type) {
         return DescriptorRenderer.TEXT.renderType(type);
     }
 
     @NotNull
-    private static String[] getTypeParameterNamesNotInScope(Collection<? extends TypeParameterDescriptor> typeParameters, JetScope scope) {
-        List<String> typeParameterNames = new ArrayList<String>();
+    private static TypeParameterDescriptor[] getTypeParameterNamesNotInScope(
+            @NotNull Collection<? extends TypeParameterDescriptor> typeParameters,
+            @NotNull JetScope scope
+    ) {
+        List<TypeParameterDescriptor> typeParameterNames = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             ClassifierDescriptor classifier = scope.getClassifier(typeParameter.getName());
             if (classifier == null || !classifier.equals(typeParameter)) {
-                typeParameterNames.add(typeParameter.getName().getIdentifier());
+                typeParameterNames.add(typeParameter);
             }
         }
-        return ArrayUtil.toStringArray(typeParameterNames);
+        return typeParameterNames.toArray(new TypeParameterDescriptor[typeParameterNames.size()]);
     }
 
     @NotNull
