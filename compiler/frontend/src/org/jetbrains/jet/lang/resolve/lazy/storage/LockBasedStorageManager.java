@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.jet.utils.Nulls;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -105,23 +106,6 @@ public class LockBasedStorageManager implements StorageManager {
         // It seems safe to have a separate lock for traces:
         // no other locks will be acquired inside the trace operations
         return new LockProtectedTrace(lock, originalTrace);
-    }
-
-    private static class Nulls {
-        private static final Object NULL_VALUE = new Object();
-    
-        @Nullable
-        @SuppressWarnings("unchecked")
-        private static <V> V unescape(@NotNull Object value) {
-            if (value == NULL_VALUE) return null;
-            return (V) value;
-        }
-    
-        @NotNull
-        private static <V> Object escape(@Nullable V value) {
-            if (value == null) return NULL_VALUE;
-            return value;
-        }
     }
 
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
