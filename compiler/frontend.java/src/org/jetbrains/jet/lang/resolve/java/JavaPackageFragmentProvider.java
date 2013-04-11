@@ -160,20 +160,22 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
     }
 
     private PackageFragmentDescriptor createPackageFragmentForStaticClass(final FqName fqName, final PsiClass staticClass) {
-        JavaPackageFragment fragment = new JavaPackageFragment(subModule, fqName,
-                                                               new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
-                                                                   @NotNull
-                                                                   @Override
-                                                                   public JetScope fun(PackageFragmentDescriptor fragment) {
-                                                                       return new JavaClassStaticMembersScope(
-                                                                               fragment,
-                                                                               declarationProviderFactory
-                                                                                       .createDeclarationProviderForClassStaticMembers(
-                                                                                               staticClass),
-                                                                               fqName,
-                                                                               javaDescriptorResolver);
-                                                                   }
-                                                               });
+        JavaPackageFragment fragment = new JavaPackageFragment(
+                "static class",
+                subModule, fqName,
+                new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
+                   @NotNull
+                   @Override
+                   public JetScope fun(PackageFragmentDescriptor fragment) {
+                       return new JavaClassStaticMembersScope(
+                               fragment,
+                               declarationProviderFactory
+                                       .createDeclarationProviderForClassStaticMembers(
+                                               staticClass),
+                               fqName,
+                               javaDescriptorResolver);
+                   }
+               });
         trace.record(JavaBindingContext.JAVA_STATIC_CLASS_FOR_PACKAGE, fragment, staticClass);
         return fragment;
     }
@@ -182,18 +184,20 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
             final FqName fqName,
             final PsiPackage psiPackage
     ) {
-        return new JavaPackageFragment(subModule, fqName,
-                                       new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
-                                           @NotNull
-                                           @Override
-                                           public JetScope fun(PackageFragmentDescriptor fragment) {
-                                               return new JavaPackageScopeWithoutMembers(
-                                                                   fragment,
-                                                                   declarationProviderFactory.createDeclarationProviderForNamespaceWithoutMembers(
-                                                                           psiPackage),
-                                                                   fqName, javaDescriptorResolver);
-                                           }
-                                       });
+        return new JavaPackageFragment(
+                "simple package",
+                subModule, fqName,
+                new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
+                   @NotNull
+                   @Override
+                   public JetScope fun(PackageFragmentDescriptor fragment) {
+                       return new JavaPackageScopeWithoutMembers(
+                                           fragment,
+                                           declarationProviderFactory.createDeclarationProviderForNamespaceWithoutMembers(
+                                                   psiPackage),
+                                           fqName, javaDescriptorResolver);
+                   }
+               });
     }
 
     private PackageFragmentDescriptor createPackageFragmentForPackageWithMembers(
@@ -201,31 +205,36 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
             final PsiPackage psiPackage,
             final PsiClass packageClass
     ) {
-        return new JavaPackageFragment(subModule, fqName,
-                                       new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
-                                           @NotNull
-                                           @Override
-                                           public JetScope fun(PackageFragmentDescriptor fragment) {
-                                               return new JavaScopeForKotlinNamespace(
-                                                       fragment,
-                                                       declarationProviderFactory.createDeclarationForKotlinNamespace(
-                                                               psiPackage, packageClass),
-                                                       fqName, javaDescriptorResolver);
-                                           }
-                                       });
+        return new JavaPackageFragment(
+                "package class (from Kotlin)",
+                subModule, fqName,
+                new NotNullFunction<PackageFragmentDescriptor, JetScope>() {
+                   @NotNull
+                   @Override
+                   public JetScope fun(PackageFragmentDescriptor fragment) {
+                       return new JavaScopeForKotlinNamespace(
+                               fragment,
+                               declarationProviderFactory.createDeclarationForKotlinNamespace(
+                                       psiPackage, packageClass),
+                               fqName, javaDescriptorResolver);
+                   }
+               });
     }
 
     private static class JavaPackageFragment extends PackageLikeDescriptorBase implements PackageFragmentDescriptor {
 
+        private final String debugName;
         private final SubModuleDescriptor subModule;
         private final JetScope memberScope;
 
         public JavaPackageFragment(
+                @NotNull String debugName,
                 @NotNull SubModuleDescriptor subModule,
                 @NotNull FqName fqName,
                 @NotNull NotNullFunction<PackageFragmentDescriptor, JetScope> memberScope
         ) {
             super(fqName);
+            this.debugName = debugName;
             this.subModule = subModule;
             this.memberScope = memberScope.fun(this);
         }
@@ -251,6 +260,11 @@ public class JavaPackageFragmentProvider implements PackageFragmentProvider {
         @Override
         public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
             return visitor.visitPackageFragmentDescriptor(this, data);
+        }
+
+        @Override
+        public String toString() {
+            return "[" + debugName + "]" + super.toString();
         }
     }
 }
