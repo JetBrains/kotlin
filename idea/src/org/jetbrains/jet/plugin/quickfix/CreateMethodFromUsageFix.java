@@ -45,12 +45,12 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
@@ -406,6 +406,15 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private final TypeOrExpressionThereof returnType;
     private final List<Parameter> parameters;
 
+    private boolean isUnit;
+    private boolean isExtension;
+    private JetFile currentFile;
+    private JetFile containingFile;
+    private BindingContext currentFileContext;
+    private JetClass ownerClass;
+    private ClassDescriptor ownerClassDescriptor;
+    private JetType receiverType;
+
     public CreateMethodFromUsageFix(@NotNull PsiElement element, @NotNull TypeOrExpressionThereof ownerType, @NotNull String methodName,
             @NotNull TypeOrExpressionThereof returnType, @NotNull List<Parameter> parameters) {
         super(element);
@@ -422,16 +431,14 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @Override
-    public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         // TODO: editing across files
 
         assert file instanceof JetFile;
-        JetFile jetFile = (JetFile) file;
-        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
+        currentFile = (JetFile) file;
 
-        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(context);
+        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
         assert possibleOwnerTypes.length > 0;
-
         JetType ownerType;
         if (possibleOwnerTypes.length == 1) {
             ownerType = possibleOwnerTypes[0];
@@ -440,12 +447,16 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             ownerType = possibleOwnerTypes[0];
         }
 
-        final ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
+        // gather relevant information
+        ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
         assert ownerTypeDescriptor != null && ownerTypeDescriptor instanceof ClassDescriptor;
-        ClassDescriptor ownerClassDescriptor = (ClassDescriptor) ownerTypeDescriptor;
-        final JetType receiverType = ownerClassDescriptor.getDefaultType();
-        PsiElement typeDeclaration = DescriptorToDeclarationUtil.getDeclaration(jetFile, ownerTypeDescriptor, context);
-        JetClass klass = (JetClass) typeDeclaration;
+        ownerClassDescriptor = (ClassDescriptor) ownerTypeDescriptor;
+        receiverType = ownerClassDescriptor.getDefaultType();
+        PsiElement typeDeclaration = BindingContextUtils.classDescriptorToDeclaration(currentFileContext, ownerClassDescriptor);
+        assert typeDeclaration != null;
+        ownerClass = (JetClass) typeDeclaration;
+        isExtension = !ownerClass.isWritable();
+        isUnit = returnType.isType() && isUnit(returnType.getType());
 
         // figure out type substitutions for type parameters
         List<TypeProjection> classTypeParameters = receiverType.getArguments();
@@ -460,45 +471,47 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             parameter.getType().substitute(substitutions);
         }
 
-        // create method with placeholder types and parameter names
+        JetNamedFunction func = createFunctionSkeleton(project);
+        buildAndRunTemplate(project, editor, func);
+    }
+
+    private JetNamedFunction createFunctionSkeleton(@NotNull Project project) {
+        JetNamedFunction func;
         String[] parameterStrings = new String[parameters.size()];
         for (int i = 0; i < parameterStrings.length; i++) {
             parameterStrings[i] = "p" + i + ": Any";
         }
         String parametersString = StringUtil.join(parameterStrings,", ");
-
-        final boolean isUnit = returnType.isType() && isUnit(returnType.getType());
         String returnTypeString = isUnit ? "" : ": Any";
-
-        String ownerTypeString;
-        String methodText;
-        JetNamedFunction func;
-        PsiElement owner;
-        final JetFile containingFile;
-        final boolean isExtension = !klass.isWritable();
         if (isExtension) { // create as extension function
-            ownerTypeString = renderTypeShort(receiverType);
-            methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
+            String ownerTypeString = renderTypeShort(receiverType);
+            String methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
-            owner = containingFile = jetFile;
-            func = (JetNamedFunction) file.add(func);
+            containingFile = currentFile;
+            func = (JetNamedFunction) currentFile.add(func);
         } else { // create as method
-            methodText = String.format("fun %s(%s)%s { }", methodName, parametersString, returnTypeString);
+            String methodText = String.format("fun %s(%s)%s { }", methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
-            owner = klass;
-            PsiFile classContainingFile = klass.getContainingFile();
+            PsiFile classContainingFile = ownerClass.getContainingFile();
             assert classContainingFile instanceof JetFile;
             containingFile = (JetFile) classContainingFile;
-            JetClassBody classBody = klass.getBody();
+            JetClassBody classBody = ownerClass.getBody();
             assert classBody != null;
             PsiElement rBrace = classBody.getRBrace();
             func = (JetNamedFunction) classBody.addBefore(func, rBrace);
         }
-
         // TODO: add newlines
+        return func;
+    }
 
+    private void buildAndRunTemplate(@NotNull final Project project, @NotNull Editor editor, @NotNull JetNamedFunction func) {
         JetParameterList parameterList = func.getValueParameterList();
         assert parameterList != null;
+
+        BindingContext containingFileContext = currentFile.equals(containingFile)
+                                               ? currentFileContext
+                                               : AnalyzerFacadeWithCache.analyzeFileWithCache(containingFile).getBindingContext();
+        JetScope scope = getScope(isExtension ? containingFile : ownerClass, containingFileContext);
 
         // build templates
         PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -506,20 +519,19 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
         final CaretModel caretModel = editor.getCaretModel();
         final int oldOffset = caretModel.getOffset();
-        caretModel.moveToOffset(file.getNode().getStartOffset());
+        caretModel.moveToOffset(currentFile.getNode().getStartOffset());
 
-        TemplateBuilderImpl builder = new TemplateBuilderImpl(file);
-        final TypeExpression returnTypeExpression = isUnit ? null : setupReturnTypeTemplate(builder, func, returnType);
-        final TypeExpression[] parameterTypeExpressions = setupParameterTypeTemplates(project, builder, parameters, parameterList);
+        TemplateBuilderImpl builder = new TemplateBuilderImpl(currentFile);
+        final TypeExpression returnTypeExpression = isUnit ? null : setupReturnTypeTemplate(builder, func);
+        final TypeExpression[] parameterTypeExpressions = setupParameterTypeTemplates(project, builder, parameterList);
 
         // add a segment for the parameter list
         // Note: because TemplateBuilderImpl does not have a replaceElement overload that takes in both a TextRange and alwaysStopAt, we
         // need to create the segment first and then hack the Expression into the template later. We use this template to update the type
         // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
         // it.
-        JetScope scope = getScope(owner, context);
-        TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func, receiverType, parameterTypeExpressions,
-                                                                                returnTypeExpression, scope);
+        TypeParameterListExpression expression =
+                setupTypeParameterListTemplate(builder, func, parameterTypeExpressions, returnTypeExpression, scope);
 
         // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
         final TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
@@ -545,11 +557,10 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     @Override
                     public void run() {
                         // file templates
-                        setupFunctionBody(project, func, methodName, isUnit, ownerTypeDescriptor);
+                        setupFunctionBody(project, func);
 
                         // change short type names to fully qualified ones (to be shortened below)
-                        setupTypeReferencesForShortening(project, func, isExtension, isUnit, typeRefsToShorten, receiverType,
-                                                         parameterTypeExpressions, returnTypeExpression);
+                        setupTypeReferencesForShortening(project, func, typeRefsToShorten, parameterTypeExpressions, returnTypeExpression);
                     }
                 });
 
@@ -560,13 +571,10 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         });
     }
 
-    private static void setupTypeReferencesForShortening(
+    private void setupTypeReferencesForShortening(
             @NotNull Project project,
             @NotNull JetNamedFunction func,
-            boolean isExtension,
-            boolean isUnit,
             @NotNull List<JetTypeReference> typeRefsToShorten,
-            @NotNull JetType receiverType,
             @NotNull TypeExpression[] parameterTypeExpressions,
             @Nullable TypeExpression returnTypeExpression
     ) {
@@ -613,46 +621,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
     }
 
-    private static void replaceWithLongerName(@NotNull Project project, @NotNull JetTypeReference typeRef, @NotNull JetType type) {
-        JetTypeReference fullyQualifiedReceiverTypeRef = JetPsiFactory.createType(project, renderTypeLong(type));
-        typeRef.replace(fullyQualifiedReceiverTypeRef);
-    }
-
-    @NotNull
-    private static JetType substituteType(@NotNull JetType type, @NotNull TypeSubstitution substitution) {
-        if (type.equals(substitution.getForType())) {
-            return substitution.getByType();
-        }
-
-        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
-        for (TypeProjection projection : type.getArguments()) {
-            JetType newArgument = substituteType(projection.getType(), substitution);
-            newArguments.add(new TypeProjection(Variance.INVARIANT, newArgument));
-        }
-        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(),
-                               type.isNullable(), newArguments, type.getMemberScope());
-    }
-
-    @NotNull
-    private static JetType[] substituteTypes(@NotNull JetType[] types, @NotNull TypeSubstitution[] substitutions) {
-        JetType[] newTypes = new JetType[types.length];
-        for (int i = 0; i < types.length; i++) {
-            JetType newType = types[i];
-            for (TypeSubstitution substitution : substitutions) {
-                newType = substituteType(newType, substitution);
-            }
-            newTypes[i] = newType;
-        }
-        return newTypes;
-    }
-
-    private static void setupFunctionBody(
-            @NotNull Project project,
-            @NotNull JetNamedFunction func,
-            @NotNull String funcName,
-            boolean isUnit,
-            @NotNull ClassifierDescriptor ownerTypeDescriptor
-    ) {
+    private void setupFunctionBody(@NotNull Project project, @NotNull JetNamedFunction func) {
         FileTemplate fileTemplate = FileTemplateManager.getInstance().getCodeTemplate(TEMPLATE_FROM_USAGE_METHOD_BODY);
         Properties properties = new Properties();
         if (isUnit) {
@@ -662,9 +631,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert returnTypeRef != null;
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, returnTypeRef.getText());
         }
-        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerTypeDescriptor).getFqName());
-        properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerTypeDescriptor.getName().getName());
-        properties.setProperty(FileTemplate.ATTRIBUTE_METHOD_NAME, funcName);
+        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerClassDescriptor).getFqName());
+        properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerClassDescriptor.getName().getName());
+        properties.setProperty(FileTemplate.ATTRIBUTE_METHOD_NAME, methodName);
 
         @NonNls String bodyText;
         try {
@@ -681,8 +650,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static TypeExpression setupReturnTypeTemplate(@NotNull TemplateBuilder builder, @NotNull JetNamedFunction func,
-            @NotNull TypeOrExpressionThereof returnType) {
+    private TypeExpression setupReturnTypeTemplate(@NotNull TemplateBuilder builder, @NotNull JetNamedFunction func) {
         JetTypeReference returnTypeRef = func.getReturnTypeRef();
         assert returnTypeRef != null;
         TypeExpression returnTypeExpression = new TypeExpression(returnType.getPossibleTypes());
@@ -691,17 +659,16 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static TypeParameterListExpression setupTypeParameterListTemplate(
+    private TypeParameterListExpression setupTypeParameterListTemplate(
             @NotNull TemplateBuilderImpl builder,
             @NotNull JetNamedFunction func,
-            @NotNull JetType ownerType,
             @NotNull TypeExpression[] parameterTypeExpressions,
             @Nullable TypeExpression returnTypeExpression,
             @NotNull JetScope scope
     ) {
         Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
-        Set<TypeParameterDescriptor> ownerTypeParameters = getTypeParametersInType(ownerType);
-        String[] ownerTypeParameterNames = getTypeParameterNamesNotInScope(ownerTypeParameters, scope);
+        Set<TypeParameterDescriptor> receiverTypeParameters = getTypeParametersInType(receiverType);
+        String[] ownerTypeParameterNames = getTypeParameterNamesNotInScope(receiverTypeParameters, scope);
         for (TypeExpression parameterTypeExpression : parameterTypeExpressions) {
             JetType[] parameterTypeOptions = parameterTypeExpression.getOptions();
             String[] parameterTypeOptionStrings = parameterTypeExpression.getOptionStrings();
@@ -728,22 +695,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         return new TypeParameterListExpression(ownerTypeParameterNames, typeParameterMap);
     }
 
-    @NotNull
-    private static JetScope getScope(@NotNull PsiElement owner, @NotNull BindingContext context) {
-        DeclarationDescriptor ownerDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
-        assert ownerDescriptor != null;
-        if (ownerDescriptor instanceof NamespaceDescriptor) {
-            NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) ownerDescriptor;
-            return namespaceDescriptor.getMemberScope();
-        } else {
-            assert ownerDescriptor instanceof MutableClassDescriptor;
-            MutableClassDescriptor classDescriptor = (MutableClassDescriptor) ownerDescriptor;
-            return classDescriptor.getScopeForMemberResolution();
-        }
-    }
-
-    private static TypeExpression[] setupParameterTypeTemplates(@NotNull Project project, @NotNull TemplateBuilder builder,
-            @NotNull List<Parameter> parameters, @NotNull JetParameterList parameterList) {
+    private TypeExpression[] setupParameterTypeTemplates(@NotNull Project project, @NotNull TemplateBuilder builder,
+            @NotNull JetParameterList parameterList) {
         List<JetParameter> jetParameters = parameterList.getParameters();
         assert jetParameters.size() == parameters.size();
         TypeExpression[] parameterTypeExpressions = new TypeExpression[parameters.size()];
@@ -792,23 +745,70 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         assert file instanceof JetFile;
         JetFile jetFile = (JetFile) file;
-        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
+        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
 
-        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(context);
+        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
         if (possibleOwnerTypes.length == 0) return false;
         assertNoUnitTypes(possibleOwnerTypes);
-        JetType[] possibleReturnTypes = returnType.getPossibleTypes(context);
+        JetType[] possibleReturnTypes = returnType.getPossibleTypes(currentFileContext);
         if (!returnType.isType()) { // allow return type to be unit (but not when it's among several options)
             assertNoUnitTypes(possibleReturnTypes);
         }
         if (possibleReturnTypes.length == 0) return false;
         for (Parameter parameter : parameters) {
-            JetType[] possibleTypes = parameter.getType().getPossibleTypes(context);
+            JetType[] possibleTypes = parameter.getType().getPossibleTypes(currentFileContext);
             if (possibleTypes.length == 0) return false;
             assertNoUnitTypes(possibleTypes);
         }
 
         return true;
+    }
+
+    private static void replaceWithLongerName(@NotNull Project project, @NotNull JetTypeReference typeRef, @NotNull JetType type) {
+        JetTypeReference fullyQualifiedReceiverTypeRef = JetPsiFactory.createType(project, renderTypeLong(type));
+        typeRef.replace(fullyQualifiedReceiverTypeRef);
+    }
+
+    @NotNull
+    private static JetType substituteType(@NotNull JetType type, @NotNull TypeSubstitution substitution) {
+        if (type.equals(substitution.getForType())) {
+            return substitution.getByType();
+        }
+
+        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
+        for (TypeProjection projection : type.getArguments()) {
+            JetType newArgument = substituteType(projection.getType(), substitution);
+            newArguments.add(new TypeProjection(Variance.INVARIANT, newArgument));
+        }
+        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(),
+                               type.isNullable(), newArguments, type.getMemberScope());
+    }
+
+    @NotNull
+    private static JetType[] substituteTypes(@NotNull JetType[] types, @NotNull TypeSubstitution[] substitutions) {
+        JetType[] newTypes = new JetType[types.length];
+        for (int i = 0; i < types.length; i++) {
+            JetType newType = types[i];
+            for (TypeSubstitution substitution : substitutions) {
+                newType = substituteType(newType, substitution);
+            }
+            newTypes[i] = newType;
+        }
+        return newTypes;
+    }
+
+    @NotNull
+    private static JetScope getScope(@NotNull PsiElement owner, @NotNull BindingContext context) {
+        DeclarationDescriptor ownerDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
+        assert ownerDescriptor != null;
+        if (ownerDescriptor instanceof NamespaceDescriptor) {
+            NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) ownerDescriptor;
+            return namespaceDescriptor.getMemberScope();
+        } else {
+            assert ownerDescriptor instanceof MutableClassDescriptor;
+            MutableClassDescriptor classDescriptor = (MutableClassDescriptor) ownerDescriptor;
+            return classDescriptor.getScopeForMemberResolution();
+        }
     }
 
     @NotNull
