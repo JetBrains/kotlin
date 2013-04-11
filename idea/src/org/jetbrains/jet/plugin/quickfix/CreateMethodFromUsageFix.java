@@ -47,10 +47,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -64,10 +67,12 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private static final String TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList";
     private static final String TEMPLATE_FROM_USAGE_METHOD_BODY = "New Kotlin Method Body.kt";
+    private static final Pattern COMPONENT_FUNCTION_PATTERN = Pattern.compile("^component(\\d+)$");
 
     /**
      * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -808,7 +813,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         assert file instanceof JetFile;
         JetFile jetFile = (JetFile) file;
-        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
+        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext(); // TODO: can't be called from EDT?
 
         JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
         if (possibleOwnerTypes.length == 0) return false;
@@ -919,7 +924,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             return new JetType[] {actualType};
         }
 
-        // if we need to guess, there are four cases:
+        // if we need to guess, there are five cases:
         if (expr.getParent() instanceof JetVariableDeclaration) {
             JetVariableDeclaration variable = (JetVariableDeclaration) expr.getParent();
             JetTypeReference variableTypeRef = variable.getTypeRef();
@@ -927,13 +932,29 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 // case 1: the expression is the RHS of a variable assignment with a specified type
                 return new JetType[] {context.get(BindingContext.TYPE, variableTypeRef)};
             } else {
-                // case 2: the expression is the RHS of a variable assignment without a specified type
-                return new JetType[0]; // TODO
+                // TODO: case 2: the expression is the RHS of a variable assignment without a specified type
+                return new JetType[0];
             }
         }
 
-        // TODO: other cases
-        return new JetType[0]; //TODO
+        // case 3: the expression has a type assertion attached to it
+        if (expr instanceof JetTypeConstraint) { // case 3a: expression itself is a type assertion
+            JetTypeConstraint constraint = (JetTypeConstraint) expr;
+            return new JetType[] {context.get(BindingContext.TYPE, constraint.getBoundTypeReference())};
+        } else {
+            PsiElement parent = expr.getParent();
+            if (parent != null && parent instanceof JetTypeConstraint) { // case 3b: expression is on the left side of a type assertion
+                JetTypeConstraint constraint = (JetTypeConstraint) parent;
+                return new JetType[] {context.get(BindingContext.TYPE, constraint.getBoundTypeReference())};
+            }
+        }
+
+        // TODO: case 4: usages of variable
+
+        // TODO: case 5: nested in a trivial expression (e.g. parentheses or if-else)
+
+        // TODO: expected type info
+        return new JetType[0];
     }
 
     private static boolean isUnit(@NotNull JetType type) {
@@ -942,7 +963,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
     private static void assertNoUnitTypes(@NotNull JetType[] types) {
         for (JetType type : types) {
-            assert !isUnit(type) : "no support for unit functions";
+            assert !isUnit(type);
         }
     }
 
@@ -1007,7 +1028,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                return null; // TODO
+                JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
+                if (forExpr == null) return null;
+                JetExpression iterableExpr = forExpr.getLoopRange();
+                if (iterableExpr == null) return null;
+                TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType());
+                return new CreateMethodFromUsageFix(forExpr, iterableType, "hasNext", returnType, new ArrayList<Parameter>());
             }
         };
     }
@@ -1018,7 +1045,15 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                return null; // TODO
+                JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
+                if (forExpr == null) return null;
+                JetExpression iterableExpr = forExpr.getLoopRange();
+                if (iterableExpr == null) return null;
+                JetExpression variableExpr = forExpr.getLoopParameter();
+                if (variableExpr == null) return null;
+                TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr);
+                return new CreateMethodFromUsageFix(forExpr, iterableType, "next", returnType, new ArrayList<Parameter>());
             }
         };
     }
@@ -1029,7 +1064,29 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                return null; // TODO
+                PsiFile file = diagnostic.getPsiFile();
+                if (!(file instanceof JetFile)) return null;
+                JetFile jetFile = (JetFile) file;
+
+                JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
+                if (forExpr == null) return null;
+                JetExpression iterableExpr = forExpr.getLoopRange();
+                if (iterableExpr == null) return null;
+                JetExpression variableExpr = forExpr.getLoopParameter();
+                if (variableExpr == null) return null;
+                TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
+                JetType returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType();
+
+                BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
+                JetType[] returnJetTypeParameterTypes = guessTypeForExpression(variableExpr, context);
+                if (returnJetTypeParameterTypes.length != 1) return null;
+
+                TypeProjection returnJetTypeParameterType = new TypeProjection(returnJetTypeParameterTypes[0]);
+                List<TypeProjection> returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType);
+                returnJetType = new JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(),
+                                                returnJetTypeArguments, returnJetType.getMemberScope());
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(returnJetType);
+                return new CreateMethodFromUsageFix(forExpr, iterableType, "next", returnType, new ArrayList<Parameter>());
             }
         };
     }
@@ -1040,7 +1097,25 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                return null; // TODO
+                JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
+                if (multiDeclaration == null) return null;
+                List<JetMultiDeclarationEntry> entries = multiDeclaration.getEntries();
+
+                assert diagnostic.getFactory() == Errors.COMPONENT_FUNCTION_MISSING;
+                @SuppressWarnings("unchecked")
+                DiagnosticWithParameters1<JetExpression, Name> diagnosticWithParameters =
+                        (DiagnosticWithParameters1<JetExpression, Name>) diagnostic;
+                Name name = diagnosticWithParameters.getA();
+                String componentNumberString = COMPONENT_FUNCTION_PATTERN.matcher(name.getIdentifier()).group(1);
+                int componentNumber = Integer.decode(componentNumberString);
+
+                JetMultiDeclarationEntry entry = entries.get(componentNumber);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry);
+                JetExpression rhs = multiDeclaration.getInitializer();
+                if (rhs == null) return null;
+                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(rhs);
+
+                return new CreateMethodFromUsageFix(multiDeclaration, ownerType, name.getIdentifier(), returnType, new ArrayList<Parameter>());
             }
         };
     }
