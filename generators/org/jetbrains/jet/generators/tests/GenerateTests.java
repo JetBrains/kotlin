@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
 import org.jetbrains.jet.completion.AbstractJavaCompletionTest;
 import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
+import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -242,6 +243,13 @@ public class GenerateTests {
                 testModel("idea/testData/completion/basic", false, "doTest"),
                 testModel("idea/testData/completion/basic/extensions", false, "doTest"),
                 testModel("idea/testData/completion/basic/java", false, "doTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "JetKeywordCompletionTestGenerated",
+                AbstractKeywordCompletionTest.class,
+                testModel("idea/testData/completion/keywords", false, "doTest")
         );
 
         generateTest(

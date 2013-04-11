@@ -7,8 +7,10 @@ public class Test {
     }
 }
 
+// TIME: 1
+
 // EXIST:  abstract
-// ?ABSENT: annotation
+/* // ABSENT: annotation */
 // ABSENT: as
 // ABSENT: break
 // ABSENT: by

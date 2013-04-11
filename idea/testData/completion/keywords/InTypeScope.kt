@@ -3,7 +3,7 @@ fun foo() {
 }
 
 // ABSENT: abstract
-// ??ABSENT: annotation // java annotation namespace
+/* // ABSENT: annotation */
 // EXIST: as
 // EXIST: break
 // EXIST: by

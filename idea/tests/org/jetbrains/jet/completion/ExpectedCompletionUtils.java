@@ -249,7 +249,7 @@ public class ExpectedCompletionUtils {
         return InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX);
     }
 
-    public static void assertNotContainsRenderedItems(CompletionProposal[] unexpected,LookupElement[] items) {
+    public static void assertNotContainsRenderedItems(CompletionProposal[] unexpected, LookupElement[] items) {
         List<CompletionProposal> itemsInformation = getItemsInformation(items);
         String allItemsString = listToString(itemsInformation);
 

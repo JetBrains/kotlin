@@ -2,6 +2,8 @@ class TestClass {
     <caret>
 }
 
+// TIME: 1
+
 // EXIST:  abstract
 // ABSENT: annotation
 // ABSENT: as
