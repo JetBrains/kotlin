@@ -97,11 +97,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             return this.type;
         }
 
-        @Nullable
-        public JetExpression getExpressionOfType() {
-            return expressionOfType;
-        }
-
         /**
          * Returns a collection containing the possible types represented by this instance. Infers the type from an expression if necessary.
          * @return A collection containing the possible types represented by this instance.
@@ -933,7 +928,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 return new JetType[] {context.get(BindingContext.TYPE, variableTypeRef)};
             } else {
                 // case 2: the expression is the RHS of a variable assignment without a specified type
-                // TODO
+                return new JetType[0]; // TODO
             }
         }
 
