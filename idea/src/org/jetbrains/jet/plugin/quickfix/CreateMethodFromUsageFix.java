@@ -67,6 +67,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
@@ -920,40 +921,59 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     @NotNull
     private static JetType[] guessTypeForExpression(@NotNull JetExpression expr, @NotNull BindingContext context) {
         JetType actualType = context.get(BindingContext.EXPRESSION_TYPE, expr);
-        if (actualType != null) { // if we know the actual type of the expression
+
+        // if we know the actual type of the expression
+        if (actualType != null) {
             return new JetType[] {actualType};
         }
 
-        // if we need to guess, there are five cases:
-        if (expr.getParent() instanceof JetVariableDeclaration) {
-            JetVariableDeclaration variable = (JetVariableDeclaration) expr.getParent();
-            JetTypeReference variableTypeRef = variable.getTypeRef();
-            if (variableTypeRef != null) {
-                // case 1: the expression is the RHS of a variable assignment with a specified type
-                return new JetType[] {context.get(BindingContext.TYPE, variableTypeRef)};
-            } else {
-                // TODO: case 2: the expression is the RHS of a variable assignment without a specified type
-                return new JetType[0];
-            }
-        }
-
-        // case 3: the expression has a type assertion attached to it
-        if (expr instanceof JetTypeConstraint) { // case 3a: expression itself is a type assertion
+        // expression itself is a type assertion
+        else if (expr instanceof JetTypeConstraint) { // expression itself is a type assertion
             JetTypeConstraint constraint = (JetTypeConstraint) expr;
             return new JetType[] {context.get(BindingContext.TYPE, constraint.getBoundTypeReference())};
-        } else {
-            PsiElement parent = expr.getParent();
-            if (parent != null && parent instanceof JetTypeConstraint) { // case 3b: expression is on the left side of a type assertion
-                JetTypeConstraint constraint = (JetTypeConstraint) parent;
-                return new JetType[] {context.get(BindingContext.TYPE, constraint.getBoundTypeReference())};
-            }
         }
 
-        // TODO: case 4: usages of variable
+        // expression is on the left side of a type assertion
+        else if (expr.getParent() instanceof JetTypeConstraint) {
+            JetTypeConstraint constraint = (JetTypeConstraint) expr.getParent();
+            return new JetType[] {context.get(BindingContext.TYPE, constraint.getBoundTypeReference())};
+        }
+
+        // expression is on the lhs of a multi-declaration
+        else if (expr instanceof JetMultiDeclarationEntry) {
+            JetMultiDeclarationEntry entry = (JetMultiDeclarationEntry) expr;
+            JetTypeReference typeRef = entry.getTypeRef();
+            if (typeRef != null) { // and has a specified type
+                return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
+            }
+            // otherwise fall through and guess
+        }
+
+        // expression is a parameter (e.g. declared in a for-loop)
+        else if (expr instanceof JetParameter) {
+            JetParameter parameter = (JetParameter) expr;
+            JetTypeReference typeRef = parameter.getTypeReference();
+            if (typeRef != null) { // and has a specified type
+                return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
+            }
+            // otherwise fall through and guess
+        }
+
+        // the expression is the RHS of a variable assignment with a specified type
+        else if (expr.getParent() instanceof JetVariableDeclaration) {
+            JetVariableDeclaration variable = (JetVariableDeclaration) expr.getParent();
+            JetTypeReference typetypeRefEf = variable.getTypeRef();
+            if (typetypeRefEf != null) { // and has a specified type
+                return new JetType[] {context.get(BindingContext.TYPE, typetypeRefEf)};
+            }
+            // otherwise fall through and guess
+        }
+
+        // TODO: need to guess based on usages of expression or expected type info
+
+        // TODO: usages of variable
 
         // TODO: case 5: nested in a trivial expression (e.g. parentheses or if-else)
-
-        // TODO: expected type info
         return new JetType[0];
     }
 
@@ -1106,8 +1126,10 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 DiagnosticWithParameters1<JetExpression, Name> diagnosticWithParameters =
                         (DiagnosticWithParameters1<JetExpression, Name>) diagnostic;
                 Name name = diagnosticWithParameters.getA();
-                String componentNumberString = COMPONENT_FUNCTION_PATTERN.matcher(name.getIdentifier()).group(1);
-                int componentNumber = Integer.decode(componentNumberString);
+                Matcher componentNumberMatcher = COMPONENT_FUNCTION_PATTERN.matcher(name.getIdentifier());
+                if (!componentNumberMatcher.matches()) return null;
+                String componentNumberString = componentNumberMatcher.group(1);
+                int componentNumber = Integer.decode(componentNumberString) - 1;
 
                 JetMultiDeclarationEntry entry = entries.get(componentNumber);
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry);
