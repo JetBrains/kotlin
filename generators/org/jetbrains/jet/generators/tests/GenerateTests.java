@@ -231,6 +231,7 @@ public class GenerateTests {
                 "JetBasicJSCompletionTest",
                 AbstractJetJSCompletionTest.class,
                 testModel("idea/testData/completion/basic", false, "doTest"),
+                testModel("idea/testData/completion/basic/extensions", false, "doTest"),
                 testModel("idea/testData/completion/basic/js", false, "doTest")
         );
 
@@ -239,6 +240,7 @@ public class GenerateTests {
                 "JetBasicJavaCompletionTest",
                 AbstractJavaCompletionTest.class,
                 testModel("idea/testData/completion/basic", false, "doTest"),
+                testModel("idea/testData/completion/basic/extensions", false, "doTest"),
                 testModel("idea/testData/completion/basic/java", false, "doTest")
         );
 
