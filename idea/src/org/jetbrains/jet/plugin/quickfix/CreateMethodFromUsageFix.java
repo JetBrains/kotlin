@@ -1106,7 +1106,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 returnJetType = new JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(),
                                                 returnJetTypeArguments, returnJetType.getMemberScope());
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(returnJetType);
-                return new CreateMethodFromUsageFix(forExpr, iterableType, "next", returnType, new ArrayList<Parameter>());
+                return new CreateMethodFromUsageFix(forExpr, iterableType, "iterator", returnType, new ArrayList<Parameter>());
             }
         };
     }
