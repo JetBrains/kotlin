@@ -502,9 +502,12 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         ownerClassDescriptor = (ClassDescriptor) ownerTypeDescriptor;
         receiverType = ownerClassDescriptor.getDefaultType();
         PsiElement typeDeclaration = BindingContextUtils.classDescriptorToDeclaration(currentFileContext, ownerClassDescriptor);
-        assert typeDeclaration != null;
-        ownerClass = (JetClass) typeDeclaration;
-        isExtension = !ownerClass.isWritable();
+        if (typeDeclaration != null && typeDeclaration instanceof JetClass) {
+            ownerClass = (JetClass) typeDeclaration;
+            isExtension = !ownerClass.isWritable();
+        } else {
+            isExtension = true;
+        }
         isUnit = returnType.isType() && isUnit(returnType.getType());
 
         // figure out type substitutions for type parameters
@@ -565,7 +568,15 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         BindingContext containingFileContext = currentFile.equals(containingFile)
                                                ? currentFileContext
                                                : AnalyzerFacadeWithCache.analyzeFileWithCache(containingFile).getBindingContext();
-        JetScope scope = getScope(isExtension ? containingFile : ownerClass, containingFileContext);
+        JetScope scope;
+        if (isExtension) {
+            NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, containingFile);
+            assert namespaceDescriptor != null;
+            scope = namespaceDescriptor.getMemberScope();
+        } else {
+            assert ownerClassDescriptor instanceof MutableClassDescriptor;
+            scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberResolution();
+        }
 
         // build templates
         PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -849,20 +860,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             newTypes[i] = newType;
         }
         return newTypes;
-    }
-
-    @NotNull
-    private static JetScope getScope(@NotNull PsiElement owner, @NotNull BindingContext context) {
-        DeclarationDescriptor ownerDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, owner);
-        assert ownerDescriptor != null;
-        if (ownerDescriptor instanceof NamespaceDescriptor) {
-            NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) ownerDescriptor;
-            return namespaceDescriptor.getMemberScope();
-        } else {
-            assert ownerDescriptor instanceof MutableClassDescriptor;
-            MutableClassDescriptor classDescriptor = (MutableClassDescriptor) ownerDescriptor;
-            return classDescriptor.getScopeForMemberResolution();
-        }
     }
 
     @NotNull
