@@ -129,7 +129,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
                     @NotNull
                     @Override
                     public Iterable<FinalListItem> getNeighbors(FinalListItem current) {
-                        TLinkedList<FinalListItem> parents = new TLinkedList<FinalListItem>();
+                        LinkedList<FinalListItem> parents = new LinkedList<FinalListItem>();
                         ClassDescriptor classDescriptor = getClassDescriptor(context().bindingContext(), current.declaration);
                         Collection<JetType> superTypes = classDescriptor.getTypeConstructor().getSupertypes();
 
@@ -146,6 +146,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
                         return parents;
                     }
                 });
+
+        assert sortedOpenClasses.size() == openList.size();
 
         // second pass: generate
         Iterator<FinalListItem> it = sortedOpenClasses.descendingIterator();
