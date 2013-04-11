@@ -24,17 +24,21 @@ import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.codeInsight.template.impl.Variable;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -52,11 +56,13 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
+import javax.swing.*;
 import java.util.*;
 
 public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
@@ -431,7 +437,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull final Project project, final Editor editor, PsiFile file) throws IncorrectOperationException {
         // TODO: editing across files
 
         assert file instanceof JetFile;
@@ -439,14 +445,57 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
         JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
         assert possibleOwnerTypes.length > 0;
-        JetType ownerType;
         if (possibleOwnerTypes.length == 1) {
-            ownerType = possibleOwnerTypes[0];
+            JetType ownerType = possibleOwnerTypes[0];
+            doInvoke(project, editor, ownerType);
         } else {
-            // TODO: class selection
-            ownerType = possibleOwnerTypes[0];
-        }
+            // class selection
+            List<String> options = new ArrayList<String>();
+            final Map<String, JetType> optionToTypeMap = new HashMap<String, JetType>();
+            for (JetType possibleOwnerType : possibleOwnerTypes) {
+                ClassifierDescriptor possibleClassDescriptor = possibleOwnerType.getConstructor().getDeclarationDescriptor();
+                if (possibleClassDescriptor != null) {
+                    String className = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(possibleClassDescriptor.getDefaultType());
+                    DeclarationDescriptor namespaceDescriptor = possibleClassDescriptor.getContainingDeclaration();
+                    assert namespaceDescriptor instanceof NamespaceDescriptor;
+                    String namespace = ((NamespaceDescriptor) namespaceDescriptor).getFqName().getFqName();
+                    String option = className + " (" + namespace + ")";
+                    options.add(option);
+                    optionToTypeMap.put(option, possibleOwnerType);
+                }
+            }
 
+            final JList list = new JBList(options);
+            PsiElementListCellRenderer renderer = new JetLightClassListCellRenderer();
+            list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            list.setCellRenderer(renderer);
+            PopupChooserBuilder builder = new PopupChooserBuilder(list);
+            renderer.installSpeedSearch(builder);
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    int index = list.getSelectedIndex();
+                    if (index < 0) return;
+                    String option = (String) list.getSelectedValue();
+                    final JetType ownerType = optionToTypeMap.get(option);
+                    CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+                        @Override
+                        public void run() {
+                            doInvoke(project, editor, ownerType);
+                        }
+                    }, getText(), null);
+                }
+            };
+
+            builder.setTitle(JetBundle.message("choose.target.class.or.trait.title"))
+                   .setItemChoosenCallback(runnable)
+                   .createPopup()
+                   .showInBestPositionFor(editor);
+        }
+    }
+
+    private void doInvoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull JetType ownerType) {
         // gather relevant information
         ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
         assert ownerTypeDescriptor != null && ownerTypeDescriptor instanceof ClassDescriptor;
@@ -471,8 +520,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             parameter.getType().substitute(substitutions);
         }
 
-        JetNamedFunction func = createFunctionSkeleton(project);
-        buildAndRunTemplate(project, editor, func);
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                JetNamedFunction func = createFunctionSkeleton(project);
+                buildAndRunTemplate(project, editor, func);
+            }
+        });
     }
 
     private JetNamedFunction createFunctionSkeleton(@NotNull Project project) {
