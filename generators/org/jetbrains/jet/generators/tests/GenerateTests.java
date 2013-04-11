@@ -229,7 +229,7 @@ public class GenerateTests {
 
         generateTest(
                 "idea/tests/",
-                "JetBasicJSCompletionTest",
+                "JetBasicJSCompletionTestGenerated",
                 AbstractJetJSCompletionTest.class,
                 testModel("idea/testData/completion/basic/common"),
                 testModel("idea/testData/completion/basic/js")
@@ -237,7 +237,7 @@ public class GenerateTests {
 
         generateTest(
                 "idea/tests/",
-                "JetBasicJavaCompletionTest",
+                "JetBasicJavaCompletionTestGenerated",
                 AbstractJavaCompletionTest.class,
                 testModel("idea/testData/completion/basic/common"),
                 testModel("idea/testData/completion/basic/java")
