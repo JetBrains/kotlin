@@ -93,9 +93,7 @@ public class GenerationState {
 
         this.typeMapper = new JetTypeMapper(bindingTrace, builtinToJavaTypesMapping == BuiltinToJavaTypesMapping.ENABLED, classBuilderMode);
 
-        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(
-                typeMapper, this.files,
-                builtinToJavaTypesMapping, this, builderFactory, project);
+        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(typeMapper, this, builderFactory, project);
 
         this.scriptCodegen = injector.getScriptCodegen();
         this.intrinsics = injector.getIntrinsics();

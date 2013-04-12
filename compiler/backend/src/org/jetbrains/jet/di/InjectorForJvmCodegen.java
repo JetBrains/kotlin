@@ -17,9 +17,6 @@
 package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import java.util.List;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import com.intellij.openapi.project.Project;
@@ -36,8 +33,6 @@ import javax.annotation.PreDestroy;
 public class InjectorForJvmCodegen {
     
     private final JetTypeMapper jetTypeMapper;
-    private final List<JetFile> listOfJetFile;
-    private final BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
     private final GenerationState generationState;
     private final ClassBuilderFactory classBuilderFactory;
     private final Project project;
@@ -50,15 +45,11 @@ public class InjectorForJvmCodegen {
     
     public InjectorForJvmCodegen(
         @NotNull JetTypeMapper jetTypeMapper,
-        @NotNull List<JetFile> listOfJetFile,
-        @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
         @NotNull GenerationState generationState,
         @NotNull ClassBuilderFactory classBuilderFactory,
         @NotNull Project project
     ) {
         this.jetTypeMapper = jetTypeMapper;
-        this.listOfJetFile = listOfJetFile;
-        this.builtinToJavaTypesMapping = builtinToJavaTypesMapping;
         this.generationState = generationState;
         this.classBuilderFactory = classBuilderFactory;
         this.project = project;

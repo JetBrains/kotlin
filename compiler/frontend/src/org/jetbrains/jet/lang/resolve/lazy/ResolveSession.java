@@ -114,7 +114,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
         this.trace = storageManager.createSafeTrace(delegationTrace);
-        this.injector = new InjectorForLazyResolve(project, this, trace, moduleConfiguration);
+        this.injector = new InjectorForLazyResolve(project, this, moduleConfiguration);
         this.module = rootDescriptor;
         this.moduleConfiguration = moduleConfiguration;
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);

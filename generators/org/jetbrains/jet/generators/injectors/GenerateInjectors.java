@@ -21,10 +21,12 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.di.*;
+import org.jetbrains.jet.di.DependencyInjectorGenerator;
+import org.jetbrains.jet.di.GivenExpression;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
+import org.jetbrains.jet.di.InstantiateType;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -64,7 +66,6 @@ public class GenerateInjectors {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generator.addParameter(Project.class);
         generator.addParameter(ResolveSession.class);
-        generator.addParameter(BindingTrace.class);
         generator.addParameter(ModuleConfiguration.class);
         generator.addPublicField(DescriptorResolver.class);
         generator.addPublicField(ExpressionTypingServices.class);
@@ -196,8 +197,6 @@ public class GenerateInjectors {
 
         // Parameters
         generator.addPublicParameter(JetTypeMapper.class);
-        generator.addParameter(DiType.listOf(JetFile.class));
-        generator.addParameter(BuiltinToJavaTypesMapping.class);
         generator.addPublicParameter(GenerationState.class);
         generator.addParameter(ClassBuilderFactory.class);
         generator.addPublicParameter(Project.class);
