@@ -1976,6 +1976,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/SupertypeOfErrorType.kt");
             }
             
+            @TestMetadata("typeParameterOnLhsOfDot.kt")
+            public void testTypeParameterOnLhsOfDot() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/typeParameterOnLhsOfDot.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError")
             public static class DiagnosticWithSyntaxError extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInDiagnosticWithSyntaxError() throws Exception {
