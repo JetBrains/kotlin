@@ -67,7 +67,7 @@ public class CallExpressionResolver {
     @Nullable
     private JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ResolutionContext context) {
         Name referencedName = expression.getReferencedNameAsName();
-        ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
+        final ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
         if (classifier != null) {
             JetType classObjectType = classifier.getClassObjectType();
             if (classObjectType != null) {
@@ -103,7 +103,18 @@ public class CallExpressionResolver {
             JetScope scopeForStaticMembersResolution =
                     classifier instanceof ClassDescriptor
                     ? getStaticNestedClassesScope((ClassDescriptor) classifier)
-                    : ErrorUtils.createErrorScope("Error scope for type parameter on the left hand side of dot");
+                    : new JetScopeImpl() {
+                            @NotNull
+                            @Override
+                            public DeclarationDescriptor getContainingDeclaration() {
+                                return classifier;
+                            }
+
+                            @Override
+                            public String toString() {
+                                return "Scope for the type parameter on the left hand side of dot";
+                            }
+                        };
             return new NamespaceType(referencedName, scopeForStaticMembersResolution);
         }
         temporaryTrace.commit();
