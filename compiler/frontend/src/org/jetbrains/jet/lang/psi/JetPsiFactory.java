@@ -296,9 +296,7 @@ public class JetPsiFactory {
 
         assert ifExpr.getCondition() != null;
         assert ifExpr.getThen() != null;
-        if (elseExpr != null) {
-            assert ifExpr.getElse() != null;
-        }
+        assert elseExpr == null || ifExpr.getElse() != null;
 
         ifExpr = (JetIfExpression)ifExpr.getCondition().replace(condition).getParent().getParent();
         ifExpr = (JetIfExpression)ifExpr.getThen().replace(thenExpr).getParent().getParent();
