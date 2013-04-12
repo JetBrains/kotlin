@@ -45,7 +45,7 @@ public class BranchedUnfoldingUtils {
         return checkUnfoldableAssignment(root) || checkUnfoldableReturn(root);
     }
 
-    private static JetExpression unwrapBranch(@Nullable JetExpression expression) {
+    private static JetExpression getOutermostLastBlockElement(@Nullable JetExpression expression) {
         return (JetExpression) JetPsiUtil.getOutermostLastBlockElement(expression, null);
     }
 
@@ -59,8 +59,8 @@ public class BranchedUnfoldingUtils {
 
         ifExpression = (JetIfExpression)assignment.replace(ifExpression);
 
-        JetExpression thenExpr = unwrapBranch(ifExpression.getThen());
-        JetExpression elseExpr = unwrapBranch(ifExpression.getElse());
+        JetExpression thenExpr = getOutermostLastBlockElement(ifExpression.getThen());
+        JetExpression elseExpr = getOutermostLastBlockElement(ifExpression.getElse());
 
         assert thenExpr != null;
         assert elseExpr != null;
@@ -80,7 +80,7 @@ public class BranchedUnfoldingUtils {
         whenExpression = (JetWhenExpression)assignment.replace(whenExpression);
 
         for (JetWhenEntry entry : whenExpression.getEntries()) {
-            JetExpression currExpr = unwrapBranch(entry.getExpression());
+            JetExpression currExpr = getOutermostLastBlockElement(entry.getExpression());
 
             assert currExpr != null;
 
@@ -96,8 +96,8 @@ public class BranchedUnfoldingUtils {
 
         ifExpression = (JetIfExpression)returnExpression.replace(ifExpression);
 
-        JetExpression thenExpr = unwrapBranch(ifExpression.getThen());
-        JetExpression elseExpr = unwrapBranch(ifExpression.getElse());
+        JetExpression thenExpr = getOutermostLastBlockElement(ifExpression.getThen());
+        JetExpression elseExpr = getOutermostLastBlockElement(ifExpression.getElse());
 
         assert thenExpr != null;
         assert elseExpr != null;
@@ -115,7 +115,7 @@ public class BranchedUnfoldingUtils {
         whenExpression = (JetWhenExpression)returnExpression.replace(whenExpression);
 
         for (JetWhenEntry entry : whenExpression.getEntries()) {
-            JetExpression currExpr = unwrapBranch(entry.getExpression());
+            JetExpression currExpr = getOutermostLastBlockElement(entry.getExpression());
 
             assert currExpr != null;
 
