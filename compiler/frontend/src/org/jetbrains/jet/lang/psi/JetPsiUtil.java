@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -623,8 +624,62 @@ public class JetPsiUtil {
         return innerPrecedence < parentPrecedence;
     }
 
-    public static boolean isAssignment(@NotNull JetElement element) {
+    public static boolean isAssignment(@NotNull PsiElement element) {
         return element instanceof JetBinaryExpression &&
                JetTokens.ALL_ASSIGNMENTS.contains(((JetBinaryExpression) element).getOperationToken());
+    }
+
+    public static boolean isBranchedExpression(@Nullable PsiElement element) {
+        return element instanceof JetIfExpression || element instanceof JetWhenExpression;
+    }
+
+    @Nullable
+    public static JetElement getOutermostLastBlockElement(
+            @Nullable JetElement element,
+            @Nullable Predicate<JetElement> checkElement) {
+        if (element == null) return null;
+
+        if (!(element instanceof JetBlockExpression)) return checkElement == null || checkElement.apply(element) ? element : null;
+
+        JetBlockExpression block = (JetBlockExpression)element;
+        int n = block.getStatements().size();
+
+        if (n == 0) return null;
+
+        JetElement lastElement = block.getStatements().get(n - 1);
+        return checkElement == null || checkElement.apply(lastElement) ? lastElement : null;
+    }
+
+    @Nullable
+    public static PsiElement getParentByTypeAndPredicate(
+            @Nullable PsiElement element, @NotNull Class<? extends PsiElement> aClass, @NotNull Predicate<PsiElement> predicate, boolean strict) {
+        if (element == null) return null;
+        if (strict) {
+            element = element.getParent();
+        }
+
+        while (element != null) {
+            //noinspection unchecked
+            if (aClass.isInstance(element) && predicate.apply(element)) {
+                //noinspection unchecked
+                return element;
+            }
+            if (element instanceof PsiFile) return null;
+            element = element.getParent();
+        }
+
+        return null;
+    }
+
+    public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
+        for (JetElement element : block.getStatements()) {
+            if (element instanceof JetVariableDeclaration) {
+                if (((JetVariableDeclaration) element).getNameAsSafeName().getName().equals(varName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

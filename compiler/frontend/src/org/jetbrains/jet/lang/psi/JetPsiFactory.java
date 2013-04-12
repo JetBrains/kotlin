@@ -249,13 +249,13 @@ public class JetPsiFactory {
         return createExpression(project, "$" + fieldName);
     }
 
-    public static JetBinaryExpression createAssignment(Project project, @NotNull String lhs, @NotNull String rhs) {
-        return (JetBinaryExpression) createExpression(project, lhs + " = " + rhs);
+    public static JetBinaryExpression createBinaryExpression(Project project, @NotNull String lhs, @NotNull String op, @NotNull String rhs) {
+        return (JetBinaryExpression) createExpression(project, lhs + " " + op + " " + rhs);
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static JetBinaryExpression createAssignment(Project project, @NotNull JetExpression lhs, @NotNull JetExpression rhs) {
-        JetBinaryExpression assignment = createAssignment(project, "_", "_");
+    public static JetBinaryExpression createBinaryExpression(Project project, @NotNull JetExpression lhs, @NotNull String op, @NotNull JetExpression rhs) {
+        JetBinaryExpression assignment = createBinaryExpression(project, "_", op, "_");
 
         assert assignment.getRight() != null;
 
