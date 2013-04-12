@@ -30,15 +30,18 @@ import java.util.Collection;
  * @see org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
  */
 public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
+    private final boolean isSamInterface;
 
     private JavaClassNonStaticMembersScope scopeForConstructorResolve;
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ClassKind kind,
-            boolean isInner
+            boolean isInner,
+            boolean isSamInterface
     ) {
         super(containingDeclaration, kind, isInner);
+        this.isSamInterface = isSamInterface;
     }
 
 
@@ -57,5 +60,9 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
 
     public void setScopeForConstructorResolve(@NotNull JavaClassNonStaticMembersScope scopeForConstructorResolve) {
         this.scopeForConstructorResolve = scopeForConstructorResolve;
+    }
+
+    public boolean isSamInterface() {
+        return isSamInterface;
     }
 }

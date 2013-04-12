@@ -36,21 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SingleAbstractMethodUtils {
-    public static boolean isSamInterface(@NotNull ClassDescriptor klass) {
-        if (klass.getKind() != ClassKind.TRAIT) {
-            return false;
-        }
-
-        List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass.getDefaultType());
-        if (abstractMembers.size() == 1) {
-            CallableMemberDescriptor member = abstractMembers.get(0);
-            if (member instanceof SimpleFunctionDescriptor) {
-                return member.getTypeParameters().isEmpty();
-            }
-        }
-        return false;
-    }
-
     @NotNull
     private static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
         List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
@@ -73,10 +58,28 @@ public class SingleAbstractMethodUtils {
         return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
     }
 
+    private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
+        if (klass.getKind() != ClassKind.TRAIT) {
+            return false;
+        }
+
+        List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass.getDefaultType());
+        if (abstractMembers.size() == 1) {
+            CallableMemberDescriptor member = abstractMembers.get(0);
+            if (member instanceof SimpleFunctionDescriptor) {
+                return member.getTypeParameters().isEmpty();
+            }
+        }
+        return false;
+    }
+
+    @NotNull
     public static SimpleFunctionDescriptor createSamConstructorFunction(
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull ClassDescriptor samInterface
     ) {
+        assert isSamInterface(samInterface) : samInterface;
+
         SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
                 owner,
                 samInterface.getAnnotations(),

@@ -336,7 +336,10 @@ public final class MembersCache {
     }
 
     public static boolean isSamInterface(@NotNull PsiClass psiClass) {
-        if (!psiClass.isInterface()) {
+        if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
+            return false;
+        }
+        if (!psiClass.isInterface() || psiClass.isAnnotationType()) {
             return false;
         }
 

@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -227,8 +228,8 @@ public final class JavaClassResolver {
 
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
-        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind,
-                                                                                            isInnerClass(psiClass));
+        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(
+                containingDeclaration, kind, isInnerClass(psiClass), MembersCache.isSamInterface(psiClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));

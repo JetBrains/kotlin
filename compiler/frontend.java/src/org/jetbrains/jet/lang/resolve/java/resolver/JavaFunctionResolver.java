@@ -357,7 +357,7 @@ public final class JavaFunctionResolver {
         PsiClass samInterface = namedMembers.getSamInterface();
         if (samInterface != null) {
             ClassDescriptor klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
-            if (klass != null && SingleAbstractMethodUtils.isSamInterface(klass)) {
+            if (klass != null) {
                 SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createSamConstructorFunction(ownerDescriptor,
                                                                                                                       klass);
                 trace.record(BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
