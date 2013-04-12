@@ -306,8 +306,7 @@ public class GenerateTests {
                 "CodeTransformationsTestGenerated",
                 AbstractCodeTransformationTest.class,
                 testModel("idea/testData/codeInsight/codeTransformations/ifStatementWithAssignmentsToExpression", "doTestIfStatementWithAssignmentsToExpression"),
-                testModel("idea/testData/codeInsight/codeTransformations/assignmentWithIfExpressionToStatement", "doTestAssignmentWithIfExpressionToStatement"),
-                testModel("idea/testData/codeInsight/codeTransformations/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
+                testModel("idea/testData/codeInsight/codeTransformations/assignmentWithIfExpressionToStatement", "doTestAssignmentWithIfExpressionToStatement")
         );
 
         generateTest(

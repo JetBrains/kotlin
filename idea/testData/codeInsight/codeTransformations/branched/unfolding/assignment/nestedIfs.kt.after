@@ -1,15 +1,15 @@
 fun test(n: Int): String {
     var res: String
 
-    <caret>res = if (n == 1) {
-        if (3 > 2) {
+    <caret>if (n == 1) {
+        res = if (3 > 2) {
             println("***")
             "one"
         } else {
             println("***")
             "???"
         }
-    } else if (n == 2) {
+    } else res = if (n == 2) {
         println("***")
         "two"
     } else {

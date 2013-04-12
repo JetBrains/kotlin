@@ -1,21 +1,17 @@
 fun test(n: Int): String {
-    var res: String
-
-    <caret>if (n == 1) {
-        if (3 > 2) {
+    if (n == 1) {
+        <caret>if (3 > 2) {
             println("***")
-            res = "one"
+            return "one"
         } else {
             println("***")
-            res = "???"
+            return "???"
         }
     } else if (n == 2) {
         println("***")
-        res = "two"
+        return "two"
     } else {
         println("***")
-        res = "too many"
+        return "too many"
     }
-
-    return res
 }
