@@ -20,7 +20,6 @@ import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -72,6 +71,10 @@ public class BranchedFoldingUtils {
         return (JetReturnExpression)JetPsiUtil.getOutermostLastBlockElement(branch, CHECK_RETURN);
     }
 
+    private static boolean checkAssignmentsMatch(JetBinaryExpression a1, JetBinaryExpression a2) {
+        return checkEquivalence(a1.getLeft(), a2.getLeft()) && a1.getOperationToken().equals(a2.getOperationToken());
+    }
+
     private static boolean checkFoldableIfExpressionWithAssignments(JetIfExpression ifExpression) {
         JetExpression thenBranch = ifExpression.getThen();
         JetExpression elseBranch = ifExpression.getElse();
@@ -81,8 +84,7 @@ public class BranchedFoldingUtils {
 
         if (thenAssignment == null || elseAssignment == null) return false;
 
-        return checkEquivalence(thenAssignment.getLeft(), elseAssignment.getLeft()) &&
-                thenAssignment.getOperationToken().equals(elseAssignment.getOperationToken());
+        return checkAssignmentsMatch(thenAssignment, elseAssignment);
     }
 
     private static boolean checkFoldableWhenExpressionWithAssignments(JetWhenExpression whenExpression) {
@@ -105,11 +107,9 @@ public class BranchedFoldingUtils {
 
         assert !assignments.isEmpty();
 
-        JetExpression lhs = assignments.get(0).getLeft();
-        IElementType opToken = assignments.get(0).getOperationToken();
-        for (int i = 1; i < assignments.size(); i++) {
-            if (!checkEquivalence(lhs, assignments.get(i).getLeft())) return false;
-            if (!opToken.equals(assignments.get(i).getOperationToken())) return false;
+        JetBinaryExpression firstAssignment = assignments.get(0);
+        for (JetBinaryExpression assignment : assignments) {
+            if (!checkAssignmentsMatch(assignment, firstAssignment)) return false;
         }
 
         return true;
