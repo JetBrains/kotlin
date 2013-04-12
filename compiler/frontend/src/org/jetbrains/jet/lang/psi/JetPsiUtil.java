@@ -634,12 +634,10 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetElement getOutermostLastBlockElement(
-            @Nullable JetElement element,
-            @Nullable Predicate<JetElement> checkElement) {
+    public static JetElement getOutermostLastBlockElement(@Nullable JetElement element, @NotNull Predicate<JetElement> checkElement) {
         if (element == null) return null;
 
-        if (!(element instanceof JetBlockExpression)) return checkElement == null || checkElement.apply(element) ? element : null;
+        if (!(element instanceof JetBlockExpression)) return checkElement.apply(element) ? element : null;
 
         JetBlockExpression block = (JetBlockExpression)element;
         int n = block.getStatements().size();
@@ -647,7 +645,7 @@ public class JetPsiUtil {
         if (n == 0) return null;
 
         JetElement lastElement = block.getStatements().get(n - 1);
-        return checkElement == null || checkElement.apply(lastElement) ? lastElement : null;
+        return checkElement.apply(lastElement) ? lastElement : null;
     }
 
     @Nullable
@@ -692,4 +690,11 @@ public class JetPsiUtil {
         }
         return (elseCount == 1);
     }
+
+    public static final Predicate<JetElement> ANY_JET_ELEMENT = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return true;
+        }
+    };
 }

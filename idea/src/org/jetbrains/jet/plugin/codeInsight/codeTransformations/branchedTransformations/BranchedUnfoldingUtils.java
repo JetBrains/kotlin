@@ -46,7 +46,7 @@ public class BranchedUnfoldingUtils {
     }
 
     private static JetExpression getOutermostLastBlockElement(@Nullable JetExpression expression) {
-        return (JetExpression) JetPsiUtil.getOutermostLastBlockElement(expression, null);
+        return (JetExpression) JetPsiUtil.getOutermostLastBlockElement(expression, JetPsiUtil.ANY_JET_ELEMENT);
     }
 
     private static void unfoldAssignmentToIf(@NotNull JetBinaryExpression assignment) {
