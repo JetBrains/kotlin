@@ -682,4 +682,14 @@ public class JetPsiUtil {
 
         return false;
     }
+
+    public static boolean checkWhenExpressionHasSingleElse(JetWhenExpression whenExpression) {
+        int elseCount = 0;
+        for (JetWhenEntry entry : whenExpression.getEntries()) {
+            if (entry.isElse()) {
+                elseCount++;
+            }
+        }
+        return (elseCount == 1);
+    }
 }

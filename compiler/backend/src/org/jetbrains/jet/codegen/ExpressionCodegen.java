@@ -3626,13 +3626,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
 
         Label end = new Label();
-        boolean hasElse = false;
-        for (JetWhenEntry whenEntry : expression.getEntries()) {
-            if (whenEntry.isElse()) {
-                hasElse = true;
-                break;
-            }
-        }
+        boolean hasElse = JetPsiUtil.checkWhenExpressionHasSingleElse(expression);
 
         Label nextCondition = null;
         for (JetWhenEntry whenEntry : expression.getEntries()) {

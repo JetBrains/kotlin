@@ -88,22 +88,18 @@ public class BranchedFoldingUtils {
     }
 
     private static boolean checkFoldableWhenExpressionWithAssignments(JetWhenExpression whenExpression) {
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpression)) return false;
+
         List<JetWhenEntry> entries = whenExpression.getEntries();
 
         if (entries.isEmpty()) return false;
 
-        boolean hasElse = false;
         List<JetBinaryExpression> assignments = new ArrayList<JetBinaryExpression>();
         for (JetWhenEntry entry : entries) {
-            if (entry.isElse()) {
-                hasElse = true;
-            }
             JetBinaryExpression assignment = checkAndGetFoldableBranchedAssignment(entry.getExpression());
             if (assignment == null) return false;
             assignments.add(assignment);
         }
-
-        if (!hasElse) return false;
 
         assert !assignments.isEmpty();
 
@@ -121,24 +117,22 @@ public class BranchedFoldingUtils {
     }
 
     private static boolean checkFoldableWhenExpressionWithReturns(JetWhenExpression whenExpression) {
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpression)) return false;
+
         List<JetWhenEntry> entries = whenExpression.getEntries();
 
         if (entries.isEmpty()) return false;
 
-        boolean hasElse = false;
         for (JetWhenEntry entry : entries) {
-            if (entry.isElse()) {
-                hasElse = true;
-            }
             if (checkAndGetFoldableBranchedReturn(entry.getExpression()) == null) return false;
         }
 
-        return hasElse;
+        return true;
     }
 
     private static boolean checkFoldableIfExpressionWithAsymmetricReturns(JetIfExpression ifExpression) {
         if (checkAndGetFoldableBranchedReturn(ifExpression.getThen()) == null ||
-            checkAndGetFoldableBranchedReturn(ifExpression.getElse()) != null) {
+            ifExpression.getElse() != null) {
             return false;
         }
 

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetWhenEntry;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -53,13 +54,7 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         if (!super.isAvailable(project, editor, file)) {
             return false;
         }
-        int elseCount = 0;
-        for (JetWhenEntry entry : element.getEntries()) {
-            if (entry.isElse()) {
-                elseCount++;
-            }
-        }
-        return (elseCount == 1);
+        return JetPsiUtil.checkWhenExpressionHasSingleElse(element);
     }
 
     @Override
