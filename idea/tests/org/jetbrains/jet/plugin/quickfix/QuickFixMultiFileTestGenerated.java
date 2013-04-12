@@ -82,6 +82,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile("idea/testData/quickfix/autoImports/importInFirstPartInUserType.before.Main.kt");
         }
         
+        @TestMetadata("importTrait.before.Main.kt")
+        public void testImportTrait() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/importTrait.before.Main.kt");
+        }
+        
         @TestMetadata("noImportForFunInQualifiedNotFirst.before.Main.kt")
         public void testNoImportForFunInQualifiedNotFirst() throws Exception {
             doTestWithExtraFile("idea/testData/quickfix/autoImports/noImportForFunInQualifiedNotFirst.before.Main.kt");
