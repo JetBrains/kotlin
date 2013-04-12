@@ -21,16 +21,18 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.FoldBranchedExpressionIntention;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.UnfoldBranchedExpressionIntention;
 
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
-    public void doTestIfStatementWithAssignmentsToExpression(@NotNull String path) throws Exception {
-        doTest(path, new IfStatementWithAssignmentsToExpressionIntention());
+    public void doTestBranchedFolding(@NotNull String path) throws Exception {
+        doTest(path, new FoldBranchedExpressionIntention());
     }
 
-    public void doTestAssignmentWithIfExpressionToStatement(@NotNull String path) throws Exception {
-        doTest(path, new AssignmentWithIfExpressionToStatementIntention());
+    public void doTestBranchedUnfolding(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention());
     }
 
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {

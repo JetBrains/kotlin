@@ -292,12 +292,12 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.IfStatementWithAssignmentsToExpressionIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.FoldBranchedExpressionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.AssignmentWithIfExpressionToStatementIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.UnfoldBranchedExpressionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
