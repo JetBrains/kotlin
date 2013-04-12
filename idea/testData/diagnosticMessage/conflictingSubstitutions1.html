@@ -9,20 +9,20 @@ T</b>
 <td align="right" colspan="2" style="white-space:nowrap;font-weight:bold;">
 <b>
 fun</b>
- &lt;T, E : java.lang.Cloneable>
+ &lt;T, E>
  writeToMyList</td>
 <td style="white-space:nowrap;font-weight:bold;">
 (</td>
 <td align="right" style="white-space:nowrap;font-weight:bold;">
-l: MyList&lt;in T&gt;,</td>
+l : MyList&lt;in T&gt;,</td>
 <td align="right" style="white-space:nowrap;font-weight:bold;">
-t: T</td>
+t : T</td>
 <td style="white-space:nowrap;font-weight:bold;">
 )</td>
 <td style="white-space:nowrap;font-weight:bold;">
-: jet.Unit <b>
+ : jet.Unit <b>
 where</b>
- E : java.io.Closeable</td>
+ E : java.lang.Cloneable, E : java.io.Closeable</td>
 </tr>
 <tr>
 <td colspan="8" style="white-space:nowrap;">

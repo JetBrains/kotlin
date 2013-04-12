@@ -3,6 +3,6 @@
 
 package testData.libraries
 
-[[public final class ClassWithConstructor(a: jet.String, b: jet.Any) {
-    [internal final val a: jet.String] /* compiled code */
+[[public final class ClassWithConstructor(a : jet.String, b : jet.Any) {
+    [internal final val a : jet.String] /* compiled code */
 }]]

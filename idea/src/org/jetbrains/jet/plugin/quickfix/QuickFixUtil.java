@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -36,7 +35,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class QuickFixUtil {
     private QuickFixUtil() {
@@ -94,14 +92,5 @@ public class QuickFixUtil {
 
     public static boolean canModifyElement(@NotNull PsiElement element) {
         return element.isWritable() && !BuiltInsReferenceResolver.isFromBuiltIns(element);
-    }
-
-    @NotNull
-    public static String createFunctionSignatureStringFromDescriptor(
-            @NotNull FunctionDescriptor descriptor,
-            boolean shortTypeNames
-    ) {
-        DescriptorRenderer renderer = shortTypeNames ? DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES : DescriptorRenderer.SOURCE_CODE;
-        return renderer.render(descriptor);
     }
 }

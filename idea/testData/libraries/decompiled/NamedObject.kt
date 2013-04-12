@@ -4,5 +4,5 @@
 package testData.libraries
 
 [[public object NamedObject {
-    [public final val objectMember: jet.Int] /* compiled code */
+    [public final val objectMember : jet.Int] /* compiled code */
 }]]

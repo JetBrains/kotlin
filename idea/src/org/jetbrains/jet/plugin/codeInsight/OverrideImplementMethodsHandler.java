@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -118,29 +119,29 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         for (DescriptorClassMember selectedElement : selectedElements) {
             DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(overrideFunction(file.getProject(),
-                                                       (SimpleFunctionDescriptor) descriptor /* shortTypeNames = */
-                ));
+                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor) descriptor));
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                overridingMembers.add(
-                        overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
+                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
             }
         }
         return overridingMembers;
     }
 
-    @NotNull
-    private static JetElement overrideProperty(@NotNull Project project, @NotNull PropertyDescriptor descriptor) {
-        PropertyDescriptor newDescriptor = (PropertyDescriptor) descriptor.copy(
-                descriptor.getContainingDeclaration(),
-                Modality.OPEN,
-                descriptor.getVisibility(),
-                descriptor.getKind(),
-                /* copyOverrides = */ true);
-        newDescriptor.addOverriddenDescriptor(descriptor);
-
+    private static JetElement overrideProperty(Project project, PropertyDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append(displayableVisibility(descriptor)).append("override ");
+        if (descriptor.isVar()) {
+            bodyBuilder.append("var ");
+        }
+        else {
+            bodyBuilder.append("val ");
+        }
+
+        addReceiverParameter(descriptor, bodyBuilder);
+
+        bodyBuilder.append(descriptor.getName()).append(" : ").append(
+                DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()));
         String initializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
         if (initializer != null) {
             bodyBuilder.append(" = ").append(initializer);
@@ -148,19 +149,53 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             bodyBuilder.append(" = ?");
         }
-        return JetPsiFactory.createProperty(project, DescriptorRenderer.SOURCE_CODE.render(newDescriptor) + bodyBuilder.toString());
+        return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
-    @NotNull
-    private static JetNamedFunction overrideFunction(@NotNull Project project, @NotNull FunctionDescriptor descriptor) {
-        FunctionDescriptor newDescriptor = descriptor.copy(
-                descriptor.getContainingDeclaration(),
-                Modality.OPEN,
-                descriptor.getVisibility(),
-                descriptor.getKind(),
-                /* copyOverrides = */ true);
-        newDescriptor.addOverriddenDescriptor(descriptor);
+    private static String renderType(JetType type) {
+        return DescriptorRenderer.TEXT.renderType(type);
+    }
 
+    private static JetElement overrideFunction(Project project, SimpleFunctionDescriptor descriptor) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append(displayableVisibility(descriptor));
+        bodyBuilder.append("override fun ");
+
+        List<String> whereRestrictions = new ArrayList<String>();
+        if (!descriptor.getTypeParameters().isEmpty()) {
+            bodyBuilder.append("<");
+            boolean first = true;
+            for (TypeParameterDescriptor param : descriptor.getTypeParameters()) {
+                if (!first) {
+                    bodyBuilder.append(", ");
+                }
+
+                bodyBuilder.append(param.getName());
+                Set<JetType> upperBounds = param.getUpperBounds();
+                if (!upperBounds.isEmpty()) {
+                    boolean firstUpperBound = true;
+                    for (JetType upperBound : upperBounds) {
+                        String upperBoundText = " : " + renderType(upperBound);
+                        if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
+                            if (firstUpperBound) {
+                                bodyBuilder.append(upperBoundText);
+                            }
+                            else {
+                                whereRestrictions.add(param.getName() + upperBoundText);
+                            }
+                        }
+                        firstUpperBound = false;
+                    }
+                }
+
+                first = false;
+            }
+            bodyBuilder.append("> ");
+        }
+
+        addReceiverParameter(descriptor, bodyBuilder);
+
+        bodyBuilder.append(descriptor.getName()).append("(");
         boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
         StringBuilder delegationBuilder = new StringBuilder();
         if (isAbstractFun) {
@@ -171,23 +206,51 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             delegationBuilder.append(">.").append(descriptor.getName()).append("(");
         }
         boolean first = true;
-        if (!isAbstractFun) {
-            for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
-                if (!first) {
-                    delegationBuilder.append(", ");
+        for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
+            if (!first) {
+                bodyBuilder.append(",");
+                if (!isAbstractFun) {
+                    delegationBuilder.append(",");
                 }
-                first = false;
+            }
+            first = false;
+            bodyBuilder.append(parameterDescriptor.getName());
+            bodyBuilder.append(" : ");
+            bodyBuilder.append(renderType(parameterDescriptor.getType()));
+
+            if (!isAbstractFun) {
                 delegationBuilder.append(parameterDescriptor.getName());
             }
+        }
+        bodyBuilder.append(")");
+        if (!isAbstractFun) {
             delegationBuilder.append(")");
         }
         JetType returnType = descriptor.getReturnType();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
-        String body = "{" + (returnsNotUnit && !isAbstractFun ? "return " : "") + delegationBuilder.toString() + "}";
+        if (returnsNotUnit) {
+            bodyBuilder.append(" : ").append(renderType(returnType));
+        }
+        if (!whereRestrictions.isEmpty()) {
+            bodyBuilder.append("\n").append("where ").append(StringUtil.join(whereRestrictions, ", "));
+        }
+        bodyBuilder.append("{").append(returnsNotUnit && !isAbstractFun ? "return " : "").append(delegationBuilder.toString()).append("}");
 
-        return JetPsiFactory.createFunction(project, DescriptorRenderer.SOURCE_CODE.render(newDescriptor) + body);
+        return JetPsiFactory.createFunction(project, bodyBuilder.toString());
+    }
+
+    private static void addReceiverParameter(CallableDescriptor descriptor, StringBuilder bodyBuilder) {
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        if (receiverParameter != null) {
+            bodyBuilder.append(receiverParameter.getType()).append(".");
+        }
+    }
+
+    private static String displayableVisibility(MemberDescriptor descriptor) {
+        Visibility visibility = descriptor.getVisibility().normalize();
+        return visibility != Visibilities.INTERNAL ? visibility.toString() + " " : "";
     }
 
     @NotNull
