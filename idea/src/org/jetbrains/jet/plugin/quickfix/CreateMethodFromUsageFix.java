@@ -29,11 +29,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -423,6 +425,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private boolean isExtension;
     private JetFile currentFile;
     private JetFile containingFile;
+    private Editor currentFileEditor;
+    private Editor containingFileEditor;
     private BindingContext currentFileContext;
     private JetClass ownerClass;
     private ClassDescriptor ownerClassDescriptor;
@@ -444,17 +448,16 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @Override
-    public void invoke(@NotNull final Project project, final Editor editor, PsiFile file) throws IncorrectOperationException {
-        // TODO: editing across files
-
-        assert file instanceof JetFile;
+    public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        assert file != null && file instanceof JetFile;
         currentFile = (JetFile) file;
+        currentFileEditor = editor;
 
         JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
         assert possibleOwnerTypes.length > 0;
         if (possibleOwnerTypes.length == 1) {
             JetType ownerType = possibleOwnerTypes[0];
-            doInvoke(project, editor, ownerType);
+            doInvoke(project, ownerType);
         } else {
             // class selection
             List<String> options = new ArrayList<String>();
@@ -489,7 +492,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                         @Override
                         public void run() {
-                            doInvoke(project, editor, ownerType);
+                            doInvoke(project, ownerType);
                         }
                     }, getText(), null);
                 }
@@ -498,11 +501,11 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             builder.setTitle(JetBundle.message("choose.target.class.or.trait.title"))
                    .setItemChoosenCallback(runnable)
                    .createPopup()
-                   .showInBestPositionFor(editor);
+                   .showInBestPositionFor(currentFileEditor);
         }
     }
 
-    private void doInvoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull JetType ownerType) {
+    private void doInvoke(@NotNull final Project project, @NotNull JetType ownerType) {
         // gather relevant information
         ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
         assert ownerTypeDescriptor != null && ownerTypeDescriptor instanceof ClassDescriptor;
@@ -534,7 +537,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Override
             public void run() {
                 JetNamedFunction func = createFunctionSkeleton(project);
-                buildAndRunTemplate(project, editor, func);
+                buildAndRunTemplate(project, func);
             }
         });
     }
@@ -552,6 +555,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             String methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
             containingFile = currentFile;
+            containingFileEditor = currentFileEditor;
             func = (JetNamedFunction) currentFile.add(func);
         } else { // create as method
             String methodText = String.format("fun %s(%s)%s { }", methodName, parametersString, returnTypeString);
@@ -559,16 +563,25 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             PsiFile classContainingFile = ownerClass.getContainingFile();
             assert classContainingFile instanceof JetFile;
             containingFile = (JetFile) classContainingFile;
+
+            VirtualFile virtualFile = containingFile.getVirtualFile();
+            assert virtualFile != null;
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            fileEditorManager.openFile(virtualFile, true);
+            containingFileEditor = fileEditorManager.getSelectedTextEditor();
+
             JetClassBody classBody = ownerClass.getBody();
             assert classBody != null;
             PsiElement rBrace = classBody.getRBrace();
+            assert rBrace != null;
             func = (JetNamedFunction) classBody.addBefore(func, rBrace);
         }
+
         // TODO: add newlines
         return func;
     }
 
-    private void buildAndRunTemplate(@NotNull final Project project, @NotNull Editor editor, @NotNull JetNamedFunction func) {
+    private void buildAndRunTemplate(@NotNull final Project project, @NotNull JetNamedFunction func) {
         JetParameterList parameterList = func.getValueParameterList();
         assert parameterList != null;
 
@@ -584,13 +597,12 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
         // build templates
         PsiDocumentManager.getInstance(project).commitAllDocuments();
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(containingFileEditor.getDocument());
 
-        final CaretModel caretModel = editor.getCaretModel();
-        final int oldOffset = caretModel.getOffset();
-        caretModel.moveToOffset(currentFile.getNode().getStartOffset());
+        CaretModel caretModel = containingFileEditor.getCaretModel();
+        caretModel.moveToOffset(containingFile.getNode().getStartOffset());
 
-        TemplateBuilderImpl builder = new TemplateBuilderImpl(currentFile);
+        TemplateBuilderImpl builder = new TemplateBuilderImpl(containingFile);
         final TypeExpression returnTypeExpression = isUnit ? null : setupReturnTypeTemplate(builder, func);
         final TypeExpression[] parameterTypeExpressions = setupParameterTypeTemplates(project, builder, parameterList);
 
@@ -613,7 +625,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         variables.add(new Variable(TYPE_PARAMETER_LIST_VARIABLE_NAME, expression, expression, false, true));
 
         // run the template
-        TemplateManager.getInstance(project).startTemplate(editor, template, new TemplateEditingAdapter() {
+        TemplateManager.getInstance(project).startTemplate(containingFileEditor, template, new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template _, boolean brokenOff) {
                 // file templates
@@ -634,8 +646,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 });
 
                 ReferenceToClassesShortening.compactReferenceToClasses(typeRefsToShorten);
-
-                caretModel.moveToOffset(oldOffset);
             }
         });
     }
@@ -973,7 +983,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
         // TODO: usages of variable
 
-        // TODO: case 5: nested in a trivial expression (e.g. parentheses or if-else)
+        // TODO: nested in a trivial expression (e.g. parentheses or if-else)
         return new JetType[0];
     }
 
