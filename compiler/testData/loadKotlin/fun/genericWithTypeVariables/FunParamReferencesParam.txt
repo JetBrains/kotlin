@@ -1,3 +1,3 @@
 package test
 
-internal fun </*0*/ P, /*1*/ Q : P> funParamReferencesParam() : jet.Int
+internal fun </*0*/ P, /*1*/ Q : P> funParamReferencesParam(): jet.Int

@@ -3,20 +3,20 @@ package test
 public trait TwoSuperclassesVarargAndNot : java.lang.Object {
     
     public trait Sub : test.TwoSuperclassesVarargAndNot.Super1, test.TwoSuperclassesVarargAndNot.Super2 {
-        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : jet.Unit
-        public abstract override /*1*/ fun foo(/*0*/ p0 : jet.Array<out jet.String?>?) : jet.Unit
+        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Unit
+        public abstract override /*1*/ fun foo(/*0*/ p0: jet.Array<out jet.String?>?): jet.Unit
     }
     
     public trait Super1 : java.lang.Object {
-        public abstract fun foo(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : jet.Unit
+        public abstract fun foo(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Unit
     }
     
     public trait Super2 : java.lang.Object {
-        public abstract fun foo(/*0*/ p0 : jet.Array<out jet.String?>?) : jet.Unit
+        public abstract fun foo(/*0*/ p0: jet.Array<out jet.String?>?): jet.Unit
     }
 }
 
 package TwoSuperclassesVarargAndNot {
-    public /*synthesized*/ fun Super1(/*0*/ function : (jet.Array<jet.String?>) -> jet.Unit) : test.TwoSuperclassesVarargAndNot.Super1
-    public /*synthesized*/ fun Super2(/*0*/ function : (jet.Array<out jet.String?>?) -> jet.Unit) : test.TwoSuperclassesVarargAndNot.Super2
+    public /*synthesized*/ fun Super1(/*0*/ function: (jet.Array<jet.String?>) -> jet.Unit): test.TwoSuperclassesVarargAndNot.Super1
+    public /*synthesized*/ fun Super2(/*0*/ function: (jet.Array<out jet.String?>?) -> jet.Unit): test.TwoSuperclassesVarargAndNot.Super2
 }

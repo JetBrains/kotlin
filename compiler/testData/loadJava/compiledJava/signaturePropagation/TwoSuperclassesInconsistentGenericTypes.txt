@@ -1,20 +1,20 @@
 package test
 
-public /*synthesized*/ fun TwoSuperclassesInconsistentGenericTypes(/*0*/ function : () -> jet.MutableList<jet.String?>) : test.TwoSuperclassesInconsistentGenericTypes
+public /*synthesized*/ fun TwoSuperclassesInconsistentGenericTypes(/*0*/ function: () -> jet.MutableList<jet.String?>): test.TwoSuperclassesInconsistentGenericTypes
 
 public trait TwoSuperclassesInconsistentGenericTypes : java.lang.Object {
-    public abstract fun foo() : jet.MutableList<jet.String?>
+    public abstract fun foo(): jet.MutableList<jet.String?>
     
     public trait Other : java.lang.Object {
-        public abstract fun foo() : jet.MutableList<jet.String>?
+        public abstract fun foo(): jet.MutableList<jet.String>?
     }
     
     public open class Sub : test.TwoSuperclassesInconsistentGenericTypes, test.TwoSuperclassesInconsistentGenericTypes.Other {
         public constructor Sub()
-        public open override /*2*/ fun foo() : jet.MutableList<jet.String>
+        public open override /*2*/ fun foo(): jet.MutableList<jet.String>
     }
 }
 
 package TwoSuperclassesInconsistentGenericTypes {
-    public /*synthesized*/ fun Other(/*0*/ function : () -> jet.MutableList<jet.String>?) : test.TwoSuperclassesInconsistentGenericTypes.Other
+    public /*synthesized*/ fun Other(/*0*/ function: () -> jet.MutableList<jet.String>?): test.TwoSuperclassesInconsistentGenericTypes.Other
 }

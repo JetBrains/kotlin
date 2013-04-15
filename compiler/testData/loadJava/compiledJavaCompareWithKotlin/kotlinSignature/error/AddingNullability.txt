@@ -2,5 +2,5 @@ package test
 
 public open class AddingNullability : java.lang.Object {
     public constructor AddingNullability()
-    public open fun foo() : jet.Int
+    public open fun foo(): jet.Int
 }

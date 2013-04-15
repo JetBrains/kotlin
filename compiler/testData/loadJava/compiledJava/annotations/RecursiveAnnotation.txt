@@ -3,12 +3,12 @@ package test
 public trait RecursiveAnnotation : java.lang.Object {
     
     test.RecursiveAnnotation.B(value = A[value = "test"]: test.RecursiveAnnotation.A) public final annotation class A : jet.Annotation {
-        public constructor A(/*0*/ value : jet.String?)
-        public abstract fun value() : jet.String?
+        public constructor A(/*0*/ value: jet.String?)
+        public abstract fun value(): jet.String?
     }
     
     test.RecursiveAnnotation.B(value = A[value = "test"]: test.RecursiveAnnotation.A) public final annotation class B : jet.Annotation {
-        public constructor B(/*0*/ value : test.RecursiveAnnotation.A?)
-        public abstract fun value() : test.RecursiveAnnotation.A?
+        public constructor B(/*0*/ value: test.RecursiveAnnotation.A?)
+        public abstract fun value(): test.RecursiveAnnotation.A?
     }
 }

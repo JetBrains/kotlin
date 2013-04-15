@@ -1,29 +1,29 @@
 package test
 
-internal var jet.Long.date1 : java.lang.Object
-    internal fun jet.Long.<get-date1>() : java.lang.Object
-    internal fun jet.Long.<set-date1>(/*0*/ <set-?> : java.lang.Object) : jet.Unit
-public var jet.Long.date10 : java.util.Date
-    public fun jet.Long.<get-date10>() : java.util.Date
-    protected fun jet.Long.<set-date10>(/*0*/ <set-?> : java.util.Date) : jet.Unit
-public var jet.Long.date11 : java.util.Date
-    public fun jet.Long.<get-date11>() : java.util.Date
-    public fun jet.Long.<set-date11>(/*0*/ <set-?> : java.util.Date) : jet.Unit
-internal var jet.Long.date2 : java.lang.Object
-    internal fun jet.Long.<get-date2>() : java.lang.Object
-    protected fun jet.Long.<set-date2>(/*0*/ <set-?> : java.lang.Object) : jet.Unit
-internal var jet.Long.date3 : java.lang.Object
-    internal fun jet.Long.<get-date3>() : java.lang.Object
-    private fun jet.Long.<set-date3>(/*0*/ <set-?> : java.lang.Object) : jet.Unit
-private var jet.Long.date4 : java.util.Date
-    private fun jet.Long.<get-date4>() : java.util.Date
-    private fun jet.Long.<set-date4>(/*0*/ <set-?> : java.util.Date) : jet.Unit
-public var jet.Long.date7 : java.util.Date
-    public fun jet.Long.<get-date7>() : java.util.Date
-    public fun jet.Long.<set-date7>(/*0*/ <set-?> : java.util.Date) : jet.Unit
-public var jet.Long.date8 : java.util.Date
-    public fun jet.Long.<get-date8>() : java.util.Date
-    internal fun jet.Long.<set-date8>(/*0*/ <set-?> : java.util.Date) : jet.Unit
-public var jet.Long.date9 : java.util.Date
-    public fun jet.Long.<get-date9>() : java.util.Date
-    private fun jet.Long.<set-date9>(/*0*/ <set-?> : java.util.Date) : jet.Unit
+internal var jet.Long.date1: java.lang.Object
+    internal fun jet.Long.<get-date1>(): java.lang.Object
+    internal fun jet.Long.<set-date1>(/*0*/ <set-?>: java.lang.Object): jet.Unit
+public var jet.Long.date10: java.util.Date
+    public fun jet.Long.<get-date10>(): java.util.Date
+    protected fun jet.Long.<set-date10>(/*0*/ <set-?>: java.util.Date): jet.Unit
+public var jet.Long.date11: java.util.Date
+    public fun jet.Long.<get-date11>(): java.util.Date
+    public fun jet.Long.<set-date11>(/*0*/ <set-?>: java.util.Date): jet.Unit
+internal var jet.Long.date2: java.lang.Object
+    internal fun jet.Long.<get-date2>(): java.lang.Object
+    protected fun jet.Long.<set-date2>(/*0*/ <set-?>: java.lang.Object): jet.Unit
+internal var jet.Long.date3: java.lang.Object
+    internal fun jet.Long.<get-date3>(): java.lang.Object
+    private fun jet.Long.<set-date3>(/*0*/ <set-?>: java.lang.Object): jet.Unit
+private var jet.Long.date4: java.util.Date
+    private fun jet.Long.<get-date4>(): java.util.Date
+    private fun jet.Long.<set-date4>(/*0*/ <set-?>: java.util.Date): jet.Unit
+public var jet.Long.date7: java.util.Date
+    public fun jet.Long.<get-date7>(): java.util.Date
+    public fun jet.Long.<set-date7>(/*0*/ <set-?>: java.util.Date): jet.Unit
+public var jet.Long.date8: java.util.Date
+    public fun jet.Long.<get-date8>(): java.util.Date
+    internal fun jet.Long.<set-date8>(/*0*/ <set-?>: java.util.Date): jet.Unit
+public var jet.Long.date9: java.util.Date
+    public fun jet.Long.<get-date9>(): java.util.Date
+    private fun jet.Long.<set-date9>(/*0*/ <set-?>: java.util.Date): jet.Unit

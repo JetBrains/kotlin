@@ -1,3 +1,3 @@
 package test
 
-internal fun </*0*/ T> nothing() : jet.Array<out T>
+internal fun </*0*/ T> nothing(): jet.Array<out T>

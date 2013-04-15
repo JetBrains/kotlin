@@ -2,5 +2,5 @@ package test
 
 public final class MethosWithPRefTP : java.lang.Object {
     public constructor MethosWithPRefTP()
-    public final fun </*0*/ P> f(/*0*/ p0 : P?) : jet.Unit
+    public final fun </*0*/ P> f(/*0*/ p0: P?): jet.Unit
 }

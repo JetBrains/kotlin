@@ -3,12 +3,12 @@ package test
 public trait SameProjectionKind : java.lang.Object {
     
     public trait Sub : test.SameProjectionKind.Super {
-        public abstract override /*1*/ /*fake_override*/ fun dummy() : jet.Unit
-        public abstract override /*1*/ fun foo() : jet.MutableCollection<out jet.Number?>?
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): jet.Unit
+        public abstract override /*1*/ fun foo(): jet.MutableCollection<out jet.Number?>?
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun dummy() : jet.Unit
-        public abstract fun foo() : jet.MutableCollection<out jet.Number?>?
+        public abstract fun dummy(): jet.Unit
+        public abstract fun foo(): jet.MutableCollection<out jet.Number?>?
     }
 }

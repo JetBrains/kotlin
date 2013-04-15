@@ -1,3 +1,3 @@
 package test
 
-internal fun fff() : java.lang.String
+internal fun fff(): java.lang.String

@@ -1,5 +1,5 @@
 package test
 
 public open class ConstructorWithNewTypeParams</*0*/ T> : java.lang.Object {
-    public constructor ConstructorWithNewTypeParams</*0*/ T>(/*0*/ p0 : jet.Any)
+    public constructor ConstructorWithNewTypeParams</*0*/ T>(/*0*/ p0: jet.Any)
 }

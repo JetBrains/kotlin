@@ -2,5 +2,5 @@ package test
 
 internal final class ClassParamUsedInFun</*0*/ in T> {
     /*primary*/ public constructor ClassParamUsedInFun</*0*/ in T>()
-    internal final fun f(/*0*/ t : T) : jet.Int
+    internal final fun f(/*0*/ t: T): jet.Int
 }

@@ -2,10 +2,10 @@ package test
 
 public open class Base : java.lang.Object {
     public constructor Base()
-    public/*package*/ open fun foo() : jet.Unit
+    public/*package*/ open fun foo(): jet.Unit
 }
 
 internal final class Derived : test.Base {
     public constructor Derived()
-    internal open override /*1*/ fun foo() : jet.Unit
+    internal open override /*1*/ fun foo(): jet.Unit
 }

@@ -2,5 +2,5 @@ package test
 
 public open class ExplicitFieldGettersAndSetters : java.lang.Object {
     public constructor ExplicitFieldGettersAndSetters()
-    public final var foo : jet.String?
+    public final var foo: jet.String?
 }

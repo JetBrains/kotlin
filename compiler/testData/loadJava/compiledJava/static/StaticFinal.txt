@@ -5,5 +5,5 @@ public open class StaticFinal : java.lang.Object {
 }
 
 package StaticFinal {
-    public val foo : jet.String
+    public val foo: jet.String
 }

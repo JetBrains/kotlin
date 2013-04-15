@@ -1,5 +1,5 @@
 package test
 
-internal val x : jet.Int
-    internal fun <get-x>() : jet.Int
-internal fun f() : jet.Int
+internal val x: jet.Int
+    internal fun <get-x>(): jet.Int
+internal fun f(): jet.Int

@@ -2,5 +2,5 @@ package test
 
 public open class WrongFieldName : java.lang.Object {
     public constructor WrongFieldName()
-    public final var foo : jet.String?
+    public final var foo: jet.String?
 }

@@ -3,9 +3,9 @@ package test
 public trait CustomAnnotationWithDefaultParameter : java.lang.Object {
     
     public final annotation class MyAnnotation : jet.Annotation {
-        public constructor MyAnnotation(/*0*/ first : jet.String?, /*1*/ second : jet.String? = ...)
-        public abstract fun first() : jet.String?
-        public abstract fun second() : jet.String?
+        public constructor MyAnnotation(/*0*/ first: jet.String?, /*1*/ second: jet.String? = ...)
+        public abstract fun first(): jet.String?
+        public abstract fun second(): jet.String?
     }
     
     test.CustomAnnotationWithDefaultParameter.MyAnnotation(first = "f": jet.String, second = "s": jet.String) public open class MyTest : java.lang.Object {

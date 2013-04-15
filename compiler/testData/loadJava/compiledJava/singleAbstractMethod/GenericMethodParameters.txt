@@ -1,5 +1,5 @@
 package test
 
 public trait GenericMethodParameters : java.lang.Object {
-    public abstract fun </*0*/ A : jet.CharSequence?, /*1*/ B : jet.List<A>?> method(/*0*/ p0 : jet.Array<out A>?, /*1*/ p1 : B?) : jet.Unit
+    public abstract fun </*0*/ A : jet.CharSequence?, /*1*/ B : jet.List<A>?> method(/*0*/ p0: jet.Array<out A>?, /*1*/ p1: B?): jet.Unit
 }

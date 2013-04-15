@@ -1,3 +1,3 @@
 package test
 
-internal fun nothingq() : jet.Nothing?
+internal fun nothingq(): jet.Nothing?

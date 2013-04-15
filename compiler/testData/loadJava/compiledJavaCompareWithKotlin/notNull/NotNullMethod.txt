@@ -2,5 +2,5 @@ package test
 
 public open class NotNullMethod : java.lang.Object {
     public constructor NotNullMethod()
-    public open fun hi() : jet.String
+    public open fun hi(): jet.String
 }

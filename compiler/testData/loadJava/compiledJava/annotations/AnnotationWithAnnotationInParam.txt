@@ -15,33 +15,33 @@ public trait AnnotationWithAnnotationInParam : java.lang.Object {
     }
     
     public final annotation class MyAnnotation : jet.Annotation {
-        public constructor MyAnnotation(/*0*/ value : jet.String?)
-        public abstract fun value() : jet.String?
+        public constructor MyAnnotation(/*0*/ value: jet.String?)
+        public abstract fun value(): jet.String?
     }
     
     public final annotation class MyAnnotation2 : jet.Annotation {
-        public constructor MyAnnotation2(/*0*/ vararg value : jet.String? /*jet.Array<jet.String>?*/)
-        public abstract fun value() : jet.Array<jet.String>?
+        public constructor MyAnnotation2(/*0*/ vararg value: jet.String? /*jet.Array<jet.String>?*/)
+        public abstract fun value(): jet.Array<jet.String>?
     }
     
     public final annotation class MyAnnotation3 : jet.Annotation {
-        public constructor MyAnnotation3(/*0*/ first : jet.String?, /*1*/ second : jet.String?)
-        public abstract fun first() : jet.String?
-        public abstract fun second() : jet.String?
+        public constructor MyAnnotation3(/*0*/ first: jet.String?, /*1*/ second: jet.String?)
+        public abstract fun first(): jet.String?
+        public abstract fun second(): jet.String?
     }
     
     public final annotation class MyAnnotationWithParam : jet.Annotation {
-        public constructor MyAnnotationWithParam(/*0*/ value : test.AnnotationWithAnnotationInParam.MyAnnotation?)
-        public abstract fun value() : test.AnnotationWithAnnotationInParam.MyAnnotation?
+        public constructor MyAnnotationWithParam(/*0*/ value: test.AnnotationWithAnnotationInParam.MyAnnotation?)
+        public abstract fun value(): test.AnnotationWithAnnotationInParam.MyAnnotation?
     }
     
     public final annotation class MyAnnotationWithParam2 : jet.Annotation {
-        public constructor MyAnnotationWithParam2(/*0*/ value : test.AnnotationWithAnnotationInParam.MyAnnotation2?)
-        public abstract fun value() : test.AnnotationWithAnnotationInParam.MyAnnotation2?
+        public constructor MyAnnotationWithParam2(/*0*/ value: test.AnnotationWithAnnotationInParam.MyAnnotation2?)
+        public abstract fun value(): test.AnnotationWithAnnotationInParam.MyAnnotation2?
     }
     
     public final annotation class MyAnnotationWithParam3 : jet.Annotation {
-        public constructor MyAnnotationWithParam3(/*0*/ value : test.AnnotationWithAnnotationInParam.MyAnnotation3?)
-        public abstract fun value() : test.AnnotationWithAnnotationInParam.MyAnnotation3?
+        public constructor MyAnnotationWithParam3(/*0*/ value: test.AnnotationWithAnnotationInParam.MyAnnotation3?)
+        public abstract fun value(): test.AnnotationWithAnnotationInParam.MyAnnotation3?
     }
 }

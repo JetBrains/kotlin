@@ -2,5 +2,5 @@ package test
 
 public open class FieldOfArrayType : java.lang.Object {
     public constructor FieldOfArrayType()
-    public final var files : jet.Array<java.io.File>?
+    public final var files: jet.Array<java.io.File>?
 }

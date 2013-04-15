@@ -1,6 +1,6 @@
 package test
 
-internal fun testFun(/*0*/ a : jet.Int) : jet.Int
+internal fun testFun(/*0*/ a: jet.Int): jet.Int
 
 internal final class TestSome</*0*/ P> {
     /*primary*/ public constructor TestSome</*0*/ P>()
@@ -11,5 +11,5 @@ internal final class TestSome</*0*/ P> {
 }
 
 internal open class ToResolve</*0*/ SomeClass> {
-    /*primary*/ public constructor ToResolve</*0*/ SomeClass>(/*0*/ f : (jet.Int) -> jet.Int)
+    /*primary*/ public constructor ToResolve</*0*/ SomeClass>(/*0*/ f: (jet.Int) -> jet.Int)
 }
