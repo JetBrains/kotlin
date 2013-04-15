@@ -1,6 +1,6 @@
 package test
 
 internal trait A {
-    internal open val v : jet.String
-        internal open fun <get-v>() : jet.String
+    internal open val v: jet.String
+        internal open fun <get-v>(): jet.String
 }

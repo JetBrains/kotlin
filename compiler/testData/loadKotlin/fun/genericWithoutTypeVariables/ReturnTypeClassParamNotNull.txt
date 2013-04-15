@@ -1,3 +1,3 @@
 package test
 
-internal fun ffgg() : jet.List<jet.CharSequence>
+internal fun ffgg(): jet.List<jet.CharSequence>

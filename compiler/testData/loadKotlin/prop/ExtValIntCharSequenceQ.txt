@@ -1,4 +1,4 @@
 package test
 
-internal val jet.Int.ggg : java.lang.CharSequence?
-    internal fun jet.Int.<get-ggg>() : java.lang.CharSequence?
+internal val jet.Int.ggg: java.lang.CharSequence?
+    internal fun jet.Int.<get-ggg>(): java.lang.CharSequence?

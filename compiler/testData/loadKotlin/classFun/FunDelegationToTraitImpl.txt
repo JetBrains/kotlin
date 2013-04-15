@@ -1,10 +1,10 @@
 package test
 
 internal trait A {
-    internal open fun f() : jet.String
+    internal open fun f(): jet.String
 }
 
 internal final class B : test.A {
     /*primary*/ public constructor B()
-    internal open override /*1*/ /*fake_override*/ fun f() : jet.String
+    internal override /*1*/ /*fake_override*/ fun f(): jet.String
 }

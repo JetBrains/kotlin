@@ -3,14 +3,14 @@ package test
 public trait TwoSuperclasses : java.lang.Object {
     
     public trait Sub : test.TwoSuperclasses.Super1, test.TwoSuperclasses.Super2 {
-        public abstract override /*2*/ fun </*0*/ C : jet.CharSequence> foo(/*0*/ p0 : C) : jet.Unit
+        public abstract override /*2*/ fun </*0*/ C : jet.CharSequence> foo(/*0*/ p0: C): jet.Unit
     }
     
     public trait Super1 : java.lang.Object {
-        public abstract fun </*0*/ A : jet.CharSequence> foo(/*0*/ p0 : A) : jet.Unit
+        public abstract fun </*0*/ A : jet.CharSequence> foo(/*0*/ p0: A): jet.Unit
     }
     
     public trait Super2 : java.lang.Object {
-        public abstract fun </*0*/ B : jet.CharSequence> foo(/*0*/ p0 : B) : jet.Unit
+        public abstract fun </*0*/ B : jet.CharSequence> foo(/*0*/ p0: B): jet.Unit
     }
 }

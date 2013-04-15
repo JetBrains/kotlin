@@ -2,6 +2,6 @@ package test
 
 internal final class ExtValPIntInClass</*0*/ P> {
     /*primary*/ public constructor ExtValPIntInClass</*0*/ P>()
-    internal final val P.asas : jet.Int
-        internal final fun P.<get-asas>() : jet.Int
+    internal final val P.asas: jet.Int
+        internal final fun P.<get-asas>(): jet.Int
 }

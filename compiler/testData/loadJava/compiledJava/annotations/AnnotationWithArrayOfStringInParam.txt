@@ -7,7 +7,7 @@ public trait AnnotationWithArrayOfStringInParam : java.lang.Object {
     }
     
     public final annotation class MyAnnotation : jet.Annotation {
-        public constructor MyAnnotation(/*0*/ vararg value : jet.String? /*jet.Array<jet.String>?*/)
-        public abstract fun value() : jet.Array<jet.String>?
+        public constructor MyAnnotation(/*0*/ vararg value: jet.String? /*jet.Array<jet.String>?*/)
+        public abstract fun value(): jet.Array<jet.String>?
     }
 }

@@ -1,5 +1,5 @@
 package test
 
-internal var topLevelVar : jet.Int
-    internal fun <get-topLevelVar>() : jet.Int
-    private fun <set-topLevelVar>(/*0*/ <set-?> : jet.Int) : jet.Unit
+internal var topLevelVar: jet.Int
+    internal fun <get-topLevelVar>(): jet.Int
+    private fun <set-topLevelVar>(/*0*/ <set-?>: jet.Int): jet.Unit

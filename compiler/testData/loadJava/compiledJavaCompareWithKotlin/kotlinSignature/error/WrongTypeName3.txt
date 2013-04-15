@@ -2,5 +2,5 @@ package test
 
 public open class WrongTypeName3 : java.lang.Object {
     public constructor WrongTypeName3()
-    public open fun foo(/*0*/ p0 : jet.String?) : jet.String?
+    public open fun foo(/*0*/ p0: jet.String?): jet.String?
 }

@@ -2,10 +2,10 @@ package test
 
 internal open class A {
     /*primary*/ public constructor A()
-    internal open fun foo(/*0*/ a : [ERROR : E]) : jet.Unit
+    internal open fun foo(/*0*/ a: [ERROR : E]): jet.Unit
 }
 
 internal final class B : test.A {
     /*primary*/ public constructor B()
-    internal open override /*1*/ fun foo(/*0*/ a : [ERROR : E]) : jet.Unit
+    internal override /*1*/ fun foo(/*0*/ a: [ERROR : E]): jet.Unit
 }

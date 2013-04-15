@@ -1,7 +1,7 @@
 package test
 
 internal final class TestingKotlinCollections {
-    /*primary*/ public constructor TestingKotlinCollections(/*0*/ arguments : jet.Collection<jet.String>)
-    internal final val arguments : jet.Collection<jet.String>
-        internal final fun <get-arguments>() : jet.Collection<jet.String>
+    /*primary*/ public constructor TestingKotlinCollections(/*0*/ arguments: jet.Collection<jet.String>)
+    internal final val arguments: jet.Collection<jet.String>
+        internal final fun <get-arguments>(): jet.Collection<jet.String>
 }

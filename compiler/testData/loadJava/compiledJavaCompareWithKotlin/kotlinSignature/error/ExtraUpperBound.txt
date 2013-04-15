@@ -2,5 +2,5 @@ package test
 
 public open class ExtraUpperBound : java.lang.Object {
     public constructor ExtraUpperBound()
-    public open fun </*0*/ A : java.lang.Runnable?> foo() : jet.String?
+    public open fun </*0*/ A : java.lang.Runnable?> foo(): jet.String?
 }

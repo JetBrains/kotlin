@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithTypeParameters : java.lang.Object {
     public constructor MethodWithTypeParameters()
-    public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0 : A, /*1*/ p1 : jet.List<B>, /*2*/ p2 : jet.MutableList<in jet.String?>) : jet.Unit where B : java.lang.Runnable, B : jet.List<java.lang.Cloneable>
+    public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0: A, /*1*/ p1: jet.List<B>, /*2*/ p2: jet.MutableList<in jet.String?>): jet.Unit where B : java.lang.Runnable, B : jet.List<java.lang.Cloneable>
 }

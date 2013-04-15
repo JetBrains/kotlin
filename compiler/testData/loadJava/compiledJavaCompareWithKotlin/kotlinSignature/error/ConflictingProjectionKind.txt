@@ -2,5 +2,5 @@ package test
 
 public open class ConflictingProjectionKind : java.lang.Object {
     public constructor ConflictingProjectionKind()
-    public open fun foo(/*0*/ p0 : jet.List<jet.Number>?) : jet.Unit
+    public open fun foo(/*0*/ p0: jet.List<jet.Number>?): jet.Unit
 }

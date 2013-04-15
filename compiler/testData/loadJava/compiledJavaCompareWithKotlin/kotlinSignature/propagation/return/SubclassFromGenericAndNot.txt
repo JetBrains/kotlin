@@ -3,17 +3,17 @@ package test
 public trait SubclassFromGenericAndNot : java.lang.Object {
     
     public trait Generic</*0*/ T> : java.lang.Object {
-        public abstract fun dummy() : jet.Unit
-        public abstract fun foo() : T
+        public abstract fun dummy(): jet.Unit
+        public abstract fun foo(): T
     }
     
     public trait NonGeneric : java.lang.Object {
-        public abstract fun dummy() : jet.Unit
-        public abstract fun foo() : jet.String?
+        public abstract fun dummy(): jet.Unit
+        public abstract fun foo(): jet.String?
     }
     
     public trait Sub : test.SubclassFromGenericAndNot.NonGeneric, test.SubclassFromGenericAndNot.Generic<jet.String> {
-        public abstract override /*2*/ /*fake_override*/ fun dummy() : jet.Unit
-        public abstract override /*2*/ fun foo() : jet.String
+        public abstract override /*2*/ /*fake_override*/ fun dummy(): jet.Unit
+        public abstract override /*2*/ fun foo(): jet.String
     }
 }

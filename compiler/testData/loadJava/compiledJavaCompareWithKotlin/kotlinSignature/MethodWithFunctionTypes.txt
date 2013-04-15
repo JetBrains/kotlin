@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithFunctionTypes : java.lang.Object {
     public constructor MethodWithFunctionTypes()
-    public open fun foo(/*0*/ p0 : (jet.String?) -> jet.String) : (jet.String.() -> jet.String?)?
+    public open fun foo(/*0*/ p0: (jet.String?) -> jet.String): (jet.String.() -> jet.String?)?
 }

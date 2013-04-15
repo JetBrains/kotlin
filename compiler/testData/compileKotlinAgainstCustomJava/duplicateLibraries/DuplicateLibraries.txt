@@ -1,3 +1,3 @@
 package test
 
-internal val testObjectProperty : testing.TopLevelObject
+internal val testObjectProperty: testing.TopLevelObject

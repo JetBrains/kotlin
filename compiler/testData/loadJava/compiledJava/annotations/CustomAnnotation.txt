@@ -3,20 +3,20 @@ package test
 public trait CustomAnnotation : java.lang.Object {
     
     public final annotation class MyAnnotation : jet.Annotation {
-        public constructor MyAnnotation(/*0*/ value : test.CustomAnnotation.MyEnum?)
-        public abstract fun value() : test.CustomAnnotation.MyEnum?
+        public constructor MyAnnotation(/*0*/ value: test.CustomAnnotation.MyEnum?)
+        public abstract fun value(): test.CustomAnnotation.MyEnum?
     }
     
     public final enum class MyEnum : jet.Enum<test.CustomAnnotation.MyEnum> {
         private constructor MyEnum()
-        public final override /*1*/ /*fake_override*/ fun name() : jet.String
-        public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
         
         public class object <class-object-for-MyEnum> {
             private constructor <class-object-for-MyEnum>()
-            public final val ONE : test.CustomAnnotation.MyEnum
-            public final fun valueOf(/*0*/ value : jet.String) : test.CustomAnnotation.MyEnum
-            public final fun values() : jet.Array<test.CustomAnnotation.MyEnum>
+            public final val ONE: test.CustomAnnotation.MyEnum
+            public final fun valueOf(/*0*/ value: jet.String): test.CustomAnnotation.MyEnum
+            public final fun values(): jet.Array<test.CustomAnnotation.MyEnum>
         }
     }
     

@@ -2,5 +2,5 @@ package test
 
 public open class WrongTypeParametersCount : java.lang.Object {
     public constructor WrongTypeParametersCount()
-    public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0 : A?, /*1*/ p1 : jet.List<B>?) : jet.Unit
+    public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0: A?, /*1*/ p1: jet.List<B>?): jet.Unit
 }

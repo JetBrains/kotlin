@@ -4,6 +4,6 @@ internal final class A {
     /*primary*/ public constructor A()
     
     internal final class TestConstructor {
-        /*primary*/ public constructor TestConstructor(/*0*/ p : jet.Int = ...)
+        /*primary*/ public constructor TestConstructor(/*0*/ p: jet.Int = ...)
     }
 }

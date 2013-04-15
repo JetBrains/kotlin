@@ -2,12 +2,12 @@ package test
 
 internal open class BaseClass {
     /*primary*/ public constructor BaseClass()
-    internal final val exactly : jet.Int
-        internal final fun <get-exactly>() : jet.Int
+    internal final val exactly: jet.Int
+        internal final fun <get-exactly>(): jet.Int
 }
 
 internal final class Subclass : test.BaseClass {
     /*primary*/ public constructor Subclass()
-    internal final override /*1*/ /*fake_override*/ val exactly : jet.Int
-        internal final override /*1*/ /*fake_override*/ fun <get-exactly>() : jet.Int
+    internal final override /*1*/ /*fake_override*/ val exactly: jet.Int
+        internal final override /*1*/ /*fake_override*/ fun <get-exactly>(): jet.Int
 }

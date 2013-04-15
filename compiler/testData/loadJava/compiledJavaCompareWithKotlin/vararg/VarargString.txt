@@ -2,5 +2,5 @@ package test
 
 public open class VarargString : java.lang.Object {
     public constructor VarargString()
-    public open fun vararg(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : jet.Unit
+    public open fun vararg(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Unit
 }
