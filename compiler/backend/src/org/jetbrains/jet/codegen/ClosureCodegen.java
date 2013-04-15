@@ -35,7 +35,6 @@ import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -291,7 +290,6 @@ public class ClosureCodegen extends GenerationStateAware {
 
     @NotNull
     private String getGenericSignature() {
-        // TODO: obtain the correct funDescriptor and use BothSignatureWriter instead of this code
         SignatureWriter signatureWriter = new SignatureWriter();
         JvmClassName funClass = getFunctionImplClassName(funDescriptor);
         signatureWriter.visitClassType(funClass.getInternalName());

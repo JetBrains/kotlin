@@ -53,7 +53,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
@@ -1250,27 +1249,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue genClosure(JetDeclarationWithBody declaration, @Nullable ClassDescriptor samInterfaceClass) {
         FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
-        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, descriptor);
-        CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
-        assert closure != null : "Closure must be calculated for class: " + classDescriptor;
 
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure, samInterfaceClass, declaration, context, this);
+        JvmClassName closureSuperClass = samInterfaceClass == null ? getFunctionImplClassName(descriptor) : JvmClassName.byType(OBJECT_TYPE);
+
+        ClosureCodegen closureCodegen = new ClosureCodegen(state, declaration, descriptor, samInterfaceClass, closureSuperClass, context,
+                this, new FunctionGenerationStrategy.Default(state, declaration));
+
         closureCodegen.gen();
 
-        JvmClassName className = closureCodegen.getGeneratedClassName();
-        Type asmType = className.getAsmType();
-        if (isConst(closure)) {
-            v.getstatic(className.getInternalName(), JvmAbi.INSTANCE_FIELD, className.getDescriptor());
-        }
-        else {
-            v.anew(asmType);
-            v.dup();
-
-            Method cons = closureCodegen.getGeneratedConstructor();
-            pushClosureOnStack(closure, false);
-            v.invokespecial(className.getInternalName(), "<init>", cons.getDescriptor());
-        }
-        return StackValue.onStack(asmType);
+        return closureCodegen.putInstanceOnStack(v, this);
     }
 
     @Override
