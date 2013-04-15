@@ -1,13 +1,13 @@
 package test
 
 internal final enum class EnumWithGenericConstructorParameter : jet.Enum<test.EnumWithGenericConstructorParameter> {
-    /*primary*/ private constructor EnumWithGenericConstructorParameter(/*0*/ list : jet.List<jet.String>?)
-    public final override /*1*/ /*fake_override*/ fun name() : jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    /*primary*/ private constructor EnumWithGenericConstructorParameter(/*0*/ list: jet.List<jet.String>?)
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
     internal class object <class-object-for-EnumWithGenericConstructorParameter> {
         /*primary*/ private constructor <class-object-for-EnumWithGenericConstructorParameter>()
-        public final fun valueOf(/*0*/ value : jet.String) : test.EnumWithGenericConstructorParameter
-        public final fun values() : jet.Array<test.EnumWithGenericConstructorParameter>
+        public final fun valueOf(/*0*/ value: jet.String): test.EnumWithGenericConstructorParameter
+        public final fun values(): jet.Array<test.EnumWithGenericConstructorParameter>
     }
 }

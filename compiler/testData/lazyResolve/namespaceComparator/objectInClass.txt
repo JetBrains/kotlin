@@ -2,10 +2,10 @@ package test
 
 internal final class A {
     /*primary*/ public constructor A()
-    internal final val B : test.A.B
+    internal final val B: test.A.B
     
     internal object B {
         /*primary*/ private constructor B()
-        internal final fun foo(/*0*/ a : jet.Int) : jet.String
+        internal final fun foo(/*0*/ a: jet.Int): jet.String
     }
 }

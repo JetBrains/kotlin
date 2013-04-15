@@ -1,6 +1,6 @@
 package test
 
-internal val Bar : test.Bar
+internal val Bar: test.Bar
 
 internal object Bar {
     /*primary*/ private constructor Bar()

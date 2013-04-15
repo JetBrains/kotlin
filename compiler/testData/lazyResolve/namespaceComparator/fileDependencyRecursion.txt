@@ -1,4 +1,4 @@
 package test
 
-internal val fromImported : jet.Int
-internal val normal : jet.Int
+internal val fromImported: jet.Int
+internal val normal: jet.Int

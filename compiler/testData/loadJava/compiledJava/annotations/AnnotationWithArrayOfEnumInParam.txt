@@ -3,7 +3,7 @@ package test
 public trait AnnotationWithArrayOfEnumInParam : java.lang.Object {
     
     java.lang.annotation.Target(value = [ElementType.FIELD, ElementType.CONSTRUCTOR]: jet.Array<java.lang.annotation.ElementType>?) public final annotation class targetAnnotation : jet.Annotation {
-        public constructor targetAnnotation(/*0*/ value : jet.String?)
-        public abstract fun value() : jet.String?
+        public constructor targetAnnotation(/*0*/ value: jet.String?)
+        public abstract fun value(): jet.String?
     }
 }

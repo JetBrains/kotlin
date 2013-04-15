@@ -9,14 +9,14 @@ internal final class A {
     
     internal final enum class E : jet.Enum<test.A.E> {
         private constructor E()
-        public final override /*1*/ /*fake_override*/ fun name() : jet.String
-        public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
         
         internal class object <class-object-for-E> {
             private constructor <class-object-for-E>()
-            public final val ENTRY : test.A.E
-            public final fun valueOf(/*0*/ value : jet.String) : test.A.E
-            public final fun values() : jet.Array<test.A.E>
+            public final val ENTRY: test.A.E
+            public final fun valueOf(/*0*/ value: jet.String): test.A.E
+            public final fun values(): jet.Array<test.A.E>
         }
     }
 }

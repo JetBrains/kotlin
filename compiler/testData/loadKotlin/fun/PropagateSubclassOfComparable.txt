@@ -2,5 +2,5 @@ package test
 
 internal final class PropagateSubclassOfComparable : jet.Comparable<test.PropagateSubclassOfComparable> {
     /*primary*/ public constructor PropagateSubclassOfComparable()
-    public open override /*1*/ fun compareTo(/*0*/ other : test.PropagateSubclassOfComparable) : jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: test.PropagateSubclassOfComparable): jet.Int
 }

@@ -2,5 +2,5 @@ package test
 
 public open class SyntaxError : java.lang.Object {
     public constructor SyntaxError()
-    public open fun foo() : jet.Int?
+    public open fun foo(): jet.Int?
 }

@@ -2,5 +2,5 @@ package test
 
 public open class VarargInt : java.lang.Object {
     public constructor VarargInt()
-    public open fun vararg(/*0*/ vararg p0 : jet.Int /*jet.IntArray*/) : jet.Unit
+    public open fun vararg(/*0*/ vararg p0: jet.Int /*jet.IntArray*/): jet.Unit
 }

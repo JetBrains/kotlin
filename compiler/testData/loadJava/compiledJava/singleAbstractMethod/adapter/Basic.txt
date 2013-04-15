@@ -2,11 +2,11 @@ package test
 
 public open class Basic : java.lang.Object {
     public constructor Basic()
-    public open /*synthesized*/ fun foo(/*0*/ p0 : (() -> jet.Unit)?) : jet.Unit
-    public open fun foo(/*0*/ p0 : java.lang.Runnable?) : jet.Unit
+    public open /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+    public open fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
 }
 
 package Basic {
-    public open /*synthesized*/ fun bar(/*0*/ p0 : (() -> jet.Unit)?) : jet.Unit
-    public open fun bar(/*0*/ p0 : java.lang.Runnable?) : jet.Unit
+    public open /*synthesized*/ fun bar(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+    public open fun bar(/*0*/ p0: java.lang.Runnable?): jet.Unit
 }

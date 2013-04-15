@@ -1,5 +1,5 @@
 package test
 
 internal final class ClassWithConstructor1 {
-    /*primary*/ public constructor ClassWithConstructor1(/*0*/ p : jet.Int)
+    /*primary*/ public constructor ClassWithConstructor1(/*0*/ p: jet.Int)
 }

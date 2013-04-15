@@ -1,3 +1,3 @@
 package test
 
-internal fun listOfAny() : jet.List<jet.Any>
+internal fun listOfAny(): jet.List<jet.Any>

@@ -2,27 +2,27 @@ package test
 
 public final enum class Enum : jet.Enum<test.Enum> {
     private constructor Enum()
-    public final override /*1*/ /*fake_override*/ fun name() : jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
     public class object <class-object-for-Enum> {
         private constructor <class-object-for-Enum>()
-        public final val A : test.Enum
-        public final val B : test.Enum
-        public final val C : test.Enum
-        public final fun valueOf(/*0*/ value : jet.String) : test.Enum
-        public final fun values() : jet.Array<test.Enum>
+        public final val A: test.Enum
+        public final val B: test.Enum
+        public final val C: test.Enum
+        public final fun valueOf(/*0*/ value: jet.String): test.Enum
+        public final fun values(): jet.Array<test.Enum>
     }
     
     public open inner class Inner : java.lang.Object {
         public constructor Inner()
-        public/*package*/ open fun bar() : jet.Unit
-        public/*package*/ open fun valueOf(/*0*/ p0 : jet.String?) : jet.Unit
+        public/*package*/ open fun bar(): jet.Unit
+        public/*package*/ open fun valueOf(/*0*/ p0: jet.String?): jet.Unit
     }
     
     public open class Nested : java.lang.Object {
         public constructor Nested()
-        public/*package*/ open fun foo() : jet.Unit
-        public/*package*/ open fun values() : jet.Unit
+        public/*package*/ open fun foo(): jet.Unit
+        public/*package*/ open fun values(): jet.Unit
     }
 }

@@ -3,12 +3,12 @@ package test
 public trait InheritReadOnlinessSubclass : java.lang.Object {
     
     public trait Sub : test.InheritReadOnlinessSubclass.Super {
-        public abstract override /*1*/ /*fake_override*/ fun dummy() : jet.Unit
-        public abstract override /*1*/ fun foo() : jet.List<jet.String>
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): jet.Unit
+        public abstract override /*1*/ fun foo(): jet.List<jet.String>
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun dummy() : jet.Unit
-        public abstract fun foo() : jet.Collection<jet.String>
+        public abstract fun dummy(): jet.Unit
+        public abstract fun foo(): jet.Collection<jet.String>
     }
 }

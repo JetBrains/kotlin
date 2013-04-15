@@ -1,3 +1,3 @@
 package test
 
-internal fun nothing() : jet.IntArray
+internal fun nothing(): jet.IntArray

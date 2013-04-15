@@ -2,5 +2,5 @@ package test
 
 public open class ReturnTypeMissing : java.lang.Object {
     public constructor ReturnTypeMissing()
-    public open fun foo(/*0*/ p0 : jet.String?) : jet.Int
+    public open fun foo(/*0*/ p0: jet.String?): jet.Int
 }

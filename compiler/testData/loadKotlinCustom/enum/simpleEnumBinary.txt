@@ -2,13 +2,13 @@ package test
 
 internal final enum class MyEnum : jet.Enum<test.MyEnum> {
     private constructor MyEnum()
-    public final override /*1*/ /*fake_override*/ fun name() : jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
     internal class object <class-object-for-MyEnum> {
         private constructor <class-object-for-MyEnum>()
-        public final val ENTRY : test.MyEnum
-        public final fun valueOf(/*0*/ value : jet.String) : test.MyEnum
-        public final fun values() : jet.Array<test.MyEnum>
+        public final val ENTRY: test.MyEnum
+        public final fun valueOf(/*0*/ value: jet.String): test.MyEnum
+        public final fun values(): jet.Array<test.MyEnum>
     }
 }

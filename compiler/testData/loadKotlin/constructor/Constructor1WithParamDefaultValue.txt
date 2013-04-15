@@ -1,5 +1,5 @@
 package test
 
 internal final class ClassWithConstructorWithValueParamWithDefaultValue {
-    /*primary*/ public constructor ClassWithConstructorWithValueParamWithDefaultValue(/*0*/ p : jet.Int = ...)
+    /*primary*/ public constructor ClassWithConstructorWithValueParamWithDefaultValue(/*0*/ p: jet.Int = ...)
 }

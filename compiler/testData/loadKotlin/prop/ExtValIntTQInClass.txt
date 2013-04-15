@@ -2,6 +2,6 @@ package test
 
 internal final class ExtValInClass</*0*/ P> {
     /*primary*/ public constructor ExtValInClass</*0*/ P>()
-    internal final val jet.Int.asas : P?
-        internal final fun jet.Int.<get-asas>() : P?
+    internal final val jet.Int.asas: P?
+        internal final fun jet.Int.<get-asas>(): P?
 }

@@ -3,12 +3,12 @@ package test
 public trait InheritNotVararg : java.lang.Object {
     
     public trait Sub : test.InheritNotVararg.Super {
-        public abstract override /*1*/ /*fake_override*/ fun dummy() : jet.Unit
-        public abstract override /*1*/ fun foo(/*0*/ p0 : jet.Array<out jet.String>?) : jet.Unit
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): jet.Unit
+        public abstract override /*1*/ fun foo(/*0*/ p0: jet.Array<out jet.String>?): jet.Unit
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun dummy() : jet.Unit
-        public abstract fun foo(/*0*/ p0 : jet.Array<out jet.String>?) : jet.Unit
+        public abstract fun dummy(): jet.Unit
+        public abstract fun foo(/*0*/ p0: jet.Array<out jet.String>?): jet.Unit
     }
 }

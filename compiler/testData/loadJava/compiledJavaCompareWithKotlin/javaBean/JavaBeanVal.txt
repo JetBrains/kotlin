@@ -2,5 +2,5 @@ package test
 
 public open class JavaBeanVal : java.lang.Object {
     public constructor JavaBeanVal()
-    public open fun getColor() : jet.String?
+    public open fun getColor(): jet.String?
 }

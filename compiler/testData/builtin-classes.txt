@@ -1,12 +1,12 @@
 package jet
 
-public fun </*0*/ T> arrayOfNulls(/*0*/ size : jet.Int) : jet.Array<T?>
-public fun </*0*/ R> synchronized(/*0*/ lock : jet.Any, /*1*/ block : () -> R) : R
-public fun jet.Any?.equals(/*0*/ other : jet.Any?) : jet.Boolean
-public fun jet.Any?.identityEquals(/*0*/ other : jet.Any?) : jet.Boolean
-public fun </*0*/ T> jet.Iterator<T>.iterator() : jet.Iterator<T>
-public fun jet.String?.plus(/*0*/ other : jet.Any?) : jet.String
-public fun jet.Any?.toString() : jet.String
+public fun </*0*/ T> arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>
+public fun </*0*/ R> synchronized(/*0*/ lock: jet.Any, /*1*/ block: () -> R): R
+public fun jet.Any?.equals(/*0*/ other: jet.Any?): jet.Boolean
+public fun jet.Any?.identityEquals(/*0*/ other: jet.Any?): jet.Boolean
+public fun </*0*/ T> jet.Iterator<T>.iterator(): jet.Iterator<T>
+public fun jet.String?.plus(/*0*/ other: jet.Any?): jet.String
+public fun jet.Any?.toString(): jet.String
 
 public trait Annotation {
 }
@@ -16,1320 +16,1320 @@ public open class Any {
 }
 
 public final class Array</*0*/ reified T> {
-    public constructor Array</*0*/ reified T>(/*0*/ size : jet.Int, /*1*/ init : (jet.Int) -> T)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : T
-    public final fun iterator() : jet.Iterator<T>
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : T) : jet.Unit
+    public constructor Array</*0*/ reified T>(/*0*/ size: jet.Int, /*1*/ init: (jet.Int) -> T)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): T
+    public final fun iterator(): jet.Iterator<T>
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: T): jet.Unit
 }
 
 public final class Boolean {
     public constructor Boolean()
-    public final fun and(/*0*/ other : jet.Boolean) : jet.Boolean
-    public final fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public final fun not() : jet.Boolean
-    public final fun or(/*0*/ other : jet.Boolean) : jet.Boolean
-    public final fun xor(/*0*/ other : jet.Boolean) : jet.Boolean
+    public final fun and(/*0*/ other: jet.Boolean): jet.Boolean
+    public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public final fun not(): jet.Boolean
+    public final fun or(/*0*/ other: jet.Boolean): jet.Boolean
+    public final fun xor(/*0*/ other: jet.Boolean): jet.Boolean
 }
 
 public final class BooleanArray {
-    public constructor BooleanArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Boolean
-    public final fun iterator() : jet.BooleanIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Boolean) : jet.Unit
+    public constructor BooleanArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Boolean
+    public final fun iterator(): jet.BooleanIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Boolean): jet.Unit
 }
 
 public abstract class BooleanIterator : jet.Iterator<jet.Boolean> {
     public constructor BooleanIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Boolean
-    public abstract fun nextBoolean() : jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Boolean
+    public abstract fun nextBoolean(): jet.Boolean
 }
 
 public final class Byte : jet.Number, jet.Comparable<jet.Byte> {
     public constructor Byte()
-    public open override /*1*/ fun compareTo(/*0*/ other : jet.Byte) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Char) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Double) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Float) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Int) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Long) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Short) : jet.Int
-    public final fun dec() : jet.Byte
-    public final fun div(/*0*/ other : jet.Byte) : jet.Int
-    public final fun div(/*0*/ other : jet.Char) : jet.Int
-    public final fun div(/*0*/ other : jet.Double) : jet.Double
-    public final fun div(/*0*/ other : jet.Float) : jet.Float
-    public final fun div(/*0*/ other : jet.Int) : jet.Int
-    public final fun div(/*0*/ other : jet.Long) : jet.Long
-    public final fun div(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun hashCode() : jet.Int
-    public final fun inc() : jet.Byte
-    public final fun minus() : jet.Byte
-    public final fun minus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun minus(/*0*/ other : jet.Char) : jet.Int
-    public final fun minus(/*0*/ other : jet.Double) : jet.Double
-    public final fun minus(/*0*/ other : jet.Float) : jet.Float
-    public final fun minus(/*0*/ other : jet.Int) : jet.Int
-    public final fun minus(/*0*/ other : jet.Long) : jet.Long
-    public final fun minus(/*0*/ other : jet.Short) : jet.Int
-    public final fun mod(/*0*/ other : jet.Byte) : jet.Int
-    public final fun mod(/*0*/ other : jet.Char) : jet.Int
-    public final fun mod(/*0*/ other : jet.Double) : jet.Double
-    public final fun mod(/*0*/ other : jet.Float) : jet.Float
-    public final fun mod(/*0*/ other : jet.Int) : jet.Int
-    public final fun mod(/*0*/ other : jet.Long) : jet.Long
-    public final fun mod(/*0*/ other : jet.Short) : jet.Int
-    public final fun plus() : jet.Byte
-    public final fun plus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun plus(/*0*/ other : jet.Char) : jet.Int
-    public final fun plus(/*0*/ other : jet.Double) : jet.Double
-    public final fun plus(/*0*/ other : jet.Float) : jet.Float
-    public final fun plus(/*0*/ other : jet.Int) : jet.Int
-    public final fun plus(/*0*/ other : jet.Long) : jet.Long
-    public final fun plus(/*0*/ other : jet.Short) : jet.Int
-    public final fun rangeTo(/*0*/ other : jet.Byte) : jet.ByteRange
-    public final fun rangeTo(/*0*/ other : jet.Char) : jet.CharRange
-    public final fun rangeTo(/*0*/ other : jet.Double) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Float) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Int) : jet.IntRange
-    public final fun rangeTo(/*0*/ other : jet.Long) : jet.LongRange
-    public final fun rangeTo(/*0*/ other : jet.Short) : jet.ShortRange
-    public final fun times(/*0*/ other : jet.Byte) : jet.Int
-    public final fun times(/*0*/ other : jet.Char) : jet.Int
-    public final fun times(/*0*/ other : jet.Double) : jet.Double
-    public final fun times(/*0*/ other : jet.Float) : jet.Float
-    public final fun times(/*0*/ other : jet.Int) : jet.Int
-    public final fun times(/*0*/ other : jet.Long) : jet.Long
-    public final fun times(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun toByte() : jet.Byte
-    public open override /*1*/ fun toChar() : jet.Char
-    public open override /*1*/ fun toDouble() : jet.Double
-    public open override /*1*/ fun toFloat() : jet.Float
-    public open override /*1*/ fun toInt() : jet.Int
-    public open override /*1*/ fun toLong() : jet.Long
-    public open override /*1*/ fun toShort() : jet.Short
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Byte): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
+    public final fun dec(): jet.Byte
+    public final fun div(/*0*/ other: jet.Byte): jet.Int
+    public final fun div(/*0*/ other: jet.Char): jet.Int
+    public final fun div(/*0*/ other: jet.Double): jet.Double
+    public final fun div(/*0*/ other: jet.Float): jet.Float
+    public final fun div(/*0*/ other: jet.Int): jet.Int
+    public final fun div(/*0*/ other: jet.Long): jet.Long
+    public final fun div(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun hashCode(): jet.Int
+    public final fun inc(): jet.Byte
+    public final fun minus(): jet.Byte
+    public final fun minus(/*0*/ other: jet.Byte): jet.Int
+    public final fun minus(/*0*/ other: jet.Char): jet.Int
+    public final fun minus(/*0*/ other: jet.Double): jet.Double
+    public final fun minus(/*0*/ other: jet.Float): jet.Float
+    public final fun minus(/*0*/ other: jet.Int): jet.Int
+    public final fun minus(/*0*/ other: jet.Long): jet.Long
+    public final fun minus(/*0*/ other: jet.Short): jet.Int
+    public final fun mod(/*0*/ other: jet.Byte): jet.Int
+    public final fun mod(/*0*/ other: jet.Char): jet.Int
+    public final fun mod(/*0*/ other: jet.Double): jet.Double
+    public final fun mod(/*0*/ other: jet.Float): jet.Float
+    public final fun mod(/*0*/ other: jet.Int): jet.Int
+    public final fun mod(/*0*/ other: jet.Long): jet.Long
+    public final fun mod(/*0*/ other: jet.Short): jet.Int
+    public final fun plus(): jet.Byte
+    public final fun plus(/*0*/ other: jet.Byte): jet.Int
+    public final fun plus(/*0*/ other: jet.Char): jet.Int
+    public final fun plus(/*0*/ other: jet.Double): jet.Double
+    public final fun plus(/*0*/ other: jet.Float): jet.Float
+    public final fun plus(/*0*/ other: jet.Int): jet.Int
+    public final fun plus(/*0*/ other: jet.Long): jet.Long
+    public final fun plus(/*0*/ other: jet.Short): jet.Int
+    public final fun rangeTo(/*0*/ other: jet.Byte): jet.ByteRange
+    public final fun rangeTo(/*0*/ other: jet.Char): jet.CharRange
+    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Int): jet.IntRange
+    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
+    public final fun rangeTo(/*0*/ other: jet.Short): jet.ShortRange
+    public final fun times(/*0*/ other: jet.Byte): jet.Int
+    public final fun times(/*0*/ other: jet.Char): jet.Int
+    public final fun times(/*0*/ other: jet.Double): jet.Double
+    public final fun times(/*0*/ other: jet.Float): jet.Float
+    public final fun times(/*0*/ other: jet.Int): jet.Int
+    public final fun times(/*0*/ other: jet.Long): jet.Long
+    public final fun times(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun toByte(): jet.Byte
+    public open override /*1*/ fun toChar(): jet.Char
+    public open override /*1*/ fun toDouble(): jet.Double
+    public open override /*1*/ fun toFloat(): jet.Float
+    public open override /*1*/ fun toInt(): jet.Int
+    public open override /*1*/ fun toLong(): jet.Long
+    public open override /*1*/ fun toShort(): jet.Short
 }
 
 public final class ByteArray {
-    public constructor ByteArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Byte
-    public final fun iterator() : jet.ByteIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Byte) : jet.Unit
+    public constructor ByteArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Byte
+    public final fun iterator(): jet.ByteIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Byte): jet.Unit
 }
 
 public abstract class ByteIterator : jet.Iterator<jet.Byte> {
     public constructor ByteIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Byte
-    public abstract fun nextByte() : jet.Byte
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Byte
+    public abstract fun nextByte(): jet.Byte
 }
 
 public final class ByteProgression : jet.Progression<jet.Byte> {
-    public constructor ByteProgression(/*0*/ start : jet.Byte, /*1*/ end : jet.Byte, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Byte
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Byte
-    public open override /*1*/ fun iterator() : jet.ByteIterator
+    public constructor ByteProgression(/*0*/ start: jet.Byte, /*1*/ end: jet.Byte, /*2*/ increment: jet.Int)
+    public open override /*1*/ val end: jet.Byte
+    public open override /*1*/ val increment: jet.Int
+    public open override /*1*/ val start: jet.Byte
+    public open override /*1*/ fun iterator(): jet.ByteIterator
 }
 
 public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
-    public constructor ByteRange(/*0*/ start : jet.Byte, /*1*/ end : jet.Byte)
-    public open override /*2*/ val end : jet.Byte
-    public open override /*1*/ val increment : jet.Int
-    public open override /*2*/ val start : jet.Byte
-    public open override /*1*/ fun contains(/*0*/ item : jet.Byte) : jet.Boolean
-    public open override /*1*/ fun iterator() : jet.ByteIterator
+    public constructor ByteRange(/*0*/ start: jet.Byte, /*1*/ end: jet.Byte)
+    public open override /*2*/ val end: jet.Byte
+    public open override /*1*/ val increment: jet.Int
+    public open override /*2*/ val start: jet.Byte
+    public open override /*1*/ fun contains(/*0*/ item: jet.Byte): jet.Boolean
+    public open override /*1*/ fun iterator(): jet.ByteIterator
     
     public class object <class-object-for-ByteRange> {
         private constructor <class-object-for-ByteRange>()
-        public final val EMPTY : jet.ByteRange
+        public final val EMPTY: jet.ByteRange
     }
 }
 
 public final class Char : jet.Number, jet.Comparable<jet.Char> {
     public constructor Char()
-    public final fun compareTo(/*0*/ other : jet.Byte) : jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other : jet.Char) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Double) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Float) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Int) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Long) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Short) : jet.Int
-    public final fun dec() : jet.Char
-    public final fun div(/*0*/ other : jet.Byte) : jet.Int
-    public final fun div(/*0*/ other : jet.Double) : jet.Double
-    public final fun div(/*0*/ other : jet.Float) : jet.Float
-    public final fun div(/*0*/ other : jet.Int) : jet.Int
-    public final fun div(/*0*/ other : jet.Long) : jet.Long
-    public final fun div(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun hashCode() : jet.Int
-    public final fun inc() : jet.Char
-    public final fun minus() : jet.Int
-    public final fun minus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun minus(/*0*/ other : jet.Char) : jet.Int
-    public final fun minus(/*0*/ other : jet.Double) : jet.Double
-    public final fun minus(/*0*/ other : jet.Float) : jet.Float
-    public final fun minus(/*0*/ other : jet.Int) : jet.Int
-    public final fun minus(/*0*/ other : jet.Long) : jet.Long
-    public final fun minus(/*0*/ other : jet.Short) : jet.Int
-    public final fun mod(/*0*/ other : jet.Byte) : jet.Int
-    public final fun mod(/*0*/ other : jet.Double) : jet.Double
-    public final fun mod(/*0*/ other : jet.Float) : jet.Float
-    public final fun mod(/*0*/ other : jet.Int) : jet.Int
-    public final fun mod(/*0*/ other : jet.Long) : jet.Long
-    public final fun mod(/*0*/ other : jet.Short) : jet.Int
-    public final fun plus() : jet.Int
-    public final fun plus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun plus(/*0*/ other : jet.Double) : jet.Double
-    public final fun plus(/*0*/ other : jet.Float) : jet.Float
-    public final fun plus(/*0*/ other : jet.Int) : jet.Int
-    public final fun plus(/*0*/ other : jet.Long) : jet.Long
-    public final fun plus(/*0*/ other : jet.Short) : jet.Int
-    public final fun rangeTo(/*0*/ other : jet.Char) : jet.CharRange
-    public final fun times(/*0*/ other : jet.Byte) : jet.Int
-    public final fun times(/*0*/ other : jet.Double) : jet.Double
-    public final fun times(/*0*/ other : jet.Float) : jet.Float
-    public final fun times(/*0*/ other : jet.Int) : jet.Int
-    public final fun times(/*0*/ other : jet.Long) : jet.Long
-    public final fun times(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun toByte() : jet.Byte
-    public open override /*1*/ fun toChar() : jet.Char
-    public open override /*1*/ fun toDouble() : jet.Double
-    public open override /*1*/ fun toFloat() : jet.Float
-    public open override /*1*/ fun toInt() : jet.Int
-    public open override /*1*/ fun toLong() : jet.Long
-    public open override /*1*/ fun toShort() : jet.Short
+    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Char): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
+    public final fun dec(): jet.Char
+    public final fun div(/*0*/ other: jet.Byte): jet.Int
+    public final fun div(/*0*/ other: jet.Double): jet.Double
+    public final fun div(/*0*/ other: jet.Float): jet.Float
+    public final fun div(/*0*/ other: jet.Int): jet.Int
+    public final fun div(/*0*/ other: jet.Long): jet.Long
+    public final fun div(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun hashCode(): jet.Int
+    public final fun inc(): jet.Char
+    public final fun minus(): jet.Int
+    public final fun minus(/*0*/ other: jet.Byte): jet.Int
+    public final fun minus(/*0*/ other: jet.Char): jet.Int
+    public final fun minus(/*0*/ other: jet.Double): jet.Double
+    public final fun minus(/*0*/ other: jet.Float): jet.Float
+    public final fun minus(/*0*/ other: jet.Int): jet.Int
+    public final fun minus(/*0*/ other: jet.Long): jet.Long
+    public final fun minus(/*0*/ other: jet.Short): jet.Int
+    public final fun mod(/*0*/ other: jet.Byte): jet.Int
+    public final fun mod(/*0*/ other: jet.Double): jet.Double
+    public final fun mod(/*0*/ other: jet.Float): jet.Float
+    public final fun mod(/*0*/ other: jet.Int): jet.Int
+    public final fun mod(/*0*/ other: jet.Long): jet.Long
+    public final fun mod(/*0*/ other: jet.Short): jet.Int
+    public final fun plus(): jet.Int
+    public final fun plus(/*0*/ other: jet.Byte): jet.Int
+    public final fun plus(/*0*/ other: jet.Double): jet.Double
+    public final fun plus(/*0*/ other: jet.Float): jet.Float
+    public final fun plus(/*0*/ other: jet.Int): jet.Int
+    public final fun plus(/*0*/ other: jet.Long): jet.Long
+    public final fun plus(/*0*/ other: jet.Short): jet.Int
+    public final fun rangeTo(/*0*/ other: jet.Char): jet.CharRange
+    public final fun times(/*0*/ other: jet.Byte): jet.Int
+    public final fun times(/*0*/ other: jet.Double): jet.Double
+    public final fun times(/*0*/ other: jet.Float): jet.Float
+    public final fun times(/*0*/ other: jet.Int): jet.Int
+    public final fun times(/*0*/ other: jet.Long): jet.Long
+    public final fun times(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun toByte(): jet.Byte
+    public open override /*1*/ fun toChar(): jet.Char
+    public open override /*1*/ fun toDouble(): jet.Double
+    public open override /*1*/ fun toFloat(): jet.Float
+    public open override /*1*/ fun toInt(): jet.Int
+    public open override /*1*/ fun toLong(): jet.Long
+    public open override /*1*/ fun toShort(): jet.Short
 }
 
 public final class CharArray {
-    public constructor CharArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Char
-    public final fun iterator() : jet.CharIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Char) : jet.Unit
+    public constructor CharArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Char
+    public final fun iterator(): jet.CharIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Char): jet.Unit
 }
 
 public abstract class CharIterator : jet.Iterator<jet.Char> {
     public constructor CharIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Char
-    public abstract fun nextChar() : jet.Char
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Char
+    public abstract fun nextChar(): jet.Char
 }
 
 public final class CharProgression : jet.Progression<jet.Char> {
-    public constructor CharProgression(/*0*/ start : jet.Char, /*1*/ end : jet.Char, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Char
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Char
-    public open override /*1*/ fun iterator() : jet.CharIterator
+    public constructor CharProgression(/*0*/ start: jet.Char, /*1*/ end: jet.Char, /*2*/ increment: jet.Int)
+    public open override /*1*/ val end: jet.Char
+    public open override /*1*/ val increment: jet.Int
+    public open override /*1*/ val start: jet.Char
+    public open override /*1*/ fun iterator(): jet.CharIterator
 }
 
 public final class CharRange : jet.Range<jet.Char>, jet.Progression<jet.Char> {
-    public constructor CharRange(/*0*/ start : jet.Char, /*1*/ end : jet.Char)
-    public open override /*2*/ val end : jet.Char
-    public open override /*1*/ val increment : jet.Int
-    public open override /*2*/ val start : jet.Char
-    public open override /*1*/ fun contains(/*0*/ item : jet.Char) : jet.Boolean
-    public open override /*1*/ fun iterator() : jet.CharIterator
+    public constructor CharRange(/*0*/ start: jet.Char, /*1*/ end: jet.Char)
+    public open override /*2*/ val end: jet.Char
+    public open override /*1*/ val increment: jet.Int
+    public open override /*2*/ val start: jet.Char
+    public open override /*1*/ fun contains(/*0*/ item: jet.Char): jet.Boolean
+    public open override /*1*/ fun iterator(): jet.CharIterator
     
     public class object <class-object-for-CharRange> {
         private constructor <class-object-for-CharRange>()
-        public final val EMPTY : jet.CharRange
+        public final val EMPTY: jet.CharRange
     }
 }
 
 public trait CharSequence {
-    public abstract val length : jet.Int
-    public abstract fun get(/*0*/ index : jet.Int) : jet.Char
-    public abstract fun toString() : jet.String
+    public abstract val length: jet.Int
+    public abstract fun get(/*0*/ index: jet.Int): jet.Char
+    public abstract fun toString(): jet.String
 }
 
 public trait Collection</*0*/ out E> : jet.Iterable<E>, jet.Hashable {
-    public abstract fun contains(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode() : jet.Int
-    public abstract fun isEmpty() : jet.Boolean
-    public abstract override /*1*/ fun iterator() : jet.Iterator<E>
-    public abstract fun size() : jet.Int
-    public abstract fun toArray() : jet.Array<jet.Any?>
-    public abstract fun </*0*/ T> toArray(/*0*/ a : jet.Array<out T>) : jet.Array<T>
+    public abstract fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract fun isEmpty(): jet.Boolean
+    public abstract override /*1*/ fun iterator(): jet.Iterator<E>
+    public abstract fun size(): jet.Int
+    public abstract fun toArray(): jet.Array<jet.Any?>
+    public abstract fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait Comparable</*0*/ in T> {
-    public abstract fun compareTo(/*0*/ other : T) : jet.Int
+    public abstract fun compareTo(/*0*/ other: T): jet.Int
 }
 
 public final class Double : jet.Number, jet.Comparable<jet.Double> {
     public constructor Double()
-    public final fun compareTo(/*0*/ other : jet.Byte) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Char) : jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other : jet.Double) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Float) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Int) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Long) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Short) : jet.Int
-    public final fun dec() : jet.Double
-    public final fun div(/*0*/ other : jet.Byte) : jet.Double
-    public final fun div(/*0*/ other : jet.Char) : jet.Double
-    public final fun div(/*0*/ other : jet.Double) : jet.Double
-    public final fun div(/*0*/ other : jet.Float) : jet.Double
-    public final fun div(/*0*/ other : jet.Int) : jet.Double
-    public final fun div(/*0*/ other : jet.Long) : jet.Double
-    public final fun div(/*0*/ other : jet.Short) : jet.Double
-    public open override /*1*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun hashCode() : jet.Int
-    public final fun inc() : jet.Double
-    public final fun minus() : jet.Double
-    public final fun minus(/*0*/ other : jet.Byte) : jet.Double
-    public final fun minus(/*0*/ other : jet.Char) : jet.Double
-    public final fun minus(/*0*/ other : jet.Double) : jet.Double
-    public final fun minus(/*0*/ other : jet.Float) : jet.Double
-    public final fun minus(/*0*/ other : jet.Int) : jet.Double
-    public final fun minus(/*0*/ other : jet.Long) : jet.Double
-    public final fun minus(/*0*/ other : jet.Short) : jet.Double
-    public final fun mod(/*0*/ other : jet.Byte) : jet.Double
-    public final fun mod(/*0*/ other : jet.Double) : jet.Double
-    public final fun mod(/*0*/ other : jet.Float) : jet.Double
-    public final fun mod(/*0*/ other : jet.Int) : jet.Double
-    public final fun mod(/*0*/ other : jet.Long) : jet.Double
-    public final fun mod(/*0*/ other : jet.Short) : jet.Double
-    public final fun plus() : jet.Double
-    public final fun plus(/*0*/ other : jet.Byte) : jet.Double
-    public final fun plus(/*0*/ other : jet.Char) : jet.Double
-    public final fun plus(/*0*/ other : jet.Double) : jet.Double
-    public final fun plus(/*0*/ other : jet.Float) : jet.Double
-    public final fun plus(/*0*/ other : jet.Int) : jet.Double
-    public final fun plus(/*0*/ other : jet.Long) : jet.Double
-    public final fun plus(/*0*/ other : jet.Short) : jet.Double
-    public final fun rangeTo(/*0*/ other : jet.Byte) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Char) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Double) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Float) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Int) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Long) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Short) : jet.DoubleRange
-    public final fun times(/*0*/ other : jet.Byte) : jet.Double
-    public final fun times(/*0*/ other : jet.Char) : jet.Double
-    public final fun times(/*0*/ other : jet.Double) : jet.Double
-    public final fun times(/*0*/ other : jet.Float) : jet.Double
-    public final fun times(/*0*/ other : jet.Int) : jet.Double
-    public final fun times(/*0*/ other : jet.Long) : jet.Double
-    public final fun times(/*0*/ other : jet.Short) : jet.Double
-    public open override /*1*/ fun toByte() : jet.Byte
-    public open override /*1*/ fun toChar() : jet.Char
-    public open override /*1*/ fun toDouble() : jet.Double
-    public open override /*1*/ fun toFloat() : jet.Float
-    public open override /*1*/ fun toInt() : jet.Int
-    public open override /*1*/ fun toLong() : jet.Long
-    public open override /*1*/ fun toShort() : jet.Short
+    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Double): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
+    public final fun dec(): jet.Double
+    public final fun div(/*0*/ other: jet.Byte): jet.Double
+    public final fun div(/*0*/ other: jet.Char): jet.Double
+    public final fun div(/*0*/ other: jet.Double): jet.Double
+    public final fun div(/*0*/ other: jet.Float): jet.Double
+    public final fun div(/*0*/ other: jet.Int): jet.Double
+    public final fun div(/*0*/ other: jet.Long): jet.Double
+    public final fun div(/*0*/ other: jet.Short): jet.Double
+    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun hashCode(): jet.Int
+    public final fun inc(): jet.Double
+    public final fun minus(): jet.Double
+    public final fun minus(/*0*/ other: jet.Byte): jet.Double
+    public final fun minus(/*0*/ other: jet.Char): jet.Double
+    public final fun minus(/*0*/ other: jet.Double): jet.Double
+    public final fun minus(/*0*/ other: jet.Float): jet.Double
+    public final fun minus(/*0*/ other: jet.Int): jet.Double
+    public final fun minus(/*0*/ other: jet.Long): jet.Double
+    public final fun minus(/*0*/ other: jet.Short): jet.Double
+    public final fun mod(/*0*/ other: jet.Byte): jet.Double
+    public final fun mod(/*0*/ other: jet.Double): jet.Double
+    public final fun mod(/*0*/ other: jet.Float): jet.Double
+    public final fun mod(/*0*/ other: jet.Int): jet.Double
+    public final fun mod(/*0*/ other: jet.Long): jet.Double
+    public final fun mod(/*0*/ other: jet.Short): jet.Double
+    public final fun plus(): jet.Double
+    public final fun plus(/*0*/ other: jet.Byte): jet.Double
+    public final fun plus(/*0*/ other: jet.Char): jet.Double
+    public final fun plus(/*0*/ other: jet.Double): jet.Double
+    public final fun plus(/*0*/ other: jet.Float): jet.Double
+    public final fun plus(/*0*/ other: jet.Int): jet.Double
+    public final fun plus(/*0*/ other: jet.Long): jet.Double
+    public final fun plus(/*0*/ other: jet.Short): jet.Double
+    public final fun rangeTo(/*0*/ other: jet.Byte): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Char): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Float): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Int): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Long): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Short): jet.DoubleRange
+    public final fun times(/*0*/ other: jet.Byte): jet.Double
+    public final fun times(/*0*/ other: jet.Char): jet.Double
+    public final fun times(/*0*/ other: jet.Double): jet.Double
+    public final fun times(/*0*/ other: jet.Float): jet.Double
+    public final fun times(/*0*/ other: jet.Int): jet.Double
+    public final fun times(/*0*/ other: jet.Long): jet.Double
+    public final fun times(/*0*/ other: jet.Short): jet.Double
+    public open override /*1*/ fun toByte(): jet.Byte
+    public open override /*1*/ fun toChar(): jet.Char
+    public open override /*1*/ fun toDouble(): jet.Double
+    public open override /*1*/ fun toFloat(): jet.Float
+    public open override /*1*/ fun toInt(): jet.Int
+    public open override /*1*/ fun toLong(): jet.Long
+    public open override /*1*/ fun toShort(): jet.Short
 }
 
 public final class DoubleArray {
-    public constructor DoubleArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Double
-    public final fun iterator() : jet.DoubleIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Double) : jet.Unit
+    public constructor DoubleArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Double
+    public final fun iterator(): jet.DoubleIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Double): jet.Unit
 }
 
 public abstract class DoubleIterator : jet.Iterator<jet.Double> {
     public constructor DoubleIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Double
-    public abstract fun nextDouble() : jet.Double
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Double
+    public abstract fun nextDouble(): jet.Double
 }
 
 public final class DoubleProgression : jet.Progression<jet.Double> {
-    public constructor DoubleProgression(/*0*/ start : jet.Double, /*1*/ end : jet.Double, /*2*/ increment : jet.Double)
-    public open override /*1*/ val end : jet.Double
-    public open override /*1*/ val increment : jet.Double
-    public open override /*1*/ val start : jet.Double
-    public open override /*1*/ fun iterator() : jet.DoubleIterator
+    public constructor DoubleProgression(/*0*/ start: jet.Double, /*1*/ end: jet.Double, /*2*/ increment: jet.Double)
+    public open override /*1*/ val end: jet.Double
+    public open override /*1*/ val increment: jet.Double
+    public open override /*1*/ val start: jet.Double
+    public open override /*1*/ fun iterator(): jet.DoubleIterator
 }
 
 public final class DoubleRange : jet.Range<jet.Double>, jet.Progression<jet.Double> {
-    public constructor DoubleRange(/*0*/ start : jet.Double, /*1*/ end : jet.Double)
-    public open override /*2*/ val end : jet.Double
-    public open override /*1*/ val increment : jet.Double
-    public open override /*2*/ val start : jet.Double
-    public open override /*1*/ fun contains(/*0*/ item : jet.Double) : jet.Boolean
-    public open override /*1*/ fun iterator() : jet.DoubleIterator
+    public constructor DoubleRange(/*0*/ start: jet.Double, /*1*/ end: jet.Double)
+    public open override /*2*/ val end: jet.Double
+    public open override /*1*/ val increment: jet.Double
+    public open override /*2*/ val start: jet.Double
+    public open override /*1*/ fun contains(/*0*/ item: jet.Double): jet.Boolean
+    public open override /*1*/ fun iterator(): jet.DoubleIterator
     
     public class object <class-object-for-DoubleRange> {
         private constructor <class-object-for-DoubleRange>()
-        public final val EMPTY : jet.DoubleRange
+        public final val EMPTY: jet.DoubleRange
     }
 }
 
 public abstract class Enum</*0*/ E : jet.Enum<E>> {
-    public constructor Enum</*0*/ E : jet.Enum<E>>(/*0*/ name : jet.String, /*1*/ ordinal : jet.Int)
-    public final fun name() : jet.String
-    public final fun ordinal() : jet.Int
+    public constructor Enum</*0*/ E : jet.Enum<E>>(/*0*/ name: jet.String, /*1*/ ordinal: jet.Int)
+    public final fun name(): jet.String
+    public final fun ordinal(): jet.Int
 }
 
 public trait ExtensionFunction0</*0*/ in T, /*1*/ out R> {
-    public abstract fun T.invoke() : R
+    public abstract fun T.invoke(): R
 }
 
 public trait ExtensionFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1) : R
+    public abstract fun T.invoke(/*0*/ p1: P1): R
 }
 
 public trait ExtensionFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
 public trait ExtensionFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
 public trait ExtensionFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
 public trait ExtensionFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
 public trait ExtensionFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
 public trait ExtensionFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
 public trait ExtensionFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
 public trait ExtensionFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
 public trait ExtensionFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
 public trait ExtensionFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
 public trait ExtensionFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
 public trait ExtensionFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
 public trait ExtensionFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
 public trait ExtensionFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
 public trait ExtensionFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
 public trait ExtensionFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
 public trait ExtensionFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
 public trait ExtensionFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
 public trait ExtensionFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
 public trait ExtensionFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
 public trait ExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> {
-    public abstract fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+    public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
 public final class Float : jet.Number, jet.Comparable<jet.Float> {
     public constructor Float()
-    public final fun compareTo(/*0*/ other : jet.Byte) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Char) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Double) : jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other : jet.Float) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Int) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Long) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Short) : jet.Int
-    public final fun dec() : jet.Float
-    public final fun div(/*0*/ other : jet.Byte) : jet.Float
-    public final fun div(/*0*/ other : jet.Char) : jet.Float
-    public final fun div(/*0*/ other : jet.Double) : jet.Double
-    public final fun div(/*0*/ other : jet.Float) : jet.Float
-    public final fun div(/*0*/ other : jet.Int) : jet.Float
-    public final fun div(/*0*/ other : jet.Long) : jet.Float
-    public final fun div(/*0*/ other : jet.Short) : jet.Float
-    public open override /*1*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun hashCode() : jet.Int
-    public final fun inc() : jet.Float
-    public final fun minus() : jet.Float
-    public final fun minus(/*0*/ other : jet.Byte) : jet.Float
-    public final fun minus(/*0*/ other : jet.Char) : jet.Float
-    public final fun minus(/*0*/ other : jet.Double) : jet.Double
-    public final fun minus(/*0*/ other : jet.Float) : jet.Float
-    public final fun minus(/*0*/ other : jet.Int) : jet.Float
-    public final fun minus(/*0*/ other : jet.Long) : jet.Float
-    public final fun minus(/*0*/ other : jet.Short) : jet.Float
-    public final fun mod(/*0*/ other : jet.Byte) : jet.Float
-    public final fun mod(/*0*/ other : jet.Char) : jet.Float
-    public final fun mod(/*0*/ other : jet.Double) : jet.Double
-    public final fun mod(/*0*/ other : jet.Float) : jet.Float
-    public final fun mod(/*0*/ other : jet.Int) : jet.Float
-    public final fun mod(/*0*/ other : jet.Long) : jet.Float
-    public final fun mod(/*0*/ other : jet.Short) : jet.Float
-    public final fun plus() : jet.Float
-    public final fun plus(/*0*/ other : jet.Byte) : jet.Float
-    public final fun plus(/*0*/ other : jet.Char) : jet.Float
-    public final fun plus(/*0*/ other : jet.Double) : jet.Double
-    public final fun plus(/*0*/ other : jet.Float) : jet.Float
-    public final fun plus(/*0*/ other : jet.Int) : jet.Float
-    public final fun plus(/*0*/ other : jet.Long) : jet.Float
-    public final fun plus(/*0*/ other : jet.Short) : jet.Float
-    public final fun rangeTo(/*0*/ other : jet.Byte) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Char) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Double) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Float) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Int) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Long) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Short) : jet.FloatRange
-    public final fun times(/*0*/ other : jet.Byte) : jet.Float
-    public final fun times(/*0*/ other : jet.Char) : jet.Float
-    public final fun times(/*0*/ other : jet.Double) : jet.Double
-    public final fun times(/*0*/ other : jet.Float) : jet.Float
-    public final fun times(/*0*/ other : jet.Int) : jet.Float
-    public final fun times(/*0*/ other : jet.Long) : jet.Float
-    public final fun times(/*0*/ other : jet.Short) : jet.Float
-    public open override /*1*/ fun toByte() : jet.Byte
-    public open override /*1*/ fun toChar() : jet.Char
-    public open override /*1*/ fun toDouble() : jet.Double
-    public open override /*1*/ fun toFloat() : jet.Float
-    public open override /*1*/ fun toInt() : jet.Int
-    public open override /*1*/ fun toLong() : jet.Long
-    public open override /*1*/ fun toShort() : jet.Short
+    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Float): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
+    public final fun dec(): jet.Float
+    public final fun div(/*0*/ other: jet.Byte): jet.Float
+    public final fun div(/*0*/ other: jet.Char): jet.Float
+    public final fun div(/*0*/ other: jet.Double): jet.Double
+    public final fun div(/*0*/ other: jet.Float): jet.Float
+    public final fun div(/*0*/ other: jet.Int): jet.Float
+    public final fun div(/*0*/ other: jet.Long): jet.Float
+    public final fun div(/*0*/ other: jet.Short): jet.Float
+    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun hashCode(): jet.Int
+    public final fun inc(): jet.Float
+    public final fun minus(): jet.Float
+    public final fun minus(/*0*/ other: jet.Byte): jet.Float
+    public final fun minus(/*0*/ other: jet.Char): jet.Float
+    public final fun minus(/*0*/ other: jet.Double): jet.Double
+    public final fun minus(/*0*/ other: jet.Float): jet.Float
+    public final fun minus(/*0*/ other: jet.Int): jet.Float
+    public final fun minus(/*0*/ other: jet.Long): jet.Float
+    public final fun minus(/*0*/ other: jet.Short): jet.Float
+    public final fun mod(/*0*/ other: jet.Byte): jet.Float
+    public final fun mod(/*0*/ other: jet.Char): jet.Float
+    public final fun mod(/*0*/ other: jet.Double): jet.Double
+    public final fun mod(/*0*/ other: jet.Float): jet.Float
+    public final fun mod(/*0*/ other: jet.Int): jet.Float
+    public final fun mod(/*0*/ other: jet.Long): jet.Float
+    public final fun mod(/*0*/ other: jet.Short): jet.Float
+    public final fun plus(): jet.Float
+    public final fun plus(/*0*/ other: jet.Byte): jet.Float
+    public final fun plus(/*0*/ other: jet.Char): jet.Float
+    public final fun plus(/*0*/ other: jet.Double): jet.Double
+    public final fun plus(/*0*/ other: jet.Float): jet.Float
+    public final fun plus(/*0*/ other: jet.Int): jet.Float
+    public final fun plus(/*0*/ other: jet.Long): jet.Float
+    public final fun plus(/*0*/ other: jet.Short): jet.Float
+    public final fun rangeTo(/*0*/ other: jet.Byte): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Char): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Int): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Long): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Short): jet.FloatRange
+    public final fun times(/*0*/ other: jet.Byte): jet.Float
+    public final fun times(/*0*/ other: jet.Char): jet.Float
+    public final fun times(/*0*/ other: jet.Double): jet.Double
+    public final fun times(/*0*/ other: jet.Float): jet.Float
+    public final fun times(/*0*/ other: jet.Int): jet.Float
+    public final fun times(/*0*/ other: jet.Long): jet.Float
+    public final fun times(/*0*/ other: jet.Short): jet.Float
+    public open override /*1*/ fun toByte(): jet.Byte
+    public open override /*1*/ fun toChar(): jet.Char
+    public open override /*1*/ fun toDouble(): jet.Double
+    public open override /*1*/ fun toFloat(): jet.Float
+    public open override /*1*/ fun toInt(): jet.Int
+    public open override /*1*/ fun toLong(): jet.Long
+    public open override /*1*/ fun toShort(): jet.Short
 }
 
 public final class FloatArray {
-    public constructor FloatArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Float
-    public final fun iterator() : jet.FloatIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Float) : jet.Unit
+    public constructor FloatArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Float
+    public final fun iterator(): jet.FloatIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Float): jet.Unit
 }
 
 public abstract class FloatIterator : jet.Iterator<jet.Float> {
     public constructor FloatIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Float
-    public abstract fun nextFloat() : jet.Float
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Float
+    public abstract fun nextFloat(): jet.Float
 }
 
 public final class FloatProgression : jet.Progression<jet.Float> {
-    public constructor FloatProgression(/*0*/ start : jet.Float, /*1*/ end : jet.Float, /*2*/ increment : jet.Float)
-    public open override /*1*/ val end : jet.Float
-    public open override /*1*/ val increment : jet.Float
-    public open override /*1*/ val start : jet.Float
-    public open override /*1*/ fun iterator() : jet.FloatIterator
+    public constructor FloatProgression(/*0*/ start: jet.Float, /*1*/ end: jet.Float, /*2*/ increment: jet.Float)
+    public open override /*1*/ val end: jet.Float
+    public open override /*1*/ val increment: jet.Float
+    public open override /*1*/ val start: jet.Float
+    public open override /*1*/ fun iterator(): jet.FloatIterator
 }
 
 public final class FloatRange : jet.Range<jet.Float>, jet.Progression<jet.Float> {
-    public constructor FloatRange(/*0*/ start : jet.Float, /*1*/ end : jet.Float)
-    public open override /*2*/ val end : jet.Float
-    public open override /*1*/ val increment : jet.Float
-    public open override /*2*/ val start : jet.Float
-    public open override /*1*/ fun contains(/*0*/ item : jet.Float) : jet.Boolean
-    public open override /*1*/ fun iterator() : jet.FloatIterator
+    public constructor FloatRange(/*0*/ start: jet.Float, /*1*/ end: jet.Float)
+    public open override /*2*/ val end: jet.Float
+    public open override /*1*/ val increment: jet.Float
+    public open override /*2*/ val start: jet.Float
+    public open override /*1*/ fun contains(/*0*/ item: jet.Float): jet.Boolean
+    public open override /*1*/ fun iterator(): jet.FloatIterator
     
     public class object <class-object-for-FloatRange> {
         private constructor <class-object-for-FloatRange>()
-        public final val EMPTY : jet.FloatRange
+        public final val EMPTY: jet.FloatRange
     }
 }
 
 public trait Function0</*0*/ out R> {
-    public abstract fun invoke() : R
+    public abstract fun invoke(): R
 }
 
 public trait Function1</*0*/ in P1, /*1*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1) : R
+    public abstract fun invoke(/*0*/ p1: P1): R
 }
 
 public trait Function10</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
 public trait Function11</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
 public trait Function12</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
 public trait Function13</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
 public trait Function14</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
 public trait Function15</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
 public trait Function16</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
 public trait Function17</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
 public trait Function18</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
 public trait Function19</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
 public trait Function2</*0*/ in P1, /*1*/ in P2, /*2*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
 public trait Function20</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
 public trait Function21</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
 public trait Function22</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ in P22, /*22*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
 public trait Function3</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
 public trait Function4</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
 public trait Function5</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
 public trait Function6</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
 public trait Function7</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
 public trait Function8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
 public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> {
-    public abstract fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+    public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
 public trait Hashable {
-    public abstract fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract fun hashCode() : jet.Int
+    public abstract fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract fun hashCode(): jet.Int
 }
 
 public final class Int : jet.Number, jet.Comparable<jet.Int> {
     public constructor Int()
-    public final fun and(/*0*/ other : jet.Int) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Byte) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Char) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Double) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Float) : jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other : jet.Int) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Long) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Short) : jet.Int
-    public final fun dec() : jet.Int
-    public final fun div(/*0*/ other : jet.Byte) : jet.Int
-    public final fun div(/*0*/ other : jet.Char) : jet.Int
-    public final fun div(/*0*/ other : jet.Double) : jet.Double
-    public final fun div(/*0*/ other : jet.Float) : jet.Float
-    public final fun div(/*0*/ other : jet.Int) : jet.Int
-    public final fun div(/*0*/ other : jet.Long) : jet.Long
-    public final fun div(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun hashCode() : jet.Int
-    public final fun inc() : jet.Int
-    public final fun inv() : jet.Int
-    public final fun minus() : jet.Int
-    public final fun minus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun minus(/*0*/ other : jet.Char) : jet.Int
-    public final fun minus(/*0*/ other : jet.Double) : jet.Double
-    public final fun minus(/*0*/ other : jet.Float) : jet.Float
-    public final fun minus(/*0*/ other : jet.Int) : jet.Int
-    public final fun minus(/*0*/ other : jet.Long) : jet.Long
-    public final fun minus(/*0*/ other : jet.Short) : jet.Int
-    public final fun mod(/*0*/ other : jet.Byte) : jet.Int
-    public final fun mod(/*0*/ other : jet.Char) : jet.Int
-    public final fun mod(/*0*/ other : jet.Double) : jet.Double
-    public final fun mod(/*0*/ other : jet.Float) : jet.Float
-    public final fun mod(/*0*/ other : jet.Int) : jet.Int
-    public final fun mod(/*0*/ other : jet.Long) : jet.Long
-    public final fun mod(/*0*/ other : jet.Short) : jet.Int
-    public final fun or(/*0*/ other : jet.Int) : jet.Int
-    public final fun plus() : jet.Int
-    public final fun plus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun plus(/*0*/ other : jet.Char) : jet.Int
-    public final fun plus(/*0*/ other : jet.Double) : jet.Double
-    public final fun plus(/*0*/ other : jet.Float) : jet.Float
-    public final fun plus(/*0*/ other : jet.Int) : jet.Int
-    public final fun plus(/*0*/ other : jet.Long) : jet.Long
-    public final fun plus(/*0*/ other : jet.Short) : jet.Int
-    public final fun rangeTo(/*0*/ other : jet.Byte) : jet.IntRange
-    public final fun rangeTo(/*0*/ other : jet.Char) : jet.IntRange
-    public final fun rangeTo(/*0*/ other : jet.Double) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Float) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Int) : jet.IntRange
-    public final fun rangeTo(/*0*/ other : jet.Long) : jet.LongRange
-    public final fun rangeTo(/*0*/ other : jet.Short) : jet.IntRange
-    public final fun shl(/*0*/ bits : jet.Int) : jet.Int
-    public final fun shr(/*0*/ bits : jet.Int) : jet.Int
-    public final fun times(/*0*/ other : jet.Byte) : jet.Int
-    public final fun times(/*0*/ other : jet.Char) : jet.Int
-    public final fun times(/*0*/ other : jet.Double) : jet.Double
-    public final fun times(/*0*/ other : jet.Float) : jet.Float
-    public final fun times(/*0*/ other : jet.Int) : jet.Int
-    public final fun times(/*0*/ other : jet.Long) : jet.Long
-    public final fun times(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun toByte() : jet.Byte
-    public open override /*1*/ fun toChar() : jet.Char
-    public open override /*1*/ fun toDouble() : jet.Double
-    public open override /*1*/ fun toFloat() : jet.Float
-    public open override /*1*/ fun toInt() : jet.Int
-    public open override /*1*/ fun toLong() : jet.Long
-    public open override /*1*/ fun toShort() : jet.Short
-    public final fun ushr(/*0*/ bits : jet.Int) : jet.Int
-    public final fun xor(/*0*/ other : jet.Int) : jet.Int
+    public final fun and(/*0*/ other: jet.Int): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Int): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
+    public final fun dec(): jet.Int
+    public final fun div(/*0*/ other: jet.Byte): jet.Int
+    public final fun div(/*0*/ other: jet.Char): jet.Int
+    public final fun div(/*0*/ other: jet.Double): jet.Double
+    public final fun div(/*0*/ other: jet.Float): jet.Float
+    public final fun div(/*0*/ other: jet.Int): jet.Int
+    public final fun div(/*0*/ other: jet.Long): jet.Long
+    public final fun div(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun hashCode(): jet.Int
+    public final fun inc(): jet.Int
+    public final fun inv(): jet.Int
+    public final fun minus(): jet.Int
+    public final fun minus(/*0*/ other: jet.Byte): jet.Int
+    public final fun minus(/*0*/ other: jet.Char): jet.Int
+    public final fun minus(/*0*/ other: jet.Double): jet.Double
+    public final fun minus(/*0*/ other: jet.Float): jet.Float
+    public final fun minus(/*0*/ other: jet.Int): jet.Int
+    public final fun minus(/*0*/ other: jet.Long): jet.Long
+    public final fun minus(/*0*/ other: jet.Short): jet.Int
+    public final fun mod(/*0*/ other: jet.Byte): jet.Int
+    public final fun mod(/*0*/ other: jet.Char): jet.Int
+    public final fun mod(/*0*/ other: jet.Double): jet.Double
+    public final fun mod(/*0*/ other: jet.Float): jet.Float
+    public final fun mod(/*0*/ other: jet.Int): jet.Int
+    public final fun mod(/*0*/ other: jet.Long): jet.Long
+    public final fun mod(/*0*/ other: jet.Short): jet.Int
+    public final fun or(/*0*/ other: jet.Int): jet.Int
+    public final fun plus(): jet.Int
+    public final fun plus(/*0*/ other: jet.Byte): jet.Int
+    public final fun plus(/*0*/ other: jet.Char): jet.Int
+    public final fun plus(/*0*/ other: jet.Double): jet.Double
+    public final fun plus(/*0*/ other: jet.Float): jet.Float
+    public final fun plus(/*0*/ other: jet.Int): jet.Int
+    public final fun plus(/*0*/ other: jet.Long): jet.Long
+    public final fun plus(/*0*/ other: jet.Short): jet.Int
+    public final fun rangeTo(/*0*/ other: jet.Byte): jet.IntRange
+    public final fun rangeTo(/*0*/ other: jet.Char): jet.IntRange
+    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Int): jet.IntRange
+    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
+    public final fun rangeTo(/*0*/ other: jet.Short): jet.IntRange
+    public final fun shl(/*0*/ bits: jet.Int): jet.Int
+    public final fun shr(/*0*/ bits: jet.Int): jet.Int
+    public final fun times(/*0*/ other: jet.Byte): jet.Int
+    public final fun times(/*0*/ other: jet.Char): jet.Int
+    public final fun times(/*0*/ other: jet.Double): jet.Double
+    public final fun times(/*0*/ other: jet.Float): jet.Float
+    public final fun times(/*0*/ other: jet.Int): jet.Int
+    public final fun times(/*0*/ other: jet.Long): jet.Long
+    public final fun times(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun toByte(): jet.Byte
+    public open override /*1*/ fun toChar(): jet.Char
+    public open override /*1*/ fun toDouble(): jet.Double
+    public open override /*1*/ fun toFloat(): jet.Float
+    public open override /*1*/ fun toInt(): jet.Int
+    public open override /*1*/ fun toLong(): jet.Long
+    public open override /*1*/ fun toShort(): jet.Short
+    public final fun ushr(/*0*/ bits: jet.Int): jet.Int
+    public final fun xor(/*0*/ other: jet.Int): jet.Int
 }
 
 public final class IntArray {
-    public constructor IntArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Int
-    public final fun iterator() : jet.IntIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Int) : jet.Unit
+    public constructor IntArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Int
+    public final fun iterator(): jet.IntIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Int): jet.Unit
 }
 
 public abstract class IntIterator : jet.Iterator<jet.Int> {
     public constructor IntIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Int
-    public abstract fun nextInt() : jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Int
+    public abstract fun nextInt(): jet.Int
 }
 
 public final class IntProgression : jet.Progression<jet.Int> {
-    public constructor IntProgression(/*0*/ start : jet.Int, /*1*/ end : jet.Int, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Int
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Int
-    public open override /*1*/ fun iterator() : jet.IntIterator
+    public constructor IntProgression(/*0*/ start: jet.Int, /*1*/ end: jet.Int, /*2*/ increment: jet.Int)
+    public open override /*1*/ val end: jet.Int
+    public open override /*1*/ val increment: jet.Int
+    public open override /*1*/ val start: jet.Int
+    public open override /*1*/ fun iterator(): jet.IntIterator
 }
 
 public final class IntRange : jet.Range<jet.Int>, jet.Progression<jet.Int> {
-    public constructor IntRange(/*0*/ start : jet.Int, /*1*/ end : jet.Int)
-    public open override /*2*/ val end : jet.Int
-    public open override /*1*/ val increment : jet.Int
-    public open override /*2*/ val start : jet.Int
-    public open override /*1*/ fun contains(/*0*/ item : jet.Int) : jet.Boolean
-    public open override /*1*/ fun iterator() : jet.IntIterator
+    public constructor IntRange(/*0*/ start: jet.Int, /*1*/ end: jet.Int)
+    public open override /*2*/ val end: jet.Int
+    public open override /*1*/ val increment: jet.Int
+    public open override /*2*/ val start: jet.Int
+    public open override /*1*/ fun contains(/*0*/ item: jet.Int): jet.Boolean
+    public open override /*1*/ fun iterator(): jet.IntIterator
     
     public class object <class-object-for-IntRange> {
         private constructor <class-object-for-IntRange>()
-        public final val EMPTY : jet.IntRange
+        public final val EMPTY: jet.IntRange
     }
 }
 
 public trait Iterable</*0*/ out T> {
-    public abstract fun iterator() : jet.Iterator<T>
+    public abstract fun iterator(): jet.Iterator<T>
 }
 
 public trait Iterator</*0*/ out T> {
-    public abstract fun hasNext() : jet.Boolean
-    public abstract fun next() : T
+    public abstract fun hasNext(): jet.Boolean
+    public abstract fun next(): T
 }
 
 public trait KExtensionFunction0</*0*/ in T, /*1*/ out R> : T.() -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke() : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(): R
 }
 
 public trait KExtensionFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : T.(P1) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1): R
 }
 
 public trait KExtensionFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
 public trait KExtensionFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
 public trait KExtensionFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
 public trait KExtensionFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
 public trait KExtensionFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
 public trait KExtensionFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
 public trait KExtensionFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
 public trait KExtensionFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
 public trait KExtensionFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
 public trait KExtensionFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
 public trait KExtensionFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : T.(P1, P2) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
 public trait KExtensionFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
 public trait KExtensionFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
 public trait KExtensionFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
 public trait KExtensionFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : T.(P1, P2, P3) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
 public trait KExtensionFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : T.(P1, P2, P3, P4) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
 public trait KExtensionFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : T.(P1, P2, P3, P4, P5) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
 public trait KExtensionFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : T.(P1, P2, P3, P4, P5, P6) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
 public trait KExtensionFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
 public trait KExtensionFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
 public trait KExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
 public trait KFunction0</*0*/ out R> : () -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke() : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(): R
 }
 
 public trait KFunction1</*0*/ in P1, /*1*/ out R> : (P1) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1): R
 }
 
 public trait KFunction10</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
 public trait KFunction11</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
 public trait KFunction12</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
 public trait KFunction13</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
 public trait KFunction14</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
 public trait KFunction15</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
 public trait KFunction16</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
 public trait KFunction17</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
 public trait KFunction18</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
 public trait KFunction19</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
 public trait KFunction2</*0*/ in P1, /*1*/ in P2, /*2*/ out R> : (P1, P2) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
 public trait KFunction20</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
 public trait KFunction21</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
 public trait KFunction22</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ in P22, /*22*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
 public trait KFunction3</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ out R> : (P1, P2, P3) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
 public trait KFunction4</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ out R> : (P1, P2, P3, P4) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
 public trait KFunction5</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ out R> : (P1, P2, P3, P4, P5) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
 public trait KFunction6</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ out R> : (P1, P2, P3, P4, P5, P6) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
 public trait KFunction7</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ out R> : (P1, P2, P3, P4, P5, P6, P7) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
 public trait KFunction8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
 public trait KFunction9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
 public trait KMemberFunction0</*0*/ in T, /*1*/ out R> : T.() -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke() : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(): R
 }
 
 public trait KMemberFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : T.(P1) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1): R
 }
 
 public trait KMemberFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
 public trait KMemberFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
 public trait KMemberFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
 public trait KMemberFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
 public trait KMemberFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
 public trait KMemberFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
 public trait KMemberFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
 public trait KMemberFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
 public trait KMemberFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
 public trait KMemberFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
 public trait KMemberFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : T.(P1, P2) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
 public trait KMemberFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
 public trait KMemberFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
 public trait KMemberFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9, /*9*/ p10 : P10, /*10*/ p11 : P11, /*11*/ p12 : P12, /*12*/ p13 : P13, /*13*/ p14 : P14, /*14*/ p15 : P15, /*15*/ p16 : P16, /*16*/ p17 : P17, /*17*/ p18 : P18, /*18*/ p19 : P19, /*19*/ p20 : P20, /*20*/ p21 : P21, /*21*/ p22 : P22) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
 public trait KMemberFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : T.(P1, P2, P3) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
 public trait KMemberFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : T.(P1, P2, P3, P4) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
 public trait KMemberFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : T.(P1, P2, P3, P4, P5) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
 public trait KMemberFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : T.(P1, P2, P3, P4, P5, P6) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
 public trait KMemberFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
 public trait KMemberFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
 public trait KMemberFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
-    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1 : P1, /*1*/ p2 : P2, /*2*/ p3 : P3, /*3*/ p4 : P4, /*4*/ p5 : P5, /*5*/ p6 : P6, /*6*/ p7 : P7, /*7*/ p8 : P8, /*8*/ p9 : P9) : R
+    public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
 public trait List</*0*/ out E> : jet.Collection<E> {
-    public abstract override /*1*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract fun get(/*0*/ index : jet.Int) : E
-    public abstract override /*1*/ /*fake_override*/ fun hashCode() : jet.Int
-    public abstract fun indexOf(/*0*/ o : jet.Any?) : jet.Int
-    public abstract override /*1*/ fun isEmpty() : jet.Boolean
-    public abstract override /*1*/ fun iterator() : jet.Iterator<E>
-    public abstract fun lastIndexOf(/*0*/ o : jet.Any?) : jet.Int
-    public abstract fun listIterator() : jet.ListIterator<E>
-    public abstract fun listIterator(/*0*/ index : jet.Int) : jet.ListIterator<E>
-    public abstract override /*1*/ fun size() : jet.Int
-    public abstract fun subList(/*0*/ fromIndex : jet.Int, /*1*/ toIndex : jet.Int) : jet.List<E>
-    public abstract override /*1*/ fun toArray() : jet.Array<jet.Any?>
-    public abstract override /*1*/ fun </*0*/ T> toArray(/*0*/ a : jet.Array<out T>) : jet.Array<T>
+    public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract fun get(/*0*/ index: jet.Int): E
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract fun indexOf(/*0*/ o: jet.Any?): jet.Int
+    public abstract override /*1*/ fun isEmpty(): jet.Boolean
+    public abstract override /*1*/ fun iterator(): jet.Iterator<E>
+    public abstract fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
+    public abstract fun listIterator(): jet.ListIterator<E>
+    public abstract fun listIterator(/*0*/ index: jet.Int): jet.ListIterator<E>
+    public abstract override /*1*/ fun size(): jet.Int
+    public abstract fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.List<E>
+    public abstract override /*1*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*1*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait ListIterator</*0*/ out T> : jet.Iterator<T> {
-    public abstract override /*1*/ fun hasNext() : jet.Boolean
-    public abstract fun hasPrevious() : jet.Boolean
-    public abstract override /*1*/ fun next() : T
-    public abstract fun nextIndex() : jet.Int
-    public abstract fun previous() : T
-    public abstract fun previousIndex() : jet.Int
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract fun hasPrevious(): jet.Boolean
+    public abstract override /*1*/ fun next(): T
+    public abstract fun nextIndex(): jet.Int
+    public abstract fun previous(): T
+    public abstract fun previousIndex(): jet.Int
 }
 
 public final class Long : jet.Number, jet.Comparable<jet.Long> {
     public constructor Long()
-    public final fun and(/*0*/ other : jet.Long) : jet.Long
-    public final fun compareTo(/*0*/ other : jet.Byte) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Char) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Double) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Float) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Int) : jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other : jet.Long) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Short) : jet.Int
-    public final fun dec() : jet.Long
-    public final fun div(/*0*/ other : jet.Byte) : jet.Long
-    public final fun div(/*0*/ other : jet.Char) : jet.Long
-    public final fun div(/*0*/ other : jet.Double) : jet.Double
-    public final fun div(/*0*/ other : jet.Float) : jet.Float
-    public final fun div(/*0*/ other : jet.Int) : jet.Long
-    public final fun div(/*0*/ other : jet.Long) : jet.Long
-    public final fun div(/*0*/ other : jet.Short) : jet.Long
-    public open override /*1*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun hashCode() : jet.Int
-    public final fun inc() : jet.Long
-    public final fun inv() : jet.Long
-    public final fun minus() : jet.Long
-    public final fun minus(/*0*/ other : jet.Byte) : jet.Long
-    public final fun minus(/*0*/ other : jet.Char) : jet.Long
-    public final fun minus(/*0*/ other : jet.Double) : jet.Double
-    public final fun minus(/*0*/ other : jet.Float) : jet.Float
-    public final fun minus(/*0*/ other : jet.Int) : jet.Long
-    public final fun minus(/*0*/ other : jet.Long) : jet.Long
-    public final fun minus(/*0*/ other : jet.Short) : jet.Long
-    public final fun mod(/*0*/ other : jet.Byte) : jet.Long
-    public final fun mod(/*0*/ other : jet.Char) : jet.Long
-    public final fun mod(/*0*/ other : jet.Double) : jet.Double
-    public final fun mod(/*0*/ other : jet.Float) : jet.Float
-    public final fun mod(/*0*/ other : jet.Int) : jet.Long
-    public final fun mod(/*0*/ other : jet.Long) : jet.Long
-    public final fun mod(/*0*/ other : jet.Short) : jet.Long
-    public final fun or(/*0*/ other : jet.Long) : jet.Long
-    public final fun plus() : jet.Long
-    public final fun plus(/*0*/ other : jet.Byte) : jet.Long
-    public final fun plus(/*0*/ other : jet.Char) : jet.Long
-    public final fun plus(/*0*/ other : jet.Double) : jet.Double
-    public final fun plus(/*0*/ other : jet.Float) : jet.Float
-    public final fun plus(/*0*/ other : jet.Int) : jet.Long
-    public final fun plus(/*0*/ other : jet.Long) : jet.Long
-    public final fun plus(/*0*/ other : jet.Short) : jet.Long
-    public final fun rangeTo(/*0*/ other : jet.Byte) : jet.LongRange
-    public final fun rangeTo(/*0*/ other : jet.Char) : jet.LongRange
-    public final fun rangeTo(/*0*/ other : jet.Double) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Float) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Int) : jet.LongRange
-    public final fun rangeTo(/*0*/ other : jet.Long) : jet.LongRange
-    public final fun rangeTo(/*0*/ other : jet.Short) : jet.LongRange
-    public final fun shl(/*0*/ bits : jet.Int) : jet.Long
-    public final fun shr(/*0*/ bits : jet.Int) : jet.Long
-    public final fun times(/*0*/ other : jet.Byte) : jet.Long
-    public final fun times(/*0*/ other : jet.Char) : jet.Long
-    public final fun times(/*0*/ other : jet.Double) : jet.Double
-    public final fun times(/*0*/ other : jet.Float) : jet.Float
-    public final fun times(/*0*/ other : jet.Int) : jet.Long
-    public final fun times(/*0*/ other : jet.Long) : jet.Long
-    public final fun times(/*0*/ other : jet.Short) : jet.Long
-    public open override /*1*/ fun toByte() : jet.Byte
-    public open override /*1*/ fun toChar() : jet.Char
-    public open override /*1*/ fun toDouble() : jet.Double
-    public open override /*1*/ fun toFloat() : jet.Float
-    public open override /*1*/ fun toInt() : jet.Int
-    public open override /*1*/ fun toLong() : jet.Long
-    public open override /*1*/ fun toShort() : jet.Short
-    public final fun ushr(/*0*/ bits : jet.Int) : jet.Long
-    public final fun xor(/*0*/ other : jet.Long) : jet.Long
+    public final fun and(/*0*/ other: jet.Long): jet.Long
+    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Long): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
+    public final fun dec(): jet.Long
+    public final fun div(/*0*/ other: jet.Byte): jet.Long
+    public final fun div(/*0*/ other: jet.Char): jet.Long
+    public final fun div(/*0*/ other: jet.Double): jet.Double
+    public final fun div(/*0*/ other: jet.Float): jet.Float
+    public final fun div(/*0*/ other: jet.Int): jet.Long
+    public final fun div(/*0*/ other: jet.Long): jet.Long
+    public final fun div(/*0*/ other: jet.Short): jet.Long
+    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun hashCode(): jet.Int
+    public final fun inc(): jet.Long
+    public final fun inv(): jet.Long
+    public final fun minus(): jet.Long
+    public final fun minus(/*0*/ other: jet.Byte): jet.Long
+    public final fun minus(/*0*/ other: jet.Char): jet.Long
+    public final fun minus(/*0*/ other: jet.Double): jet.Double
+    public final fun minus(/*0*/ other: jet.Float): jet.Float
+    public final fun minus(/*0*/ other: jet.Int): jet.Long
+    public final fun minus(/*0*/ other: jet.Long): jet.Long
+    public final fun minus(/*0*/ other: jet.Short): jet.Long
+    public final fun mod(/*0*/ other: jet.Byte): jet.Long
+    public final fun mod(/*0*/ other: jet.Char): jet.Long
+    public final fun mod(/*0*/ other: jet.Double): jet.Double
+    public final fun mod(/*0*/ other: jet.Float): jet.Float
+    public final fun mod(/*0*/ other: jet.Int): jet.Long
+    public final fun mod(/*0*/ other: jet.Long): jet.Long
+    public final fun mod(/*0*/ other: jet.Short): jet.Long
+    public final fun or(/*0*/ other: jet.Long): jet.Long
+    public final fun plus(): jet.Long
+    public final fun plus(/*0*/ other: jet.Byte): jet.Long
+    public final fun plus(/*0*/ other: jet.Char): jet.Long
+    public final fun plus(/*0*/ other: jet.Double): jet.Double
+    public final fun plus(/*0*/ other: jet.Float): jet.Float
+    public final fun plus(/*0*/ other: jet.Int): jet.Long
+    public final fun plus(/*0*/ other: jet.Long): jet.Long
+    public final fun plus(/*0*/ other: jet.Short): jet.Long
+    public final fun rangeTo(/*0*/ other: jet.Byte): jet.LongRange
+    public final fun rangeTo(/*0*/ other: jet.Char): jet.LongRange
+    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Int): jet.LongRange
+    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
+    public final fun rangeTo(/*0*/ other: jet.Short): jet.LongRange
+    public final fun shl(/*0*/ bits: jet.Int): jet.Long
+    public final fun shr(/*0*/ bits: jet.Int): jet.Long
+    public final fun times(/*0*/ other: jet.Byte): jet.Long
+    public final fun times(/*0*/ other: jet.Char): jet.Long
+    public final fun times(/*0*/ other: jet.Double): jet.Double
+    public final fun times(/*0*/ other: jet.Float): jet.Float
+    public final fun times(/*0*/ other: jet.Int): jet.Long
+    public final fun times(/*0*/ other: jet.Long): jet.Long
+    public final fun times(/*0*/ other: jet.Short): jet.Long
+    public open override /*1*/ fun toByte(): jet.Byte
+    public open override /*1*/ fun toChar(): jet.Char
+    public open override /*1*/ fun toDouble(): jet.Double
+    public open override /*1*/ fun toFloat(): jet.Float
+    public open override /*1*/ fun toInt(): jet.Int
+    public open override /*1*/ fun toLong(): jet.Long
+    public open override /*1*/ fun toShort(): jet.Short
+    public final fun ushr(/*0*/ bits: jet.Int): jet.Long
+    public final fun xor(/*0*/ other: jet.Long): jet.Long
 }
 
 public final class LongArray {
-    public constructor LongArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Long
-    public final fun iterator() : jet.LongIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Long) : jet.Unit
+    public constructor LongArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Long
+    public final fun iterator(): jet.LongIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Long): jet.Unit
 }
 
 public abstract class LongIterator : jet.Iterator<jet.Long> {
     public constructor LongIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Long
-    public abstract fun nextLong() : jet.Long
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Long
+    public abstract fun nextLong(): jet.Long
 }
 
 public final class LongProgression : jet.Progression<jet.Long> {
-    public constructor LongProgression(/*0*/ start : jet.Long, /*1*/ end : jet.Long, /*2*/ increment : jet.Long)
-    public open override /*1*/ val end : jet.Long
-    public open override /*1*/ val increment : jet.Long
-    public open override /*1*/ val start : jet.Long
-    public open override /*1*/ fun iterator() : jet.LongIterator
+    public constructor LongProgression(/*0*/ start: jet.Long, /*1*/ end: jet.Long, /*2*/ increment: jet.Long)
+    public open override /*1*/ val end: jet.Long
+    public open override /*1*/ val increment: jet.Long
+    public open override /*1*/ val start: jet.Long
+    public open override /*1*/ fun iterator(): jet.LongIterator
 }
 
 public final class LongRange : jet.Range<jet.Long>, jet.Progression<jet.Long> {
-    public constructor LongRange(/*0*/ start : jet.Long, /*1*/ end : jet.Long)
-    public open override /*2*/ val end : jet.Long
-    public open override /*1*/ val increment : jet.Long
-    public open override /*2*/ val start : jet.Long
-    public open override /*1*/ fun contains(/*0*/ item : jet.Long) : jet.Boolean
-    public open override /*1*/ fun iterator() : jet.LongIterator
+    public constructor LongRange(/*0*/ start: jet.Long, /*1*/ end: jet.Long)
+    public open override /*2*/ val end: jet.Long
+    public open override /*1*/ val increment: jet.Long
+    public open override /*2*/ val start: jet.Long
+    public open override /*1*/ fun contains(/*0*/ item: jet.Long): jet.Boolean
+    public open override /*1*/ fun iterator(): jet.LongIterator
     
     public class object <class-object-for-LongRange> {
         private constructor <class-object-for-LongRange>()
-        public final val EMPTY : jet.LongRange
+        public final val EMPTY: jet.LongRange
     }
 }
 
 public trait Map</*0*/ K, /*1*/ out V> {
-    public abstract fun containsKey(/*0*/ key : jet.Any?) : jet.Boolean
-    public abstract fun containsValue(/*0*/ value : jet.Any?) : jet.Boolean
-    public abstract fun entrySet() : jet.Set<jet.Map.Entry<K, V>>
-    public abstract fun get(/*0*/ key : jet.Any?) : V?
-    public abstract fun isEmpty() : jet.Boolean
-    public abstract fun keySet() : jet.Set<K>
-    public abstract fun size() : jet.Int
-    public abstract fun values() : jet.Collection<V>
+    public abstract fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
+    public abstract fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
+    public abstract fun entrySet(): jet.Set<jet.Map.Entry<K, V>>
+    public abstract fun get(/*0*/ key: jet.Any?): V?
+    public abstract fun isEmpty(): jet.Boolean
+    public abstract fun keySet(): jet.Set<K>
+    public abstract fun size(): jet.Int
+    public abstract fun values(): jet.Collection<V>
     
     public trait Entry</*0*/ out K, /*1*/ out V> : jet.Hashable {
-        public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-        public abstract fun getKey() : K
-        public abstract fun getValue() : V
-        public abstract override /*1*/ /*fake_override*/ fun hashCode() : jet.Int
+        public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+        public abstract fun getKey(): K
+        public abstract fun getValue(): V
+        public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     }
 }
 
 public trait MutableCollection</*0*/ E> : jet.Collection<E>, jet.MutableIterable<E> {
-    public abstract fun add(/*0*/ e : E) : jet.Boolean
-    public abstract fun addAll(/*0*/ c : jet.Collection<E>) : jet.Boolean
-    public abstract fun clear() : jet.Unit
-    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode() : jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun isEmpty() : jet.Boolean
-    public abstract override /*2*/ fun iterator() : jet.MutableIterator<E>
-    public abstract fun remove(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract fun removeAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract fun retainAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun size() : jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun toArray() : jet.Array<jet.Any?>
-    public abstract override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a : jet.Array<out T>) : jet.Array<T>
+    public abstract fun add(/*0*/ e: E): jet.Boolean
+    public abstract fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
+    public abstract fun clear(): jet.Unit
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
+    public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
+    public abstract fun remove(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait MutableIterable</*0*/ out T> : jet.Iterable<T> {
-    public abstract override /*1*/ fun iterator() : jet.MutableIterator<T>
+    public abstract override /*1*/ fun iterator(): jet.MutableIterator<T>
 }
 
 public trait MutableIterator</*0*/ out T> : jet.Iterator<T> {
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun next() : T
-    public abstract fun remove() : jet.Unit
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun next(): T
+    public abstract fun remove(): jet.Unit
 }
 
 public trait MutableList</*0*/ E> : jet.List<E>, jet.MutableCollection<E> {
-    public abstract override /*1*/ fun add(/*0*/ e : E) : jet.Boolean
-    public abstract fun add(/*0*/ index : jet.Int, /*1*/ element : E) : jet.Unit
-    public abstract override /*1*/ fun addAll(/*0*/ c : jet.Collection<E>) : jet.Boolean
-    public abstract fun addAll(/*0*/ index : jet.Int, /*1*/ c : jet.Collection<E>) : jet.Boolean
-    public abstract override /*1*/ fun clear() : jet.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index : jet.Int) : E
-    public abstract override /*2*/ /*fake_override*/ fun hashCode() : jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o : jet.Any?) : jet.Int
-    public abstract override /*2*/ /*fake_override*/ fun isEmpty() : jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun iterator() : jet.Iterator<E>
-    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o : jet.Any?) : jet.Int
-    public abstract override /*1*/ fun listIterator() : jet.MutableListIterator<E>
-    public abstract override /*1*/ fun listIterator(/*0*/ index : jet.Int) : jet.MutableListIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract fun remove(/*0*/ index : jet.Int) : E
-    public abstract override /*1*/ fun removeAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*1*/ fun retainAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract fun set(/*0*/ index : jet.Int, /*1*/ element : E) : E
-    public abstract override /*2*/ /*fake_override*/ fun size() : jet.Int
-    public abstract override /*1*/ fun subList(/*0*/ fromIndex : jet.Int, /*1*/ toIndex : jet.Int) : jet.MutableList<E>
-    public abstract override /*2*/ /*fake_override*/ fun toArray() : jet.Array<jet.Any?>
-    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a : jet.Array<out T>) : jet.Array<T>
+    public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
+    public abstract fun add(/*0*/ index: jet.Int, /*1*/ element: E): jet.Unit
+    public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
+    public abstract fun addAll(/*0*/ index: jet.Int, /*1*/ c: jet.Collection<E>): jet.Boolean
+    public abstract override /*1*/ fun clear(): jet.Unit
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: jet.Int): E
+    public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: jet.Any?): jet.Int
+    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun iterator(): jet.Iterator<E>
+    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
+    public abstract override /*1*/ fun listIterator(): jet.MutableListIterator<E>
+    public abstract override /*1*/ fun listIterator(/*0*/ index: jet.Int): jet.MutableListIterator<E>
+    public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract fun remove(/*0*/ index: jet.Int): E
+    public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract fun set(/*0*/ index: jet.Int, /*1*/ element: E): E
+    public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*1*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.MutableList<E>
+    public abstract override /*2*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait MutableListIterator</*0*/ T> : jet.ListIterator<T>, jet.MutableIterator<T> {
-    public abstract fun add(/*0*/ e : T) : jet.Unit
-    public abstract override /*2*/ fun hasNext() : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hasPrevious() : jet.Boolean
-    public abstract override /*2*/ fun next() : T
-    public abstract override /*1*/ /*fake_override*/ fun nextIndex() : jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun previous() : T
-    public abstract override /*1*/ /*fake_override*/ fun previousIndex() : jet.Int
-    public abstract override /*1*/ fun remove() : jet.Unit
-    public abstract fun set(/*0*/ e : T) : jet.Unit
+    public abstract fun add(/*0*/ e: T): jet.Unit
+    public abstract override /*2*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasPrevious(): jet.Boolean
+    public abstract override /*2*/ fun next(): T
+    public abstract override /*1*/ /*fake_override*/ fun nextIndex(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun previous(): T
+    public abstract override /*1*/ /*fake_override*/ fun previousIndex(): jet.Int
+    public abstract override /*1*/ fun remove(): jet.Unit
+    public abstract fun set(/*0*/ e: T): jet.Unit
 }
 
 public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
-    public abstract fun clear() : jet.Unit
-    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ fun entrySet() : jet.MutableSet<jet.MutableMap.MutableEntry<K, V>>
-    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key : jet.Any?) : V?
-    public abstract override /*1*/ /*fake_override*/ fun isEmpty() : jet.Boolean
-    public abstract override /*1*/ fun keySet() : jet.MutableSet<K>
-    public abstract fun put(/*0*/ key : K, /*1*/ value : V) : V?
-    public abstract fun putAll(/*0*/ m : jet.Map<out K, V>) : jet.Unit
-    public abstract fun remove(/*0*/ key : jet.Any?) : V?
-    public abstract override /*1*/ /*fake_override*/ fun size() : jet.Int
-    public abstract override /*1*/ fun values() : jet.MutableCollection<V>
+    public abstract fun clear(): jet.Unit
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
+    public abstract override /*1*/ fun entrySet(): jet.MutableSet<jet.MutableMap.MutableEntry<K, V>>
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: jet.Any?): V?
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
+    public abstract override /*1*/ fun keySet(): jet.MutableSet<K>
+    public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
+    public abstract fun putAll(/*0*/ m: jet.Map<out K, V>): jet.Unit
+    public abstract fun remove(/*0*/ key: jet.Any?): V?
+    public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*1*/ fun values(): jet.MutableCollection<V>
     
     public trait MutableEntry</*0*/ K, /*1*/ V> : jet.Map.Entry<K, V>, jet.Hashable {
-        public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-        public abstract override /*1*/ /*fake_override*/ fun getKey() : K
-        public abstract override /*1*/ /*fake_override*/ fun getValue() : V
-        public abstract override /*2*/ /*fake_override*/ fun hashCode() : jet.Int
-        public abstract fun setValue(/*0*/ value : V) : V
+        public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+        public abstract override /*1*/ /*fake_override*/ fun getKey(): K
+        public abstract override /*1*/ /*fake_override*/ fun getValue(): V
+        public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
+        public abstract fun setValue(/*0*/ value: V): V
     }
 }
 
 public trait MutableSet</*0*/ E> : jet.Set<E>, jet.MutableCollection<E> {
-    public abstract override /*1*/ fun add(/*0*/ e : E) : jet.Boolean
-    public abstract override /*1*/ fun addAll(/*0*/ c : jet.Collection<E>) : jet.Boolean
-    public abstract override /*1*/ fun clear() : jet.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun hashCode() : jet.Int
-    public abstract override /*2*/ /*fake_override*/ fun isEmpty() : jet.Boolean
-    public abstract override /*2*/ fun iterator() : jet.MutableIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ fun removeAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*1*/ fun retainAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun size() : jet.Int
-    public abstract override /*2*/ /*fake_override*/ fun toArray() : jet.Array<jet.Any?>
-    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a : jet.Array<out T>) : jet.Array<T>
+    public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
+    public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
+    public abstract override /*1*/ fun clear(): jet.Unit
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
+    public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
+    public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*2*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public final class Nothing {
@@ -1338,161 +1338,161 @@ public final class Nothing {
 
 public abstract class Number : jet.Hashable {
     public constructor Number()
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode() : jet.Int
-    public abstract fun toByte() : jet.Byte
-    public abstract fun toChar() : jet.Char
-    public abstract fun toDouble() : jet.Double
-    public abstract fun toFloat() : jet.Float
-    public abstract fun toInt() : jet.Int
-    public abstract fun toLong() : jet.Long
-    public abstract fun toShort() : jet.Short
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract fun toByte(): jet.Byte
+    public abstract fun toChar(): jet.Char
+    public abstract fun toDouble(): jet.Double
+    public abstract fun toFloat(): jet.Float
+    public abstract fun toInt(): jet.Int
+    public abstract fun toLong(): jet.Long
+    public abstract fun toShort(): jet.Short
 }
 
 public trait Progression</*0*/ N : jet.Any> : jet.Iterable<N> {
-    public abstract val end : N
-    public abstract val increment : jet.Number
-    public abstract val start : N
-    public abstract override /*1*/ /*fake_override*/ fun iterator() : jet.Iterator<N>
+    public abstract val end: N
+    public abstract val increment: jet.Number
+    public abstract val start: N
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): jet.Iterator<N>
 }
 
 public trait Range</*0*/ in T : jet.Comparable<T>> {
-    public abstract val end : T
-    public abstract val start : T
-    public abstract fun contains(/*0*/ item : T) : jet.Boolean
+    public abstract val end: T
+    public abstract val start: T
+    public abstract fun contains(/*0*/ item: T): jet.Boolean
 }
 
 public trait Set</*0*/ out E> : jet.Collection<E> {
-    public abstract override /*1*/ fun contains(/*0*/ o : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c : jet.Collection<jet.Any?>) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode() : jet.Int
-    public abstract override /*1*/ fun isEmpty() : jet.Boolean
-    public abstract override /*1*/ fun iterator() : jet.Iterator<E>
-    public abstract override /*1*/ fun size() : jet.Int
-    public abstract override /*1*/ fun toArray() : jet.Array<jet.Any?>
-    public abstract override /*1*/ fun </*0*/ T> toArray(/*0*/ a : jet.Array<out T>) : jet.Array<T>
+    public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ fun isEmpty(): jet.Boolean
+    public abstract override /*1*/ fun iterator(): jet.Iterator<E>
+    public abstract override /*1*/ fun size(): jet.Int
+    public abstract override /*1*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*1*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public final class Short : jet.Number, jet.Comparable<jet.Short> {
     public constructor Short()
-    public final fun compareTo(/*0*/ other : jet.Byte) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Char) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Double) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Float) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Int) : jet.Int
-    public final fun compareTo(/*0*/ other : jet.Long) : jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other : jet.Short) : jet.Int
-    public final fun dec() : jet.Short
-    public final fun div(/*0*/ other : jet.Byte) : jet.Int
-    public final fun div(/*0*/ other : jet.Char) : jet.Int
-    public final fun div(/*0*/ other : jet.Double) : jet.Double
-    public final fun div(/*0*/ other : jet.Float) : jet.Float
-    public final fun div(/*0*/ other : jet.Int) : jet.Int
-    public final fun div(/*0*/ other : jet.Long) : jet.Long
-    public final fun div(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun hashCode() : jet.Int
-    public final fun inc() : jet.Short
-    public final fun minus() : jet.Short
-    public final fun minus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun minus(/*0*/ other : jet.Char) : jet.Int
-    public final fun minus(/*0*/ other : jet.Double) : jet.Double
-    public final fun minus(/*0*/ other : jet.Float) : jet.Float
-    public final fun minus(/*0*/ other : jet.Int) : jet.Int
-    public final fun minus(/*0*/ other : jet.Long) : jet.Long
-    public final fun minus(/*0*/ other : jet.Short) : jet.Int
-    public final fun mod(/*0*/ other : jet.Byte) : jet.Int
-    public final fun mod(/*0*/ other : jet.Char) : jet.Int
-    public final fun mod(/*0*/ other : jet.Double) : jet.Double
-    public final fun mod(/*0*/ other : jet.Float) : jet.Float
-    public final fun mod(/*0*/ other : jet.Int) : jet.Int
-    public final fun mod(/*0*/ other : jet.Long) : jet.Long
-    public final fun mod(/*0*/ other : jet.Short) : jet.Int
-    public final fun plus() : jet.Short
-    public final fun plus(/*0*/ other : jet.Byte) : jet.Int
-    public final fun plus(/*0*/ other : jet.Char) : jet.Int
-    public final fun plus(/*0*/ other : jet.Double) : jet.Double
-    public final fun plus(/*0*/ other : jet.Float) : jet.Float
-    public final fun plus(/*0*/ other : jet.Int) : jet.Int
-    public final fun plus(/*0*/ other : jet.Long) : jet.Long
-    public final fun plus(/*0*/ other : jet.Short) : jet.Int
-    public final fun rangeTo(/*0*/ other : jet.Byte) : jet.ShortRange
-    public final fun rangeTo(/*0*/ other : jet.Char) : jet.ShortRange
-    public final fun rangeTo(/*0*/ other : jet.Double) : jet.DoubleRange
-    public final fun rangeTo(/*0*/ other : jet.Float) : jet.FloatRange
-    public final fun rangeTo(/*0*/ other : jet.Int) : jet.IntRange
-    public final fun rangeTo(/*0*/ other : jet.Long) : jet.LongRange
-    public final fun rangeTo(/*0*/ other : jet.Short) : jet.ShortRange
-    public final fun times(/*0*/ other : jet.Byte) : jet.Int
-    public final fun times(/*0*/ other : jet.Char) : jet.Int
-    public final fun times(/*0*/ other : jet.Double) : jet.Double
-    public final fun times(/*0*/ other : jet.Float) : jet.Float
-    public final fun times(/*0*/ other : jet.Int) : jet.Int
-    public final fun times(/*0*/ other : jet.Long) : jet.Long
-    public final fun times(/*0*/ other : jet.Short) : jet.Int
-    public open override /*1*/ fun toByte() : jet.Byte
-    public open override /*1*/ fun toChar() : jet.Char
-    public open override /*1*/ fun toDouble() : jet.Double
-    public open override /*1*/ fun toFloat() : jet.Float
-    public open override /*1*/ fun toInt() : jet.Int
-    public open override /*1*/ fun toLong() : jet.Long
-    public open override /*1*/ fun toShort() : jet.Short
+    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
+    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Short): jet.Int
+    public final fun dec(): jet.Short
+    public final fun div(/*0*/ other: jet.Byte): jet.Int
+    public final fun div(/*0*/ other: jet.Char): jet.Int
+    public final fun div(/*0*/ other: jet.Double): jet.Double
+    public final fun div(/*0*/ other: jet.Float): jet.Float
+    public final fun div(/*0*/ other: jet.Int): jet.Int
+    public final fun div(/*0*/ other: jet.Long): jet.Long
+    public final fun div(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun hashCode(): jet.Int
+    public final fun inc(): jet.Short
+    public final fun minus(): jet.Short
+    public final fun minus(/*0*/ other: jet.Byte): jet.Int
+    public final fun minus(/*0*/ other: jet.Char): jet.Int
+    public final fun minus(/*0*/ other: jet.Double): jet.Double
+    public final fun minus(/*0*/ other: jet.Float): jet.Float
+    public final fun minus(/*0*/ other: jet.Int): jet.Int
+    public final fun minus(/*0*/ other: jet.Long): jet.Long
+    public final fun minus(/*0*/ other: jet.Short): jet.Int
+    public final fun mod(/*0*/ other: jet.Byte): jet.Int
+    public final fun mod(/*0*/ other: jet.Char): jet.Int
+    public final fun mod(/*0*/ other: jet.Double): jet.Double
+    public final fun mod(/*0*/ other: jet.Float): jet.Float
+    public final fun mod(/*0*/ other: jet.Int): jet.Int
+    public final fun mod(/*0*/ other: jet.Long): jet.Long
+    public final fun mod(/*0*/ other: jet.Short): jet.Int
+    public final fun plus(): jet.Short
+    public final fun plus(/*0*/ other: jet.Byte): jet.Int
+    public final fun plus(/*0*/ other: jet.Char): jet.Int
+    public final fun plus(/*0*/ other: jet.Double): jet.Double
+    public final fun plus(/*0*/ other: jet.Float): jet.Float
+    public final fun plus(/*0*/ other: jet.Int): jet.Int
+    public final fun plus(/*0*/ other: jet.Long): jet.Long
+    public final fun plus(/*0*/ other: jet.Short): jet.Int
+    public final fun rangeTo(/*0*/ other: jet.Byte): jet.ShortRange
+    public final fun rangeTo(/*0*/ other: jet.Char): jet.ShortRange
+    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
+    public final fun rangeTo(/*0*/ other: jet.Int): jet.IntRange
+    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
+    public final fun rangeTo(/*0*/ other: jet.Short): jet.ShortRange
+    public final fun times(/*0*/ other: jet.Byte): jet.Int
+    public final fun times(/*0*/ other: jet.Char): jet.Int
+    public final fun times(/*0*/ other: jet.Double): jet.Double
+    public final fun times(/*0*/ other: jet.Float): jet.Float
+    public final fun times(/*0*/ other: jet.Int): jet.Int
+    public final fun times(/*0*/ other: jet.Long): jet.Long
+    public final fun times(/*0*/ other: jet.Short): jet.Int
+    public open override /*1*/ fun toByte(): jet.Byte
+    public open override /*1*/ fun toChar(): jet.Char
+    public open override /*1*/ fun toDouble(): jet.Double
+    public open override /*1*/ fun toFloat(): jet.Float
+    public open override /*1*/ fun toInt(): jet.Int
+    public open override /*1*/ fun toLong(): jet.Long
+    public open override /*1*/ fun toShort(): jet.Short
 }
 
 public final class ShortArray {
-    public constructor ShortArray(/*0*/ size : jet.Int)
-    public final val indices : jet.IntRange
-    public final val size : jet.Int
-    public final fun get(/*0*/ index : jet.Int) : jet.Short
-    public final fun iterator() : jet.ShortIterator
-    public final fun set(/*0*/ index : jet.Int, /*1*/ value : jet.Short) : jet.Unit
+    public constructor ShortArray(/*0*/ size: jet.Int)
+    public final val indices: jet.IntRange
+    public final val size: jet.Int
+    public final fun get(/*0*/ index: jet.Int): jet.Short
+    public final fun iterator(): jet.ShortIterator
+    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Short): jet.Unit
 }
 
 public abstract class ShortIterator : jet.Iterator<jet.Short> {
     public constructor ShortIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext() : jet.Boolean
-    public open override /*1*/ fun next() : jet.Short
-    public abstract fun nextShort() : jet.Short
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public open override /*1*/ fun next(): jet.Short
+    public abstract fun nextShort(): jet.Short
 }
 
 public final class ShortProgression : jet.Progression<jet.Short> {
-    public constructor ShortProgression(/*0*/ start : jet.Short, /*1*/ end : jet.Short, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Short
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Short
-    public open override /*1*/ fun iterator() : jet.ShortIterator
+    public constructor ShortProgression(/*0*/ start: jet.Short, /*1*/ end: jet.Short, /*2*/ increment: jet.Int)
+    public open override /*1*/ val end: jet.Short
+    public open override /*1*/ val increment: jet.Int
+    public open override /*1*/ val start: jet.Short
+    public open override /*1*/ fun iterator(): jet.ShortIterator
 }
 
 public final class ShortRange : jet.Range<jet.Short>, jet.Progression<jet.Short> {
-    public constructor ShortRange(/*0*/ start : jet.Short, /*1*/ end : jet.Short)
-    public open override /*2*/ val end : jet.Short
-    public open override /*1*/ val increment : jet.Int
-    public open override /*2*/ val start : jet.Short
-    public open override /*1*/ fun contains(/*0*/ item : jet.Short) : jet.Boolean
-    public open override /*1*/ fun iterator() : jet.ShortIterator
+    public constructor ShortRange(/*0*/ start: jet.Short, /*1*/ end: jet.Short)
+    public open override /*2*/ val end: jet.Short
+    public open override /*1*/ val increment: jet.Int
+    public open override /*2*/ val start: jet.Short
+    public open override /*1*/ fun contains(/*0*/ item: jet.Short): jet.Boolean
+    public open override /*1*/ fun iterator(): jet.ShortIterator
     
     public class object <class-object-for-ShortRange> {
         private constructor <class-object-for-ShortRange>()
-        public final val EMPTY : jet.ShortRange
+        public final val EMPTY: jet.ShortRange
     }
 }
 
 public final class String : jet.Comparable<jet.String>, jet.CharSequence {
     public constructor String()
-    public open override /*1*/ val length : jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ that : jet.String) : jet.Int
-    public final fun equals(/*0*/ other : jet.Any?) : jet.Boolean
-    public open override /*1*/ fun get(/*0*/ index : jet.Int) : jet.Char
-    public final fun plus(/*0*/ other : jet.Any?) : jet.String
-    public open override /*1*/ fun toString() : jet.String
+    public open override /*1*/ val length: jet.Int
+    public open override /*1*/ fun compareTo(/*0*/ that: jet.String): jet.Int
+    public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public open override /*1*/ fun get(/*0*/ index: jet.Int): jet.Char
+    public final fun plus(/*0*/ other: jet.Any?): jet.String
+    public open override /*1*/ fun toString(): jet.String
 }
 
 public open class Throwable {
-    public constructor Throwable(/*0*/ message : jet.String? = ..., /*1*/ cause : jet.Throwable? = ...)
-    public final fun getCause() : jet.Throwable?
-    public final fun getMessage() : jet.String?
-    public final fun printStackTrace() : jet.Unit
+    public constructor Throwable(/*0*/ message: jet.String? = ..., /*1*/ cause: jet.Throwable? = ...)
+    public final fun getCause(): jet.Throwable?
+    public final fun getMessage(): jet.String?
+    public final fun printStackTrace(): jet.Unit
 }
 
 public final class Unit {
@@ -1500,7 +1500,7 @@ public final class Unit {
     
     public class object <class-object-for-Unit> {
         private constructor <class-object-for-Unit>()
-        public final val VALUE : jet.Unit
+        public final val VALUE: jet.Unit
     }
 }
 
@@ -1513,7 +1513,7 @@ public final annotation class data : jet.Annotation {
 }
 
 public final annotation class deprecated : jet.Annotation {
-    public constructor deprecated(/*0*/ value : jet.String)
+    public constructor deprecated(/*0*/ value: jet.String)
 }
 
 public final annotation class volatile : jet.Annotation {

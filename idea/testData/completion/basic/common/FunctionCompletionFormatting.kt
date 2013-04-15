@@ -4,4 +4,4 @@ fun some() {
     tes<caret>
 }
 
-// EXIST: test@test(a : jet.Int)
+// EXIST: test@test(a: jet.Int)

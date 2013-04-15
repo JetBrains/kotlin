@@ -2,39 +2,39 @@ package test
 
 internal final enum class In : jet.Enum<test.In> {
     private constructor In()
-    public final override /*1*/ /*fake_override*/ fun name() : jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
     internal class object <class-object-for-In> {
         private constructor <class-object-for-In>()
-        public final val A : test.In
-        public final fun valueOf(/*0*/ value : jet.String) : test.In
-        public final fun values() : jet.Array<test.In>
+        public final val A: test.In
+        public final fun valueOf(/*0*/ value: jet.String): test.In
+        public final fun values(): jet.Array<test.In>
     }
 }
 
 private final enum class Pr : jet.Enum<test.Pr> {
     private constructor Pr()
-    public final override /*1*/ /*fake_override*/ fun name() : jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
     private class object <class-object-for-Pr> {
         private constructor <class-object-for-Pr>()
-        public final val A : test.Pr
-        public final fun valueOf(/*0*/ value : jet.String) : test.Pr
-        public final fun values() : jet.Array<test.Pr>
+        public final val A: test.Pr
+        public final fun valueOf(/*0*/ value: jet.String): test.Pr
+        public final fun values(): jet.Array<test.Pr>
     }
 }
 
 public final enum class Pu : jet.Enum<test.Pu> {
     private constructor Pu()
-    public final override /*1*/ /*fake_override*/ fun name() : jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
     public class object <class-object-for-Pu> {
         private constructor <class-object-for-Pu>()
-        public final val A : test.Pu
-        public final fun valueOf(/*0*/ value : jet.String) : test.Pu
-        public final fun values() : jet.Array<test.Pu>
+        public final val A: test.Pu
+        public final fun valueOf(/*0*/ value: jet.String): test.Pu
+        public final fun values(): jet.Array<test.Pu>
     }
 }
