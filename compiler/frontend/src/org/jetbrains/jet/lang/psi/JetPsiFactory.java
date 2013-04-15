@@ -249,11 +249,13 @@ public class JetPsiFactory {
         return createExpression(project, "$" + fieldName);
     }
 
+    @NotNull
     public static JetBinaryExpression createBinaryExpression(Project project, @NotNull String lhs, @NotNull String op, @NotNull String rhs) {
         return (JetBinaryExpression) createExpression(project, lhs + " " + op + " " + rhs);
     }
 
     @SuppressWarnings("ConstantConditions")
+    @NotNull
     public static JetBinaryExpression createBinaryExpression(Project project, @NotNull JetExpression lhs, @NotNull String op, @NotNull JetExpression rhs) {
         JetBinaryExpression assignment = createBinaryExpression(project, "_", op, "_");
 
@@ -273,11 +275,13 @@ public class JetPsiFactory {
         return new JetExpressionCodeFragmentImpl(project, "fragment.kt", text, context);
     }
 
+    @NotNull
     public static JetReturnExpression createReturn(Project project, @NotNull String text) {
         return (JetReturnExpression) createExpression(project, "return " + text);
     }
 
     @SuppressWarnings("ConstantConditions")
+    @NotNull
     public static JetReturnExpression createReturn(Project project, @NotNull JetExpression expression) {
         JetReturnExpression returnExpr = createReturn(project, "_");
 
@@ -286,11 +290,13 @@ public class JetPsiFactory {
         return (JetReturnExpression)returnExpr.getReturnedExpression().replace(expression).getParent();
     }
 
+    @NotNull
     public static JetIfExpression createIf(Project project, @NotNull String condText, @NotNull String thenText, @Nullable String elseText) {
         return (JetIfExpression) createExpression(project, "if (" + condText + ") " + thenText + (elseText != null ? " else " + elseText : ""));
     }
 
     @SuppressWarnings("ConstantConditions")
+    @NotNull
     public static JetIfExpression createIf(Project project, @NotNull JetExpression condition, @NotNull JetExpression thenExpr, @Nullable JetExpression elseExpr) {
         JetIfExpression ifExpr = createIf(project, "_", "_", elseExpr != null ? "_" : null);
 
