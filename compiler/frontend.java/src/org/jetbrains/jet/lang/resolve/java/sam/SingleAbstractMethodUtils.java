@@ -23,10 +23,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -40,7 +42,9 @@ public class SingleAbstractMethodUtils {
     private static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
         List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
         for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
-            if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
+            if (member instanceof CallableMemberDescriptor &&
+                ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT &&
+                ((CallableMemberDescriptor) member).getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
                 abstractMembers.add((CallableMemberDescriptor) member);
             }
         }
@@ -48,14 +52,17 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    private static JetType getFunctionTypeForFunction(@NotNull FunctionDescriptor function) {
+    private static JetType getFunctionTypeForSamType(@NotNull JetType samType) {
+        FunctionDescriptor function = getAbstractMethodOfSamType(samType);
         JetType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
         List<JetType> parameterTypes = Lists.newArrayList();
         for (ValueParameterDescriptor parameter : function.getValueParameters()) {
             parameterTypes.add(parameter.getType());
         }
-        return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
+        JetType functionType = KotlinBuiltIns.getInstance()
+                .getFunctionType(Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
+        return TypeUtils.makeNullableAsSpecified(functionType, samType.isNullable());
     }
 
     private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
@@ -91,7 +98,7 @@ public class SingleAbstractMethodUtils {
                 SignaturesUtil.recreateTypeParametersAndReturnMapping(samInterface.getTypeConstructor().getParameters(), result);
         TypeSubstitutor typeParametersSubstitutor = SignaturesUtil.createSubstitutorForTypeParameters(traitToFunTypeParameters);
 
-        JetType parameterTypeUnsubstituted = getFunctionTypeForFunction(getAbstractMethodOfSamType(samInterface.getDefaultType()));
+        JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
         JetType parameterType = typeParametersSubstitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParametersSubstitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
@@ -121,6 +128,56 @@ public class SingleAbstractMethodUtils {
                 returnType,
                 Modality.FINAL,
                 samInterface.getVisibility(),
+                false
+        );
+
+        return result;
+    }
+
+    private static boolean isSamType(@NotNull JetType type) {
+        ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+        return classifier instanceof ClassDescriptorFromJvmBytecode &&
+               ((ClassDescriptorFromJvmBytecode) classifier).isSamInterface();
+    }
+
+    public static boolean isSamAdapterNecessary(@NotNull SimpleFunctionDescriptor fun) {
+        for (ValueParameterDescriptor param : fun.getValueParameters()) {
+            if (isSamType(param.getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NotNull
+    public static SimpleFunctionDescriptor createSamAdapterFunction(@NotNull SimpleFunctionDescriptor original) {
+        SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
+                original.getContainingDeclaration(),
+                original.getAnnotations(),
+                original.getName(),
+                CallableMemberDescriptor.Kind.SYNTHESIZED
+        );
+
+        JetType returnType = original.getReturnType();
+
+        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+        for (ValueParameterDescriptor originalParam : original.getValueParameters()) {
+            JetType originalType = originalParam.getType();
+            JetType newType = isSamType(originalType) ? getFunctionTypeForSamType(originalType) : originalType;
+
+            ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
+                    result, originalParam.getIndex(), originalParam.getAnnotations(), originalParam.getName(), newType, false, null);
+            valueParameters.add(newParam);
+        }
+
+        result.initialize(
+                null,
+                original.getExpectedThisObject(),
+                Collections.<TypeParameterDescriptor>emptyList(), // TODO copy type parameters
+                valueParameters,
+                returnType,
+                original.getModality(),
+                original.getVisibility(),
                 false
         );
 

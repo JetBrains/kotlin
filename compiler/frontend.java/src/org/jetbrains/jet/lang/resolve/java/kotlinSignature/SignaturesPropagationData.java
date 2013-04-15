@@ -268,7 +268,9 @@ public class SignaturesPropagationData {
             FqName fqName = DescriptorUtils.getFQName(klass).toSafe();
 
             for (FunctionDescriptor fun : klass.getDefaultType().getMemberScope().getFunctions(functionName)) {
-                if (fun.getKind().isReal() && fun.getValueParameters().size() == parameterCount) {
+                CallableMemberDescriptor.Kind kind = fun.getKind();
+                if ((kind == CallableMemberDescriptor.Kind.DECLARATION || kind == CallableMemberDescriptor.Kind.DELEGATION) &&
+                    fun.getValueParameters().size() == parameterCount) {
                     PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, fun);
                     if (declaration instanceof PsiMethod) {
                         result.put(fqName, Pair.create(fun, (PsiMethod) declaration));

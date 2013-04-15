@@ -270,6 +270,8 @@ public final class JavaFunctionResolver {
             SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData, owner);
             if (function != null) {
                 functionsFromCurrent.add(function);
+
+                ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
             }
         }
 
@@ -364,6 +366,18 @@ public final class JavaFunctionResolver {
                 trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
                 return constructorFunction;
             }
+        }
+        return null;
+    }
+
+    @Nullable
+    private SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
+        if (SingleAbstractMethodUtils.isSamAdapterNecessary(original)) {
+            SimpleFunctionDescriptor adapterFunction = SingleAbstractMethodUtils.createSamAdapterFunction(original);
+
+            trace.record(BindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
+            trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
+            return adapterFunction;
         }
         return null;
     }

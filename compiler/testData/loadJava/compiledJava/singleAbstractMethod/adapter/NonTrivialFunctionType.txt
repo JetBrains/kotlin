@@ -1,0 +1,9 @@
+package test
+
+public open class NonTrivialFunctionType : java.lang.Object {
+    public constructor NonTrivialFunctionType()
+    public open /*synthesized*/ fun foo(/*0*/ p0 : ((java.io.File?, jet.String?) -> jet.Boolean)?) : jet.Unit
+    public open /*synthesized*/ fun foo(/*0*/ p0 : ((jet.String?, jet.String?) -> jet.Int)?) : jet.Unit
+    public open fun foo(/*0*/ p0 : java.io.FilenameFilter?) : jet.Unit
+    public open fun foo(/*0*/ p0 : java.util.Comparator<jet.String>?) : jet.Unit
+}
