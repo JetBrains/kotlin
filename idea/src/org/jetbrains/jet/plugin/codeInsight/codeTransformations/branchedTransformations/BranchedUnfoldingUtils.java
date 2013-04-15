@@ -49,21 +49,23 @@ public class BranchedUnfoldingUtils {
         return (JetExpression) JetPsiUtil.getOutermostLastBlockElement(expression, JetPsiUtil.ANY_JET_ELEMENT);
     }
 
+    public static final String UNFOLD_WITHOUT_CHECK = "Expression must be checked before unfolding";
+
     private static void unfoldAssignmentToIf(@NotNull JetBinaryExpression assignment) {
         Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
         String lhsText = assignment.getLeft().getText();
         JetIfExpression ifExpression = (JetIfExpression)assignment.getRight();
 
-        assert ifExpression != null;
+        assert ifExpression != null : UNFOLD_WITHOUT_CHECK;
 
         ifExpression = (JetIfExpression)assignment.replace(ifExpression);
 
         JetExpression thenExpr = getOutermostLastBlockElement(ifExpression.getThen());
         JetExpression elseExpr = getOutermostLastBlockElement(ifExpression.getElse());
 
-        assert thenExpr != null;
-        assert elseExpr != null;
+        assert thenExpr != null : UNFOLD_WITHOUT_CHECK;
+        assert elseExpr != null : UNFOLD_WITHOUT_CHECK;
 
         thenExpr.replace(JetPsiFactory.createBinaryExpression(project, JetPsiFactory.createExpression(project, lhsText), op, thenExpr));
         elseExpr.replace(JetPsiFactory.createBinaryExpression(project, JetPsiFactory.createExpression(project, lhsText), op, elseExpr));
@@ -75,14 +77,14 @@ public class BranchedUnfoldingUtils {
         JetExpression lhs = (JetExpression)assignment.getLeft().copy();
         JetWhenExpression whenExpression = (JetWhenExpression)assignment.getRight();
 
-        assert whenExpression != null;
+        assert whenExpression != null : UNFOLD_WITHOUT_CHECK;
 
         whenExpression = (JetWhenExpression)assignment.replace(whenExpression);
 
         for (JetWhenEntry entry : whenExpression.getEntries()) {
             JetExpression currExpr = getOutermostLastBlockElement(entry.getExpression());
 
-            assert currExpr != null;
+            assert currExpr != null : UNFOLD_WITHOUT_CHECK;
 
             currExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, currExpr));
         }
@@ -92,15 +94,15 @@ public class BranchedUnfoldingUtils {
         Project project = returnExpression.getProject();
         JetIfExpression ifExpression = (JetIfExpression)returnExpression.getReturnedExpression();
 
-        assert ifExpression != null;
+        assert ifExpression != null : UNFOLD_WITHOUT_CHECK;
 
         ifExpression = (JetIfExpression)returnExpression.replace(ifExpression);
 
         JetExpression thenExpr = getOutermostLastBlockElement(ifExpression.getThen());
         JetExpression elseExpr = getOutermostLastBlockElement(ifExpression.getElse());
 
-        assert thenExpr != null;
-        assert elseExpr != null;
+        assert thenExpr != null : UNFOLD_WITHOUT_CHECK;
+        assert elseExpr != null : UNFOLD_WITHOUT_CHECK;
 
         thenExpr.replace(JetPsiFactory.createReturn(project, thenExpr));
         elseExpr.replace(JetPsiFactory.createReturn(project, elseExpr));
@@ -110,14 +112,14 @@ public class BranchedUnfoldingUtils {
         Project project = returnExpression.getProject();
         JetWhenExpression whenExpression = (JetWhenExpression)returnExpression.getReturnedExpression();
 
-        assert whenExpression != null;
+        assert whenExpression != null : UNFOLD_WITHOUT_CHECK;
 
         whenExpression = (JetWhenExpression)returnExpression.replace(whenExpression);
 
         for (JetWhenEntry entry : whenExpression.getEntries()) {
             JetExpression currExpr = getOutermostLastBlockElement(entry.getExpression());
 
-            assert currExpr != null;
+            assert currExpr != null : UNFOLD_WITHOUT_CHECK;
 
             currExpr.replace(JetPsiFactory.createReturn(project, currExpr));
         }
