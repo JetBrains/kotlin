@@ -81,6 +81,17 @@ public class FunctionTypesUtil {
     }
 
     @NotNull
+    public static JvmClassName getFunctionTraitClassName(@NotNull FunctionDescriptor descriptor) {
+        int paramCount = descriptor.getValueParameters().size();
+        if (descriptor.getReceiverParameter() != null) {
+            return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
+        }
+        else {
+            return JvmClassName.byInternalName("jet/Function" + paramCount);
+        }
+    }
+
+    @NotNull
     public static JvmClassName getFunctionImplClassName(@NotNull FunctionDescriptor descriptor) {
         int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter() != null) {

@@ -1975,7 +1975,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall, @NotNull CodegenContext context) {
         if (isCallAsFunctionObject(fd)) {
-            return typeMapper.asCallableMethod(createInvoke(fd));
+            return typeMapper.mapToFunctionInvokeCallableMethod(createInvoke(fd));
         }
         else {
             SimpleFunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);

@@ -47,7 +47,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplClassName;
+import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionTraitClassName;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
 public class JetTypeMapper extends BindingTraceAware {
@@ -936,9 +936,10 @@ public class JetTypeMapper extends BindingTraceAware {
         return null;
     }
 
-    public CallableMethod asCallableMethod(FunctionDescriptor fd) {
+    @NotNull
+    public CallableMethod mapToFunctionInvokeCallableMethod(@NotNull FunctionDescriptor fd) {
         JvmMethodSignature descriptor = erasedInvokeSignature(fd);
-        JvmClassName owner = getFunctionImplClassName(fd);
+        JvmClassName owner = getFunctionTraitClassName(fd);
         Type receiverParameterType;
         ReceiverParameterDescriptor receiverParameter = fd.getOriginal().getReceiverParameter();
         if (receiverParameter != null) {
@@ -947,6 +948,6 @@ public class JetTypeMapper extends BindingTraceAware {
         else {
             receiverParameterType = null;
         }
-        return new CallableMethod(owner, null, null, descriptor, INVOKEVIRTUAL, owner, receiverParameterType, owner.getAsmType());
+        return new CallableMethod(owner, null, null, descriptor, INVOKEINTERFACE, owner, receiverParameterType, owner.getAsmType());
     }
 }
