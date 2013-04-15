@@ -70,7 +70,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
+import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplClassName;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -2786,7 +2786,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
         int functionLocalIndex = lookupLocalIndex(op);
         if (functionLocalIndex >= 0) {
-            stackValueForLocal(op, functionLocalIndex).put(getInternalClassName(op).getAsmType(), v);
+            stackValueForLocal(op, functionLocalIndex).put(getFunctionImplClassName(op).getAsmType(), v);
         }
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());

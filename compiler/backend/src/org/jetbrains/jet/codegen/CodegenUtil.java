@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -120,17 +119,6 @@ public class CodegenUtil {
 
     public static int getFlagsForClassKind(@NotNull ClassDescriptor descriptor) {
         return descriptor.getKind() == ClassKind.OBJECT ? JvmStdlibNames.FLAG_CLASS_KIND_OBJECT : JvmStdlibNames.FLAG_CLASS_KIND_DEFAULT;
-    }
-
-    @NotNull
-    public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
-        int paramCount = descriptor.getValueParameters().size();
-        if (descriptor.getReceiverParameter() != null) {
-            return JvmClassName.byInternalName("jet/ExtensionFunctionImpl" + paramCount);
-        }
-        else {
-            return JvmClassName.byInternalName("jet/FunctionImpl" + paramCount);
-        }
     }
 
     public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
