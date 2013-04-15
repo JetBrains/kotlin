@@ -1,11 +1,7 @@
-public class MyClass {
-    public fun f(a: Int): String {
-        var res: String
-
-        if (a == 1) res = "one";
-        else if (a == 2) res = "two";
-        else res = "too many";
-
-        return res;
-    }
+if (n == 1) {
+    println("***")
+    res = "one"
+} else {
+    println("***")
+    res = "two"
 }

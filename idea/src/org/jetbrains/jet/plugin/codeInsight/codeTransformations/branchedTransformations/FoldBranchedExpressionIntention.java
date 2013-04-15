@@ -21,13 +21,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetIfExpression;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 
