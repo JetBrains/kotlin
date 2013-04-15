@@ -1962,29 +1962,28 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.none();
     }
 
+    @NotNull
     Callable resolveToCallable(@NotNull FunctionDescriptor fd, boolean superCall) {
         IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(fd);
         if (intrinsic != null) {
             return intrinsic;
         }
 
-        CallableMethod callableMethod;
-        //if (fd instanceof VariableAsFunctionDescriptor) {
-        //    assert !superCall;
-        //    callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
-        //}
+        return resolveToCallableMethod(fd, superCall, context);
+    }
+
+    @NotNull
+    private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall, @NotNull CodegenContext context) {
         if (isCallAsFunctionObject(fd)) {
-            SimpleFunctionDescriptor invoke = createInvoke(fd);
-            callableMethod = typeMapper.asCallableMethod(invoke);
+            return typeMapper.asCallableMethod(createInvoke(fd));
         }
         else {
             SimpleFunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);
-            callableMethod = typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall,
-                                                            isCallInsideSameClassAsDeclared(fd, context),
-                                                            isCallInsideSameModuleAsDeclared(fd, context),
-                                                            OwnerKind.IMPLEMENTATION);
+            return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall,
+                                                  isCallInsideSameClassAsDeclared(fd, context),
+                                                  isCallInsideSameModuleAsDeclared(fd, context),
+                                                  OwnerKind.IMPLEMENTATION);
         }
-        return callableMethod;
     }
 
     private boolean isCallAsFunctionObject(FunctionDescriptor fd) {
@@ -2008,10 +2007,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
         JetExpression calleeExpression = expression.getCalleeExpression();
-        invokeMethodWithArguments(callableMethod, receiver, calleeExpression);
-    }
-
-    private void invokeMethodWithArguments(CallableMethod callableMethod, StackValue receiver, JetExpression calleeExpression) {
         Call call = bindingContext.get(CALL, calleeExpression);
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, calleeExpression);
 
