@@ -19,8 +19,6 @@ package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransfo
 import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -136,7 +134,7 @@ public class BranchedFoldingUtils {
             return false;
         }
 
-        PsiElement nextElement = PsiTreeUtil.skipSiblingsForward(ifExpression, PsiWhiteSpace.class);
+        PsiElement nextElement = JetPsiUtil.skipTrailingWhitespacesAndComments(ifExpression);
         return (nextElement instanceof JetExpression) && checkAndGetFoldableBranchedReturn((JetExpression)nextElement) != null;
     }
 
@@ -218,7 +216,7 @@ public class BranchedFoldingUtils {
 
         JetExpression condition = ifExpression.getCondition();
         JetExpression thenRoot = ifExpression.getThen();
-        JetExpression elseRoot = (JetExpression)PsiTreeUtil.skipSiblingsForward(ifExpression, PsiWhiteSpace.class);
+        JetExpression elseRoot = (JetExpression)JetPsiUtil.skipTrailingWhitespacesAndComments(ifExpression);
 
         assert condition != null;
         assert thenRoot != null;
@@ -228,7 +226,7 @@ public class BranchedFoldingUtils {
         JetReturnExpression newReturnExpr = JetPsiFactory.createReturn(project, newIfExpr);
         newReturnExpr = (JetReturnExpression) ifExpression.replace(newReturnExpr);
 
-        JetReturnExpression oldReturn = (JetReturnExpression)PsiTreeUtil.skipSiblingsForward(newReturnExpr, PsiWhiteSpace.class);
+        JetReturnExpression oldReturn = (JetReturnExpression)JetPsiUtil.skipTrailingWhitespacesAndComments(newReturnExpr);
 
         assert oldReturn != null;
 

@@ -20,8 +20,10 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.tree.IElementType;
@@ -689,6 +691,10 @@ public class JetPsiUtil {
             }
         }
         return (elseCount == 1);
+    }
+
+    public static PsiElement skipTrailingWhitespacesAndComments(PsiElement element)  {
+        return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace.class, PsiComment.class);
     }
 
     public static final Predicate<JetElement> ANY_JET_ELEMENT = new Predicate<JetElement>() {
