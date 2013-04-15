@@ -45,6 +45,10 @@ public abstract class FunctionGenerationStrategy {
         return localVariableNames;
     }
 
+    public boolean needsLocalVariableTable() {
+        return true;
+    }
+
 
     public static class Default extends FunctionGenerationStrategy {
         private final GenerationState state;

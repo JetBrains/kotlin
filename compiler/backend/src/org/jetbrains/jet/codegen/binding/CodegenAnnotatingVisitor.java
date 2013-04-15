@@ -115,11 +115,12 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             if (declaration instanceof JetFunctionLiteralExpression ||
                 declaration instanceof JetNamedFunction ||
                 declaration instanceof JetObjectLiteralExpression ||
-                declaration instanceof JetCallExpression) {
+                declaration instanceof JetCallExpression ||
+                declaration instanceof JetCallableReferenceExpression) {
             }
             else {
                 throw new IllegalStateException(
-                        "Class-less declaration which is not JetFunctionLiteralExpression|JetNamedFunction|JetObjectLiteralExpression|JetCallExpression : " +
+                        "Class-less declaration which is not JetFunctionLiteralExpression|JetNamedFunction|JetObjectLiteralExpression|JetCallExpression|JetCallableReferenceExpression : " +
                         declaration.getClass().getName());
             }
         }
@@ -263,6 +264,23 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         classStack.push(classDescriptor);
         nameStack.push(name);
         super.visitFunctionLiteralExpression(expression);
+        nameStack.pop();
+        classStack.pop();
+    }
+
+    @Override
+    public void visitCallableReferenceExpression(JetCallableReferenceExpression expression) {
+        FunctionDescriptor functionDescriptor = bindingContext.get(CALLABLE_REFERENCE, expression);
+        // working around a problem with shallow analysis
+        if (functionDescriptor == null) return;
+
+        String name = inventAnonymousClassName(expression);
+        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
+        recordClosure(bindingTrace, expression, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
+
+        classStack.push(classDescriptor);
+        nameStack.push(name);
+        super.visitCallableReferenceExpression(expression);
         nameStack.pop();
         classStack.pop();
     }

@@ -182,8 +182,10 @@ public class FunctionCodegen extends GenerationStateAware {
         Label methodEnd = new Label();
         mv.visitLabel(methodEnd);
 
-        Type thisType = getThisTypeForFunction(functionDescriptor, context);
-        generateLocalVariableTable(mv, functionDescriptor, thisType, methodBegin, methodEnd, localVariableNames, labelsForSharedVars);
+        if (strategy.needsLocalVariableTable()) {
+            Type thisType = getThisTypeForFunction(functionDescriptor, context);
+            generateLocalVariableTable(mv, functionDescriptor, thisType, methodBegin, methodEnd, localVariableNames, labelsForSharedVars);
+        }
     }
 
     @NotNull
