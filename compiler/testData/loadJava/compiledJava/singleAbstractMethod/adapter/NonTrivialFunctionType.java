@@ -9,4 +9,10 @@ public class NonTrivialFunctionType {
 
     public void foo(Comparator<String> comparator) {
     }
+
+    public void wildcardUnbound(Comparator<?> comparator) {
+    }
+
+    public void wildcardBound(Comparator<? super CharSequence> comparator) {
+    }
 }

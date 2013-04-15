@@ -137,7 +137,8 @@ public class SingleAbstractMethodUtils {
     private static boolean isSamType(@NotNull JetType type) {
         ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
         return classifier instanceof ClassDescriptorFromJvmBytecode &&
-               ((ClassDescriptorFromJvmBytecode) classifier).isSamInterface();
+               ((ClassDescriptorFromJvmBytecode) classifier).isSamInterface() &&
+               getAbstractMembers(type).size() == 1; // Comparator<*> is not a SAM type, because substituted compare() method doesn't exist
     }
 
     public static boolean isSamAdapterNecessary(@NotNull SimpleFunctionDescriptor fun) {
