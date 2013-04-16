@@ -17,7 +17,10 @@
 package org.jetbrains.jet.generators.injectors;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -27,6 +30,7 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InstantiateType;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -138,7 +142,7 @@ public class GenerateInjectors {
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(BindingTrace.class);
-        generator.addParameter(ModuleDescriptor.class);
+        generator.addParameter(ModuleDescriptorImpl.class);
     }
 
     private static void generateMacroInjector() throws IOException {
@@ -181,8 +185,8 @@ public class GenerateInjectors {
                            new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
         generator.addField(JavaBridgeConfiguration.class);
         generator.addPublicField(PsiClassFinderImpl.class);
-        generator.addField(false, ModuleDescriptor.class, null,
-                           new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(" +
+        generator.addField(false, ModuleDescriptorImpl.class, null,
+                           new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl(" +
                                                "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
 
         // Parameters

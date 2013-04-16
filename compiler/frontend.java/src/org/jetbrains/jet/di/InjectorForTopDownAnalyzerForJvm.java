@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
@@ -77,7 +77,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
-    private final ModuleDescriptor moduleDescriptor;
+    private final ModuleDescriptorImpl moduleDescriptor;
     private JavaBridgeConfiguration moduleConfiguration;
     private JavaDescriptorResolver javaDescriptorResolver;
     private PsiClassFinderImpl psiClassFinder;
@@ -118,7 +118,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         @NotNull Project project,
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptor moduleDescriptor
+        @NotNull ModuleDescriptorImpl moduleDescriptor
     ) {
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.topDownAnalysisContext = new TopDownAnalysisContext();

@@ -186,7 +186,7 @@ public class TopDownAnalyzer {
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
     ) {
-        ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<dummy for object>"));
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<dummy for object>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()),

@@ -138,7 +138,7 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final KotlinCodeAnalyzer analyzer;
-    private final ModuleDescriptor builtInsModule;
+    private final ModuleDescriptorImpl builtInsModule;
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
@@ -170,7 +170,7 @@ public class KotlinBuiltIns {
 
     private KotlinBuiltIns(@NotNull Project project) {
         try {
-            this.builtInsModule = new ModuleDescriptor(Name.special("<built-ins lazy module>"));
+            this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"));
             this.analyzer = createLazyResolveSession(project);
 
             this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
@@ -298,7 +298,7 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    public ModuleDescriptor getBuiltInsModule() {
+    public ModuleDescriptorImpl getBuiltInsModule() {
         return builtInsModule;
     }
 

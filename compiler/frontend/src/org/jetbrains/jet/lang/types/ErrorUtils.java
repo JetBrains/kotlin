@@ -31,7 +31,7 @@ import java.util.*;
 
 public class ErrorUtils {
 
-    private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor(Name.special("<ERROR MODULE>"));
+    private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptorImpl(Name.special("<ERROR MODULE>"));
 
 
     public static class ErrorScope implements JetScope {

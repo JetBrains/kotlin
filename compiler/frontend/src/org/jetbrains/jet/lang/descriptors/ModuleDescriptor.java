@@ -18,64 +18,20 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collections;
-
-public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
-    private NamespaceDescriptor rootNamepsace;
-
-    public ModuleDescriptor(@NotNull Name name) {
-        super(Collections.<AnnotationDescriptor>emptyList(), name);
-        if (!name.isSpecial()) {
-            throw new IllegalArgumentException("module name must be special: " + name);
-        }
-    }
-
-    public void setRootNamespace(@NotNull NamespaceDescriptor rootNs) {
-        if (this.rootNamepsace != null) {
-            throw new IllegalStateException("setRootNamespace() is called twice");
-        }
-        this.rootNamepsace = rootNs;
-    }
-
+public interface ModuleDescriptor extends DeclarationDescriptor, NamespaceDescriptorParent {
     @Override
     @Nullable
-    public DeclarationDescriptor getContainingDeclaration() {
-        return null;
-    }
+    DeclarationDescriptor getContainingDeclaration();
 
-    public NamespaceDescriptor getRootNamespace() {
-        return rootNamepsace;
-    }
-
-    public NamespaceDescriptorImpl getRootNamespaceDescriptorImpl() {
-        return (NamespaceDescriptorImpl) rootNamepsace;
-    }
+    NamespaceDescriptor getRootNamespace();
 
     @NotNull
     @Override
-    public ModuleDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        return this;
-    }
+    ModuleDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitModuleDeclaration(this, data);
-    }
-
-
-    @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        if (namespaceDescriptor.getContainingDeclaration() != this) {
-            throw new IllegalStateException();
-        }
-        setRootNamespace(namespaceDescriptor);
-    }
-
+    <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data);
 }

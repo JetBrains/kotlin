@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
@@ -43,12 +43,12 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 public class NamespaceFactoryImpl implements NamespaceFactory {
 
-    private ModuleDescriptor moduleDescriptor;
+    private ModuleDescriptorImpl moduleDescriptor;
     private BindingTrace trace;
     private ModuleConfiguration configuration;
 
     @Inject
-    public void setModuleDescriptor(ModuleDescriptor moduleDescriptor) {
+    public void setModuleDescriptor(ModuleDescriptorImpl moduleDescriptor) {
         this.moduleDescriptor = moduleDescriptor;
     }
 
@@ -136,7 +136,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     }
 
     private NamespaceDescriptorImpl createRootNamespaceDescriptorIfNeeded(@Nullable JetFile file,
-                                                                          @NotNull ModuleDescriptor owner,
+                                                                          @NotNull ModuleDescriptorImpl owner,
                                                                           @Nullable JetReferenceExpression expression,
                                                                           @NotNull RedeclarationHandler handler) {
         FqName fqName = FqName.ROOT;

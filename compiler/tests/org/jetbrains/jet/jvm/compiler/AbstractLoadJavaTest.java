@@ -31,7 +31,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -138,7 +138,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourcesDir.getAbsolutePath()));
         JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
-        ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<test module>"));
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<test module>"));
 
         // we need the same binding trace for resolve from Java and Kotlin
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();

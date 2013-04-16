@@ -60,7 +60,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     }
 
     public class JetDefaultModalityModifiersTestCase  {
-        private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
+        private ModuleDescriptor root = new ModuleDescriptorImpl(Name.special("<test_root>"));
         private DescriptorResolver descriptorResolver;
         private JetScope scope;
 

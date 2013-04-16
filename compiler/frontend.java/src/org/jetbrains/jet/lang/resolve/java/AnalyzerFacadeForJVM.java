@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
@@ -82,7 +83,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
+        ModuleDescriptor javaModule = new ModuleDescriptorImpl(Name.special("<java module>"));
 
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
@@ -132,7 +133,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             }
         };
 
-        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
 
         return new ResolveSession(fileProject, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
     }
@@ -199,7 +200,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve
     ) {
-        ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
+        ModuleDescriptorImpl owner = new ModuleDescriptorImpl(Name.special("<module>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);

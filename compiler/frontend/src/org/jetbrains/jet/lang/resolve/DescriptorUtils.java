@@ -150,8 +150,8 @@ public class DescriptorUtils {
     }
 
     public static boolean isInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(first, ModuleDescriptor.class, false);
-        ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(second, ModuleDescriptor.class, false);
+        ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(first, ModuleDescriptorImpl.class, false);
+        ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(second, ModuleDescriptorImpl.class, false);
         assert parentModule != null && fromModule != null;
         return parentModule.equals(fromModule);
     }

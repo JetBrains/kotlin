@@ -47,7 +47,7 @@ import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
@@ -224,7 +224,7 @@ public class JetSourceNavigationHelper {
         KotlinCodeAnalyzer analyzer = new ResolveSession(
                 project,
                 storageManager,
-                new ModuleDescriptor(Name.special("<library module>")),
+                new ModuleDescriptorImpl(Name.special("<library module>")),
                 DefaultModuleConfiguration.createStandardConfiguration(),
                 providerFactory);
 

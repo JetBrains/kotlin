@@ -72,7 +72,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public ResolveSession(
         @NotNull Project project,
         @NotNull StorageManager storageManager,
-        @NotNull ModuleDescriptor rootDescriptor,
+        @NotNull ModuleDescriptorImpl rootDescriptor,
         @NotNull ModuleConfiguration moduleConfiguration,
         @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
@@ -84,7 +84,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public ResolveSession(
             @NotNull Project project,
             @NotNull StorageManager storageManager,
-            @NotNull ModuleDescriptor rootDescriptor,
+            @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
@@ -103,7 +103,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public ResolveSession(
             @NotNull Project project,
             @NotNull StorageManager storageManager,
-            @NotNull ModuleDescriptor rootDescriptor,
+            @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
