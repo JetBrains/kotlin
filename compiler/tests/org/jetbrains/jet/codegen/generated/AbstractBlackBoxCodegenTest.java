@@ -46,7 +46,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     public void doTestWithJava(@NotNull String filename) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFileWithJavaByFullPath(filename);
     }
 
@@ -81,7 +80,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
+                ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
         loadFile(ktFile);
         blackBox();
