@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
@@ -44,8 +45,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @NotNull
     private static final Set<ClassKind> GENERATE_CONSTRUCTORS_FOR =
-            EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT,
-                       ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY, ClassKind.CLASS_OBJECT);
+            ImmutableSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT,
+                            ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY, ClassKind.CLASS_OBJECT);
 
     private interface MemberExtractor<T extends CallableMemberDescriptor> {
         MemberExtractor<FunctionDescriptor> EXTRACT_FUNCTIONS = new MemberExtractor<FunctionDescriptor>() {
