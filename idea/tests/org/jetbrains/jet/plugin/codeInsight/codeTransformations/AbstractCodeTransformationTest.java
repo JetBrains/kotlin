@@ -59,7 +59,7 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
     }
 
     public void doTestUnfoldReturnToWhen(@NotNull String path) throws Exception {
-        doTest(path, new UnfoldAssignmentToIfIntention());
+        doTest(path, new UnfoldReturnToWhenIntention());
     }
 
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
