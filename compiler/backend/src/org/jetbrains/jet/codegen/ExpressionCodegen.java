@@ -2212,29 +2212,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new IllegalStateException();
         }
 
-        int index = 0;
         int mask = 0;
 
-        for (ValueParameterDescriptor valueParameterDescriptor : fd.getValueParameters()) {
-            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameterDescriptor.getIndex());
+        for (ValueParameterDescriptor valueParameter : fd.getValueParameters()) {
+            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
             if (resolvedValueArgument instanceof ExpressionValueArgument) {
                 ExpressionValueArgument valueArgument = (ExpressionValueArgument) resolvedValueArgument;
                 //noinspection ConstantConditions
-                gen(valueArgument.getValueArgument().getArgumentExpression(), valueParameterTypes.get(index));
+                gen(valueArgument.getValueArgument().getArgumentExpression(), valueParameterTypes.get(valueParameter.getIndex()));
             }
             else if (resolvedValueArgument instanceof DefaultValueArgument) {
-                Type type = valueParameterTypes.get(index);
+                Type type = valueParameterTypes.get(valueParameter.getIndex());
                 pushDefaultValueOnStack(type, v);
-                mask |= (1 << index);
+                mask |= (1 << valueParameter.getIndex());
             }
             else if (resolvedValueArgument instanceof VarargValueArgument) {
                 VarargValueArgument valueArgument = (VarargValueArgument) resolvedValueArgument;
-                genVarargs(valueParameterDescriptor, valueArgument);
+                genVarargs(valueParameter, valueArgument);
             }
             else {
                 throw new UnsupportedOperationException();
             }
-            index++;
         }
         return mask;
     }
