@@ -79,7 +79,7 @@ public class BranchedUnfoldingUtils {
     public static void unfoldAssignmentToWhen(@NotNull JetBinaryExpression assignment) {
         Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
-        JetExpression lhs = (JetExpression)assignment.getLeft().copy();
+        String lhsText = assignment.getLeft().getText();
         JetWhenExpression whenExpression = (JetWhenExpression)assignment.getRight();
 
         assert whenExpression != null : UNFOLD_WITHOUT_CHECK;
@@ -91,7 +91,7 @@ public class BranchedUnfoldingUtils {
 
             assert currExpr != null : UNFOLD_WITHOUT_CHECK;
 
-            currExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, currExpr));
+            currExpr.replace(JetPsiFactory.createBinaryExpression(project, JetPsiFactory.createExpression(project, lhsText), op, currExpr));
         }
     }
 
