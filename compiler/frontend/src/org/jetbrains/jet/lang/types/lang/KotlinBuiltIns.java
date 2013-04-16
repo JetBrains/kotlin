@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
@@ -240,7 +241,7 @@ public class KotlinBuiltIns {
             //noinspection IOResourceOpenedButNotSafelyClosed
             String text = FileUtil.loadTextAndClose(new InputStreamReader(stream));
             JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(path,
-                    JetFileType.INSTANCE, StringUtil.convertLineSeparators(text));
+                    JetFileType.INSTANCE, StringUtil.convertLineSeparators(text), LocalTimeCounter.currentTime(), true, false);
             files.add(file);
         }
         return files;
