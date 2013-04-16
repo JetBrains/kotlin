@@ -102,20 +102,18 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
         // We saw only positioned arguments so far
         private final ProcessorState positionedOnly = new ProcessorState() {
 
-            private Queue<ValueParameterDescriptor> valueParameterQueue;
+            private int currentParameter = 0;
 
             @Nullable
             public ValueParameterDescriptor nextValueParameter() {
-                if (valueParameterQueue == null) {
-                    valueParameterQueue = new LinkedList<ValueParameterDescriptor>(candidateCall.getCandidateDescriptor().getValueParameters());
-                }
+                List<ValueParameterDescriptor> parameters = candidateCall.getCandidateDescriptor().getValueParameters();
+                if (currentParameter >= parameters.size()) return null;
 
-                ValueParameterDescriptor head = valueParameterQueue.peek();
-                if (head == null) return null;
+                ValueParameterDescriptor head = parameters.get(currentParameter);
 
                 // If we found a vararg parameter, we are stuck with it forever
                 if (head.getVarargElementType() == null) {
-                    valueParameterQueue.remove();
+                    currentParameter++;
                 }
 
                 return head;
