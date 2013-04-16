@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.name;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Name implements Comparable<Name> {
+public final class Name implements Comparable<Name> {
     @NotNull
     private final String name;
     private final boolean special;
@@ -89,7 +89,7 @@ public class Name implements Comparable<Name> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Name)) return false;
 
         Name name1 = (Name) o;
 
