@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Function;
@@ -109,7 +108,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     private List<ClassDescriptor> resolveClassOrObjectDescriptor(@NotNull final Name name, final boolean object) {
         Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
 
-        return Lists.newArrayList(ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassOrObject, ClassDescriptor>() {
+        return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassOrObject, ClassDescriptor>() {
             @Override
             public ClassDescriptor fun(JetClassOrObject classOrObject) {
                 if (object != declaresObjectOrEnumConstant(classOrObject)) return null;
@@ -117,7 +116,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 return new LazyClassDescriptor(resolveSession, thisDescriptor, name,
                                                JetClassInfoUtil.createClassLikeInfo(classOrObject));
             }
-        }));
+        });
     }
 
     private static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
