@@ -374,7 +374,9 @@ public class TypeUtils {
 
     @NotNull
     public static Set<JetType> getAllSupertypes(@NotNull JetType type) {
-        Set<JetType> result = Sets.newLinkedHashSet();
+        // 15 is obtained by experimentation: JDK classes like ArrayList tend to have so many supertypes,
+        // the average number is lower
+        Set<JetType> result = new LinkedHashSet<JetType>(15);
         collectAllSupertypes(type, result);
         return result;
     }
@@ -389,11 +391,16 @@ public class TypeUtils {
     }
 
     public static boolean hasNullableSuperType(@NotNull JetType type) {
-        for (JetType supertype : getAllSupertypes(type)) {
-            if (supertype.isNullable()) {
-                return true;
-            }
+        if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
+            // A class/trait cannot have a nullable supertype
+            return false;
         }
+
+        for (JetType supertype : getImmediateSupertypes(type)) {
+            if (supertype.isNullable()) return true;
+            if (hasNullableSuperType(supertype)) return true;
+        }
+        
         return false;
     }
 
