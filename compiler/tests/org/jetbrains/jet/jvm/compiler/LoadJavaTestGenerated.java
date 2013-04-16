@@ -1234,6 +1234,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/NonTrivialFunctionType.java");
                 }
                 
+                @TestMetadata("SeveralSamParameters.java")
+                public void testSeveralSamParameters() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/SeveralSamParameters.java");
+                }
+                
             }
             
             public static Test innerSuite() {
