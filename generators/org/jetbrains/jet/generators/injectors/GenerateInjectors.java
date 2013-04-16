@@ -120,7 +120,7 @@ public class GenerateInjectors {
         generator.addPublicParameter(ModuleDescriptor.class);
 
         // Fields
-        generator.addField(JavaBridgeConfiguration.class);
+        generator.addPublicField(JavaBridgeConfiguration.class);
         generator.addPublicField(JavaSemanticServices.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);

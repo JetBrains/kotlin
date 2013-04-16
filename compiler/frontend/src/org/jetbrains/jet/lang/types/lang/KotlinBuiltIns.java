@@ -171,6 +171,7 @@ public class KotlinBuiltIns {
     private KotlinBuiltIns(@NotNull Project project) {
         try {
             this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"));
+            builtInsModule.setModuleConfiguration(SpecialModuleConfiguration.INSTANCE);
             this.analyzer = createLazyResolveSession(project);
 
             this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
@@ -228,7 +229,7 @@ public class KotlinBuiltIns {
                 project,
                 storageManager,
                 builtInsModule,
-                new SpecialModuleConfiguration(),
+                SpecialModuleConfiguration.INSTANCE,
                 new FileBasedDeclarationProviderFactory(storageManager, files),
                 ResolveSession.NO_ALIASES,
                 Predicates.in(Sets.newHashSet(new FqNameUnsafe("jet.Any"), new FqNameUnsafe("jet.Nothing"))),
@@ -257,6 +258,8 @@ public class KotlinBuiltIns {
     }
 
     private static class SpecialModuleConfiguration implements ModuleConfiguration {
+
+        public static final ModuleConfiguration INSTANCE = new SpecialModuleConfiguration();
 
         private SpecialModuleConfiguration() {
         }

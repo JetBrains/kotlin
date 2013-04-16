@@ -116,7 +116,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         BindingContext bindingContext = declarationsCache.getBindingContext();
         DelegatingBindingTrace delegatingTrace = new DelegatingBindingTrace(bindingContext, "wrapped context of declarations cache");
 
-        return new InjectorForJavaDescriptorResolver(project, delegatingTrace, new ModuleDescriptorImpl(Name.special("<fake>")));
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<fake>"));
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, delegatingTrace, moduleDescriptor);
+        moduleDescriptor.setModuleConfiguration(injector.getJavaBridgeConfiguration());
+        return injector;
     }
 
     @Nullable

@@ -153,6 +153,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                         Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
                 trace,
                 moduleDescriptor);
+        moduleDescriptor.setModuleConfiguration(injectorForAnalyzer.getModuleConfiguration());
 
         injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 

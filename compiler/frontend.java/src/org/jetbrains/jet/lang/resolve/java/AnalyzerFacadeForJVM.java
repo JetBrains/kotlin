@@ -31,14 +31,13 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -83,7 +82,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        ModuleDescriptor javaModule = new ModuleDescriptorImpl(Name.special("<java module>"));
+        ModuleDescriptorImpl javaModule = new ModuleDescriptorImpl(Name.special("<java module>"));
 
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
@@ -132,8 +131,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 return JavaToKotlinClassMap.getInstance();
             }
         };
+        javaModule.setModuleConfiguration(moduleConfiguration);
 
         ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
+        lazyModule.setModuleConfiguration(moduleConfiguration);
 
         return new ResolveSession(fileProject, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
     }
@@ -208,6 +209,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
                 new ObservableBindingTrace(trace), owner);
+        owner.setModuleConfiguration(injector.getModuleConfiguration());
         try {
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?

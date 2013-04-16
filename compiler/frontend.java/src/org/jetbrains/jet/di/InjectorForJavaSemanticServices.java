@@ -107,6 +107,8 @@ public class InjectorForJavaSemanticServices {
 
         this.psiClassFinder.setProject(project);
 
+        moduleDescriptor.setModuleConfiguration(javaBridgeConfiguration);
+
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 

@@ -90,6 +90,7 @@ public final class AnalyzerFacadeForJS {
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
                 project, topDownAnalysisParameters, trace, owner,
                 new JsConfiguration(libraryBindingContext));
+        owner.setModuleConfiguration(injector.getModuleConfiguration());
         try {
             Collection<JetFile> allFiles = libraryBindingContext != null ?
                                            files :
@@ -144,6 +145,7 @@ public final class AnalyzerFacadeForJS {
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
-        return new ResolveSession(config.getProject(), storageManager, lazyModule, new JsConfiguration(null), declarationProviderFactory);
+        lazyModule.setModuleConfiguration(new JsConfiguration(null));
+        return new ResolveSession(config.getProject(), storageManager, lazyModule, lazyModule.getModuleConfiguration(), declarationProviderFactory);
     }
 }

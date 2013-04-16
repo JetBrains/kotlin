@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -27,6 +28,9 @@ public interface ModuleDescriptor extends DeclarationDescriptor, NamespaceDescri
     DeclarationDescriptor getContainingDeclaration();
 
     NamespaceDescriptor getRootNamespace();
+
+    @NotNull
+    ModuleConfiguration getModuleConfiguration();
 
     @NotNull
     @Override

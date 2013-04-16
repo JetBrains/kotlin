@@ -187,6 +187,7 @@ public class TopDownAnalyzer {
             @NotNull JetClassOrObject object
     ) {
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<dummy for object>"));
+        moduleDescriptor.setModuleConfiguration(ModuleConfiguration.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()),

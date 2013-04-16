@@ -18,16 +18,19 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
+import javax.inject.Inject;
 import java.util.Collections;
 
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, ModuleDescriptor {
     private NamespaceDescriptor rootNamepsace;
+    private ModuleConfiguration moduleConfiguration;
 
     public ModuleDescriptorImpl(@NotNull Name name) {
         super(Collections.<AnnotationDescriptor>emptyList(), name);
@@ -52,6 +55,18 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements C
     @Override
     public NamespaceDescriptor getRootNamespace() {
         return rootNamepsace;
+    }
+
+    @NotNull
+    @Override
+    public ModuleConfiguration getModuleConfiguration() {
+        return moduleConfiguration;
+    }
+
+    @Inject
+    public ModuleDescriptorImpl setModuleConfiguration(@NotNull ModuleConfiguration moduleConfiguration) {
+        this.moduleConfiguration = moduleConfiguration;
+        return this;
     }
 
     public NamespaceDescriptorImpl getRootNamespaceDescriptorImpl() {
