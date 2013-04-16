@@ -1,16 +1,18 @@
 open class Base {
-    open fun foo() { }
+    open fun foo() : String {
+      return "fail"
+    }
 }
 
 trait Derived : Base {
-    override fun foo() {
-        super.foo()
+    override fun foo() : String {
+        //super.foo()
+        return "OK"
     }
 }
 
 class DerivedImpl : Derived, Base()
 
 fun box(): String {
-    DerivedImpl().foo()
-    return "OK"
+    return DerivedImpl().foo()
 }

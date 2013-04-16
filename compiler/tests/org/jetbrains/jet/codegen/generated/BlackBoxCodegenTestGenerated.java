@@ -3295,9 +3295,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/super/innerClassLabeledSuper.kt");
         }
         
+        @TestMetadata("innerClassLabeledSuper2.kt")
+        public void testInnerClassLabeledSuper2() throws Exception {
+            doTest("compiler/testData/codegen/box/super/innerClassLabeledSuper2.kt");
+        }
+        
         @TestMetadata("innerClassLabeledSuperProperty.kt")
         public void testInnerClassLabeledSuperProperty() throws Exception {
             doTest("compiler/testData/codegen/box/super/innerClassLabeledSuperProperty.kt");
+        }
+        
+        @TestMetadata("innerClassLabeledSuperProperty2.kt")
+        public void testInnerClassLabeledSuperProperty2() throws Exception {
+            doTest("compiler/testData/codegen/box/super/innerClassLabeledSuperProperty2.kt");
+        }
+        
+        @TestMetadata("kt3492ClassFun.kt")
+        public void testKt3492ClassFun() throws Exception {
+            doTest("compiler/testData/codegen/box/super/kt3492ClassFun.kt");
         }
         
         @TestMetadata("kt3492ClassProperty.kt")
@@ -3336,6 +3351,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("finalMethod.kt")
         public void testFinalMethod() throws Exception {
             doTest("compiler/testData/codegen/box/traits/finalMethod.kt");
+        }
+        
+        @TestMetadata("genericMethod.kt")
+        public void testGenericMethod() throws Exception {
+            doTest("compiler/testData/codegen/box/traits/genericMethod.kt");
         }
         
         @TestMetadata("inheritedFun.kt")
@@ -3381,6 +3401,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt3413.kt")
         public void testKt3413() throws Exception {
             doTest("compiler/testData/codegen/box/traits/kt3413.kt");
+        }
+        
+        @TestMetadata("kt3429.kt")
+        public void testKt3429() throws Exception {
+            doTest("compiler/testData/codegen/box/traits/kt3429.kt");
+        }
+        
+        @TestMetadata("kt3500.kt")
+        public void testKt3500() throws Exception {
+            doTest("compiler/testData/codegen/box/traits/kt3500.kt");
         }
         
         @TestMetadata("multiple.kt")

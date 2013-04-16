@@ -494,6 +494,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         if (result != null) {
+            if (DescriptorUtils.isKindOf(thisType, ClassKind.TRAIT)) {
+                if (DescriptorUtils.isKindOf(result, ClassKind.CLASS)) {
+                    context.trace.report(SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT.on(expression));
+                }
+            }
             context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
             context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
             if (superTypeQualifier != null) {

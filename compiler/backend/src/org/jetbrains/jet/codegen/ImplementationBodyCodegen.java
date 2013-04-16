@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -1298,8 +1300,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (myClass instanceof JetClass &&
-            (((JetClass) myClass).isTrait() || myClass.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
+        if (myClass instanceof JetClass && ((JetClass) myClass).isTrait()) {
             return;
         }
 
@@ -1699,7 +1700,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
      * Return pairs of descriptors. First is member of this that should be implemented by delegating to trait,
      * second is member of trait that contain implementation.
      */
-    private static List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
+    private List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
         List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> r = Lists.newArrayList();
 
         root:
@@ -1715,21 +1716,39 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             Collection<CallableMemberDescriptor> overriddenDeclarations =
                     OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
-            for (CallableMemberDescriptor overriddenDeclaration : overriddenDeclarations) {
-                if (overriddenDeclaration.getModality() != Modality.ABSTRACT) {
-                    if (!isInterface(overriddenDeclaration.getContainingDeclaration())) {
-                        continue root;
-                    }
+
+            Collection<CallableMemberDescriptor> filteredOverriddenDeclarations =
+                    OverridingUtil.filterOverrides(Sets.newLinkedHashSet(overriddenDeclarations));
+
+            int count = 0;
+            CallableMemberDescriptor candidate = null;
+
+            for (CallableMemberDescriptor overriddenDeclaration : filteredOverriddenDeclarations) {
+                if (isKindOf(overriddenDeclaration.getContainingDeclaration(), ClassKind.TRAIT) &&
+                    overriddenDeclaration.getModality() != Modality.ABSTRACT) {
+                    candidate = overriddenDeclaration;
+                    count++;
                 }
             }
+            if (candidate == null) {
+                continue;
+            }
 
-            for (CallableMemberDescriptor overriddenDeclaration : overriddenDeclarations) {
-                if (overriddenDeclaration.getModality() != Modality.ABSTRACT) {
-                    r.add(Pair.create(callableMemberDescriptor, overriddenDeclaration));
-                }
+            assert count == 1 : "Ambiguous overriden declaration: " + callableMemberDescriptor.getName();
+
+
+            Collection<JetType> superTypesOfSuperClass =
+                    superClassType != null ? TypeUtils.getAllSupertypes(superClassType) : Collections.<JetType>emptySet();
+            ReceiverParameterDescriptor expectedThisObject = candidate.getExpectedThisObject();
+            assert expectedThisObject != null;
+            JetType candidateType = expectedThisObject.getType();
+            boolean implementedInSuperClass = superTypesOfSuperClass.contains(candidateType);
+
+            if (!implementedInSuperClass) {
+                r.add(Pair.create(callableMemberDescriptor, candidate));
             }
         }
-
         return r;
     }
+
 }

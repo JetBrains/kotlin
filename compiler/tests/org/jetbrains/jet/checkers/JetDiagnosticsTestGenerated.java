@@ -4352,6 +4352,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/thisAndSuper/ambigousLabelOnThis.kt");
             }
             
+            @TestMetadata("notAccessibleSuperInTrait.kt")
+            public void testNotAccessibleSuperInTrait() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/notAccessibleSuperInTrait.kt");
+            }
+            
             @TestMetadata("QualifiedThis.kt")
             public void testQualifiedThis() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/thisAndSuper/QualifiedThis.kt");
