@@ -309,5 +309,9 @@ public class ErrorUtils {
         }
     }
 
+    public static ModuleDescriptor getErrorModule() {
+        return ERROR_MODULE;
+    }
+
     private ErrorUtils() {}
 }

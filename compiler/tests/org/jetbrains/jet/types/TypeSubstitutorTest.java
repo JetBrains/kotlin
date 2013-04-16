@@ -24,6 +24,7 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -65,7 +66,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     protected void setUp() throws Exception {
         super.setUp();
 
-        injector = new InjectorForTests(getProject());
+        injector = new InjectorForTests(getProject(), JetTestUtils.createEmptyModule());
         scope = getContextScope();
     }
 

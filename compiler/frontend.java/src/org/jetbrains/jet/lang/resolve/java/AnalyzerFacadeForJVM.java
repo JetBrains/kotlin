@@ -31,6 +31,7 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -72,11 +73,11 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                @NotNull Predicate<PsiFile> filesForBodiesResolve,
                                                @NotNull BindingTrace headersTraceContext,
                                                @NotNull BodiesResolveContext bodiesResolveContext,
-                                               @NotNull ModuleConfiguration configuration
+                                               @NotNull ModuleDescriptor module
     ) {
         return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
                 project, scriptParameters, filesForBodiesResolve,
-                headersTraceContext, bodiesResolveContext, configuration);
+                headersTraceContext, bodiesResolveContext, module);
     }
 
     @NotNull
@@ -136,7 +137,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
         lazyModule.setModuleConfiguration(moduleConfiguration);
 
-        return new ResolveSession(fileProject, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
+        return new ResolveSession(fileProject, storageManager, lazyModule, declarationProviderFactory, javaResolverTrace);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
@@ -209,13 +210,13 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
                 new ObservableBindingTrace(trace), owner);
-        owner.setModuleConfiguration(injector.getModuleConfiguration());
+        owner.setModuleConfiguration(injector.getJavaBridgeConfiguration());
         try {
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
-            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, injector.getModuleConfiguration());
+            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, owner);
         } finally {
             injector.destroy();
         }

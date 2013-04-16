@@ -20,7 +20,7 @@ import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -47,7 +47,7 @@ public interface AnalyzerFacade {
             @NotNull Predicate<PsiFile> filesForBodiesResolve,
             @NotNull BindingTrace traceContext,
             @NotNull BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleConfiguration configuration
+            @NotNull ModuleDescriptor module
     );
 
     @NotNull

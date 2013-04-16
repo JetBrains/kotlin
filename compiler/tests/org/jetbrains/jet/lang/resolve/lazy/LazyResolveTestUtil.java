@@ -63,7 +63,6 @@ public class LazyResolveTestUtil {
         ModuleDescriptorImpl eagerModuleForLazy = new ModuleDescriptorImpl(Name.special("<eager module for lazy>"));
 
         InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy, environment);
-        eagerModuleForLazy.setModuleConfiguration(tdaInjectorForLazy.getModuleConfiguration());
         // This line is required fro the 'jet' namespace to be filled in with functions
         tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(
                 Collections.singletonList(JetPsiFactory.createFile(environment.getProject(), "")), Collections.<AnalyzerScriptParameter>emptyList());
@@ -76,13 +75,14 @@ public class LazyResolveTestUtil {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-        return new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, module);
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, module);
+        module.setModuleConfiguration(injector.getJavaBridgeConfiguration());
+        return injector;
     }
 
     public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
         ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<test module>"));
         InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
-        module.setModuleConfiguration(injector.getModuleConfiguration());
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
         return module;
     }
@@ -143,7 +143,7 @@ public class LazyResolveTestUtil {
 
         ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
         lazyModule.setModuleConfiguration(moduleConfiguration);
-        return new ResolveSession(project, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, sharedTrace);
+        return new ResolveSession(project, storageManager, lazyModule, declarationProviderFactory, sharedTrace);
     }
 
     public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {

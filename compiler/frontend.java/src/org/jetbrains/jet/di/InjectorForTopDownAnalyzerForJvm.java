@@ -61,7 +61,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -78,7 +77,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptorImpl moduleDescriptor;
-    private JavaBridgeConfiguration moduleConfiguration;
+    private JavaBridgeConfiguration javaBridgeConfiguration;
     private JavaDescriptorResolver javaDescriptorResolver;
     private PsiClassFinderImpl psiClassFinder;
     private NamespaceFactoryImpl namespaceFactory;
@@ -130,7 +129,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
-        this.moduleConfiguration = new JavaBridgeConfiguration();
+        this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.namespaceFactory = new NamespaceFactoryImpl();
@@ -198,7 +197,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
-        this.moduleConfiguration.setJavaSemanticServices(javaSemanticServices);
+        this.javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
 
         javaDescriptorResolver.setClassResolver(javaClassResolver);
         javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
@@ -209,7 +208,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         psiClassFinder.setProject(project);
 
-        this.namespaceFactory.setConfiguration(moduleConfiguration);
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
         this.namespaceFactory.setTrace(bindingTrace);
 
@@ -241,14 +239,14 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
-        typeResolver.setModuleConfiguration(moduleConfiguration);
+        typeResolver.setModuleDescriptor(moduleDescriptor);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
-        importsResolver.setConfiguration(moduleConfiguration);
         importsResolver.setContext(topDownAnalysisContext);
         importsResolver.setImportsFactory(jetImportsFactory);
+        importsResolver.setModuleDescriptor(moduleDescriptor);
         importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         importsResolver.setTrace(bindingTrace);
 
@@ -336,7 +334,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaPropertyResolver.setSemanticServices(javaSemanticServices);
         javaPropertyResolver.setTrace(bindingTrace);
 
-        moduleConfiguration.init();
+        javaBridgeConfiguration.init();
 
         psiClassFinder.initialize();
 
@@ -382,8 +380,12 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         return this.bindingTrace;
     }
     
-    public ModuleConfiguration getModuleConfiguration() {
-        return this.moduleConfiguration;
+    public ModuleDescriptorImpl getModuleDescriptor() {
+        return this.moduleDescriptor;
+    }
+    
+    public JavaBridgeConfiguration getJavaBridgeConfiguration() {
+        return this.javaBridgeConfiguration;
     }
     
     public NamespaceFactoryImpl getNamespaceFactory() {

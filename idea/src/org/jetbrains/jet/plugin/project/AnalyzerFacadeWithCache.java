@@ -38,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -46,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCacheImpl;
@@ -121,7 +121,7 @@ public final class AnalyzerFacadeWithCache {
     }
 
     private static AnalyzeExhaust emptyExhaust() {
-        return AnalyzeExhaust.success(BindingContext.EMPTY, ModuleConfiguration.EMPTY);
+        return AnalyzeExhaust.success(BindingContext.EMPTY, ErrorUtils.getErrorModule());
     }
 
     private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull JetFile fileToCache) {
@@ -143,7 +143,6 @@ public final class AnalyzerFacadeWithCache {
 
     private static AnalyzeExhaust analyzeBodies(AnalyzeExhaust analyzeExhaustHeaders, JetFile file) {
         BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
-        ModuleConfiguration moduleConfiguration = analyzeExhaustHeaders.getModuleConfiguration();
         assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
 
         // Need to resolve bodies in given file and all in the same package
@@ -154,7 +153,7 @@ public final class AnalyzerFacadeWithCache {
                 new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(),
                                            "trace to resolve bodies in file", file.getName()),
                 context,
-                moduleConfiguration);
+                analyzeExhaustHeaders.getModuleDescriptor());
     }
 
     @NotNull

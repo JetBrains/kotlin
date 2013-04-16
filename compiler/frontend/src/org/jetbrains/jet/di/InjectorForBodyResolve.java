@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
-import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -46,7 +46,7 @@ public class InjectorForBodyResolve {
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
     private final BodiesResolveContext bodiesResolveContext;
-    private final ModuleConfiguration moduleConfiguration;
+    private final ModuleDescriptor moduleDescriptor;
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
     private ExpressionTypingServices expressionTypingServices;
@@ -66,14 +66,14 @@ public class InjectorForBodyResolve {
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
         @NotNull BindingTrace bindingTrace,
         @NotNull BodiesResolveContext bodiesResolveContext,
-        @NotNull ModuleConfiguration moduleConfiguration
+        @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.bodyResolver = new BodyResolver();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
         this.bodiesResolveContext = bodiesResolveContext;
-        this.moduleConfiguration = moduleConfiguration;
+        this.moduleDescriptor = moduleDescriptor;
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
@@ -123,7 +123,7 @@ public class InjectorForBodyResolve {
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
-        typeResolver.setModuleConfiguration(moduleConfiguration);
+        typeResolver.setModuleDescriptor(moduleDescriptor);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);

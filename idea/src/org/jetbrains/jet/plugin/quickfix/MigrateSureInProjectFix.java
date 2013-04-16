@@ -25,7 +25,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
@@ -155,7 +154,6 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
                 Predicates.<PsiFile>alwaysFalse());
 
         BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
-        ModuleConfiguration moduleConfiguration = analyzeExhaustHeaders.getModuleConfiguration();
         assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
 
         // Need to resolve bodies in given file and all in the same package
@@ -165,6 +163,6 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
                 Predicates.<PsiFile>alwaysTrue(),
                 new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(), "trace in migrate sure fix"),
                 context,
-                moduleConfiguration);
+                analyzeExhaustHeaders.getModuleDescriptor());
     }
 }

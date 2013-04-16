@@ -99,7 +99,7 @@ public class ScopeProvider {
         }
 
         JetImportsFactory importsFactory = resolveSession.getInjector().getJetImportsFactory();
-        List<ImportPath> defaultImports = resolveSession.getModuleConfiguration().getDefaultImports();
+        List<ImportPath> defaultImports = resolveSession.getRootModuleDescriptor().getDefaultImports();
 
         Collection<JetImportDirective> defaultImportDirectives = importsFactory.createImportDirectives(defaultImports);
 

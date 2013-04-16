@@ -25,11 +25,12 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
@@ -65,18 +66,16 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
 
     private final InjectorForLazyResolve injector;
-    private final ModuleConfiguration moduleConfiguration;
 
     private final Function<FqName, Name> classifierAliases;
 
     public ResolveSession(
-        @NotNull Project project,
-        @NotNull StorageManager storageManager,
-        @NotNull ModuleDescriptorImpl rootDescriptor,
-        @NotNull ModuleConfiguration moduleConfiguration,
-        @NotNull DeclarationProviderFactory declarationProviderFactory
+            @NotNull Project project,
+            @NotNull StorageManager storageManager,
+            @NotNull ModuleDescriptorImpl rootDescriptor,
+            @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        this(project, storageManager, rootDescriptor, moduleConfiguration, declarationProviderFactory, NO_ALIASES,
+        this(project, storageManager, rootDescriptor, declarationProviderFactory, NO_ALIASES,
              Predicates.<FqNameUnsafe>alwaysFalse(),
              new BindingTraceContext());
     }
@@ -85,14 +84,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             @NotNull Project project,
             @NotNull StorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
-            @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
     ) {
         this(project,
              storageManager,
              rootDescriptor,
-             moduleConfiguration,
              declarationProviderFactory,
              NO_ALIASES,
              Predicates.<FqNameUnsafe>alwaysFalse(),
@@ -104,7 +101,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             @NotNull Project project,
             @NotNull StorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
-            @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
             @NotNull Predicate<FqNameUnsafe> specialClasses,
@@ -114,9 +110,8 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
         this.trace = storageManager.createSafeTrace(delegationTrace);
-        this.injector = new InjectorForLazyResolve(project, this, moduleConfiguration);
+        this.injector = new InjectorForLazyResolve(project, this, rootDescriptor);
         this.module = rootDescriptor;
-        this.moduleConfiguration = moduleConfiguration;
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
         this.rootPackage = new LazyPackageDescriptor(rootDescriptor, FqNameUnsafe.ROOT_NAME, this, provider);
@@ -142,12 +137,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @NotNull
     public StorageManager getStorageManager() {
         return storageManager;
-    }
-
-    @Override
-    @NotNull
-    public ModuleConfiguration getModuleConfiguration() {
-        return moduleConfiguration;
     }
 
     @Override

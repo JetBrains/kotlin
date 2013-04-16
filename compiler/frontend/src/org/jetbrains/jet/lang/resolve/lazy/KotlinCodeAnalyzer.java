@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -31,9 +30,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface KotlinCodeAnalyzer {
     ModuleDescriptor getRootModuleDescriptor();
-
-    @NotNull
-    ModuleConfiguration getModuleConfiguration();
 
     @Nullable
     NamespaceDescriptor getPackageDescriptor(@NotNull Name shortName);

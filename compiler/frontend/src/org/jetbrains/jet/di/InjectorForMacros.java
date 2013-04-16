@@ -18,7 +18,7 @@ package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -35,7 +35,7 @@ public class InjectorForMacros {
     
     private ExpressionTypingServices expressionTypingServices;
     private final Project project;
-    private final ModuleConfiguration moduleConfiguration;
+    private final ModuleDescriptor moduleDescriptor;
     private CallExpressionResolver callExpressionResolver;
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
@@ -47,11 +47,11 @@ public class InjectorForMacros {
     
     public InjectorForMacros(
         @NotNull Project project,
-        @NotNull ModuleConfiguration moduleConfiguration
+        @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.project = project;
-        this.moduleConfiguration = moduleConfiguration;
+        this.moduleDescriptor = moduleDescriptor;
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -79,7 +79,7 @@ public class InjectorForMacros {
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
-        typeResolver.setModuleConfiguration(moduleConfiguration);
+        typeResolver.setModuleDescriptor(moduleDescriptor);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         annotationResolver.setCallResolver(callResolver);

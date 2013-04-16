@@ -46,7 +46,7 @@ public class JetOverridingTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        InjectorForTests injector = new InjectorForTests(getProject());
+        InjectorForTests injector = new InjectorForTests(getProject(), root);
         builtIns = injector.getKotlinBuiltIns();
         descriptorResolver = injector.getDescriptorResolver();
     }

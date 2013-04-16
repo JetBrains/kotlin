@@ -19,8 +19,12 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+
+import java.util.List;
 
 public interface ModuleDescriptor extends DeclarationDescriptor, NamespaceDescriptorParent {
     @Override
@@ -31,6 +35,12 @@ public interface ModuleDescriptor extends DeclarationDescriptor, NamespaceDescri
 
     @NotNull
     ModuleConfiguration getModuleConfiguration();
+
+    @NotNull
+    List<ImportPath> getDefaultImports();
+
+    @NotNull
+    PlatformToKotlinClassMap getPlatformToKotlinClassMap();
 
     @NotNull
     @Override

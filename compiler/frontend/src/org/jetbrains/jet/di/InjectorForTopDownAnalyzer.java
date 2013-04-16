@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.di;
 
-import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 
 public interface InjectorForTopDownAnalyzer {
-    ModuleConfiguration getModuleConfiguration();
+    ModuleDescriptor getModuleDescriptor();
 
     TopDownAnalyzer getTopDownAnalyzer();
 }

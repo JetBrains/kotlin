@@ -229,7 +229,6 @@ public class KotlinBuiltIns {
                 project,
                 storageManager,
                 builtInsModule,
-                SpecialModuleConfiguration.INSTANCE,
                 new FileBasedDeclarationProviderFactory(storageManager, files),
                 ResolveSession.NO_ALIASES,
                 Predicates.in(Sets.newHashSet(new FqNameUnsafe("jet.Any"), new FqNameUnsafe("jet.Nothing"))),

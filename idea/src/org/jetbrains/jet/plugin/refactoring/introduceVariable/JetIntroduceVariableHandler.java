@@ -31,7 +31,6 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -128,7 +127,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             }
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
-            InjectorForMacros injector = new InjectorForMacros(project, analyzeExhaust.getModuleConfiguration());
+            InjectorForMacros injector = new InjectorForMacros(project, analyzeExhaust.getModuleDescriptor());
             JetType typeNoExpectedType = injector.getExpressionTypingServices().getType(scope, expression,
                                                                                 TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                                                 bindingTrace);

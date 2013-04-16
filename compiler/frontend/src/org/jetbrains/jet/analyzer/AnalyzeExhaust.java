@@ -18,70 +18,43 @@ package org.jetbrains.jet.analyzer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
-import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-
-import java.util.Collections;
-import java.util.List;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 
 public class AnalyzeExhaust {
-    private static final ModuleConfiguration ERROR_CONFIGURATION = new ModuleConfiguration() {
-        @Override
-        public List<ImportPath> getDefaultImports() {
-            return Collections.emptyList();
-        }
 
-        @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        }
-
-        @NotNull
-        @Override
-        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-            return PlatformToKotlinClassMap.EMPTY;
-        }
-
-        @Override
-        public String toString() {
-            return "ERROR_CONFIGURATION";
-        }
-    };
-
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleConfiguration configuration) {
-        return new AnalyzeExhaust(bindingContext, configuration, null, null);
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleDescriptor module) {
+        return new AnalyzeExhaust(bindingContext, module, null, null);
     }
+
     public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
             @Nullable BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleConfiguration configuration
+            @NotNull ModuleDescriptor module
     ) {
-        return new AnalyzeExhaust(bindingContext, configuration, bodiesResolveContext, null);
+        return new AnalyzeExhaust(bindingContext, module, bodiesResolveContext, null);
     }
 
     public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
-        return new AnalyzeExhaust(bindingContext, ERROR_CONFIGURATION, null, error);
+        return new AnalyzeExhaust(bindingContext, ErrorUtils.getErrorModule(), null, error);
     }
 
     private final BindingContext bindingContext;
     private final Throwable error;
     private final BodiesResolveContext bodiesResolveContext;
-    private final ModuleConfiguration configuration;
+    private final ModuleDescriptor moduleDescriptor;
 
     private AnalyzeExhaust(
             @NotNull BindingContext bindingContext,
-            @NotNull ModuleConfiguration configuration,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @Nullable BodiesResolveContext bodiesResolveContext,
             @Nullable Throwable error
     ) {
         this.bindingContext = bindingContext;
         this.error = error;
         this.bodiesResolveContext = bodiesResolveContext;
-        this.configuration = configuration;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     @Nullable
@@ -110,7 +83,7 @@ public class AnalyzeExhaust {
     }
 
     @NotNull
-    public ModuleConfiguration getModuleConfiguration() {
-        return configuration;
+    public ModuleDescriptor getModuleDescriptor() {
+        return moduleDescriptor;
     }
 }

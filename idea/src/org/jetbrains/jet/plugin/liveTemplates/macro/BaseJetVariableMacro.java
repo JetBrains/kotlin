@@ -67,7 +67,7 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
-        ExpressionTypingServices callResolverContext = new InjectorForMacros(project, analyzeExhaust.getModuleConfiguration()).getExpressionTypingServices();
+        ExpressionTypingServices callResolverContext = new InjectorForMacros(project, analyzeExhaust.getModuleDescriptor()).getExpressionTypingServices();
 
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {

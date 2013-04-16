@@ -171,7 +171,7 @@ public class LazyImportScope implements JetScope {
                     packageDescriptor.getMemberScope(),
                     importer,
                     traceForImportResolve,
-                    resolveSession.getModuleConfiguration(),
+                    resolveSession.getRootModuleDescriptor(),
                     lookupMode);
         }
         finally {

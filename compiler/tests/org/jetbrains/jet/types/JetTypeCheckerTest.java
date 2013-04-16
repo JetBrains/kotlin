@@ -79,7 +79,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         builtIns = KotlinBuiltIns.getInstance();
 
-        InjectorForTests injector = new InjectorForTests(getProject());
+        InjectorForTests injector = new InjectorForTests(getProject(), JetTestUtils.createEmptyModule());
         descriptorResolver = injector.getDescriptorResolver();
         typeResolver = injector.getTypeResolver();
         expressionTypingServices = injector.getExpressionTypingServices();

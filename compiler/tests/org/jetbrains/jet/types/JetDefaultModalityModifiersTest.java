@@ -65,7 +65,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         private JetScope scope;
 
         public void setUp() throws Exception {
-            InjectorForTests injector = new InjectorForTests(getProject());
+            InjectorForTests injector = new InjectorForTests(getProject(), root);
             KotlinBuiltIns builtIns = injector.getKotlinBuiltIns();
             descriptorResolver = injector.getDescriptorResolver();
             scope = createScope(builtIns.getBuiltInsScope());

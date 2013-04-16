@@ -95,7 +95,7 @@ public class ReplInterpreter {
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
-        module.setModuleConfiguration(injector.getModuleConfiguration());
+        module.setModuleConfiguration(injector.getModuleDescriptor().getModuleConfiguration());
 
         List<URL> classpath = Lists.newArrayList();
 
@@ -225,7 +225,7 @@ public class ReplInterpreter {
             earierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassName()));
         }
 
-        BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), injector.getModuleConfiguration()).getBindingContext();
+        BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), module).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false),
                                                               bindingContext, Collections.singletonList(psiFile));
         generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassName, earierScripts,
