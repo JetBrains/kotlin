@@ -24,9 +24,11 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -44,11 +46,10 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.JetPsiFactory.createExpression;
 import static org.jetbrains.jet.lang.psi.JetPsiFactory.createSimpleName;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
 
 public class DelegatedPropertyUtils {
@@ -91,7 +92,10 @@ public class DelegatedPropertyUtils {
         }
 
         if (returnType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(returnType, propertyType)) {
-            //todo report error
+            Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, propertyDescriptor.getGetter());
+            assert call != null : "Call should exists for " + propertyDescriptor.getGetter();
+            trace.report(DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH
+                                 .on(delegateExpression, renderCall(call, trace.getBindingContext()), propertyDescriptor.getType(), returnType));
         }
     }
 
@@ -152,11 +156,41 @@ public class DelegatedPropertyUtils {
         OverloadResolutionResults<FunctionDescriptor> functionResults = context.resolveCallWithGivenName(call, fakeCalleeExpression, functionName);
 
         if (!functionResults.isSuccess()) {
-            //todo report errors
+            String expectedFunction = renderCall(call, trace.getBindingContext());
+            if (functionResults.isIncomplete()) {
+                context.trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
+            }
+            else if (functionResults.isSingleResult() ||
+                     functionResults.getResultCode() == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
+                context.trace.report(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
+                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+            }
+            else if (functionResults.isAmbiguity()) {
+                context.trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
+                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+            }
+            else {
+                context.trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
+            }
             return;
         }
 
         context.trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, functionResults.getResultingCall());
+    }
+
+    private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {
+        JetExpression calleeExpression = call.getCalleeExpression();
+        assert calleeExpression != null : "CalleeExpression should exists for fake call of convention method";
+        StringBuilder builder = new StringBuilder(calleeExpression.getText());
+        builder.append("(");
+        List<JetType> argumentTypes = Lists.newArrayList();
+        for (ValueArgument argument : call.getValueArguments()) {
+            argumentTypes.add(context.get(EXPRESSION_TYPE, argument.getArgumentExpression()));
+
+        }
+        builder.append(Renderers.RENDER_COLLECTION_OF_TYPES.render(argumentTypes));
+        builder.append(")");
+        return builder.toString();
     }
 
     private DelegatedPropertyUtils() {

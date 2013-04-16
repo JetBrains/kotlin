@@ -1918,14 +1918,44 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/delegatedPropertyOverridedInTrait.kt");
             }
             
+            @TestMetadata("delegatedPropertyOverridedInTraitTypeMismatch.kt")
+            public void testDelegatedPropertyOverridedInTraitTypeMismatch() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/delegatedPropertyOverridedInTraitTypeMismatch.kt");
+            }
+            
+            @TestMetadata("genericGetter.kt")
+            public void testGenericGetter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/genericGetter.kt");
+            }
+            
+            @TestMetadata("getterWithSubtype.kt")
+            public void testGetterWithSubtype() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/getterWithSubtype.kt");
+            }
+            
             @TestMetadata("inTrait.kt")
             public void testInTrait() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/inTrait.kt");
             }
             
+            @TestMetadata("incompleteTypeInference.kt")
+            public void testIncompleteTypeInference() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/incompleteTypeInference.kt");
+            }
+            
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");
+            }
+            
+            @TestMetadata("missedGetter.kt")
+            public void testMissedGetter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/missedGetter.kt");
+            }
+            
+            @TestMetadata("missedSetter.kt")
+            public void testMissedSetter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/missedSetter.kt");
             }
             
             @TestMetadata("propertyDefferedType.kt")
@@ -1953,9 +1983,74 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/redundantSetter.kt");
             }
             
+            @TestMetadata("setterThisTypeMismatch.kt")
+            public void testSetterThisTypeMismatch() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/setterThisTypeMismatch.kt");
+            }
+            
+            @TestMetadata("setterWithSupertype.kt")
+            public void testSetterWithSupertype() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/setterWithSupertype.kt");
+            }
+            
             @TestMetadata("thisInDelegate.kt")
             public void testThisInDelegate() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/thisInDelegate.kt");
+            }
+            
+            @TestMetadata("thisOfAnyType.kt")
+            public void testThisOfAnyType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/thisOfAnyType.kt");
+            }
+            
+            @TestMetadata("thisOfNothingNullableType.kt")
+            public void testThisOfNothingNullableType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/thisOfNothingNullableType.kt");
+            }
+            
+            @TestMetadata("thisOfNothingType.kt")
+            public void testThisOfNothingType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/thisOfNothingType.kt");
+            }
+            
+            @TestMetadata("twoGetMethods.kt")
+            public void testTwoGetMethods() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/twoGetMethods.kt");
+            }
+            
+            @TestMetadata("typeMismatchForGetReturnType.kt")
+            public void testTypeMismatchForGetReturnType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/typeMismatchForGetReturnType.kt");
+            }
+            
+            @TestMetadata("typeMismatchForGetWithGeneric.kt")
+            public void testTypeMismatchForGetWithGeneric() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/typeMismatchForGetWithGeneric.kt");
+            }
+            
+            @TestMetadata("typeMismatchForSetParameter.kt")
+            public void testTypeMismatchForSetParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/typeMismatchForSetParameter.kt");
+            }
+            
+            @TestMetadata("typeMismatchForThisGetParameter.kt")
+            public void testTypeMismatchForThisGetParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/typeMismatchForThisGetParameter.kt");
+            }
+            
+            @TestMetadata("wrongCountOfParametersInGet.kt")
+            public void testWrongCountOfParametersInGet() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/wrongCountOfParametersInGet.kt");
+            }
+            
+            @TestMetadata("wrongCountOfParametersInSet.kt")
+            public void testWrongCountOfParametersInSet() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/wrongCountOfParametersInSet.kt");
+            }
+            
+            @TestMetadata("wrongSetterReturnType.kt")
+            public void testWrongSetterReturnType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/wrongSetterReturnType.kt");
             }
             
         }

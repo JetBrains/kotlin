@@ -250,6 +250,12 @@ public class DefaultErrorMessages {
         MAP.put(ITERATOR_MISSING, "For-loop range must have an iterator() method");
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
+        MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", TO_STRING, RENDER_TYPE);
+        MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "Overload resolution ambiguity on method ''{0}'': {1}",  TO_STRING, AMBIGUOUS_CALLS);
+        MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}", TO_STRING,  AMBIGUOUS_CALLS);
+        MAP.put(DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH, "The ''{0}'' function of property delegate is expected to return ''{1}'', but returns ''{2}''",
+                TO_STRING, RENDER_TYPE, RENDER_TYPE);
+
         MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return jet.Int, but returns {0}", RENDER_TYPE);
         MAP.put(CALLEE_NOT_A_FUNCTION, "Expecting a function type, but found {0}", RENDER_TYPE);
 
