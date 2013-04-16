@@ -8,9 +8,9 @@ fun test() {
   if (p.public is Int) <!AUTOCAST_IMPOSSIBLE!>p.public<!> + 1
   if (p.<!INVISIBLE_MEMBER!>protected<!> is Int) <!AUTOCAST_IMPOSSIBLE!>p.<!INVISIBLE_MEMBER!>protected<!><!> + 1
   if (p.internal is Int) p.internal + 1
-  val i = test.Public()
-  if (i.public is Int) <!AUTOCAST_IMPOSSIBLE!>i.public<!> + 1
-  if (i.<!INVISIBLE_MEMBER!>protected<!> is Int) <!AUTOCAST_IMPOSSIBLE!>i.<!INVISIBLE_MEMBER!>protected<!><!> + 1
+  val i = test.Internal()
+  if (i.public is Int) i.public + 1
+  if (i.<!INVISIBLE_MEMBER!>protected<!> is Int) i.<!INVISIBLE_MEMBER!>protected<!> + 1
   if (i.internal is Int) i.internal + 1
 }
 
