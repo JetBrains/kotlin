@@ -88,9 +88,16 @@ public class KotlinBuiltIns {
     private static volatile boolean initializing;
     private static Throwable initializationFailed;
 
+    public enum InitializationMode {
+        // Multi-threaded mode is used in the IDE
+        MULTI_THREADED,
+        // Single-threaded mode is used in the compiler and IDE-independent tests
+        SINGLE_THREADED
+    }
+
     // This method must be called at least once per application run, on any project
     // before any type checking is run
-    public static synchronized void initialize(@NotNull Project project) {
+    public static synchronized void initialize(@NotNull Project project, @NotNull InitializationMode initializationMode) {
         if (instance == null) {
             if (initializationFailed != null) {
                 throw new RuntimeException(
@@ -102,7 +109,7 @@ public class KotlinBuiltIns {
             initializing = true;
             try {
                 instance = new KotlinBuiltIns(project);
-                instance.initialize();
+                instance.initialize(initializationMode == InitializationMode.MULTI_THREADED);
             }
             catch (Throwable e) {
                 initializationFailed = e;
@@ -191,7 +198,7 @@ public class KotlinBuiltIns {
         }
     }
 
-    private void initialize() {
+    private void initialize(boolean forceResolveAll) {
         anyType = getBuiltInTypeByClassName("Any");
         nullableAnyType = TypeUtils.makeNullable(anyType);
         nothingType = getBuiltInTypeByClassName("Nothing");
@@ -206,7 +213,9 @@ public class KotlinBuiltIns {
 
         nonPhysicalClasses = computeNonPhysicalClasses();
 
-        analyzer.forceResolveAll();
+        if (forceResolveAll) {
+            analyzer.forceResolveAll();
+        }
 
         AnalyzingUtils.throwExceptionOnErrors(analyzer.getBindingContext());
     }

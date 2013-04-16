@@ -30,7 +30,10 @@ public class BuiltInsInitializer {
         ProgressManager.getInstance().executeNonCancelableSection(new Runnable() {
             @Override
             public void run() {
-                KotlinBuiltIns.initialize(project);
+                // MULTI_THREADED is important not only because of threading as such: since built-ins rely on a project,
+                // if they are not fully initialized when a project is closed,
+                // they will be referencing invalid PSI upon a next request
+                KotlinBuiltIns.initialize(project, KotlinBuiltIns.InitializationMode.MULTI_THREADED);
             }
         });
     }

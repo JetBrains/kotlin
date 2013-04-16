@@ -59,7 +59,7 @@ public class Converter {
     private final Set<J2KConverterFlags> flags = Sets.newHashSet();
 
     public Converter(@NotNull Project project) {
-        KotlinBuiltIns.initialize(project);
+        KotlinBuiltIns.initialize(project, KotlinBuiltIns.InitializationMode.MULTI_THREADED);
     }
 
     public boolean addFlag(@NotNull J2KConverterFlags flag) {
