@@ -56,6 +56,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -1790,6 +1791,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
+    @Nullable
+    private SimpleFunctionDescriptor getOriginalIfSamAdapter(@NotNull CallableDescriptor fun) {
+        if (!(fun instanceof SimpleFunctionDescriptor)) {
+            return null;
+        }
+        SimpleFunctionDescriptor original = ((SimpleFunctionDescriptor) fun).getOriginal();
+        return bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
+    }
+
     private StackValue invokeSamConstructor(
             JetCallExpression expression,
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
@@ -1967,7 +1977,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             callableMethod = typeMapper.asCallableMethod(invoke);
         }
         else {
-            callableMethod = typeMapper.mapToCallableMethod(fd, superCall,
+            SimpleFunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);
+            callableMethod = typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall,
                                                             isCallInsideSameClassAsDeclared(fd, context),
                                                             isCallInsideSameModuleAsDeclared(fd, context),
                                                             OwnerKind.IMPLEMENTATION);
@@ -2214,12 +2225,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         int mask = 0;
 
+        SimpleFunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);
+
         for (ValueParameterDescriptor valueParameter : fd.getValueParameters()) {
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
             if (resolvedValueArgument instanceof ExpressionValueArgument) {
-                ExpressionValueArgument valueArgument = (ExpressionValueArgument) resolvedValueArgument;
-                //noinspection ConstantConditions
-                gen(valueArgument.getValueArgument().getArgumentExpression(), valueParameterTypes.get(valueParameter.getIndex()));
+                ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
+                assert valueArgument != null;
+                JetExpression argumentExpression = valueArgument.getArgumentExpression();
+                assert argumentExpression != null : valueArgument.asElement().getText();
+
+                if (originalOfSamAdapter != null) {
+                    JetType samAdapterType = originalOfSamAdapter.getValueParameters().get(valueParameter.getIndex()).getType();
+                    if (SingleAbstractMethodUtils.isSamType(samAdapterType)) {
+                        ClassDescriptor samInterface = (ClassDescriptor) samAdapterType.getConstructor().getDeclarationDescriptor();
+
+                        // TODO support not literals
+                        genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
+                        continue;
+                    }
+                }
+                gen(argumentExpression, valueParameterTypes.get(valueParameter.getIndex()));
             }
             else if (resolvedValueArgument instanceof DefaultValueArgument) {
                 Type type = valueParameterTypes.get(valueParameter.getIndex());

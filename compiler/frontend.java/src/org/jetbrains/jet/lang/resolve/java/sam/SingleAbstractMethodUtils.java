@@ -134,7 +134,7 @@ public class SingleAbstractMethodUtils {
         return result;
     }
 
-    private static boolean isSamType(@NotNull JetType type) {
+    public static boolean isSamType(@NotNull JetType type) {
         ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
         return classifier instanceof ClassDescriptorFromJvmBytecode &&
                ((ClassDescriptorFromJvmBytecode) classifier).isSamInterface() &&
