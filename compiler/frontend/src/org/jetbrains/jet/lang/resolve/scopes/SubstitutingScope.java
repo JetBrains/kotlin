@@ -69,7 +69,7 @@ public class SubstitutingScope implements JetScope {
         if (substitutor.isEmpty()) return descriptors;
         if (descriptors.isEmpty()) return descriptors;
 
-        Set<D> result = Sets.newHashSet();
+        Set<D> result = Sets.newHashSetWithExpectedSize(descriptors.size());
         for (D descriptor : descriptors) {
             D substitute = substitute(descriptor);
             if (substitute != null) {
