@@ -27,31 +27,36 @@ public class BranchedUnfoldingUtils {
     private BranchedUnfoldingUtils() {
     }
 
-    private static boolean checkUnfoldableAssignment(@NotNull JetExpression expression) {
-        if (!JetPsiUtil.isAssignment(expression)) return false;
-
-        JetBinaryExpression assignment = (JetBinaryExpression)expression;
-        return assignment.getLeft() instanceof JetSimpleNameExpression && JetPsiUtil.isBranchedExpression(assignment.getRight());
-    }
-
-    private static boolean checkUnfoldableReturn(@NotNull JetExpression expression) {
-        if (!(expression instanceof JetReturnExpression)) return false;
-
-        JetReturnExpression returnExpression = (JetReturnExpression)expression;
-        return JetPsiUtil.isBranchedExpression(returnExpression.getReturnedExpression());
-    }
-
-    public static boolean checkUnfoldableExpression(@NotNull JetExpression root) {
-        return checkUnfoldableAssignment(root) || checkUnfoldableReturn(root);
-    }
-
     private static JetExpression getOutermostLastBlockElement(@Nullable JetExpression expression) {
         return (JetExpression) JetPsiUtil.getOutermostLastBlockElement(expression, JetPsiUtil.ANY_JET_ELEMENT);
     }
 
+    @Nullable
+    public static UnfoldableKind getUnfoldableExpressionKind(@Nullable JetExpression root) {
+        if (root == null) return null;
+
+        if (JetPsiUtil.isAssignment(root)) {
+            JetBinaryExpression assignment = (JetBinaryExpression)root;
+            JetExpression lhs = assignment.getLeft();
+            JetExpression rhs = assignment.getRight();
+
+            if (!(lhs instanceof JetSimpleNameExpression)) return null;
+
+            if (rhs instanceof JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF;
+            if (rhs instanceof JetWhenExpression) return UnfoldableKind.ASSIGNMENT_TO_WHEN;
+        } else if (root instanceof JetReturnExpression) {
+            JetExpression resultExpr = ((JetReturnExpression)root).getReturnedExpression();
+
+            if (resultExpr instanceof JetIfExpression) return UnfoldableKind.RETURN_TO_IF;
+            if (resultExpr instanceof JetWhenExpression) return UnfoldableKind.RETURN_TO_WHEN;
+        }
+
+        return null;
+    }
+
     public static final String UNFOLD_WITHOUT_CHECK = "Expression must be checked before unfolding";
 
-    private static void unfoldAssignmentToIf(@NotNull JetBinaryExpression assignment) {
+    public static void unfoldAssignmentToIf(@NotNull JetBinaryExpression assignment) {
         Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
         String lhsText = assignment.getLeft().getText();
@@ -71,7 +76,7 @@ public class BranchedUnfoldingUtils {
         elseExpr.replace(JetPsiFactory.createBinaryExpression(project, JetPsiFactory.createExpression(project, lhsText), op, elseExpr));
     }
 
-    private static void unfoldAssignmentToWhen(@NotNull JetBinaryExpression assignment) {
+    public static void unfoldAssignmentToWhen(@NotNull JetBinaryExpression assignment) {
         Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
         JetExpression lhs = (JetExpression)assignment.getLeft().copy();
@@ -90,7 +95,7 @@ public class BranchedUnfoldingUtils {
         }
     }
 
-    private static void unfoldReturnToIf(@NotNull JetReturnExpression returnExpression) {
+    public static void unfoldReturnToIf(@NotNull JetReturnExpression returnExpression) {
         Project project = returnExpression.getProject();
         JetIfExpression ifExpression = (JetIfExpression)returnExpression.getReturnedExpression();
 
@@ -108,7 +113,7 @@ public class BranchedUnfoldingUtils {
         elseExpr.replace(JetPsiFactory.createReturn(project, elseExpr));
     }
 
-    private static void unfoldReturnToWhen(@NotNull JetReturnExpression returnExpression) {
+    public static void unfoldReturnToWhen(@NotNull JetReturnExpression returnExpression) {
         Project project = returnExpression.getProject();
         JetWhenExpression whenExpression = (JetWhenExpression)returnExpression.getReturnedExpression();
 
@@ -124,29 +129,4 @@ public class BranchedUnfoldingUtils {
             currExpr.replace(JetPsiFactory.createReturn(project, currExpr));
         }
     }
-
-    public static void unfoldExpression(@NotNull JetExpression root) {
-        if (checkUnfoldableAssignment(root)) {
-            JetBinaryExpression assignment = (JetBinaryExpression)root;
-            if (assignment.getRight() instanceof JetIfExpression) {
-                unfoldAssignmentToIf(assignment);
-            } else if (assignment.getRight() instanceof JetWhenExpression) {
-                unfoldAssignmentToWhen(assignment);
-            }
-        } else if (checkUnfoldableReturn(root)) {
-            JetReturnExpression returnExpression = (JetReturnExpression)root;
-            if (returnExpression.getReturnedExpression() instanceof JetIfExpression) {
-                unfoldReturnToIf(returnExpression);
-            } else if (returnExpression.getReturnedExpression() instanceof JetWhenExpression) {
-                unfoldReturnToWhen(returnExpression);
-            }
-        }
-    }
-
-    public static final Predicate<PsiElement> UNFOLDABLE_EXPRESSION = new Predicate<PsiElement>() {
-        @Override
-        public boolean apply(@Nullable PsiElement input) {
-            return (input instanceof JetExpression) && checkUnfoldableExpression((JetExpression)input);
-        }
-    };
 }

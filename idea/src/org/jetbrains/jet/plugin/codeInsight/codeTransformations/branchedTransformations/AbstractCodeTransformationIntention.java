@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations;
 
+import com.google.common.base.Predicate;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -25,25 +26,38 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
 
-public class UnfoldBranchedExpressionIntention extends BaseIntentionAction {
-    public UnfoldBranchedExpressionIntention() {
-        setText(JetBundle.message("unfold.branched.expression"));
+public abstract class AbstractCodeTransformationIntention<T extends Transformer> extends BaseIntentionAction {
+    private final T transformer;
+    private final Predicate<PsiElement> filter;
+
+    protected AbstractCodeTransformationIntention(@NotNull T transformer, @NotNull Predicate<PsiElement> filter) {
+        this.transformer = transformer;
+        this.filter = filter;
+        setText(JetBundle.message(transformer.getKey()));
+    }
+
+    @Nullable
+    private PsiElement getTarget(@NotNull Editor editor, @NotNull PsiFile file) {
+        PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
+        return JetPsiUtil.getParentByTypeAndPredicate(element, JetElement.class, filter, false);
+    }
+
+    protected final T getTransformer() {
+        return transformer;
+    }
+
+    protected final Predicate<PsiElement> getFilter() {
+        return filter;
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("unfold.branched.expression.family");
-    }
-
-    @Nullable
-    private static JetExpression getTarget(@NotNull Editor editor, @NotNull PsiFile file) {
-        PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-        return (JetExpression)JetPsiUtil.getParentByTypeAndPredicate(element, JetElement.class, BranchedUnfoldingUtils.UNFOLDABLE_EXPRESSION, false);
+        return JetBundle.message(transformer.getKey() + ".family");
     }
 
     @Override
@@ -53,10 +67,10 @@ public class UnfoldBranchedExpressionIntention extends BaseIntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) throws IncorrectOperationException {
-        JetExpression target = getTarget(editor, file);
+        PsiElement target = getTarget(editor, file);
 
-        assert target != null;
+        assert target != null : "Intention is not applicable";
 
-        BranchedUnfoldingUtils.unfoldExpression(target);
+        transformer.transform(target);
     }
 }

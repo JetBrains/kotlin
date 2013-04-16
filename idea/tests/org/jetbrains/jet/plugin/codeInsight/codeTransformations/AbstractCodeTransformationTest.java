@@ -21,18 +21,45 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.FoldBranchedExpressionIntention;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.UnfoldBranchedExpressionIntention;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.*;
 
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
-    public void doTestBranchedFolding(@NotNull String path) throws Exception {
-        doTest(path, new FoldBranchedExpressionIntention());
+    public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
+        doTest(path, new FoldIfToAssignmentIntention());
     }
 
-    public void doTestBranchedUnfolding(@NotNull String path) throws Exception {
-        doTest(path, new UnfoldBranchedExpressionIntention());
+    public void doTestFoldIfToReturn(@NotNull String path) throws Exception {
+        doTest(path, new FoldIfToReturnIntention());
+    }
+
+    public void doTestFoldIfToReturnAsymmetrically(@NotNull String path) throws Exception {
+        doTest(path, new FoldIfToReturnAsymmetricallyIntention());
+    }
+
+    public void doTestFoldWhenToAssignment(@NotNull String path) throws Exception {
+        doTest(path, new FoldWhenToAssignmentIntention());
+    }
+
+    public void doTestFoldWhenToReturn(@NotNull String path) throws Exception {
+        doTest(path, new FoldWhenToReturnIntention());
+    }
+
+    public void doTestUnfoldAssignmentToIf(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldAssignmentToIfIntention());
+    }
+
+    public void doTestUnfoldAssignmentToWhen(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldAssignmentToWhenIntention());
+    }
+
+    public void doTestUnfoldReturnToIf(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldReturnToIfIntention());
+    }
+
+    public void doTestUnfoldReturnToWhen(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldAssignmentToIfIntention());
     }
 
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {

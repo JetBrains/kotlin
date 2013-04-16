@@ -1,7 +1,0 @@
-res = if (n == 1) {
-    println("***")
-    "one"
-} else {
-    println("***")
-    "two"
-}

@@ -292,12 +292,47 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.FoldBranchedExpressionIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldIfToAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.UnfoldBranchedExpressionIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldIfToReturnIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldWhenToAssignmentIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldWhenToReturnIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldAssignmentToIfIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldAssignmentToWhenIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldReturnToIfIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldReturnToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

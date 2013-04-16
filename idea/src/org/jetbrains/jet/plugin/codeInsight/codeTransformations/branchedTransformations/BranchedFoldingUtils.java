@@ -138,26 +138,27 @@ public class BranchedFoldingUtils {
         return (nextElement instanceof JetExpression) && checkAndGetFoldableBranchedReturn((JetExpression)nextElement) != null;
     }
 
-    public static boolean checkFoldableExpression(@Nullable JetExpression root) {
+    @Nullable
+    public static FoldableKind getFoldableExpressionKind(@Nullable JetExpression root) {
         if (root instanceof JetIfExpression) {
             JetIfExpression ifExpression = (JetIfExpression)root;
-            return checkFoldableIfExpressionWithAssignments(ifExpression) ||
-                   checkFoldableIfExpressionWithReturns(ifExpression) ||
-                   checkFoldableIfExpressionWithAsymmetricReturns(ifExpression) ;
-        }
 
-        if (root instanceof JetWhenExpression) {
+            if (checkFoldableIfExpressionWithAssignments(ifExpression)) return FoldableKind.IF_TO_ASSIGNMENT;
+            if (checkFoldableIfExpressionWithReturns(ifExpression)) return FoldableKind.IF_TO_RETURN;
+            if (checkFoldableIfExpressionWithAsymmetricReturns(ifExpression)) return FoldableKind.IF_TO_RETURN_ASYMMETRICALLY;
+        } else if (root instanceof JetWhenExpression) {
             JetWhenExpression whenExpression = (JetWhenExpression)root;
-            return checkFoldableWhenExpressionWithAssignments(whenExpression) ||
-                   checkFoldableWhenExpressionWithReturns(whenExpression);
+
+            if (checkFoldableWhenExpressionWithAssignments(whenExpression)) return FoldableKind.WHEN_TO_ASSIGNMENT;
+            if (checkFoldableWhenExpressionWithReturns(whenExpression)) return FoldableKind.WHEN_TO_RETURN;
         }
 
-        return false;
+        return null;
     }
 
     public static final String FOLD_WITHOUT_CHECK = "Expression must be checked before folding";
 
-    private static void foldIfExpressionWithAssignments(JetIfExpression ifExpression) {
+    public static void foldIfExpressionWithAssignments(JetIfExpression ifExpression) {
         Project project = ifExpression.getProject();
 
         JetBinaryExpression thenAssignment = checkAndGetFoldableBranchedAssignment(ifExpression.getThen());
@@ -189,7 +190,7 @@ public class BranchedFoldingUtils {
         elseAssignment.replace(elseRhs);
     }
 
-    private static void foldIfExpressionWithReturns(JetIfExpression ifExpression) {
+    public static void foldIfExpressionWithReturns(JetIfExpression ifExpression) {
         Project project = ifExpression.getProject();
 
         JetReturnExpression returnExpr = (JetReturnExpression)ifExpression.replace(JetPsiFactory.createReturn(project, ifExpression));
@@ -213,7 +214,7 @@ public class BranchedFoldingUtils {
         elseReturn.replace(elseExpr);
     }
 
-    private static void foldIfExpressionWithAsymmetricReturns(JetIfExpression ifExpression) {
+    public static void foldIfExpressionWithAsymmetricReturns(JetIfExpression ifExpression) {
         Project project = ifExpression.getProject();
 
         JetExpression condition = ifExpression.getCondition();
@@ -254,7 +255,7 @@ public class BranchedFoldingUtils {
         elseReturn.replace(elseExpr);
     }
 
-    private static void foldWhenExpressionWithAssignments(JetWhenExpression whenExpression) {
+    public static void foldWhenExpressionWithAssignments(JetWhenExpression whenExpression) {
         Project project = whenExpression.getProject();
 
         assert !whenExpression.getEntries().isEmpty() : FOLD_WITHOUT_CHECK;
@@ -285,7 +286,7 @@ public class BranchedFoldingUtils {
         }
     }
 
-    private static void foldWhenExpressionWithReturns(JetWhenExpression whenExpression) {
+    public static void foldWhenExpressionWithReturns(JetWhenExpression whenExpression) {
         Project project = whenExpression.getProject();
 
         assert !whenExpression.getEntries().isEmpty() : FOLD_WITHOUT_CHECK;
@@ -307,33 +308,4 @@ public class BranchedFoldingUtils {
             currReturn.replace(currExpr);
         }
     }
-
-    public static void foldExpression(@Nullable JetExpression root) {
-        if (root instanceof JetIfExpression) {
-            JetIfExpression ifExpression = (JetIfExpression)root;
-            if (checkFoldableIfExpressionWithAssignments(ifExpression)) {
-                foldIfExpressionWithAssignments(ifExpression);
-            } else if (checkFoldableIfExpressionWithReturns(ifExpression)) {
-                foldIfExpressionWithReturns(ifExpression);
-            } else if (checkFoldableIfExpressionWithAsymmetricReturns(ifExpression)) {
-                foldIfExpressionWithAsymmetricReturns(ifExpression);
-            }
-        }
-
-        if (root instanceof JetWhenExpression) {
-            JetWhenExpression whenExpression = (JetWhenExpression)root;
-            if (checkFoldableWhenExpressionWithAssignments(whenExpression)) {
-                foldWhenExpressionWithAssignments(whenExpression);
-            } else if (checkFoldableWhenExpressionWithReturns(whenExpression)) {
-                foldWhenExpressionWithReturns(whenExpression);
-            }
-        }
-    }
-
-    public static final Predicate<PsiElement> FOLDABLE_EXPRESSION = new Predicate<PsiElement>() {
-        @Override
-        public boolean apply(@Nullable PsiElement input) {
-            return (input instanceof JetExpression) && checkFoldableExpression((JetExpression)input);
-        }
-    };
 }

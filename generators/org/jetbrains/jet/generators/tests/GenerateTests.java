@@ -305,8 +305,15 @@ public class GenerateTests {
                 "idea/tests/",
                 "CodeTransformationsTestGenerated",
                 AbstractCodeTransformationTest.class,
-                testModel("idea/testData/codeInsight/codeTransformations/ifStatementWithAssignmentsToExpression", "doTestIfStatementWithAssignmentsToExpression"),
-                testModel("idea/testData/codeInsight/codeTransformations/assignmentWithIfExpressionToStatement", "doTestAssignmentWithIfExpressionToStatement")
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToAssignment", "doTestFoldIfToAssignment"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturn", "doTestFoldIfToReturn"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturnAsymmetrically", "doTestFoldIfToReturnAsymmetrically"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToAssignment", "doTestFoldWhenToAssignment"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToReturn", "doTestFoldWhenToReturn"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen")
         );
 
         generateTest(
