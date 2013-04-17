@@ -17,8 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -29,34 +27,27 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Set;
 
 public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = ImmutableList.of(new ImportPath("java.lang.*"));
+    public static final List<ImportPath> ALL_JAVA_IMPORTS = ImmutableList.<ImportPath>builder()
+            .addAll(DEFAULT_JAVA_IMPORTS)
+            .addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS)
+            .build();
 
     private JavaSemanticServices javaSemanticServices;
-    private ModuleConfiguration delegateConfiguration;
 
     @Inject
     public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
         this.javaSemanticServices = javaSemanticServices;
     }
 
-    @PostConstruct
-    public void init() {
-        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration();
-    }
-
     @Override
     public List<ImportPath> getDefaultImports() {
-        Set<ImportPath> imports = Sets.newLinkedHashSet(DEFAULT_JAVA_IMPORTS);
-        imports.addAll(delegateConfiguration.getDefaultImports());
-
-        return Lists.newArrayList(imports);
+        return ALL_JAVA_IMPORTS;
     }
 
     @Override
@@ -65,7 +56,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
         if (javaPackageScope != null) {
             namespaceMemberScope.importScope(javaPackageScope);
         }
-        delegateConfiguration.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+        DefaultModuleConfiguration.INSTANCE.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
     }
 
     @NotNull

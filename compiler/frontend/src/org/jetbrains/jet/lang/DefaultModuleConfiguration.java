@@ -33,8 +33,10 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
             new ImportPath("kotlin.io.*"),
             new ImportPath("jet.*"));
 
-    public static DefaultModuleConfiguration createStandardConfiguration() {
-        return new DefaultModuleConfiguration();
+    public static final ModuleConfiguration INSTANCE = new DefaultModuleConfiguration();
+
+    public static ModuleConfiguration createStandardConfiguration() {
+        return INSTANCE;
     }
 
     private DefaultModuleConfiguration() {
