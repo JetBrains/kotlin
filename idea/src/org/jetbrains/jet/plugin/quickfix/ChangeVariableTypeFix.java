@@ -85,13 +85,13 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForPropertyTypeMismatchOnOverride() {
+    public static JetIntentionActionFactory createFactoryForPropertyOrReturnTypeMismatchOnOverride() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetProperty property = QuickFixUtil.getParentElementOfType(diagnostic, JetProperty.class);
-                assert property != null : "PROPERTY_TYPE_MISMATCH_ON_OVERRIDE reported on element that is not within any property";
+                if (property == null) return null;
                 BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(property);
                 JetType type = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
                 return type == null ? null : new ChangeVariableTypeFix(property, type);

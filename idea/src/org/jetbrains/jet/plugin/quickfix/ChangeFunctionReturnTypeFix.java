@@ -164,7 +164,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
-                assert function != null : "RETURN_TYPE_MISMATCH_ON_OVERRIDE reported on element that is not within any function";
+                if (function == null) return null;
                 BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(function);
                 JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, function);
                 return matchingReturnType == null ? null : new ChangeFunctionReturnTypeFix(function, matchingReturnType);
