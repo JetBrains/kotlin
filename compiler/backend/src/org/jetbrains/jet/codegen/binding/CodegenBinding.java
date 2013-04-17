@@ -236,7 +236,8 @@ public class CodegenBinding {
         registerClassNameForScript(bindingTrace, descriptor, className);
     }
 
-    @NotNull public static Collection<JetFile> allFilesInNamespaces(BindingContext bindingContext, Collection<JetFile> files) {
+    @NotNull
+    public static Collection<JetFile> allFilesInNamespaces(BindingContext bindingContext, Collection<JetFile> files) {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 
@@ -273,12 +274,6 @@ public class CodegenBinding {
         });
 
         return sortedAnswer;
-    }
-
-    public static boolean isMultiFileNamespace(BindingContext bindingContext, FqName fqName) {
-        NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
-        Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
-        return jetFiles != null && jetFiles.size() > 1;
     }
 
     public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {
