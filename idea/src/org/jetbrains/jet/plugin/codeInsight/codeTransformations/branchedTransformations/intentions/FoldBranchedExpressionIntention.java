@@ -37,4 +37,34 @@ public abstract class FoldBranchedExpressionIntention extends AbstractCodeTransf
                 }
         );
     }
+
+    public static class FoldIfToAssignmentIntention extends FoldBranchedExpressionIntention {
+        public FoldIfToAssignmentIntention() {
+            super(FoldableKind.IF_TO_ASSIGNMENT);
+        }
+    }
+
+    public static class FoldIfToReturnAsymmetricallyIntention extends FoldBranchedExpressionIntention {
+        public FoldIfToReturnAsymmetricallyIntention() {
+            super(FoldableKind.IF_TO_RETURN_ASYMMETRICALLY);
+        }
+    }
+
+    public static class FoldIfToReturnIntention extends FoldBranchedExpressionIntention {
+        public FoldIfToReturnIntention() {
+            super(FoldableKind.IF_TO_RETURN);
+        }
+    }
+
+    public static class FoldWhenToAssignmentIntention extends FoldBranchedExpressionIntention {
+        public FoldWhenToAssignmentIntention() {
+            super(FoldableKind.WHEN_TO_ASSIGNMENT);
+        }
+    }
+
+    public static class FoldWhenToReturnIntention extends FoldBranchedExpressionIntention {
+        public FoldWhenToReturnIntention() {
+            super(FoldableKind.WHEN_TO_RETURN);
+        }
+    }
 }

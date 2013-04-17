@@ -35,4 +35,28 @@ public abstract class UnfoldBranchedExpressionIntention extends AbstractCodeTran
                 }
         );
     }
+
+    public static class UnfoldAssignmentToIfIntention extends UnfoldBranchedExpressionIntention {
+        public UnfoldAssignmentToIfIntention() {
+            super(UnfoldableKind.ASSIGNMENT_TO_IF);
+        }
+    }
+
+    public static class UnfoldAssignmentToWhenIntention extends UnfoldBranchedExpressionIntention {
+        public UnfoldAssignmentToWhenIntention() {
+            super(UnfoldableKind.ASSIGNMENT_TO_WHEN);
+        }
+    }
+
+    public static class UnfoldReturnToIfIntention extends UnfoldBranchedExpressionIntention {
+        public UnfoldReturnToIfIntention() {
+            super(UnfoldableKind.RETURN_TO_IF);
+        }
+    }
+
+    public static class UnfoldReturnToWhenIntention extends UnfoldBranchedExpressionIntention {
+        public UnfoldReturnToWhenIntention() {
+            super(UnfoldableKind.RETURN_TO_WHEN);
+        }
+    }
 }

@@ -46,14 +46,6 @@ public abstract class AbstractCodeTransformationIntention<T extends Transformer>
         return JetPsiUtil.getParentByTypeAndPredicate(element, JetElement.class, filter, false);
     }
 
-    protected final T getTransformer() {
-        return transformer;
-    }
-
-    protected final Predicate<PsiElement> getFilter() {
-        return filter;
-    }
-
     @NotNull
     @Override
     public String getFamilyName() {

@@ -292,47 +292,47 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldIfToAssignmentIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldBranchedExpressionIntention$FoldIfToAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldBranchedExpressionIntention$FoldIfToReturnAsymmetricallyIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldIfToReturnIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldBranchedExpressionIntention$FoldIfToReturnIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldWhenToAssignmentIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldBranchedExpressionIntention$FoldWhenToAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldWhenToReturnIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.FoldBranchedExpressionIntention$FoldWhenToReturnIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldAssignmentToIfIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldBranchedExpressionIntention$UnfoldAssignmentToIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldAssignmentToWhenIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldBranchedExpressionIntention$UnfoldAssignmentToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldReturnToIfIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldBranchedExpressionIntention$UnfoldReturnToIfIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldReturnToWhenIntention</className>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldBranchedExpressionIntention$UnfoldReturnToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 public interface Transformer {
-    public @NotNull String getKey();
+    @NotNull
+    public String getKey();
     public void transform(@NotNull PsiElement element);
 }
