@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -93,11 +92,5 @@ public class JsConfiguration implements ModuleConfiguration {
             }
         }
         return false;
-    }
-
-    @NotNull
-    @Override
-    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-        return PlatformToKotlinClassMap.EMPTY;
     }
 }

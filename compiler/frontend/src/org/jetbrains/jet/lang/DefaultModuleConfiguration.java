@@ -48,10 +48,4 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
             namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
         }
     }
-
-    @NotNull
-    @Override
-    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-        return PlatformToKotlinClassMap.EMPTY;
-    }
 }

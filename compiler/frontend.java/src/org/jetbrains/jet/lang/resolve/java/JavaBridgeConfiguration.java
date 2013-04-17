@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -52,11 +51,5 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
             namespaceMemberScope.importScope(javaPackageScope);
         }
         DefaultModuleConfiguration.INSTANCE.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
-    }
-
-    @NotNull
-    @Override
-    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-        return JavaToKotlinClassMap.getInstance();
     }
 }

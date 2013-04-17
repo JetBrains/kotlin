@@ -28,12 +28,6 @@ public interface ModuleConfiguration {
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         }
 
-        @NotNull
-        @Override
-        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-            return PlatformToKotlinClassMap.EMPTY;
-        }
-
         @Override
         public String toString() {
             return "EMPTY";
@@ -45,7 +39,4 @@ public interface ModuleConfiguration {
      * Java package with a Kotlin one
      */
     void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
-
-    @NotNull
-    PlatformToKotlinClassMap getPlatformToKotlinClassMap();
 }

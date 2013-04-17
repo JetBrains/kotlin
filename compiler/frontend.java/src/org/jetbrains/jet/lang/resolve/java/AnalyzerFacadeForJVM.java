@@ -27,7 +27,6 @@ import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -114,12 +113,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     assert javaPackageScope != null;
                     namespaceMemberScope.importScope(javaPackageScope);
                 }
-            }
-
-            @NotNull
-            @Override
-            public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-                return JavaToKotlinClassMap.getInstance();
             }
         };
         javaModule.setModuleConfiguration(moduleConfiguration);
