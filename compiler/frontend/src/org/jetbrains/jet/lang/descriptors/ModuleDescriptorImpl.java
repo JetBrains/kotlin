@@ -74,6 +74,13 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements C
         return moduleConfiguration;
     }
 
+    @Inject
+    public ModuleDescriptorImpl setModuleConfiguration(@NotNull ModuleConfiguration moduleConfiguration) {
+        assert this.moduleConfiguration == null : "Trying to set module configuration twice for " + this;
+        this.moduleConfiguration = moduleConfiguration;
+        return this;
+    }
+
     @NotNull
     @Override
     public List<ImportPath> getDefaultImports() {
@@ -84,12 +91,6 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements C
     @Override
     public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
         return platformToKotlinClassMap;
-    }
-
-    @Inject
-    public ModuleDescriptorImpl setModuleConfiguration(@NotNull ModuleConfiguration moduleConfiguration) {
-        this.moduleConfiguration = moduleConfiguration;
-        return this;
     }
 
     public NamespaceDescriptorImpl getRootNamespaceDescriptorImpl() {
