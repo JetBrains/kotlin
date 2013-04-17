@@ -61,11 +61,11 @@ public class BranchedFoldingUtils {
         }
     };
 
-    private static JetBinaryExpression checkAndGetFoldableBranchedAssignment(JetExpression branch) {
+    private static JetBinaryExpression getFoldableBranchedAssignment(JetExpression branch) {
         return (JetBinaryExpression)JetPsiUtil.getOutermostLastBlockElement(branch, CHECK_ASSIGNMENT);
     }
 
-    private static JetReturnExpression checkAndGetFoldableBranchedReturn(JetExpression branch) {
+    private static JetReturnExpression getFoldableBranchedReturn(JetExpression branch) {
         return (JetReturnExpression)JetPsiUtil.getOutermostLastBlockElement(branch, CHECK_RETURN);
     }
 
@@ -77,8 +77,8 @@ public class BranchedFoldingUtils {
         JetExpression thenBranch = ifExpression.getThen();
         JetExpression elseBranch = ifExpression.getElse();
 
-        JetBinaryExpression thenAssignment = checkAndGetFoldableBranchedAssignment(thenBranch);
-        JetBinaryExpression elseAssignment = checkAndGetFoldableBranchedAssignment(elseBranch);
+        JetBinaryExpression thenAssignment = getFoldableBranchedAssignment(thenBranch);
+        JetBinaryExpression elseAssignment = getFoldableBranchedAssignment(elseBranch);
 
         if (thenAssignment == null || elseAssignment == null) return false;
 
@@ -94,7 +94,7 @@ public class BranchedFoldingUtils {
 
         List<JetBinaryExpression> assignments = new ArrayList<JetBinaryExpression>();
         for (JetWhenEntry entry : entries) {
-            JetBinaryExpression assignment = checkAndGetFoldableBranchedAssignment(entry.getExpression());
+            JetBinaryExpression assignment = getFoldableBranchedAssignment(entry.getExpression());
             if (assignment == null) return false;
             assignments.add(assignment);
         }
@@ -110,8 +110,8 @@ public class BranchedFoldingUtils {
     }
 
     private static boolean checkFoldableIfExpressionWithReturns(JetIfExpression ifExpression) {
-        return checkAndGetFoldableBranchedReturn(ifExpression.getThen()) != null &&
-               checkAndGetFoldableBranchedReturn(ifExpression.getElse()) != null;
+        return getFoldableBranchedReturn(ifExpression.getThen()) != null &&
+               getFoldableBranchedReturn(ifExpression.getElse()) != null;
     }
 
     private static boolean checkFoldableWhenExpressionWithReturns(JetWhenExpression whenExpression) {
@@ -122,20 +122,20 @@ public class BranchedFoldingUtils {
         if (entries.isEmpty()) return false;
 
         for (JetWhenEntry entry : entries) {
-            if (checkAndGetFoldableBranchedReturn(entry.getExpression()) == null) return false;
+            if (getFoldableBranchedReturn(entry.getExpression()) == null) return false;
         }
 
         return true;
     }
 
     private static boolean checkFoldableIfExpressionWithAsymmetricReturns(JetIfExpression ifExpression) {
-        if (checkAndGetFoldableBranchedReturn(ifExpression.getThen()) == null ||
+        if (getFoldableBranchedReturn(ifExpression.getThen()) == null ||
             ifExpression.getElse() != null) {
             return false;
         }
 
         PsiElement nextElement = JetPsiUtil.skipTrailingWhitespacesAndComments(ifExpression);
-        return (nextElement instanceof JetExpression) && checkAndGetFoldableBranchedReturn((JetExpression)nextElement) != null;
+        return (nextElement instanceof JetExpression) && getFoldableBranchedReturn((JetExpression) nextElement) != null;
     }
 
     @Nullable
@@ -161,21 +161,20 @@ public class BranchedFoldingUtils {
     public static void foldIfExpressionWithAssignments(JetIfExpression ifExpression) {
         Project project = ifExpression.getProject();
 
-        JetBinaryExpression thenAssignment = checkAndGetFoldableBranchedAssignment(ifExpression.getThen());
+        JetBinaryExpression thenAssignment = getFoldableBranchedAssignment(ifExpression.getThen());
 
         assert thenAssignment != null : FOLD_WITHOUT_CHECK;
 
         String op = thenAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) thenAssignment.getLeft();
 
-        JetBinaryExpression assignment =
-                (JetBinaryExpression)ifExpression.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, ifExpression));
-        ifExpression = (JetIfExpression)assignment.getRight();
+        JetBinaryExpression assignment = JetPsiFactory.createBinaryExpression(project, lhs, op, ifExpression);
+        JetIfExpression newIfExpression = (JetIfExpression)assignment.getRight();
 
-        assert ifExpression != null : FOLD_WITHOUT_CHECK;
+        assert newIfExpression != null : FOLD_WITHOUT_CHECK;
 
-        thenAssignment = checkAndGetFoldableBranchedAssignment(ifExpression.getThen());
-        JetBinaryExpression elseAssignment = checkAndGetFoldableBranchedAssignment(ifExpression.getElse());
+        thenAssignment = getFoldableBranchedAssignment(newIfExpression.getThen());
+        JetBinaryExpression elseAssignment = getFoldableBranchedAssignment(newIfExpression.getElse());
 
         assert thenAssignment != null : FOLD_WITHOUT_CHECK;
         assert elseAssignment != null : FOLD_WITHOUT_CHECK;
@@ -188,18 +187,20 @@ public class BranchedFoldingUtils {
 
         thenAssignment.replace(thenRhs);
         elseAssignment.replace(elseRhs);
+
+        ifExpression.replace(assignment);
     }
 
     public static void foldIfExpressionWithReturns(JetIfExpression ifExpression) {
         Project project = ifExpression.getProject();
 
-        JetReturnExpression returnExpr = (JetReturnExpression)ifExpression.replace(JetPsiFactory.createReturn(project, ifExpression));
-        ifExpression = (JetIfExpression)returnExpr.getReturnedExpression();
+        JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, ifExpression);
+        JetIfExpression newIfExpression = (JetIfExpression)newReturnExpression.getReturnedExpression();
 
-        assert ifExpression != null : FOLD_WITHOUT_CHECK;
+        assert newIfExpression != null;
 
-        JetReturnExpression thenReturn = checkAndGetFoldableBranchedReturn(ifExpression.getThen());
-        JetReturnExpression elseReturn = checkAndGetFoldableBranchedReturn(ifExpression.getElse());
+        JetReturnExpression thenReturn = getFoldableBranchedReturn(newIfExpression.getThen());
+        JetReturnExpression elseReturn = getFoldableBranchedReturn(newIfExpression.getElse());
 
         assert thenReturn != null : FOLD_WITHOUT_CHECK;
         assert elseReturn != null : FOLD_WITHOUT_CHECK;
@@ -212,6 +213,8 @@ public class BranchedFoldingUtils {
 
         thenReturn.replace(thenExpr);
         elseReturn.replace(elseExpr);
+
+        ifExpression.replace(newReturnExpression);
     }
 
     public static void foldIfExpressionWithAsymmetricReturns(JetIfExpression ifExpression) {
@@ -225,22 +228,15 @@ public class BranchedFoldingUtils {
         assert thenRoot != null : FOLD_WITHOUT_CHECK;
         assert elseRoot != null : FOLD_WITHOUT_CHECK;
 
-        JetIfExpression newIfExpr = JetPsiFactory.createIf(project, condition, thenRoot, elseRoot);
-        JetReturnExpression newReturnExpr = JetPsiFactory.createReturn(project, newIfExpr);
-        newReturnExpr = (JetReturnExpression) ifExpression.replace(newReturnExpr);
+        JetIfExpression newIfExpression = JetPsiFactory.createIf(project, condition, thenRoot, elseRoot);
+        JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, newIfExpression);
 
-        JetReturnExpression oldReturn = (JetReturnExpression)JetPsiUtil.skipTrailingWhitespacesAndComments(newReturnExpr);
+        newIfExpression = (JetIfExpression)newReturnExpression.getReturnedExpression();
 
-        assert oldReturn != null : FOLD_WITHOUT_CHECK;
+        assert newIfExpression != null : FOLD_WITHOUT_CHECK;
 
-        oldReturn.delete();
-
-        newIfExpr = (JetIfExpression)newReturnExpr.getReturnedExpression();
-
-        assert newIfExpr != null : FOLD_WITHOUT_CHECK;
-
-        JetReturnExpression thenReturn = checkAndGetFoldableBranchedReturn(newIfExpr.getThen());
-        JetReturnExpression elseReturn = checkAndGetFoldableBranchedReturn(newIfExpr.getElse());
+        JetReturnExpression thenReturn = getFoldableBranchedReturn(newIfExpression.getThen());
+        JetReturnExpression elseReturn = getFoldableBranchedReturn(newIfExpression.getElse());
 
         assert thenReturn != null : FOLD_WITHOUT_CHECK;
         assert elseReturn != null : FOLD_WITHOUT_CHECK;
@@ -253,6 +249,9 @@ public class BranchedFoldingUtils {
 
         thenReturn.replace(thenExpr);
         elseReturn.replace(elseExpr);
+
+        elseRoot.delete();
+        ifExpression.replace(newReturnExpression);
     }
 
     public static void foldWhenExpressionWithAssignments(JetWhenExpression whenExpression) {
@@ -260,21 +259,20 @@ public class BranchedFoldingUtils {
 
         assert !whenExpression.getEntries().isEmpty() : FOLD_WITHOUT_CHECK;
 
-        JetBinaryExpression firstAssignment = checkAndGetFoldableBranchedAssignment(whenExpression.getEntries().get(0).getExpression());
+        JetBinaryExpression firstAssignment = getFoldableBranchedAssignment(whenExpression.getEntries().get(0).getExpression());
 
         assert firstAssignment != null : FOLD_WITHOUT_CHECK;
 
         String op = firstAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) firstAssignment.getLeft();
 
-        JetBinaryExpression assignment =
-                (JetBinaryExpression)whenExpression.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, whenExpression));
-        whenExpression = (JetWhenExpression)assignment.getRight();
+        JetBinaryExpression assignment = JetPsiFactory.createBinaryExpression(project, lhs, op, whenExpression);
+        JetWhenExpression newWhenExpression = (JetWhenExpression)assignment.getRight();
 
-        assert whenExpression != null : FOLD_WITHOUT_CHECK;
+        assert newWhenExpression != null : FOLD_WITHOUT_CHECK;
 
-        for (JetWhenEntry entry : whenExpression.getEntries()) {
-            JetBinaryExpression currAssignment = checkAndGetFoldableBranchedAssignment(entry.getExpression());
+        for (JetWhenEntry entry : newWhenExpression.getEntries()) {
+            JetBinaryExpression currAssignment = getFoldableBranchedAssignment(entry.getExpression());
 
             assert currAssignment != null : FOLD_WITHOUT_CHECK;
 
@@ -284,6 +282,8 @@ public class BranchedFoldingUtils {
 
             currAssignment.replace(currRhs);
         }
+
+        whenExpression.replace(assignment);
     }
 
     public static void foldWhenExpressionWithReturns(JetWhenExpression whenExpression) {
@@ -291,13 +291,13 @@ public class BranchedFoldingUtils {
 
         assert !whenExpression.getEntries().isEmpty() : FOLD_WITHOUT_CHECK;
 
-        JetReturnExpression returnExpr = (JetReturnExpression)whenExpression.replace(JetPsiFactory.createReturn(project, whenExpression));
-        whenExpression = (JetWhenExpression)returnExpr.getReturnedExpression();
+        JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, whenExpression);
+        JetWhenExpression newWhenExpression = (JetWhenExpression)newReturnExpression.getReturnedExpression();
 
-        assert whenExpression != null : FOLD_WITHOUT_CHECK;
+        assert newWhenExpression != null : FOLD_WITHOUT_CHECK;
 
-        for (JetWhenEntry entry : whenExpression.getEntries()) {
-            JetReturnExpression currReturn = checkAndGetFoldableBranchedReturn(entry.getExpression());
+        for (JetWhenEntry entry : newWhenExpression.getEntries()) {
+            JetReturnExpression currReturn = getFoldableBranchedReturn(entry.getExpression());
 
             assert currReturn != null : FOLD_WITHOUT_CHECK;
 
@@ -307,5 +307,7 @@ public class BranchedFoldingUtils {
 
             currReturn.replace(currExpr);
         }
+
+        whenExpression.replace(newReturnExpression);
     }
 }
