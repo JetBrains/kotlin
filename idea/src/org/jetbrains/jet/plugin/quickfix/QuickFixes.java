@@ -210,7 +210,9 @@ public class QuickFixes {
 
         factories.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED, AddSemicolonAfterFunctionCallFix.createFactory());
 
-        factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, ChangeVariableTypeFix.createFactoryForPropertyTypeMismatchOnOverride());
+        JetIntentionActionFactory changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride();
+        factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
+        factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
         factories.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, ChangeVariableTypeFix.createFactoryForComponentFunctionReturnTypeMismatch());
 
         factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, ChangeFunctionReturnTypeFix.createFactoryForReturnTypeMismatchOnOverride());
