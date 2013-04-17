@@ -170,9 +170,10 @@ public class KotlinBuiltIns {
 
     private KotlinBuiltIns(@NotNull Project project) {
         try {
-            this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"), DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
+            this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
+                                                           DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
                                                            PlatformToKotlinClassMap.EMPTY);
-            builtInsModule.setModuleConfiguration(SpecialModuleConfiguration.INSTANCE);
+            builtInsModule.setModuleConfiguration(ModuleConfiguration.EMPTY);
             this.analyzer = createLazyResolveSession(project);
 
             this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
@@ -255,21 +256,6 @@ public class KotlinBuiltIns {
             files.add(file);
         }
         return files;
-    }
-
-    private static class SpecialModuleConfiguration implements ModuleConfiguration {
-
-        public static final ModuleConfiguration INSTANCE = new SpecialModuleConfiguration();
-
-        private SpecialModuleConfiguration() {
-        }
-
-        @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace,
-                @NotNull NamespaceDescriptor namespaceDescriptor,
-                @NotNull WritableScope namespaceMemberScope) {
-            // DO nothing
-        }
     }
 
     private void makePrimitive(PrimitiveType primitiveType) {
