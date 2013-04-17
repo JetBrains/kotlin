@@ -126,7 +126,7 @@ public class QuickFixes {
         factories.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS, changeToPropertyNameFactory);
         factories.put(INACCESSIBLE_BACKING_FIELD, changeToPropertyNameFactory);
 
-        JetIntentionActionFactory unresolvedReferenceFactory = ImportClassAndFunFix.createFactory();
+        JetIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.createFactory();
         factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
 
         JetIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();

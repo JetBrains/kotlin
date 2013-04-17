@@ -64,12 +64,12 @@ import java.util.Set;
 /**
  * Check possibility and perform fix for unresolved references.
  */
-public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression> implements HighPriorityAction {
+public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implements HighPriorityAction {
 
     @NotNull
     private final Collection<FqName> suggestions;
 
-    public ImportClassAndFunFix(@NotNull JetSimpleNameExpression element) {
+    public AutoImportFix(@NotNull JetSimpleNameExpression element) {
         super(element);
         suggestions = computeSuggestions(element);
     }
@@ -297,7 +297,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                 // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
                 if (diagnostic.getPsiElement() instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression psiElement = (JetSimpleNameExpression) diagnostic.getPsiElement();
-                    return new ImportClassAndFunFix(psiElement);
+                    return new AutoImportFix(psiElement);
                 }
 
                 return null;
