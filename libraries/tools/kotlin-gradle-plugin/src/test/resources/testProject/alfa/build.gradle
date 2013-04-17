@@ -17,7 +17,9 @@ sourceSets {
 }
 
 repositories {
-  mavenLocal()
+  maven {
+     url 'file://' + pathToKotlinPlugin
+  }
   mavenCentral()
 }
 
