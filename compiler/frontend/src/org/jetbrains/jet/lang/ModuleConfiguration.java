@@ -19,18 +19,10 @@ package org.jetbrains.jet.lang;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-
-import java.util.Collections;
-import java.util.List;
 
 public interface ModuleConfiguration {
     ModuleConfiguration EMPTY = new ModuleConfiguration() {
-        @Override
-        public List<ImportPath> getDefaultImports() {
-            return Collections.emptyList();
-        }
 
         @Override
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
@@ -47,8 +39,6 @@ public interface ModuleConfiguration {
             return "EMPTY";
         }
     };
-
-    List<ImportPath> getDefaultImports();
 
     /**
      * This method is called every time a namespace descriptor is created. Use it to add extra descriptors to the namespace, e.g. merge a

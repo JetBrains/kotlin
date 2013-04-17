@@ -43,11 +43,6 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     }
 
     @Override
-    public List<ImportPath> getDefaultImports() {
-        return DEFAULT_JET_IMPORTS;
-    }
-
-    @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName())) {
             namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());

@@ -98,10 +98,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
-            @Override
-            public List<ImportPath> getDefaultImports() {
-                return JavaBridgeConfiguration.ALL_JAVA_IMPORTS;
-            }
 
             @Override
             public void extendNamespaceScope(

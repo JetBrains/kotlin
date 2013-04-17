@@ -56,11 +56,6 @@ public class JsConfiguration implements ModuleConfiguration {
     }
 
     @Override
-    public List<ImportPath> getDefaultImports() {
-        return DEFAULT_IMPORT_PATHS;
-    }
-
-    @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
             @NotNull WritableScope namespaceMemberScope) {
         DefaultModuleConfiguration.createStandardConfiguration()
