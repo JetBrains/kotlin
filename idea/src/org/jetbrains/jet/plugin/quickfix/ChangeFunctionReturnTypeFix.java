@@ -168,4 +168,17 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             }
         };
     }
+
+    @NotNull
+    public static JetIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                assert function != null : "RETURN_TYPE_MISMATCH reported on element that is not within any function";
+                return new ChangeFunctionReturnTypeFix(function, KotlinBuiltIns.getInstance().getUnitType());
+            }
+        };
+    }
 }
