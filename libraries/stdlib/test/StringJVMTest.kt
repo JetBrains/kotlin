@@ -240,4 +240,52 @@ class StringJVMTest {
     test fun formatter() {
         assertEquals("12", "%d%d".format(1, 2))
     }
+
+    test fun trimLeading() {
+        assertEquals("", "".trimLeading())
+        assertEquals("a", "a".trimLeading())
+        assertEquals("a", " a".trimLeading())
+        assertEquals("a", "  a".trimLeading())
+        assertEquals("a  ", "  a  ".trimLeading())
+        assertEquals("a b", "  a b".trimLeading())
+        assertEquals("a b ", "  a b ".trimLeading())
+
+        assertEquals("a", "\ta".trimLeading())
+        assertEquals("a", "\t\ta".trimLeading())
+        assertEquals("a", "\ra".trimLeading())
+        assertEquals("a", "\na".trimLeading())
+    }
+
+    test fun trimTrailing() {
+        assertEquals("", "".trimTrailing())
+        assertEquals("a", "a".trimTrailing())
+        assertEquals("a", "a ".trimTrailing())
+        assertEquals("a", "a  ".trimTrailing())
+        assertEquals("  a", "  a  ".trimTrailing())
+        assertEquals("a b", "a b  ".trimTrailing())
+        assertEquals(" a b", " a b  ".trimTrailing())
+
+        assertEquals("a", "a\t".trimTrailing())
+        assertEquals("a", "a\t\t".trimTrailing())
+        assertEquals("a", "a\r".trimTrailing())
+        assertEquals("a", "a\n".trimTrailing())
+    }
+
+    test fun trimTrailingAndLeading() {
+        val examples = array(
+                "a",
+                " a ",
+                "  a  ",
+                "  a b  ",
+                "\ta\tb\t",
+                "\t\ta\t\t",
+                "\ra\r",
+                "\na\n"
+        )
+
+        for (example in examples) {
+            assertEquals(example.trim(), example.trimTrailing().trimLeading())
+            assertEquals(example.trim(), example.trimLeading().trimTrailing())
+        }
+    }
 }

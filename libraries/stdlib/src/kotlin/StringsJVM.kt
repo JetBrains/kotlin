@@ -509,3 +509,23 @@ public inline fun String.toCollection(): Collection<Char> = toCollection(ArrayLi
 
 /** Copies all characters into a [[Set]] */
 public inline fun String.toSet(): Set<Char> = toCollection(HashSet<Char>())
+
+/** Returns a new String containing the everything but the leading whitespace characters */
+public inline fun String.trimLeading(): String {
+    var count = 0
+
+    while ((count < this.length) && (this[count] <= ' ')) {
+        count++
+    }
+    return if (count > 0) substring(count) else this
+}
+
+/** Returns a new String containing the everything but the trailing whitespace characters */
+public inline fun String.trimTrailing(): String {
+    var count = this.length
+
+    while (count > 0 && this[count - 1] <= ' ') {
+        count--
+    }
+    return if (count < this.length) substring(0, count) else this
+}
