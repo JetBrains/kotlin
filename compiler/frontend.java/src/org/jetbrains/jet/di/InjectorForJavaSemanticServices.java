@@ -73,7 +73,7 @@ public class InjectorForJavaSemanticServices {
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinder = new PsiClassFinderImpl();
-        this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"), JavaBridgeConfiguration.ALL_JAVA_IMPORTS);
+        this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"), org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration.ALL_JAVA_IMPORTS, org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap.getInstance());
         this.project = project;
         this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
         this.javaTypeTransformer = new JavaTypeTransformer();

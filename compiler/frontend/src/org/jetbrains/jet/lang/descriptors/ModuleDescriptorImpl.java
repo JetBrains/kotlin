@@ -35,13 +35,19 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements C
     private NamespaceDescriptor rootNamepsace;
     private ModuleConfiguration moduleConfiguration;
     private final List<ImportPath> defaultImports;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
 
-    public ModuleDescriptorImpl(@NotNull Name name, @NotNull List<ImportPath> defaultImports) {
+    public ModuleDescriptorImpl(
+            @NotNull Name name,
+            @NotNull List<ImportPath> defaultImports,
+            @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
+    ) {
         super(Collections.<AnnotationDescriptor>emptyList(), name);
         if (!name.isSpecial()) {
             throw new IllegalArgumentException("module name must be special: " + name);
         }
         this.defaultImports = defaultImports;
+        this.platformToKotlinClassMap = platformToKotlinClassMap;
     }
 
     public void setRootNamespace(@NotNull NamespaceDescriptor rootNs) {
@@ -77,7 +83,7 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements C
     @NotNull
     @Override
     public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-        return getModuleConfiguration().getPlatformToKotlinClassMap();
+        return platformToKotlinClassMap;
     }
 
     @Inject

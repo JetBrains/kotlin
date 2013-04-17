@@ -32,12 +32,10 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -182,9 +180,10 @@ public class GenerateInjectors {
         generator.addField(JavaBridgeConfiguration.class);
         generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, ModuleDescriptorImpl.class, null,
-                           new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl(" +
-                                               "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"), " +
-                                               "JavaBridgeConfiguration.ALL_JAVA_IMPORTS)"));
+                           new GivenExpression("new " + ModuleDescriptorImpl.class.getCanonicalName() + "(" +
+                                               Name.class.getCanonicalName() + ".special(\"<dummy>\"), " +
+                                               JavaBridgeConfiguration.class.getCanonicalName() + ".ALL_JAVA_IMPORTS, " +
+                                               JavaToKotlinClassMap.class.getCanonicalName() + ".getInstance())"));
 
         // Parameters
         generator.addPublicParameter(Project.class);

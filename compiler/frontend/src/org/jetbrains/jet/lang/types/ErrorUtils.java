@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
@@ -35,7 +36,11 @@ public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE;
     static {
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<ERROR MODULE>"), Collections.<ImportPath>emptyList());
+        ModuleDescriptorImpl module = new ModuleDescriptorImpl(
+                Name.special("<ERROR MODULE>"),
+                Collections.<ImportPath>emptyList(),
+                PlatformToKotlinClassMap.EMPTY
+        );
         module.setModuleConfiguration(ModuleConfiguration.EMPTY);
         ERROR_MODULE = module;
     }

@@ -52,7 +52,8 @@ public final class JavaNamespaceResolver {
 
     @NotNull
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptorImpl(JavaDescriptorResolver.JAVA_ROOT,
-                                                                                     JavaBridgeConfiguration.ALL_JAVA_IMPORTS);
+                                                                                     JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
+                                                                                     JavaToKotlinClassMap.getInstance());
     @NotNull
     private final Map<FqName, JavaBaseScope> resolvedNamespaceCache = Maps.newHashMap();
     @NotNull

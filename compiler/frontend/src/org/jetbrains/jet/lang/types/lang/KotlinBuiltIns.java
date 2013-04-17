@@ -170,7 +170,8 @@ public class KotlinBuiltIns {
 
     private KotlinBuiltIns(@NotNull Project project) {
         try {
-            this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"), DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
+            this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"), DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
+                                                           PlatformToKotlinClassMap.EMPTY);
             builtInsModule.setModuleConfiguration(SpecialModuleConfiguration.INSTANCE);
             this.analyzer = createLazyResolveSession(project);
 

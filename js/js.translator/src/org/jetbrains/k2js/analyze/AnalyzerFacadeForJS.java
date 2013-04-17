@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -76,7 +77,7 @@ public final class AnalyzerFacadeForJS {
             boolean storeContextForBodiesResolve) {
         Project project = config.getProject();
 
-        ModuleDescriptorImpl owner = new ModuleDescriptorImpl(Name.special("<module>"), JsConfiguration.DEFAULT_IMPORT_PATHS);
+        ModuleDescriptorImpl owner = createJsModule("<module>");
 
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
@@ -142,8 +143,14 @@ public final class AnalyzerFacadeForJS {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
-        ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"), JsConfiguration.DEFAULT_IMPORT_PATHS);
+        ModuleDescriptorImpl lazyModule = createJsModule("<lazy module>");
         lazyModule.setModuleConfiguration(new JsConfiguration(null));
         return new ResolveSession(config.getProject(), storageManager, lazyModule, declarationProviderFactory);
     }
+
+    @NotNull
+    private static ModuleDescriptorImpl createJsModule(@NotNull String name) {
+        return new ModuleDescriptorImpl(Name.special(name), JsConfiguration.DEFAULT_IMPORT_PATHS, PlatformToKotlinClassMap.EMPTY);
+    }
+
 }
