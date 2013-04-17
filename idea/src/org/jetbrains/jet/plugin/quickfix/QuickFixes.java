@@ -220,6 +220,9 @@ public class QuickFixes {
         factories.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch());
         factories.put(COMPARE_TO_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch());
 
+        factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
+        factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
+
         factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
 
         factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
