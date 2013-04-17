@@ -117,6 +117,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile("idea/testData/quickfix/autoImports/noImportInSafeQualifiedExpressionNotFirst.before.Main.kt");
         }
         
+        @TestMetadata("objectImport.before.Main.kt")
+        public void testObjectImport() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/objectImport.before.Main.kt");
+        }
+        
         @TestMetadata("packageClass.before.Main.kt")
         public void testPackageClass() throws Exception {
             doTestWithExtraFile("idea/testData/quickfix/autoImports/packageClass.before.Main.kt");
