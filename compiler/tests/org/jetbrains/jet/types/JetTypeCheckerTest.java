@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.CommonSupertypes;
@@ -580,7 +579,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        NamespaceDescriptor testData = moduleDescriptor.getRootNamespace().getMemberScope().getNamespace(Name.identifier("testData"));
+        NamespaceDescriptor testData = moduleDescriptor.getNamespace(new FqName("testData"));
         return addImports(testData.getMemberScope());
     }
 

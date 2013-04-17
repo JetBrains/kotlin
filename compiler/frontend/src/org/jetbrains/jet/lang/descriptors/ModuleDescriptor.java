@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
@@ -31,7 +32,8 @@ public interface ModuleDescriptor extends DeclarationDescriptor, NamespaceDescri
     @Nullable
     DeclarationDescriptor getContainingDeclaration();
 
-    NamespaceDescriptor getRootNamespace();
+    @Nullable
+    NamespaceDescriptor getNamespace(@NotNull FqName fqName);
 
     @NotNull
     ModuleConfiguration getModuleConfiguration();

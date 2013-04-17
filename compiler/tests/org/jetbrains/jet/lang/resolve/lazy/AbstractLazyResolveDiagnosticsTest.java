@@ -23,6 +23,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -43,8 +44,8 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
 
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
-        NamespaceDescriptor expected = eagerModule.getRootNamespace();
-        NamespaceDescriptor actual = lazyModule.getRootNamespace();
+        NamespaceDescriptor expected = eagerModule.getNamespace(FqName.ROOT);
+        NamespaceDescriptor actual = lazyModule.getNamespace(FqName.ROOT);
 
         String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
         File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);

@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.*;
@@ -82,7 +83,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"));
         JetFile jetFile = JetPsiFactory.createFile(getProject(), text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
-        JetScope topLevelDeclarations = module.getRootNamespace().getMemberScope();
+        JetScope topLevelDeclarations = module.getNamespace(FqName.ROOT).getMemberScope();
         ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"));
         assert contextClass instanceof ClassDescriptor;
         WritableScopeImpl typeParameters = new WritableScopeImpl(JetScope.EMPTY, module, RedeclarationHandler.THROW_EXCEPTION,
