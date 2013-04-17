@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
-public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl {
+public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl implements JetOperationExpression {
     public JetBinaryExpressionWithTypeRHS(@NotNull ASTNode node) {
         super(node);
     }
@@ -46,7 +46,7 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl {
 
     @Nullable @IfNotParsed
     public JetTypeReference getRight() {
-        ASTNode node = getOperationSign().getNode();
+        ASTNode node = getOperationReference().getNode();
         while (node != null) {
             PsiElement psi = node.getPsi();
             if (psi instanceof JetTypeReference) {
@@ -57,8 +57,10 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl {
 
         return null;
     }
+
+    @Override
     @NotNull
-    public JetSimpleNameExpression getOperationSign() {
+    public JetSimpleNameExpression getOperationReference() {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 
