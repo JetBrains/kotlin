@@ -46,7 +46,7 @@ public open class Converter() {
     private val project = jetCoreEnvironment.getProject();
 
     {
-        KotlinBuiltIns.initialize(project)
+        KotlinBuiltIns.initialize(project, KotlinBuiltIns.InitializationMode.MULTI_THREADED)
     }
 
     private val javaToKotlinClassMap: JavaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
