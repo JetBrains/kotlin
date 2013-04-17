@@ -44,9 +44,10 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public ResolutionTask(
             @NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference,
             @NotNull TracingStrategy tracing, BindingTrace trace, JetScope scope, Call call, JetType expectedType,
-            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache
+            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, CheckValueArgumentsMode checkArguments,
+            ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition, resolutionResultsCache);
+        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache);
         this.candidates = candidates;
         this.reference = reference;
         this.tracing = tracing;
@@ -54,7 +55,8 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
 
     public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicCallResolutionContext context) {
         this(candidates, reference, TracingStrategyImpl.create(reference, context.call), context.trace, context.scope, context.call,
-             context.expectedType, context.dataFlowInfo, context.resolveMode, context.expressionPosition, context.resolutionResultsCache);
+             context.expectedType, context.dataFlowInfo, context.resolveMode, context.checkArguments,
+             context.expressionPosition, context.resolutionResultsCache);
     }
 
     @NotNull
@@ -87,8 +89,8 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull ExpressionPosition expressionPosition
     ) {
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(
-                candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition,
-                resolutionResultsCache);
+                candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments,
+                expressionPosition, resolutionResultsCache);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
     }

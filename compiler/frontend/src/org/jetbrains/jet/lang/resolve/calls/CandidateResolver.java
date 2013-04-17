@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -98,23 +99,25 @@ public class CandidateResolver {
             return;
         }
 
-        Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
-        ValueArgumentsToParametersMapper.Status
-                argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
-                                                                                                        candidateCall, unmappedArguments);
-        if (!argumentMappingStatus.isSuccess()) {
-            if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                candidateCall.addStatus(STRONG_ERROR);
+        if (task.checkArguments == CheckValueArgumentsMode.ENABLED) {
+            Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
+            ValueArgumentsToParametersMapper.Status
+                    argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
+                                                                                                            candidateCall, unmappedArguments);
+            if (!argumentMappingStatus.isSuccess()) {
+                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
+                    candidateCall.addStatus(STRONG_ERROR);
+                }
+                else {
+                    candidateCall.addStatus(OTHER_ERROR);
+                }
+                if ((argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR && candidate.getTypeParameters().isEmpty()) ||
+                    argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
+                    argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
+                    return;
+                }
+                candidateCall.setUnmappedArguments(unmappedArguments);
             }
-            else {
-                candidateCall.addStatus(OTHER_ERROR);
-            }
-            if ((argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR && candidate.getTypeParameters().isEmpty()) ||
-                argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
-                return;
-            }
-            candidateCall.setUnmappedArguments(unmappedArguments);
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();

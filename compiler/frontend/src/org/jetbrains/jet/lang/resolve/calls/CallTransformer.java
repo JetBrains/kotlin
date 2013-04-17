@@ -25,7 +25,9 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.ChainedTemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -194,7 +196,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             DelegatingBindingTrace variableCallTrace = context.candidateCall.getTrace();
             BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(
                     variableCallTrace, context.scope, functionCall, context.expectedType, context.dataFlowInfo,
-                    context.resolveMode, context.expressionPosition, context.resolutionResultsCache);
+                    context.resolveMode, context.checkArguments, context.expressionPosition, context.resolutionResultsCache);
 
             // 'invoke' call resolve
             OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenName(basicCallResolutionContext, task.reference, Name.identifier("invoke"));
