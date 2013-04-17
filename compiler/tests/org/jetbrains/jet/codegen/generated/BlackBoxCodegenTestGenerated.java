@@ -457,6 +457,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/classes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("boxPrimitiveTypeInClinitOfClassObject.kt")
+        public void testBoxPrimitiveTypeInClinitOfClassObject() throws Exception {
+            doTest("compiler/testData/codegen/box/classes/boxPrimitiveTypeInClinitOfClassObject.kt");
+        }
+        
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
             doTest("compiler/testData/codegen/box/classes/classObject.kt");
@@ -2619,6 +2624,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public static class Namespace extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInNamespace() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/namespace"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("boxPrimitiveTypeInClinit.kt")
+        public void testBoxPrimitiveTypeInClinit() throws Exception {
+            doTest("compiler/testData/codegen/box/namespace/boxPrimitiveTypeInClinit.kt");
         }
         
         @TestMetadata("checkCast.kt")

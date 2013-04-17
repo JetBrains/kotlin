@@ -97,7 +97,7 @@ public class PropertyCodegen extends GenerationStateAware {
             Object value = null;
             JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
             if (initializer != null) {
-                if (initializer instanceof JetConstantExpression) {
+                if (initializer instanceof JetConstantExpression && !propertyDescriptor.getType().isNullable()) {
                     CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
                     value = compileTimeValue != null ? compileTimeValue.getValue() : null;
                 }

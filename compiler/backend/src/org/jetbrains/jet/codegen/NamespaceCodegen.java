@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.io.FileUtil;
@@ -26,7 +27,6 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 
@@ -160,9 +161,7 @@ public class NamespaceCodegen extends MemberCodegen {
                 }
             }
 
-            if (hasNonConstantPropertyInitializers()) {
-                generateStaticInitializers(builder, file);
-            }
+            generateStaticInitializers(builder, file);
 
             builder.done();
         }
@@ -207,6 +206,9 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private void generateStaticInitializers(@NotNull ClassBuilder builder, @NotNull JetFile file) {
+        List<JetProperty> properties = collectPropertiesToInitialize(file);
+        if (properties.isEmpty()) return;
+
         MethodVisitor mv = builder.newMethod(file, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
@@ -214,18 +216,9 @@ public class NamespaceCodegen extends MemberCodegen {
             FrameMap frameMap = new FrameMap();
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC, state);
 
-            for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetProperty) {
-                    JetExpression initializer = ((JetProperty) declaration).getInitializer();
-                    if (initializer != null && !(initializer instanceof JetConstantExpression)) {
-                        PropertyDescriptor descriptor =
-                                (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
-                        assert descriptor != null;
-                        codegen.genToJVMStack(initializer);
-                        StackValue.Property propValue = codegen.intermediateValueForProperty(descriptor, true, null);
-                        propValue.store(propValue.type, new InstructionAdapter(mv));
-                    }
-                }
+            for (JetDeclaration declaration : properties) {
+                ImplementationBodyCodegen.
+                        initializeProperty(codegen, state.getBindingContext(), new InstructionAdapter(mv), (JetProperty) declaration, true);
             }
 
             mv.visitInsn(RETURN);
@@ -234,18 +227,16 @@ public class NamespaceCodegen extends MemberCodegen {
         }
     }
 
-    private boolean hasNonConstantPropertyInitializers() {
-        for (JetFile file : files) {
-            for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetProperty) {
-                    JetExpression initializer = ((JetProperty) declaration).getInitializer();
-                    if (initializer != null && !(initializer instanceof JetConstantExpression)) {
-                        return true;
-                    }
-                }
+    @NotNull
+    private List<JetProperty> collectPropertiesToInitialize(@NotNull JetFile file) {
+        List<JetProperty> result = Lists.newArrayList();
+        for (JetDeclaration declaration : file.getDeclarations()) {
+            if (declaration instanceof JetProperty &&
+                    ImplementationBodyCodegen.shouldInitializeProperty((JetProperty) declaration, typeMapper)) {
+                result.add((JetProperty) declaration);
             }
         }
-        return false;
+        return result;
     }
 
     public void done() {

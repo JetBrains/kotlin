@@ -1600,36 +1600,60 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetTypeMapper typeMapper = state.getTypeMapper();
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetProperty) {
-                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, declaration);
-                assert propertyDescriptor != null;
-                if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
-                    JetExpression initializer = ((JetProperty) declaration).getInitializer();
-                    if (initializer != null) {
-                        CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
-                        JetType jetType = propertyDescriptor.getType();
-                        if (compileTimeValue != null) {
-                            Object value = compileTimeValue.getValue();
-                            Type type = typeMapper.mapType(jetType);
-                            if (skipDefaultValue(propertyDescriptor, value, type)) continue;
-                        }
-                        iv.load(0, OBJECT_TYPE);
-                        Type type = codegen.expressionType(initializer);
-                        if (jetType.isNullable()) {
-                            type = boxType(type);
-                        }
-                        codegen.gen(initializer, type);
-                        // @todo write directly to the field. Fix test excloset.jet::test6
-                        JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION, isCallInsideSameModuleAsDeclared(propertyDescriptor, codegen.context));
-                        Type propType = typeMapper.mapType(jetType);
-                        StackValue.property(propertyDescriptor, owner,
-                                            propType, false, null, null, state).store(propType, iv);
-                    }
+                if (shouldInitializeProperty((JetProperty) declaration, typeMapper)) {
+                    initializeProperty(codegen, bindingContext, iv, (JetProperty) declaration, false);
                 }
             }
             else if (declaration instanceof JetClassInitializer) {
                 codegen.gen(((JetClassInitializer) declaration).getBody(), Type.VOID_TYPE);
             }
         }
+    }
+
+    public static void initializeProperty(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull BindingContext bindingContext,
+            @NotNull InstructionAdapter iv,
+            @NotNull JetProperty property,
+            boolean isStatic
+    ) {
+        if (!isStatic) {
+            iv.load(0, OBJECT_TYPE);
+        }
+
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
+        assert propertyDescriptor != null;
+
+        JetExpression initializer = property.getInitializer();
+        assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
+
+        JetType jetType = propertyDescriptor.getType();
+        Type type = codegen.expressionType(initializer);
+        if (jetType.isNullable()) {
+            type = boxType(type);
+        }
+        codegen.gen(initializer, type);
+
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
+        propValue.store(propValue.type, iv);
+    }
+
+    public static boolean shouldInitializeProperty(
+            @NotNull JetProperty property,
+            @NotNull JetTypeMapper typeMapper
+    ) {
+        JetExpression initializer = property.getInitializer();
+        if (initializer == null) return false;
+
+        CompileTimeConstant<?> compileTimeValue = typeMapper.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
+        if (compileTimeValue == null) return true;
+
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) typeMapper.getBindingContext().get(BindingContext.VARIABLE, property);
+        assert propertyDescriptor != null;
+
+        Object value = compileTimeValue.getValue();
+        Type type = typeMapper.mapType(propertyDescriptor.getType());
+        return !skipDefaultValue(propertyDescriptor, value, type);
     }
 
     private static boolean skipDefaultValue(PropertyDescriptor propertyDescriptor, Object value, Type type) {
