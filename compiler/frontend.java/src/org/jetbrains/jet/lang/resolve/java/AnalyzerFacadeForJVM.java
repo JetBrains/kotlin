@@ -18,8 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +26,6 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -47,7 +44,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
@@ -83,7 +79,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        ModuleDescriptorImpl javaModule = new ModuleDescriptorImpl(Name.special("<java module>"));
+        ModuleDescriptorImpl javaModule = createJavaModule("<java module>");
 
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
@@ -104,9 +100,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
             @Override
             public List<ImportPath> getDefaultImports() {
-                LinkedHashSet<ImportPath> imports = Sets.newLinkedHashSet(JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS);
-                imports.addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
-                return Lists.newArrayList(imports);
+                return JavaBridgeConfiguration.ALL_JAVA_IMPORTS;
             }
 
             @Override
@@ -134,7 +128,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         };
         javaModule.setModuleConfiguration(moduleConfiguration);
 
-        ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
+        ModuleDescriptorImpl lazyModule = createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(moduleConfiguration);
 
         return new ResolveSession(fileProject, storageManager, lazyModule, declarationProviderFactory, javaResolverTrace);
@@ -202,7 +196,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve
     ) {
-        ModuleDescriptorImpl owner = new ModuleDescriptorImpl(Name.special("<module>"));
+        ModuleDescriptorImpl owner = createJavaModule("<module>");
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);
@@ -229,5 +223,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         return analyzeFilesWithJavaIntegration(project,
                 files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysFalse());
+    }
+
+    @NotNull
+    public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
+        return new ModuleDescriptorImpl(Name.special(name), JavaBridgeConfiguration.ALL_JAVA_IMPORTS);
     }
 }

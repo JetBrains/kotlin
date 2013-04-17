@@ -76,7 +76,7 @@ public final class AnalyzerFacadeForJS {
             boolean storeContextForBodiesResolve) {
         Project project = config.getProject();
 
-        ModuleDescriptorImpl owner = new ModuleDescriptorImpl(Name.special("<module>"));
+        ModuleDescriptorImpl owner = new ModuleDescriptorImpl(Name.special("<module>"), JsConfiguration.DEFAULT_IMPORT_PATHS);
 
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
@@ -142,7 +142,7 @@ public final class AnalyzerFacadeForJS {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
-        ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
+        ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"), JsConfiguration.DEFAULT_IMPORT_PATHS);
         lazyModule.setModuleConfiguration(new JsConfiguration(null));
         return new ResolveSession(config.getProject(), storageManager, lazyModule, declarationProviderFactory);
     }

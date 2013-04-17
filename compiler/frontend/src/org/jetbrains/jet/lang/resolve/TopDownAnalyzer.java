@@ -186,7 +186,8 @@ public class TopDownAnalyzer {
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
     ) {
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<dummy for object>"));
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<dummy for object>"),
+                                                                         Collections.<ImportPath>emptyList());
         moduleDescriptor.setModuleConfiguration(ModuleConfiguration.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =

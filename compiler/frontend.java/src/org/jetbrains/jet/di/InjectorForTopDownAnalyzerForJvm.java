@@ -334,8 +334,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaPropertyResolver.setSemanticServices(javaSemanticServices);
         javaPropertyResolver.setTrace(bindingTrace);
 
-        javaBridgeConfiguration.init();
-
         psiClassFinder.initialize();
 
     }

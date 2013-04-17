@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -34,7 +35,7 @@ public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE;
     static {
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<ERROR MODULE>"));
+        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<ERROR MODULE>"), Collections.<ImportPath>emptyList());
         module.setModuleConfiguration(ModuleConfiguration.EMPTY);
         ERROR_MODULE = module;
     }

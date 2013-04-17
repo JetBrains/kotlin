@@ -51,7 +51,8 @@ import java.util.Set;
 public final class JavaNamespaceResolver {
 
     @NotNull
-    public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptorImpl(JavaDescriptorResolver.JAVA_ROOT);
+    public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptorImpl(JavaDescriptorResolver.JAVA_ROOT,
+                                                                                     JavaBridgeConfiguration.ALL_JAVA_IMPORTS);
     @NotNull
     private final Map<FqName, JavaBaseScope> resolvedNamespaceCache = Maps.newHashMap();
     @NotNull

@@ -51,6 +51,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -558,8 +559,12 @@ public class JetTestUtils {
         return JetPsiFactory.createPhysicalFile(project, ioFile.getName(), text);
     }
 
-    public static ModuleDescriptor createEmptyModule() {
-        ModuleDescriptorImpl descriptor = new ModuleDescriptorImpl(Name.special("<empty-for-test>"));
+    public static ModuleDescriptorImpl createEmptyModule() {
+        return createEmptyModule("<empty-for-test>");
+    }
+
+    public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
+        ModuleDescriptorImpl descriptor = new ModuleDescriptorImpl(Name.special(name), Collections.<ImportPath>emptyList());
         descriptor.setModuleConfiguration(ModuleConfiguration.EMPTY);
         return descriptor;
     }

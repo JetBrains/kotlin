@@ -221,7 +221,7 @@ public class JetSourceNavigationHelper {
                         return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
                     }
                 });
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"));
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"), DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
         moduleDescriptor.setModuleConfiguration(DefaultModuleConfiguration.createStandardConfiguration());
         KotlinCodeAnalyzer analyzer = new ResolveSession(
                 project,

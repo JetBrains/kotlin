@@ -161,8 +161,6 @@ public class InjectorForJavaDescriptorResolver {
         javaPropertyResolver.setSemanticServices(javaSemanticServices);
         javaPropertyResolver.setTrace(bindingTrace);
 
-        javaBridgeConfiguration.init();
-
         psiClassFinder.initialize();
 
     }

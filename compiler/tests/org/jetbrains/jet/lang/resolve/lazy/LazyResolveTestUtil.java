@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
@@ -60,7 +61,7 @@ public class LazyResolveTestUtil {
     }
 
     public static InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(JetCoreEnvironment environment) {
-        ModuleDescriptorImpl eagerModuleForLazy = new ModuleDescriptorImpl(Name.special("<eager module for lazy>"));
+        ModuleDescriptorImpl eagerModuleForLazy = AnalyzerFacadeForJVM.createJavaModule("<eager module for lazy>");
 
         InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy, environment);
         // This line is required fro the 'jet' namespace to be filled in with functions
@@ -81,7 +82,7 @@ public class LazyResolveTestUtil {
     }
 
     public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<test module>"));
+        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<test module>");
         InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
         return module;
@@ -90,7 +91,7 @@ public class LazyResolveTestUtil {
     public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
-        ModuleDescriptorImpl javaModule = new ModuleDescriptorImpl(Name.special("<java module>"));
+        ModuleDescriptorImpl javaModule = AnalyzerFacadeForJVM.createJavaModule("<java module>");
 
         Project project = environment.getProject();
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
@@ -141,7 +142,7 @@ public class LazyResolveTestUtil {
         };
         javaModule.setModuleConfiguration(moduleConfiguration);
 
-        ModuleDescriptorImpl lazyModule = new ModuleDescriptorImpl(Name.special("<lazy module>"));
+        ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(moduleConfiguration);
         return new ResolveSession(project, storageManager, lazyModule, declarationProviderFactory, sharedTrace);
     }

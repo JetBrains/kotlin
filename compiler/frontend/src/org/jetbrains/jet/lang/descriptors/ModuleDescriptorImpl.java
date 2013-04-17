@@ -34,12 +34,14 @@ import java.util.List;
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, ModuleDescriptor {
     private NamespaceDescriptor rootNamepsace;
     private ModuleConfiguration moduleConfiguration;
+    private final List<ImportPath> defaultImports;
 
-    public ModuleDescriptorImpl(@NotNull Name name) {
+    public ModuleDescriptorImpl(@NotNull Name name, @NotNull List<ImportPath> defaultImports) {
         super(Collections.<AnnotationDescriptor>emptyList(), name);
         if (!name.isSpecial()) {
             throw new IllegalArgumentException("module name must be special: " + name);
         }
+        this.defaultImports = defaultImports;
     }
 
     public void setRootNamespace(@NotNull NamespaceDescriptor rootNs) {
@@ -69,7 +71,7 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements C
     @NotNull
     @Override
     public List<ImportPath> getDefaultImports() {
-        return getModuleConfiguration().getDefaultImports();
+        return defaultImports;
     }
 
     @NotNull

@@ -183,7 +183,8 @@ public class GenerateInjectors {
         generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, ModuleDescriptorImpl.class, null,
                            new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl(" +
-                                               "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
+                                               "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"), " +
+                                               "JavaBridgeConfiguration.ALL_JAVA_IMPORTS)"));
 
         // Parameters
         generator.addPublicParameter(Project.class);
