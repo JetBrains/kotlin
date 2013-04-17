@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.sam;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -94,36 +95,21 @@ public class SingleAbstractMethodUtils {
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
 
-        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
-                SignaturesUtil.recreateTypeParametersAndReturnMapping(samInterface.getTypeConstructor().getParameters(), result);
-        TypeSubstitutor typeParametersSubstitutor = SignaturesUtil.createSubstitutorForTypeParameters(traitToFunTypeParameters);
+        TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 
         JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
-        JetType parameterType = typeParametersSubstitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
-        assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParametersSubstitutor;
+        JetType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
+        assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
                 result, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("function"), parameterType, false, null);
 
-        JetType returnType = typeParametersSubstitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
-        assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParametersSubstitutor;
-
-        for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> mapEntry : traitToFunTypeParameters.entrySet()) {
-            TypeParameterDescriptor traitTypeParameter = mapEntry.getKey();
-            TypeParameterDescriptorImpl funTypeParameter = mapEntry.getValue();
-
-            for (JetType upperBound : traitTypeParameter.getUpperBounds()) {
-                JetType upperBoundSubstituted = typeParametersSubstitutor.substitute(upperBound, Variance.INVARIANT);
-                assert upperBoundSubstituted != null : "couldn't substitute type: " + upperBound + ", substitutor = " + typeParametersSubstitutor;
-                funTypeParameter.addUpperBound(upperBoundSubstituted);
-            }
-
-            funTypeParameter.setInitialized();
-        }
+        JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
+        assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParameters.substitutor;
 
         result.initialize(
                 null,
                 null,
-                Lists.newArrayList(traitToFunTypeParameters.values()),
+                typeParameters.descriptors,
                 Arrays.asList(parameter),
                 returnType,
                 Modality.FINAL,
@@ -186,6 +172,31 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
+    private static TypeParameters recreateAndInitializeTypeParameters(
+            @NotNull List<TypeParameterDescriptor> originalParameters,
+            @Nullable DeclarationDescriptor newOwner
+    ) {
+        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
+                SignaturesUtil.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
+        TypeSubstitutor typeParametersSubstitutor = SignaturesUtil.createSubstitutorForTypeParameters(traitToFunTypeParameters);
+        for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> mapEntry : traitToFunTypeParameters.entrySet()) {
+            TypeParameterDescriptor traitTypeParameter = mapEntry.getKey();
+            TypeParameterDescriptorImpl funTypeParameter = mapEntry.getValue();
+
+            for (JetType upperBound : traitTypeParameter.getUpperBounds()) {
+                JetType upperBoundSubstituted = typeParametersSubstitutor.substitute(upperBound, Variance.INVARIANT);
+                assert upperBoundSubstituted != null : "couldn't substitute type: " + upperBound + ", substitutor = " + typeParametersSubstitutor;
+                funTypeParameter.addUpperBound(upperBoundSubstituted);
+            }
+
+            funTypeParameter.setInitialized();
+        }
+
+        List<TypeParameterDescriptor> typeParameters = Lists.<TypeParameterDescriptor>newArrayList(traitToFunTypeParameters.values());
+        return new TypeParameters(typeParameters, typeParametersSubstitutor);
+    }
+
+    @NotNull
     public static SimpleFunctionDescriptor getAbstractMethodOfSamType(@NotNull JetType type) {
         return (SimpleFunctionDescriptor) getAbstractMembers(type).get(0);
     }
@@ -196,5 +207,15 @@ public class SingleAbstractMethodUtils {
     }
 
     private SingleAbstractMethodUtils() {
+    }
+
+    private static class TypeParameters {
+        public final List<TypeParameterDescriptor> descriptors;
+        public final TypeSubstitutor substitutor;
+
+        private TypeParameters(List<TypeParameterDescriptor> descriptors, TypeSubstitutor substitutor) {
+            this.descriptors = descriptors;
+            this.substitutor = substitutor;
+        }
     }
 }
