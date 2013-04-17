@@ -58,6 +58,7 @@ class BasicKotlinGradleIT {
         assertTrue(buildOutput.contains(":compileKotlin"), "Should contain ':compileKotlin'")
         assertTrue(buildOutput.contains(":compileTestKotlin"), "Should contain ':compileTestKotlin'")
         assertTrue(buildOutput.contains(":compileDeployKotlin"), "Should contain ':compileDeployKotlin'")
+        assertTrue(File(projectDir, "build/reports/tests/demo.TestSource.html").exists(), "Test report does not exist. Were tests executed?")
 
         // Run the build second time, assert everything is up-to-date
 

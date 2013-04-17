@@ -23,6 +23,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
 import org.gradle.api.initialization.dsl.ScriptHandler
+import org.apache.commons.io.FileUtils
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -31,6 +32,8 @@ public open class KotlinCompile(): AbstractCompile() {
     val logger = Logging.getLogger(getClass())
 
     public val kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
+
+    public var kotlinDestinationDir : File? = getDestinationDir()
 
     // override setSource to track source directory sets
     override fun setSource(source: Any?) {
@@ -98,7 +101,7 @@ public open class KotlinCompile(): AbstractCompile() {
             args.setClasspath(effectiveClassPath)
         }
 
-        args.outputDir = if (StringUtils.isEmpty(kotlinOptions.outputDir)) { getDestinationDir()?.getPath() } else { kotlinOptions.outputDir }
+        args.outputDir = if (StringUtils.isEmpty(kotlinOptions.outputDir)) { kotlinDestinationDir?.getPath() } else { kotlinOptions.outputDir }
 
         val embeddedAnnotations = getAnnotations()
         val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
@@ -116,6 +119,9 @@ public open class KotlinCompile(): AbstractCompile() {
             ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
             else -> {}
         }
+
+        // Copy kotlin classes to all classes directory
+        FileUtils.copyDirectory(kotlinDestinationDir, getDestinationDir())
     }
 
     fun getAnnotations(): File {
