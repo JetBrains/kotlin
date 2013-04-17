@@ -35,10 +35,6 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
 
     public static final ModuleConfiguration INSTANCE = new DefaultModuleConfiguration();
 
-    public static ModuleConfiguration createStandardConfiguration() {
-        return INSTANCE;
-    }
-
     private DefaultModuleConfiguration() {
     }
 

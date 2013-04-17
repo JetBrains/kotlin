@@ -57,7 +57,7 @@ public class JsConfiguration implements ModuleConfiguration {
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
             @NotNull WritableScope namespaceMemberScope) {
-        DefaultModuleConfiguration.createStandardConfiguration()
+        DefaultModuleConfiguration.INSTANCE
                 .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
 
         // Extend root namespace with standard classes
