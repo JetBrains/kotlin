@@ -1,0 +1,7 @@
+package test
+
+public open class TypeParameterOfClass</*0*/ T> : java.lang.Object {
+    public constructor TypeParameterOfClass</*0*/ T>()
+    public open /*synthesized*/ fun foo(/*0*/ p0 : ((T?, T?) -> jet.Int)?) : jet.Unit
+    public open fun foo(/*0*/ p0 : java.util.Comparator<T>?) : jet.Unit
+}
