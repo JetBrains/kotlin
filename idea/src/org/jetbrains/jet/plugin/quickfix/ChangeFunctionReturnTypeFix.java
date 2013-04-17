@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters3;
 import org.jetbrains.jet.lang.psi.*;
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -56,11 +56,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
     @Override
     public String getText() {
         String functionName = element.getName();
-        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-        SimpleFunctionDescriptor descriptor = context.get(BindingContext.FUNCTION, element);
-        if (descriptor != null) {
-            functionName = descriptor.getContainingDeclaration().getName() + "." + functionName;
-        }
+        FqName fqName = JetPsiUtil.getFQName(element);
+        if (fqName != null) functionName = fqName.getFqName();
 
         if (KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody()) {
             return JetBundle.message("remove.function.return.type", functionName);
