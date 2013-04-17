@@ -205,15 +205,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         }
     }
 
-    public static AnalyzeExhaust shallowAnalyzeFiles(Collection<JetFile> files) {
-        assert files.size() > 0;
-
-        Project project = files.iterator().next().getProject();
-
-        return analyzeFilesWithJavaIntegration(project,
-                files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysFalse());
-    }
-
     @NotNull
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
         return new ModuleDescriptorImpl(Name.special(name), JavaBridgeConfiguration.ALL_JAVA_IMPORTS, JavaToKotlinClassMap.getInstance());
