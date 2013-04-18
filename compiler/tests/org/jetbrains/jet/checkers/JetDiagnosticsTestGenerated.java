@@ -781,6 +781,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/callableReference/extensionFromTopLevel.kt");
             }
             
+            @TestMetadata("extensionInClassDisallowed.kt")
+            public void testExtensionInClassDisallowed() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/callableReference/extensionInClassDisallowed.kt");
+            }
+            
             @TestMetadata("genericClassFromTopLevel.kt")
             public void testGenericClassFromTopLevel() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/callableReference/genericClassFromTopLevel.kt");

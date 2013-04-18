@@ -440,6 +440,9 @@ public class DefaultErrorMessages {
 
         MAP.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", TO_STRING);
 
+        MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
+                "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", TO_STRING);
+
         MAP.setImmutable();
 
         for (Field field : Errors.class.getFields()) {

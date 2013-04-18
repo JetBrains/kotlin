@@ -611,8 +611,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
         if (receiverParameter != null && expectedThisObject != null) {
-            // TODO: report "extensions in classes" are not supported
-            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+            context.trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(reference, descriptor));
             return null;
         }
 
