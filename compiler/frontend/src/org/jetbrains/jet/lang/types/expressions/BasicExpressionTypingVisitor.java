@@ -754,10 +754,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression right = expression.getRight();
         IElementType operationType = operationSign.getReferencedNameElementType();
 
-        JetTypeInfo leftTypeInfo = left != null
-                                   ? facade.getTypeInfo(left, context)
-                                   : JetTypeInfo.create(null, context.dataFlowInfo);
-
         JetType result = null;
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
 
@@ -801,6 +797,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (right != null && left != null) {
                     ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
 
+                    JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
+
                     dataFlowInfo = leftTypeInfo.getDataFlowInfo();
                     ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
@@ -843,6 +841,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = typeInfo.getType();
             }
             else if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationType)) {
+                JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
+
                 JetType leftType = leftTypeInfo.getType();
                 dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 
@@ -865,6 +865,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = booleanType;
             }
             else if (operationType == JetTokens.ELVIS) {
+                JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
+
                 JetType leftType = leftTypeInfo.getType();
                 dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 

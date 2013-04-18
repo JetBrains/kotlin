@@ -209,9 +209,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
         JetExpression leftOperand = expression.getLeft();
-        JetTypeInfo leftInfo = leftOperand != null
-                               ? facade.getTypeInfo(leftOperand, context)
-                               : JetTypeInfo.create(null, context.dataFlowInfo);
+        JetTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(leftOperand, context, facade);
         JetType leftType = leftInfo.getType();
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
 
@@ -294,9 +292,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             return JetTypeInfo.create(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType),
                                       typeInfo.getDataFlowInfo());
         }
-        JetTypeInfo leftInfo = leftOperand != null
-                               ? facade.getTypeInfo(leftOperand, context)
-                               : JetTypeInfo.create(null, context.dataFlowInfo);
+        JetTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
         JetType leftType = leftInfo.getType();
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         if (right != null) {

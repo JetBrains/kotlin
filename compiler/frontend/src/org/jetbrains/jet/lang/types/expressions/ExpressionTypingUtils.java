@@ -467,4 +467,15 @@ public class ExpressionTypingUtils {
             }
         };
     }
+
+    @NotNull
+    public static JetTypeInfo getTypeInfoOrNullType(
+            @Nullable JetExpression expression,
+            @NotNull ExpressionTypingContext context,
+            @NotNull ExpressionTypingInternals facade
+    ) {
+        return expression != null
+               ? facade.getTypeInfo(expression, context)
+               : JetTypeInfo.create(null, context.dataFlowInfo);
+    }
 }
