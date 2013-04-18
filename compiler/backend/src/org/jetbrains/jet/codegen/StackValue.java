@@ -889,7 +889,7 @@ public abstract class StackValue {
             }
             else {
                 Method method = getter.getSignature().getAsmMethod();
-                v.visitMethodInsn(getter.getInvokeOpcode(), methodOwner.getInternalName(), method.getName(), method.getDescriptor());
+                v.visitMethodInsn(getter.getInvokeOpcode(), getter.getOwner().getInternalName(), method.getName(), method.getDescriptor());
             }
             coerceTo(type, v);
         }
@@ -902,7 +902,7 @@ public abstract class StackValue {
                                  this.type.getDescriptor()); }
             else {
                 Method method = setter.getSignature().getAsmMethod();
-                v.visitMethodInsn(setter.getInvokeOpcode(), methodOwner.getInternalName(), method.getName(), method.getDescriptor());
+                v.visitMethodInsn(setter.getInvokeOpcode(), setter.getOwner().getInternalName(), method.getName(), method.getDescriptor());
             }
         }
     }

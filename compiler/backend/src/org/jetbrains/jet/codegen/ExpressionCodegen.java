@@ -1734,6 +1734,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JvmClassName owner;
         CallableMethod callableMethod = callableGetter != null ? callableGetter : callableSetter;
 
+        propertyDescriptor = unwrapFakeOverride(propertyDescriptor);
         if (callableMethod == null) {
             owner = typeMapper.getOwner(propertyDescriptor, contextKind(), isInsideModule);
         }
@@ -1741,7 +1742,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             owner = callableMethod.getOwner();
         }
 
-        return StackValue.property(propertyDescriptor, owner, asmType(unwrapFakeOverride(propertyDescriptor).getOriginal().getType()),
+        return StackValue.property(propertyDescriptor, owner, asmType(propertyDescriptor.getOriginal().getType()),
                                    isStatic, callableGetter, callableSetter, state);
     }
 
