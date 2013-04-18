@@ -1,0 +1,14 @@
+package test
+
+public open class TypeParameterOfMethod : java.lang.Object {
+    public constructor TypeParameterOfMethod()
+}
+
+package TypeParameterOfMethod {
+    public open /*synthesized*/ fun </*0*/ T> max(/*0*/ p0 : ((T?, T?) -> jet.Int)?, /*1*/ p1 : T?, /*2*/ p2 : T?) : T?
+    public open fun </*0*/ T> max(/*0*/ p0 : java.util.Comparator<T>?, /*1*/ p1 : T?, /*2*/ p2 : T?) : T?
+    public open /*synthesized*/ fun </*0*/ T : jet.CharSequence?> max2(/*0*/ p0 : ((T?, T?) -> jet.Int)?, /*1*/ p1 : T?, /*2*/ p2 : T?) : T?
+    public open fun </*0*/ T : jet.CharSequence?> max2(/*0*/ p0 : java.util.Comparator<T>?, /*1*/ p1 : T?, /*2*/ p2 : T?) : T?
+    public open /*synthesized*/ fun </*0*/ A : jet.CharSequence?, /*1*/ B : jet.List<A>?> method(/*0*/ p0 : ((A?, A?) -> jet.Int)?, /*1*/ p1 : B?) : jet.Unit
+    public open fun </*0*/ A : jet.CharSequence?, /*1*/ B : jet.List<A>?> method(/*0*/ p0 : java.util.Comparator<A>?, /*1*/ p1 : B?) : jet.Unit
+}

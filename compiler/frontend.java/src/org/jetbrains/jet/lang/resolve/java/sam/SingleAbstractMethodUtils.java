@@ -145,12 +145,19 @@ public class SingleAbstractMethodUtils {
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
 
-        JetType returnType = original.getReturnType();
+        TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), result);
+
+        JetType returnTypeUnsubstituted = original.getReturnType();
+        assert returnTypeUnsubstituted != null : original;
+        JetType returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
+        assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParameters.substitutor;
 
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         for (ValueParameterDescriptor originalParam : original.getValueParameters()) {
             JetType originalType = originalParam.getType();
-            JetType newType = isSamType(originalType) ? getFunctionTypeForSamType(originalType) : originalType;
+            JetType newTypeUnsubstituted = isSamType(originalType) ? getFunctionTypeForSamType(originalType) : originalType;
+            JetType newType = typeParameters.substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
+            assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + typeParameters.substitutor;
 
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
                     result, originalParam.getIndex(), originalParam.getAnnotations(), originalParam.getName(), newType, false, null);
@@ -160,7 +167,7 @@ public class SingleAbstractMethodUtils {
         result.initialize(
                 null,
                 original.getExpectedThisObject(),
-                Collections.<TypeParameterDescriptor>emptyList(), // TODO copy type parameters
+                typeParameters.descriptors,
                 valueParameters,
                 returnType,
                 original.getModality(),
