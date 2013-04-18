@@ -1,9 +1,9 @@
 package test
 
 jet.data() internal open class DataClass {
-    /*primary*/ public constructor DataClass(/*0*/ x : jet.String)
-    internal final val x : jet.String
-        internal final fun <get-x>() : jet.String
-    internal final /*synthesized*/ fun component1() : jet.String
-    internal final /*synthesized*/ fun copy(/*0*/ x : jet.String = ...) : test.DataClass
+    /*primary*/ public constructor DataClass(/*0*/ x: jet.String)
+    internal final val x: jet.String
+        internal final fun <get-x>(): jet.String
+    internal final /*synthesized*/ fun component1(): jet.String
+    internal final /*synthesized*/ fun copy(/*0*/ x: jet.String = ...): test.DataClass
 }

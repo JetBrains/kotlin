@@ -2,5 +2,5 @@ package test
 
 public final class ArrayTypeVariance : java.lang.Object {
     public constructor ArrayTypeVariance()
-    public final fun toArray(/*0*/ p0 : jet.Array<out jet.Any>?) : jet.Array<jet.Any>?
+    public final fun toArray(/*0*/ p0: jet.Array<out jet.Any>?): jet.Array<jet.Any>?
 }

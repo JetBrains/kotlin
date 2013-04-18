@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithVararg : java.lang.Object {
     public constructor MethodWithVararg()
-    public open fun foo(/*0*/ vararg p0 : jet.String /*jet.Array<jet.String>*/) : jet.Unit
+    public open fun foo(/*0*/ vararg p0: jet.String /*jet.Array<jet.String>*/): jet.Unit
 }

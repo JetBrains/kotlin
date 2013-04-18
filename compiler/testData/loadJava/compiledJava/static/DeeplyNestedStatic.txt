@@ -17,7 +17,7 @@ package DeeplyNestedStatic {
     package Foo {
         
         package Bar {
-            public open fun method() : jet.Unit
+            public open fun method(): jet.Unit
         }
     }
 }

@@ -2,5 +2,5 @@ package test
 
 internal final class ClassFunGetFoo {
     /*primary*/ public constructor ClassFunGetFoo()
-    internal final fun getFoo() : jet.Int
+    internal final fun getFoo(): jet.Int
 }

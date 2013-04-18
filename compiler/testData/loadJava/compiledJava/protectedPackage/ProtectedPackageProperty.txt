@@ -2,5 +2,5 @@ package test
 
 public open class ProtectedPackageProperty : java.lang.Object {
     public constructor ProtectedPackageProperty()
-    protected/*protected and package*/ final var foo : jet.Int
+    protected/*protected and package*/ final var foo: jet.Int
 }

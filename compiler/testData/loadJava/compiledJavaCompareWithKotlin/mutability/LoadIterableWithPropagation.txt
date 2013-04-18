@@ -3,17 +3,17 @@ package test
 public trait LoadIterableWithPropagation : java.lang.Object {
     
     public trait LoadIterable</*0*/ T> : java.lang.Object {
-        public abstract fun getIterable() : jet.MutableIterable<T>?
-        public abstract fun getReadOnlyIterable() : jet.Iterable<T>?
-        public abstract fun setIterable(/*0*/ p0 : jet.MutableIterable<T>?) : jet.Unit
-        public abstract fun setReadOnlyIterable(/*0*/ p0 : jet.Iterable<T>?) : jet.Unit
+        public abstract fun getIterable(): jet.MutableIterable<T>?
+        public abstract fun getReadOnlyIterable(): jet.Iterable<T>?
+        public abstract fun setIterable(/*0*/ p0: jet.MutableIterable<T>?): jet.Unit
+        public abstract fun setReadOnlyIterable(/*0*/ p0: jet.Iterable<T>?): jet.Unit
     }
     
     public open class LoadIterableImpl</*0*/ T> : test.LoadIterableWithPropagation.LoadIterable<T> {
         public constructor LoadIterableImpl</*0*/ T>()
-        public open override /*1*/ fun getIterable() : jet.MutableIterable<T>?
-        public open override /*1*/ fun getReadOnlyIterable() : jet.Iterable<T>?
-        public open override /*1*/ fun setIterable(/*0*/ p0 : jet.MutableIterable<T>?) : jet.Unit
-        public open override /*1*/ fun setReadOnlyIterable(/*0*/ p0 : jet.Iterable<T>?) : jet.Unit
+        public override /*1*/ fun getIterable(): jet.MutableIterable<T>?
+        public override /*1*/ fun getReadOnlyIterable(): jet.Iterable<T>?
+        public override /*1*/ fun setIterable(/*0*/ p0: jet.MutableIterable<T>?): jet.Unit
+        public override /*1*/ fun setReadOnlyIterable(/*0*/ p0: jet.Iterable<T>?): jet.Unit
     }
 }

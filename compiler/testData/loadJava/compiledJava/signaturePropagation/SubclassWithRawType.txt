@@ -3,24 +3,24 @@ package test
 public trait SubclassWithRawType : java.lang.Object {
     
     public trait Sub : test.SubclassWithRawType.Super {
-        public abstract override /*1*/ fun array1() : jet.Array<jet.List<jet.String?>>?
-        public abstract override /*1*/ fun array2() : jet.Array<jet.List<jet.Any>>?
-        public abstract override /*1*/ fun boundWildcard1() : jet.MutableList<out jet.List<jet.String?>?>?
-        public abstract override /*1*/ fun boundWildcard2() : jet.MutableList<in jet.List<jet.Any>?>?
-        public abstract override /*1*/ fun simple1() : jet.MutableList<out jet.String?>?
-        public abstract override /*1*/ fun simple2() : jet.MutableList<out jet.List<jet.String>?>?
-        public abstract override /*1*/ fun simple3() : jet.MutableList<out jet.Any>?
-        public abstract override /*1*/ fun wildcard() : jet.MutableList<out jet.Any?>?
+        public abstract override /*1*/ fun array1(): jet.Array<jet.List<jet.String?>>?
+        public abstract override /*1*/ fun array2(): jet.Array<jet.List<jet.Any>>?
+        public abstract override /*1*/ fun boundWildcard1(): jet.MutableList<out jet.List<jet.String?>?>?
+        public abstract override /*1*/ fun boundWildcard2(): jet.MutableList<in jet.List<jet.Any>?>?
+        public abstract override /*1*/ fun simple1(): jet.MutableList<out jet.String?>?
+        public abstract override /*1*/ fun simple2(): jet.MutableList<out jet.List<jet.String>?>?
+        public abstract override /*1*/ fun simple3(): jet.MutableList<out jet.Any>?
+        public abstract override /*1*/ fun wildcard(): jet.MutableList<out jet.Any?>?
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun array1() : jet.Array<jet.List<jet.Any?>>?
-        public abstract fun array2() : jet.Array<jet.List<jet.String>>?
-        public abstract fun boundWildcard1() : jet.MutableList<out jet.List<jet.Any?>?>?
-        public abstract fun boundWildcard2() : jet.MutableList<in jet.List<jet.String>?>?
-        public abstract fun simple1() : jet.MutableList<out jet.Any?>?
-        public abstract fun simple2() : jet.MutableList<out jet.Any?>?
-        public abstract fun simple3() : jet.MutableList<jet.String>?
-        public abstract fun wildcard() : jet.MutableList<out jet.Any?>?
+        public abstract fun array1(): jet.Array<jet.List<jet.Any?>>?
+        public abstract fun array2(): jet.Array<jet.List<jet.String>>?
+        public abstract fun boundWildcard1(): jet.MutableList<out jet.List<jet.Any?>?>?
+        public abstract fun boundWildcard2(): jet.MutableList<in jet.List<jet.String>?>?
+        public abstract fun simple1(): jet.MutableList<out jet.Any?>?
+        public abstract fun simple2(): jet.MutableList<out jet.Any?>?
+        public abstract fun simple3(): jet.MutableList<jet.String>?
+        public abstract fun wildcard(): jet.MutableList<out jet.Any?>?
     }
 }

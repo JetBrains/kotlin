@@ -2,17 +2,17 @@ package test
 
 internal open class Impl : test.Trait {
     public constructor Impl()
-    internal open override /*1*/ /*fake_override*/ fun bar() : jet.String
-    internal open override /*1*/ /*fake_override*/ fun foo() : jet.String
+    internal override /*1*/ /*fake_override*/ fun bar(): jet.String
+    internal override /*1*/ /*fake_override*/ fun foo(): jet.String
 }
 
 public open class Subclass : test.Impl {
     public constructor Subclass()
-    java.lang.Override() public open override /*1*/ fun bar() : jet.String
-    internal open override /*1*/ /*fake_override*/ fun foo() : jet.String
+    java.lang.Override() public override /*1*/ fun bar(): jet.String
+    internal override /*1*/ /*fake_override*/ fun foo(): jet.String
 }
 
 internal trait Trait {
-    internal open fun bar() : jet.String
-    internal open fun foo() : jet.String
+    internal open fun bar(): jet.String
+    internal open fun foo(): jet.String
 }

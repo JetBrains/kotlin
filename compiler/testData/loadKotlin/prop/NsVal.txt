@@ -1,4 +1,4 @@
 package test
 
-internal val nsVal : jet.Int
-    internal fun <get-nsVal>() : jet.Int
+internal val nsVal: jet.Int
+    internal fun <get-nsVal>(): jet.Int

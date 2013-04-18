@@ -2,5 +2,5 @@ package test
 
 public open class WrongValueParametersCount : java.lang.Object {
     public constructor WrongValueParametersCount()
-    public open fun foo() : jet.Int?
+    public open fun foo(): jet.Int?
 }

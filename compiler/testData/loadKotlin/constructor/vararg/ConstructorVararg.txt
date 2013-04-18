@@ -1,5 +1,5 @@
 package test
 
 internal final class A {
-    /*primary*/ public constructor A(/*0*/ vararg a : jet.Int /*jet.IntArray*/)
+    /*primary*/ public constructor A(/*0*/ vararg a: jet.Int /*jet.IntArray*/)
 }

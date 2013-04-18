@@ -1,4 +1,4 @@
 package test
 
-internal fun f(/*0*/ vararg t : jet.String /*jet.Array<jet.String>*/, /*1*/ f : () -> jet.Unit) : jet.Unit
-internal fun f(/*0*/ vararg t : jet.Int /*jet.IntArray*/, /*1*/ f : () -> jet.Unit) : jet.Unit
+internal fun f(/*0*/ vararg t: jet.String /*jet.Array<jet.String>*/, /*1*/ f: () -> jet.Unit): jet.Unit
+internal fun f(/*0*/ vararg t: jet.Int /*jet.IntArray*/, /*1*/ f: () -> jet.Unit): jet.Unit

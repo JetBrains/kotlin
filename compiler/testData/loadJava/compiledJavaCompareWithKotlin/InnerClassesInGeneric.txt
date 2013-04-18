@@ -9,6 +9,6 @@ public open class InnerClassesInGeneric</*0*/ P, /*1*/ Q> : java.lang.Object {
     
     public open inner class Inner2 : test.InnerClassesInGeneric.Inner {
         public constructor Inner2()
-        public open fun iterator() : jet.MutableIterator<P>?
+        public open fun iterator(): jet.MutableIterator<P>?
     }
 }

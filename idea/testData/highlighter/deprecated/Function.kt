@@ -3,7 +3,7 @@ fun test() {
     MyClass().<warning descr="'fun test2()' is deprecated. Use A instead">test2</warning>()
     MyClass.<warning descr="'fun test3()' is deprecated. Use A instead">test3</warning>()
 
-    <warning descr="'fun test4(x : jet.Int, y : jet.Int)' is deprecated. Use A instead">test4</warning>(1, 2)
+    <warning descr="'fun test4(x: jet.Int, y: jet.Int)' is deprecated. Use A instead">test4</warning>(1, 2)
 }
 
 deprecated("Use A instead") fun test1() { }

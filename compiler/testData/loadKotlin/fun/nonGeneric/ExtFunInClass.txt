@@ -2,5 +2,5 @@ package test
 
 internal final class ExtFunInClass {
     /*primary*/ public constructor ExtFunInClass()
-    internal final fun jet.Int.shuffle() : jet.Int
+    internal final fun jet.Int.shuffle(): jet.Int
 }

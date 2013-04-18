@@ -2,7 +2,7 @@ package test
 
 public final class UnboundWildcard : java.lang.Object {
     public constructor UnboundWildcard()
-    public final fun foo() : test.UnboundWildcard.MyClass<out jet.CharSequence?>?
+    public final fun foo(): test.UnboundWildcard.MyClass<out jet.CharSequence?>?
     
     public trait MyClass</*0*/ T : jet.CharSequence?> : java.lang.Object {
     }

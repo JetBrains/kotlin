@@ -1,6 +1,6 @@
 package test
 
 internal final class CompositeIterator</*0*/ T> {
-    /*primary*/ public constructor CompositeIterator</*0*/ T>(/*0*/ vararg iterators : java.util.Iterator<T> /*jet.Array<java.util.Iterator<T>>*/)
-    internal final val iteratorsIter : jet.Iterator<java.util.Iterator<T>>
+    /*primary*/ public constructor CompositeIterator</*0*/ T>(/*0*/ vararg iterators: java.util.Iterator<T> /*jet.Array<java.util.Iterator<T>>*/)
+    internal final val iteratorsIter: jet.Iterator<java.util.Iterator<T>>
 }

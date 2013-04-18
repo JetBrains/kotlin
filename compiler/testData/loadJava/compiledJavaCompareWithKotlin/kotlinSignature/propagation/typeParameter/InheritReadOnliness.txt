@@ -3,10 +3,10 @@ package test
 public trait InheritReadOnliness : java.lang.Object {
     
     public trait Sub : test.InheritReadOnliness.Super {
-        public abstract override /*1*/ fun </*0*/ B : jet.List<jet.String>> foo(/*0*/ p0 : B) : jet.Unit
+        public abstract override /*1*/ fun </*0*/ B : jet.List<jet.String>> foo(/*0*/ p0: B): jet.Unit
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun </*0*/ A : jet.List<jet.String>> foo(/*0*/ p0 : A) : jet.Unit
+        public abstract fun </*0*/ A : jet.List<jet.String>> foo(/*0*/ p0: A): jet.Unit
     }
 }

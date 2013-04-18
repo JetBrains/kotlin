@@ -2,5 +2,5 @@ package test
 
 public open class CustomProjectionKind : java.lang.Object {
     public constructor CustomProjectionKind()
-    public open fun foo() : jet.MutableList<out jet.Number>
+    public open fun foo(): jet.MutableList<out jet.Number>
 }

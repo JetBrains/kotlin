@@ -1,4 +1,4 @@
 package test
 
-internal val jet.Collection<jet.Any?>.anotherSize : jet.Int
-    internal fun jet.Collection<jet.Any?>.<get-anotherSize>() : jet.Int
+internal val jet.Collection<jet.Any?>.anotherSize: jet.Int
+    internal fun jet.Collection<jet.Any?>.<get-anotherSize>(): jet.Int

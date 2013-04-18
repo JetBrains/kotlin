@@ -2,6 +2,6 @@ package test
 
 internal abstract class ClassValAbstract {
     /*primary*/ public constructor ClassValAbstract()
-    internal abstract val a : jet.Int
-        internal abstract fun <get-a>() : jet.Int
+    internal abstract val a: jet.Int
+        internal abstract fun <get-a>(): jet.Int
 }

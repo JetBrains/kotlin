@@ -2,5 +2,5 @@ package test
 
 public open class WrongValueParameterStructure2 : java.lang.Object {
     public constructor WrongValueParameterStructure2()
-    public open fun foo(/*0*/ p0 : jet.String?, /*1*/ p1 : jet.List<jet.Map.Entry<jet.String, jet.String>>?) : jet.String?
+    public open fun foo(/*0*/ p0: jet.String?, /*1*/ p1: jet.List<jet.Map.Entry<jet.String, jet.String>>?): jet.String?
 }

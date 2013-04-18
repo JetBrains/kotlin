@@ -1,6 +1,6 @@
 package test
 
-internal val inferTypeFromImportedFun : jet.Int
+internal val inferTypeFromImportedFun: jet.Int
 
 internal final class B : testOther.A {
     /*primary*/ public constructor B()

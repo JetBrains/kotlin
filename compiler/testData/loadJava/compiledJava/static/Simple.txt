@@ -2,9 +2,9 @@ package test
 
 public open class Simple : java.lang.Object {
     public constructor Simple()
-    public open fun foo() : jet.Unit
+    public open fun foo(): jet.Unit
 }
 
 package Simple {
-    public open fun bar() : jet.Unit
+    public open fun bar(): jet.Unit
 }

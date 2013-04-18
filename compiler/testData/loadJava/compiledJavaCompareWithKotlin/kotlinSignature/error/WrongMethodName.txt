@@ -2,5 +2,5 @@ package test
 
 public open class WrongMethodName : java.lang.Object {
     public constructor WrongMethodName()
-    public open fun foo() : jet.String?
+    public open fun foo(): jet.String?
 }

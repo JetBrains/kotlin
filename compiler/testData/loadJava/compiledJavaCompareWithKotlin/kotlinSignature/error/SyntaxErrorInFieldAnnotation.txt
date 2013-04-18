@@ -2,5 +2,5 @@ package test
 
 public open class SyntaxErrorInFieldAnnotation : java.lang.Object {
     public constructor SyntaxErrorInFieldAnnotation()
-    public final var foo : jet.String?
+    public final var foo: jet.String?
 }

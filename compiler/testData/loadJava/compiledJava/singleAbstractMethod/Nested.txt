@@ -5,27 +5,27 @@ public trait Nested : java.lang.Object {
     public trait Deeper1 : java.lang.Object {
         
         public trait Runnable : java.lang.Object {
-            public abstract fun run() : jet.Unit
-            public abstract fun run2() : jet.Unit
+            public abstract fun run(): jet.Unit
+            public abstract fun run2(): jet.Unit
         }
     }
     
     public trait Deeper2 : java.lang.Object {
         
         public trait Runnable : java.lang.Object {
-            public abstract fun run() : jet.Unit
+            public abstract fun run(): jet.Unit
         }
     }
     
     public trait Runnable : java.lang.Object {
-        public abstract fun run() : jet.Unit
+        public abstract fun run(): jet.Unit
     }
 }
 
 package Nested {
-    public /*synthesized*/ fun Runnable(/*0*/ function : () -> jet.Unit) : test.Nested.Runnable
+    public /*synthesized*/ fun Runnable(/*0*/ function: () -> jet.Unit): test.Nested.Runnable
     
     package Deeper2 {
-        public /*synthesized*/ fun Runnable(/*0*/ function : () -> jet.Unit) : test.Nested.Deeper2.Runnable
+        public /*synthesized*/ fun Runnable(/*0*/ function: () -> jet.Unit): test.Nested.Deeper2.Runnable
     }
 }
