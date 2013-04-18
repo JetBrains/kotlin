@@ -61,9 +61,13 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         if (fqName != null) functionName = fqName.getFqName();
 
         if (KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody()) {
-            return JetBundle.message("remove.function.return.type", functionName);
+            return functionName == null ?
+                   JetBundle.message("remove.no.name.function.return.type") :
+                   JetBundle.message("remove.function.return.type", functionName);
         }
-        return JetBundle.message("change.function.return.type", functionName, type.toString());
+        return functionName == null ?
+               JetBundle.message("change.no.name.function.return.type", type.toString()) :
+               JetBundle.message("change.function.return.type", functionName, type.toString());
     }
 
     @NotNull
