@@ -568,7 +568,33 @@ public class JetTypeMapper extends BindingTraceAware {
         }
     }
 
-    private JvmMethodSignature mapSignature(FunctionDescriptor f, boolean needGenericSignature, OwnerKind kind) {
+    @NotNull
+    private JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
+        String name = f.getName().getName();
+        if (f instanceof PropertyAccessorDescriptor) {
+            boolean isGetter = f instanceof PropertyGetterDescriptor;
+            name = getPropertyAccessorName(((PropertyAccessorDescriptor) f).getCorrespondingProperty(), isGetter);
+        }
+        return mapSignature(name, f, needGenericSignature, kind);
+    }
+
+    @NotNull
+    public JvmMethodSignature mapSignature(@NotNull Name functionName, @NotNull FunctionDescriptor f) {
+        return mapSignature(functionName.getName(), f, false, OwnerKind.IMPLEMENTATION);
+    }
+
+    @NotNull
+    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f) {
+        return mapSignature(f.getName(), f);
+    }
+
+    @NotNull
+    private JvmMethodSignature mapSignature(
+            @NotNull String methodName,
+            @NotNull FunctionDescriptor f,
+            boolean needGenericSignature,
+            @NotNull OwnerKind kind
+    ) {
         if (kind == OwnerKind.TRAIT_IMPL) {
             needGenericSignature = false;
         }
@@ -598,12 +624,7 @@ public class JetTypeMapper extends BindingTraceAware {
             signatureVisitor.writeReturnTypeEnd();
         }
 
-        String name = f.getName().getName();
-        if (f instanceof PropertyAccessorDescriptor) {
-            boolean isGetter = f instanceof PropertyGetterDescriptor;
-            name = getPropertyAccessorName(((PropertyAccessorDescriptor)f).getCorrespondingProperty(), isGetter);
-        }
-        return signatureVisitor.makeJvmMethodSignature(name);
+        return signatureVisitor.makeJvmMethodSignature(methodName);
     }
 
     private void writeThisIfNeeded(
@@ -687,33 +708,6 @@ public class JetTypeMapper extends BindingTraceAware {
         signatureVisitor.writeFormalTypeParameterEnd();
     }
 
-    public JvmMethodSignature mapSignature(Name name, FunctionDescriptor f) {
-        ReceiverParameterDescriptor receiver = f.getReceiverParameter();
-
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
-
-        writeFormalTypeParameters(f.getTypeParameters(), signatureWriter);
-
-        signatureWriter.writeParametersStart();
-
-        writeThisForAccessorIfNeeded(f, signatureWriter);
-
-        List<ValueParameterDescriptor> parameters = f.getValueParameters();
-        writeReceiverIfNeeded(receiver, signatureWriter);
-        for (ValueParameterDescriptor parameter : parameters) {
-            writeParameter(signatureWriter, parameter.getType());
-        }
-
-        signatureWriter.writeParametersEnd();
-
-        signatureWriter.writeReturnType();
-        JetType returnType = f.getReturnType();
-        assert returnType != null;
-        mapReturnType(returnType, signatureWriter);
-        signatureWriter.writeReturnTypeEnd();
-
-        return signatureWriter.makeJvmMethodSignature(name.getName());
-    }
 
     private void writeReceiverIfNeeded(@Nullable ReceiverParameterDescriptor receiver, BothSignatureWriter signatureWriter) {
         if (receiver != null) {

@@ -170,7 +170,7 @@ public class ClosureCodegen extends GenerationStateAware {
             JetExpression fun,
             ClassBuilder cv
     ) {
-        Method bridge = typeMapper.mapSignature(interfaceFunction.getName(), interfaceFunction).getAsmMethod();
+        Method bridge = typeMapper.mapSignature(interfaceFunction).getAsmMethod();
 
         Method delegate = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor).getAsmMethod();
 

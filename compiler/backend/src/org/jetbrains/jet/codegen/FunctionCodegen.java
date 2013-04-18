@@ -393,7 +393,7 @@ public class FunctionCodegen extends GenerationStateAware {
         }
 
         Method method =
-                state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
+                state.getTypeMapper().mapSignature(functionDescriptor).getAsmMethod();
 
         Queue<FunctionDescriptor> bfsQueue = new LinkedList<FunctionDescriptor>();
         Set<FunctionDescriptor> visited = new HashSet<FunctionDescriptor>();
@@ -413,7 +413,7 @@ public class FunctionCodegen extends GenerationStateAware {
             FunctionDescriptor descriptor = bfsQueue.poll();
             if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
                 Method overridden =
-                        state.getTypeMapper().mapSignature(descriptor.getName(), descriptor.getOriginal()).getAsmMethod();
+                        state.getTypeMapper().mapSignature(descriptor.getOriginal()).getAsmMethod();
                 if (differentMethods(method, overridden)) {
                     bridgesToGenerate.add(overridden);
                 }
@@ -788,8 +788,8 @@ public class FunctionCodegen extends GenerationStateAware {
 
     public void genDelegate(FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
         genDelegate(functionDescriptor, (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field,
-                    typeMapper.mapSignature(functionDescriptor.getName(), functionDescriptor),
-                    typeMapper.mapSignature(overriddenDescriptor.getName(), overriddenDescriptor.getOriginal())
+                    typeMapper.mapSignature(functionDescriptor),
+                    typeMapper.mapSignature(overriddenDescriptor.getOriginal())
         );
     }
 

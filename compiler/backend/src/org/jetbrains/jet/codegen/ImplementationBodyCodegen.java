@@ -209,7 +209,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
 
             if (function != null) {
-                Method method = typeMapper.mapSignature(function.getName(), function).getAsmMethod();
+                Method method = typeMapper.mapSignature(function).getAsmMethod();
                 v.visitOuterClass(outerClassName, method.getName(), method.getDescriptor());
             }
             else {
@@ -678,7 +678,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert returnType != null : "Return type of component function should not be null: " + function;
         final Type componentType = typeMapper.mapReturnType(returnType);
 
-        JvmMethodSignature signature = typeMapper.mapSignature(function.getName(), function);
+        JvmMethodSignature signature = typeMapper.mapSignature(function);
 
         FunctionCodegen fc = new FunctionCodegen(context, v, state);
         fc.generateMethod(myClass, signature, true, null, function, new FunctionGenerationStrategy() {
@@ -701,7 +701,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateCopyFunction(@NotNull final FunctionDescriptor function) {
-        JvmMethodSignature methodSignature = typeMapper.mapSignature(function.getName(), function);
+        JvmMethodSignature methodSignature = typeMapper.mapSignature(function);
 
         final Type thisDescriptorType = typeMapper.mapType(descriptor.getDefaultType());
 
@@ -811,11 +811,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
             FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
 
-            Method method = typeMapper.mapSignature(bridge.getName(), bridge).getAsmMethod();
+            Method method = typeMapper.mapSignature(bridge).getAsmMethod();
             boolean isConstructor = original instanceof ConstructorDescriptor;
             Method originalMethod = isConstructor ?
                                     typeMapper.mapToCallableMethod((ConstructorDescriptor) original).getSignature().getAsmMethod() :
-                                    typeMapper.mapSignature(original.getName(), original).getAsmMethod();
+                                    typeMapper.mapSignature(original).getAsmMethod();
             Type[] argTypes = method.getArgumentTypes();
 
             String owner = typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isCallInsideSameModuleAsDeclared(original, context)).getInternalName();
@@ -1414,8 +1414,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
         else {
-            Method function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
-            Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
+            Method function = typeMapper.mapSignature(fun).getAsmMethod();
+            Method functionOriginal = typeMapper.mapSignature(fun.getOriginal()).getAsmMethod();
             return new TraitImplDelegateInfo(function, functionOriginal);
         }
     }
