@@ -45,8 +45,11 @@ public class ReplaceInfixCallFix extends JetIntentionAction<JetBinaryExpression>
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        String newText = element.getLeft().getText() + "?." + element.getOperationReference().getText()
-                         + "(" + element.getRight().getText() + ")";
+        JetExpression left = element.getLeft();
+        JetExpression right = element.getRight();
+        assert left != null && right != null : "Preconditions checked by factory";
+        String newText = left.getText() + "?." + element.getOperationReference().getText()
+                         + "(" + right.getText() + ")";
         JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory.createExpression(project, newText);
         element.replace(newElement);
     }
@@ -61,6 +64,9 @@ public class ReplaceInfixCallFix extends JetIntentionAction<JetBinaryExpression>
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
+                if (expression == null) return null;
+                if (expression.getLeft() == null) return null;
+                if (expression.getRight() == null) return null;
                 return new ReplaceInfixCallFix(expression);
             }
         };

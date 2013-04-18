@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -61,7 +62,9 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         super(context);
         this.expression = expression;
         this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
-        this.accessTranslator = AccessTranslationUtils.getAccessTranslator(expression.getLeft(), context());
+        JetExpression left = expression.getLeft();
+        assert left != null : "No left-hand side: " + expression.getText();
+        this.accessTranslator = AccessTranslationUtils.getAccessTranslator(left, context());
         this.right = translateRightExpression(context(), expression);
     }
 }

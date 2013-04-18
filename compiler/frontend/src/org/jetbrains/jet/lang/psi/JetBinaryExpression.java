@@ -38,11 +38,18 @@ public class JetBinaryExpression extends JetExpressionImpl implements JetOperati
         return visitor.visitBinaryExpression(this, data);
     }
 
-    @NotNull
+    @Nullable @IfNotParsed
     public JetExpression getLeft() {
-        JetExpression left = findChildByClass(JetExpression.class);
-        assert left != null;
-        return left;
+        ASTNode node = getOperationReference().getNode().getTreePrev();
+        while (node != null) {
+            PsiElement psi = node.getPsi();
+            if (psi instanceof JetExpression) {
+                return (JetExpression) psi;
+            }
+            node = node.getTreePrev();
+        }
+
+        return null;
     }
 
     @Nullable @IfNotParsed

@@ -1,0 +1,128 @@
+JetFile: AbsentLeftHandSide.kt
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('import')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('import')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('a')
+        BINARY_EXPRESSION
+          PsiErrorElement:Expecting an element
+            PsiElement(DOT)('.')
+          OPERATION_REFERENCE
+            PsiElement(MUL)('*')
+          PsiErrorElement:Expecting an element
+            <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('composite')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('s')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('13')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          BINARY_EXPRESSION
+            PsiErrorElement:Expecting an element
+              PsiElement(BAD_CHARACTER)('~')
+            OPERATION_REFERENCE
+              PsiElement(DIV)('/')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('html')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(LT)('<')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('html')
+          OPERATION_REFERENCE
+            PsiElement(GT)('>')
+          BINARY_EXPRESSION
+            PsiErrorElement:Expecting an element
+              PsiElement(LT)('<')
+            OPERATION_REFERENCE
+              PsiElement(DIV)('/')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('html')
+        OPERATION_REFERENCE
+          PsiElement(GT)('>')
+        PsiErrorElement:Expecting an element
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('html1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(LT)('<')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('html')
+          OPERATION_REFERENCE
+            PsiElement(GT)('>')
+          BINARY_EXPRESSION
+            PsiErrorElement:Expecting an element
+              PsiElement(LT)('<')
+            OPERATION_REFERENCE
+              PsiElement(DIV)('/')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('html')
+        OPERATION_REFERENCE
+          PsiElement(GT)('>')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('html')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

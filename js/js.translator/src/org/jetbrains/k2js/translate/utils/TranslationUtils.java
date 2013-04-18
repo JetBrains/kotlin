@@ -153,7 +153,9 @@ public final class TranslationUtils {
     @NotNull
     public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
             @NotNull JetBinaryExpression expression) {
-        return Translation.translateAsExpression(expression.getLeft(), context);
+        JetExpression left = expression.getLeft();
+        assert left != null : "Binary expression should have a left expression: " + expression.getText();
+        return Translation.translateAsExpression(left, context);
     }
 
     @NotNull

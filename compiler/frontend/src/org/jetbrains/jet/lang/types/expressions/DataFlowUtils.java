@@ -73,6 +73,7 @@ public class DataFlowUtils {
                 }
                 else  {
                     JetExpression left = expression.getLeft();
+                    if (left == null) return;
                     JetExpression right = expression.getRight();
                     if (right == null) return;
 

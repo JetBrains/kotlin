@@ -175,9 +175,10 @@ public class TracingStrategyImpl implements TracingStrategy {
                         Name.identifier(operationReference.getText()) :
                         OperatorConventions.getNameForOperationSymbol((JetToken) operationReference.getReferencedNameElementType());
 
+                JetExpression left = binaryExpression.getLeft();
                 JetExpression right = binaryExpression.getRight();
-                if (right != null) {
-                    trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString.getName(), right.getText()));
+                if (left != null && right != null) {
+                    trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.getName(), right.getText()));
                 }
             }
             else {

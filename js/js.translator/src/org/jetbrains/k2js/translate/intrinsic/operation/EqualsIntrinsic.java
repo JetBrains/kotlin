@@ -23,6 +23,7 @@ import com.google.dart.compiler.backend.js.ast.JsLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -69,7 +70,9 @@ public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
     }
 
     private static boolean canUseSimpleEquals(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context) {
-        Name typeName = JsDescriptorUtils.getNameIfStandardType(expression.getLeft(), context);
+        JetExpression left = expression.getLeft();
+        assert left != null : "No left-hand side: " + expression.getText();
+        Name typeName = JsDescriptorUtils.getNameIfStandardType(left, context);
         return typeName != null && NamePredicate.PRIMITIVE_NUMBERS.apply(typeName);
     }
 }
