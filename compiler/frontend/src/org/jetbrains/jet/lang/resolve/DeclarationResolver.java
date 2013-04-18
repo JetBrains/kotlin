@@ -346,7 +346,13 @@ public class DeclarationResolver {
     }
 
     private void checkRedeclarationsInInnerClassNames() {
-        for (MutableClassDescriptor classDescriptor : context.getClasses().values()) {
+        Iterable<MutableClassDescriptor> classesAndObjects = Iterables.concat(context.getClasses().values(), context.getObjects().values());
+        for (MutableClassDescriptor classDescriptor : classesAndObjects) {
+            if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+                // Class objects should be considered during analysing redeclarations in classes
+                continue;
+            }
+
             Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
 
             MutableClassDescriptorLite classObj = classDescriptor.getClassObjectDescriptor();
