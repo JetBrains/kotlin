@@ -657,8 +657,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         ClassifierDescriptor classifier = lhsType.getConstructor().getDeclarationDescriptor();
-        // TODO: report an error if the classifier is not a class
-        assert classifier instanceof ClassDescriptor : "TODO";
+        if (!(classifier instanceof ClassDescriptor)) {
+            context.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(expression));
+            return null;
+        }
 
         ReceiverValue receiver = new TransientReceiver(lhsType);
         TemporaryBindingTrace traceWithReceiver = TemporaryBindingTrace.create(context.trace,

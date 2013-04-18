@@ -811,6 +811,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/callableReference/innerConstructorFromTopLevel.kt");
             }
             
+            @TestMetadata("lhsNotAClass.kt")
+            public void testLhsNotAClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/callableReference/lhsNotAClass.kt");
+            }
+            
             @TestMetadata("localConstructor.kt")
             public void testLocalConstructor() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/callableReference/localConstructor.kt");
