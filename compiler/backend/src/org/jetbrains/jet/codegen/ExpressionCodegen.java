@@ -1574,36 +1574,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             boolean isSuper = r instanceof JetSuperExpression;
             propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
             StackValue.Property iValue =
-                    intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
-            if (!directToField && resolvedCall != null && !isSuper) {
-                receiver.put(propertyDescriptor.getReceiverParameter() != null || isStatic
-                             ? receiver.type
-                             : iValue.methodOwner.getAsmType(), v);
+                intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
+            if (directToField) {
+                receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
-            else {
-                if (!isStatic) {
-                    if (receiver == StackValue.none()) {
-                        if (resolvedCall != null && resolvedCall.getThisObject() instanceof ExtensionReceiver) {
-                            receiver = generateReceiver(((ExtensionReceiver) resolvedCall.getThisObject()).getDeclarationDescriptor());
-                        }
-                        else {
-                            receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration(), false);
-                        }
-                    }
-                    if (directToField) {
-                        receiver = StackValue.receiverWithoutReceiverArgument(receiver);
-                    }
-                    JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
-                    receiver.put(receiverType != null && !isSuper ? asmType(receiverType) : OBJECT_TYPE, v);
-                    if (receiverType != null) {
-                        ClassDescriptor propReceiverDescriptor = (ClassDescriptor) propertyDescriptor.getContainingDeclaration();
-                        if (!isInterface(propReceiverDescriptor) &&
-                            isInterface(receiverType.getConstructor().getDeclarationDescriptor())) {
-                            v.checkcast(asmType(propReceiverDescriptor.getDefaultType()));
-                        }
-                    }
-                }
-            }
+            receiver.put(receiver.type, v);
+
             return iValue;
         }
 
