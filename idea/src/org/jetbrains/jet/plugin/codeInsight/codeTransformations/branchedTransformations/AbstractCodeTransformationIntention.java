@@ -32,18 +32,18 @@ import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransfor
 
 public abstract class AbstractCodeTransformationIntention<T extends Transformer> extends BaseIntentionAction {
     private final T transformer;
-    private final Predicate<PsiElement> filter;
+    private final Predicate<PsiElement> isApplicable;
 
-    protected AbstractCodeTransformationIntention(@NotNull T transformer, @NotNull Predicate<PsiElement> filter) {
+    protected AbstractCodeTransformationIntention(@NotNull T transformer, @NotNull Predicate<PsiElement> isApplicable) {
         this.transformer = transformer;
-        this.filter = filter;
+        this.isApplicable = isApplicable;
         setText(JetBundle.message(transformer.getKey()));
     }
 
     @Nullable
     private PsiElement getTarget(@NotNull Editor editor, @NotNull PsiFile file) {
         PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-        return JetPsiUtil.getParentByTypeAndPredicate(element, JetElement.class, filter, false);
+        return JetPsiUtil.getParentByTypeAndPredicate(element, JetElement.class, isApplicable, false);
     }
 
     @NotNull
