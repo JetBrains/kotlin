@@ -185,12 +185,15 @@ public class JetFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 //  Uninitialized variables analysis
 
-    public void markUninitializedVariables() {
+    public Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers() {
+        return pseudocodeVariablesData.getVariableInitializers();
+    }
+
+    public void markUninitializedVariables(Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> initializers) {
         final Collection<VariableDescriptor> varWithUninitializedErrorGenerated = Sets.newHashSet();
         final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
         final boolean processClassOrObject = subroutine instanceof JetClassOrObject;
 
-        Map<Instruction, Edges<Map<VariableDescriptor,VariableInitState>>> initializers = pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
 
         final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
@@ -228,9 +231,8 @@ public class JetFlowInformationProvider {
         });
     }
 
-    public void recordInitializedVariables() {
+    public void recordInitializedVariables(Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> initializers) {
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
-        Map<Instruction, Edges<Map<VariableDescriptor,VariableInitState>>> initializers = pseudocodeVariablesData.getVariableInitializers();
         recordInitializedVariables(pseudocode, initializers);
         for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             recordInitializedVariables(instruction.getBody(), initializers);

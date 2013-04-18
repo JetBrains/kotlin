@@ -18,9 +18,13 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser;
+import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData;
+import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -77,11 +81,15 @@ public class ControlFlowAnalyzer {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) declarationContainer, trace);
-        flowInformationProvider.recordInitializedVariables();
+
+        Map<Instruction, PseudocodeTraverser.Edges<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>> initializers =
+                flowInformationProvider.getVariableInitializers();
+
+        flowInformationProvider.recordInitializedVariables(initializers);
 
         if (topDownAnalysisParameters.isDeclaredLocally()) return;
 
-        flowInformationProvider.markUninitializedVariables();
+        flowInformationProvider.markUninitializedVariables(initializers);
     }
 
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
@@ -102,8 +110,11 @@ public class ControlFlowAnalyzer {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
 
         boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
+        Map<Instruction, PseudocodeTraverser.Edges<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>> initializers =
+                isPropertyAccessor ? null : flowInformationProvider.getVariableInitializers();
+
         if (!isPropertyAccessor) {
-            flowInformationProvider.recordInitializedVariables();
+            flowInformationProvider.recordInitializedVariables(initializers);
         }
 
         if (topDownAnalysisParameters.isDeclaredLocally()) return;
@@ -112,7 +123,7 @@ public class ControlFlowAnalyzer {
 
         if (!isPropertyAccessor) {
             // Property accessor is checked through initialization of a class/object or package properties (at 'checkDeclarationContainer')
-            flowInformationProvider.markUninitializedVariables();
+            flowInformationProvider.markUninitializedVariables(initializers);
         }
 
         flowInformationProvider.markUnusedVariables();
