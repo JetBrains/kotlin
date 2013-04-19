@@ -3355,7 +3355,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     @Override
     public StackValue visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, StackValue receiver) {
-        JetSimpleNameExpression operationSign = expression.getOperationSign();
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType opToken = operationSign.getReferencedNameElementType();
         if (opToken == JetTokens.COLON) {
             return gen(expression.getLeft());
