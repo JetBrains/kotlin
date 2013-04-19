@@ -88,17 +88,26 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private static class TypeOrExpressionThereof {
         private final JetExpression expressionOfType;
         private JetType type;
+        private final boolean enumerateSupertypes;
         private JetType[] cachedTypeCandidates;
         private String[] cachedNameCandidatesFromExpression;
 
         public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType) {
-            this.expressionOfType = expressionOfType;
-            this.type = null;
+            this(expressionOfType, true);
         }
 
-        public TypeOrExpressionThereof(@NotNull JetType type) {
-            this.expressionOfType = null;
+        public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType, boolean enumerateSupertypes) {
+            this(expressionOfType, null, enumerateSupertypes);
+        }
+
+        public TypeOrExpressionThereof(@NotNull JetType type, boolean enumerateSupertypes) {
+            this(null, type, enumerateSupertypes);
+        }
+
+        private TypeOrExpressionThereof(@Nullable JetExpression expressionOfType, @Nullable JetType type, boolean enumerateSupertypes) {
+            this.expressionOfType = expressionOfType;
             this.type = type;
+            this.enumerateSupertypes = enumerateSupertypes;
         }
 
         public boolean isType() {
@@ -115,7 +124,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
          * @return A collection containing the possible types represented by this instance.
          */
         @NotNull
-        public JetType[] getPossibleTypes(@Nullable("used cached, don't recompute") BindingContext context) {
+        public JetType[] getPossibleTypes(@Nullable("use cached, don't recompute") BindingContext context) {
             if (context == null) {
                 assert cachedTypeCandidates != null;
                 return cachedTypeCandidates;
@@ -125,9 +134,12 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 types.add(type);
                 types.addAll(TypeUtils.getAllSupertypes(type));
             } else {
+                assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
                 for (JetType type : guessTypeForExpression(expressionOfType, context)) {
                     types.add(type);
-                    types.addAll(TypeUtils.getAllSupertypes(type));
+                    if (enumerateSupertypes) {
+                        types.addAll(TypeUtils.getAllSupertypes(type));
+                    }
                 }
             }
             return cachedTypeCandidates = types.toArray(new JetType[types.size()]);
@@ -141,11 +153,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         @NotNull
         public String[] getPossibleNamesFromExpression() {
             if (cachedNameCandidatesFromExpression != null) return cachedNameCandidatesFromExpression;
-            cachedNameCandidatesFromExpression = isType()
-                                                 ? ArrayUtil.EMPTY_STRING_ARRAY
-                                                 : JetNameSuggester.suggestNamesForExpression(
-                                                         expressionOfType,
-                                                         JetNameValidator.getEmptyValidator(expressionOfType.getProject()));
+            if (isType()) {
+                cachedNameCandidatesFromExpression = ArrayUtil.EMPTY_STRING_ARRAY;
+            } else {
+                assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
+                JetNameValidator dummyValidator = JetNameValidator.getEmptyValidator(expressionOfType.getProject());
+                cachedNameCandidatesFromExpression = JetNameSuggester.suggestNamesForExpression(expressionOfType, dummyValidator);
+            }
             return cachedNameCandidatesFromExpression;
         }
 
@@ -582,7 +596,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             func = (JetNamedFunction) classBody.addBefore(func, rBrace);
         }
 
-        // TODO: add newlines
         return func;
     }
 
@@ -1034,6 +1047,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetArrayAccessExpression accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetArrayAccessExpression.class);
                 if (accessExpr == null) return null;
                 JetExpression arrayExpr = accessExpr.getArrayExpression();
+                if (arrayExpr == null) return null;
                 TypeOrExpressionThereof arrayType = new TypeOrExpressionThereof(arrayExpr);
 
                 List<Parameter> parameters = new ArrayList<Parameter>();
@@ -1043,7 +1057,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     parameters.add(new Parameter(null, indexType));
                 }
 
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(accessExpr);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(accessExpr, false);
                 return new CreateMethodFromUsageFix(accessExpr, arrayType, "get", returnType, parameters);
             }
         };
@@ -1058,6 +1072,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetArrayAccessExpression accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetArrayAccessExpression.class);
                 if (accessExpr == null) return null;
                 JetExpression arrayExpr = accessExpr.getArrayExpression();
+                if (arrayExpr == null) return null;
                 TypeOrExpressionThereof arrayType = new TypeOrExpressionThereof(arrayExpr);
 
                 List<Parameter> parameters = new ArrayList<Parameter>();
@@ -1074,7 +1089,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 TypeOrExpressionThereof valType = new TypeOrExpressionThereof(rhs);
                 parameters.add(new Parameter("value", valType));
 
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType());
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), false);
                 return new CreateMethodFromUsageFix(accessExpr, arrayType, "set", returnType, parameters);
             }
         };
@@ -1091,7 +1106,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetExpression iterableExpr = forExpr.getLoopRange();
                 if (iterableExpr == null) return null;
                 TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType());
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), false);
                 return new CreateMethodFromUsageFix(forExpr, iterableType, "hasNext", returnType, new ArrayList<Parameter>());
             }
         };
@@ -1110,7 +1125,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetExpression variableExpr = forExpr.getLoopParameter();
                 if (variableExpr == null) return null;
                 TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr, false);
                 return new CreateMethodFromUsageFix(forExpr, iterableType, "next", returnType, new ArrayList<Parameter>());
             }
         };
@@ -1143,7 +1158,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 List<TypeProjection> returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType);
                 returnJetType = new JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(),
                                                 returnJetTypeArguments, returnJetType.getMemberScope());
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(returnJetType);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(returnJetType, false);
                 return new CreateMethodFromUsageFix(forExpr, iterableType, "iterator", returnType, new ArrayList<Parameter>());
             }
         };
@@ -1170,7 +1185,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 int componentNumber = Integer.decode(componentNumberString) - 1;
 
                 JetMultiDeclarationEntry entry = entries.get(componentNumber);
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry, false);
                 JetExpression rhs = multiDeclaration.getInitializer();
                 if (rhs == null) return null;
                 TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(rhs);
