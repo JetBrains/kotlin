@@ -176,11 +176,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
         assert classDescriptor != null;
 
-        JvmClassName name = JvmClassName.byInternalName(peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX);
-        recordClosure(bindingTrace, classObject, classDescriptor, peekFromStack(classStack), name, false);
+        String name = peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX;
+        recordClosure(classObject, classDescriptor, name, false);
 
         classStack.push(classDescriptor);
-        nameStack.push(name.getInternalName());
+        nameStack.push(name);
         super.visitClassObject(classObject);
         nameStack.pop();
         classStack.pop();
@@ -197,7 +197,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             if (classDescriptor == null) return;
 
             String name = getName(classDescriptor);
-            recordClosure(bindingTrace, declaration, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
+            recordClosure(declaration, classDescriptor, name, false);
 
             classStack.push(classDescriptor);
             nameStack.push(name);
@@ -214,7 +214,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (classDescriptor == null) return;
 
         String name = getName(classDescriptor);
-        recordClosure(bindingTrace, klass, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
+        recordClosure(klass, classDescriptor, name, false);
 
         classStack.push(classDescriptor);
         nameStack.push(name);
@@ -239,7 +239,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
 
         String name = inventAnonymousClassName(expression.getObjectDeclaration());
-        recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
+        recordClosure(expression.getObjectDeclaration(), classDescriptor, name, false);
 
         classStack.push(classDescriptor);
         //noinspection ConstantConditions
@@ -259,7 +259,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         String name = inventAnonymousClassName(expression);
         ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-        recordClosure(bindingTrace, functionLiteral, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
+        recordClosure(functionLiteral, classDescriptor, name, true);
 
         classStack.push(classDescriptor);
         nameStack.push(name);
@@ -276,13 +276,23 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         String name = inventAnonymousClassName(expression);
         ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-        recordClosure(bindingTrace, expression, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
+        recordClosure(expression, classDescriptor, name, true);
 
         classStack.push(classDescriptor);
         nameStack.push(name);
         super.visitCallableReferenceExpression(expression);
         nameStack.pop();
         classStack.pop();
+    }
+
+    private void recordClosure(
+            @NotNull JetElement element,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull String name,
+            boolean functionLiteral
+    ) {
+        CodegenBinding.recordClosure(bindingTrace, element, classDescriptor, peekFromStack(classStack),
+                                     JvmClassName.byInternalName(name), functionLiteral);
     }
 
     @Override
@@ -304,8 +314,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitNamedFunction(JetNamedFunction function) {
-        FunctionDescriptor functionDescriptor =
-                (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
@@ -318,7 +327,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else {
             String name = inventAnonymousClassName(function);
             ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-            recordClosure(bindingTrace, function, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
+            recordClosure(function, classDescriptor, name, true);
 
             classStack.push(classDescriptor);
             nameStack.push(name);
