@@ -39,7 +39,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.refactoring.psi.SearchUtils;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -58,6 +61,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
@@ -65,6 +69,7 @@ import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
+import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -449,7 +454,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
     @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        assert file != null && file instanceof JetFile;
+        assert file != null && file instanceof JetFile; // TODO: change some assertions to notifications
         currentFile = (JetFile) file;
         currentFileEditor = editor;
 
@@ -824,7 +829,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         assert file instanceof JetFile;
         JetFile jetFile = (JetFile) file;
-        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext(); // TODO: can't be called from EDT?
+        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
 
         JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
         if (possibleOwnerTypes.length == 0) return false;
@@ -930,11 +935,17 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
     @NotNull
     private static JetType[] guessTypeForExpression(@NotNull JetExpression expr, @NotNull BindingContext context) {
-        JetType actualType = context.get(BindingContext.EXPRESSION_TYPE, expr);
+        JetType type = context.get(BindingContext.EXPRESSION_TYPE, expr);
+        JetNamedDeclaration declaration = null;
 
         // if we know the actual type of the expression
-        if (actualType != null) {
-            return new JetType[] {actualType};
+        if (type != null) {
+            return new JetType[] {type};
+        }
+
+        // expression has an expected type
+        else if ((type = context.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expr)) != null) {
+            return new JetType[] {type};
         }
 
         // expression itself is a type assertion
@@ -956,7 +967,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             if (typeRef != null) { // and has a specified type
                 return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
             }
-            // otherwise fall through and guess
+            declaration = entry; // otherwise fall through and guess
         }
 
         // expression is a parameter (e.g. declared in a for-loop)
@@ -966,25 +977,44 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             if (typeRef != null) { // and has a specified type
                 return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
             }
-            // otherwise fall through and guess
+            declaration = parameter; // otherwise fall through and guess
         }
 
         // the expression is the RHS of a variable assignment with a specified type
         else if (expr.getParent() instanceof JetVariableDeclaration) {
             JetVariableDeclaration variable = (JetVariableDeclaration) expr.getParent();
-            JetTypeReference typetypeRefEf = variable.getTypeRef();
-            if (typetypeRefEf != null) { // and has a specified type
-                return new JetType[] {context.get(BindingContext.TYPE, typetypeRefEf)};
+            JetTypeReference typeRef = variable.getTypeRef();
+            if (typeRef != null) { // and has a specified type
+                return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
             }
-            // otherwise fall through and guess
+            declaration = variable; // otherwise fall through and guess, based on LHS
         }
 
-        // TODO: need to guess based on usages of expression or expected type info
-
-        // TODO: usages of variable
-
         // TODO: nested in a trivial expression (e.g. parentheses or if-else)
-        return new JetType[0];
+
+        // guess based on declaration
+        SearchScope scope = expr.getContainingFile().getUseScope();
+        Set<JetType> expectedTypes = new HashSet<JetType>();
+        if (declaration != null) {
+            for (PsiReference ref : SearchUtils.findAllReferences(declaration, scope)) {
+                if (ref instanceof JetSimpleNameReference) {
+                    JetSimpleNameReference simpleNameRef = (JetSimpleNameReference) ref;
+                    JetType expectedType = context.get(BindingContext.EXPECTED_EXPRESSION_TYPE, simpleNameRef.getExpression());
+                    if (expectedType != null) {
+                        expectedTypes.add(expectedType);
+                    }
+                }
+            }
+        }
+        if (expectedTypes.isEmpty()) {
+            return new JetType[0];
+        }
+        type = TypeUtils.intersect(JetTypeChecker.INSTANCE, expectedTypes);
+        if (type != null) {
+            return new JetType[] {type};
+        } else { // intersection doesn't exist; let user make an imperfect choice
+            return expectedTypes.toArray(new JetType[expectedTypes.size()]);
+        }
     }
 
     private static boolean isUnit(@NotNull JetType type) {
