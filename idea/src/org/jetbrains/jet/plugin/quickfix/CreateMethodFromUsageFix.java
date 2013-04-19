@@ -990,8 +990,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             declaration = variable; // otherwise fall through and guess, based on LHS
         }
 
-        // TODO: nested in a trivial expression (e.g. parentheses or if-else)
-
         // guess based on declaration
         SearchScope scope = expr.getContainingFile().getUseScope();
         Set<JetType> expectedTypes = new HashSet<JetType>();
