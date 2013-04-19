@@ -142,6 +142,11 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     }
                 }
             }
+
+            if (types.isEmpty()) {
+                types.add(KotlinBuiltIns.getInstance().getAnyType());
+            }
+
             return cachedTypeCandidates = types.toArray(new JetType[types.size()]);
         }
 
