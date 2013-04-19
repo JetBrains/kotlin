@@ -81,5 +81,5 @@ CPSELECT="-cp "
 "${JAVACMD:=java}" \
   $JAVA_OPTS \
   "${java_args[@]}" \
-  ${CPSELECT}"${KOTLIN_HOME}/lib/kotlin-compiler.jar" \
-   org.jetbrains.jet.cli.js.K2JSCompiler  "$@"
+  ${CPSELECT}"${KOTLIN_HOME}/lib/kotlin-preloader.jar" \
+  org.jetbrains.jet.preloading.Preloader "${KOTLIN_HOME}/lib/kotlin-compiler.jar" org.jetbrains.jet.cli.js.K2JSCompiler 4096 "$@"

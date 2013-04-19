@@ -21,7 +21,9 @@ if "%_JAVACMD%"=="" set _JAVACMD=java
 rem We use the value of the JAVA_OPTS environment variable if defined
 set _JAVA_OPTS=-Xmx256M -Xms32M -noverify
 
-"%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" org.jetbrains.jet.cli.js.K2JSCompiler  %*
+"%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
+    org.jetbrains.jet.preloading.Preloader "${KOTLIN_HOME}/lib/kotlin-compiler.jar" ^
+    org.jetbrains.jet.cli.jvm.K2JVMCompiler 4096 org.jetbrains.jet.cli.js.K2JSCompiler %*
 goto end
 
 rem ##########################################################################

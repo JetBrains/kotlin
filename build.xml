@@ -56,6 +56,10 @@
         <dirset refid="compilerSources.dirset"/>
     </path>
 
+    <path id="preloaderSources.path">
+        <dirset dir="compiler/preloader/src"/>
+    </path>
+
     <macrodef name="cleandir">
         <attribute name="dir"/>
 
@@ -236,15 +240,36 @@
         </java>
     </target>
 
+    <target name="preloader">
+      <cleandir dir="${output}/classes/preloader"/>
+      <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+          <src refid="preloaderSources.path"/>
+      </javac>
+  
+      <jar jarfile="${kotlin-home}/lib/kotlin-preloader.jar">
+          <fileset dir="${output}/classes/preloader"/>
+  
+          <manifest>
+              <attribute name="Built-By" value="JetBrains"/>
+  
+              <attribute name="Implementation-Vendor" value="JetBrains"/>
+              <attribute name="Implementation-Title" value="Kotlin Preloader"/>
+              <attribute name="Implementation-Version" value="${build.number}"/>
+  
+              <attribute name="Main-Class" value="org.jetbrains.jet.preloading.Preloader"/>
+          </manifest>
+      </jar>
+    </target>
+  
     <macrodef name="pack_compiler">
         <attribute name="jarfile"/>
         <attribute name="compress" default="true"/>
-
+  
         <sequential>
           <jar jarfile="@{jarfile}" compress="@{compress}">
               <fileset dir="${output}/classes/compiler"/>
               <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
-
+  
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
@@ -252,14 +277,14 @@
               <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
               <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
-
+  
               <manifest>
                   <attribute name="Built-By" value="JetBrains"/>
-
+  
                   <attribute name="Implementation-Vendor" value="JetBrains"/>
                   <attribute name="Implementation-Title" value="Kotlin Compiler"/>
                   <attribute name="Implementation-Version" value="${build.number}"/>
-
+  
                   <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
               </manifest>
           </jar>
@@ -517,13 +542,13 @@
     </target>
 
     <target name="dist"
-            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler,compilerSources,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
 
     <target name="dist_quick"
-            depends="clean,init,prepareDist,compiler_quick,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler_quick,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
 
     <target name="dist_quick_compiler_only"
-            depends="init,prepareDist,compiler_quick"/>
+            depends="init,prepareDist,preloader,compiler_quick"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
