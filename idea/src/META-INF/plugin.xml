@@ -32,6 +32,12 @@
     </component>
   </project-components>
 
+ <application-components>
+   <component>
+     <implementation-class>org.jetbrains.jet.plugin.PluginBundledRegistrar</implementation-class>
+   </component>
+ </application-components>
+
   <module-components>
     <component>
       <implementation-class>org.jetbrains.jet.plugin.project.K2JSModuleComponent</implementation-class>
