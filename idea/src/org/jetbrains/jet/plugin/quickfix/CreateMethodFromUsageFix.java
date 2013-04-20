@@ -171,7 +171,21 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
 
         public void substitute(TypeSubstitution[] substitutions) {
-            cachedTypeCandidates = substituteTypes(cachedTypeCandidates, substitutions, variance);
+            Set<JetType> newTypes = new LinkedHashSet<JetType>(Arrays.asList(cachedTypeCandidates));
+            for (TypeSubstitution substitution : substitutions) { // each substitution can be applied or not, so we offer all options
+                List<JetType> toAdd = new ArrayList<JetType>();
+                List<JetType> toRemove = new ArrayList<JetType>();
+                for (JetType type : newTypes) {
+                    toAdd.add(substituteType(type, substitution, variance));
+                    // substitution.byType are type arguments, but they cannot already occur in the type before substitution
+                    if (containsType(type, substitution.getByType())) {
+                        toRemove.add(type);
+                    }
+                }
+                newTypes.addAll(toAdd);
+                newTypes.removeAll(toRemove);
+            }
+            cachedTypeCandidates = newTypes.toArray(new JetType[newTypes.size()]);
         }
     }
 
@@ -902,25 +916,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(),
                                type.isNullable(), newArguments, type.getMemberScope());
-    }
-
-    @NotNull
-    private static JetType[] substituteTypes(@NotNull JetType[] types, @NotNull TypeSubstitution[] substitutions, @NotNull Variance variance) {
-        Set<JetType> newTypes = new LinkedHashSet<JetType>(Arrays.asList(types));
-        for (TypeSubstitution substitution : substitutions) { // each substitution can be applied or not, so we offer all options
-            List<JetType> toAdd = new ArrayList<JetType>();
-            List<JetType> toRemove = new ArrayList<JetType>();
-            for (JetType type : newTypes) {
-                toAdd.add(substituteType(type, substitution, variance));
-                // substitution.byType are type arguments, but they cannot already occur before substitution
-                if (containsType(type, substitution.getByType())) {
-                    toRemove.add(type);
-                }
-            }
-            newTypes.addAll(toAdd);
-            newTypes.removeAll(toRemove);
-        }
-        return newTypes.toArray(new JetType[newTypes.size()]);
     }
 
     private static boolean containsType(JetType outer, JetType inner) {
