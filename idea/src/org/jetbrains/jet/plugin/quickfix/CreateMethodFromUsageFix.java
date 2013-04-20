@@ -83,13 +83,66 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private static final Pattern COMPONENT_FUNCTION_PATTERN = Pattern.compile("^component(\\d+)$");
 
     /**
+     * Represents a single choice for a type (e.g. parameter type or return type).
+     */
+    private static class TypeCandidate {
+        private final JetType type;
+        private final TypeParameterDescriptor[] typeParameters;
+        private String renderedType;
+        private String[] typeParameterNames;
+
+        public TypeCandidate(@NotNull JetType type) {
+            this.type = type;
+            Set<TypeParameterDescriptor> typeParametersInType = getTypeParametersInType(type);
+            typeParameters = typeParametersInType.toArray(new TypeParameterDescriptor[typeParametersInType.size()]);
+            render(Collections.<TypeParameterDescriptor, String>emptyMap());
+        }
+
+        public TypeCandidate(@NotNull JetType type, @NotNull JetScope scope) {
+            this.type = type;
+            typeParameters = getTypeParameterNamesNotInScope(getTypeParametersInType(type), scope);
+        }
+
+        public void render(@NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap) {
+            renderedType = renderTypeShort(type, typeParameterNameMap);
+            typeParameterNames = new String[typeParameters.length];
+            int i = 0;
+            for (TypeParameterDescriptor typeParameter : typeParameters) {
+                typeParameterNames[i] = typeParameterNameMap.get(typeParameter);
+                i++;
+            }
+        }
+
+        @NotNull JetType getType() {
+            return type;
+        }
+
+        @NotNull
+        public String getRenderedType() {
+            assert renderedType != null : "call render() first";
+            return renderedType;
+        }
+
+        @NotNull
+        public String[] getTypeParameterNames() {
+            assert typeParameterNames != null : "call render() first";
+            return typeParameterNames;
+        }
+
+        @NotNull
+        public TypeParameterDescriptor[] getTypeParameters() {
+            return typeParameters;
+        }
+    }
+
+    /**
      * Represents a concrete type or a set of types yet to be inferred from an expression.
      */
     private static class TypeOrExpressionThereof {
         private final JetExpression expressionOfType;
         private final JetType type;
         private final Variance variance;
-        private JetType[] cachedTypeCandidates;
+        private TypeCandidate[] typeCandidates;
         private String[] cachedNameCandidatesFromExpression;
 
         public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType) {
@@ -120,17 +173,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             return this.type;
         }
 
-        /**
-         * Returns a collection containing the possible types represented by this instance. Infers the type from an expression if necessary.
-         * @return A collection containing the possible types represented by this instance.
-         */
         @NotNull
-        public JetType[] getPossibleTypes(@Nullable("use cached, don't recompute") BindingContext context) {
-            if (context == null) {
-                assert cachedTypeCandidates != null;
-                return cachedTypeCandidates;
-            }
-            List<JetType> types = new ArrayList<JetType>();
+        private Collection<JetType> getPossibleTypes(BindingContext context) {
+            Collection<JetType> types = new ArrayList<JetType>();
             if (isType()) {
                 assert type != null : "!isType() means type == null && expressionOfType != null";
                 types.add(type);
@@ -144,34 +189,28 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     }
                 }
             }
+            return types;
+        }
 
-            if (types.isEmpty()) {
-                types.add(KotlinBuiltIns.getInstance().getAnyType());
+        public void computeTypeCandidates(@NotNull BindingContext context) {
+            Collection<JetType> types = getPossibleTypes(context);
+
+            typeCandidates = new TypeCandidate[types.size()];
+            int i = 0;
+            for (JetType type : types) {
+                typeCandidates[i] = new TypeCandidate(type);
+                i++;
             }
-
-            return cachedTypeCandidates = types.toArray(new JetType[types.size()]);
         }
 
-        @NotNull
-        public JetType[] getPossibleTypes() {
-            return getPossibleTypes(null);
-        }
+        public void computeTypeCandidates(
+                @NotNull BindingContext context,
+                @NotNull TypeSubstitution[] substitutions,
+                @NotNull JetScope scope
+        ) {
+            Collection<JetType> types = getPossibleTypes(context);
 
-        @NotNull
-        public String[] getPossibleNamesFromExpression() {
-            if (cachedNameCandidatesFromExpression != null) return cachedNameCandidatesFromExpression;
-            if (isType()) {
-                cachedNameCandidatesFromExpression = ArrayUtil.EMPTY_STRING_ARRAY;
-            } else {
-                assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
-                JetNameValidator dummyValidator = JetNameValidator.getEmptyValidator(expressionOfType.getProject());
-                cachedNameCandidatesFromExpression = JetNameSuggester.suggestNamesForExpression(expressionOfType, dummyValidator);
-            }
-            return cachedNameCandidatesFromExpression;
-        }
-
-        public void substitute(TypeSubstitution[] substitutions) {
-            Set<JetType> newTypes = new LinkedHashSet<JetType>(Arrays.asList(cachedTypeCandidates));
+            Set<JetType> newTypes = new LinkedHashSet<JetType>(types);
             for (TypeSubstitution substitution : substitutions) { // each substitution can be applied or not, so we offer all options
                 List<JetType> toAdd = new ArrayList<JetType>();
                 List<JetType> toRemove = new ArrayList<JetType>();
@@ -185,7 +224,44 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 newTypes.addAll(toAdd);
                 newTypes.removeAll(toRemove);
             }
-            cachedTypeCandidates = newTypes.toArray(new JetType[newTypes.size()]);
+
+            if (newTypes.isEmpty()) {
+                newTypes.add(KotlinBuiltIns.getInstance().getAnyType());
+            }
+
+            types = newTypes;
+
+            typeCandidates = new TypeCandidate[types.size()];
+            int i = 0;
+            for (JetType type : types) {
+                typeCandidates[i] = new TypeCandidate(type, scope);
+                i++;
+            }
+        }
+
+        @NotNull
+        public TypeCandidate[] getTypeCandidates() {
+            assert typeCandidates != null : "call computeTypeCandidates() first";
+            return typeCandidates;
+        }
+
+        public void renderTypeCandidates(@NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap) {
+            for (TypeCandidate candidate : typeCandidates) {
+                candidate.render(typeParameterNameMap);
+            }
+        }
+
+        @NotNull
+        public String[] getPossibleNamesFromExpression() {
+            if (cachedNameCandidatesFromExpression != null) return cachedNameCandidatesFromExpression;
+            if (isType()) {
+                cachedNameCandidatesFromExpression = ArrayUtil.EMPTY_STRING_ARRAY;
+            } else {
+                assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
+                JetNameValidator dummyValidator = JetNameValidator.getEmptyValidator(expressionOfType.getProject());
+                cachedNameCandidatesFromExpression = JetNameSuggester.suggestNamesForExpression(expressionOfType, dummyValidator);
+            }
+            return cachedNameCandidatesFromExpression;
         }
     }
 
@@ -298,17 +374,15 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      * An <code>Expression</code> for type references.
      */
     private static class TypeExpression extends Expression {
-        private final JetType[] options;
-        private final String[] optionStrings;
-        private final LookupElement[] cachedLookupElements;
+        private final TypeOrExpressionThereof type;
+        private @NotNull LookupElement[] cachedLookupElements;
 
-        public TypeExpression(@NotNull JetType[] options) {
-            this.options = options;
-            optionStrings = new String[options.length];
-            cachedLookupElements = new LookupElement[options.length];
-            for (int i = 0; i < options.length; i++) {
-                optionStrings[i] = renderTypeShort(options[i]);
-                cachedLookupElements[i] = LookupElementBuilder.create(options[i], optionStrings[i]);
+        public TypeExpression(@NotNull TypeOrExpressionThereof type) {
+            this.type = type;
+            TypeCandidate[] candidates = type.getTypeCandidates();
+            cachedLookupElements = new LookupElement[candidates.length];
+            for (int i = 0; i < candidates.length; i++) {
+                cachedLookupElements[i] = LookupElementBuilder.create(candidates[i], candidates[i].getRenderedType());
             }
         }
 
@@ -334,20 +408,16 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
 
         @NotNull
-        public JetType[] getOptions() {
-            return options;
-        }
-
-        @NotNull
-        public String[] getOptionStrings() {
-            return optionStrings;
+        public TypeOrExpressionThereof getType() {
+            return type;
         }
 
         @Nullable("can't be found")
         public JetType getTypeFromSelection(@NotNull String selection) {
-            for (int i = 0; i < options.length; i++) {
-                if (optionStrings[i].equals(selection)) {
-                    return options[i];
+            TypeCandidate[] options = type.getTypeCandidates();
+            for (TypeCandidate option : options) {
+                if (option.getRenderedType().equals(selection)) {
+                    return option.getType();
                 }
             }
             return null;
@@ -358,13 +428,15 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      * A sort-of dummy <code>Expression</code> for parameter lists, to allow us to update the parameter list as the user makes selections.
      */
     private static class TypeParameterListExpression extends Expression {
-        private final TypeParameterDescriptor[] typeParametersFromReceiverType;
-        private final Map<String, TypeParameterDescriptor[]> typeParameterMap;
+        private final String[] typeParameterNamesFromReceiverType;
+        private final Map<String, String[]> parameterTypeToTypeParameterNamesMap;
 
-        public TypeParameterListExpression(@NotNull TypeParameterDescriptor[] typeParametersFromReceiverType,
-                @NotNull Map<String, TypeParameterDescriptor[]> typeParametersMap) {
-            this.typeParametersFromReceiverType = typeParametersFromReceiverType;
-            this.typeParameterMap = typeParametersMap;
+        public TypeParameterListExpression(
+                @NotNull String[] typeParameterNamesFromReceiverType,
+                @NotNull Map<String, String[]> typeParametersMap
+        ) {
+            this.typeParameterNamesFromReceiverType = typeParameterNamesFromReceiverType;
+            this.parameterTypeToTypeParameterNamesMap = typeParametersMap;
         }
 
         @NotNull
@@ -382,34 +454,22 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert func != null;
             List<JetParameter> parameters = func.getValueParameters();
 
-            Set<TypeParameterDescriptor> typeParameters = new LinkedHashSet<TypeParameterDescriptor>();
-            Collections.addAll(typeParameters, typeParametersFromReceiverType);
+            Set<String> typeParameterNames = new LinkedHashSet<String>();
+            Collections.addAll(typeParameterNames, typeParameterNamesFromReceiverType);
             for (JetParameter parameter : parameters) {
                 JetTypeReference parameterTypeRef = parameter.getTypeReference();
                 assert parameterTypeRef != null;
-                TypeParameterDescriptor[] typeParametersFromParameter = typeParameterMap.get(parameterTypeRef.getText());
-                if (typeParametersFromParameter != null) {
-                    Collections.addAll(typeParameters, typeParametersFromParameter);
+                String[] typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap.get(parameterTypeRef.getText());
+                if (typeParameterNamesFromParameter != null) {
+                    Collections.addAll(typeParameterNames, typeParameterNamesFromParameter);
                 }
             }
             JetTypeReference returnTypeRef = func.getReturnTypeRef();
             if (returnTypeRef != null) {
-                TypeParameterDescriptor[] typeParametersFromReturnType = typeParameterMap.get(returnTypeRef.getText());
-                if (typeParametersFromReturnType != null) {
-                    Collections.addAll(typeParameters, typeParametersFromReturnType);
+                String[] typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap.get(returnTypeRef.getText());
+                if (typeParameterNamesFromReturnType != null) {
+                    Collections.addAll(typeParameterNames, typeParameterNamesFromReturnType);
                 }
-            }
-
-            List<String> typeParameterNames = new ArrayList<String>();
-            for (TypeParameterDescriptor typeParameter : typeParameters) {
-                typeParameterNames.add(typeParameter.getName().getIdentifier());
-            }
-
-            // make sure there are no name conflicts
-            for (int i = 0; i < typeParameterNames.size(); i++) {
-                String name = typeParameterNames.get(i);
-                name = getNextAvailableName(name, typeParameterNames.subList(0, i));
-                typeParameterNames.set(i, name);
             }
 
             return typeParameterNames.isEmpty()
@@ -465,7 +525,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private BindingContext currentFileContext;
     private JetClass ownerClass;
     private ClassDescriptor ownerClassDescriptor;
-    private JetType receiverType;
+    private TypeCandidate selectedReceiverType;
+    private Map<TypeParameterDescriptor, String> typeParameterNameMap;
 
     public CreateMethodFromUsageFix(@NotNull PsiElement element, @NotNull TypeOrExpressionThereof ownerType, @NotNull String methodName,
             @NotNull TypeOrExpressionThereof returnType, @NotNull List<Parameter> parameters) {
@@ -487,18 +548,20 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         assert file != null && file instanceof JetFile; // TODO: change some assertions to notifications
         currentFile = (JetFile) file;
         currentFileEditor = editor;
+        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile).getBindingContext();
 
-        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes();
-        assert possibleOwnerTypes.length > 0;
-        if (possibleOwnerTypes.length == 1) {
-            JetType ownerType = possibleOwnerTypes[0];
-            doInvoke(project, ownerType);
+        ownerType.computeTypeCandidates(currentFileContext);
+        TypeCandidate[] ownerTypeCandidates = ownerType.getTypeCandidates();
+        assert ownerTypeCandidates.length > 0;
+        if (ownerTypeCandidates.length == 1) {
+            selectedReceiverType = ownerTypeCandidates[0];
+            doInvoke(project);
         } else {
             // class selection
             List<String> options = new ArrayList<String>();
-            final Map<String, JetType> optionToTypeMap = new HashMap<String, JetType>();
-            for (JetType possibleOwnerType : possibleOwnerTypes) {
-                ClassifierDescriptor possibleClassDescriptor = possibleOwnerType.getConstructor().getDeclarationDescriptor();
+            final Map<String, TypeCandidate> optionToTypeMap = new HashMap<String, TypeCandidate>();
+            for (TypeCandidate ownerTypeCandidate : ownerTypeCandidates) {
+                ClassifierDescriptor possibleClassDescriptor = ownerTypeCandidate.getType().getConstructor().getDeclarationDescriptor();
                 if (possibleClassDescriptor != null) {
                     String className = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(possibleClassDescriptor.getDefaultType());
                     DeclarationDescriptor namespaceDescriptor = possibleClassDescriptor.getContainingDeclaration();
@@ -506,7 +569,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     String namespace = ((NamespaceDescriptor) namespaceDescriptor).getFqName().getFqName();
                     String option = className + " (" + namespace + ")";
                     options.add(option);
-                    optionToTypeMap.put(option, possibleOwnerType);
+                    optionToTypeMap.put(option, ownerTypeCandidate);
                 }
             }
 
@@ -523,11 +586,11 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     int index = list.getSelectedIndex();
                     if (index < 0) return;
                     String option = (String) list.getSelectedValue();
-                    final JetType ownerType = optionToTypeMap.get(option);
+                    selectedReceiverType = optionToTypeMap.get(option);
                     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                         @Override
                         public void run() {
-                            doInvoke(project, ownerType);
+                            doInvoke(project);
                         }
                     }, getText(), null);
                 }
@@ -540,12 +603,12 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
     }
 
-    private void doInvoke(@NotNull final Project project, @NotNull JetType ownerType) {
+    private void doInvoke(@NotNull final Project project) {
         // gather relevant information
-        ClassifierDescriptor ownerTypeDescriptor = ownerType.getConstructor().getDeclarationDescriptor();
+        ClassifierDescriptor ownerTypeDescriptor = selectedReceiverType.getType().getConstructor().getDeclarationDescriptor();
         assert ownerTypeDescriptor != null && ownerTypeDescriptor instanceof ClassDescriptor;
         ownerClassDescriptor = (ClassDescriptor) ownerTypeDescriptor;
-        receiverType = ownerClassDescriptor.getDefaultType();
+        JetType receiverType = ownerClassDescriptor.getDefaultType();
         PsiElement typeDeclaration = BindingContextUtils.classDescriptorToDeclaration(currentFileContext, ownerClassDescriptor);
         if (typeDeclaration != null && typeDeclaration instanceof JetClass) {
             ownerClass = (JetClass) typeDeclaration;
@@ -555,17 +618,41 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
         isUnit = returnType.isType() && isUnit(returnType.getType());
 
+        JetScope scope;
+        if (isExtension) {
+            NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, containingFile);
+            assert namespaceDescriptor != null;
+            scope = namespaceDescriptor.getMemberScope();
+        } else {
+            assert ownerClassDescriptor instanceof MutableClassDescriptor;
+            scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberResolution();
+        }
+
         // figure out type substitutions for type parameters
         List<TypeProjection> classTypeParameters = receiverType.getArguments();
-        List<TypeProjection> ownerTypeArguments = ownerType.getArguments();
+        List<TypeProjection> ownerTypeArguments = selectedReceiverType.getType().getArguments();
         assert ownerTypeArguments.size() == classTypeParameters.size();
         TypeSubstitution[] substitutions = new TypeSubstitution[classTypeParameters.size()];
         for (int i = 0; i < substitutions.length; i++) {
             substitutions[i] = new TypeSubstitution(ownerTypeArguments.get(i).getType(), classTypeParameters.get(i).getType());
         }
-        returnType.substitute(substitutions);
         for (Parameter parameter : parameters) {
-            parameter.getType().substitute(substitutions);
+            parameter.getType().computeTypeCandidates(currentFileContext, substitutions, scope);
+        }
+        if (!isUnit) {
+            returnType.computeTypeCandidates(currentFileContext, substitutions, scope);
+        }
+
+        // figure out type parameter renames to avoid conflicts
+        typeParameterNameMap = getTypeParameterRenames(scope);
+        for (Parameter parameter : parameters) {
+            parameter.getType().renderTypeCandidates(typeParameterNameMap);
+        }
+        if (!isUnit) {
+            returnType.renderTypeCandidates(typeParameterNameMap);
+        }
+        if (isExtension) {
+            ownerType.renderTypeCandidates(typeParameterNameMap);
         }
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -586,7 +673,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         String parametersString = StringUtil.join(parameterStrings,", ");
         String returnTypeString = isUnit ? "" : ": Any";
         if (isExtension) { // create as extension function
-            String ownerTypeString = renderTypeShort(receiverType);
+            String ownerTypeString = selectedReceiverType.getRenderedType();
             String methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, methodText);
             containingFile = currentFile;
@@ -619,16 +706,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         JetParameterList parameterList = func.getValueParameterList();
         assert parameterList != null;
 
-        JetScope scope;
-        if (isExtension) {
-            NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, containingFile);
-            assert namespaceDescriptor != null;
-            scope = namespaceDescriptor.getMemberScope();
-        } else {
-            assert ownerClassDescriptor instanceof MutableClassDescriptor;
-            scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberResolution();
-        }
-
         // build templates
         PsiDocumentManager.getInstance(project).commitAllDocuments();
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(containingFileEditor.getDocument());
@@ -645,8 +722,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         // need to create the segment first and then hack the Expression into the template later. We use this template to update the type
         // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
         // it.
-        TypeParameterListExpression expression =
-                setupTypeParameterListTemplate(builder, func, parameterTypeExpressions, returnTypeExpression, scope);
+        TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func);
 
         // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
         final TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
@@ -684,6 +760,39 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         });
     }
 
+    private Map<TypeParameterDescriptor, String> getTypeParameterRenames(JetScope scope) {
+        TypeParameterDescriptor[] receiverTypeParametersNotInScope = selectedReceiverType.getTypeParameters();
+        Set<TypeParameterDescriptor> allTypeParametersNotInScope = new LinkedHashSet<TypeParameterDescriptor>();
+        allTypeParametersNotInScope.addAll(Arrays.asList(receiverTypeParametersNotInScope));
+
+        for (Parameter parameter : parameters) {
+            TypeCandidate[] parameterTypeCandidates = parameter.getType().getTypeCandidates();
+            for (TypeCandidate parameterTypeCandidate : parameterTypeCandidates) {
+                allTypeParametersNotInScope.addAll(Arrays.asList(parameterTypeCandidate.getTypeParameters()));
+            }
+        }
+
+        if (!isUnit) {
+            TypeCandidate[] returnTypeCandidates = returnType.getTypeCandidates();
+            for (TypeCandidate returnTypeCandidate : returnTypeCandidates) {
+                allTypeParametersNotInScope.addAll(Arrays.asList(returnTypeCandidate.getTypeParameters()));
+            }
+        }
+
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(allTypeParametersNotInScope);
+        List<String> typeParameterNames = new ArrayList<String>();
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            typeParameterNames.add(getNextAvailableName(typeParameter.getName().getName(), typeParameterNames, scope));
+        }
+        assert typeParameters.size() == typeParameterNames.size();
+        Map<TypeParameterDescriptor, String> typeParameterNameMap = new HashMap<TypeParameterDescriptor, String>();
+        for (int i = 0; i < typeParameters.size(); i++) {
+            typeParameterNameMap.put(typeParameters.get(i), typeParameterNames.get(i));
+        }
+
+        return typeParameterNameMap;
+    }
+
     private void setupTypeReferencesForShortening(
             @NotNull Project project,
             @NotNull JetNamedFunction func,
@@ -692,8 +801,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable TypeExpression returnTypeExpression
     ) {
         if (isExtension) {
-            JetTypeReference receiverTypeRef = JetPsiFactory.createType(project, renderTypeLong(receiverType));
-            replaceWithLongerName(project, receiverTypeRef, receiverType);
+            JetTypeReference receiverTypeRef =
+                    JetPsiFactory.createType(project, renderTypeLong(selectedReceiverType.getType(), typeParameterNameMap));
+            replaceWithLongerName(project, receiverTypeRef, selectedReceiverType.getType());
 
             receiverTypeRef = func.getReceiverTypeRef();
             assert receiverTypeRef != null;
@@ -766,46 +876,33 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private TypeExpression setupReturnTypeTemplate(@NotNull TemplateBuilder builder, @NotNull JetNamedFunction func) {
         JetTypeReference returnTypeRef = func.getReturnTypeRef();
         assert returnTypeRef != null;
-        TypeExpression returnTypeExpression = new TypeExpression(returnType.getPossibleTypes());
+        TypeExpression returnTypeExpression = new TypeExpression(returnType);
         builder.replaceElement(returnTypeRef, returnTypeExpression);
         return returnTypeExpression;
     }
 
     @NotNull
-    private TypeParameterListExpression setupTypeParameterListTemplate(
-            @NotNull TemplateBuilderImpl builder,
-            @NotNull JetNamedFunction func,
-            @NotNull TypeExpression[] parameterTypeExpressions,
-            @Nullable TypeExpression returnTypeExpression,
-            @NotNull JetScope scope
-    ) {
-        Map<String, TypeParameterDescriptor[]> typeParameterMap = new HashMap<String, TypeParameterDescriptor[]>();
-        Set<TypeParameterDescriptor> receiverTypeParameters = getTypeParametersInType(receiverType);
-        TypeParameterDescriptor[] receiverTypeParametersNotInScope = getTypeParameterNamesNotInScope(receiverTypeParameters, scope);
-        for (TypeExpression parameterTypeExpression : parameterTypeExpressions) {
-            JetType[] parameterTypeOptions = parameterTypeExpression.getOptions();
-            String[] parameterTypeOptionStrings = parameterTypeExpression.getOptionStrings();
-            assert parameterTypeOptions.length == parameterTypeOptionStrings.length;
-            for (int i = 0; i < parameterTypeOptions.length; i++) {
-                Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(parameterTypeOptions[i]);
-                typeParameterMap.put(parameterTypeOptionStrings[i], getTypeParameterNamesNotInScope(typeParameters, scope));
+    private TypeParameterListExpression setupTypeParameterListTemplate(@NotNull TemplateBuilderImpl builder, @NotNull JetNamedFunction func) {
+        Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
+        String[] receiverTypeParameterNames = selectedReceiverType.getTypeParameterNames();
+
+        for (Parameter parameter : parameters) {
+            TypeCandidate[] parameterTypeCandidates = parameter.getType().getTypeCandidates();
+            for (TypeCandidate parameterTypeCandidate : parameterTypeCandidates) {
+                typeParameterMap.put(parameterTypeCandidate.getRenderedType(), parameterTypeCandidate.getTypeParameterNames());
             }
         }
 
         JetTypeReference returnTypeRef = func.getReturnTypeRef();
         if (returnTypeRef != null) {
-            assert returnTypeExpression != null;
-            JetType[] returnTypeOptions = returnTypeExpression.getOptions();
-            String[] returnTypeOptionStrings = returnTypeExpression.getOptionStrings();
-            assert returnTypeOptions.length == returnTypeOptionStrings.length;
-            for (int i = 0; i < returnTypeOptions.length; i++) {
-                Set<TypeParameterDescriptor> typeParameters = getTypeParametersInType(returnTypeOptions[i]);
-                typeParameterMap.put(returnTypeOptionStrings[i], getTypeParameterNamesNotInScope(typeParameters, scope));
+            TypeCandidate[] returnTypeCandidates = returnType.getTypeCandidates();
+            for (TypeCandidate returnTypeCandidate : returnTypeCandidates) {
+                typeParameterMap.put(returnTypeCandidate.getRenderedType(), returnTypeCandidate.getTypeParameterNames());
             }
         }
 
         builder.replaceElement(func, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false); // ((3, 3) is after "fun")
-        return new TypeParameterListExpression(receiverTypeParametersNotInScope, typeParameterMap);
+        return new TypeParameterListExpression(receiverTypeParameterNames, typeParameterMap);
     }
 
     private TypeExpression[] setupParameterTypeTemplates(@NotNull Project project, @NotNull TemplateBuilder builder,
@@ -813,13 +910,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         List<JetParameter> jetParameters = parameterList.getParameters();
         assert jetParameters.size() == parameters.size();
         TypeExpression[] parameterTypeExpressions = new TypeExpression[parameters.size()];
+        JetNameValidator dummyValidator = JetNameValidator.getEmptyValidator(project);
         for (int i = 0; i < parameters.size(); i++) {
             Parameter parameter = parameters.get(i);
             JetParameter jetParameter = jetParameters.get(i);
 
             // add parameter type to the template
-            JetType[] typeOptions = parameter.getType().getPossibleTypes();
-            parameterTypeExpressions[i] = new TypeExpression(typeOptions);
+            parameterTypeExpressions[i] = new TypeExpression(parameter.getType());
             JetTypeReference parameterTypeRef = jetParameter.getTypeReference();
             assert parameterTypeRef != null;
             builder.replaceElement(parameterTypeRef, parameterTypeExpressions[i]);
@@ -838,11 +935,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
             // figure out suggested names for each type option
             Map<String, String[]> parameterTypeToNamesMap = new HashMap<String, String[]>();
-            String[] typeOptionStrings = parameterTypeExpressions[i].getOptionStrings();
-            assert typeOptions.length == typeOptionStrings.length;
-            for (int j = 0; j < typeOptions.length; j++) {
-                String[] suggestedNames = JetNameSuggester.suggestNamesForType(typeOptions[j], JetNameValidator.getEmptyValidator(project));
-                parameterTypeToNamesMap.put(typeOptionStrings[j], suggestedNames);
+            for (TypeCandidate typeCandidate : parameter.getType().getTypeCandidates()) {
+                String[] suggestedNames = JetNameSuggester.suggestNamesForType(typeCandidate.getType(), dummyValidator);
+                parameterTypeToNamesMap.put(typeCandidate.getRenderedType(), suggestedNames);
             }
 
             // add expression to builder
@@ -854,31 +949,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         return parameterTypeExpressions;
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        assert file instanceof JetFile;
-        JetFile jetFile = (JetFile) file;
-        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
-
-        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
-        if (possibleOwnerTypes.length == 0) return false;
-        assertNoUnitTypes(possibleOwnerTypes);
-        JetType[] possibleReturnTypes = returnType.getPossibleTypes(currentFileContext);
-        if (!returnType.isType()) { // allow return type to be unit (but not when it's among several options)
-            assertNoUnitTypes(possibleReturnTypes);
-        }
-        if (possibleReturnTypes.length == 0) return false;
-        for (Parameter parameter : parameters) {
-            JetType[] possibleTypes = parameter.getType().getPossibleTypes(currentFileContext);
-            if (possibleTypes.length == 0) return false;
-            assertNoUnitTypes(possibleTypes);
-        }
-
-        return true;
-    }
-
-    private static void replaceWithLongerName(@NotNull Project project, @NotNull JetTypeReference typeRef, @NotNull JetType type) {
-        JetTypeReference fullyQualifiedReceiverTypeRef = JetPsiFactory.createType(project, renderTypeLong(type));
+    private void replaceWithLongerName(@NotNull Project project, @NotNull JetTypeReference typeRef, @NotNull JetType type) {
+        JetTypeReference fullyQualifiedReceiverTypeRef = JetPsiFactory.createType(project, renderTypeLong(type, typeParameterNameMap));
         typeRef.replace(fullyQualifiedReceiverTypeRef);
     }
 
@@ -933,13 +1005,45 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static String renderTypeShort(@NotNull JetType type) {
-        return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+    private static String renderDescriptor(
+            @NotNull DeclarationDescriptor declarationDescriptor,
+            @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap,
+            boolean fq
+    ) {
+        if (declarationDescriptor instanceof TypeParameterDescriptor) {
+            String replacement = typeParameterNameMap.get(declarationDescriptor);
+            return replacement == null ? declarationDescriptor.getName().getName() : replacement;
+        } else if (declarationDescriptor instanceof ClassDescriptor) {
+            return fq ? DescriptorUtils.getFQName(declarationDescriptor).getFqName() : declarationDescriptor.getName().getName();
+        } else {
+            assert false : "unexpected descriptor in type";
+            return null;
+        }
+    }
+
+    private static String renderType(@NotNull JetType type, @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap, boolean fq) {
+        List<TypeProjection> projections = type.getArguments();
+        DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+        assert declarationDescriptor != null;
+        if (projections.isEmpty()) {
+            return renderDescriptor(declarationDescriptor, typeParameterNameMap, fq);
+        }
+
+        List<String> arguments = new ArrayList<String>();
+        for (TypeProjection projection : projections) {
+            arguments.add(renderTypeLong(projection.getType(), typeParameterNameMap));
+        }
+        return renderDescriptor(declarationDescriptor, typeParameterNameMap, fq) + "<" + StringUtil.join(arguments, ", ") + ">";
     }
 
     @NotNull
-    private static String renderTypeLong(@NotNull JetType type) {
-        return DescriptorRenderer.TEXT.renderType(type);
+    private static String renderTypeShort(@NotNull JetType type, @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap) {
+        return renderType(type, typeParameterNameMap, false);
+    }
+
+    @NotNull
+    private static String renderTypeLong(@NotNull JetType type, @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap) {
+        return renderType(type, typeParameterNameMap, true);
     }
 
     @NotNull
@@ -979,6 +1083,16 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         if (existingNames.contains(name)) {
             int j = 1;
             while (existingNames.contains(name + j)) j++;
+            name += j;
+        }
+        return name;
+    }
+
+    @NotNull
+    private static String getNextAvailableName(@NotNull String name, @NotNull Collection<String> existingNames, @NotNull JetScope scope) {
+        if (existingNames.contains(name) || scope.getClassifier(Name.identifier(name)) != null) {
+            int j = 1;
+            while (existingNames.contains(name + j) || scope.getClassifier(Name.identifier(name + j)) != null) j++;
             name += j;
         }
         return name;
@@ -1068,12 +1182,6 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
     private static boolean isUnit(@NotNull JetType type) {
         return KotlinBuiltIns.getInstance().isUnit(type);
-    }
-
-    private static void assertNoUnitTypes(@NotNull JetType[] types) {
-        for (JetType type : types) {
-            assert !isUnit(type);
-        }
     }
 
     @NotNull
