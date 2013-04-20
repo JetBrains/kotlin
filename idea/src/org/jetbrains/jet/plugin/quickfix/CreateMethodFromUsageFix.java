@@ -87,35 +87,36 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
      */
     private static class TypeOrExpressionThereof {
         private final JetExpression expressionOfType;
-        private JetType type;
-        private final boolean enumerateSupertypes;
+        private final JetType type;
+        private final Variance variance;
         private JetType[] cachedTypeCandidates;
         private String[] cachedNameCandidatesFromExpression;
 
         public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType) {
-            this(expressionOfType, true);
+            this(expressionOfType, Variance.IN_VARIANCE);
         }
 
-        public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType, boolean enumerateSupertypes) {
-            this(expressionOfType, null, enumerateSupertypes);
+        public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType, Variance variance) {
+            this(expressionOfType, null, variance);
         }
 
-        public TypeOrExpressionThereof(@NotNull JetType type, boolean enumerateSupertypes) {
-            this(null, type, enumerateSupertypes);
+        public TypeOrExpressionThereof(@NotNull JetType type, Variance variance) {
+            this(null, type, variance);
         }
 
-        private TypeOrExpressionThereof(@Nullable JetExpression expressionOfType, @Nullable JetType type, boolean enumerateSupertypes) {
+        private TypeOrExpressionThereof(@Nullable JetExpression expressionOfType, @Nullable JetType type, Variance variance) {
             this.expressionOfType = expressionOfType;
             this.type = type;
-            this.enumerateSupertypes = enumerateSupertypes;
+            this.variance = variance;
         }
 
         public boolean isType() {
             return this.type != null;
         }
 
-        @Nullable
+        @NotNull
         public JetType getType() {
+            assert this.type != null;
             return this.type;
         }
 
@@ -131,13 +132,14 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             }
             List<JetType> types = new ArrayList<JetType>();
             if (isType()) {
+                assert type != null : "!isType() means type == null && expressionOfType != null";
                 types.add(type);
                 types.addAll(TypeUtils.getAllSupertypes(type));
             } else {
                 assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
                 for (JetType type : guessTypeForExpression(expressionOfType, context)) {
                     types.add(type);
-                    if (enumerateSupertypes) {
+                    if (variance == Variance.IN_VARIANCE) {
                         types.addAll(TypeUtils.getAllSupertypes(type));
                     }
                 }
@@ -169,12 +171,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
 
         public void substitute(TypeSubstitution[] substitutions) {
-            if (type != null) {
-                for (TypeSubstitution substitution : substitutions) {
-                    type = substituteType(type, substitution);
-                }
-            }
-            cachedTypeCandidates = substituteTypes(cachedTypeCandidates, substitutions);
+            cachedTypeCandidates = substituteTypes(cachedTypeCandidates, substitutions, variance);
         }
     }
 
@@ -477,7 +474,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         currentFile = (JetFile) file;
         currentFileEditor = editor;
 
-        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes(currentFileContext);
+        JetType[] possibleOwnerTypes = ownerType.getPossibleTypes();
         assert possibleOwnerTypes.length > 0;
         if (possibleOwnerTypes.length == 1) {
             JetType ownerType = possibleOwnerTypes[0];
@@ -872,31 +869,72 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static JetType substituteType(@NotNull JetType type, @NotNull TypeSubstitution substitution) {
-        if (type.equals(substitution.getForType())) {
-            return substitution.getByType();
+    private static JetType substituteType(@NotNull JetType type, @NotNull TypeSubstitution substitution, @NotNull Variance variance) {
+        switch (variance) {
+            case INVARIANT:
+                // for invariant, can replace only when they're equal
+                if (type.equals(substitution.getForType())) {
+                    return substitution.getByType();
+                }
+                break;
+            case IN_VARIANCE:
+                // for covariant (e.g. function parameter), can replace type with any of its supertypes
+                if (JetTypeChecker.INSTANCE.isSubtypeOf(type, substitution.getForType())) {
+                    return substitution.getByType();
+                }
+                break;
+            case OUT_VARIANCE:
+                // for contravariant (e.g. function return value), can replace type with any of its subtypes
+                if (JetTypeChecker.INSTANCE.isSubtypeOf(substitution.getForType(), type)) {
+                    return substitution.getByType();
+                }
+                break;
         }
 
         List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
+        List<TypeParameterDescriptor> typeParameters = type.getConstructor().getParameters();
+        int i = 0;
         for (TypeProjection projection : type.getArguments()) {
-            JetType newArgument = substituteType(projection.getType(), substitution);
+            TypeParameterDescriptor typeParameter = typeParameters.get(i);
+            JetType newArgument = substituteType(projection.getType(), substitution, typeParameter.getVariance());
             newArguments.add(new TypeProjection(Variance.INVARIANT, newArgument));
+            i++;
         }
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(),
                                type.isNullable(), newArguments, type.getMemberScope());
     }
 
     @NotNull
-    private static JetType[] substituteTypes(@NotNull JetType[] types, @NotNull TypeSubstitution[] substitutions) {
-        JetType[] newTypes = new JetType[types.length];
-        for (int i = 0; i < types.length; i++) {
-            JetType newType = types[i];
-            for (TypeSubstitution substitution : substitutions) {
-                newType = substituteType(newType, substitution);
+    private static JetType[] substituteTypes(@NotNull JetType[] types, @NotNull TypeSubstitution[] substitutions, @NotNull Variance variance) {
+        Set<JetType> newTypes = new LinkedHashSet<JetType>(Arrays.asList(types));
+        for (TypeSubstitution substitution : substitutions) { // each substitution can be applied or not, so we offer all options
+            List<JetType> toAdd = new ArrayList<JetType>();
+            List<JetType> toRemove = new ArrayList<JetType>();
+            for (JetType type : newTypes) {
+                toAdd.add(substituteType(type, substitution, variance));
+                // substitution.byType are type arguments, but they cannot already occur before substitution
+                if (containsType(type, substitution.getByType())) {
+                    toRemove.add(type);
+                }
             }
-            newTypes[i] = newType;
+            newTypes.addAll(toAdd);
+            newTypes.removeAll(toRemove);
         }
-        return newTypes;
+        return newTypes.toArray(new JetType[newTypes.size()]);
+    }
+
+    private static boolean containsType(JetType outer, JetType inner) {
+        if (outer.equals(inner)) {
+            return true;
+        }
+
+        for (TypeProjection projection : outer.getArguments()) {
+            if (containsType(projection.getType(), inner)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @NotNull
@@ -1062,7 +1100,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                     parameters.add(new Parameter(null, indexType));
                 }
 
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(accessExpr, false);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(accessExpr, Variance.OUT_VARIANCE);
                 return new CreateMethodFromUsageFix(accessExpr, arrayType, "get", returnType, parameters);
             }
         };
@@ -1094,7 +1132,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 TypeOrExpressionThereof valType = new TypeOrExpressionThereof(rhs);
                 parameters.add(new Parameter("value", valType));
 
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), false);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE);
                 return new CreateMethodFromUsageFix(accessExpr, arrayType, "set", returnType, parameters);
             }
         };
@@ -1111,7 +1149,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetExpression iterableExpr = forExpr.getLoopRange();
                 if (iterableExpr == null) return null;
                 TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), false);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE);
                 return new CreateMethodFromUsageFix(forExpr, iterableType, "hasNext", returnType, new ArrayList<Parameter>());
             }
         };
@@ -1130,7 +1168,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetExpression variableExpr = forExpr.getLoopParameter();
                 if (variableExpr == null) return null;
                 TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr, false);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr, Variance.OUT_VARIANCE);
                 return new CreateMethodFromUsageFix(forExpr, iterableType, "next", returnType, new ArrayList<Parameter>());
             }
         };
@@ -1163,7 +1201,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 List<TypeProjection> returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType);
                 returnJetType = new JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(),
                                                 returnJetTypeArguments, returnJetType.getMemberScope());
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(returnJetType, false);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(returnJetType, Variance.OUT_VARIANCE);
                 return new CreateMethodFromUsageFix(forExpr, iterableType, "iterator", returnType, new ArrayList<Parameter>());
             }
         };
@@ -1190,7 +1228,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 int componentNumber = Integer.decode(componentNumberString) - 1;
 
                 JetMultiDeclarationEntry entry = entries.get(componentNumber);
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry, false);
+                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry, Variance.OUT_VARIANCE);
                 JetExpression rhs = multiDeclaration.getInitializer();
                 if (rhs == null) return null;
                 TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(rhs);
