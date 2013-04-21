@@ -294,8 +294,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         private final Map<String, String[]> parameterTypeToNamesMap;
 
         public ParameterNameExpression(@NotNull String[] names, @NotNull Map<String, String[]> parameterTypeToNamesMap) {
-            for (String name : names)
+            for (String name : names) {
                 assert name != null && !name.isEmpty();
+            }
             this.names = names;
             this.parameterTypeToNamesMap = parameterTypeToNamesMap;
         }
@@ -331,7 +332,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert file != null && file instanceof JetFile;
             PsiElement elementAt = file.findElementAt(offset);
             JetFunction func = PsiTreeUtil.getParentOfType(elementAt, JetFunction.class);
-            assert func != null;
+            if (func == null) return new LookupElement[0];
             JetParameterList parameterList = func.getValueParameterList();
             assert parameterList != null;
 
@@ -339,17 +340,18 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             JetParameter parameter = PsiTreeUtil.getParentOfType(elementAt, JetParameter.class);
             if (parameter != null) {
                 JetTypeReference parameterTypeRef = parameter.getTypeReference();
-                assert parameterTypeRef != null;
-                String[] suggestedNamesBasedOnType = parameterTypeToNamesMap.get(parameterTypeRef.getText());
-                if (suggestedNamesBasedOnType != null) {
-                    Collections.addAll(names, suggestedNamesBasedOnType);
+                if (parameterTypeRef != null) {
+                    String[] suggestedNamesBasedOnType = parameterTypeToNamesMap.get(parameterTypeRef.getText());
+                    if (suggestedNamesBasedOnType != null) {
+                        Collections.addAll(names, suggestedNamesBasedOnType);
+                    }
                 }
             }
 
             // remember other parameter names for later use
             Set<String> parameterNames = new HashSet<String>();
             for (JetParameter jetParameter : parameterList.getParameters()) {
-                if (jetParameter == parameter) continue;
+                if (jetParameter == parameter || jetParameter.getName() == null) continue;
                 parameterNames.add(jetParameter.getName());
             }
 
@@ -451,17 +453,20 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert file != null && file instanceof JetFile;
             PsiElement elementAt = file.findElementAt(offset);
             JetFunction func = PsiTreeUtil.getParentOfType(elementAt, JetFunction.class);
-            assert func != null;
+            if (func == null) {
+                return new TextResult("");
+            }
             List<JetParameter> parameters = func.getValueParameters();
 
             Set<String> typeParameterNames = new LinkedHashSet<String>();
             Collections.addAll(typeParameterNames, typeParameterNamesFromReceiverType);
             for (JetParameter parameter : parameters) {
                 JetTypeReference parameterTypeRef = parameter.getTypeReference();
-                assert parameterTypeRef != null;
-                String[] typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap.get(parameterTypeRef.getText());
-                if (typeParameterNamesFromParameter != null) {
-                    Collections.addAll(typeParameterNames, typeParameterNamesFromParameter);
+                if (parameterTypeRef != null) {
+                    String[] typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap.get(parameterTypeRef.getText());
+                    if (typeParameterNamesFromParameter != null) {
+                        Collections.addAll(typeParameterNames, typeParameterNamesFromParameter);
+                    }
                 }
             }
             JetTypeReference returnTypeRef = func.getReturnTypeRef();
@@ -545,7 +550,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
     @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        assert file != null && file instanceof JetFile; // TODO: change some assertions to notifications
+        assert file != null && file instanceof JetFile;
         currentFile = (JetFile) file;
         currentFileEditor = editor;
         currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile).getBindingContext();
@@ -693,7 +698,10 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             containingFileEditor = fileEditorManager.getSelectedTextEditor();
 
             JetClassBody classBody = ownerClass.getBody();
-            assert classBody != null;
+            if (classBody == null) {
+                classBody = (JetClassBody) ownerClass.add(JetPsiFactory.createEmptyClassBody(project));
+                ownerClass.addBefore(JetPsiFactory.createWhiteSpace(project), classBody);
+            }
             PsiElement rBrace = classBody.getRBrace();
             assert rBrace != null;
             func = (JetNamedFunction) classBody.addBefore(func, rBrace);
@@ -806,20 +814,22 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             replaceWithLongerName(project, receiverTypeRef, selectedReceiverType.getType());
 
             receiverTypeRef = func.getReceiverTypeRef();
-            assert receiverTypeRef != null;
-            typeRefsToShorten.add(receiverTypeRef);
+            if (receiverTypeRef != null) {
+                typeRefsToShorten.add(receiverTypeRef);
+            }
         }
 
         if (!isUnit) {
             assert returnTypeExpression != null;
             JetTypeReference returnTypeRef = func.getReturnTypeRef();
-            assert returnTypeRef != null;
-            JetType returnType = returnTypeExpression.getTypeFromSelection(returnTypeRef.getText());
-            if (returnType != null) { // user selected a given type
-                replaceWithLongerName(project, returnTypeRef, returnType);
-                returnTypeRef = func.getReturnTypeRef();
-                assert returnTypeRef != null;
-                typeRefsToShorten.add(returnTypeRef);
+            if (returnTypeRef != null) {
+                JetType returnType = returnTypeExpression.getTypeFromSelection(returnTypeRef.getText());
+                if (returnType != null) { // user selected a given type
+                    replaceWithLongerName(project, returnTypeRef, returnType);
+                    returnTypeRef = func.getReturnTypeRef();
+                    assert returnTypeRef != null;
+                    typeRefsToShorten.add(returnTypeRef);
+                }
             }
         }
 
@@ -829,18 +839,20 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         for (int i = 0; i < valueParameters.size(); i++) {
             JetParameter parameter = valueParameters.get(i);
             JetTypeReference parameterTypeRef = parameter.getTypeReference();
-            assert parameterTypeRef != null;
-            JetType parameterType = parameterTypeExpressions[i].getTypeFromSelection(parameterTypeRef.getText());
-            if (parameterType != null) {
-                replaceWithLongerName(project, parameterTypeRef, parameterType);
-                parameterIndicesToShorten.add(i);
+            if (parameterTypeRef != null) {
+                JetType parameterType = parameterTypeExpressions[i].getTypeFromSelection(parameterTypeRef.getText());
+                if (parameterType != null) {
+                    replaceWithLongerName(project, parameterTypeRef, parameterType);
+                    parameterIndicesToShorten.add(i);
+                }
             }
         }
         valueParameters = func.getValueParameters();
         for (int i : parameterIndicesToShorten) {
             JetTypeReference parameterTypeRef = valueParameters.get(i).getTypeReference();
-            assert parameterTypeRef != null;
-            typeRefsToShorten.add(parameterTypeRef);
+            if (parameterTypeRef != null) {
+                typeRefsToShorten.add(parameterTypeRef);
+            }
         }
     }
 
