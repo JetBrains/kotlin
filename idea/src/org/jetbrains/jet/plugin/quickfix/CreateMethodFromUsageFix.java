@@ -95,7 +95,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             this.type = type;
             Set<TypeParameterDescriptor> typeParametersInType = getTypeParametersInType(type);
             typeParameters = typeParametersInType.toArray(new TypeParameterDescriptor[typeParametersInType.size()]);
-            render(Collections.<TypeParameterDescriptor, String>emptyMap());
+            renderedType = renderTypeShort(type, Collections.<TypeParameterDescriptor, String>emptyMap());
         }
 
         public TypeCandidate(@NotNull JetType type, @NotNull JetScope scope) {
@@ -647,6 +647,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             returnType.computeTypeCandidates(currentFileContext, substitutions, scope);
         }
 
+        // now that we have done substitutions, we can throw it away
+        selectedReceiverType = new TypeCandidate(receiverType, scope);
+
         // figure out type parameter renames to avoid conflicts
         typeParameterNameMap = getTypeParameterRenames(scope);
         for (Parameter parameter : parameters) {
@@ -655,9 +658,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         if (!isUnit) {
             returnType.renderTypeCandidates(typeParameterNameMap);
         }
-        if (isExtension) {
-            ownerType.renderTypeCandidates(typeParameterNameMap);
-        }
+        selectedReceiverType.render(typeParameterNameMap);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
