@@ -624,7 +624,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
         JetScope scope;
         if (isExtension) {
-            NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, containingFile);
+            NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, currentFile);
             assert namespaceDescriptor != null;
             scope = namespaceDescriptor.getMemberScope();
         } else {
