@@ -570,8 +570,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 if (possibleClassDescriptor != null) {
                     String className = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(possibleClassDescriptor.getDefaultType());
                     DeclarationDescriptor namespaceDescriptor = possibleClassDescriptor.getContainingDeclaration();
-                    assert namespaceDescriptor instanceof NamespaceDescriptor;
-                    String namespace = ((NamespaceDescriptor) namespaceDescriptor).getFqName().getFqName();
+                    String namespace = renderDescriptor(namespaceDescriptor, true);
                     String option = className + " (" + namespace + ")";
                     options.add(option);
                     optionToTypeMap.put(option, ownerTypeCandidate);
@@ -1025,12 +1024,14 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             String replacement = typeParameterNameMap.get(declarationDescriptor);
             return replacement == null ? declarationDescriptor.getName().getName() : replacement;
-        } else if (declarationDescriptor instanceof ClassDescriptor) {
-            return fq ? DescriptorUtils.getFQName(declarationDescriptor).getFqName() : declarationDescriptor.getName().getName();
         } else {
-            assert false : "unexpected descriptor in type";
-            return null;
+            return fq ? DescriptorUtils.getFQName(declarationDescriptor).getFqName() : declarationDescriptor.getName().getName();
         }
+    }
+
+    @NotNull
+    private static String renderDescriptor(@NotNull DeclarationDescriptor declarationDescriptor, boolean fq) {
+        return renderDescriptor(declarationDescriptor, Collections.<TypeParameterDescriptor, String>emptyMap(), fq);
     }
 
     private static String renderType(@NotNull JetType type, @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap, boolean fq) {
