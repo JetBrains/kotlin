@@ -179,7 +179,9 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             if (isType()) {
                 assert type != null : "!isType() means type == null && expressionOfType != null";
                 types.add(type);
-                types.addAll(TypeUtils.getAllSupertypes(type));
+                if (variance == Variance.IN_VARIANCE) {
+                    types.addAll(TypeUtils.getAllSupertypes(type));
+                }
             } else {
                 assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
                 for (JetType type : guessTypeForExpression(expressionOfType, context)) {
@@ -1044,7 +1046,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
 
         List<String> arguments = new ArrayList<String>();
         for (TypeProjection projection : projections) {
-            arguments.add(renderTypeLong(projection.getType(), typeParameterNameMap));
+            arguments.add(renderType(projection.getType(), typeParameterNameMap, fq));
         }
         return renderDescriptor(declarationDescriptor, typeParameterNameMap, fq) + "<" + StringUtil.join(arguments, ", ") + ">";
     }
