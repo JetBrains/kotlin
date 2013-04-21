@@ -18,18 +18,25 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class CreateClassObjectFromUsageFix extends CreateFromUsageFixBase {
-    public CreateClassObjectFromUsageFix(@NotNull PsiElement element) {
+    private final JetClass klass;
+
+    public CreateClassObjectFromUsageFix(@NotNull PsiElement element, @NotNull JetClass klass) {
         super(element);
+        this.klass = klass;
     }
 
     @NotNull
@@ -40,7 +47,20 @@ public class CreateClassObjectFromUsageFix extends CreateFromUsageFixBase {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        // TODO
+        PsiFile containingFile = klass.getContainingFile();
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        assert virtualFile != null;
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        fileEditorManager.openFile(virtualFile, true);
+
+        JetClassBody classBody = klass.getBody();
+        if (classBody == null) {
+            classBody = (JetClassBody) klass.add(JetPsiFactory.createEmptyClassBody(project));
+            klass.addBefore(JetPsiFactory.createWhiteSpace(project), classBody);
+        }
+        PsiElement lBrace = classBody.getLBrace();
+        JetClassObject classObject = (JetClassObject) classBody.addAfter(JetPsiFactory.createEmptyClassObject(project), lBrace);
+        classBody.addBefore(JetPsiFactory.createNewLine(project), classObject);
     }
 
     @NotNull
@@ -49,7 +69,15 @@ public class CreateClassObjectFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                return null; // TODO
+                JetReferenceExpression refExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetReferenceExpression.class);
+                if (refExpr == null) return null;
+                PsiReference reference = refExpr.getReference();
+                if (reference == null) return null;
+                PsiElement resolvedReference = reference.resolve();
+                if (resolvedReference == null || !(resolvedReference instanceof JetClass)) return null;
+                JetClass klass = (JetClass) resolvedReference;
+                if (!klass.isWritable()) return null;
+                return new CreateClassObjectFromUsageFix(refExpr, (JetClass) resolvedReference);
             }
         };
     }

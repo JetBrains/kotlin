@@ -277,4 +277,9 @@ public class JetPsiFactory {
         JetFunction func = createFunction(project, "fun foo() {\n" + bodyText + "\n}");
         return func.getBodyExpression();
     }
+
+    public static JetClassObject createEmptyClassObject(Project project) {
+        JetClass klass = createClass(project, "class foo { class object { } }");
+        return klass.getClassObject();
+    }
 }
