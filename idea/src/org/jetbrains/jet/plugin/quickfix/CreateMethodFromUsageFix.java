@@ -174,8 +174,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
 
         @NotNull
-        private Collection<JetType> getPossibleTypes(BindingContext context) {
-            Collection<JetType> types = new ArrayList<JetType>();
+        private List<JetType> getPossibleTypes(BindingContext context) {
+            List<JetType> types = new ArrayList<JetType>();
             if (isType()) {
                 assert type != null : "!isType() means type == null && expressionOfType != null";
                 types.add(type);
@@ -208,7 +208,8 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 @NotNull TypeSubstitution[] substitutions,
                 @NotNull JetScope scope
         ) {
-            Collection<JetType> types = getPossibleTypes(context);
+            List<JetType> types = getPossibleTypes(context);
+            Collections.reverse(types); // reverse and reverse back later, so that things added below are added at the front
 
             Set<JetType> newTypes = new LinkedHashSet<JetType>(types);
             for (TypeSubstitution substitution : substitutions) { // each substitution can be applied or not, so we offer all options
@@ -229,13 +230,11 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 newTypes.add(KotlinBuiltIns.getInstance().getAnyType());
             }
 
-            types = newTypes;
-
-            typeCandidates = new TypeCandidate[types.size()];
-            int i = 0;
-            for (JetType type : types) {
+            typeCandidates = new TypeCandidate[newTypes.size()];
+            int i = typeCandidates.length - 1; // reverse order (see explanation above)
+            for (JetType type : newTypes) {
                 typeCandidates[i] = new TypeCandidate(type, scope);
-                i++;
+                i--;
             }
         }
 
