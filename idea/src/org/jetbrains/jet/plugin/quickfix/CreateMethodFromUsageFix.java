@@ -153,6 +153,10 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             this(expressionOfType, null, variance);
         }
 
+        public TypeOrExpressionThereof(@NotNull JetType type) {
+            this(type, Variance.IN_VARIANCE);
+        }
+
         public TypeOrExpressionThereof(@NotNull JetType type, Variance variance) {
             this(null, type, variance);
         }
@@ -1262,13 +1266,17 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
+                assert diagnostic.getFactory() == Errors.HAS_NEXT_MISSING ||
+                       diagnostic.getFactory() == Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE;
+                @SuppressWarnings("unchecked")
+                DiagnosticWithParameters1<JetExpression, JetType> diagnosticWithParameters =
+                        (DiagnosticWithParameters1<JetExpression, JetType>) diagnostic;
+                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getA());
+
                 JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
                 if (forExpr == null) return null;
-                JetExpression iterableExpr = forExpr.getLoopRange();
-                if (iterableExpr == null) return null;
-                TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE);
-                return new CreateMethodFromUsageFix(forExpr, iterableType, "hasNext", returnType, new ArrayList<Parameter>());
+                return new CreateMethodFromUsageFix(forExpr, ownerType, "hasNext", returnType, new ArrayList<Parameter>());
             }
         };
     }
@@ -1279,15 +1287,18 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
+                assert diagnostic.getFactory() == Errors.NEXT_MISSING || diagnostic.getFactory() == Errors.NEXT_NONE_APPLICABLE;
+                @SuppressWarnings("unchecked")
+                DiagnosticWithParameters1<JetExpression, JetType> diagnosticWithParameters =
+                        (DiagnosticWithParameters1<JetExpression, JetType>) diagnostic;
+                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getA());
+
                 JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
                 if (forExpr == null) return null;
-                JetExpression iterableExpr = forExpr.getLoopRange();
-                if (iterableExpr == null) return null;
                 JetExpression variableExpr = forExpr.getLoopParameter();
                 if (variableExpr == null) return null;
-                TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr, Variance.OUT_VARIANCE);
-                return new CreateMethodFromUsageFix(forExpr, iterableType, "next", returnType, new ArrayList<Parameter>());
+                return new CreateMethodFromUsageFix(forExpr, ownerType, "next", returnType, new ArrayList<Parameter>());
             }
         };
     }
