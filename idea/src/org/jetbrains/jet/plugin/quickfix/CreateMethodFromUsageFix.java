@@ -563,7 +563,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         ownerType.computeTypeCandidates(currentFileContext);
         TypeCandidate[] ownerTypeCandidates = ownerType.getTypeCandidates();
         assert ownerTypeCandidates.length > 0;
-        if (ownerTypeCandidates.length == 1) {
+        if (ownerTypeCandidates.length == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
             selectedReceiverType = ownerTypeCandidates[0];
             doInvoke(project);
         } else {
