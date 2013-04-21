@@ -1488,7 +1488,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             superCallable.invokeWithNotNullAssertion(codegen.v, state, resolvedCall);
         }
         else {
-            codegen.invokeMethodWithArguments(superCallable, (JetCallElement) superCall, StackValue.none());
+            codegen.invokeMethodWithArguments(superCallable, resolvedCall, null, StackValue.none());
         }
     }
 
@@ -1571,13 +1571,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(state.getBindingContext(), enumConstant)) {
                 JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
                 if (specifier instanceof JetDelegatorToSuperCall) {
-                    JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
-                    ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) bindingContext
-                            .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
-                    assert constructorDescriptor != null;
-                    //noinspection SuspiciousMethodCalls
+                    ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                            bindingContext.get(BindingContext.RESOLVED_CALL, ((JetDelegatorToSuperCall) specifier).getCalleeExpression());
+                    assert resolvedCall != null : "Enum entry delegation specifier is unresolved: " + specifier.getText();
+
+                    ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
                     CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
-                    codegen.invokeMethodWithArguments(method, superCall, StackValue.none());
+
+                    codegen.invokeMethodWithArguments(method, resolvedCall, null, StackValue.none());
                 }
                 else {
                     throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);

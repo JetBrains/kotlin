@@ -25,7 +25,6 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.List;
 
@@ -40,8 +39,7 @@ public class NewArray implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        codegen.generateNewArray((JetCallExpression) element,
-                                 codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, (JetExpression) element));
+        codegen.generateNewArray((JetCallExpression) element);
         return StackValue.onStack(expectedType);
     }
 }
