@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.provider;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
@@ -38,15 +40,19 @@ import static com.intellij.psi.util.PsiFormatUtilBase.*;
 public final class MembersCache {
     private static final ImmutableSet<String> OBJECT_METHODS = ImmutableSet.of("hashCode()", "equals(java.lang.Object)", "toString()");
 
+    private final Multimap<Name, Runnable> memberProcessingTasks = HashMultimap.create();
     private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
     @Nullable
     public NamedMembers get(@NotNull Name name) {
+        runTasksByName(name);
         return namedMembersMap.get(name);
     }
 
     @NotNull
     public Collection<NamedMembers> allMembers() {
+        runAllTasks();
+        memberProcessingTasks.clear();
         return namedMembersMap.values();
     }
 
@@ -58,6 +64,33 @@ public final class MembersCache {
             namedMembersMap.put(name, r);
         }
         return r;
+    }
+
+    private void addTask(@NotNull PsiMember member, @NotNull RunOnce task) {
+        addTask(member.getName(), task);
+    }
+
+    private void addTask(@Nullable String name, @NotNull RunOnce task) {
+        if (name == null) {
+            return;
+        }
+        memberProcessingTasks.put(Name.identifier(name), task);
+    }
+
+    private void runTasksByName(Name name) {
+        if (!memberProcessingTasks.containsKey(name)) return;
+        Collection<Runnable> tasks = memberProcessingTasks.get(name);
+        for (Runnable task : tasks) {
+            task.run();
+        }
+        // Delete tasks
+        tasks.clear();
+    }
+
+    private void runAllTasks() {
+        for (Runnable task : memberProcessingTasks.values()) {
+            task.run();
+        }
     }
 
     @NotNull
@@ -139,8 +172,13 @@ public final class MembersCache {
             if (kotlin && !psiClass.getPsiClass().isEnum()) {
                 return;
             }
-            for (PsiField field : psiClass.getPsiClass().getAllFields()) {
-                processField(field);
+            for (final PsiField field : psiClass.getPsiClass().getAllFields()) {
+                addTask(field, new RunOnce() {
+                    @Override
+                    public void doRun() {
+                        processField(field);
+                    }
+                });
             }
         }
 
@@ -150,14 +188,30 @@ public final class MembersCache {
         }
 
         private void processOwnMethods() {
-            for (PsiMethod ownMethod : psiClass.getPsiClass().getMethods()) {
-                processOwnMethod(ownMethod);
+            for (final PsiMethod method : psiClass.getPsiClass().getMethods()) {
+                RunOnce task = new RunOnce() {
+                    @Override
+                    public void doRun() {
+                        processOwnMethod(method);
+                    }
+                };
+                addTask(method, task);
+
+                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
+                if (propertyParseResult != null) {
+                    addTask(propertyParseResult.getPropertyName(), task);
+                }
             }
         }
 
         private void parseAllMethodsAsProperties() {
             for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
-                parseMethodAsProperty(method);
+                createEmptyEntry(Name.identifier(method.getName()));
+
+                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
+                if (propertyParseResult != null) {
+                    createEmptyEntry(Name.identifier(propertyParseResult.getPropertyName()));
+                }
             }
         }
 
@@ -165,8 +219,13 @@ public final class MembersCache {
             if (!staticMembers) {
                 return;
             }
-            for (PsiClass nested : psiClass.getPsiClass().getInnerClasses()) {
-                processNestedClass(nested);
+            for (final PsiClass nested : psiClass.getPsiClass().getInnerClasses()) {
+                addTask(nested, new RunOnce() {
+                    @Override
+                    public void doRun() {
+                        processNestedClass(nested);
+                    }
+                });
             }
         }
 
@@ -309,15 +368,6 @@ public final class MembersCache {
             }
         }
 
-        private void parseMethodAsProperty(PsiMethod method) {
-            createEmptyEntry(Name.identifier(method.getName()));
-
-            PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-            if (propertyParseResult != null) {
-                createEmptyEntry(Name.identifier(propertyParseResult.getPropertyName()));
-            }
-        }
-
         private void createEmptyEntry(@NotNull Name identifier) {
             getOrCreateEmpty(identifier);
         }
@@ -371,4 +421,16 @@ public final class MembersCache {
         return foundAbstractMethods == 1;
     }
 
+    private static abstract class RunOnce implements Runnable {
+        private boolean hasRun = false;
+
+        @Override
+        public final void run() {
+            if (hasRun) return;
+            hasRun = true;
+            doRun();
+        }
+
+        protected abstract void doRun();
+    }
 }
