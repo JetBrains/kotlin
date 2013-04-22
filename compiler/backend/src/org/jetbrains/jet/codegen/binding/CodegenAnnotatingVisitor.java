@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,9 +81,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
     }
 
-    private ClassDescriptor recordClassForFunction(FunctionDescriptor funDescriptor) {
+    @NotNull
+    private ClassDescriptor recordClassForFunction(@NotNull FunctionDescriptor funDescriptor, @NotNull JetType superType) {
         ClassDescriptor classDescriptor;
-        int arity = funDescriptor.getValueParameters().size();
 
         classDescriptor = new ClassDescriptorImpl(
                 funDescriptor.getContainingDeclaration(),
@@ -92,7 +93,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         ((ClassDescriptorImpl)classDescriptor).initialize(
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singleton(getSuperTypeForClosure(funDescriptor, arity)),
+                Collections.singleton(superType),
                 JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>emptySet(),
                 null,
@@ -258,7 +259,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (functionDescriptor == null) return;
 
         String name = inventAnonymousClassName(expression);
-        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
+        JetType superType = getSuperTypeForClosure(functionDescriptor, false);
+        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
         recordClosure(functionLiteral, classDescriptor, name, true);
 
         classStack.push(classDescriptor);
@@ -274,8 +276,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
+        ResolvedCall<? extends CallableDescriptor> referencedFunction =
+                bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
+        if (referencedFunction == null) return;
+        JetType superType = getSuperTypeForClosure((FunctionDescriptor) referencedFunction.getResultingDescriptor(), true);
+
         String name = inventAnonymousClassName(expression);
-        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
+        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
         recordClosure(expression, classDescriptor, name, true);
 
         classStack.push(classDescriptor);
@@ -326,7 +333,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
         else {
             String name = inventAnonymousClassName(function);
-            ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
+            JetType superType = getSuperTypeForClosure(functionDescriptor, false);
+            ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
             recordClosure(function, classDescriptor, name, true);
 
             classStack.push(classDescriptor);

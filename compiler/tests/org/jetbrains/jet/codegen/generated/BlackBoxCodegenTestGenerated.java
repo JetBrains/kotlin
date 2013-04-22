@@ -564,6 +564,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/callableReference/sortListOfStrings.kt");
         }
         
+        @TestMetadata("toString.kt")
+        public void testToString() throws Exception {
+            doTest("compiler/testData/codegen/box/callableReference/toString.kt");
+        }
+        
         @TestMetadata("topLevelFromClass.kt")
         public void testTopLevelFromClass() throws Exception {
             doTest("compiler/testData/codegen/box/callableReference/topLevelFromClass.kt");

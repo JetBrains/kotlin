@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeImpl;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
@@ -85,13 +87,54 @@ public class FunctionTypesUtil {
     }
 
     @NotNull
-    public static JetType getSuperTypeForClosure(@NotNull FunctionDescriptor funDescriptor, int arity) {
-        if (funDescriptor.getReceiverParameter() != null) {
-            return EXTENSION_FUNCTIONS.get(arity).getDefaultType();
+    public static JetType getSuperTypeForClosure(@NotNull FunctionDescriptor descriptor, boolean kFunction) {
+        int arity = descriptor.getValueParameters().size();
+
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
+
+        List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(arity + 2);
+        if (receiverParameter != null) {
+            typeArguments.add(new TypeProjection(receiverParameter.getType()));
+        }
+        else if (kFunction && expectedThisObject != null) {
+            typeArguments.add(new TypeProjection(expectedThisObject.getType()));
+        }
+
+        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
+            typeArguments.add(new TypeProjection(parameter.getType()));
+        }
+
+        typeArguments.add(new TypeProjection(descriptor.getReturnType()));
+
+        ClassDescriptor classDescriptor;
+        if (kFunction) {
+            if (expectedThisObject != null) {
+                classDescriptor = K_MEMBER_FUNCTIONS.get(arity);
+            }
+            else if (receiverParameter != null) {
+                classDescriptor = K_EXTENSION_FUNCTIONS.get(arity);
+            }
+            else {
+                classDescriptor = K_FUNCTIONS.get(arity);
+            }
         }
         else {
-            return FUNCTIONS.get(arity).getDefaultType();
+            if (receiverParameter != null) {
+                classDescriptor = EXTENSION_FUNCTIONS.get(arity);
+            }
+            else {
+                classDescriptor = FUNCTIONS.get(arity);
+            }
         }
+
+        return new JetTypeImpl(
+                classDescriptor.getDefaultType().getAnnotations(),
+                classDescriptor.getTypeConstructor(),
+                false,
+                typeArguments,
+                classDescriptor.getMemberScope(typeArguments)
+        );
     }
 
     @NotNull

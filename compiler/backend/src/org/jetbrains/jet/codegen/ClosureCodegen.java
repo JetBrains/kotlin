@@ -25,10 +25,10 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.LocalLookup;
+import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
@@ -43,12 +43,13 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.isConst;
-import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplClassName;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
 public class ClosureCodegen extends GenerationStateAware {
@@ -290,40 +291,22 @@ public class ClosureCodegen extends GenerationStateAware {
 
     @NotNull
     private String getGenericSignature() {
-        SignatureWriter signatureWriter = new SignatureWriter();
-        JvmClassName funClass = getFunctionImplClassName(funDescriptor);
-        signatureWriter.visitClassType(funClass.getInternalName());
-        ReceiverParameterDescriptor receiverParameter = funDescriptor.getReceiverParameter();
-        if (receiverParameter != null) {
-            appendType(signatureWriter, receiverParameter.getType(), '=');
-        }
-        for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
-            appendType(signatureWriter, parameter.getType(), '=');
-        }
+        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
+        Collection<JetType> supertypes = classDescriptor.getTypeConstructor().getSupertypes();
+        assert supertypes.size() == 1 : "Closure must have exactly one supertype: " + funDescriptor;
+        JetType supertype = supertypes.iterator().next();
 
-        appendType(signatureWriter, funDescriptor.getReturnType(), '=');
-        signatureWriter.visitEnd();
+        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS, true);
+        typeMapper.writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), sw);
+        sw.writeSupersStart();
+        sw.writeSuperclass();
+        typeMapper.mapType(supertype, sw, JetTypeMapperMode.TYPE_PARAMETER);
+        sw.writeSuperclassEnd();
+        sw.writeSupersEnd();
 
-        return signatureWriter.toString();
-    }
-
-    private void appendType(SignatureWriter signatureWriter, JetType type, char variance) {
-        signatureWriter.visitTypeArgument(variance);
-
-        Type rawRetType = typeMapper.mapType(type, JetTypeMapperMode.TYPE_PARAMETER);
-        while (rawRetType.getSort() == Type.ARRAY) {
-            signatureWriter.visitArrayType();
-            rawRetType = rawRetType.getElementType();
-        }
-
-        if (rawRetType.getSort() == Type.OBJECT) {
-            signatureWriter.visitClassType(rawRetType.getInternalName());
-            signatureWriter.visitEnd();
-        }
-        else {
-            assert isPrimitive(rawRetType);
-            signatureWriter.visitBaseType(rawRetType.getDescriptor().charAt(0));
-        }
+        String signature = sw.makeJavaGenericSignature();
+        assert signature != null : "Closure superclass must have a generic signature: " + funDescriptor;
+        return signature;
     }
 
     private static FunctionDescriptor getInvokeFunction(FunctionDescriptor funDescriptor) {
