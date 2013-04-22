@@ -6,8 +6,10 @@ import java.util.Arrays;
 
 public class Preloader {
 
+    public static final int PRELOADER_ARG_COUNT = 4;
+
     public static void main(String[] args) throws Exception {
-        if (args.length < 3) {
+        if (args.length < PRELOADER_ARG_COUNT) {
             printUsageAndExit();
         }
 
@@ -29,6 +31,9 @@ public class Preloader {
             return;
         }
 
+        boolean printTime = parseMeasureTime(args[3]);
+        long startTime = System.nanoTime();
+
         ClassLoader parent = Preloader.class.getClassLoader();
 
         ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(file, classNumber, parent);
@@ -36,11 +41,24 @@ public class Preloader {
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
         Method mainMethod = mainClass.getMethod("main", String[].class);
 
-        mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, 2, args.length)});
+        mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
+
+        if (printTime) {
+            long dt = System.nanoTime() - startTime;
+            System.out.format("Total time: %.3fs\n", dt / 1e9);
+        }
+    }
+
+    private static boolean parseMeasureTime(String arg) {
+        if ("time".equals(arg)) return true;
+        if ("notime".equals(arg)) return true;
+        System.out.println("Unrecognized argument: " + arg);
+        printUsageAndExit();
+        return false;
     }
 
     private static void printUsageAndExit() {
-        System.out.println("Usage: Preloader <path to jar> <main class> <class number estimate> <parameters to pass to the main class>");
+        System.out.println("Usage: Preloader <path to jar> <main class> <class number estimate> <parameters to pass to the main class> <time|notime>");
         System.exit(1);
     }
 }
