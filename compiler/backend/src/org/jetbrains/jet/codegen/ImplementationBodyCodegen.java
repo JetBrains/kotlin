@@ -1508,10 +1508,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
-        if (declaration instanceof JetClassObject || declaration instanceof JetObjectDeclaration) {
-            // done earlier in order to have accessors
-        }
-        else if (declaration instanceof JetEnumEntry) {
+        if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
             String desc = "L" + classAsmType.getInternalName() + ";";
             v.newField(declaration, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
@@ -1525,9 +1522,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
             myEnumConstants.add((JetEnumEntry) declaration);
         }
-        else {
-            super.generateDeclaration(propertyCodegen, declaration, functionCodegen);
-        }
+
+        super.generateDeclaration(propertyCodegen, declaration, functionCodegen);
     }
 
     private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();

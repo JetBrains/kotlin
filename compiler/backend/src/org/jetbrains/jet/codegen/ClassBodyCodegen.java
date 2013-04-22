@@ -34,6 +34,7 @@ import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
 public abstract class ClassBodyCodegen extends MemberCodegen {
     protected final JetClassOrObject myClass;
@@ -84,6 +85,17 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
             genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v);
+        }
+        else if (declaration instanceof JetClassOrObject) {
+            if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(
+                    state.getBindingContext(), (JetEnumEntry) declaration)) {
+                return;
+            }
+
+            genClassOrObject(context, (JetClassOrObject) declaration);
+        }
+        else if (declaration instanceof JetClassObject) {
+            genClassOrObject(context, ((JetClassObject) declaration).getObjectDeclaration());
         }
     }
 
