@@ -2,7 +2,9 @@ package org.jetbrains.jet.preloading;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Preloader {
 
@@ -13,10 +15,16 @@ public class Preloader {
             printUsageAndExit();
         }
 
-        File file = new File(args[0]);
-        if (!file.exists()) {
-            System.out.println("File does not exist: " + file);
-            printUsageAndExit();
+        String classpath = args[0];
+        String[] paths = classpath.split("\\" + File.pathSeparator);
+        List<File> files = new ArrayList<File>(paths.length);
+        for (String path : paths) {
+            File file = new File(path);
+            if (!file.exists()) {
+                System.out.println("File does not exist: " + file);
+                printUsageAndExit();
+            }
+            files.add(file);
         }
 
         String mainClassCanonicalName = args[1];
@@ -36,7 +44,7 @@ public class Preloader {
 
         ClassLoader parent = Preloader.class.getClassLoader();
 
-        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(file, classNumber, parent);
+        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, parent);
 
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
         Method mainMethod = mainClass.getMethod("main", String[].class);
@@ -58,7 +66,7 @@ public class Preloader {
     }
 
     private static void printUsageAndExit() {
-        System.out.println("Usage: Preloader <path to jar> <main class> <class number estimate> <parameters to pass to the main class> <time|notime>");
+        System.out.println("Usage: Preloader <paths to jars> <main class> <class number estimate> <parameters to pass to the main class> <time|notime>");
         System.exit(1);
     }
 }

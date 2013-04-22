@@ -1,4 +1,4 @@
-package org.jetbrains.jet.preloading;/*
+/*
  * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,8 @@ package org.jetbrains.jet.preloading;/*
  * limitations under the License.
  */
 
+package org.jetbrains.jet.preloading;
+
 import sun.misc.CompoundEnumeration;
 
 import java.io.*;
@@ -21,33 +23,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ClassPreloadingUtils {
 
     /**
-     * Creates a class loader that loads all classes from {@code jarFile} into memory to make loading faster (avoid skipping through zip archives).
-     * @param jarFile a jar to load all classes from
-     * @param classCountEstimation an estimated number of classes in a the jar
+     * Creates a class loader that loads all classes from {@code jarFiles} into memory to make loading faster (avoid skipping through zip archives).
+     *
+     * NOTE: if many resources with the same name exist, only the first one will be loaded
+     *
+     * @param jarFiles jars to load all classes from
+     * @param classCountEstimation an estimated number of classes in a the jars
      * @param parent (nullable) parent class loader
      * @return a class loader that reads classes from memory
      * @throws IOException on from reading the jar
      */
-    public static ClassLoader preloadClasses(File jarFile, int classCountEstimation, ClassLoader parent) throws IOException {
-        Map<String, byte[]> entries = loadAllClassesFromJar(jarFile, classCountEstimation);
+    public static ClassLoader preloadClasses(Collection<File> jarFiles, int classCountEstimation, ClassLoader parent) throws IOException {
+        Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation);
 
-        return createMemoryBasedClassLoader(parent, jarFile, entries);
+        return createMemoryBasedClassLoader(parent, entries);
     }
 
     private static ClassLoader createMemoryBasedClassLoader(
             final ClassLoader parent,
-            final File jarFile,
-            final Map<String, byte[]> preloadedResources
+            final Map<String, ResourceData> preloadedResources
     ) {
         return new ClassLoader(null) {
             @Override
@@ -63,38 +64,17 @@ public class ClassPreloadingUtils {
             @Override
             protected Class<?> findClass(String name) throws ClassNotFoundException {
                 String internalName = name.replace('.', '/').concat(".class");
-                byte[] bytes = preloadedResources.get(internalName);
-                if (bytes == null) return null;
+                ResourceData resourceData = preloadedResources.get(internalName);
+                if (resourceData == null) return null;
 
-                return defineClass(name, bytes, 0, bytes.length);
+                return defineClass(name, resourceData.bytes, 0, resourceData.bytes.length);
             }
 
             @Override
             protected URL findResource(String name) {
-                final byte[] bytes = preloadedResources.get(name);
-                if (bytes == null) return null;
-
-                try {
-                    String path = "file:" + jarFile + "!" + name;
-                    return new URL("jar", null, 0, path, new URLStreamHandler() {
-                        @Override
-                        protected URLConnection openConnection(URL u) throws IOException {
-                            return new URLConnection(u) {
-                                @Override
-                                public void connect() throws IOException {}
-
-                                @Override
-                                public InputStream getInputStream() throws IOException {
-                                    return new ByteArrayInputStream(bytes);
-                                }
-                            };
-                        }
-                    });
-                }
-                catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                ResourceData resourceData = preloadedResources.get(name);
+                if (resourceData == null) return null;
+                return resourceData.getURL();
             }
 
             @Override
@@ -103,41 +83,46 @@ public class ClassPreloadingUtils {
                 if (resource == null) {
                     return new CompoundEnumeration<URL>(new Enumeration[0]);
                 }
+                // Only the first resource is loaded
                 return Collections.enumeration(Collections.singletonList(resource));
             }
         };
     }
 
-    private static Map<String, byte[]> loadAllClassesFromJar(File jarFile, int classNumberEstimate) throws IOException {
-        Map<String, byte[]> classes = new HashMap<String, byte[]>(classNumberEstimate);
+    private static Map<String, ResourceData> loadAllClassesFromJars(Collection<File> jarFiles, int classNumberEstimate) throws IOException {
+        Map<String, ResourceData> resources = new HashMap<String, ResourceData>(classNumberEstimate);
 
-        FileInputStream fileInputStream = new FileInputStream(jarFile);
-        try {
-            byte[] buffer = new byte[10 * 1024];
-            ZipInputStream stream = new ZipInputStream(new BufferedInputStream(fileInputStream));
-            while (true) {
-                ZipEntry entry = stream.getNextEntry();
-                if (entry == null) break;
-
-                ByteArrayOutputStreamWithPublicArray bytes = new ByteArrayOutputStreamWithPublicArray((int) entry.getSize());
-                int count;
-                while ((count = stream.read(buffer)) > 0) {
-                  bytes.write(buffer, 0, count);
-                }
-                if (!entry.isDirectory()) {
-                    classes.put(entry.getName(), bytes.getBytes());
-                }
-            }
-        }
-        finally {
+        for (File jarFile : jarFiles) {
+            FileInputStream fileInputStream = new FileInputStream(jarFile);
             try {
-                fileInputStream.close();
+                byte[] buffer = new byte[10 * 1024];
+                ZipInputStream stream = new ZipInputStream(new BufferedInputStream(fileInputStream));
+                while (true) {
+                    ZipEntry entry = stream.getNextEntry();
+                    if (entry == null) break;
+                    if (entry.isDirectory()) continue;
+                    String name = entry.getName();
+                    if (resources.containsKey(name)) continue; // Only the first resource is stored
+
+                    ByteArrayOutputStreamWithPublicArray bytes = new ByteArrayOutputStreamWithPublicArray((int) entry.getSize());
+                    int count;
+                    while ((count = stream.read(buffer)) > 0) {
+                        bytes.write(buffer, 0, count);
+                    }
+
+                    resources.put(name, new ResourceData(jarFile, name, bytes.getBytes()));
+                }
             }
-            catch (IOException e) {
-                // Ignore
+            finally {
+                try {
+                    fileInputStream.close();
+                }
+                catch (IOException e) {
+                    // Ignore
+                }
             }
         }
-        return classes;
+        return resources;
     }
 
     private static class ByteArrayOutputStreamWithPublicArray extends ByteArrayOutputStream {
@@ -149,5 +134,42 @@ public class ClassPreloadingUtils {
         public byte[] getBytes() {
             return buf;
         }
+    }
+
+    private static class ResourceData {
+        private final File jarFile;
+        private final String resourceName;
+        private final byte[] bytes;
+
+        public ResourceData(File jarFile, String resourceName, byte[] bytes) {
+            this.jarFile = jarFile;
+            this.resourceName = resourceName;
+            this.bytes = bytes;
+        }
+
+        public URL getURL() {
+            try {
+                String path = "file:" + jarFile + "!" + resourceName;
+                return new URL("jar", null, 0, path, new URLStreamHandler() {
+                    @Override
+                    protected URLConnection openConnection(URL u) throws IOException {
+                        return new URLConnection(u) {
+                            @Override
+                            public void connect() throws IOException {}
+
+                            @Override
+                            public InputStream getInputStream() throws IOException {
+                                return new ByteArrayInputStream(bytes);
+                            }
+                        };
+                    }
+                });
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
     }
 }
