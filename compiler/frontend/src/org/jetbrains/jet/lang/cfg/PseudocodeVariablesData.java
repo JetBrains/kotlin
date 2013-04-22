@@ -45,6 +45,8 @@ public class PseudocodeVariablesData {
     private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
     private final Map<Pseudocode, Set<VariableDescriptor>> usedVariablesForDeclaration = Maps.newHashMap();
 
+    private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializers;
+
     public PseudocodeVariablesData(@NotNull Pseudocode pseudocode, @NotNull BindingContext bindingContext) {
         this.pseudocode = pseudocode;
         this.bindingContext = bindingContext;
@@ -121,7 +123,10 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers() {
-        return getVariableInitializers(pseudocode);
+        if ( variableInitializers == null )
+            variableInitializers = getVariableInitializers(pseudocode);
+
+        return variableInitializers;
     }
 
     @NotNull
@@ -187,24 +192,27 @@ public class PseudocodeVariablesData {
     private static Map<VariableDescriptor, VariableInitState> mergeIncomingEdgesDataForInitializers(
             @NotNull Collection<Map<VariableDescriptor, VariableInitState>> incomingEdgesData) {
 
+        Set<VariableDescriptor> variablesInScope = Sets.newHashSet();
+        for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
+            variablesInScope.addAll(edgeData.keySet());
+        }
+
         Map<VariableDescriptor, VariableInitState> enterInstructionData = Maps.newHashMap();
-        for (Map<VariableDescriptor, VariableInitState> variableInScope : incomingEdgesData) {
-            for (VariableDescriptor variable : variableInScope.keySet()) {
-                boolean isInitialized = true;
-                boolean isDeclared = true;
-                for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
-                    VariableInitState initState = edgeData.get(variable);
-                    if (initState != null) {
-                        if (!initState.isInitialized) {
-                            isInitialized = false;
-                        }
-                        if (!initState.isDeclared) {
-                            isDeclared = false;
-                        }
+        for (VariableDescriptor variable : variablesInScope) {
+            boolean isInitialized = true;
+            boolean isDeclared = true;
+            for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
+                VariableInitState initState = edgeData.get(variable);
+                if (initState != null) {
+                    if (!initState.isInitialized) {
+                        isInitialized = false;
+                    }
+                    if (!initState.isDeclared) {
+                        isDeclared = false;
                     }
                 }
-                enterInstructionData.put(variable, VariableInitState.create(isInitialized, isDeclared));
             }
+            enterInstructionData.put(variable, VariableInitState.create(isInitialized, isDeclared));
         }
         return enterInstructionData;
     }
