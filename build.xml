@@ -37,6 +37,21 @@
         <include name="js/js.translator/src"/>
     </dirset>
 
+    <property name="idea.out" value="${basedir}/out/production"/>
+    <patternset id="compilerClassesFromIDEA.fileset">
+        <include name="frontend/**"/>
+        <include name="frontend.java/**"/>
+        <include name="backend/**"/>
+        <include name="cli/**"/>
+        <include name="cli-common/**"/>
+        <include name="util/**"/>
+        <include name="jet.as.java.psi/**"/>
+
+        <include name="runtime/**"/>
+
+        <include name="js.translator/**"/>
+    </patternset>
+
     <path id="compilerSources.path">
         <dirset refid="compilerSources.dirset"/>
     </path>
@@ -55,7 +70,7 @@
         <delete dir="${output}"/>
     </target>
 
-    <target name="init" depends="clean">
+    <target name="init">
         <mkdir dir="${kotlin-home}"/>
         <mkdir dir="${kotlin-home}/lib"/>
         <mkdir dir="${kotlin-home}/lib/tools"/>
@@ -221,6 +236,49 @@
         </java>
     </target>
 
+    <macrodef name="pack_compiler">
+        <attribute name="jarfile"/>
+        <attribute name="compress" default="true"/>
+
+        <sequential>
+          <jar jarfile="@{jarfile}" compress="@{compress}">
+              <fileset dir="${output}/classes/compiler"/>
+              <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
+
+              <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
+              <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
+              <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
+              <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
+              <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
+              <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
+              <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
+
+              <manifest>
+                  <attribute name="Built-By" value="JetBrains"/>
+
+                  <attribute name="Implementation-Vendor" value="JetBrains"/>
+                  <attribute name="Implementation-Title" value="Kotlin Compiler"/>
+                  <attribute name="Implementation-Version" value="${build.number}"/>
+
+                  <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+              </manifest>
+          </jar>
+        </sequential>
+    </macrodef>
+
+    <target name="compiler_quick">
+        <delete dir="${output}/classes/compiler"/>
+        <copy todir="${output}/classes/compiler">
+            <fileset dir="${idea.out}/">
+                <patternset refid="compilerClassesFromIDEA.fileset"/>
+            </fileset>
+            <!-- out/production contains classes under module directories, here we are merging them all into one root-->
+            <cutdirsmapper dirs="1"/>
+        </copy>
+        <delete file="${kotlin-home}/lib/kotlin-compiler.jar"/>
+        <pack_compiler jarfile="${kotlin-home}/lib/kotlin-compiler.jar" compress="false"/>
+    </target>
+
     <target name="compiler">
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
@@ -231,28 +289,7 @@
             <classpath refid="classpath"/>
         </javac>
 
-        <jar jarfile="${output}/kotlin-compiler-before-shrink.jar">
-            <fileset dir="${output}/classes/compiler"/>
-            <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
-
-            <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-            <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
-            <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
-            <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
-            <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
-            <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
-            <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
-
-            <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
-
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-
-                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
-            </manifest>
-        </jar>
+        <pack_compiler jarfile="${output}/kotlin-compiler-before-shrink.jar"/>
 
         <delete file="${kotlin-home}/lib/kotlin-compiler.jar" failonerror="false"/>
 
@@ -480,7 +517,13 @@
     </target>
 
     <target name="dist"
-            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations, annotationsExt, runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+
+    <target name="dist_quick"
+            depends="clean,init,prepareDist,compiler_quick,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+
+    <target name="dist_quick_compiler_only"
+            depends="init,prepareDist,compiler_quick"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
@@ -489,5 +532,3 @@
         <echo message="##teamcity[publishArtifacts '${output.relative}/${output.name}.zip']"/>
     </target>
 </project>
-
-    <!-- vim: set ts=4 sw=4 et nowrap: -->
