@@ -230,8 +230,11 @@ public abstract class StackValue {
             pop(fromType, v);
         }
         else if (fromType.getSort() == Type.VOID) {
-            if (toType.getSort() == Type.OBJECT) {
+            if (toType.equals(JET_UNIT_TYPE) || toType.equals(OBJECT_TYPE)) {
                 putUnitInstance(v);
+            }
+            else if (toType.getSort() == Type.OBJECT || toType.getSort() == Type.ARRAY) {
+                v.aconst(null);
             }
             else {
                 pushDefaultPrimitiveValueOnStack(toType, v);

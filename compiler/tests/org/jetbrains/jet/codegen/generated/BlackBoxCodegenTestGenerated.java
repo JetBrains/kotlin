@@ -1897,6 +1897,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("coerceVoidToArray.kt")
+        public void testCoerceVoidToArray() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/coerceVoidToArray.kt");
+        }
+        
+        @TestMetadata("coerceVoidToObject.kt")
+        public void testCoerceVoidToObject() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/coerceVoidToObject.kt");
+        }
+        
         @TestMetadata("defaultargs.kt")
         public void testDefaultargs() throws Exception {
             doTest("compiler/testData/codegen/box/functions/defaultargs.kt");
