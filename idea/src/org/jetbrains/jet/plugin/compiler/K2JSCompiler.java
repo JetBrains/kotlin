@@ -129,7 +129,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
         File outDir = environment.getOutput();
         File outFile = new File(outDir, module.getName() + ".js");
         String[] commandLineArgs = constructArguments(module, outFile);
-        Object rc = invokeExecMethod(environment, out, messageCollector, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
+        Object rc = invokeExecMethod("org.jetbrains.jet.cli.js.K2JSCompiler", commandLineArgs, environment, messageCollector, out);
 
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
             VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(outDir);

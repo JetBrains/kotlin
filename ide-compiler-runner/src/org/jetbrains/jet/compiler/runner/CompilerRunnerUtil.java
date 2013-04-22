@@ -88,11 +88,12 @@ public class CompilerRunnerUtil {
         }
     }
 
-    public static Object invokeExecMethod(CompilerEnvironment environment,
-            PrintStream out,
-            MessageCollector messageCollector, String[] arguments, String name) throws Exception {
+    public static Object invokeExecMethod(
+            String className, String[] arguments, CompilerEnvironment environment,
+            MessageCollector messageCollector, PrintStream out
+    ) throws Exception {
         URLClassLoader loader = getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
-        Class<?> kompiler = Class.forName(name, true, loader);
+        Class<?> kompiler = Class.forName(className, true, loader);
         Method exec = kompiler.getMethod("exec", PrintStream.class, String[].class);
         return exec.invoke(kompiler.newInstance(), out, arguments);
     }
