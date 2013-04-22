@@ -39,6 +39,8 @@ public class JvmAbi {
     public static final String CLASS_OBJECT_CLASS_NAME = "object";
     public static final String CLASS_OBJECT_SUFFIX = "$" + CLASS_OBJECT_CLASS_NAME;
 
+    public static final String DELEGATED_PROPERTY_NAME_POSTFIX = "$delegate";
+
     public static final String INSTANCE_FIELD = "instance$";
     public static final String CLASS_OBJECT_FIELD = "object$";
     public static final String RECEIVER_PARAMETER = "$receiver";
@@ -53,6 +55,10 @@ public class JvmAbi {
 
     public static boolean isClassObjectFqName(@NotNull FqName fqName) {
         return fqName.lastSegmentIs(Name.identifier(CLASS_OBJECT_CLASS_NAME));
+    }
+
+    public static String getPropertyDelegateName(@NotNull Name name) {
+        return name.getName() + DELEGATED_PROPERTY_NAME_POSTFIX;
     }
 
     private JvmAbi() {

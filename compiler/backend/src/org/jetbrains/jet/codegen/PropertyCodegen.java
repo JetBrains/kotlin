@@ -34,11 +34,13 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -86,38 +88,63 @@ public class PropertyCodegen extends GenerationStateAware {
 
     private void generateBackingField(PsiElement p, PropertyDescriptor propertyDescriptor) {
         //noinspection ConstantConditions
-        if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+        boolean hasBackingField = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
+        boolean isDelegated = p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null;
+        if (hasBackingField || isDelegated) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
             if (isInterface(containingDeclaration)) {
                 return;
             }
 
-            Object value = null;
-            JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
-            if (initializer != null) {
-                if (initializer instanceof JetConstantExpression && !propertyDescriptor.getType().isNullable()) {
-                    CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
-                    value = compileTimeValue != null ? compileTimeValue.getValue() : null;
-                }
-            }
-            int modifiers;
-            if (kind == OwnerKind.NAMESPACE) {
-                modifiers = ACC_STATIC;
-            }
-            else {
-                modifiers = ACC_PRIVATE;
-            }
-            if (!propertyDescriptor.isVar()) {
-                modifiers |= ACC_FINAL;
-            }
-            modifiers |= getDeprecatedAccessFlag(propertyDescriptor);
-            if (KotlinBuiltIns.getInstance().isVolatile(propertyDescriptor)) {
-                modifiers |= ACC_VOLATILE;
-            }
-            Type type = typeMapper.mapType(propertyDescriptor);
-            FieldVisitor fieldVisitor = v.newField(p, modifiers, propertyDescriptor.getName().getName(), type.getDescriptor(), null, value);
+            FieldVisitor fieldVisitor = hasBackingField
+                           ? generateBackingFieldAccess(p, propertyDescriptor)
+                           : generatePropertyDelegateAccess((JetProperty) p, propertyDescriptor);
+
             AnnotationCodegen.forField(fieldVisitor, typeMapper).genAnnotations(propertyDescriptor);
         }
+
+    }
+
+    private FieldVisitor generatePropertyDelegateAccess(JetProperty p, PropertyDescriptor propertyDescriptor) {
+        int modifiers = ACC_PRIVATE | ACC_FINAL | getDeprecatedAccessFlag(propertyDescriptor);
+        if (kind == OwnerKind.NAMESPACE) {
+            modifiers |= ACC_STATIC;
+        }
+        if (KotlinBuiltIns.getInstance().isVolatile(propertyDescriptor)) {
+            modifiers |= ACC_VOLATILE;
+        }
+        JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, p.getDelegateExpression());
+        assert delegateType != null : "Type of delegate should be recorded: " + p.getText();
+        Type type = typeMapper.mapType(delegateType);
+        return v.newField(p, modifiers, JvmAbi.getPropertyDelegateName(propertyDescriptor.getName()), type.getDescriptor(),
+                          null, null);
+    }
+
+    private FieldVisitor generateBackingFieldAccess(PsiElement p, PropertyDescriptor propertyDescriptor) {
+        Object value = null;
+        JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
+        if (initializer != null) {
+            if (initializer instanceof JetConstantExpression && !propertyDescriptor.getType().isNullable()) {
+                CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
+                value = compileTimeValue != null ? compileTimeValue.getValue() : null;
+            }
+        }
+        int modifiers;
+        if (kind == OwnerKind.NAMESPACE) {
+            modifiers = ACC_STATIC;
+        }
+        else {
+            modifiers = ACC_PRIVATE;
+        }
+        if (!propertyDescriptor.isVar()) {
+            modifiers |= ACC_FINAL;
+        }
+        modifiers |= getDeprecatedAccessFlag(propertyDescriptor);
+        if (KotlinBuiltIns.getInstance().isVolatile(propertyDescriptor)) {
+            modifiers |= ACC_VOLATILE;
+        }
+        Type type = typeMapper.mapType(propertyDescriptor);
+        return v.newField(p, modifiers, propertyDescriptor.getName().getName(), type.getDescriptor(), null, value);
     }
 
     private void generateGetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor getter) {
@@ -130,10 +157,18 @@ public class PropertyCodegen extends GenerationStateAware {
         getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorResolver.createDefaultGetter(propertyDescriptor);
 
         if (kind != OwnerKind.TRAIT_IMPL || !defaultGetter) {
-            FunctionGenerationStrategy strategy =
-                    defaultGetter
-                    ? new DefaultPropertyAccessorStrategy(getterDescriptor)
-                    : new FunctionGenerationStrategy.FunctionDefault(state, getterDescriptor, getter);
+            FunctionGenerationStrategy strategy;
+            if (defaultGetter) {
+                if (p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null) {
+                    strategy = new DefaultPropertyWithDelegateAccessorStrategy(getterDescriptor);
+                }
+                else {
+                    strategy = new DefaultPropertyAccessorStrategy(getterDescriptor);
+                }
+            }
+            else {
+                strategy = new FunctionGenerationStrategy.FunctionDefault(state, getterDescriptor, getter);
+            }
             functionCodegen.generateMethod(getter != null ? getter : p,
                                            signature,
                                            true,
@@ -153,10 +188,18 @@ public class PropertyCodegen extends GenerationStateAware {
             setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorResolver.createDefaultSetter(propertyDescriptor);
 
             if (kind != OwnerKind.TRAIT_IMPL || !defaultSetter) {
-                FunctionGenerationStrategy strategy =
-                        defaultSetter
-                        ? new DefaultPropertyAccessorStrategy(setterDescriptor)
-                        : new FunctionGenerationStrategy.FunctionDefault(state, setterDescriptor, setter);
+                FunctionGenerationStrategy strategy;
+                if (defaultSetter) {
+                    if (p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null) {
+                        strategy = new DefaultPropertyWithDelegateAccessorStrategy(setterDescriptor);
+                    }
+                    else {
+                        strategy = new DefaultPropertyAccessorStrategy(setterDescriptor);
+                    }
+                }
+                else {
+                    strategy = new FunctionGenerationStrategy.FunctionDefault(state, setterDescriptor, setter);
+                }
                 functionCodegen.generateMethod(setter != null ? setter : p,
                                                signature,
                                                true,
@@ -224,6 +267,49 @@ public class PropertyCodegen extends GenerationStateAware {
             iv.visitInsn(RETURN);
         } else {
             assert false : "Unreachable state";
+        }
+    }
+
+    private class DefaultPropertyWithDelegateAccessorStrategy extends FunctionGenerationStrategy {
+        private final PropertyAccessorDescriptor descriptor;
+
+        public DefaultPropertyWithDelegateAccessorStrategy(@NotNull PropertyAccessorDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        @Override
+        public void generateBody(
+                @NotNull MethodVisitor mv,
+                @NotNull JvmMethodSignature signature,
+                @NotNull MethodContext context
+        ) {
+            InstructionAdapter iv = new InstructionAdapter(mv);
+            ExpressionCodegen codegen = new ExpressionCodegen(
+                    mv, getFrameMap(typeMapper, context), signature.getAsmMethod().getReturnType(), context, state);
+
+            ResolvedCall<FunctionDescriptor> resolvedCall =
+                    bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, descriptor);
+
+            Call call = bindingContext.get(BindingContext.DELEGATED_PROPERTY_CALL, descriptor);
+            assert call != null : "Call should be recorded for delegate call " + signature.toString();
+
+            PropertyDescriptor property = descriptor.getCorrespondingProperty();
+            Type asmType = typeMapper.mapType(property);
+
+            if (kind != OwnerKind.NAMESPACE) {
+                iv.load(0, OBJECT_TYPE);
+            }
+
+            StackValue.Property delegatedProperty = codegen.intermediateValueForProperty(property, true, null);
+            StackValue lastValue = codegen.invokeFunction(call, delegatedProperty, resolvedCall);
+
+            if (lastValue.type != Type.VOID_TYPE) {
+                lastValue.put(asmType, iv);
+                iv.areturn(asmType);
+            }
+            else {
+                iv.areturn(Type.VOID_TYPE);
+            }
         }
     }
 

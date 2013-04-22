@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -139,12 +140,12 @@ public abstract class StackValue {
             JvmClassName methodOwner,
             Type type,
             boolean isStatic,
+            boolean isDelegated,
             @Nullable CallableMethod getter,
             @Nullable CallableMethod setter,
             GenerationState state
     ) {
-        return new Property(descriptor, methodOwner, getter, setter, isStatic, type,
-                            state);
+        return new Property(descriptor, methodOwner, getter, setter, isStatic, isDelegated, type, state);
     }
 
     public static StackValue expression(Type type, JetExpression expression, ExpressionCodegen generator) {
@@ -869,11 +870,12 @@ public abstract class StackValue {
         private final PropertyDescriptor descriptor;
         @NotNull
         private final GenerationState state;
+        private final boolean isDelegated;
 
         public Property(
                 @NotNull PropertyDescriptor descriptor, @NotNull JvmClassName methodOwner,
                 @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStatic,
-                @NotNull Type type, @NotNull GenerationState state
+                boolean isDelegated, @NotNull Type type, @NotNull GenerationState state
         ) {
             super(type, isStatic);
             this.methodOwner = methodOwner;
@@ -881,12 +883,13 @@ public abstract class StackValue {
             this.setter = setter;
             this.descriptor = descriptor;
             this.state = state;
+            this.isDelegated = isDelegated;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             if (getter == null) {
-                v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), descriptor.getName().getName(),
+                v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), getPropertyName(),
                                  this.type.getDescriptor());
                 genNotNullAssertionForField(v, state, descriptor);
             }
@@ -901,12 +904,16 @@ public abstract class StackValue {
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             if (setter == null) {
-                v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), descriptor.getName().getName(),
+                v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), getPropertyName(),
                                  this.type.getDescriptor()); }
             else {
                 Method method = setter.getSignature().getAsmMethod();
                 v.visitMethodInsn(setter.getInvokeOpcode(), setter.getOwner().getInternalName(), method.getName(), method.getDescriptor());
             }
+        }
+
+        private String getPropertyName() {
+            return isDelegated ? JvmAbi.getPropertyDelegateName(descriptor.getName()) : descriptor.getName().getName();
         }
     }
 

@@ -1660,6 +1660,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return myFrameMap.getIndex(descriptor);
     }
 
+    @Nullable
+    private static JetType getPropertyDelegateType(@NotNull PropertyDescriptor descriptor, @NotNull BindingContext bindingContext) {
+        PropertyGetterDescriptor getter = descriptor.getGetter();
+        if (getter != null) {
+            Call call = bindingContext.get(BindingContext.DELEGATED_PROPERTY_CALL, getter);
+            return call != null ? call.getExplicitReceiver().getType() : null;
+        }
+        return null;
+    }
+
     @NotNull
     public StackValue.Property intermediateValueForProperty(
             PropertyDescriptor propertyDescriptor,
@@ -1688,12 +1698,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
         boolean isInsideModule = isCallInsideSameModuleAsDeclared(propertyDescriptor, context);
 
+        JetType delegateType = getPropertyDelegateType(propertyDescriptor, state.getBindingContext());
+        boolean isDelegatedProperty = delegateType != null;
+
         CallableMethod callableGetter = null;
         CallableMethod callableSetter = null;
 
         if (!forceField) {
             //noinspection ConstantConditions
-            if (couldUseDirectAccessToProperty(propertyDescriptor, true, isInsideClass)) {
+            if (couldUseDirectAccessToProperty(propertyDescriptor, true, isInsideClass, isDelegatedProperty)) {
                 callableGetter = null;
             }
             else {
@@ -1715,7 +1728,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             if (propertyDescriptor.isVar()) {
                 if (propertyDescriptor.getSetter() != null) {
-                    if (couldUseDirectAccessToProperty(propertyDescriptor, false, isInsideClass)) {
+                    if (couldUseDirectAccessToProperty(propertyDescriptor, false, isInsideClass, isDelegatedProperty)) {
                         callableSetter = null;
                     }
                     else {
@@ -1736,8 +1749,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             owner = callableMethod.getOwner();
         }
 
-        return StackValue.property(propertyDescriptor, owner, typeMapper.mapType(propertyDescriptor.getOriginal().getType()),
-                                   isStatic, callableGetter, callableSetter, state);
+        if (isDelegatedProperty && forceField) {
+            return StackValue.property(propertyDescriptor, owner, typeMapper.mapType(delegateType),
+                                       isStatic, true, callableGetter, callableSetter, state);
+        }
+        else {
+            return StackValue.property(propertyDescriptor, owner, typeMapper.mapType(propertyDescriptor.getOriginal().getType()),
+                                       isStatic, false, callableGetter, callableSetter, state);
+        }
     }
 
     @Override
@@ -1864,7 +1883,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return (MemberDescriptor) descriptor;
     }
 
-    private StackValue invokeFunction(
+    public StackValue invokeFunction(
             Call call,
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall

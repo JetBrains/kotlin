@@ -1531,10 +1531,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null;
 
-        JetExpression initializer = property.getInitializer();
+        JetExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
-        JetType jetType = propertyDescriptor.getType();
+        JetType jetType = getPropertyOrDelegateType(bindingContext, property, propertyDescriptor);
         Type type = codegen.expressionType(initializer);
         if (jetType.isNullable()) {
             type = boxType(type);
@@ -1542,14 +1542,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         codegen.gen(initializer, type);
 
         StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
-        propValue.store(propValue.type, iv);
+        propValue.store(type, iv);
     }
 
     public static boolean shouldInitializeProperty(
             @NotNull JetProperty property,
             @NotNull JetTypeMapper typeMapper
     ) {
-        JetExpression initializer = property.getInitializer();
+        JetExpression initializer = property.getDelegateExpressionOrInitializer();
         if (initializer == null) return false;
 
         CompileTimeConstant<?> compileTimeValue = typeMapper.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
@@ -1559,8 +1559,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert propertyDescriptor != null;
 
         Object value = compileTimeValue.getValue();
-        Type type = typeMapper.mapType(propertyDescriptor.getType());
+        JetType jetType = getPropertyOrDelegateType(typeMapper.getBindingContext(), property, propertyDescriptor);
+        Type type = typeMapper.mapType(jetType);
         return !skipDefaultValue(propertyDescriptor, value, type);
+    }
+
+    @NotNull
+    private static JetType getPropertyOrDelegateType(@NotNull BindingContext bindingContext, @NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
+        JetExpression delegateExpression = property.getDelegateExpression();
+        if (delegateExpression != null) {
+            JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, delegateExpression);
+            assert delegateType != null : "Type of delegate expression should be recorded";
+            return delegateType;
+        }
+        return descriptor.getType();
     }
 
     private static boolean skipDefaultValue(PropertyDescriptor propertyDescriptor, Object value, Type type) {

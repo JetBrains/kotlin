@@ -1,0 +1,20 @@
+class Delegate<T>(val f: (T) -> Int) {
+    fun get(t: T, p: String): Int = f(t)
+}
+
+val p = Delegate<A> { t -> t.foo() }
+
+class A(val i: Int) {
+    val prop: Int by p
+
+    fun foo(): Int {
+       return i
+    }
+}
+
+fun box(): String {
+    if(A(1).prop != 1) return "fail get1"
+    if(A(10).prop != 10) return "fail get2"
+
+    return "OK"
+}
