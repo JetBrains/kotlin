@@ -38,7 +38,6 @@ import static com.intellij.psi.util.PsiFormatUtilBase.*;
 public final class MembersCache {
     private static final ImmutableSet<String> OBJECT_METHODS = ImmutableSet.of("hashCode()", "equals(java.lang.Object)", "toString()");
 
-    @NotNull
     private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
     @Nullable
@@ -135,6 +134,42 @@ public final class MembersCache {
             processNestedClasses();
         }
 
+        private void processFields() {
+            // Hack to load static members for enum class loaded from class file
+            if (kotlin && !psiClass.getPsiClass().isEnum()) {
+                return;
+            }
+            for (PsiField field : psiClass.getPsiClass().getAllFields()) {
+                processField(field);
+            }
+        }
+
+        private void processMethods() {
+            parseAllMethodsAsProperties();
+            processOwnMethods();
+        }
+
+        private void processOwnMethods() {
+            for (PsiMethod ownMethod : psiClass.getPsiClass().getMethods()) {
+                processOwnMethod(ownMethod);
+            }
+        }
+
+        private void parseAllMethodsAsProperties() {
+            for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
+                parseMethodAsProperty(method);
+            }
+        }
+
+        private void processNestedClasses() {
+            if (!staticMembers) {
+                return;
+            }
+            for (PsiClass nested : psiClass.getPsiClass().getInnerClasses()) {
+                processNestedClass(nested);
+            }
+        }
+
         private boolean includeMember(PsiMemberWrapper member) {
             if (psiClass.getPsiClass().isEnum() && staticMembers) {
                 return member.isStatic();
@@ -161,53 +196,40 @@ public final class MembersCache {
             return true;
         }
 
-        private void processFields() {
-            // Hack to load static members for enum class loaded from class file
-            if (kotlin && !psiClass.getPsiClass().isEnum()) {
+        private void processField(PsiField field) {
+            PsiFieldWrapper fieldWrapper = new PsiFieldWrapper(field);
+
+            // group must be created even for excluded field
+            NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(fieldWrapper.getName()));
+
+            if (!includeMember(fieldWrapper)) {
                 return;
             }
-            for (PsiField field : psiClass.getPsiClass().getAllFields()) {
-                PsiFieldWrapper fieldWrapper = new PsiFieldWrapper(field);
 
-                // group must be created even for excluded field
-                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(fieldWrapper.getName()));
+            TypeSource type = new TypeSource("", fieldWrapper.getType(), field);
+            namedMembers.addPropertyAccessor(new PropertyPsiDataElement(fieldWrapper, type, null));
+        }
 
-                if (!includeMember(fieldWrapper)) {
-                    continue;
-                }
+        private void processOwnMethod(PsiMethod ownMethod) {
+            PsiMethodWrapper method = new PsiMethodWrapper(ownMethod);
 
-                TypeSource type = new TypeSource("", fieldWrapper.getType(), field);
-                namedMembers.addPropertyAccessor(new PropertyPsiDataElement(fieldWrapper, type, null));
+            if (!includeMember(method)) {
+                return;
             }
-        }
 
-        private void processMethods() {
-            parseAllMethodsAsProperties();
-            processOwnMethods();
-        }
+            PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
 
-        private void processOwnMethods() {
-            for (PsiMethod ownMethod : psiClass.getPsiClass().getMethods()) {
-                PsiMethodWrapper method = new PsiMethodWrapper(ownMethod);
+            // TODO: remove getJavaClass
+            if (propertyParseResult != null && propertyParseResult.isGetter()) {
+                processGetter(ownMethod, method, propertyParseResult);
+            }
+            else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
+                processSetter(method, propertyParseResult);
+            }
 
-                if (!includeMember(method)) {
-                    continue;
-                }
-
-                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-
-                // TODO: remove getJavaClass
-                if (propertyParseResult != null && propertyParseResult.isGetter()) {
-                    processGetter(ownMethod, method, propertyParseResult);
-                }
-                else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
-                    processSetter(method, propertyParseResult);
-                }
-
-                if (!method.getJetMethodAnnotation().hasPropertyFlag()) {
-                    NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
-                    namedMembers.addMethod(method);
-                }
+            if (!method.getJetMethodAnnotation().hasPropertyFlag()) {
+                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
+                namedMembers.addMethod(method);
             }
         }
 
@@ -287,14 +309,12 @@ public final class MembersCache {
             }
         }
 
-        private void parseAllMethodsAsProperties() {
-            for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
-                createEmptyEntry(Name.identifier(method.getName()));
+        private void parseMethodAsProperty(PsiMethod method) {
+            createEmptyEntry(Name.identifier(method.getName()));
 
-                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-                if (propertyParseResult != null) {
-                    createEmptyEntry(Name.identifier(propertyParseResult.getPropertyName()));
-                }
+            PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
+            if (propertyParseResult != null) {
+                createEmptyEntry(Name.identifier(propertyParseResult.getPropertyName()));
             }
         }
 
@@ -302,15 +322,10 @@ public final class MembersCache {
             getOrCreateEmpty(identifier);
         }
 
-        private void processNestedClasses() {
-            if (!staticMembers) {
-                return;
-            }
-            for (PsiClass nested : psiClass.getPsiClass().getInnerClasses()) {
-                if (isSamInterface(nested)) {
-                    NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(nested.getName()));
-                    namedMembers.setSamInterface(nested);
-                }
+        private void processNestedClass(PsiClass nested) {
+            if (isSamInterface(nested)) {
+                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(nested.getName()));
+                namedMembers.setSamInterface(nested);
             }
         }
     }
