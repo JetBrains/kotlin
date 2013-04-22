@@ -66,7 +66,7 @@ public final class NavigationTestUtils {
             UsefulTestCase.assertOrderedEquals(Ordering.natural().sortedCopy(psiElements), expectedReferences);
         }
         else {
-            UsefulTestCase.assertEmpty(expectedReferences);
+            UsefulTestCase.assertOrderedEquals(Collections.emptyList(), expectedReferences);
         }
     }
 
