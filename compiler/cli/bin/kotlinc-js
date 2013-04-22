@@ -38,7 +38,7 @@ if $cygwin; then
     KOTLIN_HOME=`cygpath --windows --short-name "$KOTLIN_HOME"`
 fi
 
-[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
+[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M -noverify"
 
 # break out -D and -J options and add them to JAVA_OPTS as well
 # so they reach the underlying JVM in time to do some good.  The
