@@ -74,7 +74,8 @@ public class KotlinCompilerRunner {
             messageCollector.report(CompilerMessageSeverity.INFO,
                                "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments),
                                CompilerMessageLocation.NO_LOCATION);
-            Object rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, arguments, environment, messageCollector, out);
+            Object rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, arguments, environment,
+                                                            messageCollector, out, /*usePreloader=*/true);
             // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
             // so we take it's contents through reflection
             return CompilerRunnerUtil.getReturnCodeFromObject(rc);

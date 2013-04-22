@@ -19,6 +19,7 @@ package org.jetbrains.jet.compiler.runner;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 
 import java.io.*;
@@ -35,7 +36,7 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
 
 public class CompilerRunnerUtil {
 
-    private static SoftReference<URLClassLoader> ourClassLoaderRef = new SoftReference<URLClassLoader>(null);
+    private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<ClassLoader>(null);
 
     public static List<File> kompilerClasspath(KotlinPaths paths, MessageCollector messageCollector) {
         File libs = paths.getLibPath();
@@ -50,11 +51,26 @@ public class CompilerRunnerUtil {
         return answer;
     }
 
-    public static URLClassLoader getOrCreateClassLoader(KotlinPaths paths, MessageCollector messageCollector) {
-        URLClassLoader answer = ourClassLoaderRef.get();
+    public static ClassLoader getOrCreatePreloader(KotlinPaths paths, MessageCollector messageCollector) {
+        ClassLoader answer = ourClassLoaderRef.get();
+        if (answer == null) {
+            try {
+                int estimatedClassNumber = 4096;
+                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, null);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            ourClassLoaderRef = new SoftReference<ClassLoader>(answer);
+        }
+        return answer;
+    }
+
+    public static ClassLoader getOrCreateClassLoader(KotlinPaths paths, MessageCollector messageCollector) {
+        ClassLoader answer = ourClassLoaderRef.get();
         if (answer == null) {
             answer = createClassloader(paths, messageCollector);
-            ourClassLoaderRef = new SoftReference<URLClassLoader>(answer);
+            ourClassLoaderRef = new SoftReference<ClassLoader>(answer);
         }
         return answer;
     }
@@ -90,9 +106,11 @@ public class CompilerRunnerUtil {
 
     public static Object invokeExecMethod(
             String className, String[] arguments, CompilerEnvironment environment,
-            MessageCollector messageCollector, PrintStream out
+            MessageCollector messageCollector, PrintStream out, boolean usePreloader
     ) throws Exception {
-        URLClassLoader loader = getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
+        ClassLoader loader = usePreloader
+                             ? getOrCreatePreloader(environment.getKotlinPaths(), messageCollector)
+                             : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
         Class<?> kompiler = Class.forName(className, true, loader);
         Method exec = kompiler.getMethod("exec", PrintStream.class, String[].class);
         return exec.invoke(kompiler.newInstance(), out, arguments);

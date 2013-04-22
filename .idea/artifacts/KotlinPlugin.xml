@@ -32,6 +32,7 @@
               <element id="module-output" name="ide-compiler-runner" />
               <element id="module-output" name="cli-common" />
               <element id="module-output" name="util" />
+              <element id="module-output" name="preloader" />
             </element>
           </element>
         </element>
