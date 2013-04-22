@@ -288,4 +288,11 @@ class StringJVMTest {
             assertEquals(example.trim(), example.trimLeading().trimTrailing())
         }
     }
+
+    test fun toByteArrayEncodings() {
+        val s = "hello"
+        val defaultCharset = java.nio.charset.Charset.defaultCharset()!!
+        assertEquals(s.toByteArray().toString(), s.toByteArray(defaultCharset).toString())
+        assertEquals(s.toByteArray().toString(), s.toByteArray(defaultCharset.name()).toString())
+    }
 }

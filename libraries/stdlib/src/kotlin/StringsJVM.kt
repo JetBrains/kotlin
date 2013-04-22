@@ -146,13 +146,8 @@ public inline fun CharSequence.toString() : String? = (this as java.lang.CharSeq
 public inline fun CharSequence.length() : Int = (this as java.lang.CharSequence).length()
 
 
-public inline fun String.toByteArray(encoding: String?=null):ByteArray {
-    if(encoding==null) {
-        return (this as java.lang.String).getBytes()
-    } else {
-        return (this as java.lang.String).getBytes(encoding)
-    }
-}
+public inline fun String.toByteArray():ByteArray = (this as java.lang.String).getBytes()
+public inline fun String.toByteArray(encoding: String):ByteArray = (this as java.lang.String).getBytes(encoding)
 public inline fun String.toByteArray(encoding: java.nio.charset.Charset):ByteArray =  (this as java.lang.String).getBytes(encoding)
 
 public inline fun String.toBoolean() : Boolean = java.lang.Boolean.parseBoolean(this)
