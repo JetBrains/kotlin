@@ -25,10 +25,10 @@ import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator;
 import com.intellij.codeInsight.daemon.impl.MarkerType;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
@@ -61,10 +61,10 @@ import java.util.List;
 import java.util.Set;
 
 public class JetLineMarkerProvider implements LineMarkerProvider {
-    public static final Icon OVERRIDING_MARK = IconLoader.getIcon("/gutter/overridingMethod.png");
-    public static final Icon IMPLEMENTING_MARK = IconLoader.getIcon("/gutter/implementingMethod.png");
-    protected static final Icon OVERRIDDEN_MARK = IconLoader.getIcon("/gutter/overridenMethod.png");
-    protected static final Icon IMPLEMENTED_MARK = IconLoader.getIcon("/gutter/implementedMethod.png");
+    public static final Icon OVERRIDING_MARK = AllIcons.Gutter.OverridingMethod;
+    public static final Icon IMPLEMENTING_MARK = AllIcons.Gutter.ImplementingMethod;
+    protected static final Icon OVERRIDDEN_MARK = AllIcons.Gutter.OverridenMethod;
+    protected static final Icon IMPLEMENTED_MARK = AllIcons.Gutter.ImplementedMethod;
 
     private static final Function<PsiElement, String> SUBCLASSED_CLASS_TOOLTIP_ADAPTER = new Function<PsiElement, String>() {
         @Override
