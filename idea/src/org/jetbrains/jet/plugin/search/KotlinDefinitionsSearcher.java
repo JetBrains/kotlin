@@ -16,21 +16,24 @@
 
 package org.jetbrains.jet.plugin.search;
 
+import com.intellij.codeInsight.navigation.MethodImplementationsSearch;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.util.Processor;
-import com.intellij.util.Query;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
-    public void processQuery(@NotNull final PsiElement queryParameters, @NotNull final Processor<PsiElement> consumer) {
+    public void processQuery(@NotNull final PsiElement queryParameters, @NotNull Processor<PsiElement> consumer) {
         if (queryParameters instanceof JetClass) {
             PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
                 @Override
@@ -39,13 +42,20 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
                 }
             });
             if (psiClass != null) {
-                Query<PsiClass> query = ClassInheritorsSearch.search(psiClass, true);
-                query.forEach(new Processor<PsiClass>() {
-                    @Override
-                    public boolean process(PsiClass clazz) {
-                        return consumer.process(clazz);
-                    }
-                });
+                ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer);
+            }
+        }
+
+        if (queryParameters instanceof JetNamedFunction) {
+            PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
+                @Override
+                public PsiMethod compute() {
+                    return LightClassUtil.getLightClassMethod((JetNamedFunction) queryParameters);
+                }
+            });
+
+            if (psiMethod != null) {
+                ContainerUtil.process(MethodImplementationsSearch.getMethodImplementations(psiMethod), consumer);
             }
         }
     }

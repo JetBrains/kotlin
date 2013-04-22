@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.navigation;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -32,6 +33,11 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
         doTest();
     }
 
+    public void testFunctionOverrideNavigation() {
+        doTest();
+    }
+
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/navigation/implementations").getPath() +
