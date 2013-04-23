@@ -90,6 +90,10 @@ public class RawTypesCheck {
     }
 
     static boolean hasRawTypesInHierarchicalSignature(@NotNull PsiMethod method) {
+        // This is a very important optimization: package-classes are big and full of static methods
+        // building method hierarchies for such classes takes a very long time
+        if (method.hasModifierProperty(PsiModifier.STATIC)) return false;
+
         if (hasRawTypesInSignature(method)) {
             return true;
         }

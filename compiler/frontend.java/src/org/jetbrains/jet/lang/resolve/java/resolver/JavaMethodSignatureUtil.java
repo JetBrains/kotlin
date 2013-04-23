@@ -29,6 +29,7 @@ import java.util.List;
 class JavaMethodSignatureUtil {
     // This and following methods are originally from com.intellij.codeInsight.daemon.impl.analysis.HighlightMethodUtil
     static boolean isMethodReturnTypeCompatible(@NotNull PsiMethod method) {
+        if (method.hasModifierProperty(PsiModifier.STATIC)) return true;
         HierarchicalMethodSignature methodSignature = method.getHierarchicalMethodSignature();
         List<HierarchicalMethodSignature> superSignatures = methodSignature.getSuperSignatures();
 
