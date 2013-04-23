@@ -39,7 +39,7 @@ public final class SlicedMapKey<K, V> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SlicedMapKey)) return false;
 
         SlicedMapKey that = (SlicedMapKey) o;
 
