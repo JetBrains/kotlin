@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
@@ -475,7 +476,7 @@ public class CallResolver {
         //      {...} // intended to be a returned from the outer literal
         //    }
         //  }
-        EnumSet<OverloadResolutionResults.Code> someFailed = EnumSet.of(OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES,
+        ImmutableSet<OverloadResolutionResults.Code> someFailed = ImmutableSet.of(OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES,
                                                                         OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
         if (someFailed.contains(results.getResultCode()) && !task.call.getFunctionLiteralArguments().isEmpty()) {
             // We have some candidates that failed for some reason
