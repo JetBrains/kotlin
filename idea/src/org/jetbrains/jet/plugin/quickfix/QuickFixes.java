@@ -220,6 +220,10 @@ public class QuickFixes {
         factories.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch());
         factories.put(COMPARE_TO_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch());
 
+        JetIntentionActionFactory changeReturnTypeToUnitFixFactory = ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToUnit();
+        factories.put(RETURN_TYPE_MISMATCH, changeReturnTypeToUnitFixFactory);
+        factories.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, changeReturnTypeToUnitFixFactory);
+
         factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
 

@@ -28,14 +28,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters3;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -56,16 +57,17 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
     @Override
     public String getText() {
         String functionName = element.getName();
-        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-        SimpleFunctionDescriptor descriptor = context.get(BindingContext.FUNCTION, element);
-        if (descriptor != null) {
-            functionName = descriptor.getContainingDeclaration().getName() + "." + functionName;
-        }
+        FqName fqName = JetPsiUtil.getFQName(element);
+        if (fqName != null) functionName = fqName.getFqName();
 
         if (KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody()) {
-            return JetBundle.message("remove.function.return.type", functionName);
+            return functionName == null ?
+                   JetBundle.message("remove.no.name.function.return.type") :
+                   JetBundle.message("remove.function.return.type", functionName);
         }
-        return JetBundle.message("change.function.return.type", functionName, type.toString());
+        return functionName == null ?
+               JetBundle.message("change.no.name.function.return.type", type.toString()) :
+               JetBundle.message("change.function.return.type", functionName, type.toString());
     }
 
     @NotNull
@@ -92,6 +94,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
 
     @NotNull
     public static JetMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
+        assert diagnostic.getFactory() == Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
+        @SuppressWarnings("unchecked")
         String componentName = ((DiagnosticWithParameters3<JetExpression, Name, JetType, JetType>) diagnostic).getA().getName();
         int componentIndex = Integer.valueOf(componentName.substring(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX.length()));
         JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
@@ -168,6 +172,19 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(function);
                 JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, function);
                 return matchingReturnType == null ? null : new ChangeFunctionReturnTypeFix(function, matchingReturnType);
+            }
+        };
+    }
+
+    @NotNull
+    public static JetIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                assert function != null : "RETURN_TYPE_MISMATCH reported on element that is not within any function";
+                return new ChangeFunctionReturnTypeFix(function, KotlinBuiltIns.getInstance().getUnitType());
             }
         };
     }
