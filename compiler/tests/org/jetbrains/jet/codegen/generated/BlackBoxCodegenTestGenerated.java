@@ -2281,6 +2281,51 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/localClasses/enum.kt");
         }
         
+        @TestMetadata("inExtensionFunction.kt")
+        public void testInExtensionFunction() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/inExtensionFunction.kt");
+        }
+        
+        @TestMetadata("inExtensionProperty.kt")
+        public void testInExtensionProperty() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/inExtensionProperty.kt");
+        }
+        
+        @TestMetadata("inLocalExtensionFunction.kt")
+        public void testInLocalExtensionFunction() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/inLocalExtensionFunction.kt");
+        }
+        
+        @TestMetadata("inLocalExtensionProperty.kt")
+        public void testInLocalExtensionProperty() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/inLocalExtensionProperty.kt");
+        }
+        
+        @TestMetadata("innerClassInLocalClass.kt")
+        public void testInnerClassInLocalClass() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/innerClassInLocalClass.kt");
+        }
+        
+        @TestMetadata("kt2873.kt")
+        public void testKt2873() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/kt2873.kt");
+        }
+        
+        @TestMetadata("kt3210.kt")
+        public void testKt3210() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/kt3210.kt");
+        }
+        
+        @TestMetadata("kt3389.kt")
+        public void testKt3389() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/kt3389.kt");
+        }
+        
+        @TestMetadata("localClass.kt")
+        public void testLocalClass() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/localClass.kt");
+        }
+        
         @TestMetadata("noclosure.kt")
         public void testNoclosure() throws Exception {
             doTest("compiler/testData/codegen/box/localClasses/noclosure.kt");

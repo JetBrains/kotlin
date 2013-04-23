@@ -3160,7 +3160,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.pop();
         }
 
-        pushClosureOnStack(closure, true);
+        //Resolved call to local class constructor doesn't have resolvedCall.getThisObject() and resolvedCall.getReceiverArgument()
+        //so we need generate closure on stack
+        //See StackValue.receiver for more info
+        pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists());
 
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
         invokeMethodWithArguments(method, resolvedCall, null, StackValue.none());
