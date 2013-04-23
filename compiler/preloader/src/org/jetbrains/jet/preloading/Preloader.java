@@ -44,16 +44,31 @@ public class Preloader {
 
         ClassLoader parent = Preloader.class.getClassLoader();
 
-        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, parent);
+        final int[] counter = new int[1];
+        final int[] size = new int[1];
+        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, parent,
+                                                                    !printTime ? null :
+                                                                    new ClassPreloadingUtils.ClassHandler() {
+                                                                        @Override
+                                                                        public void beforeDefineClass(String name, int sizeInBytes) {
+                                                                            counter[0]++;
+                                                                            size[0] += sizeInBytes;
+                                                                        }
+                                                                    });
 
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
         Method mainMethod = mainClass.getMethod("main", String[].class);
 
-        mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
-
-        if (printTime) {
-            long dt = System.nanoTime() - startTime;
-            System.out.format("Total time: %.3fs\n", dt / 1e9);
+        try {
+            mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
+        }
+        finally {
+            if (printTime) {
+                long dt = System.nanoTime() - startTime;
+                System.out.format("Total time: %.3fs\n", dt / 1e9);
+                System.out.println("Loaded classes: " + counter[0]);
+                System.out.println("Loaded classes size: " + size[0]);
+            }
         }
     }
 

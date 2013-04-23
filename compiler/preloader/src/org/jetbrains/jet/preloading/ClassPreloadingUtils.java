@@ -29,6 +29,10 @@ import java.util.zip.ZipInputStream;
 
 public class ClassPreloadingUtils {
 
+    public interface ClassHandler {
+        void beforeDefineClass(String name, int sizeInBytes);
+    }
+
     /**
      * Creates a class loader that loads all classes from {@code jarFiles} into memory to make loading faster (avoid skipping through zip archives).
      *
@@ -37,18 +41,28 @@ public class ClassPreloadingUtils {
      * @param jarFiles jars to load all classes from
      * @param classCountEstimation an estimated number of classes in a the jars
      * @param parent (nullable) parent class loader
+     * @param handler handler to be notified on class definitions done by this class loader, or null
      * @return a class loader that reads classes from memory
      * @throws IOException on from reading the jar
      */
-    public static ClassLoader preloadClasses(Collection<File> jarFiles, int classCountEstimation, ClassLoader parent) throws IOException {
+    public static ClassLoader preloadClasses(
+            Collection<File> jarFiles, int classCountEstimation, ClassLoader parent, ClassHandler handler
+    ) throws IOException {
         Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation);
 
-        return createMemoryBasedClassLoader(parent, entries);
+        return createMemoryBasedClassLoader(parent, entries, handler);
+    }
+
+    public static ClassLoader preloadClasses(
+            Collection<File> jarFiles, int classCountEstimation, ClassLoader parent
+    ) throws IOException {
+        return preloadClasses(jarFiles, classCountEstimation, parent, null);
     }
 
     private static ClassLoader createMemoryBasedClassLoader(
             final ClassLoader parent,
-            final Map<String, ResourceData> preloadedResources
+            final Map<String, ResourceData> preloadedResources,
+            final ClassHandler handler
     ) {
         return new ClassLoader(null) {
             @Override
@@ -67,7 +81,12 @@ public class ClassPreloadingUtils {
                 ResourceData resourceData = preloadedResources.get(internalName);
                 if (resourceData == null) return null;
 
-                return defineClass(name, resourceData.bytes, 0, resourceData.bytes.length);
+                int sizeInBytes = resourceData.bytes.length;
+                if (handler != null) {
+                    handler.beforeDefineClass(name, sizeInBytes);
+                }
+
+                return defineClass(name, resourceData.bytes, 0, sizeInBytes);
             }
 
             @Override
