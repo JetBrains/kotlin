@@ -222,6 +222,10 @@ public class QuickFixes {
 
         factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
+        
+        factories.put(AUTOCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForAutoCastImpossible());
+        factories.put(TYPE_MISMATCH, CastExpressionFix.createFactoryForTypeMismatch());
+        factories.put(INCOMPATIBLE_TYPES, CastExpressionFix.createFactoryForIncompatibleTypes());
 
         factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
 

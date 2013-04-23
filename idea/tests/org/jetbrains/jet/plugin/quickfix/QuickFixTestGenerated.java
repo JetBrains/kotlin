@@ -993,6 +993,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/typeMismatch")
+    @InnerTestClasses({TypeMismatch.Casts.class})
     public static class TypeMismatch extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1048,6 +1049,55 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/typeMismatch/beforeHasNextFunctionReturnTypeMismatch.kt");
         }
         
+        @TestMetadata("idea/testData/quickfix/typeMismatch/casts")
+        public static class Casts extends AbstractQuickFixTest {
+            public void testAllFilesPresentInCasts() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch/casts"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeAutocastImpossible1.kt")
+            public void testAutocastImpossible1() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeAutocastImpossible1.kt");
+            }
+            
+            @TestMetadata("beforeAutocastImpossible2.kt")
+            public void testAutocastImpossible2() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeAutocastImpossible2.kt");
+            }
+            
+            @TestMetadata("beforeAutocastImpossible3.kt")
+            public void testAutocastImpossible3() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeAutocastImpossible3.kt");
+            }
+            
+            @TestMetadata("beforeIncompatibleTypes1.kt")
+            public void testIncompatibleTypes1() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeIncompatibleTypes1.kt");
+            }
+            
+            @TestMetadata("beforeIncompatibleTypes2.kt")
+            public void testIncompatibleTypes2() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeIncompatibleTypes2.kt");
+            }
+            
+            @TestMetadata("beforeTypeMismatch1.kt")
+            public void testTypeMismatch1() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeTypeMismatch1.kt");
+            }
+            
+            @TestMetadata("beforeTypeMismatch2.kt")
+            public void testTypeMismatch2() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeTypeMismatch2.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("TypeMismatch");
+            suite.addTestSuite(TypeMismatch.class);
+            suite.addTestSuite(Casts.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/quickfix/typeProjection")
@@ -1281,7 +1331,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         suite.addTestSuite(SupertypeInitialization.class);
         suite.addTestSuite(TypeAddition.class);
         suite.addTestSuite(TypeImports.class);
-        suite.addTestSuite(TypeMismatch.class);
+        suite.addTest(TypeMismatch.innerSuite());
         suite.addTestSuite(TypeProjection.class);
         suite.addTestSuite(UselessImports.class);
         suite.addTest(Variables.innerSuite());
