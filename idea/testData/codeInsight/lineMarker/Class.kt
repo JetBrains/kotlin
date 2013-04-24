@@ -1,5 +1,5 @@
 open class <lineMarker></lineMarker>A {
-  open fun a(){
+  open fun <lineMarker></lineMarker>a(){
   }
 }
 

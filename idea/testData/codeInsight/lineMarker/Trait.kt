@@ -1,5 +1,5 @@
 trait <lineMarker></lineMarker>A {
-  fun a(){
+  fun <lineMarker></lineMarker>a(){
   }
 }
 
