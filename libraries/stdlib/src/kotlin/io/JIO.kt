@@ -319,14 +319,7 @@ public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long
  *
  * This method is not recommended on huge files.
  */
-public fun URL.readText(encoding: String): String = readBytes().toString(encoding)
-
-/**
- * Reads the entire content of the URL as a String with default character set name
- *
- * This method is not recommended on huge files.
- */
-public fun URL.readText(): String = readBytes().toString()
+public fun URL.readText(encoding: String = java.nio.charset.Charset.defaultCharset()!!.name()): String = readBytes().toString(encoding)
 
 /**
  * Reads the entire content of the URL as a String with the specified character encoding.
