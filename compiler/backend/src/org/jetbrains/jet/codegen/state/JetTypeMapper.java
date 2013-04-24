@@ -508,9 +508,11 @@ public class JetTypeMapper extends BindingTraceAware {
             boolean isInterface = originalIsInterface && currentIsInterface;
             Type type = mapType(receiver.getDefaultType(), JetTypeMapperMode.TYPE_PARAMETER);
             owner = JvmClassName.byType(type);
-            ownerForDefaultParam = JvmClassName.byType(mapType(declarationOwner.getDefaultType(), JetTypeMapperMode.TYPE_PARAMETER));
+
+            ClassDescriptor declarationOwnerForDefault = (ClassDescriptor) findBaseDeclaration(functionDescriptor).getContainingDeclaration();
+            ownerForDefaultParam = JvmClassName.byType(mapType(declarationOwnerForDefault.getDefaultType(), JetTypeMapperMode.TYPE_PARAMETER));
             ownerForDefaultImpl = JvmClassName.byInternalName(
-                    ownerForDefaultParam.getInternalName() + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+                    ownerForDefaultParam.getInternalName() + (isInterface(declarationOwnerForDefault) ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
             if (isInterface) {
                 invokeOpcode = superCall ? INVOKESTATIC : INVOKEINTERFACE;
             }
@@ -557,13 +559,20 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     private static FunctionDescriptor findAnyDeclaration(@NotNull FunctionDescriptor function) {
-        //if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+        if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+            return function;
+        }
+        return findBaseDeclaration(function);
+    }
+
+    @NotNull
+    private static FunctionDescriptor findBaseDeclaration(@NotNull FunctionDescriptor function) {
         if (function.getOverriddenDescriptors().isEmpty()) {
             return function;
         }
         else {
             // TODO: prefer class to interface
-            return findAnyDeclaration(function.getOverriddenDescriptors().iterator().next());
+            return findBaseDeclaration(function.getOverriddenDescriptors().iterator().next());
         }
     }
 
