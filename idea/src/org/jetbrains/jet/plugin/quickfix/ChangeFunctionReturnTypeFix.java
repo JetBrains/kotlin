@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -56,16 +57,17 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     @Override
     public String getText() {
         String functionName = element.getName();
-        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-        SimpleFunctionDescriptor descriptor = context.get(BindingContext.FUNCTION, element);
-        if (descriptor != null) {
-            functionName = descriptor.getContainingDeclaration().getName() + "." + functionName;
-        }
+        FqName fqName = JetPsiUtil.getFQName(element);
+        if (fqName != null) functionName = fqName.getFqName();
 
         if (KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody()) {
-            return JetBundle.message("remove.function.return.type", functionName);
+            return functionName == null ?
+                   JetBundle.message("remove.no.name.function.return.type") :
+                   JetBundle.message("remove.function.return.type", functionName);
         }
-        return JetBundle.message("change.function.return.type", functionName, type.toString());
+        return functionName == null ?
+               JetBundle.message("change.no.name.function.return.type", type.toString()) :
+               JetBundle.message("change.function.return.type", functionName, type.toString());
     }
 
     @NotNull
