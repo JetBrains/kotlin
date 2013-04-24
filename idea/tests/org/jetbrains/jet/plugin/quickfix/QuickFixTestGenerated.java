@@ -998,6 +998,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeChangeReturnTypeWhenFunctionNameIsMissing.kt")
+        public void testChangeReturnTypeWhenFunctionNameIsMissing() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeChangeReturnTypeWhenFunctionNameIsMissing.kt");
+        }
+        
         @TestMetadata("beforeChangeReturnTypeWhenValueParameterListIsAbsent.kt")
         public void testChangeReturnTypeWhenValueParameterListIsAbsent() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeChangeReturnTypeWhenValueParameterListIsAbsent.kt");
@@ -1046,6 +1051,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeHasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeHasNextFunctionReturnTypeMismatch.kt");
+        }
+        
+        @TestMetadata("beforeNoReturnInFunctionWithBlockBody.kt")
+        public void testNoReturnInFunctionWithBlockBody() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeNoReturnInFunctionWithBlockBody.kt");
+        }
+        
+        @TestMetadata("beforeReturnTypeMismatch.kt")
+        public void testReturnTypeMismatch() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeReturnTypeMismatch.kt");
         }
         
     }

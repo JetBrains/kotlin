@@ -173,4 +173,16 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
             }
         };
     }
+
+    @NotNull
+    public static JetIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetNamedFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction.class);
+                return function == null ? null : new ChangeFunctionReturnTypeFix(function, KotlinBuiltIns.getInstance().getUnitType());
+            }
+        };
+    }
 }
