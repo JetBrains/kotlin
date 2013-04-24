@@ -138,5 +138,8 @@
     <item name="java.nio.charset.UnmappableCharacterException java.lang.String getMessage()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.nio.charset.Charset java.nio.charset.Charset defaultCharset()">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
 </root>
 

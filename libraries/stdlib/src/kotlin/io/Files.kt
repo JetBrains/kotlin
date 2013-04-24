@@ -114,25 +114,25 @@ public fun File.appendBytes(data: ByteArray): Unit {
  *
  * This method is not recommended on huge files.
  */
-public fun File.readText(encoding:String = java.nio.charset.Charset.defaultCharset()!!.name()) : String = readBytes().toString(encoding)
+public fun File.readText(encoding:String = Charset.defaultCharset().name()) : String = readBytes().toString(encoding)
 
 /**
  * Reads the entire content of the file as a String using a character encoding.
  *
  * This method is not recommended on huge files.
  */
-public fun File.readText(encoding:Charset) : String = readBytes().toString(encoding)
+public fun File.readText(encoding: Charset) : String = readBytes().toString(encoding)
 
 /**
  * Writes the text as the contents of the file using the a
  * character encoding.
  */
-public fun File.writeText(text: String, encoding:String = java.nio.charset.Charset.defaultCharset()!!.name()): Unit { writeBytes(text.toByteArray(encoding)) }
+public fun File.writeText(text: String, encoding: String = Charset.defaultCharset().name()): Unit { writeBytes(text.toByteArray(encoding)) }
 
 /**
  * Writes the text as the contents of the file using a character encoding.
  */
-public fun File.writeText(text: String, encoding:Charset): Unit { writeBytes(text.toByteArray(encoding)) }
+public fun File.writeText(text: String, encoding: Charset): Unit { writeBytes(text.toByteArray(encoding)) }
 
 /**
  * Appends text to the contents of the file using a given character encoding.
@@ -144,7 +144,7 @@ public fun File.appendText(text: String, encoding: Charset): Unit {
 /**
  * Appends text to the contents of the file using a character encoding.
  */
-public fun File.appendText(text: String, encoding: String = java.nio.charset.Charset.defaultCharset()!!.name()): Unit {
+public fun File.appendText(text: String, encoding: String = Charset.defaultCharset().name()): Unit {
     appendBytes(text.toByteArray(encoding))
 }
 

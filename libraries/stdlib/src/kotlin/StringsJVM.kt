@@ -5,6 +5,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
 import java.util.LinkedList
+import java.nio.charset.Charset
 
 public inline fun String.lastIndexOf(str: String) : Int = (this as java.lang.String).lastIndexOf(str)
 
@@ -62,11 +63,11 @@ public inline fun String.endsWith(ch: Char) : Boolean = (this as java.lang.Strin
 
 public inline fun String(bytes : ByteArray, offset : Int, length : Int, charsetName : String) : String = java.lang.String(bytes, offset, length, charsetName) as String
 
-public inline fun String(bytes : ByteArray, offset : Int, length : Int, charset : java.nio.charset.Charset) : String = java.lang.String(bytes, offset, length, charset) as String
+public inline fun String(bytes : ByteArray, offset : Int, length : Int, charset : Charset) : String = java.lang.String(bytes, offset, length, charset) as String
 
 public inline fun String(bytes : ByteArray, charsetName : String) : String = java.lang.String(bytes, charsetName) as String
 
-public inline fun String(bytes : ByteArray, charset : java.nio.charset.Charset) : String = java.lang.String(bytes, charset) as String
+public inline fun String(bytes : ByteArray, charset : Charset) : String = java.lang.String(bytes, charset) as String
 
 public inline fun String(bytes : ByteArray, i : Int, i1 : Int) : String = java.lang.String(bytes, i, i1) as String
 
@@ -98,7 +99,7 @@ public inline fun String.contentEquals(cs : CharSequence) : Boolean = (this as j
 
 public inline fun String.contentEquals(sb : StringBuffer) : Boolean = (this as java.lang.String).contentEquals(sb)
 
-public inline fun String.getBytes(charset : java.nio.charset.Charset) : ByteArray = (this as java.lang.String).getBytes(charset)
+public inline fun String.getBytes(charset : Charset) : ByteArray = (this as java.lang.String).getBytes(charset)
 
 public inline fun String.getBytes(charsetName : String) : ByteArray = (this as java.lang.String).getBytes(charsetName)
 
@@ -146,8 +147,8 @@ public inline fun CharSequence.toString() : String? = (this as java.lang.CharSeq
 public inline fun CharSequence.length() : Int = (this as java.lang.CharSequence).length()
 
 
-public inline fun String.toByteArray(encoding: String = java.nio.charset.Charset.defaultCharset()!!.name()):ByteArray = (this as java.lang.String).getBytes(encoding)
-public inline fun String.toByteArray(encoding: java.nio.charset.Charset):ByteArray =  (this as java.lang.String).getBytes(encoding)
+public inline fun String.toByteArray(encoding: String = Charset.defaultCharset().name()): ByteArray = (this as java.lang.String).getBytes(encoding)
+public inline fun String.toByteArray(encoding: Charset): ByteArray =  (this as java.lang.String).getBytes(encoding)
 
 public inline fun String.toBoolean() : Boolean = java.lang.Boolean.parseBoolean(this)
 public inline fun String.toShort() : Short = java.lang.Short.parseShort(this)
