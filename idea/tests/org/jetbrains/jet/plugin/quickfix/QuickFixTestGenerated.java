@@ -1063,6 +1063,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/typeMismatch/beforeReturnTypeMismatch.kt");
         }
         
+        @TestMetadata("beforeTypeMismatchInInitializer.kt")
+        public void testTypeMismatchInInitializer() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeTypeMismatchInInitializer.kt");
+        }
+        
+        @TestMetadata("beforeTypeMismatchInReturnStatement.kt")
+        public void testTypeMismatchInReturnStatement() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeTypeMismatchInReturnStatement.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/quickfix/typeProjection")

@@ -222,6 +222,7 @@ public class QuickFixes {
         factories.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForComponentFunctionReturnTypeMismatch());
         factories.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch());
         factories.put(COMPARE_TO_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch());
+        factories.put(TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForTypeMismatch());
 
         factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
