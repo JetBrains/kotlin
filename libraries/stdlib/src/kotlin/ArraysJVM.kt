@@ -104,12 +104,7 @@ public inline val ByteArray.inputStream : ByteArrayInputStream
 
 public inline fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
-public inline fun ByteArray.toString(encoding: String?): String {
-    if (encoding != null) {
-        return String(this, encoding)
-    } else {
-        return String(this)
-    }
-}
+public inline fun ByteArray.toString(encoding: String): String = String(this, encoding)
+public inline fun ByteArray.toString(): String = String(this)
 
 public inline fun ByteArray.toString(encoding: Charset) : String = String(this, encoding)
