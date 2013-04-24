@@ -44,10 +44,10 @@ import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
-public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction> {
+public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunction> {
     private final JetType type;
 
-    public ChangeFunctionReturnTypeFix(@NotNull JetFunction element, @NotNull JetType type) {
+    public ChangeFunctionReturnTypeFix(@NotNull JetNamedFunction element, @NotNull JetType type) {
         super(element);
         this.type = type;
     }
@@ -109,7 +109,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) entry.getContainingFile().getContainingFile()).getBindingContext();
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetNamedFunction componentFunction = (JetNamedFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
                 JetType expectedType = context.get(BindingContext.TYPE, entry.getTypeRef());
                 if (componentFunction != null && expectedType != null) {
                     return new ChangeFunctionReturnTypeFix(componentFunction, expectedType);
@@ -130,7 +130,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
-                JetFunction hasNextFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetNamedFunction hasNextFunction = (JetNamedFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
                 if (hasNextFunction != null) {
                     return new ChangeFunctionReturnTypeFix(hasNextFunction, KotlinBuiltIns.getInstance().getBooleanType());
                 }
@@ -151,8 +151,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
                 if (resolvedCall == null) return null;
                 PsiElement compareTo = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
-                if (!(compareTo instanceof JetFunction)) return null;
-                return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
+                if (!(compareTo instanceof JetNamedFunction)) return null;
+                return new ChangeFunctionReturnTypeFix((JetNamedFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
             }
         };
     }
@@ -163,7 +163,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                JetNamedFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction.class);
                 if (function == null) return null;
                 BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(function);
                 JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, function);
