@@ -3,7 +3,7 @@ class B {
 }
 
 class Delegate<T: Any>(val init: T) {
-  fun get(t: Any?, p: String): Int {
+  fun get(t: Any?, p: PropertyMetadata): Int {
     t.equals(p) // to avoid UNUSED_PARAMETER warning
     throw Exception()
   }

@@ -1356,6 +1356,15 @@ public trait Progression</*0*/ N : jet.Any> : jet.Iterable<N> {
     public abstract override /*1*/ /*fake_override*/ fun iterator(): jet.Iterator<N>
 }
 
+public trait PropertyMetadata {
+    public abstract val name: jet.String
+}
+
+public final class PropertyMetadataImpl : jet.PropertyMetadata {
+    public constructor PropertyMetadataImpl(/*0*/ name: jet.String)
+    public open override /*1*/ val name: jet.String
+}
+
 public trait Range</*0*/ in T : jet.Comparable<T>> {
     public abstract val end: T
     public abstract val start: T

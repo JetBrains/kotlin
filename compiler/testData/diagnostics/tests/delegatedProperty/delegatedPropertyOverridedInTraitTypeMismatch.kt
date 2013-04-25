@@ -11,7 +11,7 @@ fun foo() {
 }
 
 class Delegate {
-    fun get(t: Any?, p: String): String {
+    fun get(t: Any?, p: PropertyMetadata): String {
         t.equals(p) // to avoid UNUSED_PARAMETER warning
         return ""
     }

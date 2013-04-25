@@ -13,7 +13,7 @@ class C {
 val cTopLevel: Int by Delegate<Nothing?>()
 
 class Delegate<T> {
-  fun get(t: T, p: String): Int {
+  fun get(t: T, p: PropertyMetadata): Int {
     t.equals(p) // to avoid UNUSED_PARAMETER warning
     return 1
   }

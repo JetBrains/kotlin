@@ -787,6 +787,16 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getPropertyMetadata() {
+        return getBuiltInClassByName("PropertyMetadata");
+    }
+
+    @NotNull
+    public ClassDescriptor getPropertyMetadataImpl() {
+        return getBuiltInClassByName("PropertyMetadataImpl");
+    }
+
+    @NotNull
     public JetType getFunctionType(
             @NotNull List<AnnotationDescriptor> annotations,
             @Nullable JetType receiverType,

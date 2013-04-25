@@ -1,9 +1,9 @@
 class Delegate {
     var inner = 1
-    fun get(t: Any?, p: String): Int = inner
+    fun get(t: Any?, p: PropertyMetadata): Int = inner
 }
 
-fun Delegate.set(t: Any?, p: String, i: Int) { inner = i }
+fun Delegate.set(t: Any?, p: PropertyMetadata, i: Int) { inner = i }
 
 class A {
     var prop: Int by Delegate()

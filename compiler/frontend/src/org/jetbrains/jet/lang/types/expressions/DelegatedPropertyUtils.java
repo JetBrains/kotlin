@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
@@ -136,9 +137,11 @@ public class DelegatedPropertyUtils {
 
         List<JetExpression> arguments = Lists.newArrayList();
         arguments.add(createExpression(project, hasThis ? "this" : "null"));
-        arguments.add(createExpression(project, "\"" + propertyDescriptor.getName().getName() + "\""));
+
+        arguments.add(createExpression(project, KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().getName() + "(\"" + propertyDescriptor.getName().getName() + "\")"));
+
         if (!isGet) {
-            JetReferenceExpression fakeArgument = createFakeExpressionOfType(context.expressionTypingServices.getProject(), trace,
+            JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(context.expressionTypingServices.getProject(), trace,
                                                                              "fakeArgument" + arguments.size(),
                                                                              propertyDescriptor.getType());
             arguments.add(fakeArgument);

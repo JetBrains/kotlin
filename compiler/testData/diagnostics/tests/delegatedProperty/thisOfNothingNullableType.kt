@@ -5,11 +5,11 @@ class A {
 var aTopLevel: Int by Delegate()
 
 class Delegate {
-  fun get(<!UNUSED_PARAMETER!>t<!>: Nothing?, p: String): Int {
+  fun get(<!UNUSED_PARAMETER!>t<!>: Nothing?, p: PropertyMetadata): Int {
     p.equals(null) // to avoid UNUSED_PARAMETER warning
     return 1
   }
-  fun set(<!UNUSED_PARAMETER!>t<!>: Nothing?, p: String, a: Int) {
+  fun set(<!UNUSED_PARAMETER!>t<!>: Nothing?, p: PropertyMetadata, a: Int) {
     p.equals(a) // to avoid UNUSED_PARAMETER warning
   }
 }

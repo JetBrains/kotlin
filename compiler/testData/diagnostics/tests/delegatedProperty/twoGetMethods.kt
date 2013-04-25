@@ -3,12 +3,12 @@ class A {
 }
 
 class Delegate {
-    fun get(t: Int, p: String): Int {
+    fun get(t: Int, p: PropertyMetadata): Int {
         t.equals(p) // to avoid UNUSED_PARAMETER warning
         return 1
     }
 
-    fun get(t: String, p: String): Int {
+    fun get(t: String, p: PropertyMetadata): Int {
         t.equals(p) // to avoid UNUSED_PARAMETER warning
         return 1
     }

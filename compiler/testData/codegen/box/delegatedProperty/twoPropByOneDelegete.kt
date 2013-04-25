@@ -1,5 +1,5 @@
 class Delegate<T>(val f: (T) -> Int) {
-    fun get(t: T, p: String): Int = f(t)
+    fun get(t: T, p: PropertyMetadata): Int = f(t)
 }
 
 val p = Delegate<A> { t -> t.foo() }

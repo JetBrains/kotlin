@@ -1,5 +1,5 @@
 class Delegate {
-    fun get(t: Any?, p: String, s: String = ""): Int = 1
+    fun get(t: Any?, p: PropertyMetadata, s: String = ""): Int = 1
 }
 
 val prop: Int by Delegate()

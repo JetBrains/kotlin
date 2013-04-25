@@ -1,6 +1,6 @@
 class Delegate<T>(var inner: T) {
-    fun get(t: Any?, p: String): T = inner
-    fun set(t: Any?, p: String, i: T) { inner = i }
+    fun get(t: Any?, p: PropertyMetadata): T = inner
+    fun set(t: Any?, p: PropertyMetadata, i: T) { inner = i }
 }
 
 class A {

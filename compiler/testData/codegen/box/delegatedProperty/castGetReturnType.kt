@@ -1,5 +1,5 @@
 class Delegate {
-    fun get(t: Any?, p: String): Int = 1
+    fun get(t: Any?, p: PropertyMetadata): Int = 1
 }
 
 class AImpl {
