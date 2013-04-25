@@ -142,16 +142,15 @@ public class ClassPreloadingUtils {
                     if (resources.containsKey(name)) continue; // Only the first resource is stored
 
                     int size = (int) entry.getSize();
-                    boolean unknownArraySize = size < 0;
-                    int effectiveSize = unknownArraySize ? 32 : size;
-                    ByteArrayOutputStreamWithPublicArray bytes = new ByteArrayOutputStreamWithPublicArray(effectiveSize);
+                    int effectiveSize = size < 0 ? 32 : size;
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream(effectiveSize);
 
                     int count;
                     while ((count = stream.read(buffer)) > 0) {
                         bytes.write(buffer, 0, count);
                     }
 
-                    resources.put(name, new ResourceData(jarFile, name, unknownArraySize ? bytes.toByteArray() : bytes.getBytes()));
+                    resources.put(name, new ResourceData(jarFile, name, bytes.toByteArray()));
                 }
             }
             finally {
@@ -168,17 +167,6 @@ public class ClassPreloadingUtils {
             }
         }
         return resources;
-    }
-
-    private static class ByteArrayOutputStreamWithPublicArray extends ByteArrayOutputStream {
-        public ByteArrayOutputStreamWithPublicArray(int size) {
-            super(size);
-        }
-
-        // To avoid copying the array
-        public byte[] getBytes() {
-            return buf;
-        }
     }
 
     private static class ResourceData {
