@@ -49,7 +49,10 @@ import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     @NotNull
@@ -187,14 +190,24 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         addTypeAnnotation(project, editor, property, anchor, exprType);
     }
 
-    public static void addTypeAnnotation(Project project, Editor editor, JetFunction function, @NotNull JetType exprType) {
+    public static void addTypeAnnotation(Project project, @Nullable Editor editor, JetFunction function, @NotNull JetType exprType) {
         JetParameterList valueParameterList = function.getValueParameterList();
         assert valueParameterList != null;
-        addTypeAnnotation(project, editor, function, valueParameterList, exprType);
+        if (editor != null) {
+            addTypeAnnotation(project, editor, function, valueParameterList, exprType);
+        }
+        else {
+            addTypeAnnotationSilently(project, function, valueParameterList);
+        }
     }
 
-    public static void addTypeAnnotation(Project project, Editor editor, JetParameter parameter, @NotNull JetType exprType) {
-        addTypeAnnotation(project, editor, parameter, parameter.getNameIdentifier(), exprType);
+    public static void addTypeAnnotation(Project project, @Nullable Editor editor, JetParameter parameter, @NotNull JetType exprType) {
+        if (editor != null) {
+            addTypeAnnotation(project, editor, parameter, parameter.getNameIdentifier(), exprType);
+        }
+        else {
+            addTypeAnnotationSilently(project, parameter, parameter.getNameIdentifier());
+        }
     }
 
     private static void addTypeAnnotation(
@@ -227,10 +240,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             }
         };
 
-        JetTypeReference typeReference = JetPsiFactory.createType(project, "Any");
-        namedDeclaration.addAfter(typeReference, anchor);
-        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColonAndWhiteSpaces(project);
-        namedDeclaration.addRangeAfter(colon.getFirst(), colon.getSecond(), anchor);
+        addTypeAnnotationSilently(project, namedDeclaration, anchor);
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
@@ -248,6 +258,13 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(namedDeclaration));
             }
         });
+    }
+
+    private static void addTypeAnnotationSilently(Project project, JetNamedDeclaration namedDeclaration, PsiElement anchor) {
+        JetTypeReference typeReference = JetPsiFactory.createType(project, "Any");
+        namedDeclaration.addAfter(typeReference, anchor);
+        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColonAndWhiteSpaces(project);
+        namedDeclaration.addRangeAfter(colon.getFirst(), colon.getSecond(), anchor);
     }
 
     @Nullable

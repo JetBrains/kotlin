@@ -19,8 +19,11 @@ package org.jetbrains.jet.plugin.refactoring;
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
+import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureHandler;
 import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetIntroduceVariableHandler;
 
 /**
@@ -44,5 +47,11 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
             if (function.isLocal()) return true;
         }
         return false;
+    }
+
+    @Nullable
+    @Override
+    public ChangeSignatureHandler getChangeSignatureHandler() {
+        return new JetChangeSignatureHandler();
     }
 }

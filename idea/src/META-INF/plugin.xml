@@ -127,6 +127,7 @@
     <quoteHandler fileType="Kotlin" className="org.jetbrains.jet.plugin.editor.KotlinQuoteHandler"/>
     <refactoring.moveHandler implementation="org.jetbrains.jet.plugin.refactoring.move.JetMoveFilesOrDirectoriesHandler"/>
     <refactoring.copyHandler implementation="org.jetbrains.jet.plugin.refactoring.copy.JetCopyClassHandler"/>
+    <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
     <treeStructureProvider implementation="org.jetbrains.jet.plugin.projectView.JetProjectViewProvider"/>
 
     <colorSettingsPage implementation="org.jetbrains.jet.plugin.highlighter.JetColorSettingsPage"/>

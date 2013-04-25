@@ -22,19 +22,25 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierListOwner> {
+    public static final JetKeywordToken[] VISIBILITY_TOKENS =
+            new JetKeywordToken[] {JetTokens.PUBLIC_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD};
+
     public ChangeVisibilityModifierFix(@NotNull JetModifierListOwner element) {
         super(element);
     }
@@ -61,8 +67,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         if (!(file instanceof JetFile)) return;
         JetKeywordToken modifier = findVisibilityChangeTo((JetFile)file);
-        JetToken[] modifiersThanCanBeReplaced = new JetKeywordToken[] { JetTokens.PUBLIC_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD };
-        element.replace(AddModifierFix.addModifier(element, modifier, modifiersThanCanBeReplaced, project, true));
+        element.replace(AddModifierFix.addModifier(element, modifier, VISIBILITY_TOKENS, project, true));
     }
 
     private JetKeywordToken findVisibilityChangeTo(JetFile file) {
@@ -95,17 +100,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
         if (maxVisibility == memberDescriptor.getVisibility()) {
             return null;
         }
-        JetKeywordToken modifier = null;
-        if (maxVisibility == Visibilities.PUBLIC) {
-            modifier = JetTokens.PUBLIC_KEYWORD;
-        }
-        else if (maxVisibility == Visibilities.PROTECTED) {
-            modifier = JetTokens.PROTECTED_KEYWORD;
-        }
-        else if (maxVisibility == Visibilities.INTERNAL) {
-            modifier = JetTokens.INTERNAL_KEYWORD;
-        }
-        return modifier;
+        return JetRefactoringUtil.getVisibilityToken(maxVisibility);
     }
 
     public static JetIntentionActionFactory createFactory() {

@@ -27,12 +27,16 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
@@ -49,6 +53,23 @@ import java.util.ArrayList;
 public class JetRefactoringUtil {
 
     private JetRefactoringUtil() {
+    }
+
+    public static JetKeywordToken getVisibilityToken(Visibility visibility) {
+        if (visibility == Visibilities.PUBLIC) {
+            return JetTokens.PUBLIC_KEYWORD;
+        }
+        else if (visibility == Visibilities.PROTECTED) {
+            return JetTokens.PROTECTED_KEYWORD;
+        }
+        else if (visibility == Visibilities.INTERNAL) {
+            return JetTokens.INTERNAL_KEYWORD;
+        }
+        else if (visibility == Visibilities.PRIVATE) {
+            return JetTokens.PRIVATE_KEYWORD;
+        }
+
+        throw new IllegalArgumentException("Unexpected visibility '" + visibility + "'");
     }
 
     public interface SelectExpressionCallback {

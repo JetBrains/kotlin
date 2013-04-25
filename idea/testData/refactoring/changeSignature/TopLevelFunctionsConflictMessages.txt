@@ -1,0 +1,1 @@
+Function already exists: 'internal fun fun2() : Unit defined in root package'

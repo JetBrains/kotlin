@@ -36,7 +36,7 @@ abstract class JetTypeParameterListOwnerStub<T extends NamedStub> extends JetNam
     }
 
     @Nullable
-    JetTypeParameterList getTypeParameterList() {
+    public JetTypeParameterList getTypeParameterList() {
         return (JetTypeParameterList) findChildByType(JetNodeTypes.TYPE_PARAMETER_LIST);
     }
 

@@ -77,19 +77,23 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, @Nullable Editor editor, @Nullable PsiFile file) throws IncorrectOperationException {
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
-            PsiElement elementToPrecedeType = element.getValueParameterList();
-            if (elementToPrecedeType == null) elementToPrecedeType = element.getNameIdentifier();
-            assert elementToPrecedeType != null : "Return type of function without name can't mismatch anything";
-            if (elementToPrecedeType.getNextSibling() instanceof PsiErrorElement) {
-                // if a function doesn't have a value parameter list, a syntax error is raised, and it should follow the function name
-                elementToPrecedeType = elementToPrecedeType.getNextSibling();
-            }
-            Pair<PsiElement, PsiElement> typeWhiteSpaceAndColon = JetPsiFactory.createTypeWhiteSpaceAndColon(project, type.toString());
-            element.addRangeAfter(typeWhiteSpaceAndColon.first, typeWhiteSpaceAndColon.second, elementToPrecedeType);
+            addReturnTypeAnnotation(project, element, type.toString());
         }
+    }
+
+    public static void addReturnTypeAnnotation(Project project, JetFunction function, String typeText) {
+        PsiElement elementToPrecedeType = function.getValueParameterList();
+        if (elementToPrecedeType == null) elementToPrecedeType = function.getNameIdentifier();
+        assert elementToPrecedeType != null : "Return type of function without name can't mismatch anything";
+        if (elementToPrecedeType.getNextSibling() instanceof PsiErrorElement) {
+            // if a function doesn't have a value parameter list, a syntax error is raised, and it should follow the function name
+            elementToPrecedeType = elementToPrecedeType.getNextSibling();
+        }
+        Pair<PsiElement, PsiElement> typeWhiteSpaceAndColon = JetPsiFactory.createTypeWhiteSpaceAndColon(project, typeText);
+        function.addRangeAfter(typeWhiteSpaceAndColon.first, typeWhiteSpaceAndColon.second, elementToPrecedeType);
     }
 
     @NotNull

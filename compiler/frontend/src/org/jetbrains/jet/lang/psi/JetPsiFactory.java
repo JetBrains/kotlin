@@ -45,6 +45,10 @@ public class JetPsiFactory {
         return property.getValOrVarNode();
     }
 
+    public static ASTNode createValOrVarNode(Project project, String text) {
+        return createParameterList(project, "(" + text + " int x)").getParameters().get(0).getValOrVarNode();
+    }
+
     public static JetExpression createExpression(Project project, String text) {
         JetProperty property = createProperty(project, "val x = " + text);
         return property.getInitializer();
@@ -158,14 +162,23 @@ public class JetPsiFactory {
         return (JetSimpleNameExpression) createProperty(project, name, null, false, name).getInitializer();
     }
 
+    public static PsiElement createIdentifier(Project project, String name) {
+        return createSimpleName(project, name).getIdentifier();
+    }
+
     public static JetNamedFunction createFunction(Project project, String funDecl) {
         return createDeclaration(project, funDecl, JetNamedFunction.class);
     }
 
-    public static JetModifierList createModifier(Project project, JetKeywordToken modifier) {
+    public static JetModifierList createModifierList(Project project, JetKeywordToken modifier) {
         String text = modifier.getValue() + " val x";
         JetProperty property = createProperty(project, text);
         return property.getModifierList();
+    }
+
+    public static JetModifierList createConstructorModifierList(Project project, JetKeywordToken modifier) {
+        JetClass aClass = createClass(project, "class C " + modifier.getValue() + " (){}");
+        return aClass.getPrimaryConstructorModifierList();
     }
 
     public static JetExpression createEmptyBody(Project project) {
@@ -181,6 +194,11 @@ public class JetPsiFactory {
     public static JetParameter createParameter(Project project, String name, String type) {
         JetNamedFunction function = createFunction(project, "fun foo(" + name + " : " + type + ") {}");
         return function.getValueParameters().get(0);
+    }
+
+    public static JetParameterList createParameterList(Project project, String text) {
+        JetNamedFunction function = createFunction(project, "fun foo" + text + "{}");
+        return function.getValueParameterList();
     }
 
     @NotNull
