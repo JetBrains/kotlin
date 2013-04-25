@@ -148,4 +148,7 @@ public interface JetNodeTypes {
     JetNodeType SCRIPT = new JetNodeType("SCRIPT", JetScript.class);
 
     JetNodeType IDE_TEMPLATE_EXPRESSION   = new JetNodeType("IDE_TEMPLATE_EXPRESSION", JetIdeTemplate.class);
+
+    IFileElementType TYPE_CODE_FRAGMENT = new JetTypeCodeFragmentType();
+    IFileElementType EXPRESSION_CODE_FRAGMENT = new JetExpressionCodeFragmentType();
 }

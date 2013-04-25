@@ -98,6 +98,30 @@ public class JetParsing extends AbstractJetParsing {
         fileMarker.done(JET_FILE);
     }
 
+    void parseTypeCodeFragment() {
+        PsiBuilder.Marker marker = mark();
+        parseTypeRef();
+
+        while (!eof()) {
+            error("unexpected symbol");
+            advance();
+        }
+
+        marker.done(TYPE_CODE_FRAGMENT);
+    }
+
+    void parseExpressionCodeFragment() {
+        PsiBuilder.Marker marker = mark();
+        myExpressionParsing.parseExpression();
+
+        while (!eof()) {
+            error("unexpected symbol");
+            advance();
+        }
+
+        marker.done(EXPRESSION_CODE_FRAGMENT);
+    }
+
     void parseScript() {
         PsiBuilder.Marker fileMarker = mark();
 

@@ -26,6 +26,7 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
@@ -39,6 +40,10 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
 
     public JetFileElementType() {
         super("jet.FILE", JetLanguage.INSTANCE);
+    }
+
+    protected JetFileElementType(@NonNls String debugName) {
+        super(debugName, JetLanguage.INSTANCE);
     }
 
     @Override
@@ -78,7 +83,6 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
         JetParser parser = (JetParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
         return parser.parse(this, builder, psi.getContainingFile()).getFirstChildNode();
     }
-
 
     @Override
     public void indexStub(PsiJetFileStub stub, IndexSink sink) {

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.parsing;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
@@ -25,24 +26,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class JetParserDefinition implements ParserDefinition {
     public static final String KTSCRIPT_FILE_SUFFIX = "ktscript";
@@ -96,11 +91,17 @@ public class JetParserDefinition implements ParserDefinition {
     @Override
     @NotNull
     public PsiElement createElement(ASTNode astNode) {
-        if (astNode.getElementType() instanceof JetStubElementType) {
-            return ((JetStubElementType) astNode.getElementType()).createPsiFromAst(astNode);
-        }
+        IElementType elementType = astNode.getElementType();
 
-        return ((JetNodeType) astNode.getElementType()).createPsi(astNode);
+        if (elementType instanceof JetStubElementType) {
+            return ((JetStubElementType) elementType).createPsiFromAst(astNode);
+        }
+        else if (elementType == JetNodeTypes.TYPE_CODE_FRAGMENT || elementType == JetNodeTypes.EXPRESSION_CODE_FRAGMENT) {
+            return new ASTWrapperPsiElement(astNode);
+        }
+        else {
+            return ((JetNodeType) elementType).createPsi(astNode);
+        }
     }
 
     @Override

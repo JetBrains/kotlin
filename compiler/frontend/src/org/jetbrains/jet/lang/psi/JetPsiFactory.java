@@ -246,4 +246,12 @@ public class JetPsiFactory {
 
         return assignment;
     }
+
+    public static JetTypeCodeFragment createTypeCodeFragment(Project project, String text, PsiElement context) {
+        return new JetTypeCodeFragmentImpl(project, "fragment.kt", text, context);
+    }
+
+    public static JetExpressionCodeFragment createExpressionCodeFragment(Project project, String text, PsiElement context) {
+        return new JetExpressionCodeFragmentImpl(project, "fragment.kt", text, context);
+    }
 }

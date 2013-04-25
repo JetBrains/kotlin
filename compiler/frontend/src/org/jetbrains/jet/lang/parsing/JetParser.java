@@ -19,10 +19,8 @@ package org.jetbrains.jet.lang.parsing;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +49,20 @@ public class JetParser implements PsiParser {
         else {
             jetParsing.parseFile();
         }
+        return psiBuilder.getTreeBuilt();
+    }
+
+    @NotNull
+    public static ASTNode parseTypeCodeFragment(PsiBuilder psiBuilder) {
+        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        jetParsing.parseTypeCodeFragment();
+        return psiBuilder.getTreeBuilt();
+    }
+
+    @NotNull
+    public static ASTNode parseExpressionCodeFragment(PsiBuilder psiBuilder) {
+        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        jetParsing.parseExpressionCodeFragment();
         return psiBuilder.getTreeBuilt();
     }
 }
