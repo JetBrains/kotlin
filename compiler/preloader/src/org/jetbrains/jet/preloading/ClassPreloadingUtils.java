@@ -123,13 +123,17 @@ public class ClassPreloadingUtils {
                     String name = entry.getName();
                     if (resources.containsKey(name)) continue; // Only the first resource is stored
 
-                    ByteArrayOutputStreamWithPublicArray bytes = new ByteArrayOutputStreamWithPublicArray((int) entry.getSize());
+                    int size = (int) entry.getSize();
+                    boolean unknownArraySize = size < 0;
+                    int effectiveSize = unknownArraySize ? 32 : size;
+                    ByteArrayOutputStreamWithPublicArray bytes = new ByteArrayOutputStreamWithPublicArray(effectiveSize);
+
                     int count;
                     while ((count = stream.read(buffer)) > 0) {
                         bytes.write(buffer, 0, count);
                     }
 
-                    resources.put(name, new ResourceData(jarFile, name, bytes.getBytes()));
+                    resources.put(name, new ResourceData(jarFile, name, unknownArraySize ? bytes.toByteArray() : bytes.getBytes()));
                 }
             }
             finally {
