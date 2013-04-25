@@ -29,8 +29,12 @@ import java.util.zip.ZipInputStream;
 
 public class ClassPreloadingUtils {
 
-    public interface ClassHandler {
-        void beforeDefineClass(String name, int sizeInBytes);
+    public static abstract class ClassHandler {
+        public void beforeDefineClass(String name, int sizeInBytes) {}
+        public void afterDefineClass(String name) {}
+
+        public void beforeLoadJar(File jarFile) {}
+        public void afterLoadJar(File jarFile) {}
     }
 
     /**
@@ -48,7 +52,7 @@ public class ClassPreloadingUtils {
     public static ClassLoader preloadClasses(
             Collection<File> jarFiles, int classCountEstimation, ClassLoader parent, ClassHandler handler
     ) throws IOException {
-        Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation);
+        Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
         return createMemoryBasedClassLoader(parent, entries, handler);
     }
@@ -86,7 +90,13 @@ public class ClassPreloadingUtils {
                     handler.beforeDefineClass(name, sizeInBytes);
                 }
 
-                return defineClass(name, resourceData.bytes, 0, sizeInBytes);
+                Class<?> definedClass = defineClass(name, resourceData.bytes, 0, sizeInBytes);
+
+                if (handler != null) {
+                    handler.afterDefineClass(name);
+                }
+
+                return definedClass;
             }
 
             @Override
@@ -108,10 +118,18 @@ public class ClassPreloadingUtils {
         };
     }
 
-    private static Map<String, ResourceData> loadAllClassesFromJars(Collection<File> jarFiles, int classNumberEstimate) throws IOException {
+    private static Map<String, ResourceData> loadAllClassesFromJars(
+            Collection<File> jarFiles,
+            int classNumberEstimate,
+            ClassHandler handler
+    ) throws IOException {
         Map<String, ResourceData> resources = new HashMap<String, ResourceData>(classNumberEstimate);
 
         for (File jarFile : jarFiles) {
+            if (handler != null) {
+                handler.beforeLoadJar(jarFile);
+            }
+
             FileInputStream fileInputStream = new FileInputStream(jarFile);
             try {
                 byte[] buffer = new byte[10 * 1024];
@@ -143,6 +161,10 @@ public class ClassPreloadingUtils {
                 catch (IOException e) {
                     // Ignore
                 }
+            }
+
+            if (handler != null) {
+                handler.afterLoadJar(jarFile);
             }
         }
         return resources;
