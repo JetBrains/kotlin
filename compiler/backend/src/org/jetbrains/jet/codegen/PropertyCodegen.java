@@ -135,7 +135,7 @@ public class PropertyCodegen extends GenerationStateAware {
                     ? new DefaultPropertyAccessorStrategy(getterDescriptor)
                     : new FunctionGenerationStrategy.FunctionDefault(state, getterDescriptor, getter);
             functionCodegen.generateMethod(getter != null ? getter : p,
-                                           signature.getJvmMethodSignature(),
+                                           signature,
                                            true,
                                            getterDescriptor,
                                            strategy);
@@ -158,7 +158,7 @@ public class PropertyCodegen extends GenerationStateAware {
                         ? new DefaultPropertyAccessorStrategy(setterDescriptor)
                         : new FunctionGenerationStrategy.FunctionDefault(state, setterDescriptor, setter);
                 functionCodegen.generateMethod(setter != null ? setter : p,
-                                               signature.getJvmMethodSignature(),
+                                               signature,
                                                true,
                                                setterDescriptor,
                                                strategy);
@@ -257,13 +257,13 @@ public class PropertyCodegen extends GenerationStateAware {
         ClassDescriptor toClass = (ClassDescriptor) overridden.getContainingDeclaration();
 
         functionCodegen.genDelegate(delegate.getGetter(), toClass, field,
-                                    typeMapper.mapGetterSignature(delegate, OwnerKind.IMPLEMENTATION).getJvmMethodSignature(),
-                                    typeMapper.mapGetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature());
+                                    typeMapper.mapGetterSignature(delegate, OwnerKind.IMPLEMENTATION),
+                                    typeMapper.mapGetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION));
 
         if (delegate.isVar()) {
             functionCodegen.genDelegate(delegate.getSetter(), toClass, field,
-                                        typeMapper.mapSetterSignature(delegate, OwnerKind.IMPLEMENTATION).getJvmMethodSignature(),
-                                        typeMapper.mapSetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature());
+                                        typeMapper.mapSetterSignature(delegate, OwnerKind.IMPLEMENTATION),
+                                        typeMapper.mapSetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION));
         }
     }
 }

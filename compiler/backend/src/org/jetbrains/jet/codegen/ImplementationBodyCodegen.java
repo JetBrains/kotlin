@@ -654,7 +654,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private Type genPropertyOnStack(InstructionAdapter iv, PropertyDescriptor propertyDescriptor, int index) {
         iv.load(index, classAsmType);
         Method
-                method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getAsmMethod();
 
         iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
         return method.getReturnType();
@@ -853,9 +853,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
 
             {
-                Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION).getAsmMethod();
                 JvmPropertyAccessorSignature originalSignature = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
-                Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
+                Method originalMethod = originalSignature.getAsmMethod();
                 MethodVisitor mv =
                         v.newMethod(null, ACC_BRIDGE | ACC_SYNTHETIC | ACC_STATIC, method.getName(), method.getDescriptor(), null, null);
                 PropertyGetterDescriptor getter = bridge.getGetter();
@@ -890,9 +890,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (bridge.isVar()) {
-                Method method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                Method method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION).getAsmMethod();
                 JvmPropertyAccessorSignature originalSignature2 = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
-                Method originalMethod = originalSignature2.getJvmMethodSignature().getAsmMethod();
+                Method originalMethod = originalSignature2.getAsmMethod();
                 MethodVisitor mv =
                         v.newMethod(null, ACC_STATIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                 PropertySetterDescriptor setter = bridge.getSetter();
@@ -1353,13 +1353,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JvmPropertyAccessorSignature toGenerate = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION);
                 JvmPropertyAccessorSignature inTrait = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
                 return new TraitImplDelegateInfo(
-                        toGenerate.getJvmMethodSignature().getAsmMethod(), inTrait.getJvmMethodSignature().getAsmMethod());
+                        toGenerate.getAsmMethod(), inTrait.getAsmMethod());
             }
             else if (fun instanceof PropertySetterDescriptor) {
                 JvmPropertyAccessorSignature toGenerate = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION);
                 JvmPropertyAccessorSignature inTrait = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
                 return new TraitImplDelegateInfo(
-                        toGenerate.getJvmMethodSignature().getAsmMethod(), inTrait.getJvmMethodSignature().getAsmMethod());
+                        toGenerate.getAsmMethod(), inTrait.getAsmMethod());
             }
             else {
                 throw new IllegalStateException("Accessor is neither getter, nor setter, what is it? " + fun);

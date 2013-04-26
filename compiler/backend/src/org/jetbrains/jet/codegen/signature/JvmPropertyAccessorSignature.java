@@ -41,11 +41,6 @@ public class JvmPropertyAccessorSignature extends JvmMethodSignature {
     }
 
     @NotNull
-    public JvmMethodSignature getJvmMethodSignature() {
-        return this;
-    }
-
-    @NotNull
     public String getPropertyTypeKotlinSignature() {
         return isGetter ? getKotlinReturnType() : getKotlinParameterType(getParameterCount() - 1);
     }
