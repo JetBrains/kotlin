@@ -36,6 +36,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.List;
 
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_ACCESSOR;
+import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> implements JetVariableDeclaration {
@@ -155,10 +156,33 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return null;
     }
 
+    @Nullable
+    public JetPropertyDelegate getDelegate() {
+        return (JetPropertyDelegate) findChildByType(PROPERTY_DELEGATE);
+    }
+
+    @Nullable
+    public JetExpression getDelegateExpression() {
+        JetPropertyDelegate delegate = getDelegate();
+        if (delegate != null) {
+            return delegate.getExpression();
+        }
+        return null;
+    }
+
     @Override
     @Nullable
     public JetExpression getInitializer() {
         return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), JetExpression.class);
+    }
+
+    @Nullable
+    public JetExpression getDelegateExpressionOrInitializer() {
+        JetExpression expression = getDelegateExpression();
+        if (expression == null) {
+            return getInitializer();
+        }
+        return expression;
     }
 
     @Override

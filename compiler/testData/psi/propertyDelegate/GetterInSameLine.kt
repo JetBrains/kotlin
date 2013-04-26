@@ -1,0 +1,1 @@
+val a by A(); get() = 1;

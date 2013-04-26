@@ -129,6 +129,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitDelegationSpecifier(thisCall, data);
     }
 
+    public R visitPropertyDelegate(JetPropertyDelegate delegate, D data) {
+        return visitJetElement(delegate, data);
+    }
+
     public R visitTypeReference(JetTypeReference typeReference, D data) {
         return visitJetElement(typeReference, data);
     }

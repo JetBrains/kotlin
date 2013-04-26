@@ -1,0 +1,1 @@
+val p: Int by A()

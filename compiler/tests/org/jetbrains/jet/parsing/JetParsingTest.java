@@ -138,6 +138,7 @@ public class JetParsingTest extends ParsingTestCase {
         suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "greatSyntacticShift", true, factory));
         suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "script", true, factory));
         suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "recovery", true, factory));
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "propertyDelegate", true, factory));
         return suite;
     }
 

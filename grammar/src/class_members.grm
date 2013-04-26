@@ -93,7 +93,7 @@ property
       typeParameters? (type "." | annotations)?
       (multipleVariableDeclarations | variableDeclarationEntry)
       typeConstraints
-      ("=" expression SEMI?)?
+      ("by" | "=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
   ;
 

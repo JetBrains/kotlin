@@ -119,6 +119,10 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitDelegationSpecifier(thisCall);
     }
 
+    public void visitPropertyDelegate(JetPropertyDelegate delegate) {
+        visitJetElement(delegate);
+    }
+
     public void visitTypeReference(JetTypeReference typeReference) {
         visitJetElement(typeReference);
     }
