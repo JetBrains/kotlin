@@ -313,7 +313,12 @@ public class GenerateTests {
                 testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
                 testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
                 testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen")
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/whenToIf", "doTestWhenToIf"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/when/flatten", "doTestFlattenWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/when/eliminateSubject", "doTestEliminateWhenSubject")
         );
 
         generateTest(

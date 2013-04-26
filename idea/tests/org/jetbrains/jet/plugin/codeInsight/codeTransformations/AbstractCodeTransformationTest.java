@@ -62,6 +62,26 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTest(path, new UnfoldBranchedExpressionIntention.UnfoldReturnToWhenIntention());
     }
 
+    public void doTestIfToWhen(@NotNull String path) throws Exception {
+        doTest(path, new IfToWhenIntention());
+    }
+
+    public void doTestWhenToIf(@NotNull String path) throws Exception {
+        doTest(path, new WhenToIfIntention());
+    }
+
+    public void doTestFlattenWhen(@NotNull String path) throws Exception {
+        doTest(path, new FlattenWhenIntention());
+    }
+
+    public void doTestIntroduceWhenSubject(@NotNull String path) throws Exception {
+        doTest(path, new IntroduceWhenSubjectIntention());
+    }
+
+    public void doTestEliminateWhenSubject(@NotNull String path) throws Exception {
+        doTest(path, new EliminateWhenSubjectIntention());
+    }
+
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
         doTest(path, new RemoveUnnecessaryParenthesesIntention());
     }
