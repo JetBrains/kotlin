@@ -693,6 +693,15 @@ public class JetPsiUtil {
         return (elseCount == 1);
     }
 
+    public static JetExpression getWhenElseBranch(@NotNull JetWhenExpression whenExpression) {
+        for (JetWhenEntry entry : whenExpression.getEntries()) {
+            if (entry.isElse()) {
+                return entry.getExpression();
+            }
+        }
+        return null;
+    }
+
     public static PsiElement skipTrailingWhitespacesAndComments(PsiElement element)  {
         return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace.class, PsiComment.class);
     }
