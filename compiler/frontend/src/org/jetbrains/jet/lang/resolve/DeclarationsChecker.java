@@ -199,6 +199,10 @@ public class DeclarationsChecker {
             if (initializer != null) {
                 trace.report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));
             }
+            JetPropertyDelegate delegate = property.getDelegate();
+            if (delegate != null) {
+                trace.report(ABSTRACT_DELEGATED_PROPERTY.on(delegate));
+            }
             if (getter != null && getter.getBodyExpression() != null) {
                 trace.report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter));
             }
@@ -218,7 +222,7 @@ public class DeclarationsChecker {
                                             (setter != null && setter.getBodyExpression() != null);
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            if (property.getInitializer() == null && property.getTypeRef() == null) {
+            if (property.getDelegateExpressionOrInitializer() == null && property.getTypeRef() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             return;
@@ -226,12 +230,13 @@ public class DeclarationsChecker {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean inTrait = containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor)containingDeclaration).getKind() == ClassKind.TRAIT;
         JetExpression initializer = property.getInitializer();
+        JetPropertyDelegate delegate = property.getDelegate();
         boolean backingFieldRequired = trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
 
         if (inTrait && backingFieldRequired && hasAccessorImplementation) {
             trace.report(BACKING_FIELD_IN_TRAIT.on(property));
         }
-        if (initializer == null) {
+        if (initializer == null && delegate == null) {
             boolean error = false;
             if (backingFieldRequired && !inTrait && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (!(containingDeclaration instanceof ClassDescriptor) || hasAccessorImplementation) {
@@ -252,9 +257,14 @@ public class DeclarationsChecker {
             return;
         }
         if (inTrait) {
-            trace.report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
+            if (delegate != null) {
+                trace.report(DELEGATED_PROPERTY_IN_TRAIT.on(delegate));
+            }
+            else {
+                trace.report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
+            }
         }
-        else if (!backingFieldRequired) {
+        else if (!backingFieldRequired && delegate == null) {
             trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer));
         }
     }

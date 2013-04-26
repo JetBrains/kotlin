@@ -964,7 +964,7 @@ public class DescriptorResolver {
 
     /*package*/
     static boolean hasBody(JetProperty property) {
-        boolean hasBody = property.getInitializer() != null;
+        boolean hasBody = property.getDelegateExpressionOrInitializer() != null;
         if (!hasBody) {
             JetPropertyAccessor getter = property.getGetter();
             if (getter != null && getter.getBodyExpression() != null) {
@@ -989,9 +989,14 @@ public class DescriptorResolver {
     ) {
         JetTypeReference propertyTypeRef = variable.getTypeRef();
 
+        boolean hasDelegate = variable instanceof JetProperty && ((JetProperty) variable).getDelegateExpression() != null;
         if (propertyTypeRef == null) {
             final JetExpression initializer = variable.getInitializer();
             if (initializer == null) {
+                if (hasDelegate) {
+                    // todo resolve type from delegate
+                    return ErrorUtils.createErrorType("Type from delegate");
+                }
                 if (!notLocal) {
                     trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable));
                 }
@@ -1112,7 +1117,12 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
         else if (property.isVar()) {
-            setterDescriptor = createDefaultSetter(propertyDescriptor);
+            if (property.getDelegateExpression() != null) {
+                setterDescriptor = createSetterForDelegatedProperty(propertyDescriptor);
+            }
+            else {
+                setterDescriptor = createDefaultSetter(propertyDescriptor);
+            }
         }
 
         if (!property.isVar()) {
@@ -1124,12 +1134,23 @@ public class DescriptorResolver {
         return setterDescriptor;
     }
 
-    public static PropertySetterDescriptorImpl createDefaultSetter(PropertyDescriptor propertyDescriptor) {
+    @NotNull
+    public static PropertySetterDescriptorImpl createDefaultSetter(@NotNull PropertyDescriptor propertyDescriptor) {
+        return createSetter(propertyDescriptor, false, true);
+    }
+
+    @NotNull
+    public static PropertySetterDescriptorImpl createSetterForDelegatedProperty(@NotNull PropertyDescriptor propertyDescriptor) {
+        return createSetter(propertyDescriptor, true, false);
+    }
+
+    @NotNull
+    private static PropertySetterDescriptorImpl createSetter(@NotNull PropertyDescriptor propertyDescriptor, boolean hasBody, boolean isDefault) {
         PropertySetterDescriptorImpl setterDescriptor;
         setterDescriptor = new PropertySetterDescriptorImpl(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
-                false, true, CallableMemberDescriptor.Kind.DECLARATION);
+                hasBody, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
         setterDescriptor.initializeDefault();
         return setterDescriptor;
     }
@@ -1165,18 +1186,33 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
-            getterDescriptor = createDefaultGetter(propertyDescriptor);
+            if (property.getDelegateExpression() != null) {
+                getterDescriptor = createGetterForDelegatedProperty(propertyDescriptor);
+            }
+            else {
+                getterDescriptor = createDefaultGetter(propertyDescriptor);
+            }
             getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;
     }
 
-    public static PropertyGetterDescriptorImpl createDefaultGetter(PropertyDescriptor propertyDescriptor) {
+    @NotNull
+    public static PropertyGetterDescriptorImpl createDefaultGetter(@NotNull PropertyDescriptor propertyDescriptor) {
+        return createGetter(propertyDescriptor, false, true);
+    }
+
+    @NotNull
+    public static PropertyGetterDescriptorImpl createGetterForDelegatedProperty(@NotNull PropertyDescriptor propertyDescriptor) {
+        return createGetter(propertyDescriptor, true, false);
+    }
+
+    private static PropertyGetterDescriptorImpl createGetter(@NotNull PropertyDescriptor propertyDescriptor, boolean hasBody, boolean isDefault) {
         PropertyGetterDescriptorImpl getterDescriptor;
         getterDescriptor = new PropertyGetterDescriptorImpl(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
-                false, true, CallableMemberDescriptor.Kind.DECLARATION);
+                hasBody, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
         return getterDescriptor;
     }
 

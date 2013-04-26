@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class})
 public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEagerResolve {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.ThisAndSuper.class, Tests.Varargs.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.ThisAndSuper.class, Tests.Varargs.class})
     public static class Tests extends AbstractDiagnosticsTestWithEagerResolve {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -1885,6 +1885,59 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 suite.addTestSuite(MultiDeclarations.class);
                 return suite;
             }
+        }
+        
+        @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty")
+        public static class DelegatedProperty extends AbstractDiagnosticsTestWithEagerResolve {
+            @TestMetadata("absentErrorAboutInitializer.kt")
+            public void testAbsentErrorAboutInitializer() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/absentErrorAboutInitializer.kt");
+            }
+            
+            @TestMetadata("absentErrorAboutType.kt")
+            public void testAbsentErrorAboutType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/absentErrorAboutType.kt");
+            }
+            
+            @TestMetadata("abstractDelegatedProperty.kt")
+            public void testAbstractDelegatedProperty() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/abstractDelegatedProperty.kt");
+            }
+            
+            public void testAllFilesPresentInDelegatedProperty() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("backingField.kt")
+            public void testBackingField() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/backingField.kt");
+            }
+            
+            @TestMetadata("inTrait.kt")
+            public void testInTrait() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/inTrait.kt");
+            }
+            
+            @TestMetadata("localVariable.kt")
+            public void testLocalVariable() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");
+            }
+            
+            @TestMetadata("publicDelegatedProperty.kt")
+            public void testPublicDelegatedProperty() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/publicDelegatedProperty.kt");
+            }
+            
+            @TestMetadata("redundantGetter.kt")
+            public void testRedundantGetter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/redundantGetter.kt");
+            }
+            
+            @TestMetadata("redundantSetter.kt")
+            public void testRedundantSetter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/redundantSetter.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/deparenthesize")
@@ -4757,6 +4810,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
+            suite.addTestSuite(DelegatedProperty.class);
             suite.addTestSuite(Deparenthesize.class);
             suite.addTest(Enum.innerSuite());
             suite.addTestSuite(Extensions.class);

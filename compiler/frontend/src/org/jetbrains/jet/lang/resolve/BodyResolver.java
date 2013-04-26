@@ -123,6 +123,7 @@ public class BodyResolver {
         resolveDelegationSpecifierLists();
         resolveClassAnnotations();
 
+        resolvePropertyDelegates();
         resolvePropertyDeclarationBodies();
         resolveAnonymousInitializers();
         resolvePrimaryConstructorParameters();
@@ -149,6 +150,27 @@ public class BodyResolver {
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void resolvePropertyDelegates() {
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : context.getProperties().entrySet()) {
+            JetProperty jetProperty = entry.getKey();
+
+            JetExpression delegateExpression = jetProperty.getDelegateExpression();
+            if (delegateExpression == null) continue;
+
+            JetPropertyAccessor getter = jetProperty.getGetter();
+            if (getter != null) {
+                trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
+            }
+
+            JetPropertyAccessor setter = jetProperty.getSetter();
+            if (setter != null) {
+                trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
+            }
+
+            //todo resolve delegate expression
         }
     }
 
@@ -422,7 +444,8 @@ public class BodyResolver {
         JetScope declaringScope = context.getDeclaringScopes().apply(accessor);
 
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(
-                propertyDescriptor, declaringScope, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter(), trace);
+                propertyDescriptor, declaringScope, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter(),
+                trace);
         WritableScope accessorScope = new WritableScopeImpl(
                 propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace), "Accessor scope");
         accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
@@ -521,7 +544,7 @@ public class BodyResolver {
             }
         }
     }
-    
+
     private static void computeDeferredType(JetType type) {
         // handle type inference loop: function or property body contains a reference to itself
         // fun f() = { f() }
