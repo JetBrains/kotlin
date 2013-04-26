@@ -157,7 +157,7 @@ public class JetCompiler implements TranslatingCompiler {
         if (!tests) {
             outputDirectoriesToFilter.add(moduleOutputDirectory);
         }
-        CharSequence script = KotlinModuleScriptGenerator.generateModuleScript(
+        CharSequence script = KotlinModuleScriptGenerator.INSTANCE.generateModuleScript(
                 moduleName,
                 getDependencyProvider(chunk, tests, mainOutput),
                 sourceFiles,
@@ -176,14 +176,14 @@ public class JetCompiler implements TranslatingCompiler {
         return scriptFile;
     }
 
-    private static KotlinModuleScriptGenerator.DependencyProvider getDependencyProvider(
+    private static KotlinModuleDescriptionGenerator.DependencyProvider getDependencyProvider(
             final ModuleChunk chunk,
             final boolean tests,
             final VirtualFile mainOutputPath
     ) {
-        return new KotlinModuleScriptGenerator.DependencyProvider() {
+        return new KotlinModuleDescriptionGenerator.DependencyProvider() {
             @Override
-            public void processClassPath(@NotNull KotlinModuleScriptGenerator.DependencyProcessor processor) {
+            public void processClassPath(@NotNull KotlinModuleDescriptionGenerator.DependencyProcessor processor) {
                 // TODO: have a bootclasspath in script API
                 processor.processClassPathSection("Boot classpath", ioFiles(chunk.getCompilationBootClasspathFiles()));
 

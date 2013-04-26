@@ -25,22 +25,20 @@ import java.util.Set;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
 
-public class KotlinModuleScriptGenerator {
+public class KotlinModuleScriptGenerator implements KotlinModuleDescriptionGenerator {
 
-    public interface DependencyProvider {
-        void processClassPath(@NotNull DependencyProcessor processor);
-    }
+    public static final KotlinModuleScriptGenerator INSTANCE = new KotlinModuleScriptGenerator();
 
-    public interface DependencyProcessor {
-        void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files);
-        void processAnnotationRoots(@NotNull List<File> files);
-    }
+    private KotlinModuleScriptGenerator() {}
 
-    public static CharSequence generateModuleScript(String moduleName,
+    @Override
+    public CharSequence generateModuleScript(
+            String moduleName,
             DependencyProvider dependencyProvider,
             List<File> sourceFiles,
             boolean tests,
-            final Set<File> directoriesToFilterOut) {
+            final Set<File> directoriesToFilterOut
+    ) {
         final StringBuilder script = new StringBuilder();
 
         if (tests) {
