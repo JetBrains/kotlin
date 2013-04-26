@@ -429,4 +429,22 @@ public class JetPsiFactory {
     public static JetWhenExpression createWhenWithoutSubject(Project project, int positiveBranchCount) {
         return new WhenTemplateBuilder(false).addBranchesWithSingleCondition(positiveBranchCount).toExpression(project);
     }
+
+    public static JetParenthesizedExpression createParenthesizedExpression(Project project, @NotNull String text) {
+        return (JetParenthesizedExpression)createExpression(project, "(" + text + ")");
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static JetParenthesizedExpression createParenthesizedExpression(Project project, @NotNull JetExpression expression) {
+        JetParenthesizedExpression parenthesizedExpression = createParenthesizedExpression(project, "_");
+        parenthesizedExpression.getExpression().replace(expression);
+
+        return parenthesizedExpression;
+    }
+
+    public static JetParenthesizedExpression createParenthesizedExpressionIfNeeded(Project project, @NotNull JetExpression expression) {
+        return (expression instanceof JetParenthesizedExpression) ?
+               (JetParenthesizedExpression) expression :
+               createParenthesizedExpression(project, expression);
+    }
 }
