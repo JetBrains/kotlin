@@ -19,9 +19,11 @@ package org.jetbrains.jet.compiler.runner;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.OutputMessageUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,6 +37,7 @@ import java.util.Map;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.jet.cli.common.messages.MessageCollectorUtil.reportException;
 
 public class CompilerOutputParser {
     public static void parseCompilerMessagesFromReader(MessageCollector messageCollector, final Reader reader, OutputItemsCollector collector) {
@@ -92,10 +95,6 @@ public class CompilerOutputParser {
                 reportException(messageCollector, e);
             }
         }
-    }
-
-    public static void reportException(@NotNull MessageCollector messageCollector, @NotNull Throwable e) {
-        messageCollector.report(EXCEPTION, MessageRenderer.PLAIN.renderException(e), NO_LOCATION);
     }
 
     private static class CompilerOutputSAXHandler extends DefaultHandler {

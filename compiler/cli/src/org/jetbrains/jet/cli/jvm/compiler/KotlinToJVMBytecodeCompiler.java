@@ -400,8 +400,7 @@ public class KotlinToJVMBytecodeCompiler {
                 return null;
             }
             catch (Throwable t) {
-                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
-                                        CompilerMessageLocation.NO_LOCATION);
+                MessageCollectorUtil.reportException(messageCollector, t);
                 return null;
             }
 

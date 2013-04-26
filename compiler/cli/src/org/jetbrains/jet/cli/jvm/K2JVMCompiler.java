@@ -73,8 +73,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));
         }
         catch (Throwable t) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
-                                    CompilerMessageLocation.NO_LOCATION);
+            MessageCollectorUtil.reportException(messageCollector, t);
             return INTERNAL_ERROR;
         }
 

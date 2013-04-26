@@ -29,6 +29,7 @@ import com.intellij.util.SystemProperties;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +82,7 @@ public class KotlinCompilerRunner {
             return CompilerRunnerUtil.getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {
-            CompilerOutputParser.reportException(messageCollector, e);
+            MessageCollectorUtil.reportException(messageCollector, e);
             return -1;
         }
     }
