@@ -21,6 +21,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
@@ -30,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
@@ -40,6 +43,10 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
 
         if (queryParameters instanceof JetNamedFunction) {
             processFunctionImplementations((JetNamedFunction) queryParameters, consumer);
+        }
+
+        if (queryParameters instanceof JetProperty) {
+            processPropertyImplementations((JetProperty) queryParameters, consumer);
         }
     }
 
@@ -65,6 +72,32 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
 
         if (psiMethod != null) {
             ContainerUtil.process(MethodImplementationsSearch.getMethodImplementations(psiMethod), consumer);
+        }
+    }
+
+    private static void processPropertyImplementations(@NotNull final JetProperty property, @NotNull Processor<PsiElement> consumer) {
+        LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
+                new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
+                    @Override
+                    public LightClassUtil.PropertyAccessorsPsiMethods compute() {
+                        return LightClassUtil.getLightClassPropertyMethods(property);
+                    }
+                });
+
+        for (PsiMethod method : accessorsPsiMethods) {
+            PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method);
+            for (PsiMethod implementation : implementations) {
+                PsiElement mirrorElement = implementation instanceof PsiCompiledElement ? ((PsiCompiledElement) implementation).getMirror() : null;
+                if (mirrorElement instanceof JetProperty) {
+                    consumer.process(mirrorElement);
+                }
+                else if (mirrorElement instanceof JetPropertyAccessor && mirrorElement.getParent() instanceof JetProperty) {
+                    consumer.process(mirrorElement.getParent());
+                }
+                else {
+                    consumer.process(implementation);
+                }
+            }
         }
     }
 }
