@@ -1249,7 +1249,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JvmClassName closureSuperClass = samInterfaceClass == null ? getFunctionImplClassName(descriptor) : JvmClassName.byType(OBJECT_TYPE);
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, declaration, descriptor, samInterfaceClass, closureSuperClass, context,
-                this, new FunctionGenerationStrategy.Default(state, declaration));
+                this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration));
 
         closureCodegen.gen();
 
@@ -2335,14 +2335,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JvmClassName closureSuperClass = JvmClassName.byType(typeMapper.mapType(kFunctionImpl));
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, closureSuperClass, context, this,
-                new FunctionGenerationStrategy() {
+                new FunctionGenerationStrategy.CodegenBased(state, functionDescriptor) {
+
                     @Override
-                    public void generateBody(
-                           @NotNull MethodVisitor mv,
-                           @NotNull JvmMethodSignature signature,
-                           @NotNull MethodContext context,
-                           @NotNull FrameMap frameMap
+                    public ExpressionCodegen initializeExpressionCodegen(
+                            JvmMethodSignature signature, MethodContext context, MethodVisitor mv,
+                            Type returnType
                     ) {
+                        FunctionDescriptor referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+                        JetType returnJetType = referencedFunction.getReturnType();
+                        assert returnJetType != null : "Return type can't be null: " + referencedFunction;
+
+                        return super.initializeExpressionCodegen(signature, context,
+                                                          mv, typeMapper.mapReturnType(returnJetType));
+                    }
+
+                    @Override
+                    public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
                         /*
                          Here we need to put the arguments from our locals to the stack and invoke the referenced method. Since invokation
                          of methods is highly dependent on expressions, we create a fake call expression. Then we create a new instance of
@@ -2352,17 +2361,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                          */
 
                         FunctionDescriptor referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
-                        JetType returnJetType = referencedFunction.getReturnType();
-                        assert returnJetType != null : "Return type can't be null: " + referencedFunction;
-                        Type returnType = typeMapper.mapReturnType(returnJetType);
 
                         JetCallExpression fakeExpression = constructFakeFunctionCall(referencedFunction);
                         final List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
-                        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context, state);
-
                         final ReceiverValue receiverValue = computeAndSaveReceiver(signature, codegen);
-                        computeAndSaveArguments(frameMap, fakeArguments, codegen);
+                        computeAndSaveArguments(codegen.myFrameMap, fakeArguments, codegen);
 
                         ResolvedCall<CallableDescriptor> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {
                             @NotNull
@@ -2389,9 +2393,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         };
 
                         StackValue result;
+                        Type returnType = codegen.returnType;
                         if (referencedFunction instanceof ConstructorDescriptor) {
                             if (returnType.getSort() == Type.ARRAY) {
-                                codegen.generateNewArray(fakeExpression, returnJetType);
+                                codegen.generateNewArray(fakeExpression, referencedFunction.getReturnType());
                                 result = StackValue.onStack(returnType);
                             }
                             else {
@@ -2403,7 +2408,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             result = codegen.invokeFunction(call, StackValue.none(), fakeResolvedCall);
                         }
 
-                        InstructionAdapter v = new InstructionAdapter(mv);
+                        InstructionAdapter v = codegen.v;
                         result.put(returnType, v);
                         v.areturn(returnType);
                     }
@@ -2462,11 +2467,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         codegen.tempVariables.put(receiverExpression, StackValue.local(1, firstParameterType));
 
                         return new ExpressionReceiver(receiverExpression, receiver.getType());
-                    }
-
-                    @Override
-                    public boolean needsLocalVariableTable() {
-                        return false;
                     }
                 }
         );

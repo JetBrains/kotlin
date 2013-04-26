@@ -17,13 +17,10 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -47,15 +44,6 @@ public class ConstructorFrameMap extends FrameMap {
                     break;
                 }
             }
-        }
-
-        List<Type> explicitArgTypes = callableMethod.getValueParameterTypes();
-        List<ValueParameterDescriptor> paramDescrs = descriptor != null
-                                                     ? descriptor.getValueParameters()
-                                                     : Collections.<ValueParameterDescriptor>emptyList();
-        for (int i = 0; i < paramDescrs.size(); i++) {
-            ValueParameterDescriptor parameter = paramDescrs.get(i);
-            enter(parameter, explicitArgTypes.get(i));
         }
     }
 

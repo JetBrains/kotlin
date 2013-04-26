@@ -147,7 +147,7 @@ public class AsmUtil {
 
         int flags = getCommonCallableFlags(functionDescriptor);
 
-        if (functionDescriptor.getModality() == Modality.FINAL) {
+        if (functionDescriptor.getModality() == Modality.FINAL && !(functionDescriptor instanceof ConstructorDescriptor)) {
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
             if (!(containingDeclaration instanceof ClassDescriptor) ||
                 ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.TRAIT) {

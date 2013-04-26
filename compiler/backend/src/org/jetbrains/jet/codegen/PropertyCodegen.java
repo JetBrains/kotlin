@@ -41,8 +41,6 @@ import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Collection;
-
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
@@ -135,11 +133,10 @@ public class PropertyCodegen extends GenerationStateAware {
             FunctionGenerationStrategy strategy =
                     defaultGetter
                     ? new DefaultPropertyAccessorStrategy(getterDescriptor)
-                    : new FunctionGenerationStrategy.Default(state, getter);
+                    : new FunctionGenerationStrategy.FunctionDefault(state, getterDescriptor, getter);
             functionCodegen.generateMethod(getter != null ? getter : p,
                                            signature.getJvmMethodSignature(),
                                            true,
-                                           signature.getPropertyTypeKotlinSignature(),
                                            getterDescriptor,
                                            strategy);
         }
@@ -159,11 +156,10 @@ public class PropertyCodegen extends GenerationStateAware {
                 FunctionGenerationStrategy strategy =
                         defaultSetter
                         ? new DefaultPropertyAccessorStrategy(setterDescriptor)
-                        : new FunctionGenerationStrategy.Default(state, setter);
+                        : new FunctionGenerationStrategy.FunctionDefault(state, setterDescriptor, setter);
                 functionCodegen.generateMethod(setter != null ? setter : p,
                                                signature.getJvmMethodSignature(),
                                                true,
-                                               signature.getPropertyTypeKotlinSignature(),
                                                setterDescriptor,
                                                strategy);
             }
@@ -182,8 +178,7 @@ public class PropertyCodegen extends GenerationStateAware {
         public void generateBody(
                 @NotNull MethodVisitor mv,
                 @NotNull JvmMethodSignature signature,
-                @NotNull MethodContext context,
-                @NotNull FrameMap frameMap
+                @NotNull MethodContext context
         ) {
             generateDefaultAccessor(descriptor, new InstructionAdapter(mv), typeMapper, context);
         }
@@ -233,7 +228,7 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public static void generateJetPropertyAnnotation(
-            MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters,
+            MethodVisitor mv, @NotNull JvmPropertyAccessorSignature propertyAccessorSignature,
             @NotNull PropertyDescriptor propertyDescriptor, @NotNull Visibility visibility
     ) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
@@ -245,8 +240,8 @@ public class PropertyCodegen extends GenerationStateAware {
                       : JvmStdlibNames.FLAG_FORCE_OPEN_BIT;
         }
         aw.writeFlags(flags | DescriptorKindUtils.kindToFlags(propertyDescriptor.getKind()));
-        aw.writeTypeParameters(typeParameters);
-        aw.writePropertyType(kotlinType);
+        aw.writeTypeParameters(propertyAccessorSignature.getKotlinTypeParameter());
+        aw.writePropertyType(propertyAccessorSignature.getPropertyTypeKotlinSignature());
         aw.visitEnd();
     }
 

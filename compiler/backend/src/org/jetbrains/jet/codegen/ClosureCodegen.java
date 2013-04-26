@@ -122,7 +122,7 @@ public class ClosureCodegen extends GenerationStateAware {
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor);
 
         FunctionCodegen fc = new FunctionCodegen(context, cv, state);
-        fc.generateMethod(fun, jvmMethodSignature, false, null, funDescriptor, strategy);
+        fc.generateMethod(fun, jvmMethodSignature, false, funDescriptor, strategy);
 
         this.constructor = generateConstructor(cv);
 
