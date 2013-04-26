@@ -39,6 +39,10 @@ public class JetGotoImplementationMultifileTest extends CodeInsightTestCase {
         doKotlinJavaTest();
     }
 
+    public void testImplementVarInJava() throws Exception {
+        doKotlinJavaTest();
+    }
+
     private void doKotlinJavaTest() throws Exception {
         doMultifileTest(getTestName(false) + ".kt", getTestName(false) + ".java");
     }
