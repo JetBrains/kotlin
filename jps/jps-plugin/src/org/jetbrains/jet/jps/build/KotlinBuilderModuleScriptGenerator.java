@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator;
 import org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
@@ -41,13 +42,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator.DependencyProvider;
+import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator.DependencyProvider;
 
 public class KotlinBuilderModuleScriptGenerator {
     public static File generateModuleScript(CompileContext context, ModuleBuildTarget target, List<File> sourceFiles)
             throws IOException
     {
-        CharSequence moduleScriptText = KotlinModuleScriptGenerator.generateModuleScript(
+        CharSequence moduleScriptText = KotlinModuleScriptGenerator.INSTANCE.generateModuleScript(
                 target.getId(),
                 getKotlinModuleDependencies(context, target),
                 sourceFiles,
@@ -66,7 +67,7 @@ public class KotlinBuilderModuleScriptGenerator {
     private static DependencyProvider getKotlinModuleDependencies(final CompileContext context, final ModuleBuildTarget target) {
         return new DependencyProvider() {
             @Override
-            public void processClassPath(@NotNull KotlinModuleScriptGenerator.DependencyProcessor processor) {
+            public void processClassPath(@NotNull KotlinModuleDescriptionGenerator.DependencyProcessor processor) {
                 processor.processClassPathSection("Classpath", findClassPathRoots(target));
                 processor.processClassPathSection("Java Source Roots", findSourceRoots(context, target));
                 processor.processAnnotationRoots(findAnnotationRoots(target));
