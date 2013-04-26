@@ -15,6 +15,10 @@ public class WhenUtils {
     public static final String TRANSFORM_WITHOUT_CHECK =
             "Expression must be checked before applying transformation";
 
+    private static void assertNotNull(Object expression) {
+        assert expression != null : TRANSFORM_WITHOUT_CHECK;
+    }
+
     private static JetExpression getWhenConditionSubjectCandidate(JetExpression condition) {
         if (condition instanceof JetIsExpression) {
             return ((JetIsExpression) condition).getLeftHandSide();
@@ -99,8 +103,9 @@ public class WhenUtils {
 
         if (hasSubject) {
             JetExpression dummySubjectExpression = newWhenExpression.getSubjectExpression();
-            assert dummySubjectExpression != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(dummySubjectExpression);
 
+            //noinspection ConstantConditions
             dummySubjectExpression.replace(subjectExpression);
         }
 
@@ -159,13 +164,14 @@ public class WhenUtils {
 
     public static void introduceWhenSubject(@NotNull JetWhenExpression whenExpression) {
         JetExpression subject = getWhenSubjectCandidate(whenExpression);
-        assert subject != null : TRANSFORM_WITHOUT_CHECK;
+        assertNotNull(subject);
 
         JetWhenExpression newWhenExpression = createWhenTemplateWithSubject(whenExpression);
 
         JetExpression newSubject = newWhenExpression.getSubjectExpression();
-        assert newSubject != null : TRANSFORM_WITHOUT_CHECK;
+        assertNotNull(newSubject);
 
+        //noinspection ConstantConditions
         newSubject.replace(subject);
 
         int i = 0;
@@ -175,11 +181,12 @@ public class WhenUtils {
             JetWhenEntry entry = entries.get(i++);
 
             JetExpression branchExpression = entry.getExpression();
-            assert branchExpression != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(branchExpression);
 
             JetExpression newBranchExpression = newEntry.getExpression();
-            assert newBranchExpression != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(newBranchExpression);
 
+            //noinspection ConstantConditions
             newBranchExpression.replace(branchExpression);
 
             int j = 0;
@@ -197,34 +204,37 @@ public class WhenUtils {
                     assert newCondition instanceof JetWhenConditionIsPattern : TRANSFORM_WITHOUT_CHECK;
 
                     JetTypeReference typeReference = ((JetIsExpression) conditionExpression).getTypeRef();
-                    assert typeReference != null : TRANSFORM_WITHOUT_CHECK;
+                    assertNotNull(typeReference);
 
                     JetTypeReference newTypeReference = ((JetWhenConditionIsPattern) newCondition).getTypeRef();
-                    assert newTypeReference != null : TRANSFORM_WITHOUT_CHECK;
+                    assertNotNull(newTypeReference);
 
+                    //noinspection ConstantConditions
                     newTypeReference.replace(typeReference);
                 }
                 else if (conditionExpression instanceof JetBinaryExpression) {
                     JetBinaryExpression binaryExpression = (JetBinaryExpression) conditionExpression;
 
                     JetExpression rhs = binaryExpression.getRight();
-                    assert rhs != null : TRANSFORM_WITHOUT_CHECK;
+                    assertNotNull(rhs);
 
                     IElementType op = binaryExpression.getOperationToken();
                     if (op == JetTokens.IN_KEYWORD || op == JetTokens.NOT_IN) {
                         assert newCondition instanceof JetWhenConditionInRange : TRANSFORM_WITHOUT_CHECK;
 
                         JetExpression newRangeExpression = ((JetWhenConditionInRange) newCondition).getRangeExpression();
-                        assert newRangeExpression != null : TRANSFORM_WITHOUT_CHECK;
+                        assertNotNull(newRangeExpression);
 
+                        //noinspection ConstantConditions
                         newRangeExpression.replace(rhs);
                     }
                     else if (op == JetTokens.EQEQ) {
                         assert newCondition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
 
                         JetExpression newConditionExpression = ((JetWhenConditionWithExpression) newCondition).getExpression();
-                        assert newConditionExpression != null : TRANSFORM_WITHOUT_CHECK;
+                        assertNotNull(newConditionExpression);
 
+                        //noinspection ConstantConditions
                         newConditionExpression.replace(rhs);
                     }
                     else assert false : TRANSFORM_WITHOUT_CHECK;
@@ -255,10 +265,11 @@ public class WhenUtils {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
 
             JetTypeReference typeReference = patternCondition.getTypeRef();
-            assert typeReference != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(typeReference);
 
-            assert subject != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(subject);
 
+            //noinspection ConstantConditions
             return JetPsiFactory.createIsExpression(project, subject, typeReference, patternCondition.isNegated());
         }
 
@@ -266,24 +277,26 @@ public class WhenUtils {
             JetWhenConditionInRange rangeCondition = (JetWhenConditionInRange) condition;
 
             JetExpression rangeExpression = rangeCondition.getRangeExpression();
-            assert rangeExpression != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(rangeExpression);
 
-            assert subject != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(subject);
 
+            //noinspection ConstantConditions
             return JetPsiFactory.createBinaryExpression(project, subject, rangeCondition.getOperationReference().getText(), rangeExpression);
         }
 
         assert condition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
 
         JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-        assert conditionExpression != null : TRANSFORM_WITHOUT_CHECK;
+        assertNotNull(conditionExpression);
 
+        //noinspection ConstantConditions
         return subject != null ? JetPsiFactory.createBinaryExpression(project, subject, "==", conditionExpression) : conditionExpression;
     }
 
     public static void eliminateWhenSubject(@NotNull JetWhenExpression whenExpression) {
         JetExpression subject = whenExpression.getSubjectExpression();
-        assert subject != null : TRANSFORM_WITHOUT_CHECK;
+        assertNotNull(subject);
 
         JetWhenExpression newWhenExpression = createWhenTemplateWithoutSubject(whenExpression);
 
@@ -294,11 +307,12 @@ public class WhenUtils {
             JetWhenEntry entry = entries.get(i++);
 
             JetExpression branchExpression = entry.getExpression();
-            assert branchExpression != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(branchExpression);
 
             JetExpression newBranchExpression = newEntry.getExpression();
-            assert newBranchExpression != null : TRANSFORM_WITHOUT_CHECK;
+            assertNotNull(newBranchExpression);
 
+            //noinspection ConstantConditions
             newBranchExpression.replace(branchExpression);
 
             int j = 0;
@@ -309,8 +323,9 @@ public class WhenUtils {
                 JetWhenCondition condition = conditions[j++];
 
                 JetExpression newConditionExpression = ((JetWhenConditionWithExpression) newCondition).getExpression();
-                assert newConditionExpression != null : TRANSFORM_WITHOUT_CHECK;
+                assertNotNull(newConditionExpression);
 
+                //noinspection ConstantConditions
                 newConditionExpression.replace(whenConditionToExpression(condition, subject));
             }
         }
