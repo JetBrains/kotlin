@@ -100,6 +100,11 @@ public class KotlinModuleXmlGenerator implements KotlinModuleDescriptionGenerato
         return xml;
     }
 
+    @Override
+    public String getFileExtension() {
+        return "xml";
+    }
+
     private static void openTag(Printer p, String tag) {
         p.println("<" + tag + ">");
         p.pushIndent();

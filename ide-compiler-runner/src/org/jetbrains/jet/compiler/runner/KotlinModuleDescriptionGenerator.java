@@ -32,6 +32,8 @@ public interface KotlinModuleDescriptionGenerator {
             Set<File> directoriesToFilterOut
     );
 
+    String getFileExtension();
+
     interface DependencyProvider {
         void processClassPath(@NotNull DependencyProcessor processor);
     }

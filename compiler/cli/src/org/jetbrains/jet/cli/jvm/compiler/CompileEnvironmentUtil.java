@@ -19,7 +19,10 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.util.Function;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import jet.modules.AllModules;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.common.modules.ModuleDescription;
+import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -47,8 +52,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.jar.*;
+
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
     public static Disposable createMockDisposable() {
@@ -79,7 +88,32 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static List<Module> loadModuleDescriptions(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
+    public static List<Module> loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
+        File file = new File(moduleDefinitionFile);
+        if (!file.exists()) {
+            messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, NO_LOCATION);
+            return Collections.emptyList();
+        }
+        String extension = FileUtilRt.getExtension(moduleDefinitionFile);
+        if ("kts".equalsIgnoreCase(extension)) {
+            return loadModuleScript(paths, moduleDefinitionFile, messageCollector);
+        }
+        if ("xml".equalsIgnoreCase(extension)) {
+            return ContainerUtil.map(
+                    ModuleXmlParser.parse(moduleDefinitionFile, messageCollector),
+                    new Function<ModuleDescription, Module>() {
+                        @Override
+                        public Module fun(ModuleDescription description) {
+                            return new DescriptionToModuleAdapter(description);
+                        }
+                    });
+        }
+        messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, NO_LOCATION);
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    private static List<Module> loadModuleScript(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
             @Override
             public void dispose() {
@@ -260,5 +294,33 @@ public class CompileEnvironmentUtil {
             moduleScriptText = "Can't load module script text:\n" + MessageRenderer.PLAIN.renderException(e);
         }
         return moduleScriptText;
+    }
+
+    private static class DescriptionToModuleAdapter implements Module {
+        private final ModuleDescription description;
+
+        public DescriptionToModuleAdapter(ModuleDescription description) {
+            this.description = description;
+        }
+
+        @Override
+        public String getModuleName() {
+            return description.getModuleName();
+        }
+
+        @Override
+        public List<String> getSourceFiles() {
+            return description.getSourceFiles();
+        }
+
+        @Override
+        public List<String> getClasspathRoots() {
+            return description.getClasspathRoots();
+        }
+
+        @Override
+        public List<String> getAnnotationsRoots() {
+            return description.getAnnotationsRoots();
+        }
     }
 }

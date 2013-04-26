@@ -85,4 +85,9 @@ public class KotlinModuleScriptGenerator implements KotlinModuleDescriptionGener
         script.append("}\n");
         return script;
     }
+
+    @Override
+    public String getFileExtension() {
+        return "kts";
+    }
 }

@@ -21,7 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator;
-import org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator;
+import org.jetbrains.jet.compiler.runner.KotlinModuleXmlGenerator;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
@@ -33,7 +33,10 @@ import org.jetbrains.jps.model.java.JpsJavaDependenciesEnumerator;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsLibraryRoot;
-import org.jetbrains.jps.model.module.*;
+import org.jetbrains.jps.model.module.JpsDependencyElement;
+import org.jetbrains.jps.model.module.JpsLibraryDependency;
+import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.jps.model.module.JpsSdkDependency;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
@@ -45,10 +48,13 @@ import java.util.List;
 import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator.DependencyProvider;
 
 public class KotlinBuilderModuleScriptGenerator {
-    public static File generateModuleScript(CompileContext context, ModuleBuildTarget target, List<File> sourceFiles)
+
+    public static final KotlinModuleDescriptionGenerator GENERATOR = KotlinModuleXmlGenerator.INSTANCE;
+
+    public static File generateModuleDescription(CompileContext context, ModuleBuildTarget target, List<File> sourceFiles)
             throws IOException
     {
-        CharSequence moduleScriptText = KotlinModuleScriptGenerator.INSTANCE.generateModuleScript(
+        CharSequence moduleScriptText = GENERATOR.generateModuleScript(
                 target.getId(),
                 getKotlinModuleDependencies(context, target),
                 sourceFiles,
@@ -57,7 +63,7 @@ public class KotlinBuilderModuleScriptGenerator {
                 Collections.singleton(target.getOutputDir())
         );
 
-        File scriptFile = new File(target.getOutputDir(), "script.kts");
+        File scriptFile = new File(target.getOutputDir(), "script." + GENERATOR.getFileExtension());
 
         writeScriptToFile(context, moduleScriptText, scriptFile);
 
