@@ -239,7 +239,7 @@ public class BranchedFoldingUtils {
         assertNotNull(elseRoot);
 
         //noinspection ConstantConditions
-        JetIfExpression newIfExpression = JetPsiFactory.createIf(project, condition, thenRoot, elseRoot);
+        JetIfExpression newIfExpression = JetPsiFactory.createIf(project, condition, thenRoot, elseRoot, false, false);
         JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, newIfExpression);
 
         newIfExpression = (JetIfExpression)newReturnExpression.getReturnedExpression();

@@ -307,14 +307,22 @@ public class JetPsiFactory {
     }
 
     @NotNull
-    public static JetIfExpression createIf(Project project, @NotNull String condText, @NotNull String thenText, @Nullable String elseText) {
-        return (JetIfExpression) createExpression(project, "if (" + condText + ") " + thenText + (elseText != null ? " else " + elseText : ""));
+    public static JetIfExpression createIf(
+            Project project,
+            @NotNull String condText, @NotNull String thenText, @Nullable String elseText,
+            boolean thenNewLine, boolean elseNewLine) {
+        String thenSpace = thenNewLine ? "\n" : " ";
+        String elseSpace = elseNewLine ? "\n" : " ";
+        return (JetIfExpression) createExpression(project, "if (" + condText + ")" + thenSpace + thenText + (elseText != null ? elseSpace + "else " + elseText : ""));
     }
 
     @SuppressWarnings("ConstantConditions")
     @NotNull
-    public static JetIfExpression createIf(Project project, @NotNull JetExpression condition, @NotNull JetExpression thenExpr, @Nullable JetExpression elseExpr) {
-        JetIfExpression ifExpr = createIf(project, "_", "_", elseExpr != null ? "_" : null);
+    public static JetIfExpression createIf(
+            Project project,
+            @NotNull JetExpression condition, @NotNull JetExpression thenExpr, @Nullable JetExpression elseExpr,
+            boolean thenNewLine, boolean elseNewLine) {
+        JetIfExpression ifExpr = createIf(project, "_", "_", elseExpr != null ? "_" : null, thenNewLine, elseNewLine);
 
         assert ifExpr.getCondition() != null;
         assert ifExpr.getThen() != null;
