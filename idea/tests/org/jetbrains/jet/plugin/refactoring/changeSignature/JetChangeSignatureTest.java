@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -199,6 +200,7 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
                 JetChangeSignatureHandler.createDialog(element, file.findElementAt(editor.getCaretModel().getOffset()), getProject(), editor);
         assertNotNull(dialog);
         dialog.canRun();
+        Disposer.register(getTestRootDisposable(), dialog.getDisposable());
         return dialog.evaluateChangeInfo();
     }
 
