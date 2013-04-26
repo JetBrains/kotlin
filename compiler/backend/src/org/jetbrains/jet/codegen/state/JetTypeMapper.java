@@ -736,8 +736,6 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmPropertyAccessorSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
-        String name = getPropertyAccessorName(descriptor, true);
-
         // TODO: do not genClassOrObject generics if not needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
 
@@ -752,9 +750,8 @@ public class JetTypeMapper extends BindingTraceAware {
         mapType(descriptor.getType(), signatureWriter, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE);
         signatureWriter.writeReturnTypeEnd();
 
-        JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature(name);
-
-        return new JvmPropertyAccessorSignature(jvmMethodSignature, jvmMethodSignature.getKotlinReturnType());
+        String name = getPropertyAccessorName(descriptor, true);
+        return signatureWriter.makeJvmPropertyAccessorSignature(name, true);
     }
 
 
@@ -776,9 +773,7 @@ public class JetTypeMapper extends BindingTraceAware {
         signatureWriter.writeVoidReturn();
 
         String name = getPropertyAccessorName(descriptor, false);
-        JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature(name);
-        return new JvmPropertyAccessorSignature(jvmMethodSignature,
-                                                jvmMethodSignature.getKotlinParameterType(jvmMethodSignature.getParameterCount() - 1));
+        return signatureWriter.makeJvmPropertyAccessorSignature(name, false);
     }
 
     private void writeParameter(BothSignatureWriter signatureWriter, JetType outType) {

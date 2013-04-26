@@ -525,18 +525,27 @@ public class BothSignatureWriter {
 
     @NotNull
     public JvmMethodSignature makeJvmMethodSignature(String name) {
-        if (needGenerics) {
-            return new JvmMethodSignature(
-                    makeAsmMethod(name),
-                    makeJavaGenericSignature(),
-                    makeKotlinMethodTypeParameters(),
-                    makeKotlinParameterTypes(),
-                    makeKotlinReturnTypeSignature()
-            );
-        }
-        else {
-            return new JvmMethodSignature(makeAsmMethod(name), makeKotlinParameterTypes());
-        }
+        return new JvmMethodSignature(
+                makeAsmMethod(name),
+                needGenerics ? makeJavaGenericSignature() : null,
+                needGenerics ? makeKotlinMethodTypeParameters() : null,
+                makeKotlinParameterTypes(),
+                makeKotlinReturnTypeSignature(),
+                needGenerics
+        );
+    }
+
+    @NotNull
+    public JvmPropertyAccessorSignature makeJvmPropertyAccessorSignature(String name, boolean isGetter) {
+        return new JvmPropertyAccessorSignature(
+                makeAsmMethod(name),
+                needGenerics ? makeJavaGenericSignature() : null,
+                needGenerics ? makeKotlinMethodTypeParameters() : null,
+                makeKotlinParameterTypes(),
+                makeKotlinReturnTypeSignature(),
+                needGenerics,
+                isGetter
+        );
     }
 }
 

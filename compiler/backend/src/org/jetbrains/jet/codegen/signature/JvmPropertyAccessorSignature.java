@@ -17,25 +17,36 @@
 package org.jetbrains.jet.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.commons.Method;
 
-public class JvmPropertyAccessorSignature {
-    @NotNull
-    private final JvmMethodSignature jvmMethodSignature;
-    @NotNull
-    private final String propertyTypeKotlinSignature;
+import java.util.List;
 
-    public JvmPropertyAccessorSignature(@NotNull JvmMethodSignature jvmMethodSignature, @NotNull String propertyTypeKotlinSignature) {
-        this.jvmMethodSignature = jvmMethodSignature;
-        this.propertyTypeKotlinSignature = propertyTypeKotlinSignature;
+public class JvmPropertyAccessorSignature extends JvmMethodSignature {
+
+    private final boolean isGetter;
+
+    protected JvmPropertyAccessorSignature(
+            @NotNull Method asmMethod,
+            @Nullable String genericsSignature,
+            @Nullable String kotlinTypeParameters,
+            @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes,
+            @NotNull String kotlinReturnType,
+            boolean needGenerics,
+            boolean isGetter
+    ) {
+        super(asmMethod, genericsSignature, kotlinTypeParameters, kotlinParameterTypes,
+              kotlinReturnType, needGenerics);
+        this.isGetter = isGetter;
     }
 
     @NotNull
     public JvmMethodSignature getJvmMethodSignature() {
-        return jvmMethodSignature;
+        return this;
     }
 
     @NotNull
     public String getPropertyTypeKotlinSignature() {
-        return propertyTypeKotlinSignature;
+        return isGetter ? getKotlinReturnType() : getKotlinParameterType(getParameterCount() - 1);
     }
 }

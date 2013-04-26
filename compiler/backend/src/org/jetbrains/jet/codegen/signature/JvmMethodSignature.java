@@ -43,38 +43,20 @@ public class JvmMethodSignature {
      */
     private final boolean genericsAvailable;
 
-    public JvmMethodSignature(
+    protected JvmMethodSignature(
             @NotNull Method asmMethod,
             @Nullable String genericsSignature,
             @Nullable String kotlinTypeParameters,
             @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes,
-            @NotNull String kotlinReturnType
+            @NotNull String kotlinReturnType,
+            boolean genericsAvailable
     ) {
         this.asmMethod = asmMethod;
         this.genericsSignature = genericsSignature;
         this.kotlinTypeParameter = kotlinTypeParameters;
         this.kotlinParameterTypes = kotlinParameterTypes;
         this.kotlinReturnType = kotlinReturnType;
-        this.genericsAvailable = true;
-    }
-
-    public JvmMethodSignature(@NotNull Method asmMethod, @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes) {
-        this.asmMethod = asmMethod;
-        this.genericsSignature = null;
-        this.kotlinTypeParameter = null;
-        this.kotlinParameterTypes = kotlinParameterTypes;
-        this.kotlinReturnType = "";
-        this.genericsAvailable = false;
-    }
-
-    public static JvmMethodSignature simple(
-            @NotNull String methodName,
-            @NotNull Type returnType,
-            @NotNull List<JvmMethodParameterSignature> parameterSignatures
-    ) {
-        List<Type> types = getTypes(parameterSignatures);
-        return new JvmMethodSignature(new Method(methodName, returnType, types.toArray(new Type[types.size()])),
-                                      parameterSignatures);
+        this.genericsAvailable = genericsAvailable;
     }
 
     @NotNull
