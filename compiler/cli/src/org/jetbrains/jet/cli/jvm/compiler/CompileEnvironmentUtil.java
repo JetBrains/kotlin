@@ -79,7 +79,7 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static List<Module> loadModuleScript(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
+    public static List<Module> loadModuleDescriptions(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
             @Override
             public void dispose() {

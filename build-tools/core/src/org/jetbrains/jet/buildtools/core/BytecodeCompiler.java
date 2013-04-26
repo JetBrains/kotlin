@@ -174,7 +174,8 @@ public class BytecodeCompiler {
             @Nullable String stdlib,
             @Nullable String[] classpath) {
         try {
-            List<Module> modules = CompileEnvironmentUtil.loadModuleScript(getKotlinPathsForAntTask(), module, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+            List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(getKotlinPathsForAntTask(), module,
+                                                                                 MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
             List<String> sourcesRoots = new ArrayList<String>();
             for (Module m : modules) {
                 sourcesRoots.addAll(m.getSourceFiles());
