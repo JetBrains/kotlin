@@ -1,0 +1,8 @@
+name
+	sources=[foo, foo1, foo2]
+	classpath=[bar, bar1, bar2]
+	annotations=[baz, baz1, baz2]
+name2
+	sources=[2foo, 2foo1, 2foo2]
+	classpath=[2bar, 2bar1, 2bar2]
+	annotations=[2baz, 2baz1, 2baz2]

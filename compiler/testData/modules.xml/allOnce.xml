@@ -1,0 +1,7 @@
+<modules>
+  <module name="name">
+    <sources path="foo"/>
+    <classpath path="bar"/>
+    <externalAnnotations path="baz"/>
+  </module>
+</modules>

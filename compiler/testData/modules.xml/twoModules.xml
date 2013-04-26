@@ -1,0 +1,24 @@
+<modules>
+  <module name="name">
+    <sources path="foo"/>
+    <sources path="foo1"/>
+    <sources path="foo2"/>
+    <classpath path="bar"/>
+    <classpath path="bar1"/>
+    <classpath path="bar2"/>
+    <externalAnnotations path="baz"/>
+    <externalAnnotations path="baz1"/>
+    <externalAnnotations path="baz2"/>
+  </module>
+  <module name="name2">
+    <sources path="2foo"/>
+    <sources path="2foo1"/>
+    <sources path="2foo2"/>
+    <classpath path="2bar"/>
+    <classpath path="2bar1"/>
+    <classpath path="2bar2"/>
+    <externalAnnotations path="2baz"/>
+    <externalAnnotations path="2baz1"/>
+    <externalAnnotations path="2baz2"/>
+  </module>
+</modules>

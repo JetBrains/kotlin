@@ -32,11 +32,11 @@ public interface KotlinModuleDescriptionGenerator {
             Set<File> directoriesToFilterOut
     );
 
-    public interface DependencyProvider {
+    interface DependencyProvider {
         void processClassPath(@NotNull DependencyProcessor processor);
     }
 
-    public interface DependencyProcessor {
+    interface DependencyProcessor {
         void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files);
         void processAnnotationRoots(@NotNull List<File> files);
     }

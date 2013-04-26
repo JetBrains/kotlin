@@ -1,0 +1,4 @@
+name
+	sources=[foo]
+	classpath=[bar]
+	annotations=[baz]

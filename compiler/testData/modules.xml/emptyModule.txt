@@ -1,0 +1,4 @@
+name
+	sources=[]
+	classpath=[]
+	annotations=[]

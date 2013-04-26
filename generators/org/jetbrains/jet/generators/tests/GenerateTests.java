@@ -35,6 +35,7 @@ import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
+import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.AbstractCodeTransformationTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
@@ -201,6 +202,13 @@ public class GenerateTests {
                 testModel("compiler/testData/loadKotlin", "doTestCheckingPrimaryConstructorsAndAccessors"),
                 testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", "doTestNotCheckingPrimaryConstructors"),
                 testModel("compiler/testData/lazyResolve/namespaceComparator", "doTestCheckingPrimaryConstructors")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "ModuleXmlParserTestGenerated",
+                AbstractModuleXmlParserTest.class,
+                testModel("compiler/testData/modules.xml", true, "xml", "doTest")
         );
 
         generateTest(
