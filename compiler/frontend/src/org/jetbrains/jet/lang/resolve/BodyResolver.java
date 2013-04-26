@@ -409,8 +409,7 @@ public class BodyResolver {
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                     if (primaryConstructor != null) {
-                        JetScope declaringScopeForPropertyInitializer = this.context.getDeclaringScopes().apply(property);
-                        resolvePropertyInitializer(property, propertyDescriptor, initializer, declaringScopeForPropertyInitializer);
+                        resolvePropertyInitializer(property, propertyDescriptor, initializer);
                     }
                 }
 
@@ -429,11 +428,9 @@ public class BodyResolver {
 
             computeDeferredType(propertyDescriptor.getReturnType());
 
-            JetScope declaringScope = this.context.getDeclaringScopes().apply(property);
-
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
-                resolvePropertyInitializer(property, propertyDescriptor, initializer, declaringScope);
+                resolvePropertyInitializer(property, propertyDescriptor, initializer);
             }
 
             resolvePropertyAccessors(property, propertyDescriptor);
@@ -488,11 +485,24 @@ public class BodyResolver {
         });
     }
 
+    private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer) {
+        JetScope propertyDeclarationInnerScope = makeScopeForPropertyInitializer(property, propertyDescriptor);
+        resolvePropertyInitializer(property, propertyDescriptor, initializer, propertyDeclarationInnerScope);
+    }
+
     public void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
-        JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
                 scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
+        JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, DataFlowInfo.EMPTY, trace);
+    }
+
+    @NotNull
+    private JetScope makeScopeForPropertyInitializer(@NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
+        JetScope scope = this.context.getDeclaringScopes().apply(property);
+        assert scope != null : "Scope for property " + property.getText() + " should exists";
+        return descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
+                scope, descriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
     }
 
     private void resolveFunctionBodies() {
