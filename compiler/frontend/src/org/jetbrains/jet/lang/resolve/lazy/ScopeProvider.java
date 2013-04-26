@@ -86,8 +86,8 @@ public class ScopeProvider {
 
         return new ChainedScope(packageDescriptor,
                                 "File scope: " + file.getName(),
-                                rootPackageDescriptor.getMemberScope(),
                                 packageDescriptor.getMemberScope(),
+                                rootPackageDescriptor.getMemberScope(),
                                 importsScope,
                                 defaultImportsScope.compute());
     }
