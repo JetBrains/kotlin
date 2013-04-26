@@ -346,6 +346,7 @@ public class ExpressionTypingUtils {
             JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeArgument" + index++);
             fakeArguments.add(fakeArgument);
             traceWithFakeArgumentInfo.record(EXPRESSION_TYPE, fakeArgument, type);
+            traceWithFakeArgumentInfo.record(PROCESSED, fakeArgument);
         }
         return makeAndResolveFakeCall(receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), fakeArguments, name).getSecond();
     }
