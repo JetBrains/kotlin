@@ -766,7 +766,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         // a[i]++/-- takes special treatment because it is actually let j = i, arr = a in arr.set(j, a.get(j).inc())
         if ((operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) && baseExpression instanceof JetArrayAccessExpression) {
-            JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), type, context.trace);
+            JetExpression stubExpression = ExpressionTypingUtils.createFakeExpressionOfType(baseExpression.getProject(), context.trace, "$e", type);
             resolveArrayAccessSetMethod((JetArrayAccessExpression) baseExpression,
                                         stubExpression,
                                         context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(

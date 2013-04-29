@@ -205,14 +205,6 @@ public class ExpressionTypingUtils {
             }
         }
     }
-    
-    @NotNull
-    public static JetExpression createStubExpressionOfNecessaryType(@NotNull Project project, @NotNull JetType type, @NotNull BindingTrace trace) {
-        JetExpression expression = JetPsiFactory.createExpression(project, "$e");
-        trace.record(PROCESSED, expression);
-        trace.record(EXPRESSION_TYPE, expression, type);
-        return expression;
-    }
 
     public static boolean isVariableIterable(@NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull Project project, @NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
@@ -339,16 +331,26 @@ public class ExpressionTypingUtils {
             @NotNull Name name,
             @NotNull JetType... argumentTypes
     ) {
-        TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);
-        int index = 0;
+        TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for",
+                                                                                       name);
         List<JetExpression> fakeArguments = Lists.newArrayList();
         for (JetType type : argumentTypes) {
-            JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeArgument" + index++);
-            fakeArguments.add(fakeArgument);
-            traceWithFakeArgumentInfo.record(EXPRESSION_TYPE, fakeArgument, type);
-            traceWithFakeArgumentInfo.record(PROCESSED, fakeArgument);
+            fakeArguments.add(createFakeExpressionOfType(context.expressionTypingServices.getProject(), traceWithFakeArgumentInfo,
+                                                         "fakeArgument" + fakeArguments.size(), type));
         }
         return makeAndResolveFakeCall(receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), fakeArguments, name).getSecond();
+    }
+
+    public static JetExpression createFakeExpressionOfType(
+            @NotNull Project project,
+            @NotNull BindingTrace trace,
+            @NotNull String argumentName,
+            @NotNull JetType argumentType
+    ) {
+        JetExpression fakeExpression = JetPsiFactory.createExpression(project, argumentName);
+        trace.record(EXPRESSION_TYPE, fakeExpression, argumentType);
+        trace.record(PROCESSED, fakeExpression);
+        return fakeExpression;
     }
 
     @NotNull
