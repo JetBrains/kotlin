@@ -17,6 +17,7 @@
             <element id="module-output" name="js.translator" />
             <element id="module-output" name="cli-common" />
             <element id="module-output" name="ide-compiler-runner" />
+            <element id="module-output" name="preloader" />
           </element>
           <element id="library" level="project" name="js-libs" />
           <element id="archive" name="kotlin-js-libraries.zip">
