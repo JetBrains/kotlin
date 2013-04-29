@@ -545,7 +545,7 @@
             depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler,compilerSources,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
 
     <target name="dist_quick"
-            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler_quick,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,preloader,compiler_quick,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
 
     <target name="dist_quick_compiler_only"
             depends="init,prepareDist,preloader,compiler_quick"/>
