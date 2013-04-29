@@ -1,0 +1,30 @@
+== a ==
+val a = Delegate()
+---------------------
+L0:
+    <START>                  NEXT:[v(val a = Delegate())]    PREV:[]
+    v(val a = Delegate())    NEXT:[r(Delegate)]              PREV:[<START>]
+    r(Delegate)              NEXT:[r(Delegate())]            PREV:[v(val a = Delegate())]
+    r(Delegate())            NEXT:[w(a)]                     PREV:[r(Delegate)]
+    w(a)                     NEXT:[<END>]                    PREV:[r(Delegate())]
+L1:
+    <END>                    NEXT:[<SINK>]                   PREV:[w(a)]
+error:
+    <ERROR>                  NEXT:[<SINK>]                   PREV:[]
+sink:
+    <SINK>                   NEXT:[]                         PREV:[<ERROR>, <END>]
+=====================
+== b ==
+val b by a
+---------------------
+L0:
+    <START>          NEXT:[v(val b by a)]    PREV:[]
+    v(val b by a)    NEXT:[r(a)]             PREV:[<START>]
+    r(a)             NEXT:[<END>]            PREV:[v(val b by a)]
+L1:
+    <END>            NEXT:[<SINK>]           PREV:[r(a)]
+error:
+    <ERROR>          NEXT:[<SINK>]           PREV:[]
+sink:
+    <SINK>           NEXT:[]                 PREV:[<ERROR>, <END>]
+=====================

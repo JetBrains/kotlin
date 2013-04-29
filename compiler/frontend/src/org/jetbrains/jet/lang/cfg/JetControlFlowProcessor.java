@@ -718,6 +718,10 @@ public class JetControlFlowProcessor {
                 generateInstructions(initializer, false);
                 builder.write(property, property);
             }
+            JetExpression delegate = property.getDelegateExpression();
+            if (delegate != null) {
+                generateInstructions(delegate, false);
+            }
             for (JetPropertyAccessor accessor : property.getAccessors()) {
                 generateInstructions(accessor, false);
             }
