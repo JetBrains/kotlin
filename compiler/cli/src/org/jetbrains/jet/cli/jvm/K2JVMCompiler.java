@@ -137,7 +137,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector);
                 List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
 
-                File directory = new File(arguments.module).getParentFile();
+                File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
                 KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
                                                                       directory, jar, outputDir,
                                                                       arguments.includeRuntime);
