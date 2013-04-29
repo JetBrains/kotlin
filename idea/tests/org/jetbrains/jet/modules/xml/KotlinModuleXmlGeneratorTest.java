@@ -41,7 +41,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 false,
                 Collections.<File>emptySet()
         ).toString();
-        String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/basic.xml"));
+        String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/basic.xml"), true);
         assertEquals(expected, actual);
     }
 
@@ -59,7 +59,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 false,
                 Collections.singleton(new File("cp1"))
         ).toString();
-        String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/filtered.xml"));
+        String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/filtered.xml"), true);
         assertEquals(expected, actual);
     }
 }

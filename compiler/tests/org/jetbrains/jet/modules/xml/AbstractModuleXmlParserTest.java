@@ -58,6 +58,6 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
             fail("Expected data file does not exist. A new file created: " + txtFile);
         }
 
-        assertEquals(FileUtil.loadFile(txtFile), actual);
+        assertEquals(FileUtil.loadFile(txtFile, true), actual);
     }
 }
