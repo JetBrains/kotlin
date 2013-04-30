@@ -385,6 +385,9 @@ public class FunctionCodegen extends GenerationStateAware {
             if (kind == JvmMethodParameterKind.VALUE) {
                 parameterDescriptor = valueParameters.next();
                 parameterName = parameterDescriptor.getName().getName();
+            } else if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
+                //we shouldn't generate annotations for invisible in runtime parameters otherwise we get bad RuntimeInvisibleParameterAnnotations error in javac
+                continue;
             } else if (needIndexForVar(kind)) {
                 parameterName = parameterName + "$" + i;
             }
