@@ -66,50 +66,38 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     protected static final Icon OVERRIDDEN_MARK = AllIcons.Gutter.OverridenMethod;
     protected static final Icon IMPLEMENTED_MARK = AllIcons.Gutter.ImplementedMethod;
 
-    private static final Function<PsiElement, String> SUBCLASSED_CLASS_TOOLTIP_ADAPTER = new Function<PsiElement, String>() {
-        @Override
-        public String fun(@NotNull PsiElement element) {
-            PsiClass psiClass = getPsiClass(element);
-            return psiClass != null ? SUBCLASSED_CLASS.getTooltip().fun(psiClass) : null;
-        }
-    };
-
-    private static final GutterIconNavigationHandler<PsiElement> SUBCLASSED_CLASS_NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiElement>() {
-        @Override
-        public void navigate(@Nullable MouseEvent e, @Nullable PsiElement elt) {
-            if (elt == null) return;
-            PsiElement psiClass = getPsiClass(elt);
-            if (psiClass != null) {
-                SUBCLASSED_CLASS.getNavigationHandler().navigate(e, psiClass);
-            }
-        }
-    };
-
     private static final MarkerType SUBCLASSED_CLASS = new MarkerType(
             new NullableFunction<PsiElement, String>() {
                 @Override
                 public String fun(@Nullable PsiElement element) {
-                    if (!(element instanceof PsiClass)) return null;
-                    return MarkerType.getSubclassedClassTooltip((PsiClass) element);
+                    PsiClass psiClass = getPsiClass(element);
+                    return psiClass != null ? MarkerType.getSubclassedClassTooltip(psiClass) : null;
                 }
             },
+
             new LineMarkerNavigator() {
                 @Override
                 public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
-                    if (!(element instanceof PsiClass)) return;
-                    MarkerType.navigateToSubclassedClass(e, (PsiClass) element);
+                    PsiClass psiClass = getPsiClass(element);
+                    if (psiClass != null) {
+                        MarkerType.navigateToSubclassedClass(e, psiClass);
+                    }
                 }
             }
     );
 
     @Nullable
-    private static PsiClass getPsiClass(@NotNull PsiElement element) {
+    private static PsiClass getPsiClass(@Nullable PsiElement element) {
+        if (element == null) return null;
+        if (element instanceof PsiClass) return (PsiClass) element;
+
         if (!(element instanceof JetClass)) {
             element = element.getParent();
             if (!(element instanceof JetClass)) {
                 return null;
             }
         }
+
         return LightClassUtil.getPsiClass((JetClass) element);
     }
 
@@ -276,7 +264,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             PsiElement anchor = nameIdentifier != null ? nameIdentifier : element;
             Icon mark = isTrait ? IMPLEMENTED_MARK : OVERRIDDEN_MARK;
             result.add(new LineMarkerInfo<PsiElement>(anchor, anchor.getTextOffset(), mark, Pass.UPDATE_OVERRIDEN_MARKERS,
-                                                      SUBCLASSED_CLASS_TOOLTIP_ADAPTER, SUBCLASSED_CLASS_NAVIGATION_HANDLER));
+                                                      SUBCLASSED_CLASS.getTooltip(), SUBCLASSED_CLASS.getNavigationHandler()));
         }
     }
 }
