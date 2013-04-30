@@ -16,6 +16,10 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class JetPsiMatcher {
@@ -26,221 +30,219 @@ public class JetPsiMatcher {
         return (t1 == t2) || (t1 != null && t2 != null && t1.getText().equals(t2.getText()));
     }
 
-    private static boolean checkStringTemplateEntryMatch(JetStringTemplateEntry e1, JetStringTemplateEntry e2) {
-        if (e1 == e2) return true;
-        if (e1 == null || e2 == null) return false;
-
-        return e1.getClass() == e2.getClass() && checkExpressionMatch(e1.getExpression(), e2.getExpression());
+    private interface Predicate2<A, B> {
+        boolean apply(A a, B b);
     }
 
-    private static boolean checkWhenConditionMatch(JetWhenCondition cond1, JetWhenCondition cond2) {
-        if (cond1 == cond2) return true;
-        if (cond1 == null || cond2 == null) return false;
-
-        if (cond1.getClass() != cond2.getClass()) return false;
-
-        if (cond1 instanceof JetWhenConditionInRange) {
-            JetWhenConditionInRange inRange1 = (JetWhenConditionInRange) cond1;
-            JetWhenConditionInRange inRange2 = (JetWhenConditionInRange) cond2;
-
-            return inRange1.isNegated() == inRange2.isNegated() &&
-                   checkExpressionMatch(inRange1.getRangeExpression(), inRange2.getRangeExpression()) &&
-                   checkExpressionMatch(inRange1.getOperationReference(), inRange2.getOperationReference());
+    private static final Predicate2<JetElement, JetElement> DEFAULT_CHECKER = new Predicate2<JetElement, JetElement>() {
+        @Override
+        public boolean apply(JetElement element1, JetElement element2) {
+            return checkElementMatch(element1, element2);
         }
+    };
 
-        if (cond1 instanceof JetWhenConditionIsPattern) {
-            JetWhenConditionIsPattern pattern1 = (JetWhenConditionIsPattern) cond1;
-            JetWhenConditionIsPattern pattern2 = (JetWhenConditionIsPattern) cond2;
+    private static final Predicate2<ValueArgument, ValueArgument> VALUE_ARGUMENT_CHECKER = new Predicate2<ValueArgument, ValueArgument>() {
+        @Override
+        public boolean apply(ValueArgument a1, ValueArgument a2) {
+            if (a1 == a2) return true;
+            if (a1 == null || a2 == null) return false;
 
-            return pattern1.isNegated() == pattern2.isNegated() &&
-                   checkTypeReferenceMatch(pattern1.getTypeRef(), pattern2.getTypeRef());
+            if (a1.getClass() != a2.getClass()) return false;
+
+            if (a1.isNamed() != a2.isNamed()) return false;
+
+            if (!checkElementMatch(a1.getArgumentExpression(), a2.getArgumentExpression())) return false;
+
+            if (a1.isNamed()) {
+                return checkElementMatch(a1.getArgumentName(), a2.getArgumentName());
+            }
+
+            return true;
         }
+    };
 
-        if (cond1 instanceof JetWhenConditionWithExpression) {
-            return checkExpressionMatch(((JetWhenConditionWithExpression) cond1).getExpression(), ((JetWhenConditionWithExpression) cond2).getExpression());
-        }
-
-        return false;
-    }
-
-    private static boolean checkWhenEntryMatch(JetWhenEntry e1, JetWhenEntry e2) {
-        if (e1 == e2) return true;
-        if (e1 == null || e2 == null) return false;
-
-        if (!(e1.isElse() == e2.isElse() && checkExpressionMatch(e1.getExpression(), e2.getExpression()))) return false;
-
-        JetWhenCondition[] conditions1 = e1.getConditions();
-        JetWhenCondition[] conditions2 = e2.getConditions();
-
-        int n = conditions1.length;
-        if (conditions2.length != n) return false;
+    private static <T> boolean checkListMatch(List<? extends T> list1, List<? extends T> list2, Predicate2<T, T> checker) {
+        int n = list1.size();
+        if (list2.size() != n) return false;
 
         for (int i = 0; i < n; i++) {
-            if (!checkWhenConditionMatch(conditions1[i], conditions2[i])) return false;
+            if (!checker.apply(list1.get(i), list2.get(i))) return false;
         }
 
         return true;
     }
 
-    public static boolean checkExpressionMatch(JetExpression e1, JetExpression e2) {
-        if (e1 == e2) return true;
-        if (e1 == null || e2 == null) return false;
+    private static <T extends JetElement> boolean checkListMatch(List<? extends T> list1, List<? extends T> list2) {
+        return checkListMatch(list1, list2, DEFAULT_CHECKER);
+    }
 
-        e1 = JetPsiUtil.deparenthesizeWithNoTypeResolution(e1);
-        e2 = JetPsiUtil.deparenthesizeWithNoTypeResolution(e2);
-
-        assert e1 != null && e2 != null;
-
-        if (e1.getClass() != e2.getClass()) return false;
-
-        if (e1 instanceof JetArrayAccessExpression) {
-            JetArrayAccessExpression aae1 = (JetArrayAccessExpression) e1;
-            JetArrayAccessExpression aae2 = (JetArrayAccessExpression) e2;
-
-            if (!checkExpressionMatch(aae1.getArrayExpression(), aae2.getArrayExpression())) return false;
-
-            List<JetExpression> indexes1 = aae1.getIndexExpressions();
-            List<JetExpression> indexes2 = aae2.getIndexExpressions();
-
-            int n = indexes1.size();
-            if (indexes2.size() != n) return false;
-
-            for (int i = 0; i < n; i++) {
-                if (!checkExpressionMatch(indexes1.get(i), indexes2.get(i))) return false;
-            }
-
-            return true;
+    private static final JetVisitor<Boolean, JetElement> VISITOR = new JetVisitor<Boolean, JetElement>() {
+        @Override
+        public Boolean visitJetElement(JetElement element, JetElement data) {
+            return false;
         }
 
-        if (e1 instanceof JetBinaryExpression) {
-            JetBinaryExpression be1 = (JetBinaryExpression) e1;
-            JetBinaryExpression be2 = (JetBinaryExpression) e2;
+        @Override
+        public Boolean visitArrayAccessExpression(JetArrayAccessExpression aae1, JetElement data) {
+            JetArrayAccessExpression aae2 = (JetArrayAccessExpression) data;
+
+            return checkElementMatch(aae1.getArrayExpression(), aae2.getArrayExpression()) &&
+                   checkListMatch(aae1.getIndexExpressions(), aae2.getIndexExpressions());
+        }
+
+        @Override
+        public Boolean visitBinaryExpression(JetBinaryExpression be1, JetElement data) {
+            JetBinaryExpression be2 = (JetBinaryExpression) data;
 
             return be1.getOperationToken() == be2.getOperationToken() &&
-                   checkExpressionMatch(be1.getLeft(), be2.getLeft()) &&
-                   checkExpressionMatch(be1.getRight(), be2.getRight());
+                   checkElementMatch(be1.getLeft(), be2.getLeft()) &&
+                   checkElementMatch(be1.getRight(), be2.getRight());
         }
 
-        if (e1 instanceof JetBinaryExpressionWithTypeRHS) {
-            JetBinaryExpressionWithTypeRHS bet1 = (JetBinaryExpressionWithTypeRHS) e1;
-            JetBinaryExpressionWithTypeRHS bet2 = (JetBinaryExpressionWithTypeRHS) e2;
+        @Override
+        public Boolean visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS bet1, JetElement data) {
+            JetBinaryExpressionWithTypeRHS bet2 = (JetBinaryExpressionWithTypeRHS) data;
 
-            return checkExpressionMatch(bet1.getLeft(), bet2.getLeft()) &&
+            return checkElementMatch(bet1.getLeft(), bet2.getLeft()) &&
                    checkTypeReferenceMatch(bet1.getRight(), bet2.getRight());
         }
 
-        if (e1 instanceof JetCallExpression) {
-            JetCallExpression call1 = (JetCallExpression) e1;
-            JetCallExpression call2 = (JetCallExpression) e2;
+        @Override
+        public Boolean visitCallExpression(JetCallExpression call1, JetElement data) {
+            JetCallExpression call2 = (JetCallExpression) data;
 
-            if (!checkExpressionMatch(call1.getCalleeExpression(), call2.getCalleeExpression())) return false;
+            if (!checkElementMatch(call1.getCalleeExpression(), call2.getCalleeExpression())) return false;
 
-            List<? extends ValueArgument> args1 = call1.getValueArguments();
-            List<? extends ValueArgument> args2 = call2.getValueArguments();
-
-            int argCount = args1.size();
-            if (args2.size() != argCount) return false;
-
-            for (int i = 0; i < argCount; i++) {
-                if (!checkExpressionMatch(args1.get(i).getArgumentExpression(), args2.get(i).getArgumentExpression())) return false;
-            }
-
-            List<JetExpression> funLiterals1 = call1.getFunctionLiteralArguments();
-            List<JetExpression> funLiterals2 = call2.getFunctionLiteralArguments();
-
-            int funLiteralCount = funLiterals1.size();
-            if (funLiterals2.size() != funLiteralCount) return false;
-
-            for (int i = 0; i < argCount; i++) {
-                if (!checkExpressionMatch(funLiterals1.get(i), funLiterals2.get(i))) return false;
-            }
-
-            return true;
+            return checkListMatch(call1.getValueArguments(), call2.getValueArguments(), VALUE_ARGUMENT_CHECKER) &&
+                   checkListMatch(call1.getFunctionLiteralArguments(), call2.getFunctionLiteralArguments());
         }
 
-        if (e1 instanceof JetConstantExpression || e1 instanceof JetSimpleNameExpression) {
-            return e1.getText().equals(e2.getText());
+        @Override
+        public Boolean visitSimpleNameExpression(JetSimpleNameExpression expression, JetElement data) {
+            return expression.getText().equals(data.getText());
         }
 
-        if (e1 instanceof JetConstructorCalleeExpression) {
-            return checkTypeReferenceMatch(((JetConstructorCalleeExpression) e1).getTypeReference(), ((JetConstructorCalleeExpression) e2).getTypeReference());
+        @Override
+        public Boolean visitConstantExpression(JetConstantExpression expression, JetElement data) {
+            return expression.getText().equals(data.getText());
         }
 
-        if (e1 instanceof JetQualifiedExpression) {
-            return  ((JetQualifiedExpression) e1).getOperationSign() == ((JetQualifiedExpression) e2).getOperationSign() &&
-                    checkExpressionMatch(((JetQualifiedExpression) e1).getReceiverExpression(), ((JetQualifiedExpression) e2).getReceiverExpression()) &&
-                    checkExpressionMatch(((JetQualifiedExpression) e1).getSelectorExpression(), ((JetQualifiedExpression) e2).getSelectorExpression());
+        @Override
+        public Boolean visitIsExpression(JetIsExpression is1, JetElement data) {
+            JetIsExpression is2 = (JetIsExpression) data;
+
+            return checkElementMatch(is1.getLeftHandSide(), is2.getLeftHandSide()) &&
+                   checkTypeReferenceMatch(is1.getTypeRef(), is2.getTypeRef()) &&
+                   is1.isNegated() == is2.isNegated();
         }
 
-        if (e1 instanceof JetIfExpression) {
-            return checkExpressionMatch(((JetIfExpression) e1).getCondition(), ((JetIfExpression) e2).getCondition()) &&
-                   checkExpressionMatch(((JetIfExpression) e1).getThen(), ((JetIfExpression) e2).getThen()) &&
-                   checkExpressionMatch(((JetIfExpression) e1).getElse(), ((JetIfExpression) e2).getElse());
+        @Override
+        public Boolean visitQualifiedExpression(JetQualifiedExpression qe1, JetElement data) {
+            JetQualifiedExpression qe2 = (JetQualifiedExpression) data;
+
+            return qe1.getOperationSign() == qe2.getOperationSign() &&
+                   checkElementMatch(qe1.getReceiverExpression(), qe2.getReceiverExpression()) &&
+                   checkElementMatch(qe1.getSelectorExpression(), qe2.getSelectorExpression());
         }
 
-        if (e1 instanceof JetIsExpression) {
-            return checkExpressionMatch(((JetIsExpression) e1).getLeftHandSide(), ((JetIsExpression) e2).getLeftHandSide()) &&
-                   checkTypeReferenceMatch(((JetIsExpression) e1).getTypeRef(), ((JetIsExpression) e2).getTypeRef()) &&
-                   ((JetIsExpression) e1).isNegated() == ((JetIsExpression) e2).isNegated();
+        @Override
+        public Boolean visitStringTemplateExpression(JetStringTemplateExpression expression, JetElement data) {
+            return checkListMatch(
+                    Arrays.asList(expression.getEntries()),
+                    Arrays.asList(((JetStringTemplateExpression) data).getEntries())
+            );
         }
 
-        if (e1 instanceof JetStringTemplateExpression) {
-            JetStringTemplateExpression str1 = (JetStringTemplateExpression) e1;
-            JetStringTemplateExpression str2 = (JetStringTemplateExpression) e2;
-
-            JetStringTemplateEntry[] entries1 = str1.getEntries();
-            JetStringTemplateEntry[] entries2 = str2.getEntries();
-
-            int n = entries1.length;
-            if (entries2.length != n) return false;
-
-            for (int i = 0; i < n; i++) {
-                if (!checkStringTemplateEntryMatch(entries1[i], entries2[i])) return false;
-            }
-
-            return true;
+        @Override
+        public Boolean visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry, JetElement data) {
+            return checkElementMatch(entry.getExpression(), ((JetStringTemplateEntryWithExpression) data).getExpression());
         }
 
-        if (e1 instanceof JetThrowExpression) {
-            return checkExpressionMatch(((JetThrowExpression) e1).getThrownExpression(), ((JetThrowExpression) e2).getThrownExpression());
+        @Override
+        public Boolean visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry, JetElement data) {
+            return entry.getText().equals(data.getText());
         }
 
-        if (e1 instanceof JetUnaryExpression) {
-            JetUnaryExpression ue1 = (JetUnaryExpression) e1;
-            JetUnaryExpression ue2 = (JetUnaryExpression) e2;
-
-            return checkExpressionMatch(ue1.getBaseExpression(), ue2.getBaseExpression()) &&
-                   checkExpressionMatch(ue1.getOperationReference(), ue2.getOperationReference());
+        @Override
+        public Boolean visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry, JetElement data) {
+            return entry.getText().equals(data.getText());
         }
 
-        if (e1 instanceof JetWhenExpression) {
-            JetWhenExpression when1 = (JetWhenExpression) e1;
-            JetWhenExpression when2 = (JetWhenExpression) e2;
-
-            if (checkExpressionMatch(when1.getSubjectExpression(), when2.getSubjectExpression())) return false;
-
-            List<JetWhenEntry> entries1 = when1.getEntries();
-            List<JetWhenEntry> entries2 = when2.getEntries();
-
-            int n = entries1.size();
-            if (entries2.size() != n) return false;
-
-            for (int i = 0; i < n; i++) {
-                if (!checkWhenEntryMatch(entries1.get(i), entries2.get(i))) return false;
-            }
-        }
-
-        if (e1 instanceof JetThisExpression) return true;
-
-        if (e1 instanceof JetSuperExpression) {
-            JetSuperExpression super1 = (JetSuperExpression) e1;
-            JetSuperExpression super2 = (JetSuperExpression) e2;
+        @Override
+        public Boolean visitSuperExpression(JetSuperExpression super1, JetElement data) {
+            JetSuperExpression super2 = (JetSuperExpression) data;
 
             return checkTypeReferenceMatch(super1.getSuperTypeQualifier(), super2.getSuperTypeQualifier()) &&
-                   checkExpressionMatch(super1.getInstanceReference(), super2.getInstanceReference()) &&
-                   checkExpressionMatch(super1.getTargetLabel(), super2.getTargetLabel());
+                   checkElementMatch(super1.getInstanceReference(), super2.getInstanceReference()) &&
+                   checkElementMatch(super1.getTargetLabel(), super2.getTargetLabel());
         }
 
-        return false;
+        @Override
+        public Boolean visitThrowExpression(JetThrowExpression expression, JetElement data) {
+            return checkElementMatch(expression.getThrownExpression(), ((JetThrowExpression) data).getThrownExpression());
+        }
+
+        @Override
+        public Boolean visitThisExpression(JetThisExpression this1, JetElement data) {
+            return checkElementMatch(this1.getTargetLabel(), ((JetThisExpression) data).getTargetLabel());
+        }
+
+        @Override
+        public Boolean visitUnaryExpression(JetUnaryExpression ue1, JetElement data) {
+            JetUnaryExpression ue2 = (JetUnaryExpression) data;
+
+            return checkElementMatch(ue1.getBaseExpression(), ue2.getBaseExpression()) &&
+                   checkElementMatch(ue1.getOperationReference(), ue2.getOperationReference());
+        }
+
+        @Override
+        public Boolean visitTypeReference(JetTypeReference typeReference, JetElement data) {
+            return checkElementMatch(typeReference.getTypeElement(), ((JetTypeReference) data).getTypeElement());
+        }
+
+        @Override
+        public Boolean visitFunctionType(JetFunctionType type1, JetElement data) {
+            JetFunctionType type2 = (JetFunctionType) data;
+
+            return checkListMatch(type1.getTypeArgumentsAsTypes(), type2.getTypeArgumentsAsTypes());
+        }
+
+        @Override
+        public Boolean visitUserType(JetUserType type1, JetElement data) {
+            JetUserType type2 = (JetUserType) data;
+
+            return checkElementMatch(type1.getReferenceExpression(), type2.getReferenceExpression()) &&
+                   checkElementMatch(type1.getQualifier(), type2.getQualifier()) &&
+                   checkListMatch(type1.getTypeArgumentsAsTypes(), type2.getTypeArgumentsAsTypes());
+        }
+
+        @Override
+        public Boolean visitSelfType(JetSelfType type, JetElement data) {
+            return true;
+        }
+
+        @Override
+        public Boolean visitNullableType(JetNullableType nullableType, JetElement data) {
+            return checkElementMatch(nullableType.getInnerType(), ((JetNullableType) data).getInnerType());
+        }
+    };
+
+    private static JetElement unwrap(JetElement e) {
+        if (e instanceof JetExpression) {
+            return JetPsiUtil.deparenthesizeWithNoTypeResolution((JetExpression) e);
+        }
+        return e;
+    }
+
+    public static boolean checkElementMatch(@Nullable JetElement e1, @Nullable JetElement e2) {
+        e1 = unwrap(e1);
+        e2 = unwrap(e2);
+
+        if (e1 == e2) return true;
+        if (e1 == null || e2 == null) return false;
+
+        if (e1.getClass() != e2.getClass()) return false;
+
+        return e1.accept(VISITOR, e2);
     }
 }

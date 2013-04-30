@@ -55,7 +55,7 @@ public class WhenUtils {
                 if (lastCandidate == null) {
                     lastCandidate = currCandidate;
                 }
-                else if (!JetPsiMatcher.checkExpressionMatch(lastCandidate, currCandidate)) return null;
+                else if (!JetPsiMatcher.checkElementMatch(lastCandidate, currCandidate)) return null;
             }
         }
 
@@ -75,7 +75,7 @@ public class WhenUtils {
         JetWhenExpression nestedWhenExpression = (JetWhenExpression) elseBranch;
 
         return  JetPsiUtil.checkWhenExpressionHasSingleElse(nestedWhenExpression) &&
-                JetPsiMatcher.checkExpressionMatch(subject, nestedWhenExpression.getSubjectExpression());
+                JetPsiMatcher.checkElementMatch(subject, nestedWhenExpression.getSubjectExpression());
     }
 
     public static boolean checkIntroduceWhenSubject(@NotNull JetWhenExpression whenExpression) {
