@@ -69,7 +69,7 @@ public class WhenUtils {
 
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpression)) return false;
 
-        JetExpression elseBranch = JetPsiUtil.getWhenElseBranch(whenExpression);
+        JetExpression elseBranch = whenExpression.getElseExpression();
         if (!(elseBranch instanceof JetWhenExpression)) return false;
 
         JetWhenExpression nestedWhenExpression = (JetWhenExpression) elseBranch;
@@ -89,7 +89,7 @@ public class WhenUtils {
     public static void flattenWhen(@NotNull JetWhenExpression whenExpression) {
         JetExpression subjectExpression = whenExpression.getSubjectExpression();
 
-        JetExpression elseBranch = JetPsiUtil.getWhenElseBranch(whenExpression);
+        JetExpression elseBranch = whenExpression.getElseExpression();
         assert elseBranch instanceof JetWhenExpression : TRANSFORM_WITHOUT_CHECK;
 
         JetWhenExpression nestedWhenExpression = (JetWhenExpression) elseBranch;
