@@ -65,13 +65,18 @@ public open class Throwable(message : String? = null, cause: Throwable? = null) 
     public fun printStackTrace() : Unit
 }
 
+/*
+ * Should have an abstract property 'name', overridden in PropertyMetadataImpl
+ */
 public trait PropertyMetadata {
-    public val name: String
+    public fun getName(): String
 }
 
 /*
  * In front-end we need to resolve call PropertyMetadataImpl() in getter of delegated property
  * to be able generate it in back-end using ExpressionCodegen.invokeFunction
  */
-public class PropertyMetadataImpl(public override val name: String): PropertyMetadata
+public class PropertyMetadataImpl(private val innerName: String): PropertyMetadata {
+    public override fun getName(): String = innerName
+}
 

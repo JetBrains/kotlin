@@ -441,6 +441,11 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJavaCompletionT
             doTest("idea/testData/completion/basic/java/NoImportedJavaClassDuplication.kt");
         }
         
+        @TestMetadata("PropertyMetadata.kt")
+        public void testPropertyMetadata() throws Exception {
+            doTest("idea/testData/completion/basic/java/PropertyMetadata.kt");
+        }
+        
         @TestMetadata("TopLevelFromStandardLibrary.kt")
         public void testTopLevelFromStandardLibrary() throws Exception {
             doTest("idea/testData/completion/basic/java/TopLevelFromStandardLibrary.kt");
