@@ -23,38 +23,38 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
+    private String renderedType;
+
     public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element) {
         super(element);
     }
 
-    @Nullable
-    private JetType getPropertyType() {
-        JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);
-        if (property == null) return null;
-        return QuickFixUtil.getDeclarationReturnType(property);
-    }
-
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        JetType type = getPropertyType();
-        return super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type);
+        JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);
+        if (property == null) return false;
+        JetType type = QuickFixUtil.getDeclarationReturnType(property);
+        if (super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type)) {
+            renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+            return true;
+        }
+        return false;
     }
 
     @NotNull
     @Override
     public String getText() {
-        JetType type = getPropertyType();
         return element.isGetter()
-               ? JetBundle.message("change.getter.type", type)
-               : JetBundle.message("change.setter.type", type);
+               ? JetBundle.message("change.getter.type", renderedType)
+               : JetBundle.message("change.setter.type", renderedType);
     }
 
     @NotNull
@@ -65,10 +65,8 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        JetType type = getPropertyType();
-        if (type == null) return;
         JetPropertyAccessor newElement = (JetPropertyAccessor) element.copy();
-        JetTypeReference newTypeReference = JetPsiFactory.createType(project, type.toString());
+        JetTypeReference newTypeReference = JetPsiFactory.createType(project, renderedType);
 
         if (element.isGetter()) {
             JetTypeReference returnTypeReference = newElement.getReturnTypeReference();
