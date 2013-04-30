@@ -30,13 +30,11 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
@@ -123,7 +121,6 @@ public class BodyResolver {
         resolveDelegationSpecifierLists();
         resolveClassAnnotations();
 
-        resolvePropertyDelegates();
         resolvePropertyDeclarationBodies();
         resolveAnonymousInitializers();
         resolvePrimaryConstructorParameters();
@@ -150,27 +147,6 @@ public class BodyResolver {
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private void resolvePropertyDelegates() {
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : context.getProperties().entrySet()) {
-            JetProperty jetProperty = entry.getKey();
-
-            JetExpression delegateExpression = jetProperty.getDelegateExpression();
-            if (delegateExpression == null) continue;
-
-            JetPropertyAccessor getter = jetProperty.getGetter();
-            if (getter != null) {
-                trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
-            }
-
-            JetPropertyAccessor setter = jetProperty.getSetter();
-            if (setter != null) {
-                trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
-            }
-
-            //todo resolve delegate expression
         }
     }
 
@@ -413,6 +389,12 @@ public class BodyResolver {
                     }
                 }
 
+                JetExpression delegateExpression = property.getDelegateExpression();
+                if (delegateExpression != null) {
+                    assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
+                    resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberResolution());
+                }
+
                 resolvePropertyAccessors(property, propertyDescriptor);
                 processed.add(property);
             }
@@ -433,21 +415,21 @@ public class BodyResolver {
                 resolvePropertyInitializer(property, propertyDescriptor, initializer);
             }
 
+            JetExpression delegateExpression = property.getDelegateExpression();
+            if (delegateExpression != null) {
+                assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
+                JetScope scope = context.getDeclaringScopes().apply(property);
+                resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, scope);
+            }
+
             resolvePropertyAccessors(property, propertyDescriptor);
         }
     }
 
-    private JetScope makeScopeForPropertyAccessor(@NotNull JetPropertyAccessor accessor, PropertyDescriptor propertyDescriptor) {
-        JetScope declaringScope = context.getDeclaringScopes().apply(accessor);
-
-        JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(
-                propertyDescriptor, declaringScope, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter(),
-                trace);
-        WritableScope accessorScope = new WritableScopeImpl(
-                propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace), "Accessor scope");
-        accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
-
-        return accessorScope;
+    private JetScope makeScopeForPropertyAccessor(@NotNull JetPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor) {
+        JetScope accessorDeclaringScope = context.getDeclaringScopes().apply(accessor);
+        assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
+        return JetScopeUtils.makeScopeForPropertyAccessor(descriptor, accessorDeclaringScope, descriptorResolver, trace);
     }
 
     public void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
@@ -485,8 +467,38 @@ public class BodyResolver {
         });
     }
 
+    private void resolvePropertyDelegate(
+            @NotNull JetProperty jetProperty,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetExpression delegateExpression,
+            @NotNull JetScope parentScopeForAccessor
+    ) {
+        JetPropertyAccessor getter = jetProperty.getGetter();
+        if (getter != null) {
+            trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
+        }
+
+        JetPropertyAccessor setter = jetProperty.getSetter();
+        if (setter != null) {
+            trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
+        }
+
+        JetScope scope = makeScopeForPropertyInitializerOrDelegate(jetProperty, propertyDescriptor);
+        JetType delegateType = expressionTypingServices.safeGetType(scope, delegateExpression, NO_EXPECTED_TYPE,
+                                                                    DataFlowInfo.EMPTY, trace);
+
+        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, parentScopeForAccessor, descriptorResolver, trace);
+        DelegatedPropertyUtils.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
+                                                                 expressionTypingServices, trace, accessorScope);
+
+        if (jetProperty.isVar()) {
+            DelegatedPropertyUtils.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
+                                                                     expressionTypingServices, trace, accessorScope);
+        }
+    }
+
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer) {
-        JetScope propertyDeclarationInnerScope = makeScopeForPropertyInitializer(property, propertyDescriptor);
+        JetScope propertyDeclarationInnerScope = makeScopeForPropertyInitializerOrDelegate(property, propertyDescriptor);
         resolvePropertyInitializer(property, propertyDescriptor, initializer, propertyDeclarationInnerScope);
     }
 
@@ -498,7 +510,7 @@ public class BodyResolver {
     }
 
     @NotNull
-    private JetScope makeScopeForPropertyInitializer(@NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
+    private JetScope makeScopeForPropertyInitializerOrDelegate(@NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
         JetScope scope = this.context.getDeclaringScopes().apply(property);
         assert scope != null : "Scope for property " + property.getText() + " should exists";
         return descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(

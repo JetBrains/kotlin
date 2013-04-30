@@ -1913,6 +1913,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/backingField.kt");
             }
             
+            @TestMetadata("delegatedPropertyOverridedInTrait.kt")
+            public void testDelegatedPropertyOverridedInTrait() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/delegatedPropertyOverridedInTrait.kt");
+            }
+            
             @TestMetadata("inTrait.kt")
             public void testInTrait() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/inTrait.kt");
@@ -1923,9 +1928,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");
             }
             
+            @TestMetadata("propertyDefferedType.kt")
+            public void testPropertyDefferedType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/propertyDefferedType.kt");
+            }
+            
             @TestMetadata("publicDelegatedProperty.kt")
             public void testPublicDelegatedProperty() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/publicDelegatedProperty.kt");
+            }
+            
+            @TestMetadata("recursiveType.kt")
+            public void testRecursiveType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/recursiveType.kt");
             }
             
             @TestMetadata("redundantGetter.kt")
@@ -1936,6 +1951,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("redundantSetter.kt")
             public void testRedundantSetter() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/redundantSetter.kt");
+            }
+            
+            @TestMetadata("thisInDelegate.kt")
+            public void testThisInDelegate() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/thisInDelegate.kt");
             }
             
         }

@@ -1,0 +1,11 @@
+~A~class A {
+  ~foo~fun foo() = A()
+}
+
+class B {
+  fun bar() {
+    val a: Int by `A`A().`foo`foo()
+    val b: Int by `A`A()
+  }
+}
+

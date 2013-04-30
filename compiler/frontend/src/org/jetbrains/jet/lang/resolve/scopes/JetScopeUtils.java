@@ -23,7 +23,11 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collection;
@@ -67,4 +71,22 @@ public final class JetScopeUtils {
 
         return result;
     }
+
+    public static JetScope makeScopeForPropertyAccessor(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetScope parentScope,
+            @NotNull DescriptorResolver descriptorResolver,
+            @NotNull BindingTrace trace
+    ) {
+        JetScope propertyDeclarationInnerScope = descriptorResolver
+                .getPropertyDeclarationInnerScope(propertyDescriptor, parentScope,
+                                                  propertyDescriptor.getTypeParameters(),
+                                                  propertyDescriptor.getReceiverParameter(), trace);
+        WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, parentScope.getContainingDeclaration(),
+                                                            new TraceBasedRedeclarationHandler(trace), "Accessor Scope");
+        accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        return accessorScope;
+    }
+
 }

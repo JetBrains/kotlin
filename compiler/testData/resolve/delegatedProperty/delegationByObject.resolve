@@ -1,0 +1,4 @@
+object ~A~A
+
+val a: Int by `A`A
+

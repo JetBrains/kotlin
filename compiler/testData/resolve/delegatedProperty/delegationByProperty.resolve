@@ -1,0 +1,6 @@
+class A
+
+~b~val b = A()
+
+val a: Int by `b`b
+

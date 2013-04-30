@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -38,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -993,9 +995,17 @@ public class DescriptorResolver {
         if (propertyTypeRef == null) {
             final JetExpression initializer = variable.getInitializer();
             if (initializer == null) {
-                if (hasDelegate) {
-                    // todo resolve type from delegate
-                    return ErrorUtils.createErrorType("Type from delegate");
+                if (hasDelegate && variableDescriptor instanceof PropertyDescriptor) {
+                    final JetExpression propertyDelegateExpression = ((JetProperty) variable).getDelegateExpression();
+                    if (propertyDelegateExpression != null) {
+                        return DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
+                            @Override
+                            protected JetType compute() {
+                                return resolveDelegatedPropertyType((PropertyDescriptor) variableDescriptor, scope,
+                                                                            propertyDelegateExpression, dataFlowInfo, trace);
+                            }
+                        });
+                    }
                 }
                 if (!notLocal) {
                     trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable));
@@ -1021,6 +1031,26 @@ public class DescriptorResolver {
         else {
             return typeResolver.resolveType(scope, propertyTypeRef, trace, true);
         }
+    }
+
+    @NotNull
+    private JetType resolveDelegatedPropertyType(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetScope scope,
+            @NotNull JetExpression delegateExpression,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
+        JetType type = expressionTypingServices.safeGetType(scope, delegateExpression, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace);
+
+        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, this, trace);
+        JetType getterReturnType = DelegatedPropertyUtils
+                .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, expressionTypingServices, trace,
+                                                         accessorScope);
+        if (getterReturnType != null) {
+            return getterReturnType;
+        }
+        return ErrorUtils.createErrorType("Type from delegate");
     }
 
     @Nullable
