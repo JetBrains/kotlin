@@ -943,6 +943,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override/typeMismatchOnOverride"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
+            @TestMetadata("beforeChangeOverridingPropertyTypeToFunctionType.kt")
+            public void testChangeOverridingPropertyTypeToFunctionType() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverridingPropertyTypeToFunctionType.kt");
+            }
+            
             @TestMetadata("beforePropertyReturnTypeMismatchOnOverride.kt")
             public void testPropertyReturnTypeMismatchOnOverride() throws Exception {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforePropertyReturnTypeMismatchOnOverride.kt");
@@ -1074,6 +1079,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/typeAddition/beforeAmbiguousPropertyReturnType.kt");
         }
         
+        @TestMetadata("beforeChangeAccessorTypeToFunctionType.kt")
+        public void testChangeAccessorTypeToFunctionType() throws Exception {
+            doTest("idea/testData/quickfix/typeAddition/beforeChangeAccessorTypeToFunctionType.kt");
+        }
+        
         @TestMetadata("beforeNoAddErrorType.kt")
         public void testNoAddErrorType() throws Exception {
             doTest("idea/testData/quickfix/typeAddition/beforeNoAddErrorType.kt");
@@ -1159,6 +1169,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public static class TypeMismatch extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("beforeChangeFunctionReturnTypeToFunctionType.kt")
+        public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeChangeFunctionReturnTypeToFunctionType.kt");
+        }
+        
+        @TestMetadata("beforeChangeParameterTypeToFunctionType.kt")
+        public void testChangeParameterTypeToFunctionType() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeChangeParameterTypeToFunctionType.kt");
         }
         
         @TestMetadata("beforeChangeReturnTypeWhenFunctionNameIsMissing.kt")
@@ -1255,6 +1275,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeAutocastImpossible3.kt")
             public void testAutocastImpossible3() throws Exception {
                 doTest("idea/testData/quickfix/typeMismatch/casts/beforeAutocastImpossible3.kt");
+            }
+            
+            @TestMetadata("beforeCastToFunctionType.kt")
+            public void testCastToFunctionType() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/casts/beforeCastToFunctionType.kt");
             }
             
             @TestMetadata("beforeTypeMismatch1.kt")
