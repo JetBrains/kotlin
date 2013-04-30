@@ -683,6 +683,16 @@ public class JetPsiUtil {
         return false;
     }
 
+    public static <C extends Collection<JetVariableDeclaration>> C getBlockVariableDeclarations(@NotNull JetBlockExpression block, @NotNull C collection) {
+        for (JetElement element : block.getStatements()) {
+            if (element instanceof JetVariableDeclaration) {
+                collection.add((JetVariableDeclaration) element);
+            }
+        }
+
+        return collection;
+    }
+
     public static boolean checkWhenExpressionHasSingleElse(JetWhenExpression whenExpression) {
         int elseCount = 0;
         for (JetWhenEntry entry : whenExpression.getEntries()) {

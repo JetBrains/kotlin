@@ -1,10 +1,11 @@
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import static org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*;
 
 import java.util.List;
 
@@ -87,7 +88,6 @@ public class WhenUtils {
 
     public static void flattenWhen(@NotNull JetWhenExpression whenExpression) {
         JetExpression subjectExpression = whenExpression.getSubjectExpression();
-        boolean hasSubject = subjectExpression != null;
 
         JetExpression elseBranch = JetPsiUtil.getWhenElseBranch(whenExpression);
         assert elseBranch instanceof JetWhenExpression : TRANSFORM_WITHOUT_CHECK;
@@ -97,38 +97,36 @@ public class WhenUtils {
         List<JetWhenEntry> outerEntries = whenExpression.getEntries();
         List<JetWhenEntry> innerEntries = nestedWhenExpression.getEntries();
 
-        JetWhenExpression newWhenExpression = new JetPsiFactory.WhenTemplateBuilder(hasSubject)
-                .addBranchesWithSingleCondition(outerEntries.size() + innerEntries.size() - 2)
-                .toExpression(whenExpression.getProject());
+        JetPsiFactory.WhenBuilder builder = new JetPsiFactory.WhenBuilder(subjectExpression);
 
-        if (hasSubject) {
-            JetExpression dummySubjectExpression = newWhenExpression.getSubjectExpression();
-            assertNotNull(dummySubjectExpression);
-
-            //noinspection ConstantConditions
-            dummySubjectExpression.replace(subjectExpression);
-        }
-
-        List<JetWhenEntry> newEntries = newWhenExpression.getEntries();
-
-        int i = 0;
         for (JetWhenEntry entry : outerEntries) {
-            if (!entry.isElse()) {
-                newEntries.get(i++).replace(entry);
-            }
-        }
-        for (JetWhenEntry entry : innerEntries) {
-            newEntries.get(i++).replace(entry);
+            if (entry.isElse()) continue;
+
+            builder.entry(entry);
         }
 
-        whenExpression.replace(newWhenExpression);
+        for (JetWhenEntry entry : innerEntries) {
+            builder.entry(entry);
+        }
+
+        whenExpression.replace(builder.toExpression(whenExpression.getProject()));
     }
 
-    private static JetWhenExpression createWhenTemplateWithSubject(@NotNull JetWhenExpression whenExpression) {
-        JetPsiFactory.WhenTemplateBuilder builder = new JetPsiFactory.WhenTemplateBuilder(true);
+    public static void introduceWhenSubject(@NotNull JetWhenExpression whenExpression) {
+        JetExpression subject = getWhenSubjectCandidate(whenExpression);
+        assertNotNull(subject);
+
+        JetPsiFactory.WhenBuilder builder = new JetPsiFactory.WhenBuilder(subject);
 
         for (JetWhenEntry entry : whenExpression.getEntries()) {
-            if (entry.isElse()) continue;
+            JetExpression branchExpression = entry.getExpression();
+            assertNotNull(branchExpression);
+
+            if (entry.isElse()) {
+                //noinspection ConstantConditions
+                builder.elseEntry(branchExpression);
+                continue;
+            }
 
             for (JetWhenCondition condition : entry.getConditions()) {
                 assert condition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
@@ -136,81 +134,13 @@ public class WhenUtils {
                 JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
 
                 if (conditionExpression instanceof JetIsExpression) {
-                    builder.addIsCondition(((JetIsExpression) conditionExpression).isNegated());
-                }
-                else if (conditionExpression instanceof JetBinaryExpression) {
-                    JetBinaryExpression binaryExpression = (JetBinaryExpression) conditionExpression;
+                    JetIsExpression isExpression = (JetIsExpression) conditionExpression;
 
-                    IElementType op = binaryExpression.getOperationToken();
-                    if (op == JetTokens.IN_KEYWORD) {
-                        builder.addInCondition(false);
-                    }
-                    else if (op == JetTokens.NOT_IN) {
-                        builder.addInCondition(true);
-                    }
-                    else if (op == JetTokens.EQEQ) {
-                        builder.addExpressionCondition();
-                    }
-                    else assert false : TRANSFORM_WITHOUT_CHECK;
-                }
-                else assert false : TRANSFORM_WITHOUT_CHECK;
-            }
-
-            builder.finishBranch();
-        }
-
-        return builder.toExpression(whenExpression.getProject());
-    }
-
-    public static void introduceWhenSubject(@NotNull JetWhenExpression whenExpression) {
-        JetExpression subject = getWhenSubjectCandidate(whenExpression);
-        assertNotNull(subject);
-
-        JetWhenExpression newWhenExpression = createWhenTemplateWithSubject(whenExpression);
-
-        JetExpression newSubject = newWhenExpression.getSubjectExpression();
-        assertNotNull(newSubject);
-
-        //noinspection ConstantConditions
-        newSubject.replace(subject);
-
-        int i = 0;
-        List<JetWhenEntry> entries = whenExpression.getEntries();
-        List<JetWhenEntry> newEntries = newWhenExpression.getEntries();
-        for (JetWhenEntry newEntry : newEntries) {
-            JetWhenEntry entry = entries.get(i++);
-
-            JetExpression branchExpression = entry.getExpression();
-            assertNotNull(branchExpression);
-
-            JetExpression newBranchExpression = newEntry.getExpression();
-            assertNotNull(newBranchExpression);
-
-            //noinspection ConstantConditions
-            newBranchExpression.replace(branchExpression);
-
-            int j = 0;
-            JetWhenCondition[] conditions = entry.getConditions();
-            JetWhenCondition[] newConditions = newEntry.getConditions();
-
-            for (JetWhenCondition newCondition : newConditions) {
-                JetWhenCondition condition = conditions[j++];
-
-                assert condition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
-
-                JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-
-                if (conditionExpression instanceof JetIsExpression) {
-                    assert newCondition instanceof JetWhenConditionIsPattern : TRANSFORM_WITHOUT_CHECK;
-
-                    JetTypeReference typeReference = ((JetIsExpression) conditionExpression).getTypeRef();
+                    JetTypeReference typeReference = isExpression.getTypeRef();
                     assertNotNull(typeReference);
 
-                    JetTypeReference newTypeReference = ((JetWhenConditionIsPattern) newCondition).getTypeRef();
-                    assertNotNull(newTypeReference);
-
                     //noinspection ConstantConditions
-                    newTypeReference.replace(typeReference);
+                    builder.pattern(typeReference, isExpression.isNegated());
                 }
                 else if (conditionExpression instanceof JetBinaryExpression) {
                     JetBinaryExpression binaryExpression = (JetBinaryExpression) conditionExpression;
@@ -219,48 +149,31 @@ public class WhenUtils {
                     assertNotNull(rhs);
 
                     IElementType op = binaryExpression.getOperationToken();
-                    if (op == JetTokens.IN_KEYWORD || op == JetTokens.NOT_IN) {
-                        assert newCondition instanceof JetWhenConditionInRange : TRANSFORM_WITHOUT_CHECK;
-
-                        JetExpression newRangeExpression = ((JetWhenConditionInRange) newCondition).getRangeExpression();
-                        assertNotNull(newRangeExpression);
-
+                    if (op == JetTokens.IN_KEYWORD) {
                         //noinspection ConstantConditions
-                        newRangeExpression.replace(rhs);
+                        builder.range(rhs, false);
+                    }
+                    else if (op == JetTokens.NOT_IN) {
+                        //noinspection ConstantConditions
+                        builder.range(rhs, true);
                     }
                     else if (op == JetTokens.EQEQ) {
-                        assert newCondition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
-
-                        JetExpression newConditionExpression = ((JetWhenConditionWithExpression) newCondition).getExpression();
-                        assertNotNull(newConditionExpression);
-
                         //noinspection ConstantConditions
-                        newConditionExpression.replace(rhs);
+                        builder.condition(rhs);
                     }
                     else assert false : TRANSFORM_WITHOUT_CHECK;
                 }
                 else assert false : TRANSFORM_WITHOUT_CHECK;
             }
+
+            //noinspection ConstantConditions
+            builder.branchExpression(branchExpression);
         }
 
-        whenExpression.replace(newWhenExpression);
+        whenExpression.replace(builder.toExpression(whenExpression.getProject()));
     }
 
-    private static JetWhenExpression createWhenTemplateWithoutSubject(@NotNull JetWhenExpression whenExpression) {
-        JetPsiFactory.WhenTemplateBuilder builder = new JetPsiFactory.WhenTemplateBuilder(false);
-
-        for (JetWhenEntry entry : whenExpression.getEntries()) {
-            if (!entry.isElse()) {
-                builder.addBranchWithMultiCondition(entry.getConditions().length);
-            }
-        }
-
-        return builder.toExpression(whenExpression.getProject());
-    }
-
-    static JetExpression whenConditionToExpression(@NotNull JetWhenCondition condition, JetExpression subject) {
-        Project project = condition.getProject();
-
+    static String whenConditionToExpressionText(@NotNull JetWhenCondition condition, JetExpression subject) {
         if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
 
@@ -270,7 +183,7 @@ public class WhenUtils {
             assertNotNull(subject);
 
             //noinspection ConstantConditions
-            return JetPsiFactory.createIsExpression(project, subject, typeReference, patternCondition.isNegated());
+            return toBinaryExpression(subject, (patternCondition.isNegated() ? "!is" : "is"), typeReference);
         }
 
         if (condition instanceof JetWhenConditionInRange) {
@@ -282,7 +195,7 @@ public class WhenUtils {
             assertNotNull(subject);
 
             //noinspection ConstantConditions
-            return JetPsiFactory.createBinaryExpression(project, subject, rangeCondition.getOperationReference().getText(), rangeExpression);
+            return toBinaryExpression(subject, rangeCondition.getOperationReference().getText(), rangeExpression);
         }
 
         assert condition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
@@ -291,45 +204,36 @@ public class WhenUtils {
         assertNotNull(conditionExpression);
 
         //noinspection ConstantConditions
-        return subject != null ? JetPsiFactory.createBinaryExpression(project, subject, "==", conditionExpression) : conditionExpression;
+        return subject != null ?
+               toBinaryExpression(parenthesizeIfNeeded(subject), "==", parenthesizeIfNeeded(conditionExpression))
+                               : conditionExpression.getText();
     }
 
     public static void eliminateWhenSubject(@NotNull JetWhenExpression whenExpression) {
         JetExpression subject = whenExpression.getSubjectExpression();
         assertNotNull(subject);
 
-        JetWhenExpression newWhenExpression = createWhenTemplateWithoutSubject(whenExpression);
+        JetPsiFactory.WhenBuilder builder = new JetPsiFactory.WhenBuilder();
 
-        int i = 0;
-        List<JetWhenEntry> entries = whenExpression.getEntries();
-        List<JetWhenEntry> newEntries = newWhenExpression.getEntries();
-        for (JetWhenEntry newEntry : newEntries) {
-            JetWhenEntry entry = entries.get(i++);
-
+        for (JetWhenEntry entry : whenExpression.getEntries()) {
             JetExpression branchExpression = entry.getExpression();
             assertNotNull(branchExpression);
 
-            JetExpression newBranchExpression = newEntry.getExpression();
-            assertNotNull(newBranchExpression);
+            if (entry.isElse()) {
+                //noinspection ConstantConditions
+                builder.elseEntry(branchExpression);
+
+                continue;
+            }
+
+            for (JetWhenCondition condition : entry.getConditions()) {
+                builder.condition(whenConditionToExpressionText(condition, subject));
+            }
 
             //noinspection ConstantConditions
-            newBranchExpression.replace(branchExpression);
-
-            int j = 0;
-            JetWhenCondition[] conditions = entry.getConditions();
-            JetWhenCondition[] newConditions = newEntry.getConditions();
-
-            for (JetWhenCondition newCondition : newConditions) {
-                JetWhenCondition condition = conditions[j++];
-
-                JetExpression newConditionExpression = ((JetWhenConditionWithExpression) newCondition).getExpression();
-                assertNotNull(newConditionExpression);
-
-                //noinspection ConstantConditions
-                newConditionExpression.replace(whenConditionToExpression(condition, subject));
-            }
+            builder.branchExpression(branchExpression);
         }
 
-        whenExpression.replace(newWhenExpression);
+        whenExpression.replace(builder.toExpression(whenExpression.getProject()));
     }
 }

@@ -47,6 +47,7 @@ public class BranchedFoldingUtils {
             }
 
             if (assignment.getParent() instanceof JetBlockExpression) {
+                //noinspection ConstantConditions
                 return !JetPsiUtil.checkVariableDeclarationInBlock((JetBlockExpression) assignment.getParent(), assignment.getLeft().getText());
             }
 
@@ -239,7 +240,7 @@ public class BranchedFoldingUtils {
         assertNotNull(elseRoot);
 
         //noinspection ConstantConditions
-        JetIfExpression newIfExpression = JetPsiFactory.createIf(project, condition, thenRoot, elseRoot, false, false);
+        JetIfExpression newIfExpression = JetPsiFactory.createIf(project, condition, thenRoot, elseRoot);
         JetReturnExpression newReturnExpression = JetPsiFactory.createReturn(project, newIfExpression);
 
         newIfExpression = (JetIfExpression)newReturnExpression.getReturnedExpression();

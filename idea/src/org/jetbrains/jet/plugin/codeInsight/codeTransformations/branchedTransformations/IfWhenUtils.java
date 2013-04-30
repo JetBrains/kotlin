@@ -1,12 +1,13 @@
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*;
 
 public class IfWhenUtils {
 
@@ -71,8 +72,7 @@ public class IfWhenUtils {
     }
 
     public static void transformIfToWhen(@NotNull JetIfExpression ifExpression) {
-        List<MultiGuardedExpression> positiveBranches = new ArrayList<MultiGuardedExpression>();
-        JetExpression elseExpression = null;
+        JetPsiFactory.WhenBuilder builder = new JetPsiFactory.WhenBuilder();
 
         JetIfExpression currIfExpression = ifExpression;
         do {
@@ -84,123 +84,73 @@ public class IfWhenUtils {
             assertNotNull(thenBranch);
             assertNotNull(elseBranch);
 
+            List<JetExpression> orBranches = splitExpressionToOrBranches(condition);
+            for (JetExpression orBranch : orBranches) {
+                builder.condition(orBranch);
+            }
             //noinspection ConstantConditions
-            positiveBranches.add(new MultiGuardedExpression(splitExpressionToOrBranches(condition), thenBranch));
+            builder.branchExpression(thenBranch);
 
             if (elseBranch instanceof JetIfExpression) {
                 currIfExpression = (JetIfExpression) elseBranch;
             }
             else {
                 currIfExpression = null;
-                elseExpression = elseBranch;
+                //noinspection ConstantConditions
+                builder.elseEntry(elseBranch);
             }
         } while (currIfExpression != null);
 
-        JetPsiFactory.WhenTemplateBuilder builder = new JetPsiFactory.WhenTemplateBuilder(false);
-        for (MultiGuardedExpression positiveBranch : positiveBranches) {
-            builder.addBranchWithMultiCondition(positiveBranch.getConditions().size());
-        }
-
-        JetWhenExpression whenExpression = builder.toExpression(ifExpression.getProject());
-
-        int i = 0;
-        List<JetWhenEntry> entries = whenExpression.getEntries();
-        for (JetWhenEntry entry : entries) {
-            if (entry.isElse()) {
-                //noinspection ConstantConditions
-                entry.getExpression().replace(elseExpression);
-                break;
-            }
-
-            MultiGuardedExpression branch = positiveBranches.get(i++);
-
-            //noinspection ConstantConditions
-            entry.getExpression().replace(branch.getBaseExpression());
-
-            int j = 0;
-            JetWhenCondition[] conditions = entry.getConditions();
-            for (JetWhenCondition condition : conditions) {
-                assert condition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
-
-                JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-                assertNotNull(conditionExpression);
-
-                //noinspection ConstantConditions
-                conditionExpression.replace(branch.getConditions().get(j++));
-            }
-        }
-
-        ifExpression.replace(whenExpression);
+        ifExpression.replace(builder.toExpression(ifExpression.getProject()));
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private static JetExpression combineWhenConditions(Project project, JetWhenCondition[] conditions, JetExpression subject) {
+    private static String combineWhenConditions(JetWhenCondition[] conditions, JetExpression subject) {
         int n = conditions.length;
-        assert n > 0 : TRANSFORM_WITHOUT_CHECK;
+        if (n == 0) return "";
 
-        JetWhenCondition condition = conditions[n - 1];
+        JetWhenCondition condition = conditions[0];
         assert condition != null : TRANSFORM_WITHOUT_CHECK;
 
-        JetExpression resultExpr = WhenUtils.whenConditionToExpression(condition, subject);
+        StringBuilder sb = new StringBuilder();
+
+        String text = WhenUtils.whenConditionToExpressionText(condition, subject);
         if (n > 1) {
-            resultExpr = JetPsiFactory.createParenthesizedExpressionIfNeeded(project, resultExpr);
+            text = parenthesizeTextIfNeeded(text);
         }
+        sb.append(text);
 
-        for (int i = n - 2; i >= 0; i--) {
+        for (int i = 1; i < n; i++) {
             JetWhenCondition currCondition = conditions[i];
-
             assert currCondition != null : TRANSFORM_WITHOUT_CHECK;
 
-            resultExpr = JetPsiFactory.createBinaryExpression(
-                    project,
-                    JetPsiFactory.createParenthesizedExpressionIfNeeded(project, WhenUtils.whenConditionToExpression(currCondition, subject)),
-                    "||",
-                    resultExpr);
+            sb.append(" || ").append(parenthesizeTextIfNeeded(WhenUtils.whenConditionToExpressionText(currCondition, subject)));
         }
 
-        return resultExpr;
+        return sb.toString();
     }
 
     public static void transformWhenToIf(@NotNull JetWhenExpression whenExpression) {
-        Project project = whenExpression.getProject();
-
-        JetExpression elseExpression = null;
-        List<GuardedExpression> positiveBranches = new ArrayList<GuardedExpression>();
+        JetPsiFactory.IfChainBuilder builder = new JetPsiFactory.IfChainBuilder();
 
         List<JetWhenEntry> entries = whenExpression.getEntries();
         for (JetWhenEntry entry : entries) {
             JetExpression branch = entry.getExpression();
-
             assertNotNull(branch);
 
             if (entry.isElse()) {
-                elseExpression = branch;
+                //noinspection ConstantConditions
+                builder.elseBranch(branch);
             } else {
-                JetExpression branchCondition = combineWhenConditions(project, entry.getConditions(), whenExpression.getSubjectExpression());
-                JetExpression branchExpression = entry.getExpression();
+                String branchConditionText = combineWhenConditions(entry.getConditions(), whenExpression.getSubjectExpression());
 
+                JetExpression branchExpression = entry.getExpression();
                 assertNotNull(branchExpression);
 
                 //noinspection ConstantConditions
-                positiveBranches.add(new GuardedExpression(branchCondition, branchExpression));
+                builder.ifBranch(branchConditionText, branchExpression.getText());
             }
         }
 
-        assertNotNull(elseExpression);
-        assert !positiveBranches.isEmpty() : TRANSFORM_WITHOUT_CHECK;
-
-        JetExpression outerExpression = elseExpression;
-
-        for (int i = positiveBranches.size() - 1; i >= 0; i--) {
-            GuardedExpression branch = positiveBranches.get(i);
-
-            outerExpression = JetPsiFactory.createIf(
-                    project,
-                    branch.getCondition(), branch.getBaseExpression(), outerExpression,
-                    !(branch.getBaseExpression() instanceof JetBlockExpression), !(outerExpression instanceof JetBlockExpression));
-        }
-
-        //noinspection ConstantConditions
-        whenExpression.replace(outerExpression);
+        whenExpression.replace(builder.toExpression(whenExpression.getProject()));
     }
 }

@@ -254,17 +254,9 @@ public class JetPsiFactory {
         return (JetBinaryExpression) createExpression(project, lhs + " " + op + " " + rhs);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @NotNull
     public static JetBinaryExpression createBinaryExpression(Project project, @NotNull JetExpression lhs, @NotNull String op, @NotNull JetExpression rhs) {
-        JetBinaryExpression assignment = createBinaryExpression(project, "_", op, "_");
-
-        assert assignment.getRight() != null;
-
-        assignment = (JetBinaryExpression)assignment.getLeft().replace(lhs).getParent();
-        assignment = (JetBinaryExpression)assignment.getRight().replace(rhs).getParent();
-
-        return assignment;
+        return createBinaryExpression(project, lhs.getText(), op, rhs.getText());
     }
 
     public static JetTypeCodeFragment createTypeCodeFragment(Project project, String text, PsiElement context) {
@@ -280,15 +272,9 @@ public class JetPsiFactory {
         return (JetIsExpression) createExpression(project, lhs + " " + (negated ? "!is" : "is") + " " + rhs);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @NotNull
     public static JetIsExpression createIsExpression(Project project, @NotNull JetExpression lhs, @NotNull JetTypeReference rhs, boolean negated) {
-        JetIsExpression isExpression = createIsExpression(project, "_", "_", negated);
-
-        isExpression = (JetIsExpression)isExpression.getLeftHandSide().replace(lhs).getParent();
-        isExpression = (JetIsExpression)isExpression.getTypeRef().replace(rhs).getParent();
-
-        return isExpression;
+        return createIsExpression(project, lhs.getText(), rhs.getText(), negated);
     }
 
     @NotNull
@@ -296,65 +282,84 @@ public class JetPsiFactory {
         return (JetReturnExpression) createExpression(project, "return " + text);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @NotNull
     public static JetReturnExpression createReturn(Project project, @NotNull JetExpression expression) {
-        JetReturnExpression returnExpr = createReturn(project, "_");
-
-        assert returnExpr.getReturnedExpression() != null;
-
-        return (JetReturnExpression)returnExpr.getReturnedExpression().replace(expression).getParent();
+        return createReturn(project, expression.getText());
     }
 
     @NotNull
-    public static JetIfExpression createIf(
-            Project project,
-            @NotNull String condText, @NotNull String thenText, @Nullable String elseText,
-            boolean thenNewLine, boolean elseNewLine) {
-        String thenSpace = thenNewLine ? "\n" : " ";
-        String elseSpace = elseNewLine ? "\n" : " ";
-        return (JetIfExpression) createExpression(project, "if (" + condText + ")" + thenSpace + thenText + (elseText != null ? elseSpace + "else " + elseText : ""));
+    public static JetIfExpression createIf(Project project,
+            @NotNull JetExpression condition, @NotNull JetExpression thenExpr, @Nullable JetExpression elseExpr) {
+        return (JetIfExpression) createExpression(project, JetPsiUnparsingUtils.toIf(condition, thenExpr, elseExpr));
     }
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    public static JetIfExpression createIf(
-            Project project,
-            @NotNull JetExpression condition, @NotNull JetExpression thenExpr, @Nullable JetExpression elseExpr,
-            boolean thenNewLine, boolean elseNewLine) {
-        JetIfExpression ifExpr = createIf(project, "_", "_", elseExpr != null ? "_" : null, thenNewLine, elseNewLine);
+    public static class IfChainBuilder {
+        private final StringBuilder sb = new StringBuilder();
+        private boolean first = true;
+        private boolean frozen = false;
 
-        assert ifExpr.getCondition() != null;
-        assert ifExpr.getThen() != null;
-        assert elseExpr == null || ifExpr.getElse() != null;
-
-        ifExpr = (JetIfExpression)ifExpr.getCondition().replace(condition).getParent().getParent();
-        ifExpr = (JetIfExpression)ifExpr.getThen().replace(thenExpr).getParent().getParent();
-        if (elseExpr != null) {
-            ifExpr = (JetIfExpression)ifExpr.getElse().replace(elseExpr).getParent().getParent();
+        public IfChainBuilder() {
         }
 
-        return ifExpr;
+        @NotNull
+        public IfChainBuilder ifBranch(@NotNull String conditionText, @NotNull String expressionText) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append("else ");
+            }
+
+            sb.append("if (").append(conditionText).append(") ").append(expressionText).append("\n");
+            return this;
+        }
+
+        @NotNull
+        public IfChainBuilder ifBranch(@NotNull JetExpression condition, @NotNull JetExpression expression) {
+            return ifBranch(condition.getText(), expression.getText());
+        }
+
+        @NotNull
+        public IfChainBuilder elseBranch(@NotNull String expressionText) {
+            sb.append("else ").append(expressionText);
+            return this;
+        }
+
+        @NotNull
+        public IfChainBuilder elseBranch(@NotNull JetExpression expression) {
+            return elseBranch(expression.getText());
+        }
+
+        @NotNull
+        public JetIfExpression toExpression(Project project) {
+            if (!frozen) {
+                frozen = true;
+            }
+            return (JetIfExpression) createExpression(project, sb.toString());
+        }
     }
 
-    public static class WhenTemplateBuilder {
+    public static class WhenBuilder {
         private final StringBuilder sb = new StringBuilder("when ");
         private boolean frozen = false;
         private boolean inCondition = false;
 
-        public WhenTemplateBuilder(boolean addSubject) {
-            if (addSubject) {
-                sb.append("(_) ");
+        public WhenBuilder() {
+            this((String)null);
+        }
+
+        public WhenBuilder(@Nullable String subjectText) {
+            if (subjectText != null) {
+                sb.append("(").append(subjectText).append(") ");
             }
             sb.append("{\n");
         }
 
-        private void finishAndFreeze() {
-            sb.append("else -> _\n}");
-            frozen = true;
+        public WhenBuilder(@Nullable JetExpression subject) {
+            this(subject != null ? subject.getText() : null);
         }
 
-        private WhenTemplateBuilder addCondition(String text) {
+        @NotNull
+        public WhenBuilder condition(@NotNull String text) {
             assert !frozen;
 
             if (!inCondition) {
@@ -367,84 +372,95 @@ public class JetPsiFactory {
             return this;
         }
 
-        public WhenTemplateBuilder addBranchWithSingleCondition() {
-            assert !frozen;
-
-            sb.append("_ -> _\n");
-
-            return this;
+        @NotNull
+        public WhenBuilder condition(@NotNull JetExpression expression) {
+            return condition(expression.getText());
         }
 
-        public WhenTemplateBuilder addBranchesWithSingleCondition(int count) {
-            for (int i = 0; i < count; i++) {
-                addBranchWithSingleCondition();
-            }
-
-            return this;
+        @NotNull
+        public WhenBuilder pattern(@NotNull String typeReferenceText, boolean negated) {
+            return condition((negated ? "!is" : "is") + " " + typeReferenceText);
         }
 
-        public WhenTemplateBuilder addBranchWithMultiCondition(int conditionCount) {
-            assert !frozen;
-            assert conditionCount > 0;
-
-            sb.append("_");
-            for (int i = 0; i < conditionCount - 1; i++) {
-                sb.append(", _");
-            }
-            sb.append(" -> _\n");
-
-            return this;
+        @NotNull
+        public WhenBuilder pattern(@NotNull JetTypeReference typeReference, boolean negated) {
+            return pattern(typeReference.getText(), negated);
         }
 
-        public WhenTemplateBuilder addExpressionCondition() {
-            return addCondition("_");
+        @NotNull
+        public WhenBuilder range(@NotNull String argumentText, boolean negated) {
+            return condition((negated ? "!in" : "in") + " " + argumentText);
         }
 
-        public WhenTemplateBuilder addIsCondition(boolean negated) {
-            return addCondition((negated ? "!is" : "is") + " _");
+        @NotNull
+        public WhenBuilder range(@NotNull JetExpression argument, boolean negated) {
+            return range(argument.getText(), negated);
         }
 
-        public WhenTemplateBuilder addInCondition(boolean negated) {
-            return addCondition((negated ? "!in" : "in") + " _");
-        }
-
-        public WhenTemplateBuilder finishBranch() {
+        @NotNull
+        public WhenBuilder branchExpression(@NotNull String expressionText) {
             assert !frozen;
             assert inCondition;
 
             inCondition = false;
-            sb.append(" -> _\n");
+            sb.append(" -> ").append(expressionText).append("\n");
 
             return this;
         }
 
+        @NotNull
+        public WhenBuilder branchExpression(@NotNull JetExpression expression) {
+            return branchExpression(expression.getText());
+        }
+
+        @NotNull
+        public WhenBuilder entry(@NotNull String entryText) {
+            assert !frozen;
+            assert !inCondition;
+
+            sb.append(entryText).append("\n");
+
+            return this;
+        }
+
+        @NotNull
+        public WhenBuilder entry(@NotNull JetWhenEntry whenEntry) {
+            return entry(whenEntry.getText());
+        }
+
+        @NotNull
+        public WhenBuilder elseEntry(@NotNull String text) {
+            return entry("else -> " + text);
+        }
+
+        @NotNull
+        public WhenBuilder elseEntry(@NotNull JetExpression expression) {
+            return elseEntry(expression.getText());
+        }
+
+        @NotNull
         public JetWhenExpression toExpression(Project project) {
             if (!frozen) {
-                finishAndFreeze();
+                sb.append("}");
+                frozen = true;
             }
             return (JetWhenExpression) createExpression(project, sb.toString());
         }
     }
 
-    public static JetWhenExpression createWhenWithoutSubject(Project project, int positiveBranchCount) {
-        return new WhenTemplateBuilder(false).addBranchesWithSingleCondition(positiveBranchCount).toExpression(project);
-    }
-
+    @NotNull
     public static JetParenthesizedExpression createParenthesizedExpression(Project project, @NotNull String text) {
-        return (JetParenthesizedExpression)createExpression(project, "(" + text + ")");
+        return (JetParenthesizedExpression) createExpression(project, "(" + text + ")");
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public static JetParenthesizedExpression createParenthesizedExpression(Project project, @NotNull JetExpression expression) {
-        JetParenthesizedExpression parenthesizedExpression = createParenthesizedExpression(project, "_");
-        parenthesizedExpression.getExpression().replace(expression);
-
-        return parenthesizedExpression;
+        return createParenthesizedExpression(project, expression.getText());
     }
 
+    @NotNull
     public static JetParenthesizedExpression createParenthesizedExpressionIfNeeded(Project project, @NotNull JetExpression expression) {
         return (expression instanceof JetParenthesizedExpression) ?
-               (JetParenthesizedExpression) expression :
-               createParenthesizedExpression(project, expression);
+               (JetParenthesizedExpression) expression : createParenthesizedExpression(project, expression);
     }
 }

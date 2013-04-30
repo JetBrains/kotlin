@@ -35,11 +35,10 @@ public class BranchedUnfoldingUtils {
 
         if (JetPsiUtil.isAssignment(root)) {
             JetBinaryExpression assignment = (JetBinaryExpression)root;
-            JetExpression lhs = assignment.getLeft();
+
+            assertNotNull(assignment.getLeft());
+
             JetExpression rhs = assignment.getRight();
-
-            if (!(lhs instanceof JetSimpleNameExpression)) return null;
-
             if (rhs instanceof JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF;
             if (rhs instanceof JetWhenExpression) return UnfoldableKind.ASSIGNMENT_TO_WHEN;
         } else if (root instanceof JetReturnExpression) {
@@ -75,6 +74,7 @@ public class BranchedUnfoldingUtils {
         assertNotNull(thenExpr);
         assertNotNull(elseExpr);
 
+        //noinspection ConstantConditions
         thenExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, thenExpr));
         elseExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, elseExpr));
 
@@ -97,6 +97,7 @@ public class BranchedUnfoldingUtils {
 
             assertNotNull(currExpr);
 
+            //noinspection ConstantConditions
             currExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, currExpr));
         }
 
