@@ -26,17 +26,17 @@ public interface JetIcons {
 
     Icon SMALL_LOGO_13 = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_13.png");
 
-    Icon CLASS = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/class_kotlin.png");
-    Icon ENUM = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/enum_kotlin.png");
+    Icon CLASS = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/classKotlin.png");
+    Icon ENUM = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/enumKotlin.png");
     Icon FILE = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_file.png");
-    Icon OBJECT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/object.png");
-    Icon TRAIT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/trait.png");
+    Icon OBJECT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/objectKotlin.png");
+    Icon TRAIT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/traitKotlin.png");
     Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/function.png");
     Icon EXTENSION_FUNCTION = PlatformIcons.FUNCTION_ICON;
     Icon LAMBDA = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/lambda.png");
-    Icon VAR = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/variable.png");
+    Icon VAR = PlatformIcons.VARIABLE_ICON;
     Icon VAL = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/value.png");
-    Icon PARAMETER = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/parameter.png");
+    Icon PARAMETER = PlatformIcons.PARAMETER_ICON;
     Icon FIELD_VAL = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/field_value.png");
     Icon FIELD_VAR = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/field_variable.png");
 

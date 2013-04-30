@@ -274,7 +274,7 @@
     <toolWindow id="Kotlin"
                 factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"
                 anchor="right"
-                icon="/org/jetbrains/jet/plugin/icons/kotlin_13.png"
+                icon="/org/jetbrains/jet/plugin/icons/kotlin13.png"
         />
 
     <applicationService serviceInterface="org.jetbrains.jet.plugin.editor.JetEditorOptions"
