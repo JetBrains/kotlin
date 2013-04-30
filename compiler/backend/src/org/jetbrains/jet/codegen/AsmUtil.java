@@ -130,11 +130,14 @@ public class AsmUtil {
         }
     }
 
-    public static boolean isAbstract(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT
                 || isInterface(functionDescriptor.getContainingDeclaration()))
-               && !isStatic(kind)
-               && kind != OwnerKind.TRAIT_IMPL;
+               && !isStaticMethod(kind, functionDescriptor);
+    }
+
+    public static boolean isStaticMethod(OwnerKind kind, FunctionDescriptor functionDescriptor) {
+        return isStatic(kind) || kind == OwnerKind.TRAIT_IMPL || JetTypeMapper.isAccessor(functionDescriptor);
     }
 
     public static boolean isStatic(OwnerKind kind) {
@@ -142,9 +145,6 @@ public class AsmUtil {
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
-        boolean isStatic = isStatic(kind);
-        boolean isAbstract = isAbstract(functionDescriptor, kind);
-
         int flags = getCommonCallableFlags(functionDescriptor);
 
         if (functionDescriptor.getModality() == Modality.FINAL && !(functionDescriptor instanceof ConstructorDescriptor)) {
@@ -155,17 +155,19 @@ public class AsmUtil {
             }
         }
 
-        if (isStatic || kind == OwnerKind.TRAIT_IMPL) {
+        if (isStaticMethod(kind, functionDescriptor)) {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstract) flags |= ACC_ABSTRACT;
+        if (isAbstractMethod(functionDescriptor, kind)) {
+            flags |= ACC_ABSTRACT;
+        }
+
+        if (JetTypeMapper.isAccessor(functionDescriptor)) {
+            flags |= ACC_SYNTHETIC;
+        }
 
         return flags;
-    }
-
-    public static int getConstructorAsmFlags(FunctionDescriptor functionDescriptor) {
-        return getCommonCallableFlags(functionDescriptor);
     }
 
     private static int getCommonCallableFlags(FunctionDescriptor functionDescriptor) {

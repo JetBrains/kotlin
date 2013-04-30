@@ -127,7 +127,7 @@ public class FunctionCodegen extends GenerationStateAware {
             genJetAnnotations(mv, functionDescriptor, jvmSignature);
         }
 
-        if (isAbstract(functionDescriptor, methodContext.getContextKind())) return;
+        if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
@@ -227,13 +227,13 @@ public class FunctionCodegen extends GenerationStateAware {
         List<JvmMethodParameterSignature> params = jvmMethodSignature.getKotlinParameterTypes();
         int shift = 0;
 
-        boolean isStatic = isStatic(ownerKind) || ownerKind == OwnerKind.TRAIT_IMPL;
+        boolean isStatic = AsmUtil.isStaticMethod(ownerKind, functionDescriptor);
         if (!isStatic) {
             //add this
             if (thisType != null) {
                 mv.visitLocalVariable("this", thisType.getDescriptor(), null, methodBegin, methodEnd, shift);
             } else {
-                //sometimes there is no thisType for callable reference
+                //TODO: provide thisType for callable reference
             }
             shift++;
         }
@@ -334,14 +334,13 @@ public class FunctionCodegen extends GenerationStateAware {
     ) {
 
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
-            assert jvmSignature instanceof JvmPropertyAccessorSignature;
+            assert jvmSignature instanceof JvmPropertyAccessorSignature : "jvmSignature for property should have JvmPropertyAccessorSignature type";
             PropertyCodegen.generateJetPropertyAnnotation(mv, (JvmPropertyAccessorSignature) jvmSignature,
                     ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty(), functionDescriptor.getVisibility());
         }
         else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
-            if (jvmSignature instanceof JvmPropertyAccessorSignature) {
-                throw new IllegalStateException();
-            }
+            assert !(jvmSignature instanceof JvmPropertyAccessorSignature) : "jvmSignature for function shouldn't have JvmPropertyAccessorSignature type";
+
             Modality modality = functionDescriptor.getModality();
             JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
             int kotlinFlags = getFlagsForVisibility(functionDescriptor.getVisibility());

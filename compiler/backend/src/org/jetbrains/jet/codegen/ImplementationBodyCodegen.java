@@ -36,7 +36,6 @@ import org.jetbrains.jet.codegen.context.ConstructorContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
-import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
@@ -79,9 +78,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JetType superClassType;
     private final Type classAsmType;
 
+    private final FunctionCodegen functionCodegen;
+    private final  PropertyCodegen propertyCodegen;
+
     public ImplementationBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
-        classAsmType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
+        this.classAsmType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
+        this.functionCodegen = new FunctionCodegen(context, v, state);
+        this.propertyCodegen = new PropertyCodegen(context, v, this.functionCodegen);
     }
 
     @Override
@@ -440,7 +444,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateTraitMethods();
 
-        generateAccessors();
+        generateSyntheticAccessors();
 
         generateEnumMethods();
 
@@ -798,13 +802,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateAccessors() {
+    private void generateSyntheticAccessors() {
         for (Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry : context.getAccessors().entrySet()) {
-            genAccessor(entry);
+            generateSyntheticAccessor(entry);
         }
     }
 
-    private void genAccessor(Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry) {
+    private void generateSyntheticAccessor(Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry) {
         if (entry.getValue() instanceof FunctionDescriptor) {
             FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
             FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
@@ -817,7 +821,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type[] argTypes = method.getArgumentTypes();
 
             String owner = typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isCallInsideSameModuleAsDeclared(original, context)).getInternalName();
-            MethodVisitor mv = v.newMethod(null, ACC_BRIDGE | ACC_SYNTHETIC | ACC_STATIC, bridge.getName().getName(),
+            MethodVisitor mv = v.newMethod(null, ACC_SYNTHETIC | ACC_STATIC, bridge.getName().getName(),
                                            method.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                 genStubCode(mv);
@@ -850,86 +854,46 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         else if (entry.getValue() instanceof PropertyDescriptor) {
             PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
-            PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
+            final PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
+            final StackValue.Property property = ExpressionCodegen.intermediateValueForProperty(original, false, null, state, context, true);
 
-            {
-                Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION).getAsmMethod();
-                JvmPropertyAccessorSignature originalSignature = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
-                Method originalMethod = originalSignature.getAsmMethod();
-                MethodVisitor mv =
-                        v.newMethod(null, ACC_BRIDGE | ACC_SYNTHETIC | ACC_STATIC, method.getName(), method.getDescriptor(), null, null);
-                PropertyGetterDescriptor getter = bridge.getGetter();
-                assert getter != null;
-                PropertyCodegen.generateJetPropertyAnnotation(mv,
-                                                              originalSignature,
-                                                              original,
-                                                              getter.getVisibility());
-                if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    genStubCode(mv);
-                }
-                else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                    mv.visitCode();
-
-                    InstructionAdapter iv = new InstructionAdapter(mv);
-
+            PropertyGetterDescriptor getter = bridge.getGetter();
+            assert getter != null;
+            functionCodegen.generateMethod(null, typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION), false, getter,
+                                           new FunctionGenerationStrategy.CodegenBased<PropertyGetterDescriptor>(state, getter) {
+                @Override
+                public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
+                    InstructionAdapter iv = codegen.v;
                     iv.load(0, OBJECT_TYPE);
-                    boolean hasBackingField = Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, original));
-                    boolean isInsideModule = isCallInsideSameModuleAsDeclared(original, context);
-                    if (original.getVisibility() == Visibilities.PRIVATE && hasBackingField) {
-                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(), original.getName().getName(),
-                                    originalMethod.getReturnType().getDescriptor());
-                    }
-                    else {
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(),
-                                         originalMethod.getName(), originalMethod.getDescriptor());
-                    }
-
-                    iv.areturn(method.getReturnType());
-                    FunctionCodegen.endVisit(iv, "accessor", null);
+                    property.put(property.type, iv);
+                    iv.areturn(signature.getAsmMethod().getReturnType());
                 }
-            }
+            });
+
 
             if (bridge.isVar()) {
-                Method method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION).getAsmMethod();
-                JvmPropertyAccessorSignature originalSignature2 = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
-                Method originalMethod = originalSignature2.getAsmMethod();
-                MethodVisitor mv =
-                        v.newMethod(null, ACC_STATIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                 PropertySetterDescriptor setter = bridge.getSetter();
                 assert setter != null;
-                PropertyCodegen.generateJetPropertyAnnotation(mv,
-                                                              originalSignature2,
-                                                              original,
-                                                              setter.getVisibility());
-                if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    genStubCode(mv);
-                }
-                else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                    mv.visitCode();
 
-                    InstructionAdapter iv = new InstructionAdapter(mv);
+                functionCodegen.generateMethod(null, typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION), false, setter,
+                                               new FunctionGenerationStrategy.CodegenBased<PropertySetterDescriptor>(state, setter) {
+                    @Override
+                    public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
+                        InstructionAdapter iv = codegen.v;
 
-                    iv.load(0, OBJECT_TYPE);
-                    Type[] argTypes = method.getArgumentTypes();
-                    for (int i = 1, reg = 1; i < argTypes.length; i++) {
-                        Type argType = argTypes[i];
-                        iv.load(reg, argType);
-                        //noinspection AssignmentToForLoopParameter
-                        reg += argType.getSize();
-                    }
-                    boolean isInsideModule = isCallInsideSameModuleAsDeclared(original, context);
-                    if (original.getVisibility() == Visibilities.PRIVATE && original.getModality() == Modality.FINAL) {
-                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(), original.getName().getName(),
-                                    originalMethod.getArgumentTypes()[0].getDescriptor());
-                    }
-                    else {
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isInsideModule).getInternalName(),
-                                         originalMethod.getName(), originalMethod.getDescriptor());
-                    }
+                        iv.load(0, OBJECT_TYPE);
+                        Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
+                        for (int i = 1, reg = 1; i < argTypes.length; i++) {
+                            Type argType = argTypes[i];
+                            iv.load(reg, argType);
+                            //noinspection AssignmentToForLoopParameter
+                            reg += argType.getSize();
+                        }
+                        property.store(property.type, iv);
 
-                    iv.areturn(method.getReturnType());
-                    FunctionCodegen.endVisit(iv, "accessor", null);
-                }
+                        iv.areturn(signature.getAsmMethod().getReturnType());
+                    }
+                });
             }
         }
         else {
@@ -979,26 +943,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         assert constructorDescriptor != null;
 
-        FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
-
         functionCodegen.generateMethod(null, constructorMethod, true, constructorDescriptor, constructorContext,
-                                       new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
+                   new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
 
-                                           @NotNull
-                                           @Override
-                                           protected FrameMap createFrameMap(
-                                                   @NotNull JetTypeMapper typeMapper, @NotNull CodegenContext context
-                                           ) {
-                                               return new ConstructorFrameMap(callableMethod, callableDescriptor);
-                                           }
+                       @NotNull
+                       @Override
+                       protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull CodegenContext context) {
+                           return new ConstructorFrameMap(callableMethod, callableDescriptor);
+                       }
 
-                                           @Override
-                                           public void doGenerateBody(
-                                                   ExpressionCodegen codegen, JvmMethodSignature signature
-                                           ) {
-                                               generatePrimaryConstructorImpl(callableDescriptor, codegen, closure);
-                                           }
-                                       });
+                       @Override
+                       public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
+                           generatePrimaryConstructorImpl(callableDescriptor, codegen, closure);
+                       }
+                   }
+        );
 
         FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod.getAsmMethod(), constructorDescriptor,
                                                 OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT);
@@ -1642,9 +1601,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generateDelegates(ClassDescriptor toClass, StackValue field) {
-        FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
-        PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen);
-
         for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (declaration instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;

@@ -30,7 +30,7 @@ import java.util.Collections;
 
 public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
     public AccessorForPropertyDescriptor(PropertyDescriptor pd, DeclarationDescriptor containingDeclaration, int index) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,
+        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.LOCAL,
               pd.isVar(), Name.identifier(pd.getName() + "$b$" + index),
               Kind.DECLARATION);
 
@@ -41,7 +41,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
 
     public static class Getter extends PropertyGetterDescriptorImpl {
         public Getter(AccessorForPropertyDescriptor property) {
-            super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,
+            super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.LOCAL,
                   false,
                   false, Kind.DECLARATION);
             initialize(property.getType());
@@ -50,7 +50,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
 
     public static class Setter extends PropertySetterDescriptorImpl {
         public Setter(AccessorForPropertyDescriptor property) {
-            super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,
+            super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.LOCAL,
                   false,
                   false, Kind.DECLARATION);
             initializeDefault();

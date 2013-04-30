@@ -550,7 +550,7 @@ public class JetTypeMapper extends BindingTraceAware {
                 thisClass, receiverParameterType, null);
     }
 
-    private static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
+    public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
         return descriptor instanceof AccessorForFunctionDescriptor ||
                descriptor instanceof AccessorForPropertyDescriptor ||
                descriptor instanceof AccessorForPropertyDescriptor.Getter ||

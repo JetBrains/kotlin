@@ -86,6 +86,7 @@ public abstract class FunctionGenerationStrategy<T extends CallableDescriptor> {
     public abstract static class CodegenBased<T extends CallableDescriptor> extends FunctionGenerationStrategy<T> {
 
         private final GenerationState state;
+
         protected final T callableDescriptor;
 
         public CodegenBased(@NotNull GenerationState state, T callableDescriptor) {
