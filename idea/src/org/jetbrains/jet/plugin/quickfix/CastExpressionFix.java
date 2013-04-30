@@ -33,19 +33,22 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     private final JetType type;
+    private final String renderedType;
 
     public CastExpressionFix(@NotNull JetExpression element, @NotNull JetType type) {
         super(element);
         this.type = type;
+        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("cast.expression.to.type", element.getText(), type.toString());
+        return JetBundle.message("cast.expression.to.type", element.getText(), renderedType);
     }
 
     @NotNull
@@ -64,9 +67,9 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetBinaryExpressionWithTypeRHS castedExpression =
-                (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, "(" + element.getText() + ") as " + type.toString());
+                (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, "(" + element.getText() + ") as " + renderedType);
         if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castedExpression.getLeft())) {
-            castedExpression = (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, element.getText() + " as " + type.toString());
+            castedExpression = (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, element.getText() + " as " + renderedType);
         }
 
         JetParenthesizedExpression castedExpressionInParentheses =
