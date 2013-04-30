@@ -217,7 +217,7 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
             List<String> messages = new ArrayList<String>(e.getMessages());
             Collections.sort(messages);
             File conflictsFile = new File(getTestDataPath() + getTestName(false) + "Messages.txt");
-            String fileText = FileUtil.loadFile(conflictsFile, CharsetToolkit.UTF8);
+            String fileText = FileUtil.loadFile(conflictsFile, CharsetToolkit.UTF8, true);
             assertEquals(fileText, StringUtil.join(messages, "\n"));
             return;
         }
