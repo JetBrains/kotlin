@@ -15,6 +15,40 @@
         />
     </target>
 
+    <macrodef name="get-maven-library">
+        <attribute name="prefix"/>
+        <attribute name="lib"/>
+        <attribute name="version"/>
+        <attribute name="bin" default="true"/>
+        <attribute name="src" default="true"/>
+        <attribute name="server" default="http://repository.jetbrains.com/remote-repos"/>
+        <attribute name="jar.name.base" default="@{lib}-@{version}"/>
+        <attribute name="target.jar.name.base" default="@{jar.name.base}"/>
+        <attribute name="path" default="@{prefix}/@{lib}/@{version}/@{jar.name.base}"/>
+        <attribute name="download" default="dependencies/download"/>
+        <attribute name="dependencies" default="dependencies"/>
+        <sequential>
+            <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+            <if>
+                <istrue value="@{bin}"/>
+                <then>
+                    <get src="@{server}/@{path}.jar"
+                         dest="@{download}/@{jar.name.base}.jar" usetimestamp="true"/>
+                    <copy file="@{download}/@{jar.name.base}.jar" tofile="@{dependencies}/@{target.jar.name.base}.jar" overwrite="true"/>
+                </then>
+            </if>
+
+            <if>
+                <istrue value="@{src}"/>
+                <then>
+                    <get src="@{server}/@{path}-sources.jar"
+                         dest="@{download}/@{jar.name.base}-sources.jar" usetimestamp="true"/>
+                    <copy file="@{download}/@{jar.name.base}-sources.jar" tofile="@{dependencies}/@{target.jar.name.base}-sources.jar" overwrite="true"/>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
     <target name="fetch-third-party">
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
@@ -69,38 +103,18 @@
         <move file="dependencies/apache-ant-1.7.0" tofile="dependencies/ant"/>
 
         <!-- dx.jar -->
-        <get src="http://repository.jetbrains.com/remote-repos/com/google/android/tools/dx/1.7/dx-1.7.jar"
-             dest="dependencies/download/dx-1.7.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/dx-1.7.jar" tofile="dependencies/dx.jar" overwrite="true"/>
-
-        <get src="http://repository.jetbrains.com/remote-repos/com/google/android/tools/dx/1.7/dx-1.7-sources.jar"
-             dest="dependencies/download/dx-1.7-sources.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/dx-1.7-sources.jar" tofile="dependencies/dx-sources.jar" overwrite="true"/>
+        <get-maven-library prefix="com/google/android/tools" lib="dx" version="1.7" target.jar.name.base="dx"/>
 
         <!-- jline -->
-        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.9/jline-2.9.jar"
-             dest="dependencies/download/jline-2.9.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jline-2.9.jar" tofile="dependencies/jline.jar" overwrite="true"/>
-
-        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.9/jline-2.9-sources.jar"
-             dest="dependencies/download/jline-2.9-sources.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jline-2.9-sources.jar" tofile="dependencies/jline-sources.jar" overwrite="true"/>
+        <get-maven-library prefix="jline" lib="jline" version="2.9" target.jar.name.base="jline"/>
 
         <!-- jansi -->
         <!--
-        <get src="http://repository.jetbrains.com/remote-repos/org/fusesource/jansi/jansi/1.9/jansi-1.9.jar"
-             dest="dependencies/download/jansi-1.9.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jansi-1.9.jar" tofile="dependencies/jansi.jar" overwrite="true"/>
-
-        <get src="http://repository.jetbrains.com/remote-repos/org/fusesource/jansi/jansi/1.9/jansi-1.9-sources.jar"
-             dest="dependencies/download/jansi-1.9-sources.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jansi-1.9-sources.jar" tofile="dependencies/jansi-sources.jar" overwrite="true"/>
+        <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.9"/>
         -->
 
         <!-- Guava 12 sources-->
-        <get src="http://repository.jetbrains.com/remote-repos/com/google/guava/guava/12.0/guava-12.0-sources.jar"
-             dest="dependencies/download/guava-12.0-sources.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/guava-12.0-sources.jar" tofile="dependencies/guava-12.0-sources.jar" overwrite="true"/>
+        <get-maven-library prefix="com/google/guava" lib="guava" version="12.0" bin="false"/>
 
         <!-- ASM 4 -->
         <get-asm4-and-rename-packages/>
@@ -109,14 +123,9 @@
     <macrodef name="get-asm4-and-rename-packages">
         <sequential>
             <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources -->
-            <get src="http://repository.jetbrains.com/remote-repos/org/ow2/asm/asm-analysis/4.0/asm-analysis-4.0.jar"
-                 dest="dependencies/download/asm-analysis-4.0.jar" usetimestamp="true"/>
-
-            <get src="http://repository.jetbrains.com/remote-repos/org/ow2/asm/asm-util/4.0/asm-util-4.0.jar"
-                 dest="dependencies/download/asm-util-4.0.jar" usetimestamp="true"/>
-
-            <get src="http://repository.jetbrains.com/remote-repos/org/ow2/asm/asm-all/4.0/asm-all-4.0-sources.jar"
-                 dest="dependencies/download/asm-all-4.0-sources.jar" usetimestamp="true"/>
+            <get-maven-library prefix="org/ow2/asm" lib="asm-analysis" version="4.0" src="false"/>
+            <get-maven-library prefix="org/ow2/asm" lib="asm-util" version="4.0" src="false"/>
+            <get-maven-library prefix="org/ow2/asm" lib="asm-all" version="4.0" bin="false"/>
 
             <!-- Rename packages in the jars -->
             <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
