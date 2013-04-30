@@ -18,8 +18,10 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -33,26 +35,31 @@ public class OverrideImplementLineMarkerTest extends LightCodeInsightFixtureTest
     }
 
     public void testTrait() throws Throwable {
-        doSimpleTest(2);
+        doTest();
     }
 
     public void testClass() throws Throwable {
-        doSimpleTest(2);
+        doTest();
     }
 
-    private void doSimpleTest(int count) throws Throwable {
-        myFixture.configureByFile(getTestName(false) + ".kt");
-        doTest(count);
-    }
+    private void doTest() {
+        try {
+            myFixture.configureByFile(getTestName(false) + ".kt");
+            Project project = myFixture.getProject();
+            Document document = myFixture.getEditor().getDocument();
 
-    private void doTest(int count) {
-        Editor editor = myFixture.getEditor();
-        Project project = myFixture.getProject();
+            ExpectedHighlightingData data = new ExpectedHighlightingData(document, false, false, false, myFixture.getFile());
+            data.init();
 
-        myFixture.doHighlighting();
+            PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        List<LineMarkerInfo> infoList = DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), project);
-        assertNotNull(infoList);
-        assertEquals(count, infoList.size());
+            myFixture.doHighlighting();
+
+            List<LineMarkerInfo> markers = DaemonCodeAnalyzerImpl.getLineMarkers(document, project);
+            data.checkLineMarkers(markers, document.getText());
+        }
+        catch (Exception exc) {
+            throw new RuntimeException(exc);
+        }
     }
 }

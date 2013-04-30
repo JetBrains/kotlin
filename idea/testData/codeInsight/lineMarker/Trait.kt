@@ -1,9 +1,9 @@
-trait A {
+trait <lineMarker></lineMarker>A {
   fun a(){
   }
 }
 
 class B :A {
-  override fun a(){
+  override fun <lineMarker></lineMarker>a(){
   }
 }
