@@ -1806,7 +1806,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return null;
         }
         SimpleFunctionDescriptor original = ((SimpleFunctionDescriptor) fun).getOriginal();
-        return bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
+        if (original.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            return bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
+        }
+        if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            for (FunctionDescriptor overridden : original.getOverriddenDescriptors()) {
+                SimpleFunctionDescriptor originalIfSamAdapter = getOriginalIfSamAdapter(overridden);
+                if (originalIfSamAdapter != null) {
+                    return originalIfSamAdapter;
+                }
+            }
+        }
+        return null;
     }
 
     private StackValue invokeSamConstructor(

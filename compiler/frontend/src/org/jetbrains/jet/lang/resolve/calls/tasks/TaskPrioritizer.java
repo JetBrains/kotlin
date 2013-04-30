@@ -106,8 +106,22 @@ public class TaskPrioritizer {
 
             private boolean isSynthesized(ResolutionCandidate<D> call) {
                 D descriptor = call.getDescriptor();
-                return descriptor instanceof CallableMemberDescriptor &&
-                       ((CallableMemberDescriptor) descriptor).getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED;
+                return descriptor instanceof CallableMemberDescriptor && isOrOverridesSynthesized((CallableMemberDescriptor) descriptor);
+            }
+
+            private boolean isOrOverridesSynthesized(CallableMemberDescriptor descriptor) {
+                if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+                    return true;
+                }
+                if (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                    for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                        if (!isOrOverridesSynthesized(overridden)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                return false;
             }
         };
 
