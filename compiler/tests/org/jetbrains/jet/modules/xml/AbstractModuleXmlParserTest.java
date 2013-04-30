@@ -25,7 +25,6 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.jetbrains.jet.cli.common.modules.ModuleDescription;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
-import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,9 +45,8 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
         });
 
         StringBuilder sb = new StringBuilder();
-        Printer p = new Printer(sb);
         for (ModuleDescription description : result) {
-            p.println(description);
+            sb.append(description).append("\n");
         }
 
         String actual = sb.toString();
