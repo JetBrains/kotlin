@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,7 +78,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @Override
-    public void invoke(@NotNull Project project, @Nullable Editor editor, @Nullable PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, @Nullable Editor editor, @Nullable JetFile file) throws IncorrectOperationException {
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
             addReturnTypeAnnotation(project, element, renderedType);
@@ -100,6 +99,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
 
     @NotNull
     public static JetMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
+        @SuppressWarnings("unchecked")
         String componentName = ((DiagnosticWithParameters3<JetExpression, Name, JetType, JetType>) diagnostic).getA().getName();
         int componentIndex = Integer.valueOf(componentName.substring(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX.length()));
         JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
