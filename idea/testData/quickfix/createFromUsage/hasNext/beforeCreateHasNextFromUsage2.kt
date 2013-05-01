@@ -1,4 +1,4 @@
-// "Create method 'hasNext' from usage" "true"
+// "Create function 'hasNext' from usage" "true"
 class FooIterator<T> {
     fun next(): T {
         throw Exception("not implemented")

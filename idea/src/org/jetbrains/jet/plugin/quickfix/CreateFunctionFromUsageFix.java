@@ -36,7 +36,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -78,9 +77,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
+public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     private static final String TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList";
-    private static final String TEMPLATE_FROM_USAGE_METHOD_BODY = "New Kotlin Method Body.kt";
+    private static final String TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt";
+    private static final String ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME";
     private static final Pattern COMPONENT_FUNCTION_PATTERN = Pattern.compile("^component(\\d+)$");
 
     /**
@@ -272,7 +272,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     /**
-     * Encapsulates information about a method parameter that is going to be created.
+     * Encapsulates information about a function parameter that is going to be created.
      */
     private static class Parameter {
         private final String preferredName;
@@ -522,7 +522,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
     }
 
-    private final String methodName;
+    private final String functionName;
     private final TypeOrExpressionThereof ownerType;
     private final TypeOrExpressionThereof returnType;
     private final List<Parameter> parameters;
@@ -539,10 +539,12 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     private TypeCandidate selectedReceiverType;
     private Map<TypeParameterDescriptor, String> typeParameterNameMap;
 
-    public CreateMethodFromUsageFix(@NotNull PsiElement element, @NotNull TypeOrExpressionThereof ownerType, @NotNull String methodName,
-            @NotNull TypeOrExpressionThereof returnType, @NotNull List<Parameter> parameters) {
+    public CreateFunctionFromUsageFix(
+            @NotNull PsiElement element, @NotNull TypeOrExpressionThereof ownerType, @NotNull String functionName,
+            @NotNull TypeOrExpressionThereof returnType, @NotNull List<Parameter> parameters
+    ) {
         super(element);
-        this.methodName = methodName;
+        this.functionName = functionName;
         this.ownerType = ownerType;
         this.returnType = returnType;
         this.parameters = parameters;
@@ -551,7 +553,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("create.method.from.usage", methodName);
+        return JetBundle.message("create.function.from.usage", functionName);
     }
 
     @Override
@@ -685,14 +687,14 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         String returnTypeString = isUnit ? "" : ": Any";
         if (isExtension) { // create as extension function
             String ownerTypeString = selectedReceiverType.getRenderedType();
-            String methodText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, methodName, parametersString, returnTypeString);
-            func = JetPsiFactory.createFunction(project, methodText);
+            String functionText = String.format("fun %s.%s(%s)%s { }", ownerTypeString, functionName, parametersString, returnTypeString);
+            func = JetPsiFactory.createFunction(project, functionText);
             containingFile = currentFile;
             containingFileEditor = currentFileEditor;
             func = (JetNamedFunction) currentFile.add(func);
-        } else { // create as method
-            String methodText = String.format("fun %s(%s)%s { }", methodName, parametersString, returnTypeString);
-            func = JetPsiFactory.createFunction(project, methodText);
+        } else { // create as regular function
+            String functionText = String.format("fun %s(%s)%s { }", functionName, parametersString, returnTypeString);
+            func = JetPsiFactory.createFunction(project, functionText);
             PsiFile classContainingFile = ownerClass.getContainingFile();
             assert classContainingFile instanceof JetFile;
             containingFile = (JetFile) classContainingFile;
@@ -862,7 +864,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     private void setupFunctionBody(@NotNull Project project, @NotNull JetNamedFunction func) {
-        FileTemplate fileTemplate = FileTemplateManager.getInstance().getCodeTemplate(TEMPLATE_FROM_USAGE_METHOD_BODY);
+        FileTemplate fileTemplate = FileTemplateManager.getInstance().getCodeTemplate(TEMPLATE_FROM_USAGE_FUNCTION_BODY);
         Properties properties = new Properties();
         if (isUnit) {
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, "Unit");
@@ -873,7 +875,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
         }
         properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerClassDescriptor).getFqName());
         properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerClassDescriptor.getName().getName());
-        properties.setProperty(FileTemplate.ATTRIBUTE_METHOD_NAME, methodName);
+        properties.setProperty(ATTRIBUTE_FUNCTION_NAME, functionName);
 
         @NonNls String bodyText;
         try {
@@ -1204,7 +1206,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateGetMethodFromUsageFactory() {
+    public static JetIntentionActionFactory createCreateGetFunctionFromUsageFactory() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
@@ -1223,13 +1225,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 }
 
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(accessExpr, Variance.OUT_VARIANCE);
-                return new CreateMethodFromUsageFix(accessExpr, arrayType, "get", returnType, parameters);
+                return new CreateFunctionFromUsageFix(accessExpr, arrayType, "get", returnType, parameters);
             }
         };
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateSetMethodFromUsageFactory() {
+    public static JetIntentionActionFactory createCreateSetFunctionFromUsageFactory() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
@@ -1255,13 +1257,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 parameters.add(new Parameter("value", valType));
 
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE);
-                return new CreateMethodFromUsageFix(accessExpr, arrayType, "set", returnType, parameters);
+                return new CreateFunctionFromUsageFix(accessExpr, arrayType, "set", returnType, parameters);
             }
         };
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateHasNextMethodFromUsageFactory() {
+    public static JetIntentionActionFactory createCreateHasNextFunctionFromUsageFactory() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
@@ -1276,13 +1278,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
                 if (forExpr == null) return null;
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE);
-                return new CreateMethodFromUsageFix(forExpr, ownerType, "hasNext", returnType, new ArrayList<Parameter>());
+                return new CreateFunctionFromUsageFix(forExpr, ownerType, "hasNext", returnType, new ArrayList<Parameter>());
             }
         };
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateNextMethodFromUsageFactory() {
+    public static JetIntentionActionFactory createCreateNextFunctionFromUsageFactory() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
@@ -1298,13 +1300,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 JetExpression variableExpr = forExpr.getLoopParameter();
                 if (variableExpr == null) return null;
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr, Variance.OUT_VARIANCE);
-                return new CreateMethodFromUsageFix(forExpr, ownerType, "next", returnType, new ArrayList<Parameter>());
+                return new CreateFunctionFromUsageFix(forExpr, ownerType, "next", returnType, new ArrayList<Parameter>());
             }
         };
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateIteratorMethodFromUsageFactory() {
+    public static JetIntentionActionFactory createCreateIteratorFunctionFromUsageFactory() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
@@ -1331,13 +1333,13 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 returnJetType = new JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(),
                                                 returnJetTypeArguments, returnJetType.getMemberScope());
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(returnJetType, Variance.OUT_VARIANCE);
-                return new CreateMethodFromUsageFix(forExpr, iterableType, "iterator", returnType, new ArrayList<Parameter>());
+                return new CreateFunctionFromUsageFix(forExpr, iterableType, "iterator", returnType, new ArrayList<Parameter>());
             }
         };
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateComponentMethodFromUsageFactory() {
+    public static JetIntentionActionFactory createCreateComponentFunctionFromUsageFactory() {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
@@ -1362,7 +1364,7 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
                 if (rhs == null) return null;
                 TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(rhs);
 
-                return new CreateMethodFromUsageFix(multiDeclaration, ownerType, name.getIdentifier(), returnType, new ArrayList<Parameter>());
+                return new CreateFunctionFromUsageFix(multiDeclaration, ownerType, name.getIdentifier(), returnType, new ArrayList<Parameter>());
             }
         };
     }

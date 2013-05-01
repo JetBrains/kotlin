@@ -1,4 +1,4 @@
-// "Create method 'get' from usage" "true"
+// "Create function 'get' from usage" "true"
 import java.util.ArrayList
 
 class Foo<T> {
@@ -7,5 +7,5 @@ class Foo<T> {
     }
 }
 fun <E, V> ArrayList<E>.get(s: String, w: ArrayList<V>): Boolean {
-    throw UnsupportedOperationException("not implemented") //To change body of created methods use File | Settings | File Templates.
+    throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

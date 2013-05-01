@@ -1,4 +1,4 @@
-// "Create method 'next' from usage" "true"
+// "Create function 'next' from usage" "true"
 class FooIterator<T> {
     fun hasNext(): Boolean { return false }
 }

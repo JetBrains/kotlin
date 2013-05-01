@@ -1,10 +1,10 @@
-// "Create method 'hasNext' from usage" "true"
+// "Create function 'hasNext' from usage" "true"
 class FooIterator<T> {
     fun next(): T {
         throw Exception("not implemented")
     }
     fun hasNext(): Boolean {
-        throw UnsupportedOperationException("not implemented") //To change body of created methods use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 class Foo<T> {

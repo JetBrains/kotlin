@@ -1,4 +1,4 @@
-// "Create method 'get' from usage" "true"
+// "Create function 'get' from usage" "true"
 import java.util.ArrayList
 
 class Foo<T> {

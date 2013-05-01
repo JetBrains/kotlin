@@ -1,4 +1,4 @@
-// "Create method 'set' from usage" "true"
+// "Create function 'set' from usage" "true"
 import java.util.ArrayList
 
 class Foo<T> {
@@ -7,5 +7,5 @@ class Foo<T> {
     }
 }
 fun <T> Any.set(s: String, w: ArrayList<T>, value: ArrayList<T>) {
-    throw UnsupportedOperationException("not implemented") //To change body of created methods use File | Settings | File Templates.
+    throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
 }
