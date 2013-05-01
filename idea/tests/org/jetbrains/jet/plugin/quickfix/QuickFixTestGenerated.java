@@ -1155,20 +1155,15 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/typeMismatch")
-    @InnerTestClasses({TypeMismatch.Casts.class})
+    @InnerTestClasses({TypeMismatch.Casts.class, TypeMismatch.ComponentFunctionReturnTypeMismatch.class, TypeMismatch.TypeMismatchOnReturnedExpression.class})
     public static class TypeMismatch extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
-        @TestMetadata("beforeChangeFunctionReturnTypeToFunctionType.kt")
-        public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeChangeFunctionReturnTypeToFunctionType.kt");
-        }
-        
-        @TestMetadata("beforeChangeParameterTypeToFunctionType.kt")
-        public void testChangeParameterTypeToFunctionType() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeChangeParameterTypeToFunctionType.kt");
+        @TestMetadata("beforeChangeFunctionLiteralParameterTypeToFunctionType.kt")
+        public void testChangeFunctionLiteralParameterTypeToFunctionType() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeChangeFunctionLiteralParameterTypeToFunctionType.kt");
         }
         
         @TestMetadata("beforeChangeReturnTypeWhenFunctionNameIsMissing.kt")
@@ -1184,31 +1179,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeCompareToTypeMismatch.kt")
         public void testCompareToTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeCompareToTypeMismatch.kt");
-        }
-        
-        @TestMetadata("beforeComponentFunctionReturnTypeMismatch1.kt")
-        public void testComponentFunctionReturnTypeMismatch1() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeComponentFunctionReturnTypeMismatch1.kt");
-        }
-        
-        @TestMetadata("beforeComponentFunctionReturnTypeMismatch2.kt")
-        public void testComponentFunctionReturnTypeMismatch2() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeComponentFunctionReturnTypeMismatch2.kt");
-        }
-        
-        @TestMetadata("beforeComponentFunctionReturnTypeMismatch3.kt")
-        public void testComponentFunctionReturnTypeMismatch3() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeComponentFunctionReturnTypeMismatch3.kt");
-        }
-        
-        @TestMetadata("beforeComponentFunctionReturnTypeMismatch4.kt")
-        public void testComponentFunctionReturnTypeMismatch4() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeComponentFunctionReturnTypeMismatch4.kt");
-        }
-        
-        @TestMetadata("beforeComponentFunctionReturnTypeMismatch5.kt")
-        public void testComponentFunctionReturnTypeMismatch5() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeComponentFunctionReturnTypeMismatch5.kt");
         }
         
         @TestMetadata("beforeExpectedParameterTypeMismatch.kt")
@@ -1234,16 +1204,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeReturnTypeMismatch.kt")
         public void testReturnTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeReturnTypeMismatch.kt");
-        }
-        
-        @TestMetadata("beforeTypeMismatchInInitializer.kt")
-        public void testTypeMismatchInInitializer() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeTypeMismatchInInitializer.kt");
-        }
-        
-        @TestMetadata("beforeTypeMismatchInReturnStatement.kt")
-        public void testTypeMismatchInReturnStatement() throws Exception {
-            doTest("idea/testData/quickfix/typeMismatch/beforeTypeMismatchInReturnStatement.kt");
         }
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/casts")
@@ -1299,10 +1259,68 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
+        @TestMetadata("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch")
+        public static class ComponentFunctionReturnTypeMismatch extends AbstractQuickFixTest {
+            public void testAllFilesPresentInComponentFunctionReturnTypeMismatch() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeComponentFunctionReturnTypeMismatch1.kt")
+            public void testComponentFunctionReturnTypeMismatch1() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/beforeComponentFunctionReturnTypeMismatch1.kt");
+            }
+            
+            @TestMetadata("beforeComponentFunctionReturnTypeMismatch2.kt")
+            public void testComponentFunctionReturnTypeMismatch2() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/beforeComponentFunctionReturnTypeMismatch2.kt");
+            }
+            
+            @TestMetadata("beforeComponentFunctionReturnTypeMismatch3.kt")
+            public void testComponentFunctionReturnTypeMismatch3() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/beforeComponentFunctionReturnTypeMismatch3.kt");
+            }
+            
+            @TestMetadata("beforeComponentFunctionReturnTypeMismatch4.kt")
+            public void testComponentFunctionReturnTypeMismatch4() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/beforeComponentFunctionReturnTypeMismatch4.kt");
+            }
+            
+            @TestMetadata("beforeComponentFunctionReturnTypeMismatch5.kt")
+            public void testComponentFunctionReturnTypeMismatch5() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/beforeComponentFunctionReturnTypeMismatch5.kt");
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
+        public static class TypeMismatchOnReturnedExpression extends AbstractQuickFixTest {
+            public void testAllFilesPresentInTypeMismatchOnReturnedExpression() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeChangeFunctionReturnTypeToFunctionType.kt")
+            public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeChangeFunctionReturnTypeToFunctionType.kt");
+            }
+            
+            @TestMetadata("beforeTypeMismatchInInitializer.kt")
+            public void testTypeMismatchInInitializer() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeTypeMismatchInInitializer.kt");
+            }
+            
+            @TestMetadata("beforeTypeMismatchInReturnStatement.kt")
+            public void testTypeMismatchInReturnStatement() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeTypeMismatchInReturnStatement.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("TypeMismatch");
             suite.addTestSuite(TypeMismatch.class);
             suite.addTestSuite(Casts.class);
+            suite.addTestSuite(ComponentFunctionReturnTypeMismatch.class);
+            suite.addTestSuite(TypeMismatchOnReturnedExpression.class);
             return suite;
         }
     }
