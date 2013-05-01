@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.codeInsight.template.*;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.codeInsight.template.impl.Variable;
@@ -696,11 +697,10 @@ public class CreateMethodFromUsageFix extends CreateFromUsageFixBase {
             assert classContainingFile instanceof JetFile;
             containingFile = (JetFile) classContainingFile;
 
-            VirtualFile virtualFile = containingFile.getVirtualFile();
-            assert virtualFile != null;
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            fileEditorManager.openFile(virtualFile, true);
-            containingFileEditor = fileEditorManager.getSelectedTextEditor();
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                NavigationUtil.activateFileWithPsiElement(containingFile);
+            }
+            containingFileEditor = FileEditorManager.getInstance(project).getSelectedTextEditor();
 
             JetClassBody classBody = ownerClass.getBody();
             if (classBody == null) {
