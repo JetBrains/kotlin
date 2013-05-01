@@ -4,6 +4,6 @@ class Foo<T> {
         y["", w] = w
     }
     fun set(s: String, w: T, value: T) {
-        throw Exception("not implemented") //To change body of created methods use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created methods use File | Settings | File Templates.
     }
 }

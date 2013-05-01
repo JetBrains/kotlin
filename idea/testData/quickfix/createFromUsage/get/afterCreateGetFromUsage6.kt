@@ -7,5 +7,5 @@ class Foo<T> {
     }
 }
 fun <E, V> ArrayList<E>.get(s: String, w: ArrayList<V>): Boolean {
-    throw Exception("not implemented") //To change body of created methods use File | Settings | File Templates.
+    throw UnsupportedOperationException("not implemented") //To change body of created methods use File | Settings | File Templates.
 }

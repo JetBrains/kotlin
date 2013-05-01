@@ -7,5 +7,5 @@ class Foo<T> {
     }
 }
 fun <T> Any.set(s: String, w: ArrayList<T>, value: ArrayList<T>) {
-    throw Exception("not implemented") //To change body of created methods use File | Settings | File Templates.
+    throw UnsupportedOperationException("not implemented") //To change body of created methods use File | Settings | File Templates.
 }

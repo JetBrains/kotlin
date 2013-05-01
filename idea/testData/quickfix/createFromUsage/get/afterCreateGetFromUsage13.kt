@@ -8,6 +8,6 @@ class Foo<T> {
         bar(z)
     }
     fun <V> get(s: String, w: ArrayList<V>): String {
-        throw Exception("not implemented") //To change body of created methods use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented") //To change body of created methods use File | Settings | File Templates.
     }
 }
