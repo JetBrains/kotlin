@@ -36,19 +36,20 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
-    private final JetType type;
+    private final String renderedType;
 
     public ChangeVariableTypeFix(@NotNull JetVariableDeclaration element, @NotNull JetType type) {
         super(element);
-        this.type = type;
+        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("change.element.type", element.getName(), type);
+        return JetBundle.message("change.element.type", element.getName(), renderedType);
     }
 
     @NotNull
@@ -62,7 +63,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
-        Pair<PsiElement, PsiElement> typeWhiteSpaceAndColon = JetPsiFactory.createTypeWhiteSpaceAndColon(project, type.toString());
+        Pair<PsiElement, PsiElement> typeWhiteSpaceAndColon = JetPsiFactory.createTypeWhiteSpaceAndColon(project, renderedType);
         element.addRangeAfter(typeWhiteSpaceAndColon.first, typeWhiteSpaceAndColon.second, nameIdentifier);
     }
 

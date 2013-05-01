@@ -31,19 +31,20 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
-    private final JetType type;
+    private final String renderedType;
 
     public ChangeTypeFix(@NotNull JetTypeReference element, JetType type) {
         super(element);
-        this.type = type;
+        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);;
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("change.type", element.getText(), type);
+        return JetBundle.message("change.type", element.getText(), renderedType);
     }
 
     @NotNull
@@ -54,7 +55,7 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        element.replace(JetPsiFactory.createType(project, type.toString()));
+        element.replace(JetPsiFactory.createType(project, renderedType));
     }
 
     @NotNull

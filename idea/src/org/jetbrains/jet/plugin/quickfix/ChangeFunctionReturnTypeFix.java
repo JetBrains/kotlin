@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters3;
 import org.jetbrains.jet.lang.psi.*;
@@ -44,13 +43,16 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunction> {
     private final JetType type;
+    private final String renderedType;
 
     public ChangeFunctionReturnTypeFix(@NotNull JetNamedFunction element, @NotNull JetType type) {
         super(element);
         this.type = type;
+        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
     }
 
     @NotNull
@@ -66,8 +68,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
                    JetBundle.message("remove.function.return.type", functionName);
         }
         return functionName == null ?
-               JetBundle.message("change.no.name.function.return.type", type.toString()) :
-               JetBundle.message("change.function.return.type", functionName, type.toString());
+               JetBundle.message("change.no.name.function.return.type", renderedType) :
+               JetBundle.message("change.function.return.type", functionName, renderedType);
     }
 
     @NotNull
@@ -80,7 +82,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     public void invoke(@NotNull Project project, @Nullable Editor editor, @Nullable PsiFile file) throws IncorrectOperationException {
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
-            addReturnTypeAnnotation(project, element, type.toString());
+            addReturnTypeAnnotation(project, element, renderedType);
         }
     }
 
