@@ -16,10 +16,15 @@
 
 package org.jetbrains.jet.plugin.navigation;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.StdModuleTypes;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -28,7 +33,21 @@ public class JetGotoSymbolTest extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return new LightProjectDescriptor() {
+            @Override
+            public ModuleType getModuleType() {
+                return StdModuleTypes.JAVA;
+            }
+
+            @Override
+            public Sdk getSdk() {
+                return PluginTestCaseBase.jdkFromIdeaHome();
+            }
+
+            @Override
+            public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+            }
+        };
     }
 
     public void testProperties() {
