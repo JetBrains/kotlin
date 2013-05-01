@@ -250,6 +250,5 @@ public class QuickFixes {
         factories.put(NEXT_NONE_APPLICABLE, createNextFromUsageFactory);
         factories.put(ITERATOR_MISSING, CreateMethodFromUsageFix.createCreateIteratorMethodFromUsageFactory());
         factories.put(COMPONENT_FUNCTION_MISSING, CreateMethodFromUsageFix.createCreateComponentMethodFromUsageFactory());
-        factories.put(NO_CLASS_OBJECT, CreateClassObjectFromUsageFix.createCreateClassObjectFromUsageFactory());
     }
 }

@@ -430,28 +430,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/createFromUsage")
-    @InnerTestClasses({CreateFromUsage.ClassObject.class, CreateFromUsage.Component.class, CreateFromUsage.Get.class, CreateFromUsage.HasNext.class, CreateFromUsage.Iterator.class, CreateFromUsage.Next.class, CreateFromUsage.Set.class})
+    @InnerTestClasses({CreateFromUsage.Component.class, CreateFromUsage.Get.class, CreateFromUsage.HasNext.class, CreateFromUsage.Iterator.class, CreateFromUsage.Next.class, CreateFromUsage.Set.class})
     public static class CreateFromUsage extends AbstractQuickFixTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^before(\\w+)\\.kt$"), true);
-        }
-        
-        @TestMetadata("idea/testData/quickfix/createFromUsage/classObject")
-        public static class ClassObject extends AbstractQuickFixTest {
-            public void testAllFilesPresentInClassObject() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/createFromUsage/classObject"), Pattern.compile("^before(\\w+)\\.kt$"), true);
-            }
-            
-            @TestMetadata("beforeCreateClassObject1.kt")
-            public void testCreateClassObject1() throws Exception {
-                doTest("idea/testData/quickfix/createFromUsage/classObject/beforeCreateClassObject1.kt");
-            }
-            
-            @TestMetadata("beforeCreateClassObject2.kt")
-            public void testCreateClassObject2() throws Exception {
-                doTest("idea/testData/quickfix/createFromUsage/classObject/beforeCreateClassObject2.kt");
-            }
-            
         }
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/component")
@@ -620,7 +602,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("CreateFromUsage");
             suite.addTestSuite(CreateFromUsage.class);
-            suite.addTestSuite(ClassObject.class);
             suite.addTestSuite(Component.class);
             suite.addTestSuite(Get.class);
             suite.addTestSuite(HasNext.class);
