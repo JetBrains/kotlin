@@ -785,6 +785,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/override/nothingToOverride/beforeAddParameterPreserveVisibility.kt");
             }
             
+            @TestMetadata("beforeAddParameterTwoSupertypes.kt")
+            public void testAddParameterTwoSupertypes() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeAddParameterTwoSupertypes.kt");
+            }
+            
             public void testAllFilesPresentInNothingToOverride() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
