@@ -143,7 +143,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         private final JetExpression expressionOfType;
         private final JetType type;
         private final Variance variance;
-        private TypeCandidate[] typeCandidates;
+        private List<TypeCandidate> typeCandidates;
         private String[] cachedNameCandidatesFromExpression;
 
         public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType, Variance variance) {
@@ -194,11 +194,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         public void computeTypeCandidates(@NotNull BindingContext context) {
             Collection<JetType> types = getPossibleTypes(context);
 
-            typeCandidates = new TypeCandidate[types.size()];
-            int i = 0;
+            typeCandidates = new ArrayList<TypeCandidate>();
             for (JetType type : types) {
-                typeCandidates[i] = new TypeCandidate(type);
-                i++;
+                typeCandidates.add(new TypeCandidate(type));
             }
         }
 
@@ -229,16 +227,15 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 newTypes.add(KotlinBuiltIns.getInstance().getAnyType());
             }
 
-            typeCandidates = new TypeCandidate[newTypes.size()];
-            int i = typeCandidates.length - 1; // reverse order (see explanation above)
+            typeCandidates = new ArrayList<TypeCandidate>();
             for (JetType type : newTypes) {
-                typeCandidates[i] = new TypeCandidate(type, scope);
-                i--;
+                typeCandidates.add(new TypeCandidate(type, scope));
             }
+            Collections.reverse(typeCandidates); // reverse order (see explanation above)
         }
 
         @NotNull
-        public TypeCandidate[] getTypeCandidates() {
+        public List<TypeCandidate> getTypeCandidates() {
             assert typeCandidates != null : "call computeTypeCandidates() first";
             return typeCandidates;
         }
@@ -379,10 +376,10 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
         public TypeExpression(@NotNull TypeOrExpressionThereof type) {
             this.type = type;
-            TypeCandidate[] candidates = type.getTypeCandidates();
-            cachedLookupElements = new LookupElement[candidates.length];
-            for (int i = 0; i < candidates.length; i++) {
-                cachedLookupElements[i] = LookupElementBuilder.create(candidates[i], candidates[i].getRenderedType());
+            List<TypeCandidate> candidates = type.getTypeCandidates();
+            cachedLookupElements = new LookupElement[candidates.size()];
+            for (int i = 0; i < candidates.size(); i++) {
+                cachedLookupElements[i] = LookupElementBuilder.create(candidates.get(i), candidates.get(i).getRenderedType());
             }
         }
 
@@ -414,8 +411,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
         @Nullable("can't be found")
         public JetType getTypeFromSelection(@NotNull String selection) {
-            TypeCandidate[] options = type.getTypeCandidates();
-            for (TypeCandidate option : options) {
+            for (TypeCandidate option : type.getTypeCandidates()) {
                 if (option.getRenderedType().equals(selection)) {
                     return option.getType();
                 }
@@ -556,10 +552,10 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile).getBindingContext();
 
         ownerType.computeTypeCandidates(currentFileContext);
-        TypeCandidate[] ownerTypeCandidates = ownerType.getTypeCandidates();
-        assert ownerTypeCandidates.length > 0;
-        if (ownerTypeCandidates.length == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
-            selectedReceiverType = ownerTypeCandidates[0];
+        List<TypeCandidate> ownerTypeCandidates = ownerType.getTypeCandidates();
+        assert !ownerTypeCandidates.isEmpty();
+        if (ownerTypeCandidates.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
+            selectedReceiverType = ownerTypeCandidates.get(0);
             doInvoke(project);
         } else {
             // class selection
@@ -773,15 +769,13 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         allTypeParametersNotInScope.addAll(Arrays.asList(receiverTypeParametersNotInScope));
 
         for (Parameter parameter : parameters) {
-            TypeCandidate[] parameterTypeCandidates = parameter.getType().getTypeCandidates();
-            for (TypeCandidate parameterTypeCandidate : parameterTypeCandidates) {
+            for (TypeCandidate parameterTypeCandidate : parameter.getType().getTypeCandidates()) {
                 allTypeParametersNotInScope.addAll(Arrays.asList(parameterTypeCandidate.getTypeParameters()));
             }
         }
 
         if (!isUnit) {
-            TypeCandidate[] returnTypeCandidates = returnType.getTypeCandidates();
-            for (TypeCandidate returnTypeCandidate : returnTypeCandidates) {
+            for (TypeCandidate returnTypeCandidate : returnType.getTypeCandidates()) {
                 allTypeParametersNotInScope.addAll(Arrays.asList(returnTypeCandidate.getTypeParameters()));
             }
         }
@@ -898,16 +892,14 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         String[] receiverTypeParameterNames = selectedReceiverType.getTypeParameterNames();
 
         for (Parameter parameter : parameters) {
-            TypeCandidate[] parameterTypeCandidates = parameter.getType().getTypeCandidates();
-            for (TypeCandidate parameterTypeCandidate : parameterTypeCandidates) {
+            for (TypeCandidate parameterTypeCandidate : parameter.getType().getTypeCandidates()) {
                 typeParameterMap.put(parameterTypeCandidate.getRenderedType(), parameterTypeCandidate.getTypeParameterNames());
             }
         }
 
         JetTypeReference returnTypeRef = func.getReturnTypeRef();
         if (returnTypeRef != null) {
-            TypeCandidate[] returnTypeCandidates = returnType.getTypeCandidates();
-            for (TypeCandidate returnTypeCandidate : returnTypeCandidates) {
+            for (TypeCandidate returnTypeCandidate : returnType.getTypeCandidates()) {
                 typeParameterMap.put(returnTypeCandidate.getRenderedType(), returnTypeCandidate.getTypeParameterNames());
             }
         }
