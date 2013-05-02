@@ -146,16 +146,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         private TypeCandidate[] typeCandidates;
         private String[] cachedNameCandidatesFromExpression;
 
-        public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType) {
-            this(expressionOfType, Variance.IN_VARIANCE);
-        }
-
         public TypeOrExpressionThereof(@NotNull JetExpression expressionOfType, Variance variance) {
             this(expressionOfType, null, variance);
-        }
-
-        public TypeOrExpressionThereof(@NotNull JetType type) {
-            this(type, Variance.IN_VARIANCE);
         }
 
         public TypeOrExpressionThereof(@NotNull JetType type, Variance variance) {
@@ -1215,12 +1207,12 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 if (accessExpr == null) return null;
                 JetExpression arrayExpr = accessExpr.getArrayExpression();
                 if (arrayExpr == null) return null;
-                TypeOrExpressionThereof arrayType = new TypeOrExpressionThereof(arrayExpr);
+                TypeOrExpressionThereof arrayType = new TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE);
 
                 List<Parameter> parameters = new ArrayList<Parameter>();
                 for (JetExpression indexExpr : accessExpr.getIndexExpressions()) {
                     if (indexExpr == null) return null;
-                    TypeOrExpressionThereof indexType = new TypeOrExpressionThereof(indexExpr);
+                    TypeOrExpressionThereof indexType = new TypeOrExpressionThereof(indexExpr, Variance.IN_VARIANCE);
                     parameters.add(new Parameter(null, indexType));
                 }
 
@@ -1240,12 +1232,12 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 if (accessExpr == null) return null;
                 JetExpression arrayExpr = accessExpr.getArrayExpression();
                 if (arrayExpr == null) return null;
-                TypeOrExpressionThereof arrayType = new TypeOrExpressionThereof(arrayExpr);
+                TypeOrExpressionThereof arrayType = new TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE);
 
                 List<Parameter> parameters = new ArrayList<Parameter>();
                 for (JetExpression indexExpr : accessExpr.getIndexExpressions()) {
                     if (indexExpr == null) return null;
-                    TypeOrExpressionThereof indexType = new TypeOrExpressionThereof(indexExpr);
+                    TypeOrExpressionThereof indexType = new TypeOrExpressionThereof(indexExpr, Variance.IN_VARIANCE);
                     parameters.add(new Parameter(null, indexType));
                 }
 
@@ -1253,7 +1245,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 if (assignmentExpr == null) return null;
                 JetExpression rhs = assignmentExpr.getRight();
                 if (rhs == null) return null;
-                TypeOrExpressionThereof valType = new TypeOrExpressionThereof(rhs);
+                TypeOrExpressionThereof valType = new TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE);
                 parameters.add(new Parameter("value", valType));
 
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE);
@@ -1273,7 +1265,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 @SuppressWarnings("unchecked")
                 DiagnosticWithParameters1<JetExpression, JetType> diagnosticWithParameters =
                         (DiagnosticWithParameters1<JetExpression, JetType>) diagnostic;
-                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getA());
+                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE);
 
                 JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
                 if (forExpr == null) return null;
@@ -1293,7 +1285,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 @SuppressWarnings("unchecked")
                 DiagnosticWithParameters1<JetExpression, JetType> diagnosticWithParameters =
                         (DiagnosticWithParameters1<JetExpression, JetType>) diagnostic;
-                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getA());
+                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE);
 
                 JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
                 if (forExpr == null) return null;
@@ -1321,7 +1313,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 if (iterableExpr == null) return null;
                 JetExpression variableExpr = forExpr.getLoopParameter();
                 if (variableExpr == null) return null;
-                TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr);
+                TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr, Variance.IN_VARIANCE);
                 JetType returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType();
 
                 BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
@@ -1362,7 +1354,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry, Variance.OUT_VARIANCE);
                 JetExpression rhs = multiDeclaration.getInitializer();
                 if (rhs == null) return null;
-                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(rhs);
+                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE);
 
                 return new CreateFunctionFromUsageFix(multiDeclaration, ownerType, name.getIdentifier(), returnType, new ArrayList<Parameter>());
             }
