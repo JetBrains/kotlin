@@ -83,6 +83,7 @@ import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KE
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
 public class JetTestUtils {
+    private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
     private static List<File> filesToDelete = new ArrayList<File>();
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
@@ -361,6 +362,13 @@ public class JetTestUtils {
         LazyResolveTestUtil.resolveEagerly(jetFiles, environment);
     }
 
+    @NotNull
+    public static List<File> collectKtFiles(@NotNull File root) {
+        List<File> files = Lists.newArrayList();
+        FileUtil.collectMatchedFiles(root, KT_FILES, files);
+        return files;
+    }
+
     public interface TestFileFactory<F> {
         F create(String fileName, String text);
     }
@@ -581,6 +589,18 @@ public class JetTestUtils {
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile);
         return JetPsiFactory.createPhysicalFile(project, ioFile.getName(), text);
+    }
+
+    @NotNull
+    public static List<JetFile> loadToJetFiles(
+            @NotNull JetCoreEnvironment environment,
+            @NotNull List<File> files
+    ) throws IOException {
+        List<JetFile> jetFiles = Lists.newArrayList();
+        for (File file : files) {
+            jetFiles.add(loadJetFile(environment.getProject(), file));
+        }
+        return jetFiles;
     }
 
     public static ModuleDescriptorImpl createEmptyModule() {

@@ -16,26 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManagement {
 
@@ -65,22 +60,7 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
 
     public void testStdLib() throws Exception {
         doTestForGivenFiles(
-                convertToJetFiles(collectKtFiles(STD_LIB_SRC))
+                JetTestUtils.loadToJetFiles(stdlibEnvironment, JetTestUtils.collectKtFiles(STD_LIB_SRC))
         );
-    }
-
-    private List<JetFile> convertToJetFiles(List<File> files) throws IOException {
-        List<JetFile> jetFiles = Lists.newArrayList();
-        for (File file : files) {
-            JetFile jetFile = JetPsiFactory.createFile(stdlibEnvironment.getProject(), file.getName(), FileUtil.loadFile(file, true));
-            jetFiles.add(jetFile);
-        }
-        return jetFiles;
-    }
-
-    private static List<File> collectKtFiles(@NotNull File root) {
-        List<File> files = Lists.newArrayList();
-        FileUtil.collectMatchedFiles(root, Pattern.compile(".*?.kt"), files);
-        return files;
     }
 }
