@@ -416,7 +416,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             // ensure there are no conflicts
             List<LookupElement> lookupElements = new ArrayList<LookupElement>();
             for (String name : names) {
-                name = getNextAvailableName(name, parameterNames);
+                name = getNextAvailableName(name, parameterNames, null);
                 lookupElements.add(LookupElementBuilder.create(name));
             }
 
@@ -1123,21 +1123,16 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         return typeParameters;
     }
 
+    /**
+     * Returns the given <code>name</code>, appended with a number if it is one of the <code>existingNames</code> or already exists in
+     * <code>scope</code>. For example, given <code>"foo"</code>, returns the next non-conflicting name in the list <code>"foo"</code>,
+     * <code>"foo1"</code>, <code>"foo2"</code>, etc.
+     */
     @NotNull
-    private static String getNextAvailableName(@NotNull String name, @NotNull Collection<String> existingNames) {
-        if (existingNames.contains(name)) {
+    private static String getNextAvailableName(@NotNull String name, @NotNull Collection<String> existingNames, @Nullable JetScope scope) {
+        if (existingNames.contains(name) || (scope != null && scope.getClassifier(Name.identifier(name)) != null)) {
             int j = 1;
-            while (existingNames.contains(name + j)) j++;
-            name += j;
-        }
-        return name;
-    }
-
-    @NotNull
-    private static String getNextAvailableName(@NotNull String name, @NotNull Collection<String> existingNames, @NotNull JetScope scope) {
-        if (existingNames.contains(name) || scope.getClassifier(Name.identifier(name)) != null) {
-            int j = 1;
-            while (existingNames.contains(name + j) || scope.getClassifier(Name.identifier(name + j)) != null) j++;
+            while (existingNames.contains(name + j) || (scope != null && scope.getClassifier(Name.identifier(name + j)) != null)) j++;
             name += j;
         }
         return name;
