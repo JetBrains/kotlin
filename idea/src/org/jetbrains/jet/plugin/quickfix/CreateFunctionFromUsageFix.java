@@ -64,16 +64,18 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
-import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
+import org.jetbrains.jet.plugin.presentation.JetClassPresenter;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,6 +135,62 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         @NotNull
         public TypeParameterDescriptor[] getTypeParameters() {
             return typeParameters;
+        }
+    }
+
+    /**
+     * Represents an element in the class selection list.
+     */
+    private static class ClassCandidate {
+        private final TypeCandidate typeCandidate;
+        private final JetClass klass;
+
+        public ClassCandidate(TypeCandidate typeCandidate, JetFile file, BindingContext context) {
+            this.typeCandidate = typeCandidate;
+            ClassDescriptor classDescriptor = DescriptorUtils.getClassDescriptorForType(typeCandidate.getType());
+            PsiElement element = DescriptorToDeclarationUtil.getDeclaration(file, classDescriptor, context);
+            assert element instanceof JetClass;
+            klass = (JetClass) element;
+        }
+
+        public TypeCandidate getTypeCandidate() {
+            return typeCandidate;
+        }
+
+        public JetClass getJetClass() {
+            return klass;
+        }
+    }
+
+    /**
+     * Renders a <code>ClassCandidate</code>.
+     */
+    private static class ClassCandidateListCellRenderer extends PsiElementListCellRenderer<JetClass> {
+        private final JetClassPresenter presenter;
+
+        public ClassCandidateListCellRenderer() {
+            presenter = new JetClassPresenter();
+        }
+
+        @Override
+        public String getElementText(JetClass element) {
+            return presenter.getPresentation(element).getPresentableText();
+        }
+
+        @Nullable
+        @Override
+        protected String getContainerText(JetClass element, String name) {
+            return presenter.getPresentation(element).getLocationString();
+        }
+
+        @Override
+        protected int getIconFlags() {
+            return 0;
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            return super.getListCellRendererComponent(list, ((ClassCandidate) value).getJetClass(), index, isSelected, cellHasFocus);
         }
     }
 
@@ -559,22 +617,13 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             doInvoke(project);
         } else {
             // class selection
-            List<String> options = new ArrayList<String>();
-            final Map<String, TypeCandidate> optionToTypeMap = new HashMap<String, TypeCandidate>();
+            List<ClassCandidate> options = new ArrayList<ClassCandidate>();
             for (TypeCandidate ownerTypeCandidate : ownerTypeCandidates) {
-                ClassifierDescriptor possibleClassDescriptor = ownerTypeCandidate.getType().getConstructor().getDeclarationDescriptor();
-                if (possibleClassDescriptor != null) {
-                    String className = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(possibleClassDescriptor.getDefaultType());
-                    DeclarationDescriptor namespaceDescriptor = possibleClassDescriptor.getContainingDeclaration();
-                    String namespace = renderDescriptor(namespaceDescriptor, true);
-                    String option = className + " (" + namespace + ")";
-                    options.add(option);
-                    optionToTypeMap.put(option, ownerTypeCandidate);
-                }
+                options.add(new ClassCandidate(ownerTypeCandidate, currentFile, currentFileContext));
             }
 
             final JList list = new JBList(options);
-            PsiElementListCellRenderer renderer = new JetLightClassListCellRenderer();
+            PsiElementListCellRenderer renderer = new ClassCandidateListCellRenderer();
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             list.setCellRenderer(renderer);
             PopupChooserBuilder builder = new PopupChooserBuilder(list);
@@ -585,8 +634,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 public void run() {
                     int index = list.getSelectedIndex();
                     if (index < 0) return;
-                    String option = (String) list.getSelectedValue();
-                    selectedReceiverType = optionToTypeMap.get(option);
+                    ClassCandidate selectedCandidate = (ClassCandidate) list.getSelectedValue();
+                    selectedReceiverType = selectedCandidate.getTypeCandidate();
                     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                         @Override
                         public void run() {
@@ -605,9 +654,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
     private void doInvoke(@NotNull final Project project) {
         // gather relevant information
-        ClassifierDescriptor ownerTypeDescriptor = selectedReceiverType.getType().getConstructor().getDeclarationDescriptor();
-        assert ownerTypeDescriptor != null && ownerTypeDescriptor instanceof ClassDescriptor;
-        ownerClassDescriptor = (ClassDescriptor) ownerTypeDescriptor;
+        ownerClassDescriptor = DescriptorUtils.getClassDescriptorForType(selectedReceiverType.getType());
         JetType receiverType = ownerClassDescriptor.getDefaultType();
         PsiElement typeDeclaration = BindingContextUtils.classDescriptorToDeclaration(currentFileContext, ownerClassDescriptor);
         if (typeDeclaration != null && typeDeclaration instanceof JetClass) {
@@ -1019,11 +1066,6 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         } else {
             return fq ? DescriptorUtils.getFQName(declarationDescriptor).getFqName() : declarationDescriptor.getName().getName();
         }
-    }
-
-    @NotNull
-    private static String renderDescriptor(@NotNull DeclarationDescriptor declarationDescriptor, boolean fq) {
-        return renderDescriptor(declarationDescriptor, Collections.<TypeParameterDescriptor, String>emptyMap(), fq);
     }
 
     private static String renderType(@NotNull JetType type, @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap, boolean fq) {
