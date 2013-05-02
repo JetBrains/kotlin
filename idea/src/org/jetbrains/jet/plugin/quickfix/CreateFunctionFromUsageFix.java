@@ -632,9 +632,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    int index = list.getSelectedIndex();
-                    if (index < 0) return;
                     ClassCandidate selectedCandidate = (ClassCandidate) list.getSelectedValue();
+                    if (selectedCandidate == null) return;
                     selectedReceiverType = selectedCandidate.getTypeCandidate();
                     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                         @Override
