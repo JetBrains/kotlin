@@ -1012,13 +1012,13 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 }
                 break;
             case IN_VARIANCE:
-                // for covariant (e.g. function parameter), can replace type with any of its supertypes
+                // for contravariant (e.g. function parameter), can replace type with any of its supertypes
                 if (JetTypeChecker.INSTANCE.isSubtypeOf(type, substitution.getForType())) {
                     return substitution.getByType();
                 }
                 break;
             case OUT_VARIANCE:
-                // for contravariant (e.g. function return value), can replace type with any of its subtypes
+                // for covariant (e.g. function return value), can replace type with any of its subtypes
                 if (JetTypeChecker.INSTANCE.isSubtypeOf(substitution.getForType(), type)) {
                     return substitution.getByType();
                 }
