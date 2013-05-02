@@ -382,7 +382,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             Editor editor = context.getEditor();
             assert editor != null;
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-            assert file != null && file instanceof JetFile;
+            assert file instanceof JetFile;
             PsiElement elementAt = file.findElementAt(offset);
             JetFunction func = PsiTreeUtil.getParentOfType(elementAt, JetFunction.class);
             if (func == null) return new LookupElement[0];
@@ -502,7 +502,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             Editor editor = context.getEditor();
             assert editor != null;
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-            assert file != null && file instanceof JetFile;
+            assert file instanceof JetFile;
             PsiElement elementAt = file.findElementAt(offset);
             JetFunction func = PsiTreeUtil.getParentOfType(elementAt, JetFunction.class);
             if (func == null) {
@@ -604,7 +604,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
     @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        assert file != null && file instanceof JetFile;
+        assert file instanceof JetFile;
         currentFile = (JetFile) file;
         currentFileEditor = editor;
         currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile).getBindingContext();
@@ -656,7 +656,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         ownerClassDescriptor = DescriptorUtils.getClassDescriptorForType(selectedReceiverType.getType());
         JetType receiverType = ownerClassDescriptor.getDefaultType();
         PsiElement classDeclaration = BindingContextUtils.classDescriptorToDeclaration(currentFileContext, ownerClassDescriptor);
-        if (classDeclaration != null && classDeclaration instanceof JetClass) {
+        if (classDeclaration instanceof JetClass) {
             ownerClass = (JetClass) classDeclaration;
             isExtension = !ownerClass.isWritable();
         } else {
