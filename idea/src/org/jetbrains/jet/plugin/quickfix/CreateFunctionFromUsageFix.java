@@ -726,7 +726,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             func = JetPsiFactory.createFunction(project, functionText);
             containingFile = currentFile;
             containingFileEditor = currentFileEditor;
-            func = (JetNamedFunction) currentFile.add(func);
+            return (JetNamedFunction) currentFile.add(func);
         } else { // create as regular function
             String functionText = String.format("fun %s(%s)%s { }", functionName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, functionText);
@@ -746,10 +746,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             }
             PsiElement rBrace = classBody.getRBrace();
             assert rBrace != null;
-            func = (JetNamedFunction) classBody.addBefore(func, rBrace);
+            return (JetNamedFunction) classBody.addBefore(func, rBrace);
         }
-
-        return func;
     }
 
     private void buildAndRunTemplate(@NotNull JetNamedFunction func) {
