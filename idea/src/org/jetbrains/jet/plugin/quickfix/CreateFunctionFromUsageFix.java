@@ -614,7 +614,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         assert !ownerTypeCandidates.isEmpty();
         if (ownerTypeCandidates.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
             selectedReceiverType = ownerTypeCandidates.get(0);
-            addFunctionToSelectedOwner(project);
+            addFunctionToSelectedOwner();
         } else {
             // class selection
             List<ClassCandidate> options = new ArrayList<ClassCandidate>();
@@ -638,7 +638,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                         @Override
                         public void run() {
-                            addFunctionToSelectedOwner(project);
+                            addFunctionToSelectedOwner();
                         }
                     }, getText(), null);
                 }
@@ -651,7 +651,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         }
     }
 
-    private void addFunctionToSelectedOwner(@NotNull final Project project) {
+    private void addFunctionToSelectedOwner() {
         // gather relevant information
         ownerClassDescriptor = DescriptorUtils.getClassDescriptorForType(selectedReceiverType.getType());
         JetType receiverType = ownerClassDescriptor.getDefaultType();
@@ -705,13 +705,14 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                JetNamedFunction func = createFunctionSkeleton(project);
-                buildAndRunTemplate(project, func);
+                JetNamedFunction func = createFunctionSkeleton();
+                buildAndRunTemplate(func);
             }
         });
     }
 
-    private JetNamedFunction createFunctionSkeleton(@NotNull Project project) {
+    private JetNamedFunction createFunctionSkeleton() {
+        Project project = currentFile.getProject();
         JetNamedFunction func;
         String[] parameterStrings = new String[parameters.size()];
         for (int i = 0; i < parameterStrings.length; i++) {
@@ -751,7 +752,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         return func;
     }
 
-    private void buildAndRunTemplate(@NotNull final Project project, @NotNull JetNamedFunction func) {
+    private void buildAndRunTemplate(@NotNull JetNamedFunction func) {
+        Project project = func.getProject();
         JetParameterList parameterList = func.getValueParameterList();
         assert parameterList != null;
 
@@ -764,7 +766,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
         TemplateBuilderImpl builder = new TemplateBuilderImpl(containingFile);
         final TypeExpression returnTypeExpression = isUnit ? null : setupReturnTypeTemplate(builder, func);
-        final TypeExpression[] parameterTypeExpressions = setupParameterTypeTemplates(project, builder, parameterList);
+        final TypeExpression[] parameterTypeExpressions = setupParameterTypeTemplates(builder, parameterList);
 
         // add a segment for the parameter list
         // Note: because TemplateBuilderImpl does not have a replaceElement overload that takes in both a TextRange and alwaysStopAt, we
@@ -797,10 +799,10 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                     @Override
                     public void run() {
                         // file templates
-                        setupFunctionBody(project, func);
+                        setupFunctionBody(func);
 
                         // change short type names to fully qualified ones (to be shortened below)
-                        setupTypeReferencesForShortening(project, func, typeRefsToShorten, parameterTypeExpressions, returnTypeExpression);
+                        setupTypeReferencesForShortening(func, typeRefsToShorten, parameterTypeExpressions, returnTypeExpression);
                     }
                 });
 
@@ -841,7 +843,6 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     private void setupTypeReferencesForShortening(
-            @NotNull Project project,
             @NotNull JetNamedFunction func,
             @NotNull List<JetTypeReference> typeRefsToShorten,
             @NotNull TypeExpression[] parameterTypeExpressions,
@@ -849,8 +850,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     ) {
         if (isExtension) {
             JetTypeReference receiverTypeRef =
-                    JetPsiFactory.createType(project, renderTypeLong(selectedReceiverType.getType(), typeParameterNameMap));
-            replaceWithLongerName(project, receiverTypeRef, selectedReceiverType.getType());
+                    JetPsiFactory.createType(func.getProject(), renderTypeLong(selectedReceiverType.getType(), typeParameterNameMap));
+            replaceWithLongerName(receiverTypeRef, selectedReceiverType.getType());
 
             receiverTypeRef = func.getReceiverTypeRef();
             if (receiverTypeRef != null) {
@@ -864,7 +865,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             if (returnTypeRef != null) {
                 JetType returnType = returnTypeExpression.getTypeFromSelection(returnTypeRef.getText());
                 if (returnType != null) { // user selected a given type
-                    replaceWithLongerName(project, returnTypeRef, returnType);
+                    replaceWithLongerName(returnTypeRef, returnType);
                     returnTypeRef = func.getReturnTypeRef();
                     assert returnTypeRef != null;
                     typeRefsToShorten.add(returnTypeRef);
@@ -881,7 +882,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             if (parameterTypeRef != null) {
                 JetType parameterType = parameterTypeExpressions[i].getTypeFromSelection(parameterTypeRef.getText());
                 if (parameterType != null) {
-                    replaceWithLongerName(project, parameterTypeRef, parameterType);
+                    replaceWithLongerName(parameterTypeRef, parameterType);
                     parameterIndicesToShorten.add(i);
                 }
             }
@@ -895,7 +896,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         }
     }
 
-    private void setupFunctionBody(@NotNull Project project, @NotNull JetNamedFunction func) {
+    private void setupFunctionBody(@NotNull JetNamedFunction func) {
         FileTemplate fileTemplate = FileTemplateManager.getInstance().getCodeTemplate(TEMPLATE_FROM_USAGE_FUNCTION_BODY);
         Properties properties = new Properties();
         if (isUnit) {
@@ -917,7 +918,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         } catch (Exception e) {
             throw new IncorrectOperationException("Failed to parse file template", e);
         }
-        JetExpression newBodyExpression = JetPsiFactory.createFunctionBody(project, bodyText);
+        JetExpression newBodyExpression = JetPsiFactory.createFunctionBody(func.getProject(), bodyText);
         JetExpression oldBodyExpression = func.getBodyExpression();
         assert oldBodyExpression != null;
         oldBodyExpression.replace(newBodyExpression);
@@ -954,12 +955,11 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         return new TypeParameterListExpression(receiverTypeParameterNames, typeParameterMap);
     }
 
-    private TypeExpression[] setupParameterTypeTemplates(@NotNull Project project, @NotNull TemplateBuilder builder,
-            @NotNull JetParameterList parameterList) {
+    private TypeExpression[] setupParameterTypeTemplates(@NotNull TemplateBuilder builder, @NotNull JetParameterList parameterList) {
         List<JetParameter> jetParameters = parameterList.getParameters();
         assert jetParameters.size() == parameters.size();
         TypeExpression[] parameterTypeExpressions = new TypeExpression[parameters.size()];
-        JetNameValidator dummyValidator = JetNameValidator.getEmptyValidator(project);
+        JetNameValidator dummyValidator = JetNameValidator.getEmptyValidator(parameterList.getProject());
         for (int i = 0; i < parameters.size(); i++) {
             Parameter parameter = parameters.get(i);
             JetParameter jetParameter = jetParameters.get(i);
@@ -998,7 +998,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         return parameterTypeExpressions;
     }
 
-    private void replaceWithLongerName(@NotNull Project project, @NotNull JetTypeReference typeRef, @NotNull JetType type) {
+    private void replaceWithLongerName(@NotNull JetTypeReference typeRef, @NotNull JetType type) {
+        Project project = typeRef.getProject();
         JetTypeReference fullyQualifiedReceiverTypeRef = JetPsiFactory.createType(project, renderTypeLong(type, typeParameterNameMap));
         typeRef.replace(fullyQualifiedReceiverTypeRef);
     }
