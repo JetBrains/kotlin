@@ -1141,7 +1141,6 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     @NotNull
     private static JetType[] guessTypeForExpression(@NotNull JetExpression expr, @NotNull BindingContext context) {
         JetType type = context.get(BindingContext.EXPRESSION_TYPE, expr);
-        JetNamedDeclaration declaration = null;
 
         // if we know the actual type of the expression
         if (type != null) {
@@ -1172,7 +1171,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             if (typeRef != null) { // and has a specified type
                 return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
             }
-            declaration = entry; // otherwise fall through and guess
+            return guessTypeForDeclaration(entry, context); // otherwise guess
         }
 
         // expression is a parameter (e.g. declared in a for-loop)
@@ -1182,7 +1181,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             if (typeRef != null) { // and has a specified type
                 return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
             }
-            declaration = parameter; // otherwise fall through and guess
+            return guessTypeForDeclaration(parameter, context); // otherwise guess
         }
 
         // the expression is the RHS of a variable assignment with a specified type
@@ -1192,27 +1191,28 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             if (typeRef != null) { // and has a specified type
                 return new JetType[] {context.get(BindingContext.TYPE, typeRef)};
             }
-            declaration = variable; // otherwise fall through and guess, based on LHS
+            return guessTypeForDeclaration(variable, context); // otherwise guess, based on LHS
         }
 
-        // guess based on declaration
-        SearchScope scope = expr.getContainingFile().getUseScope();
+        return new JetType[0]; // can't infer anything
+    }
+
+    private static JetType[] guessTypeForDeclaration(@NotNull JetNamedDeclaration declaration, @NotNull BindingContext context) {
         Set<JetType> expectedTypes = new HashSet<JetType>();
-        if (declaration != null) {
-            for (PsiReference ref : SearchUtils.findAllReferences(declaration, scope)) {
-                if (ref instanceof JetSimpleNameReference) {
-                    JetSimpleNameReference simpleNameRef = (JetSimpleNameReference) ref;
-                    JetType expectedType = context.get(BindingContext.EXPECTED_EXPRESSION_TYPE, simpleNameRef.getExpression());
-                    if (expectedType != null) {
-                        expectedTypes.add(expectedType);
-                    }
+        SearchScope scope = declaration.getContainingFile().getUseScope();
+        for (PsiReference ref : SearchUtils.findAllReferences(declaration, scope)) {
+            if (ref instanceof JetSimpleNameReference) {
+                JetSimpleNameReference simpleNameRef = (JetSimpleNameReference) ref;
+                JetType expectedType = context.get(BindingContext.EXPECTED_EXPRESSION_TYPE, simpleNameRef.getExpression());
+                if (expectedType != null) {
+                    expectedTypes.add(expectedType);
                 }
             }
         }
         if (expectedTypes.isEmpty()) {
-            return new JetType[0];
+            return new JetType[0]; // can't guess
         }
-        type = TypeUtils.intersect(JetTypeChecker.INSTANCE, expectedTypes);
+        JetType type = TypeUtils.intersect(JetTypeChecker.INSTANCE, expectedTypes);
         if (type != null) {
             return new JetType[] {type};
         } else { // intersection doesn't exist; let user make an imperfect choice
