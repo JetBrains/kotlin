@@ -202,14 +202,14 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
         public void computeTypeCandidates(
                 @NotNull BindingContext context,
-                @NotNull TypeSubstitution[] substitutions,
+                @NotNull JetTypeSubstitution[] substitutions,
                 @NotNull JetScope scope
         ) {
             List<JetType> types = getPossibleTypes(context);
             Collections.reverse(types); // reverse and reverse back later, so that things added below are added at the front
 
             Set<JetType> newTypes = new LinkedHashSet<JetType>(types);
-            for (TypeSubstitution substitution : substitutions) { // each substitution can be applied or not, so we offer all options
+            for (JetTypeSubstitution substitution : substitutions) { // each substitution can be applied or not, so we offer all options
                 List<JetType> toAdd = new ArrayList<JetType>();
                 List<JetType> toRemove = new ArrayList<JetType>();
                 for (JetType type : newTypes) {
@@ -492,11 +492,11 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     /**
      * Encapsulates a single type substitution of a <code>JetType</code> by another <code>JetType</code>.
      */
-    private static class TypeSubstitution {
+    private static class JetTypeSubstitution {
         private final JetType forType;
         private final JetType byType;
 
-        private TypeSubstitution(JetType forType, JetType byType) {
+        private JetTypeSubstitution(JetType forType, JetType byType) {
             this.forType = forType;
             this.byType = byType;
         }
@@ -632,9 +632,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         List<TypeProjection> classTypeParameters = receiverType.getArguments();
         List<TypeProjection> ownerTypeArguments = selectedReceiverType.getType().getArguments();
         assert ownerTypeArguments.size() == classTypeParameters.size();
-        TypeSubstitution[] substitutions = new TypeSubstitution[classTypeParameters.size()];
+        JetTypeSubstitution[] substitutions = new JetTypeSubstitution[classTypeParameters.size()];
         for (int i = 0; i < substitutions.length; i++) {
-            substitutions[i] = new TypeSubstitution(ownerTypeArguments.get(i).getType(), classTypeParameters.get(i).getType());
+            substitutions[i] = new JetTypeSubstitution(ownerTypeArguments.get(i).getType(), classTypeParameters.get(i).getType());
         }
         for (Parameter parameter : parameters) {
             parameter.getType().computeTypeCandidates(currentFileContext, substitutions, scope);
@@ -958,7 +958,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static JetType substituteType(@NotNull JetType type, @NotNull TypeSubstitution substitution, @NotNull Variance variance) {
+    private static JetType substituteType(@NotNull JetType type, @NotNull JetTypeSubstitution substitution, @NotNull Variance variance) {
         switch (variance) {
             case INVARIANT:
                 // for invariant, can replace only when they're equal
