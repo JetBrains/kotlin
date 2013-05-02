@@ -26,8 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -47,24 +45,12 @@ public class JavaToKotlinMethodMap {
     }
 
     @NotNull
-    private static Set<ClassDescriptor> getAllSuperClasses(@NotNull ClassDescriptor klass) {
-        Set<JetType> allSupertypes = TypeUtils.getAllSupertypes(klass.getDefaultType());
-        Set<ClassDescriptor> allSuperclasses = Sets.newHashSet();
-        for (JetType supertype : allSupertypes) {
-            ClassDescriptor superclass = TypeUtils.getClassDescriptor(supertype);
-            assert superclass != null;
-            allSuperclasses.add(superclass);
-        }
-        return allSuperclasses;
-    }
-
-    @NotNull
     public List<FunctionDescriptor> getFunctions(@NotNull PsiMethod psiMethod, @NotNull ClassDescriptor containingClass) {
         ImmutableCollection<ClassData> classDatas = mapContainer.map.get(psiMethod.getContainingClass().getQualifiedName());
 
         List<FunctionDescriptor> result = Lists.newArrayList();
 
-        Set<ClassDescriptor> allSuperClasses = getAllSuperClasses(containingClass);
+        Set<ClassDescriptor> allSuperClasses = DescriptorUtils.getAllSuperClasses(containingClass);
 
         String serializedPsiMethod = serializePsiMethod(psiMethod);
         for (ClassData classData : classDatas) {
