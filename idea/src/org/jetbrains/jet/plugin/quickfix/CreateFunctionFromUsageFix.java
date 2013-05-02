@@ -655,9 +655,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         // gather relevant information
         ownerClassDescriptor = DescriptorUtils.getClassDescriptorForType(selectedReceiverType.getType());
         JetType receiverType = ownerClassDescriptor.getDefaultType();
-        PsiElement typeDeclaration = BindingContextUtils.classDescriptorToDeclaration(currentFileContext, ownerClassDescriptor);
-        if (typeDeclaration != null && typeDeclaration instanceof JetClass) {
-            ownerClass = (JetClass) typeDeclaration;
+        PsiElement classDeclaration = BindingContextUtils.classDescriptorToDeclaration(currentFileContext, ownerClassDescriptor);
+        if (classDeclaration != null && classDeclaration instanceof JetClass) {
+            ownerClass = (JetClass) classDeclaration;
             isExtension = !ownerClass.isWritable();
         } else {
             isExtension = true;
