@@ -614,7 +614,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         assert !ownerTypeCandidates.isEmpty();
         if (ownerTypeCandidates.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
             selectedReceiverType = ownerTypeCandidates.get(0);
-            doInvoke(project);
+            addFunctionToSelectedOwner(project);
         } else {
             // class selection
             List<ClassCandidate> options = new ArrayList<ClassCandidate>();
@@ -638,7 +638,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                         @Override
                         public void run() {
-                            doInvoke(project);
+                            addFunctionToSelectedOwner(project);
                         }
                     }, getText(), null);
                 }
@@ -651,7 +651,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         }
     }
 
-    private void doInvoke(@NotNull final Project project) {
+    private void addFunctionToSelectedOwner(@NotNull final Project project) {
         // gather relevant information
         ownerClassDescriptor = DescriptorUtils.getClassDescriptorForType(selectedReceiverType.getType());
         JetType receiverType = ownerClassDescriptor.getDefaultType();
