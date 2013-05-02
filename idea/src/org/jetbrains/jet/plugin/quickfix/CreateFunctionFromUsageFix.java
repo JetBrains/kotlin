@@ -51,9 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -1313,7 +1311,10 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
                 if (forExpr == null) return null;
                 JetExpression variableExpr = forExpr.getLoopParameter();
-                if (variableExpr == null) return null;
+                if (variableExpr == null) {
+                    variableExpr = forExpr.getMultiParameter();
+                    if (variableExpr == null) return null;
+                }
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(variableExpr, Variance.OUT_VARIANCE);
                 return new CreateFunctionFromUsageFix(forExpr, ownerType, "next", returnType, new ArrayList<Parameter>());
             }
@@ -1335,7 +1336,10 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 JetExpression iterableExpr = forExpr.getLoopRange();
                 if (iterableExpr == null) return null;
                 JetExpression variableExpr = forExpr.getLoopParameter();
-                if (variableExpr == null) return null;
+                if (variableExpr == null) {
+                    variableExpr = forExpr.getMultiParameter();
+                    if (variableExpr == null) return null;
+                }
                 TypeOrExpressionThereof iterableType = new TypeOrExpressionThereof(iterableExpr, Variance.IN_VARIANCE);
                 JetType returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType();
 
@@ -1359,25 +1363,33 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
-                if (multiDeclaration == null) return null;
-                List<JetMultiDeclarationEntry> entries = multiDeclaration.getEntries();
-
                 assert diagnostic.getFactory() == Errors.COMPONENT_FUNCTION_MISSING;
                 @SuppressWarnings("unchecked")
-                DiagnosticWithParameters1<JetExpression, Name> diagnosticWithParameters =
-                        (DiagnosticWithParameters1<JetExpression, Name>) diagnostic;
+                DiagnosticWithParameters2<JetExpression, Name, JetType> diagnosticWithParameters =
+                        (DiagnosticWithParameters2<JetExpression, Name, JetType>) diagnostic;
                 Name name = diagnosticWithParameters.getA();
                 Matcher componentNumberMatcher = COMPONENT_FUNCTION_PATTERN.matcher(name.getIdentifier());
                 if (!componentNumberMatcher.matches()) return null;
                 String componentNumberString = componentNumberMatcher.group(1);
                 int componentNumber = Integer.decode(componentNumberString) - 1;
 
+                JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
+                TypeOrExpressionThereof ownerType;
+                if (multiDeclaration == null) { // if it's not a multi-declaration, must be a multi parameter in a for-loop
+                    JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
+                    if (forExpr == null) return null;
+                    multiDeclaration = forExpr.getMultiParameter();
+                    if (multiDeclaration == null) return null;
+                    ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getB(), Variance.IN_VARIANCE);
+                } else {
+                    JetExpression rhs = multiDeclaration.getInitializer();
+                    if (rhs == null) return null;
+                    ownerType = new TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE);
+                }
+                List<JetMultiDeclarationEntry> entries = multiDeclaration.getEntries();
+
                 JetMultiDeclarationEntry entry = entries.get(componentNumber);
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry, Variance.OUT_VARIANCE);
-                JetExpression rhs = multiDeclaration.getInitializer();
-                if (rhs == null) return null;
-                TypeOrExpressionThereof ownerType = new TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE);
 
                 return new CreateFunctionFromUsageFix(multiDeclaration, ownerType, name.getIdentifier(), returnType, new ArrayList<Parameter>());
             }

@@ -417,7 +417,7 @@ public class ExpressionTypingUtils {
                 context.trace.report(COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, componentName, results.getResultingCalls()));
             }
             else {
-                context.trace.report(COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName));
+                context.trace.report(COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName, receiver.getType()));
             }
             if (componentType == null) {
                 componentType = ErrorUtils.createErrorType(componentName + "() return type");
