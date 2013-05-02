@@ -774,8 +774,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         TypeParameterListExpression expression = setupTypeParameterListTemplate(builder, func);
 
         // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
-        final TemplateImpl template = (TemplateImpl) builder.buildInlineTemplate();
-        ArrayList<Variable> variables = template.getVariables();
+        final TemplateImpl templateImpl = (TemplateImpl) builder.buildInlineTemplate();
+        ArrayList<Variable> variables = templateImpl.getVariables();
         for (int i = 0; i < parameters.size(); i++) {
             Collections.swap(variables, i * 2, i * 2 + 1);
         }
@@ -784,11 +784,11 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         variables.add(new Variable(TYPE_PARAMETER_LIST_VARIABLE_NAME, expression, expression, false, true));
 
         // run the template
-        TemplateManager.getInstance(project).startTemplate(containingFileEditor, template, new TemplateEditingAdapter() {
+        TemplateManager.getInstance(project).startTemplate(containingFileEditor, templateImpl, new TemplateEditingAdapter() {
             @Override
-            public void templateFinished(Template _, boolean brokenOff) {
+            public void templateFinished(Template template, boolean brokenOff) {
                 // file templates
-                int offset = template.getSegmentOffset(0);
+                int offset = templateImpl.getSegmentOffset(0);
                 final JetNamedFunction func = PsiTreeUtil.findElementOfClassAtOffset(containingFile, offset, JetNamedFunction.class, false);
                 assert func != null;
                 final List<JetTypeReference> typeRefsToShorten = new ArrayList<JetTypeReference>();
