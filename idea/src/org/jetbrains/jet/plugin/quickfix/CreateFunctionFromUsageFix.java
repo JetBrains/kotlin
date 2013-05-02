@@ -662,7 +662,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         } else {
             isExtension = true;
         }
-        isUnit = returnType.isType() && isUnit(returnType.getType());
+        isUnit = returnType.isType() && KotlinBuiltIns.getInstance().isUnit(returnType.getType());
 
         JetScope scope;
         if (isExtension) {
@@ -1218,10 +1218,6 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         } else { // intersection doesn't exist; let user make an imperfect choice
             return expectedTypes.toArray(new JetType[expectedTypes.size()]);
         }
-    }
-
-    private static boolean isUnit(@NotNull JetType type) {
-        return KotlinBuiltIns.getInstance().isUnit(type);
     }
 
     @NotNull
