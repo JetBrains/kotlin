@@ -93,9 +93,12 @@ public class CandidateResolver {
             return;
         }
 
-        if (!Visibilities.isVisible(candidate, context.scope.getContainingDeclaration())) {
+
+        DeclarationDescriptorWithVisibility invisibleMember =
+                Visibilities.findInvisibleMember(candidate, context.scope.getContainingDeclaration());
+        if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
-            context.tracing.invisibleMember(context.trace, candidate);
+            context.tracing.invisibleMember(context.trace, invisibleMember);
             return;
         }
 

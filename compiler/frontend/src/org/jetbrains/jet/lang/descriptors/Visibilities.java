@@ -105,17 +105,21 @@ public class Visibilities {
     }
 
     public static boolean isVisible(@Nullable DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        return findInvisibleMember(what, from) == null;
+    }
+
+    public static DeclarationDescriptorWithVisibility findInvisibleMember(
+            @Nullable DeclarationDescriptorWithVisibility what,
+            @NotNull DeclarationDescriptor from
+    ) {
         DeclarationDescriptorWithVisibility parent = what;
-        while (parent != null) {
-            if (parent.getVisibility() == LOCAL) {
-                return true;
-            }
+        while (parent != null && parent.getVisibility() != LOCAL) {
             if (!parent.getVisibility().isVisible(parent, from)) {
-                return false;
+                return parent;
             }
             parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
         }
-        return true;
+        return null;
     }
 
     private static final Map<Visibility, Integer> ORDERED_VISIBILITIES = Maps.newHashMap();
