@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -109,5 +108,9 @@ public class DiagnosticMessageTest extends JetLiteFixture {
 
     public void testTypeMismatchWithNothing() throws Exception {
         doTest("typeMismatchWithNothing", 1, Errors.TYPE_MISMATCH);
+    }
+
+    public void testInvisibleMember() throws Exception {
+        doTest("invisibleMember", 3, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER);
     }
 }
