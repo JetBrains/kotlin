@@ -85,6 +85,8 @@ public class QuickFixes {
 
         factories.put(NON_VARARG_SPREAD, RemovePsiElementSimpleFix.createRemoveSpreadFactory());
 
+        factories.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, AddNameToArgumentFix.createFactory());
+
         factories.put(NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
 
         factories.put(NOTHING_TO_OVERRIDE, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD));

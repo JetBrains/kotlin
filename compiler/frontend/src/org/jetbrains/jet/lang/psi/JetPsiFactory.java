@@ -283,6 +283,15 @@ public class JetPsiFactory {
         return (JetIfExpression) createExpression(project, JetPsiUnparsingUtils.toIf(condition, thenExpr, elseExpr));
     }
 
+    @NotNull
+    public static JetValueArgument createArgumentWithName(
+            @NotNull Project project,
+            @NotNull String name,
+            @NotNull JetExpression argumentExpression
+    ) {
+        return createCallArguments(project, "(" + name + " = " + argumentExpression.getText() + ")").getArguments().get(0);
+    }
+
     public static class IfChainBuilder {
         private final StringBuilder sb = new StringBuilder();
         private boolean first = true;
