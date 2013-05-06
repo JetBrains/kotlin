@@ -1593,7 +1593,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
                     return true;
                 }
-                if (type == Type.FLOAT_TYPE && ((Number) value).byteValue() == 0f) {
+                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
                     return true;
                 }
             }
