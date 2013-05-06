@@ -103,7 +103,7 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
         processPropertyImplementationsMethods(accessorsPsiMethods, consumer);
     }
 
-    private static void processPropertyImplementationsMethods(LightClassUtil.PropertyAccessorsPsiMethods accessors, @NotNull Processor<PsiElement> consumer) {
+    public static void processPropertyImplementationsMethods(LightClassUtil.PropertyAccessorsPsiMethods accessors, @NotNull Processor<PsiElement> consumer) {
         for (PsiMethod method : accessors) {
             PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method);
             for (PsiMethod implementation : implementations) {
