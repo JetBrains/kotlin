@@ -75,6 +75,10 @@ public class JetFunctionPlatformDescriptorImpl implements JetFunctionPlatformDes
         parameters.remove(index);
     }
 
+    public void clearParameters() {
+        parameters.clear();
+    }
+
     @Override
     public int getParametersCount() {
         return funDescriptor.getValueParameters().size();

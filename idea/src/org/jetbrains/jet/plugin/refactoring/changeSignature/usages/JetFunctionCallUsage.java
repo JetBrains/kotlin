@@ -22,7 +22,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     private final PsiElement function;
@@ -48,51 +50,103 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         if (arguments != null) {
             List<JetValueArgument> oldArguments = arguments.getArguments();
 
-            if (changeInfo.isParameterSetOrOrderChanged()) {
-                StringBuilder parametersBuilder = new StringBuilder("(");
-                boolean isFirst = true;
-
-                for (JetParameterInfo parameterInfo : changeInfo.getNewParameters()) {
-                    if (isFirst)
-                        isFirst = false;
-                    else
-                        parametersBuilder.append(',');
-
-                    String defaultValueText = parameterInfo.getDefaultValueText();
-                    parametersBuilder.append(defaultValueText.isEmpty() ? '0' : defaultValueText);
-                }
-
-                parametersBuilder.append(')');
-                JetValueArgumentList newArguments = JetPsiFactory.createCallArguments(getProject(), parametersBuilder.toString());
-                int argIndex = 0;
-
-                for (JetValueArgument newArgument : newArguments.getArguments()) {
-                    JetParameterInfo parameterInfo = changeInfo.getNewParameters()[argIndex++];
-                    int oldIndex = parameterInfo.getOldIndex();
-
-                    if (oldIndex >= 0 && oldIndex < oldArguments.size())
-                        newArgument.replace(oldArguments.get(oldIndex));
-                    else if (parameterInfo.getDefaultValueText().isEmpty())
-                        newArgument.delete();
-                }
-
-                arguments.replace(newArguments);
-            }
-            else {
-                for (JetParameterInfo parameterInfo : changeInfo.getNewParameters()) {
-                    JetValueArgument argument = parameterInfo.getOldIndex() < oldArguments.size() ? oldArguments.get(parameterInfo.getOldIndex()) : null;
-                    JetValueArgumentName argumentName = argument != null ? argument.getArgumentName() : null;
-                    JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
-                    PsiElement identifier = argumentNameExpression != null ? argumentNameExpression.getIdentifier() : null;
-
-                    if (identifier != null) {
-                        String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
-                        identifier.replace(JetPsiFactory.createIdentifier(getProject(), newName));
-                    }
-                }
-            }
+            if (changeInfo.isParameterSetOrOrderChanged())
+                arguments.replace(generateNewArgumentList(changeInfo, oldArguments));
+            else
+                changeArgumentNames(changeInfo, oldArguments);
         }
 
         return true;
+    }
+
+    private JetValueArgumentList generateNewArgumentList(JetChangeInfo changeInfo, List<JetValueArgument> oldArguments) {
+        boolean isNamedCall = oldArguments.size() > 1 && oldArguments.get(0).getArgumentName() != null;
+        StringBuilder parametersBuilder = new StringBuilder("(");
+        boolean isFirst = true;
+
+        for (JetParameterInfo parameterInfo : changeInfo.getNewParameters()) {
+            if (isFirst)
+                isFirst = false;
+            else
+                parametersBuilder.append(',');
+
+            String defaultValueText = parameterInfo.getDefaultValueText();
+
+            if (isNamedCall) {
+                String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
+                parametersBuilder.append(newName).append('=');
+            }
+
+            parametersBuilder.append(defaultValueText.isEmpty() ? '0' : defaultValueText);
+        }
+
+        parametersBuilder.append(')');
+        JetValueArgumentList newArguments = JetPsiFactory.createCallArguments(getProject(), parametersBuilder.toString());
+
+        Map<Integer, JetValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
+        int argIndex = 0;
+
+        for (JetValueArgument newArgument : newArguments.getArguments()) {
+            JetParameterInfo parameterInfo = changeInfo.getNewParameters()[argIndex++];
+            JetValueArgument oldArgument = argumentMap.get(parameterInfo.getOldIndex());
+
+            if (oldArgument != null) {
+                JetValueArgumentName argumentName = oldArgument.getArgumentName();
+                JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
+                changeArgumentName(changeInfo, argumentNameExpression, parameterInfo);
+                newArgument.replace(oldArgument);
+            }
+            else if (parameterInfo.getDefaultValueText().isEmpty())
+                newArgument.delete();
+        }
+
+        return newArguments;
+    }
+
+    private static Map<Integer, JetValueArgument> getParamIndexToArgumentMap(JetChangeInfo changeInfo, List<JetValueArgument> oldArguments) {
+        Map<Integer, JetValueArgument> argumentMap = new HashMap<Integer, JetValueArgument>();
+
+        for (int i = 0; i < oldArguments.size(); i++) {
+            JetValueArgument argument = oldArguments.get(i);
+            JetValueArgumentName argumentName = argument.getArgumentName();
+            JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
+            String oldParameterName = argumentNameExpression != null ? argumentNameExpression.getReferencedName() : null;
+
+            if (oldParameterName != null) {
+                Integer oldParameterIndex = changeInfo.getOldParameterIndex(oldParameterName);
+
+                if (oldParameterIndex != null)
+                    argumentMap.put(oldParameterIndex, argument);
+            }
+            else
+                argumentMap.put(i, argument);
+        }
+
+        return argumentMap;
+    }
+
+    private void changeArgumentNames(JetChangeInfo changeInfo, List<JetValueArgument> oldArguments) {
+        for (JetValueArgument argument : oldArguments) {
+            JetValueArgumentName argumentName = argument.getArgumentName();
+            JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
+
+            if (argumentNameExpression != null) {
+                Integer oldParameterIndex = changeInfo.getOldParameterIndex(argumentNameExpression.getReferencedName());
+
+                if (oldParameterIndex != null) {
+                    JetParameterInfo parameterInfo = changeInfo.getNewParameters()[oldParameterIndex];
+                    changeArgumentName(changeInfo, argumentNameExpression, parameterInfo);
+                }
+            }
+        }
+    }
+
+    private void changeArgumentName(JetChangeInfo changeInfo, JetSimpleNameExpression argumentNameExpression, JetParameterInfo parameterInfo) {
+        PsiElement identifier = argumentNameExpression != null ? argumentNameExpression.getIdentifier() : null;
+
+        if (identifier != null) {
+            String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
+            identifier.replace(JetPsiFactory.createIdentifier(getProject(), newName));
+        }
     }
 }
