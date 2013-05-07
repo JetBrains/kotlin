@@ -95,7 +95,8 @@ public class TestlibTest extends UsefulTestCase {
 
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test");
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src");
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
+                          new MessageCollectorPlainTextToStream(System.out, MessageCollectorPlainTextToStream.NON_VERBOSE));
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 

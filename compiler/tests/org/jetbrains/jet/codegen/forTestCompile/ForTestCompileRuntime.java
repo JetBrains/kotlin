@@ -58,7 +58,7 @@ public class ForTestCompileRuntime {
     }
 
     private static void compileStdlib(File destdir) throws IOException {
-        ExitCode exitCode = new K2JVMCompiler().exec(System.err,
+        ExitCode exitCode = new K2JVMCompiler().exec(System.out,
                 "-output", destdir.getPath(),
                 "-src", "./libraries/stdlib/src",
                 "-noStdlib",
