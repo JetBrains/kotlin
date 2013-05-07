@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -126,7 +127,7 @@ public final class MembersCache {
                     if (JetClassAnnotation.get(psiClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
                         processObjectClass(psiClass);
                     }
-                    if (!DescriptorResolverUtils.isKotlinClass(psiClass) && isSamInterface(psiClass)) {
+                    if (isSamInterface(psiClass)) {
                         processSamInterface(psiClass);
                     }
                 }
@@ -402,6 +403,10 @@ public final class MembersCache {
 
     public static boolean isSamInterface(@NotNull PsiClass psiClass) {
         if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
+            return false;
+        }
+        String qualifiedName = psiClass.getQualifiedName();
+        if (qualifiedName == null || qualifiedName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.getFqName() + ".")) {
             return false;
         }
         if (!psiClass.isInterface() || psiClass.isAnnotationType()) {
