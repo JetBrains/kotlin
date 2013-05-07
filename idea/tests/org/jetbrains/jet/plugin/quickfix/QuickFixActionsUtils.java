@@ -41,6 +41,10 @@ public class QuickFixActionsUtils {
     }
 
     public static void checkForUnexpectedErrors(JetFile file) {
+        if (!InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// DISABLE-ERRORS").isEmpty()) {
+            return;
+        }
+
         AnalyzeExhaust exhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 
         Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics();
