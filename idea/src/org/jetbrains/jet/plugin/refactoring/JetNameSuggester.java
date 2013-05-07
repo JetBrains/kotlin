@@ -62,9 +62,10 @@ public class JetNameSuggester {
      * 3. Method call expression according to method callee expression
      * @param expression to suggest name for variable
      * @param validator to check scope for such names
+     * @param defaultName
      * @return possible names
      */
-    public static String[] suggestNames(JetExpression expression, JetNameValidator validator) {
+    public static String[] suggestNames(JetExpression expression, JetNameValidator validator, String defaultName) {
         ArrayList<String> result = new ArrayList<String>();
 
         BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
@@ -74,13 +75,21 @@ public class JetNameSuggester {
         }
         addNamesForExpression(result, expression, validator);
 
-        if (result.isEmpty()) addName(result, "value", validator);
+        if (result.isEmpty()) addName(result, defaultName, validator);
         return ArrayUtil.toStringArray(result);
     }
-    
+
+    public static String[] suggestNames(JetType type, JetNameValidator validator, String defaultName) {
+        ArrayList<String> result = new ArrayList<String>();
+        addNamesForType(result, type, validator);
+        if (result.isEmpty()) addName(result, defaultName, validator);
+        return ArrayUtil.toStringArray(result);
+    }
+
     private static void addNamesForType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+        jetType = TypeUtils.makeNotNullable(jetType); // wipe out '?'
         if (ErrorUtils.containsErrorType(jetType)) return;
         if (typeChecker.equalTypes(builtIns.getBooleanType(), jetType)) {
             addName(result, "b", validator);

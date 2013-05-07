@@ -180,7 +180,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                                                           calculateAnchor(commonParent,
                                                                                           commonContainer,
                                                                                           allReplaces));
-                String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator);
+                String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator, "value");
                 final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
                 Collections.addAll(suggestedNamesSet, suggestedNames);
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();

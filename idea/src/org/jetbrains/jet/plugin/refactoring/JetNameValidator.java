@@ -17,20 +17,66 @@
 package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: Alefas
  * Date: 07.02.12
  */
-public interface JetNameValidator {
+public abstract class JetNameValidator {
+    private final Project project;
+
+    protected JetNameValidator(Project project) {
+        this.project = project;
+    }
+
+    public static JetNameValidator getEmptyValidator(final Project project) {
+        return new JetNameValidator(project) {
+            @Override
+            protected boolean validateInner(String name) {
+                return true;
+            }
+        };
+    }
+
+    public static JetNameValidator getCollectingValidator(final Project project) {
+        return new JetNameValidator(project) {
+            private final Set<String> suggestedSet = new HashSet<String>();
+
+            @Override
+            protected boolean validateInner(String name) {
+                return !suggestedSet.contains(name);
+            }
+
+            @Override
+            public String validateName(String name) {
+                String validatedName = super.validateName(name);
+                suggestedSet.add(validatedName);
+                return validatedName;
+            }
+        };
+    }
+
     /**
      * Validates name, and slightly improves it by adding number to name in case of conflicts
      * @param name to check it in scope
      * @return name or nameI, where I is number
      */
-    @Nullable
-    String validateName(String name);
+    public String validateName(String name) {
+        if (validateInner(name)) return name;
+        int i = 1;
+        while (!validateInner(name + i)) {
+            ++i;
+        }
 
-    Project getProject();
+        return name + i;
+    }
+
+    protected abstract boolean validateInner(String name);
+
+    public Project getProject() {
+        return project;
+    }
 }
