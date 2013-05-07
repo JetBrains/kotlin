@@ -81,7 +81,7 @@ public class Preloader {
     }
 
     private static void printUsageAndExit() {
-        System.out.println("Usage: Preloader <paths to jars> <main class> <class number estimate> <parameters to pass to the main class> <time|notime>");
+        System.out.println("Usage: Preloader <paths to jars> <main class> <class number estimate> <time|notime> <parameters to pass to the main class>");
         System.exit(1);
     }
 }
