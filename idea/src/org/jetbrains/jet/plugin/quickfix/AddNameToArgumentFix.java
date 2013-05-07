@@ -1,0 +1,199 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet.plugin.quickfix;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopupStep;
+import com.intellij.openapi.ui.popup.PopupStep;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.PlatformIcons;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+
+import javax.swing.*;
+import java.util.List;
+import java.util.Set;
+
+public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
+
+    @NotNull
+    private final List<String> possibleNames;
+
+    public AddNameToArgumentFix(@NotNull JetValueArgument argument, @NotNull List<String> possibleNames) {
+        super(argument);
+        this.possibleNames = possibleNames;
+    }
+
+    @NotNull
+    private static List<String> generatePossibleNames(@NotNull JetValueArgument argument) {
+        List<String> names = Lists.newArrayList();
+        JetCallElement callElement = PsiTreeUtil.getParentOfType(argument, JetCallElement.class);
+        assert callElement != null : "The argument has to be inside a function or constructor call";
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) argument.getContainingFile()).getBindingContext();
+        JetExpression callee = callElement.getCalleeExpression();
+        if (!(callee instanceof JetReferenceExpression)) return names;
+        ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                context.get(BindingContext.RESOLVED_CALL, (JetReferenceExpression) callee);
+        if (resolvedCall == null) return names;
+        CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
+        JetType type = context.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
+        Set<String> usedParameters = getUsedParameters(callElement, callableDescriptor);
+        for (ValueParameterDescriptor parameter: callableDescriptor.getValueParameters()) {
+            String name = parameter.getName().getName();
+            if (usedParameters.contains(name)) continue;
+            if (type == null || JetTypeChecker.INSTANCE.isSubtypeOf(type, parameter.getType())) names.add(name);
+        }
+        return names;
+    }
+
+    @NotNull
+    private static Set<String> getUsedParameters(@NotNull JetCallElement callElement, @NotNull CallableDescriptor callableDescriptor) {
+        Set<String> usedParameters = Sets.newHashSet();
+        boolean beforeNamed = true;
+        int idx = 0;
+        for (ValueArgument argument : callElement.getValueArguments()) {
+            if (argument.isNamed()) {
+                JetValueArgumentName name = argument.getArgumentName();
+                assert name != null : "Named argument's name cannot be null";
+                usedParameters.add(name.getText());
+                beforeNamed = false;
+            }
+            else if (beforeNamed) {
+                ValueParameterDescriptor parameter = callableDescriptor.getValueParameters().get(idx);
+                usedParameters.add(parameter.getName().getName());
+                idx++;
+            }
+        }
+        return usedParameters;
+    }
+
+    @Override
+    protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
+        if (possibleNames.size() == 1 || editor == null || !editor.getComponent().isShowing()) {
+            addName(project, element, possibleNames.get(0));
+        }
+        else {
+            chooseNameAndAdd(project, editor);
+        }
+    }
+
+    private void chooseNameAndAdd(@NotNull Project project, Editor editor) {
+        JBPopupFactory.getInstance().createListPopup(getNamePopup(project)).showInBestPositionFor(editor);
+    }
+
+    private ListPopupStep getNamePopup(final @NotNull Project project) {
+        return new BaseListPopupStep<String>(
+                JetBundle.message("add.name.to.parameter.name.chooser.title"), possibleNames) {
+            @Override
+            public PopupStep onChosen(String selectedName, boolean finalChoice) {
+                if (finalChoice) {
+                    addName(project, element, selectedName);
+                }
+                return FINAL_CHOICE;
+            }
+
+            @Override
+            public Icon getIconFor(String name) {
+                return PlatformIcons.PARAMETER_ICON;
+            }
+
+            @NotNull
+            @Override
+            public String getTextFor(String name) {
+                return getArgumentWithName(name, element).getText();
+            }
+        };
+    }
+
+    private static void addName(@NotNull Project project, final @NotNull JetValueArgument argument, final @NotNull String name) {
+        PsiDocumentManager.getInstance(project).commitAllDocuments();
+
+        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+            @Override
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        JetValueArgument newArgument = getArgumentWithName(name, argument);
+                        argument.replace(newArgument);
+                    }
+                });
+            }
+        }, JetBundle.message("add.name.to.argument.action"), null);
+    }
+
+    private static JetValueArgument getArgumentWithName(String name, JetValueArgument argument) {
+        Project project = argument.getProject();
+        return JetPsiFactory.createCallArguments(project, "(" + name + " = " + getArgumentExpression(argument).getText() + ")")
+                .getArguments().get(0);
+    }
+
+    @NotNull
+    @Override
+    public String getText() {
+        if (possibleNames.size() == 1) {
+            return JetBundle.message("add.name.to.argument.single", getArgumentWithName(possibleNames.get(0), element).getText());
+        } else {
+            return JetBundle.message("add.name.to.argument.multiple");
+        }
+    }
+
+    @NotNull
+    private static JetExpression getArgumentExpression(@NotNull JetValueArgument argument) {
+        JetExpression argumentExpression = argument.getArgumentExpression();
+        assert argumentExpression != null : "Element must have an expression - it should be already parsed";
+        return argumentExpression;
+    }
+
+    @NotNull
+    @Override
+    public String getFamilyName() {
+        return JetBundle.message("add.name.to.argument.family");
+    }
+    @NotNull
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetValueArgument argument = QuickFixUtil.getParentElementOfType(diagnostic, JetValueArgument.class);
+                if (argument == null) return null;
+                List<String> possibleNames = generatePossibleNames(argument);
+                return possibleNames.isEmpty() ? null : new AddNameToArgumentFix(argument, possibleNames);
+            }
+        };
+    }
+}

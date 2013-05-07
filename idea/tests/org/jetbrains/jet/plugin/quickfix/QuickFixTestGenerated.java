@@ -359,6 +359,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeMixedNamedAndPositionalArguments.kt")
+        public void testMixedNamedAndPositionalArguments() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArguments.kt");
+        }
+        
+        @TestMetadata("beforeMixedNamedAndPositionalArgumentsConstructor.kt")
+        public void testMixedNamedAndPositionalArgumentsConstructor() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArgumentsConstructor.kt");
+        }
+        
+        @TestMetadata("beforeMixedNamedAndPositionalArgumentsMultiple.kt")
+        public void testMixedNamedAndPositionalArgumentsMultiple() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArgumentsMultiple.kt");
+        }
+        
+        @TestMetadata("beforeMixedNamedAndPositionalArgumentsSubtype.kt")
+        public void testMixedNamedAndPositionalArgumentsSubtype() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArgumentsSubtype.kt");
+        }
+        
+        @TestMetadata("beforeMixedNamedAndPositionalArgumentsUsedNamed.kt")
+        public void testMixedNamedAndPositionalArgumentsUsedNamed() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArgumentsUsedNamed.kt");
+        }
+        
+        @TestMetadata("beforeMixedNamedAndPositionalArgumentsUsedPositional.kt")
+        public void testMixedNamedAndPositionalArgumentsUsedPositional() throws Exception {
+            doTest("idea/testData/quickfix/checkArguments/beforeMixedNamedAndPositionalArgumentsUsedPositional.kt");
+        }
+        
         @TestMetadata("beforeNonVarargSpread.kt")
         public void testNonVarargSpread() throws Exception {
             doTest("idea/testData/quickfix/checkArguments/beforeNonVarargSpread.kt");
