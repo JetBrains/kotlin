@@ -74,7 +74,7 @@ public class Preloader {
 
     private static boolean parseMeasureTime(String arg) {
         if ("time".equals(arg)) return true;
-        if ("notime".equals(arg)) return true;
+        if ("notime".equals(arg)) return false;
         System.out.println("Unrecognized argument: " + arg);
         printUsageAndExit();
         return false;
