@@ -119,15 +119,6 @@ public class OverridingUtil {
         }
         return parameters;
     }
-    
-    private static int compiledValueParameterCount(CallableDescriptor callableDescriptor) {
-        if (callableDescriptor.getReceiverParameter() != null) {
-            return 1 + callableDescriptor.getValueParameters().size();
-        }
-        else {
-            return callableDescriptor.getValueParameters().size();
-        }
-    }
 
     /**
      * @param forOverride true for override, false for overload
@@ -136,7 +127,11 @@ public class OverridingUtil {
 
         // TODO : Visibility
 
-        if (compiledValueParameterCount(superDescriptor) != compiledValueParameterCount(subDescriptor)) {
+        if ((superDescriptor.getReceiverParameter() == null) != (subDescriptor.getReceiverParameter() == null)) {
+            return OverrideCompatibilityInfo.receiverPresenseMismatch();
+        }
+
+        if (superDescriptor.getValueParameters().size() != subDescriptor.getValueParameters().size()) {
             return OverrideCompatibilityInfo.valueParameterNumberMismatch();
         }
 
@@ -324,6 +319,11 @@ public class OverridingUtil {
         @NotNull
         public static OverrideCompatibilityInfo typeParameterNumberMismatch() {
             return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "typeParameterNumberMismatch"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo receiverPresenseMismatch() {
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "receiverPresenseMismatch"); // TODO
         }
 
         @NotNull
