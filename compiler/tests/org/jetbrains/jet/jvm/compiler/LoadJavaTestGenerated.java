@@ -1367,6 +1367,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestJavaAgainstKotlin("compiler/testData/loadJava/javaAgainstKotlin/signaturePropagation/DeepSubclassingKotlinInJava.txt");
             }
             
+            @TestMetadata("InheritExtensionAndNot.txt")
+            public void testInheritExtensionAndNot() throws Exception {
+                doTestJavaAgainstKotlin("compiler/testData/loadJava/javaAgainstKotlin/signaturePropagation/InheritExtensionAndNot.txt");
+            }
+            
+            @TestMetadata("InheritExtensionFunction.txt")
+            public void testInheritExtensionFunction() throws Exception {
+                doTestJavaAgainstKotlin("compiler/testData/loadJava/javaAgainstKotlin/signaturePropagation/InheritExtensionFunction.txt");
+            }
+            
             @TestMetadata("SubclassFromTraitImplementation.txt")
             public void testSubclassFromTraitImplementation() throws Exception {
                 doTestJavaAgainstKotlin("compiler/testData/loadJava/javaAgainstKotlin/signaturePropagation/SubclassFromTraitImplementation.txt");

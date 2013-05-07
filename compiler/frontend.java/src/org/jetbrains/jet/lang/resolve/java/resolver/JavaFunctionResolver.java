@@ -151,7 +151,7 @@ public final class JavaFunctionResolver {
         List<String> signatureErrors = Lists.newArrayList();
 
         List<FunctionDescriptor> superFunctions;
-        if (ownerDescriptor instanceof ClassDescriptor) {
+        if (ownerDescriptor instanceof ClassDescriptor && !method.getJetMethodAnnotation().isDefined()) { // don't propagate for Kotlin functions
             SignaturesPropagationData signaturesPropagationData = new SignaturesPropagationData(
                     (ClassDescriptor) ownerDescriptor, returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
             superFunctions = signaturesPropagationData.getSuperFunctions();

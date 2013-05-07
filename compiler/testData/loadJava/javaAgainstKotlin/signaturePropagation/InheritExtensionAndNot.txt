@@ -1,0 +1,18 @@
+package test
+
+public trait Sub : test.Super1, test.Super2 {
+    public abstract override /*1*/ fun bar(/*0*/ vararg p: jet.String /*jet.Array<jet.String>*/): jet.Unit
+    public abstract override /*1*/ fun foo(/*0*/ p: jet.String): jet.Unit
+    public abstract override /*1*/ /*fake_override*/ fun jet.Array<jet.String>.bar(): jet.Unit
+    public abstract override /*1*/ /*fake_override*/ fun jet.String.foo(): jet.Unit
+}
+
+public trait Super1 {
+    public abstract fun jet.Array<jet.String>.bar(): jet.Unit
+    public abstract fun jet.String.foo(): jet.Unit
+}
+
+public trait Super2 {
+    public abstract fun bar(/*0*/ vararg p: jet.String /*jet.Array<jet.String>*/): jet.Unit
+    public abstract fun foo(/*0*/ p: jet.String): jet.Unit
+}
