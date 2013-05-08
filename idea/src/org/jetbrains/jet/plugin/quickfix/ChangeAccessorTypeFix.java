@@ -83,8 +83,8 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
         element.replace(newElement);
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetPropertyAccessor> createAction(Diagnostic diagnostic) {
                 JetPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, JetPropertyAccessor.class);

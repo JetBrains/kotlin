@@ -164,8 +164,8 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         return true;
     }
 
-    public static <T extends JetModifierListOwner> JetIntentionActionFactory createFactory(final JetKeywordToken modifier, final Class<T> modifierOwnerClass) {
-        return new JetIntentionActionFactory() {
+    public static <T extends JetModifierListOwner> JetSingleIntentionActionFactory createFactory(final JetKeywordToken modifier, final Class<T> modifierOwnerClass) {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass);
@@ -175,7 +175,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         };
     }
 
-    public static JetIntentionActionFactory createFactory(JetKeywordToken modifier) {
+    public static JetSingleIntentionActionFactory createFactory(JetKeywordToken modifier) {
         return createFactory(modifier, JetModifierListOwner.class);
     }
 

@@ -59,8 +59,8 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForExpectedParameterTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForExpectedParameterTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -75,8 +75,8 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForExpectedReturnTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForExpectedReturnTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

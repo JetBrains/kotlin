@@ -247,8 +247,8 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

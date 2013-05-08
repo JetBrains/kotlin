@@ -30,10 +30,10 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class QuickFixes {
 
-    private static final Multimap<AbstractDiagnosticFactory, JetIntentionActionFactory> factories = HashMultimap.create();
+    private static final Multimap<AbstractDiagnosticFactory, JetIntentionActionsFactory> factories = HashMultimap.create();
     private static final Multimap<AbstractDiagnosticFactory, IntentionAction> actions = HashMultimap.create();
 
-    public static Collection<JetIntentionActionFactory> getActionFactories(AbstractDiagnosticFactory diagnosticFactory) {
+    public static Collection<JetIntentionActionsFactory> getActionsFactories(AbstractDiagnosticFactory diagnosticFactory) {
         return factories.get(diagnosticFactory);
     }
 
@@ -44,12 +44,12 @@ public class QuickFixes {
     private QuickFixes() {}
 
     static {
-        JetIntentionActionFactory removeAbstractModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD);
-        JetIntentionActionFactory addAbstractModifierFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD);
+        JetSingleIntentionActionFactory removeAbstractModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD);
+        JetSingleIntentionActionFactory addAbstractModifierFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD);
 
         factories.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, removeAbstractModifierFactory);
 
-        JetIntentionActionFactory removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
+        JetSingleIntentionActionFactory removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
         factories.put(ABSTRACT_PROPERTY_WITH_INITIALIZER, removeAbstractModifierFactory);
         factories.put(ABSTRACT_PROPERTY_WITH_INITIALIZER, removePartsFromPropertyFactory);
 
@@ -63,13 +63,13 @@ public class QuickFixes {
 
         factories.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
 
-        JetIntentionActionFactory removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD);
+        JetSingleIntentionActionFactory removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD);
 
-        JetIntentionActionFactory addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, JetClass.class);
+        JetSingleIntentionActionFactory addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, JetClass.class);
         factories.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         factories.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
-        JetIntentionActionFactory removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
+        JetSingleIntentionActionFactory removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
         factories.put(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         factories.put(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
@@ -79,7 +79,7 @@ public class QuickFixes {
         factories.put(FINAL_PROPERTY_IN_TRAIT, removeFinalModifierFactory);
         factories.put(FINAL_FUNCTION_WITH_NO_BODY, removeFinalModifierFactory);
 
-        JetIntentionActionFactory addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
+        JetSingleIntentionActionFactory addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
         factories.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
         factories.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addFunctionBodyFactory);
 
@@ -94,13 +94,13 @@ public class QuickFixes {
         factories.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
         factories.put(USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
 
-        JetIntentionActionFactory changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
+        JetSingleIntentionActionFactory changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
         factories.put(WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);
         factories.put(WRONG_GETTER_RETURN_TYPE, changeAccessorTypeFactory);
 
         factories.put(USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
 
-        JetIntentionActionFactory removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true);
+        JetSingleIntentionActionFactory removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true);
         factories.put(REDUNDANT_MODIFIER, removeRedundantModifierFactory);
         factories.put(ABSTRACT_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true));
         factories.put(OPEN_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true));
@@ -109,28 +109,28 @@ public class QuickFixes {
         factories.put(INCOMPATIBLE_MODIFIERS, RemoveModifierFix.createRemoveModifierFactory(false));
         factories.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, RemoveModifierFix.createRemoveVarianceFactory());
 
-        JetIntentionActionFactory removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD);
+        JetSingleIntentionActionFactory removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD);
         factories.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, AddModifierFix.createFactory(OPEN_KEYWORD, JetClass.class));
         factories.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, removeOpenModifierFactory);
 
-        JetIntentionActionFactory removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory();
+        JetSingleIntentionActionFactory removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory();
         factories.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
         factories.put(REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
         factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
 
-        JetIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
+        JetSingleIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
         factories.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
 
-        JetIntentionActionFactory changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory();
+        JetSingleIntentionActionFactory changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory();
         factories.put(NO_BACKING_FIELD_ABSTRACT_PROPERTY, changeToPropertyNameFactory);
         factories.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS, changeToPropertyNameFactory);
         factories.put(INACCESSIBLE_BACKING_FIELD, changeToPropertyNameFactory);
 
-        JetIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.createFactory();
+        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.createFactory();
         factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
 
-        JetIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();
+        JetSingleIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();
         factories.put(USELESS_SIMPLE_IMPORT, removeImportFixFactory);
         factories.put(USELESS_HIDDEN_IMPORT, removeImportFixFactory);
 
@@ -170,7 +170,7 @@ public class QuickFixes {
         actions.put(UNNECESSARY_NOT_NULL_ASSERTION, ExclExclCallFix.removeExclExclCall());
         factories.put(UNSAFE_INFIX_CALL, ReplaceInfixCallFix.createFactory());
 
-        JetIntentionActionFactory removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD);
+        JetSingleIntentionActionFactory removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD);
         factories.put(PACKAGE_MEMBER_CANNOT_BE_PROTECTED, removeProtectedModifierFactory);
 
         actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
@@ -184,13 +184,13 @@ public class QuickFixes {
 
         factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory());
 
-        JetIntentionActionFactory changeToStarProjectionFactory = ChangeToStarProjectionFix.createFactory();
+        JetSingleIntentionActionFactory changeToStarProjectionFactory = ChangeToStarProjectionFix.createFactory();
         factories.put(UNCHECKED_CAST, changeToStarProjectionFactory);
         factories.put(CANNOT_CHECK_FOR_ERASED, changeToStarProjectionFactory);
 
         factories.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, AddModifierFix.createFactory(INNER_KEYWORD, JetClass.class));
 
-        JetIntentionActionFactory addOpenModifierToClassDeclarationFix = AddOpenModifierToClassDeclarationFix.createFactory();
+        JetSingleIntentionActionFactory addOpenModifierToClassDeclarationFix = AddOpenModifierToClassDeclarationFix.createFactory();
         factories.put(FINAL_SUPERTYPE, addOpenModifierToClassDeclarationFix);
         factories.put(FINAL_UPPER_BOUND, addOpenModifierToClassDeclarationFix);
 
@@ -211,12 +211,12 @@ public class QuickFixes {
 
         factories.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED, AddSemicolonAfterFunctionCallFix.createFactory());
 
-        JetIntentionActionFactory changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride();
+        JetSingleIntentionActionFactory changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride();
         factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
         factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
         factories.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, ChangeVariableTypeFix.createFactoryForComponentFunctionReturnTypeMismatch());
 
-        JetIntentionActionFactory changeFunctionReturnTypeFix = ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToUnit();
+        JetSingleIntentionActionFactory changeFunctionReturnTypeFix = ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToUnit();
         factories.put(RETURN_TYPE_MISMATCH, changeFunctionReturnTypeFix);
         factories.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, changeFunctionReturnTypeFix);
         factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, ChangeFunctionReturnTypeFix.createFactoryForReturnTypeMismatchOnOverride());
@@ -233,7 +233,7 @@ public class QuickFixes {
         factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
 
-        JetIntentionActionFactory changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch();
+        JetSingleIntentionActionFactory changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch();
         factories.put(EXPECTED_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
         factories.put(ASSIGNMENT_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
 

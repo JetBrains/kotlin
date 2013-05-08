@@ -58,8 +58,8 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
         element.replace(propertyName);
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetSimpleNameExpression> createAction(Diagnostic diagnostic) {
                 JetSimpleNameExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetSimpleNameExpression.class);
