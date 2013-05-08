@@ -71,8 +71,7 @@ public class FunctionDescriptorUtil {
     public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, @NotNull TypeSubstitutor substitutor) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getValueParameters();
-        for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
-            ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
+        for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
             // TODO : Lazy?
             JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
             JetType varargElementType = unsubstitutedValueParameter.getVarargElementType();
