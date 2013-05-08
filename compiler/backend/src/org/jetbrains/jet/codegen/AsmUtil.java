@@ -137,11 +137,11 @@ public class AsmUtil {
     }
 
     public static boolean isStaticMethod(OwnerKind kind, FunctionDescriptor functionDescriptor) {
-        return isStatic(kind) || kind == OwnerKind.TRAIT_IMPL || JetTypeMapper.isAccessor(functionDescriptor);
+        return isStatic(kind) || JetTypeMapper.isAccessor(functionDescriptor);
     }
 
     public static boolean isStatic(OwnerKind kind) {
-        return kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
+        return kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind || kind == OwnerKind.TRAIT_IMPL;
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {

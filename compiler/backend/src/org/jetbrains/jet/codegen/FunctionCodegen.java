@@ -41,7 +41,6 @@ import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -519,12 +518,12 @@ public class FunctionCodegen extends GenerationStateAware {
 
     static void generateDefaultIfNeeded(
             @NotNull MethodContext owner,
-            GenerationState state,
-            ClassBuilder v,
-            JvmMethodSignature signature,
+            @NotNull GenerationState state,
+            @NotNull ClassBuilder v,
+            @NotNull JvmMethodSignature signature,
             @NotNull FunctionDescriptor functionDescriptor,
-            OwnerKind kind,
-            DefaultParameterValueLoader loadStrategy
+            @NotNull OwnerKind kind,
+            @NotNull DefaultParameterValueLoader loadStrategy
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
@@ -538,20 +537,9 @@ public class FunctionCodegen extends GenerationStateAware {
             return;
         }
 
-        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
-        boolean hasReceiver = receiverParameter != null;
-
-        // Has outer in local variables (constructor for inner class)
-        boolean hasOuter = functionDescriptor instanceof ConstructorDescriptor &&
-                           CodegenBinding.canHaveOuter(state.getBindingContext(), ((ConstructorDescriptor) functionDescriptor).getContainingDeclaration());
         boolean isStatic = isStatic(kind);
 
         Method jvmSignature = signature.getAsmMethod();
-
-        if (kind == OwnerKind.TRAIT_IMPL) {
-            String correctedDescr = "(" + jvmSignature.getDescriptor().substring(jvmSignature.getDescriptor().indexOf(";") + 1);
-            jvmSignature = new Method(jvmSignature.getName(), correctedDescr);
-        }
 
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
@@ -573,85 +561,62 @@ public class FunctionCodegen extends GenerationStateAware {
         MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
                                              isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX,
                                              descriptor, null, null);
-        InstructionAdapter iv = new InstructionAdapter(mv);
+
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generateDefaultImpl(owner, state, jvmSignature, functionDescriptor, kind, receiverParameter, hasReceiver, hasOuter, isStatic,
-                                ownerInternalName,
-                                isConstructor, mv, iv, loadStrategy);
+            generateDefaultImpl(owner, state, signature, functionDescriptor, kind, isStatic, mv, loadStrategy);
         }
     }
 
     private static void generateDefaultImpl(
-            MethodContext owner,
-            GenerationState state,
-            Method jvmSignature,
-            FunctionDescriptor functionDescriptor,
-            OwnerKind kind,
-            ReceiverParameterDescriptor receiverParameter,
-            boolean hasReceiver, boolean hasOuter,
+            @NotNull MethodContext methodContext,
+            @NotNull GenerationState state,
+            @NotNull JvmMethodSignature signature,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull OwnerKind kind,
             boolean aStatic,
-            JvmClassName ownerInternalName,
-            boolean constructor,
-            MethodVisitor mv,
-            InstructionAdapter iv,
-            DefaultParameterValueLoader loadStrategy
+            @NotNull MethodVisitor mv,
+            @NotNull DefaultParameterValueLoader loadStrategy
     ) {
         mv.visitCode();
 
-        boolean isEnumConstructor = functionDescriptor instanceof ConstructorDescriptor &&
-                                    DescriptorUtils.isEnumClass(functionDescriptor.getContainingDeclaration());
+        FrameMap frameMap = new FrameMap();
 
-        FrameMap frameMap = owner.prepareFrame(state.getTypeMapper());
-
-        if (kind instanceof OwnerKind.StaticDelegateKind) {
-            frameMap.leaveTemp(OBJECT_TYPE);
-        }
-
-        if (hasOuter) {
+        if (!aStatic) {
             frameMap.enterTemp(OBJECT_TYPE);
         }
 
-        if (isEnumConstructor) {
-            frameMap.enterTemp(OBJECT_TYPE);
-            frameMap.enterTemp(Type.INT_TYPE);
-        }
-
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), owner, state);
-
-        Type receiverType = null;
-        if (hasReceiver) {
-            receiverType = state.getTypeMapper().mapType(receiverParameter.getType());
-        }
-
-        int extraInLocalVariablesTable = getSizeOfExplicitArgumentsInLocalVariablesTable(aStatic, hasOuter, isEnumConstructor, receiverType);
-        int countOfExtraVarsInMethodArgs = getCountOfExplicitArgumentsInMethodArguments(hasOuter, hasReceiver, isEnumConstructor);
+        Method jvmSignature = signature.getAsmMethod();
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), methodContext, state);
 
         Type[] argTypes = jvmSignature.getArgumentTypes();
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
-        int paramSizeInLocalVariablesTable = 0;
-        for (int i = 0; i < paramDescrs.size(); i++) {
-            Type argType = argTypes[i + countOfExtraVarsInMethodArgs];
-            int size = argType.getSize();
-            frameMap.enter(paramDescrs.get(i), argType);
-            paramSizeInLocalVariablesTable += size;
+        Iterator<ValueParameterDescriptor> iterator = paramDescrs.iterator();
+
+        int countOfExtraVarsInMethodArgs = 0;
+        List<JvmMethodParameterSignature> params = signature.getKotlinParameterTypes();
+
+        for (int i = 0; i < params.size(); i++) {
+            JvmMethodParameterSignature parameterSignature = params.get(i);
+            if (parameterSignature.getKind() != JvmMethodParameterKind.VALUE) {
+                countOfExtraVarsInMethodArgs++;
+                frameMap.enterTemp(parameterSignature.getAsmType());
+            } else {
+                frameMap.enter(iterator.next(), parameterSignature.getAsmType());
+            }
         }
 
-        int maskIndex = extraInLocalVariablesTable + paramSizeInLocalVariablesTable;
+        int maskIndex = frameMap.enterTemp(Type.INT_TYPE);
 
-        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, receiverType, ownerInternalName.getAsmType(), aStatic, hasOuter, isEnumConstructor);
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, aStatic, signature);
 
-        int indexInLocalVariablesTable = extraInLocalVariablesTable;
         for (int index = 0; index < paramDescrs.size(); index++) {
             ValueParameterDescriptor parameterDescriptor = paramDescrs.get(index);
 
             Type t = argTypes[countOfExtraVarsInMethodArgs + index];
-
-            if (frameMap.getIndex(parameterDescriptor) < 0) {
-                frameMap.enter(parameterDescriptor, t);
-            }
 
             if (parameterDescriptor.declaresDefaultValue()) {
                 iv.load(maskIndex, Type.INT_TYPE);
@@ -668,29 +633,20 @@ public class FunctionCodegen extends GenerationStateAware {
                 iv.mark(loadArg);
             }
 
-            iv.load(indexInLocalVariablesTable, t);
-            indexInLocalVariablesTable += t.getSize();
+            iv.load(frameMap.getIndex(parameterDescriptor), t);
         }
 
-        String internalName = ownerInternalName.getInternalName();
-        String jvmSignatureName = jvmSignature.getName();
-        String jvmSignatureDescriptor = jvmSignature.getDescriptor();
-        if (!aStatic) {
-            if (kind == OwnerKind.TRAIT_IMPL) {
-                iv.invokeinterface(internalName, jvmSignatureName, jvmSignatureDescriptor);
-            }
-            else {
-                if (!constructor && functionDescriptor.getVisibility() != Visibilities.PRIVATE) {
-                    iv.invokevirtual(internalName, jvmSignatureName, jvmSignatureDescriptor);
-                }
-                else {
-                    iv.invokespecial(internalName, jvmSignatureName, jvmSignatureDescriptor);
-                }
-            }
+        CallableMethod method = null;
+        if (functionDescriptor instanceof ConstructorDescriptor) {
+            method = state.getTypeMapper().mapToCallableMethod((ConstructorDescriptor) functionDescriptor);
+        } else {
+            method = state.getTypeMapper()
+                    .mapToCallableMethod(functionDescriptor, false, isCallInsideSameClassAsDeclared(functionDescriptor, methodContext),
+                                         isCallInsideSameModuleAsDeclared(functionDescriptor, methodContext), OwnerKind.IMPLEMENTATION);
         }
-        else {
-            iv.invokestatic(internalName, jvmSignatureName, jvmSignatureDescriptor);
-        }
+
+        iv.visitMethodInsn(method.getInvokeOpcode(), method.getOwner().getInternalName(), method.getSignature().getAsmMethod().getName(),
+                           method.getSignature().getAsmMethod().getDescriptor());
 
         iv.areturn(jvmSignature.getReturnType());
 
@@ -698,51 +654,27 @@ public class FunctionCodegen extends GenerationStateAware {
         mv.visitEnd();
     }
 
-    private static int getSizeOfExplicitArgumentsInLocalVariablesTable(
+
+    private static void loadExplicitArgumentsOnStack(
+            @NotNull InstructionAdapter iv,
+            @NotNull Type ownerType,
             boolean isStatic,
-            boolean hasOuter,
-            boolean isEnumConstructor,
-            @Nullable Type receiverType
+            @NotNull JvmMethodSignature signature
     ) {
-        int result = 0;
-        if (!isStatic) result++;
-        if (receiverType != null) result += receiverType.getSize();
-        if (hasOuter) result++;
-        if (isEnumConstructor) result += 2;
-        return result;
-    }
-
-    private static int getCountOfExplicitArgumentsInMethodArguments(
-            boolean hasOuter,
-            boolean hasReceiver,
-            boolean isEnumConstructor
-    ) {
-        int result = 0;
-        if (hasReceiver) result++;
-        if (hasOuter) result++;
-        if (isEnumConstructor) result += 2;
-        return result;
-    }
-
-    private static void loadExplicitArgumentsOnStack(@NotNull InstructionAdapter iv,
-            @NotNull Type ownerType, @Nullable Type receiverType, @NotNull Type outerType,
-            boolean isStatic, boolean hasOuter, boolean isEnumConstructor) {
         int var = 0;
         if (!isStatic) {
-            iv.load(var++, ownerType);
+            iv.load(var, ownerType);
+            var += ownerType.getSize();
         }
 
-        if (hasOuter) {
-            iv.load(var++, outerType);
-        }
-
-        if (isEnumConstructor) {
-            iv.load(var++, OBJECT_TYPE);
-            iv.load(var++, Type.INT_TYPE);
-        }
-
-        if (receiverType != null) {
-            iv.load(var, receiverType);
+        List<JvmMethodParameterSignature> params = signature.getKotlinParameterTypes();
+        for (int i = 0; i < params.size(); i++) {
+            JvmMethodParameterSignature parameterSignature = params.get(i);
+            if (parameterSignature.getKind() != JvmMethodParameterKind.VALUE) {
+                Type type = parameterSignature.getAsmType();
+                iv.load(var, type);
+                var += type.getSize();
+            }
         }
     }
 
