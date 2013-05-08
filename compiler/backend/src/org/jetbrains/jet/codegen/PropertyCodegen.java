@@ -122,9 +122,9 @@ public class PropertyCodegen extends GenerationStateAware {
 
     private FieldVisitor generateBackingFieldAccess(PsiElement p, PropertyDescriptor propertyDescriptor) {
         Object value = null;
-        JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
-        if (initializer != null) {
-            if (initializer instanceof JetConstantExpression && !propertyDescriptor.getType().isNullable()) {
+        if (p instanceof JetProperty && !ImplementationBodyCodegen.shouldInitializeProperty((JetProperty) p, typeMapper)) {
+            JetExpression initializer = ((JetProperty) p).getInitializer();
+            if (initializer != null) {
                 CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
                 value = compileTimeValue != null ? compileTimeValue.getValue() : null;
             }
