@@ -52,12 +52,12 @@ public abstract class FunctionGenerationStrategy<T extends CallableDescriptor> {
     }
 
     @NotNull
-    protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull CodegenContext context) {
+    protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {
         return context.prepareFrame(typeMapper);
     }
 
     @NotNull
-    public FrameMap getFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull CodegenContext context) {
+    public FrameMap getFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {
         if (frameMap == null) {
             frameMap = createFrameMap(typeMapper, context);
         }

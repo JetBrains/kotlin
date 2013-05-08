@@ -217,13 +217,13 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public Type mapType(JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode kind) {
+    public Type mapType(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode kind) {
         return mapType(jetType, signatureVisitor, kind, Variance.INVARIANT);
     }
 
     @NotNull
     public Type mapType(
-            JetType jetType,
+            @NotNull JetType jetType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull JetTypeMapperMode kind,
             @NotNull Variance howThisTypeIsUsed
@@ -577,7 +577,7 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    private JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
+    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
         String name = f.getName().getName();
         if (f instanceof PropertyAccessorDescriptor) {
             boolean isGetter = f instanceof PropertyGetterDescriptor;
@@ -776,13 +776,19 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureWriter.makeJvmPropertyAccessorSignature(name, false);
     }
 
-    private void writeParameter(BothSignatureWriter signatureWriter, JetType outType) {
+    private void writeParameter(@NotNull BothSignatureWriter signatureWriter, @NotNull JetType outType) {
         signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
         mapType(outType, signatureWriter, JetTypeMapperMode.VALUE);
         signatureWriter.writeParameterTypeEnd();
     }
 
-    private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor, CalculatedClosure closure) {
+    @NotNull
+    public JvmMethodSignature mapConstructorSignature(@NotNull ConstructorDescriptor descriptor) {
+        return mapConstructorSignature(descriptor, bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration()));
+    }
+
+    @NotNull
+    public JvmMethodSignature mapConstructorSignature(@NotNull ConstructorDescriptor descriptor, @Nullable CalculatedClosure closure) {
 
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
 
@@ -848,9 +854,7 @@ public class JetTypeMapper extends BindingTraceAware {
                     ConstructorDescriptor superConstructor = (ConstructorDescriptor) superDescriptor;
 
                     if (isObjectLiteral(bindingContext, descriptor.getContainingDeclaration())) {
-                        //noinspection SuspiciousMethodCalls
-                        CallableMethod superCallable = mapToCallableMethod(superConstructor);
-                        List<JvmMethodParameterSignature> types = superCallable.getSignature().getKotlinParameterTypes();
+                        List<JvmMethodParameterSignature> types = mapConstructorSignature(superConstructor).getKotlinParameterTypes();
                         if (types != null) {
                             for (JvmMethodParameterSignature type : types) {
                                 signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
@@ -901,11 +905,13 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureWriter.makeJvmMethodSignature("<init>");
     }
 
-    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor) {
+    @NotNull
+    public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor) {
         return mapToCallableMethod(descriptor, bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration()));
     }
 
-    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, CalculatedClosure closure) {
+    @NotNull
+    public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor, @Nullable CalculatedClosure closure) {
         JvmMethodSignature method = mapConstructorSignature(descriptor, closure);
         JetType defaultType = descriptor.getContainingDeclaration().getDefaultType();
         Type mapped = mapType(defaultType, JetTypeMapperMode.IMPL);

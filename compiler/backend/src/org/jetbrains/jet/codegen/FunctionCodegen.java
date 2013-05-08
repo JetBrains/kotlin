@@ -74,13 +74,7 @@ public class FunctionCodegen extends GenerationStateAware {
         assert functionDescriptor != null;
 
         OwnerKind kind = owner.getContextKind();
-        JvmMethodSignature method =
-                typeMapper.mapToCallableMethod(
-                        functionDescriptor,
-                        false,
-                        isCallInsideSameClassAsDeclared(functionDescriptor, owner),
-                        isCallInsideSameModuleAsDeclared(functionDescriptor, owner),
-                        kind).getSignature();
+        JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, true, kind);
 
         if (kind != OwnerKind.TRAIT_IMPL || function.getBodyExpression() != null) {
             boolean needJetAnnotations = kind != OwnerKind.TRAIT_IMPL;
@@ -88,7 +82,7 @@ public class FunctionCodegen extends GenerationStateAware {
                            new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
         }
 
-        generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), state, v, method.getAsmMethod(), functionDescriptor, kind,
+        generateDefaultIfNeeded(owner.intoFunction(functionDescriptor), state, v, method, functionDescriptor, kind,
                                 DefaultParameterValueLoader.DEFAULT);
     }
 
@@ -524,10 +518,10 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     static void generateDefaultIfNeeded(
-            MethodContext owner,
+            @NotNull MethodContext owner,
             GenerationState state,
             ClassBuilder v,
-            Method jvmSignature,
+            JvmMethodSignature signature,
             @NotNull FunctionDescriptor functionDescriptor,
             OwnerKind kind,
             DefaultParameterValueLoader loadStrategy
@@ -551,6 +545,8 @@ public class FunctionCodegen extends GenerationStateAware {
         boolean hasOuter = functionDescriptor instanceof ConstructorDescriptor &&
                            CodegenBinding.canHaveOuter(state.getBindingContext(), ((ConstructorDescriptor) functionDescriptor).getContainingDeclaration());
         boolean isStatic = isStatic(kind);
+
+        Method jvmSignature = signature.getAsmMethod();
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             String correctedDescr = "(" + jvmSignature.getDescriptor().substring(jvmSignature.getDescriptor().indexOf(";") + 1);

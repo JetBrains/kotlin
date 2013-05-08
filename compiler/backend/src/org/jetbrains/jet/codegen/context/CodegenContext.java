@@ -255,15 +255,6 @@ public abstract class CodegenContext {
 
     public abstract boolean isStatic();
 
-    public void copyAccessors(Map<DeclarationDescriptor, DeclarationDescriptor> accessors) {
-        if (accessors != null) {
-            if (this.accessors == null) {
-                this.accessors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();
-            }
-            this.accessors.putAll(accessors);
-        }
-    }
-
     protected void initOuterExpression(JetTypeMapper typeMapper, ClassDescriptor classDescriptor) {
         ClassDescriptor enclosingClass = getEnclosingClass();
         outerExpression = enclosingClass != null && canHaveOuter(typeMapper.getBindingContext(), classDescriptor)

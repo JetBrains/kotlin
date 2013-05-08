@@ -90,7 +90,7 @@ public class JvmMethodSignature {
         return kotlinTypeParameter;
     }
 
-    @Nullable
+    @NotNull
     public List<JvmMethodParameterSignature> getKotlinParameterTypes() {
         checkGenericsAvailable();
         return kotlinParameterTypes;

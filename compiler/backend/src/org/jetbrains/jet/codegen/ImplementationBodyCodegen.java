@@ -749,7 +749,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         });
 
         MethodContext functionContext = context.intoFunction(function);
-        FunctionCodegen.generateDefaultIfNeeded(functionContext, state, v, methodSignature.getAsmMethod(), function, OwnerKind.IMPLEMENTATION,
+        FunctionCodegen.generateDefaultIfNeeded(functionContext, state, v, methodSignature, function, OwnerKind.IMPLEMENTATION,
                     new DefaultParameterValueLoader() {
                         @Override
                         public void putValueOnStack(
@@ -816,7 +816,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Method method = typeMapper.mapSignature(bridge).getAsmMethod();
             boolean isConstructor = original instanceof ConstructorDescriptor;
             Method originalMethod = isConstructor ?
-                                    typeMapper.mapToCallableMethod((ConstructorDescriptor) original).getSignature().getAsmMethod() :
+                                    typeMapper.mapConstructorSignature((ConstructorDescriptor) original).getAsmMethod() :
                                     typeMapper.mapSignature(original).getAsmMethod();
             Type[] argTypes = method.getArgumentTypes();
 
@@ -938,18 +938,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             lookupConstructorExpressionsInClosureIfPresent(constructorContext);
         }
 
-        final CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, context.closure);
-        JvmMethodSignature constructorMethod = callableMethod.getSignature();
+        final JvmMethodSignature constructorSignature = typeMapper.mapConstructorSignature(constructorDescriptor, closure);
 
         assert constructorDescriptor != null;
 
-        functionCodegen.generateMethod(null, constructorMethod, true, constructorDescriptor, constructorContext,
+        functionCodegen.generateMethod(null, constructorSignature, true, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
 
                        @NotNull
                        @Override
-                       protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull CodegenContext context) {
-                           return new ConstructorFrameMap(callableMethod, callableDescriptor);
+                       protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {
+                           return new ConstructorFrameMap(constructorSignature);
                        }
 
                        @Override
@@ -959,10 +958,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    }
         );
 
-        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod.getAsmMethod(), constructorDescriptor,
+        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorSignature, constructorDescriptor,
                                                 OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT);
 
-
+        CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, closure);
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);
     }
 
@@ -1336,13 +1335,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull FunctionDescriptor inheritedFun,
             @NotNull MethodVisitor mv
     ) {
-        JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(
-                inheritedFun,
-                false,
-                isCallInsideSameClassAsDeclared(inheritedFun, context),
-                isCallInsideSameModuleAsDeclared(inheritedFun, context),
-                OwnerKind.IMPLEMENTATION).getSignature();
-
+        JvmMethodSignature jvmSignature = typeMapper.mapSignature(inheritedFun, true, OwnerKind.IMPLEMENTATION);
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         int kotlinFlags = getFlagsForVisibility(fun.getVisibility());
         if (fun instanceof PropertyAccessorDescriptor) {
