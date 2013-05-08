@@ -63,7 +63,7 @@ while [ $# -gt 0 ]; do
       kotlin_args=("${kotlin_args[@]}" "$1")
       shift
       ;;
-    -pp*)
+    -pp)
       profile_preloader="time"
       shift
       ;;
