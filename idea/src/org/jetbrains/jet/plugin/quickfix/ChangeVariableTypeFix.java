@@ -67,8 +67,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -85,8 +85,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForPropertyOrReturnTypeMismatchOnOverride() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForPropertyOrReturnTypeMismatchOnOverride() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

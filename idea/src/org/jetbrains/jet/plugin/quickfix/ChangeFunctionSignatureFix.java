@@ -124,8 +124,8 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         });
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
                 JetCallElement callElement = PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), JetCallElement.class);
@@ -140,8 +140,8 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         };
     }
 
-    public static JetIntentionActionFactory createFactoryForParametersNumberMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForParametersNumberMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
                 @SuppressWarnings("unchecked")
@@ -159,8 +159,8 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         };
     }
 
-    public static JetIntentionActionFactory createFactoryForUnusedParameter() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForUnusedParameter() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
                 @SuppressWarnings("unchecked")

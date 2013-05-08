@@ -50,8 +50,8 @@ public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpress
         element.replace(JetPsiFactory.createExpression(project, reference.getText() + "()"));
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetExpression> createAction(Diagnostic diagnostic) {
                 if (diagnostic.getPsiElement() instanceof JetExpression) {

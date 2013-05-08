@@ -183,8 +183,8 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         return JetBundle.message("add.name.to.argument.family");
     }
     @NotNull
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetIntentionActionsFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

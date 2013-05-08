@@ -126,8 +126,8 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForExpectedOrAssignmentTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForExpectedOrAssignmentTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
