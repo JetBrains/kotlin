@@ -149,4 +149,29 @@ public class QuickFixUtil {
             return parameterList.getParameters().get(position);
         }
     }
+
+    private static boolean equalOrLastInThenOrElse(JetExpression thenOrElse, JetExpression expression) {
+        if (thenOrElse == expression) return true;
+        return thenOrElse instanceof JetBlockExpression && expression.getParent() == thenOrElse &&
+               PsiTreeUtil.getNextSiblingOfType(expression, JetExpression.class) == null;
+    }
+
+    public static boolean canEvaluateTo(JetExpression parent, JetExpression child) {
+        if (parent == null || child == null) {
+            return false;
+        }
+        while (parent != child) {
+            if (child.getParent() instanceof JetParenthesizedExpression) {
+                child = (JetExpression) child.getParent();
+                continue;
+            }
+            JetIfExpression jetIfExpression = PsiTreeUtil.getParentOfType(child, JetIfExpression.class, true);
+            if (jetIfExpression == null) return false;
+            if (!equalOrLastInThenOrElse(jetIfExpression.getThen(), child) && !equalOrLastInThenOrElse(jetIfExpression.getElse(), child)) {
+                return false;
+            }
+            child = jetIfExpression;
+        }
+        return true;
+    }
 }

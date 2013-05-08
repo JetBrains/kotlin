@@ -1331,9 +1331,19 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
+            @TestMetadata("beforeAssignmentTypeMismatch.kt")
+            public void testAssignmentTypeMismatch() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeAssignmentTypeMismatch.kt");
+            }
+            
             @TestMetadata("beforeChangeFunctionReturnTypeToFunctionType.kt")
             public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeChangeFunctionReturnTypeToFunctionType.kt");
+            }
+            
+            @TestMetadata("beforeExpectedTypeMismatch.kt")
+            public void testExpectedTypeMismatch() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeExpectedTypeMismatch.kt");
             }
             
             @TestMetadata("beforeTypeMismatchInInitializer.kt")

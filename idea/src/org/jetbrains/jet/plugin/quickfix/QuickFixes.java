@@ -233,6 +233,10 @@ public class QuickFixes {
         factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
         factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
 
+        JetIntentionActionFactory changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch();
+        factories.put(EXPECTED_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
+        factories.put(ASSIGNMENT_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
+
         factories.put(TYPE_MISMATCH, ChangeFunctionParameterTypeFix.createFactory());
 
         factories.put(AUTOCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForAutoCastImpossible());
