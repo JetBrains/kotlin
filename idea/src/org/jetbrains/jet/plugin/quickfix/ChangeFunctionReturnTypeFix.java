@@ -108,8 +108,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -128,8 +128,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForHasNextFunctionTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForHasNextFunctionTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -148,8 +148,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForCompareToTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForCompareToTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -166,8 +166,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForReturnTypeMismatchOnOverride() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForReturnTypeMismatchOnOverride() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -181,8 +181,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -193,8 +193,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

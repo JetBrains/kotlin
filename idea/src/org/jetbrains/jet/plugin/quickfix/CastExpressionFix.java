@@ -81,8 +81,8 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForAutoCastImpossible() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForAutoCastImpossible() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -96,8 +96,8 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

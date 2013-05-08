@@ -59,8 +59,8 @@ public class ReplaceInfixCallFix extends JetIntentionAction<JetBinaryExpression>
         return true;
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);

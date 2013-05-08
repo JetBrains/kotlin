@@ -183,8 +183,8 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
         return typeExpr;
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
