@@ -31,6 +31,7 @@ if "%1"=="-pp" (
 rem We use the value of the JAVA_OPTS environment variable if defined
 set _JAVA_OPTS=-Xmx256M -Xms32M -noverify
 
+rem re: %1 %2 &c. see: http://www.riedquat.de/blog/2011-11-27-01#w9aab1c60
 if "%_PROFILE_PRELOADER%"=="time" (
   "%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
     org.jetbrains.jet.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
