@@ -1240,7 +1240,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/typeMismatch")
-    @InnerTestClasses({TypeMismatch.Casts.class, TypeMismatch.ComponentFunctionReturnTypeMismatch.class, TypeMismatch.TypeMismatchOnReturnedExpression.class})
+    @InnerTestClasses({TypeMismatch.Casts.class, TypeMismatch.ComponentFunctionReturnTypeMismatch.class, TypeMismatch.FunctionParameterTypeMismatch.class, TypeMismatch.TypeMismatchOnReturnedExpression.class})
     public static class TypeMismatch extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1377,6 +1377,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
+        @TestMetadata("idea/testData/quickfix/typeMismatch/functionParameterTypeMismatch")
+        public static class FunctionParameterTypeMismatch extends AbstractQuickFixTest {
+            public void testAllFilesPresentInFunctionParameterTypeMismatch() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeMismatch/functionParameterTypeMismatch"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeChangeFunctionParameterType1.kt")
+            public void testChangeFunctionParameterType1() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/functionParameterTypeMismatch/beforeChangeFunctionParameterType1.kt");
+            }
+            
+            @TestMetadata("beforeChangeFunctionParameterType2.kt")
+            public void testChangeFunctionParameterType2() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/functionParameterTypeMismatch/beforeChangeFunctionParameterType2.kt");
+            }
+            
+            @TestMetadata("beforeChangeFunctionParameterType3.kt")
+            public void testChangeFunctionParameterType3() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/functionParameterTypeMismatch/beforeChangeFunctionParameterType3.kt");
+            }
+            
+            @TestMetadata("beforeChangeFunctionParameterType4.kt")
+            public void testChangeFunctionParameterType4() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/functionParameterTypeMismatch/beforeChangeFunctionParameterType4.kt");
+            }
+            
+            @TestMetadata("beforeChangeFunctionParameterType5.kt")
+            public void testChangeFunctionParameterType5() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/functionParameterTypeMismatch/beforeChangeFunctionParameterType5.kt");
+            }
+            
+        }
+        
         @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
         public static class TypeMismatchOnReturnedExpression extends AbstractQuickFixTest {
             public void testAllFilesPresentInTypeMismatchOnReturnedExpression() throws Exception {
@@ -1405,6 +1438,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             suite.addTestSuite(TypeMismatch.class);
             suite.addTestSuite(Casts.class);
             suite.addTestSuite(ComponentFunctionReturnTypeMismatch.class);
+            suite.addTestSuite(FunctionParameterTypeMismatch.class);
             suite.addTestSuite(TypeMismatchOnReturnedExpression.class);
             return suite;
         }

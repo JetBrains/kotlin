@@ -26,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -92,5 +92,61 @@ public class QuickFixUtil {
 
     public static boolean canModifyElement(@NotNull PsiElement element) {
         return element.isWritable() && !BuiltInsReferenceResolver.isFromBuiltIns(element);
+    }
+
+    @Nullable
+    public static JetParameterList getParameterListOfCalledFunction(@NotNull JetCallExpression callExpression) {
+        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) callExpression.getContainingFile()).getBindingContext();
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
+        if (resolvedCall == null) return null;
+        PsiElement functionDeclaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+        if (functionDeclaration instanceof JetFunction) {
+            return ((JetFunction) functionDeclaration).getValueParameterList();
+        }
+        return null;
+    }
+
+    @Nullable
+    public static JetParameter getFunctionParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
+        if (!(functionLiteralExpression.getParent() instanceof JetCallExpression)) {
+            return null;
+        }
+        JetCallExpression callExpression = (JetCallExpression) functionLiteralExpression.getParent();
+        JetParameterList parameterList = getParameterListOfCalledFunction(callExpression);
+        if (parameterList == null) return null;
+        return parameterList.getParameters().get(parameterList.getParameters().size() - 1);
+    }
+
+    @Nullable
+    public static JetParameter getFunctionParameterCorrespondingToValueArgumentPassedInCall(@NotNull JetValueArgument valueArgument) {
+        if (!(valueArgument.getParent() instanceof JetValueArgumentList)) {
+            return null;
+        }
+        JetValueArgumentList valueArgumentList = (JetValueArgumentList) valueArgument.getParent();
+        if (!(valueArgumentList.getParent() instanceof JetCallExpression)) {
+            return null;
+        }
+        JetCallExpression callExpression = (JetCallExpression) valueArgumentList.getParent();
+        JetParameterList parameterList = getParameterListOfCalledFunction(callExpression);
+        if (parameterList == null) return null;
+        int position = valueArgumentList.getArguments().indexOf(valueArgument);
+        if (position == -1) return null;
+
+        if (valueArgument.isNamed()) {
+            JetValueArgumentName valueArgumentName = valueArgument.getArgumentName();
+            JetSimpleNameExpression referenceExpression = valueArgumentName == null ? null : valueArgumentName.getReferenceExpression();
+            String valueArgumentNameAsString = referenceExpression == null ? null : referenceExpression.getReferencedName();
+            if (valueArgumentNameAsString == null) return null;
+
+            for (JetParameter parameter: parameterList.getParameters()) {
+                if (valueArgumentNameAsString.equals(parameter.getName())) {
+                    return parameter;
+                }
+            }
+            return null;
+        }
+        else {
+            return parameterList.getParameters().get(position);
+        }
     }
 }
