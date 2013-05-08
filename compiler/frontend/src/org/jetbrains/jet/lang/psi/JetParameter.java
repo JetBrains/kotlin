@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
@@ -107,5 +109,8 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
         return getNode().findChildByType(JetTokens.VAR_KEYWORD);
     }
 
-
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
+    }
 }

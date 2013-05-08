@@ -219,6 +219,8 @@
                               forClass="org.jetbrains.jet.lang.psi.JetClass"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetPropertyPresenter"
                               forClass="org.jetbrains.jet.lang.psi.JetProperty"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetParameterPresenter"
+                              forClass="org.jetbrains.jet.lang.psi.JetParameter"/>
     <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.jet.plugin.JetGotoTargetRenderProvider"
                                 order="first"/>
     <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>

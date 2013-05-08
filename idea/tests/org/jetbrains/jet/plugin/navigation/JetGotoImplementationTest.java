@@ -41,6 +41,10 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
         doTest();
     }
 
+    public void testConstructorPropertyOverriddenNavigation() {
+        doTest();
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
