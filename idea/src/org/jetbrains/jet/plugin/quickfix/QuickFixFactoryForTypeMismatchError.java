@@ -91,6 +91,18 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             }
         }
 
+        // Change function return type when TYPE_MISMATCH is reported on call expression:
+        if (expression instanceof JetCallExpression) {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                    context.get(BindingContext.RESOLVED_CALL, ((JetCallExpression) expression).getCalleeExpression());
+            if (resolvedCall != null) {
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
+                if (declaration instanceof JetFunction) {
+                    actions.add(new ChangeFunctionReturnTypeFix((JetFunction) declaration, expectedType));
+                }
+            }
+        }
+
         // Change type of a function parameter in case TYPE_MISMATCH is reported on expression passed as value argument of call.
         // 1) When an argument is a dangling function literal:
         JetFunctionLiteralExpression functionLiteralExpression =
