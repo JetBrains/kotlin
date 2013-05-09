@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,34 +90,6 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
                 DiagnosticWithParameters2<JetExpression, JetType, String> diagnosticWithParameters =
                         (DiagnosticWithParameters2<JetExpression, JetType, String>) diagnostic;
                 return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
-            }
-        };
-    }
-
-    @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.TYPE_MISMATCH;
-                @SuppressWarnings("unchecked")
-                DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters =
-                        (DiagnosticWithParameters2<JetExpression, JetType, JetType>) diagnostic;
-                JetExpression expression = diagnosticWithParameters.getPsiElement();
-
-                // we don't want to cast a cast:
-                if (expression instanceof JetBinaryExpressionWithTypeRHS) {
-                    return null;
-                }
-
-                // 'x: Int' - TYPE_MISMATCH might be reported on 'x', and we don't want this quickfix to be available:
-                JetBinaryExpressionWithTypeRHS parentExpressionWithTypeRHS =
-                        PsiTreeUtil.getParentOfType(expression, JetBinaryExpressionWithTypeRHS.class, true);
-                if (parentExpressionWithTypeRHS != null && parentExpressionWithTypeRHS.getLeft() == expression) {
-                    return null;
-                }
-                return new CastExpressionFix(expression, diagnosticWithParameters.getA());
             }
         };
     }

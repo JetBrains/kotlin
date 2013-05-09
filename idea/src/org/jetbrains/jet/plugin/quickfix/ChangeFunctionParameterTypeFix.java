@@ -16,21 +16,16 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class ChangeFunctionParameterTypeFix extends JetIntentionAction<JetParameter> {
@@ -67,39 +62,5 @@ public class ChangeFunctionParameterTypeFix extends JetIntentionAction<JetParame
         JetTypeReference typeReference = element.getTypeReference();
         assert typeReference != null : "Parameter without type annotation cannot cause type mismatch";
         typeReference.replace(JetPsiFactory.createType(project, renderedType));
-    }
-
-    @NotNull
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
-                // Change type of function parameter in case TYPE_MISMATCH is reported on expression passed as value argument of call
-                JetParameter correspondingParameter = null;
-                JetType type = null;
-
-                BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) diagnostic.getPsiFile()).getBindingContext();
-                JetFunctionLiteralExpression functionLiteralExpression =
-                        QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralExpression.class);
-
-                if (functionLiteralExpression != null && diagnostic.getPsiElement() == functionLiteralExpression.getBodyExpression()) {
-                    correspondingParameter =
-                        QuickFixUtil.getFunctionParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(functionLiteralExpression);
-                    type = context.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression);
-                }
-                else {
-                    JetValueArgument valueArgument = QuickFixUtil.getParentElementOfType(diagnostic, JetValueArgument.class);
-                    if (valueArgument != null && valueArgument.getArgumentExpression() == diagnostic.getPsiElement()) {
-                        correspondingParameter = QuickFixUtil.getFunctionParameterCorrespondingToValueArgumentPassedInCall(valueArgument);
-                        type = context.get(BindingContext.EXPRESSION_TYPE, valueArgument.getArgumentExpression());
-                    }
-                }
-                if (correspondingParameter != null && type != null) {
-                    return new ChangeFunctionParameterTypeFix(correspondingParameter, type);
-                }
-                return null;
-            }
-        };
     }
 }

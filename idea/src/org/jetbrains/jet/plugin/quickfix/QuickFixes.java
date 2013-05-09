@@ -226,7 +226,6 @@ public class QuickFixes {
         factories.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForComponentFunctionReturnTypeMismatch());
         factories.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch());
         factories.put(COMPARE_TO_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch());
-        factories.put(TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForTypeMismatch());
 
         factories.put(TOO_MANY_ARGUMENTS, ChangeFunctionSignatureFix.createFactory());
         factories.put(NO_VALUE_FOR_PARAMETER, ChangeFunctionSignatureFix.createFactory());
@@ -240,10 +239,9 @@ public class QuickFixes {
         factories.put(EXPECTED_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
         factories.put(ASSIGNMENT_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
 
-        factories.put(TYPE_MISMATCH, ChangeFunctionParameterTypeFix.createFactory());
+        factories.put(TYPE_MISMATCH, new QuickFixFactoryForTypeMismatchError());
 
         factories.put(AUTOCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForAutoCastImpossible());
-        factories.put(TYPE_MISMATCH, CastExpressionFix.createFactoryForTypeMismatch());
 
         factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
 

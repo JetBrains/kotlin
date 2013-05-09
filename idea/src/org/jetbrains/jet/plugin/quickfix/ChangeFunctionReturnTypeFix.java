@@ -210,24 +210,4 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             }
         };
     }
-
-    @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
-                JetExpression expression = (JetExpression) diagnostic.getPsiElement();
-                JetNamedFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction.class);
-
-                if (function != null && (function.getInitializer() == expression || expression.getParent() instanceof JetReturnExpression)) {
-                    BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) diagnostic.getPsiFile()).getBindingContext();
-                    JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
-                    assert type != null : "Expression type mismatch, but expression has no type";
-                    return new ChangeFunctionReturnTypeFix(function, type);
-                }
-                return null;
-            }
-        };
-    }
 }
