@@ -17,13 +17,17 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
@@ -60,6 +64,31 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
         JetFunction function = PsiTreeUtil.getParentOfType(expression, JetFunction.class, true);
         if (function != null && QuickFixUtil.canFunctionReturnExpression(function, expression)) {
             actions.add(new ChangeFunctionReturnTypeFix(function, expressionType));
+        }
+
+        // Fixing overloaded operators:
+        if (expression instanceof JetOperationExpression) {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                    context.get(BindingContext.RESOLVED_CALL, ((JetOperationExpression) expression).getOperationReference());
+            if (resolvedCall != null) {
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
+                if (declaration instanceof JetFunction) {
+                    actions.add(new ChangeFunctionReturnTypeFix((JetFunction) declaration, expectedType));
+                }
+            }
+        }
+        if (expression.getParent() instanceof JetBinaryExpression) {
+            JetBinaryExpression parentBinary = (JetBinaryExpression) expression.getParent();
+            if (parentBinary.getRight() == expression) {
+                ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, parentBinary.getOperationReference());
+                if (resolvedCall != null) {
+                    PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
+                    if (declaration instanceof JetFunction) {
+                        JetParameter binaryOperatorParameter = ((JetFunction) declaration).getValueParameterList().getParameters().get(0);
+                        actions.add(new ChangeFunctionParameterTypeFix(binaryOperatorParameter, expressionType));
+                    }
+                }
+            }
         }
 
         // Change type of a function parameter in case TYPE_MISMATCH is reported on expression passed as value argument of call.
