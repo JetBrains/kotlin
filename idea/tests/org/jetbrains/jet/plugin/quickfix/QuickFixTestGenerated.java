@@ -1336,6 +1336,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeAssignmentTypeMismatch.kt");
             }
             
+            @TestMetadata("beforeChangeFunctionLiteralTypeWithoutChangingFunctionParameterType.kt")
+            public void testChangeFunctionLiteralTypeWithoutChangingFunctionParameterType() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeChangeFunctionLiteralTypeWithoutChangingFunctionParameterType.kt");
+            }
+            
+            @TestMetadata("beforeChangeFunctionLiteralTypeWithoutChangingPropertyType.kt")
+            public void testChangeFunctionLiteralTypeWithoutChangingPropertyType() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeChangeFunctionLiteralTypeWithoutChangingPropertyType.kt");
+            }
+            
             @TestMetadata("beforeChangeFunctionReturnTypeToFunctionType.kt")
             public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeChangeFunctionReturnTypeToFunctionType.kt");
@@ -1344,6 +1354,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeExpectedTypeMismatch.kt")
             public void testExpectedTypeMismatch() throws Exception {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeExpectedTypeMismatch.kt");
+            }
+            
+            @TestMetadata("beforeReturnedExpresionCantEvaluateToExpresionThatTypeMismatch.kt")
+            public void testReturnedExpresionCantEvaluateToExpresionThatTypeMismatch() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeReturnedExpresionCantEvaluateToExpresionThatTypeMismatch.kt");
+            }
+            
+            @TestMetadata("beforeReturnedExpressionTypeMismatchFunctionParameterType.kt")
+            public void testReturnedExpressionTypeMismatchFunctionParameterType() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeReturnedExpressionTypeMismatchFunctionParameterType.kt");
+            }
+            
+            @TestMetadata("beforeTypeMismatchInIfStatementReturnedByFunction.kt")
+            public void testTypeMismatchInIfStatementReturnedByFunction() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeTypeMismatchInIfStatementReturnedByFunction.kt");
+            }
+            
+            @TestMetadata("beforeTypeMismatchInIfStatementReturnedByLiteral.kt")
+            public void testTypeMismatchInIfStatementReturnedByLiteral() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeTypeMismatchInIfStatementReturnedByLiteral.kt");
             }
             
             @TestMetadata("beforeTypeMismatchInInitializer.kt")
