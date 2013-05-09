@@ -1211,6 +1211,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/typeMismatch/beforeNoReturnInFunctionWithBlockBody.kt");
         }
         
+        @TestMetadata("beforePropertyTypeMismatch.kt")
+        public void testPropertyTypeMismatch() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforePropertyTypeMismatch.kt");
+        }
+        
         @TestMetadata("beforeReturnTypeMismatch.kt")
         public void testReturnTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeReturnTypeMismatch.kt");
