@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,19 +45,32 @@ import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunction> {
+public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction> {
     private final JetType type;
     private final String renderedType;
+    private final ChangeFunctionLiteralReturnTypeFix changeFunctionLiteralReturnTypeFix;
 
-    public ChangeFunctionReturnTypeFix(@NotNull JetNamedFunction element, @NotNull JetType type) {
+    public ChangeFunctionReturnTypeFix(@NotNull JetFunction element, @NotNull JetType type) {
         super(element);
         this.type = type;
         renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+        if (element instanceof JetFunctionLiteral) {
+            JetFunctionLiteralExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, JetFunctionLiteralExpression.class);
+            assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression";
+            changeFunctionLiteralReturnTypeFix = new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type);
+        }
+        else {
+            changeFunctionLiteralReturnTypeFix = null;
+        }
     }
 
     @NotNull
     @Override
     public String getText() {
+        if (changeFunctionLiteralReturnTypeFix != null) {
+            return changeFunctionLiteralReturnTypeFix.getText();
+        }
+
         String functionName = element.getName();
         FqName fqName = JetPsiUtil.getFQName(element);
         if (fqName != null) functionName = fqName.getFqName();
@@ -79,9 +93,14 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
 
     @Override
     public void invoke(@NotNull Project project, @Nullable Editor editor, @Nullable JetFile file) throws IncorrectOperationException {
-        SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
-        if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
-            addReturnTypeAnnotation(project, element, renderedType);
+        if (changeFunctionLiteralReturnTypeFix != null) {
+            changeFunctionLiteralReturnTypeFix.invoke(project, editor, file);
+        }
+        else {
+            SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
+            if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
+                addReturnTypeAnnotation(project, element, renderedType);
+            }
         }
     }
 
@@ -117,7 +136,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
                 BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) entry.getContainingFile().getContainingFile()).getBindingContext();
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetNamedFunction componentFunction = (JetNamedFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
                 JetType expectedType = context.get(BindingContext.TYPE, entry.getTypeRef());
                 if (componentFunction != null && expectedType != null) {
                     return new ChangeFunctionReturnTypeFix(componentFunction, expectedType);
@@ -138,7 +157,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
                 BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
-                JetNamedFunction hasNextFunction = (JetNamedFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+                JetFunction hasNextFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
                 if (hasNextFunction != null) {
                     return new ChangeFunctionReturnTypeFix(hasNextFunction, KotlinBuiltIns.getInstance().getBooleanType());
                 }
@@ -159,8 +178,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
                 ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
                 if (resolvedCall == null) return null;
                 PsiElement compareTo = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
-                if (!(compareTo instanceof JetNamedFunction)) return null;
-                return new ChangeFunctionReturnTypeFix((JetNamedFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
+                if (!(compareTo instanceof JetFunction)) return null;
+                return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, KotlinBuiltIns.getInstance().getIntType());
             }
         };
     }
@@ -171,7 +190,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetNamedFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction.class);
+                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
                 if (function == null) return null;
                 BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(function);
                 JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, function);
@@ -186,7 +205,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetNamedFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction.class);
+                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
                 return function == null ? null : new ChangeFunctionReturnTypeFix(function, KotlinBuiltIns.getInstance().getUnitType());
             }
         };
