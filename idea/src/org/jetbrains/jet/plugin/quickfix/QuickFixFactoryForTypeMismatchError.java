@@ -50,6 +50,12 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
             actions.add(new CastExpressionFix(expression, expectedType));
         }
 
+        // Property initializer type mismatch property type:
+        JetProperty property = PsiTreeUtil.getParentOfType(expression, JetProperty.class);
+        if (property != null && QuickFixUtil.canEvaluateTo(property.getInitializer(), expression)) {
+            actions.add(new ChangeVariableTypeFix(property, expressionType));
+        }
+
         // Mismatch in returned expression:
         JetFunction function = PsiTreeUtil.getParentOfType(expression, JetFunction.class, true);
         if (function != null && QuickFixUtil.canFunctionReturnExpression(function, expression)) {
