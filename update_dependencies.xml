@@ -150,7 +150,7 @@
                 </patternset>
             </unzip>
 
-            <replaceregexp match="org.objectweb.asm" replace="org.jetbrains.asm4">
+            <replaceregexp match="org\.objectweb\.asm" replace="org.jetbrains.asm4" flags="g">
                 <fileset dir="dependencies/download/asm-src/">
                     <include name="**/*.java"/>
                 </fileset>
