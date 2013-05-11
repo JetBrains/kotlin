@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="instrumentation:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/instrumentation_jar</output-path>
+    <root id="archive" name="instrumentation.jar">
+      <element id="module-output" name="instrumentation" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/ideaSDK/lib/guava-12.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/ideaSDK/lib/asm4-all.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
