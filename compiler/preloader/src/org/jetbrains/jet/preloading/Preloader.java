@@ -44,17 +44,9 @@ public class Preloader {
 
         ClassLoader parent = Preloader.class.getClassLoader();
 
-        final int[] counter = new int[1];
-        final int[] size = new int[1];
-        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, parent,
-                                                                    !printTime ? null :
-                                                                    new ClassPreloadingUtils.ClassHandler() {
-                                                                        @Override
-                                                                        public void beforeDefineClass(String name, int sizeInBytes) {
-                                                                            counter[0]++;
-                                                                            size[0] += sizeInBytes;
-                                                                        }
-                                                                    });
+        ClassPreloadingUtils.ClassHandler handler = getHandler(printTime);
+        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, parent, handler);
+        handler.done();
 
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
         Method mainMethod = mainClass.getMethod("main", String[].class);
@@ -66,10 +58,28 @@ public class Preloader {
             if (printTime) {
                 long dt = System.nanoTime() - startTime;
                 System.out.format("Total time: %.3fs\n", dt / 1e9);
+            }
+        }
+    }
+
+    private static ClassPreloadingUtils.ClassHandler getHandler(boolean printTime) {
+        if (printTime) return new ClassPreloadingUtils.ClassHandler() {};
+
+        final int[] counter = new int[1];
+        final int[] size = new int[1];
+        return new ClassPreloadingUtils.ClassHandler() {
+            @Override
+            public void beforeDefineClass(String name, int sizeInBytes) {
+                counter[0]++;
+                size[0] += sizeInBytes;
+            }
+
+            @Override
+            public void done() {
                 System.out.println("Loaded classes: " + counter[0]);
                 System.out.println("Loaded classes size: " + size[0]);
             }
-        }
+        };
     }
 
     private static boolean parseMeasureTime(String arg) {
