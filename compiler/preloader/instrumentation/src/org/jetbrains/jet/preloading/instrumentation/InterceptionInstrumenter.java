@@ -175,25 +175,35 @@ public class InterceptionInstrumenter {
     }
 
     public byte[] instrument(String resourceName, byte[] data) {
-        List<MethodInstrumenter> applicableInstrumenters = new ArrayList<MethodInstrumenter>();
-        String className = stripClassSuffix(resourceName);
-        for (Map.Entry<String, ClassMatcher> classPatternEntry : classPatterns.entrySet()) {
-            String classPattern = classPatternEntry.getKey();
-            ClassMatcher classMatcher = classPatternEntry.getValue();
-            if (classMatcher.classPattern.matcher(className).matches()) {
-                neverMatchedClassPatterns.remove(classPattern);
-                applicableInstrumenters.addAll(classMatcher.instrumenters);
+        try {
+            String className = stripClassSuffix(resourceName);
+            if (className == null) {
+                // Not a .class file
+                return data;
             }
+
+            List<MethodInstrumenter> applicableInstrumenters = new ArrayList<MethodInstrumenter>();
+            for (Map.Entry<String, ClassMatcher> classPatternEntry : classPatterns.entrySet()) {
+                String classPattern = classPatternEntry.getKey();
+                ClassMatcher classMatcher = classPatternEntry.getValue();
+                if (classMatcher.classPattern.matcher(className).matches()) {
+                    neverMatchedClassPatterns.remove(classPattern);
+                    applicableInstrumenters.addAll(classMatcher.instrumenters);
+                }
+            }
+
+            if (applicableInstrumenters.isEmpty()) return data;
+
+            return instrument(data, applicableInstrumenters);
         }
-
-        if (applicableInstrumenters.isEmpty()) return data;
-
-        return instrument(data, applicableInstrumenters);
+        catch (Throwable e) {
+            throw new IllegalStateException("Exception while instrumenting " + resourceName, e);
+        }
     }
 
     private static String stripClassSuffix(String name) {
         String suffix = ".class";
-        if (!name.endsWith(suffix)) return name;
+        if (!name.endsWith(suffix)) return null;
         return name.substring(0, name.length() - suffix.length());
     }
 
