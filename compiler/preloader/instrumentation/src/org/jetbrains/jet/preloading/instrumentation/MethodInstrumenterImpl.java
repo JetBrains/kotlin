@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 class MethodInstrumenterImpl implements MethodInstrumenter {
+    private final String debugName;
     private final Pattern namePattern;
     private final Pattern descPattern;
     private final boolean allowMultipleMatches;
@@ -28,13 +29,14 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
     private final boolean logApplications;
 
     public MethodInstrumenterImpl(
-            Pattern namePattern,
+            String debugName, Pattern namePattern,
             Pattern descPattern,
             boolean allowMultipleMatches,
             List<MethodData> enterData,
             List<MethodData> exitData,
             boolean logApplications
     ) {
+        this.debugName = debugName;
         this.namePattern = namePattern;
         this.descPattern = descPattern;
         this.allowMultipleMatches = allowMultipleMatches;
@@ -72,6 +74,6 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
 
     @Override
     public String toString() {
-        return namePattern + " " + descPattern + (allowMultipleMatches ? " [multiple]" : "");
+        return debugName + "[" + namePattern + " " + descPattern + (allowMultipleMatches ? " multiple" : "") + "]";
     }
 }
