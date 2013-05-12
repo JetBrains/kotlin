@@ -389,7 +389,7 @@ public class InterceptionInstrumenter {
             Type[] parameterTypes = Type.getArgumentTypes(instrumentedMethodDesc);
             boolean isStatic = (access & ACC_STATIC) != 0;
             int base = isStatic ? 0 : 1;
-            int parametersUsed = 0;
+            int parameterOffset = 0;
             for (int i = 0; i < parameterCount; i++) {
                 if (i == methodData.getThisParameterIndex()) {
                     if (isStatic) {
@@ -408,8 +408,9 @@ public class InterceptionInstrumenter {
                     ia.aconst(instrumentedMethodDesc);
                 }
                 else {
-                    ia.load(base + parametersUsed, parameterTypes[parametersUsed]);
-                    parametersUsed++;
+                    Type type = parameterTypes[parameterOffset];
+                    ia.load(base + parameterOffset, type);
+                    parameterOffset += type.getSize();
                 }
 
             }
