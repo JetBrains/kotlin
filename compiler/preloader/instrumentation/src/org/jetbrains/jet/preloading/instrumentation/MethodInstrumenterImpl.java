@@ -25,24 +25,34 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
     private final boolean allowMultipleMatches;
     private final List<MethodData> enterData;
     private final List<MethodData> exitData;
+    private final boolean logApplications;
 
     public MethodInstrumenterImpl(
             Pattern namePattern,
             Pattern descPattern,
             boolean allowMultipleMatches,
             List<MethodData> enterData,
-            List<MethodData> exitData
+            List<MethodData> exitData,
+            boolean logApplications
     ) {
         this.namePattern = namePattern;
         this.descPattern = descPattern;
         this.allowMultipleMatches = allowMultipleMatches;
         this.enterData = enterData;
         this.exitData = exitData;
+        this.logApplications = logApplications;
     }
 
     @Override
     public boolean allowsMultipleMatches() {
         return allowMultipleMatches;
+    }
+
+    @Override
+    public void reportApplication(String className, String methodName, String methodDesc) {
+        if (logApplications) {
+            System.out.println(toString() + " applied to " + className + ":" + methodName + methodDesc);
+        }
     }
 
     @Override
@@ -62,6 +72,6 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
 
     @Override
     public String toString() {
-        return namePattern + " " + descPattern + (allowMultipleMatches ? "[multiple]" : "");
+        return namePattern + " " + descPattern + (allowMultipleMatches ? " [multiple]" : "");
     }
 }

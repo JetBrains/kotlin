@@ -26,4 +26,6 @@ interface MethodInstrumenter {
     List<MethodData> getEnterData();
 
     boolean allowsMultipleMatches();
+
+    void reportApplication(String className, String methodName, String methodDesc);
 }

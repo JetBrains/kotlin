@@ -98,8 +98,8 @@ public class InterceptionInstrumenter implements Instrumenter {
                         compilePattern(annotation.erasedSignature()),
                         annotation.allowMultipleMatches(),
                         enterData,
-                        exitData
-                );
+                        exitData,
+                        annotation.logInterceptions());
                 instrumenters.add(instrumenter);
                 neverMatchedInstrumenters.add(instrumenter);
             }
@@ -205,6 +205,7 @@ public class InterceptionInstrumenter implements Instrumenter {
                 for (MethodInstrumenter instrumenter : instrumenters) {
                     if (instrumenter.isApplicable(name, desc)) {
                         applicableInstrumenters.add(instrumenter);
+                        instrumenter.reportApplication(cr.getClassName(), name, desc);
 
                         checkMultipleMatches(instrumenter, name, desc);
                         neverMatchedInstrumenters.remove(instrumenter);

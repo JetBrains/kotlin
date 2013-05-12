@@ -35,4 +35,7 @@ public @interface MethodInterceptor {
 
     // if this is false, an exception is thrown when more than one method in the same class matches
     boolean allowMultipleMatches() default false;
+
+    // if true, every method instrumented with this interceptor will be logged to stdout
+    boolean logInterceptions() default false;
 }
