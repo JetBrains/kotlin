@@ -328,10 +328,9 @@ public class InterceptionInstrumenter {
                 final boolean isConstructor = "<init>".equals(name);
 
                 final int finalMaxStackDepth = maxStackDepth;
-                return new MethodVisitorWithUniversalHandler(ASM4, mv) {
+                return new MethodVisitor(ASM4, mv) {
 
                     private InstructionAdapter ia = null;
-                    private boolean enterDataWritten = false;
 
                     private InstructionAdapter getInstructionAdapter() {
                         if (ia == null) {
@@ -346,14 +345,7 @@ public class InterceptionInstrumenter {
                     }
 
                     @Override
-                    protected boolean visitAnyInsn(int opcode) {
-                        writeEnterData();
-                        return true;
-                    }
-
-                    private void writeEnterData() {
-                        if (enterDataWritten) return;
-                        enterDataWritten = true;
+                    public void visitCode() {
                         for (MethodData methodData : enterData) {
                             // At the very beginning of a constructor, i.e. before any super() call, 'this' is not available
                             // It's too hard to detect a place right after the super() call, so we just put null instead of 'this' in such cases
@@ -363,7 +355,6 @@ public class InterceptionInstrumenter {
 
                     @Override
                     public void visitInsn(int opcode) {
-                        writeEnterData();
                         switch (opcode) {
                             case RETURN:
                             case IRETURN:
