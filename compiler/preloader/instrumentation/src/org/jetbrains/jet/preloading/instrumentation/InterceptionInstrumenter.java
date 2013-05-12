@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.asm4.Opcodes.*;
 
 public class InterceptionInstrumenter implements Instrumenter {
+    private static final Pattern ANYTHING = Pattern.compile(".*");
     private final Map<String, ClassMatcher> classPatterns = new LinkedHashMap<String, ClassMatcher>();
 
     private final Set<String> neverMatchedClassPatterns = new LinkedHashSet<String>();
@@ -55,8 +56,8 @@ public class InterceptionInstrumenter implements Instrumenter {
                 throw new IllegalArgumentException("Non-static field annotated @MethodInterceptor: " + field);
             }
 
-            Pattern classPattern = Pattern.compile(annotation.className());
-            List<MethodInstrumenter> instrumenters = addClassPattern(classPattern.pattern());
+            Pattern classPattern = compilePattern(annotation.className());
+            List<MethodInstrumenter> instrumenters = addClassPattern(classPattern);
 
             try {
                 Object interceptor = field.get(null);
@@ -93,11 +94,12 @@ public class InterceptionInstrumenter implements Instrumenter {
                 String nameFromAnnotation = annotation.methodName();
                 String methodName = nameFromAnnotation.isEmpty() ? field.getName() : nameFromAnnotation;
                 MethodInstrumenterImpl instrumenter = new MethodInstrumenterImpl(
-                                                                      Pattern.compile(methodName),
-                                                                      Pattern.compile(annotation.erasedSignature()),
-                                                                      annotation.allowMultipleMatches(),
-                                                                      enterData,
-                                                                      exitData);
+                        compilePattern(methodName),
+                        compilePattern(annotation.erasedSignature()),
+                        annotation.allowMultipleMatches(),
+                        enterData,
+                        exitData
+                );
                 instrumenters.add(instrumenter);
                 neverMatchedInstrumenters.add(instrumenter);
             }
@@ -108,12 +110,12 @@ public class InterceptionInstrumenter implements Instrumenter {
         }
     }
 
-    private List<MethodInstrumenter> addClassPattern(String classPattern) {
-        ClassMatcher classMatcher = classPatterns.get(classPattern);
+    private List<MethodInstrumenter> addClassPattern(Pattern classPattern) {
+        ClassMatcher classMatcher = classPatterns.get(classPattern.pattern());
         if (classMatcher == null) {
-            classMatcher = new ClassMatcher(Pattern.compile(classPattern));
-            classPatterns.put(classPattern, classMatcher);
-            neverMatchedClassPatterns.add(classPattern);
+            classMatcher = new ClassMatcher(classPattern);
+            classPatterns.put(classPattern.pattern(), classMatcher);
+            neverMatchedClassPatterns.add(classPattern.pattern());
         }
         return classMatcher.instrumenters;
     }
@@ -306,6 +308,11 @@ public class InterceptionInstrumenter implements Instrumenter {
                 out.println("    " + instrumenter);
             }
         }
+    }
+
+    private static Pattern compilePattern(String regex) {
+        if (regex.isEmpty()) return ANYTHING;
+        return Pattern.compile(regex);
     }
 
     private static class ClassMatcher {
