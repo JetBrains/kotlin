@@ -36,6 +36,7 @@ public class InterceptionInstrumenter {
     private static final Pattern ANYTHING = Pattern.compile(".*");
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
 
+    //private final boolean dumpInstrumentedMethods = true;
     private final boolean dumpInstrumentedMethods = false;
 
     private final Map<String, ClassMatcher> classPatterns = new LinkedHashMap<String, ClassMatcher>();
@@ -181,7 +182,6 @@ public class InterceptionInstrumenter {
             Type.getInternalName(method.getDeclaringClass()),
             method.getName(),
             Type.getMethodDescriptor(method),
-            method.getParameterTypes().length,
             thisParameterIndex,
             methodNameParameterIndex,
             methodDescParameterIndex,
@@ -279,18 +279,22 @@ public class InterceptionInstrumenter {
                 final List<MethodData> exitData = new ArrayList<MethodData>();
                 final List<MethodData> enterData = new ArrayList<MethodData>();
 
-                int maxParamCount = 0;
+                org.jetbrains.asm4.commons.Method methodBeingInstrumented = new org.jetbrains.asm4.commons.Method(name, desc);
+
+                int maxStackDepth = 0;
                 for (MethodInstrumenter instrumenter : applicableInstrumenters) {
                     for (MethodData methodData : instrumenter.getEnterData()) {
-                        if (maxParamCount < stackDepth(methodData)) {
-                            maxParamCount = stackDepth(methodData);
+                        int depth = stackDepth(methodData, methodBeingInstrumented);
+                        if (maxStackDepth < depth) {
+                            maxStackDepth = depth;
                         }
                         enterData.add(methodData);
                     }
 
                     for (MethodData methodData : instrumenter.getExitData()) {
-                        if (maxParamCount < stackDepth(methodData)) {
-                            maxParamCount = stackDepth(methodData);
+                        int depth = stackDepth(methodData, methodBeingInstrumented);
+                        if (maxStackDepth < depth) {
+                            maxStackDepth = depth;
                         }
                         exitData.add(methodData);
                     }
@@ -304,7 +308,7 @@ public class InterceptionInstrumenter {
 
                 final boolean isConstructor = "<init>".equals(name);
 
-                final int finalMaxParamCount = maxParamCount;
+                final int finalMaxStackDepth = maxStackDepth;
                 return new MethodVisitorWithUniversalHandler(ASM4, mv) {
 
                     private InstructionAdapter ia = null;
@@ -319,8 +323,7 @@ public class InterceptionInstrumenter {
 
                     @Override
                     public void visitMaxs(int maxStack, int maxLocals) {
-                        int maxInstrumentedStack = finalMaxParamCount + 1; // +1 for returned value on the stack
-                        super.visitMaxs(Math.max(maxStack, maxInstrumentedStack), maxLocals);
+                        super.visitMaxs(Math.max(maxStack, finalMaxStackDepth), maxLocals);
                     }
 
                     @Override
@@ -362,10 +365,16 @@ public class InterceptionInstrumenter {
                 };
             }
 
-            private int stackDepth(MethodData methodData) {
-                // array + index + value
-                int allArgsStackDepth = methodData.getAllArgsParameterIndex() >= 0 ? 3 : 0;
-                return methodData.getParameterCount() + 1 /*receiver*/ + allArgsStackDepth;
+            private int stackDepth(MethodData methodData, org.jetbrains.asm4.commons.Method methodBeingInstrumented) {
+                org.jetbrains.asm4.commons.Method method = getAsmMethod(methodData);
+                // array * 2 (dup) + index + value (may be long/double)
+                int allArgsStackDepth = methodData.getAllArgsParameterIndex() >= 0 ? 5 : 0;
+                // receiver + return value must be kept on the stack OR exception, so we have to reserve at least 1
+                int totalSize = 1 + Math.max(methodBeingInstrumented.getReturnType().getSize(), 1);
+                for (Type type : method.getArgumentTypes()) {
+                    totalSize += type.getSize();
+                }
+                return totalSize + allArgsStackDepth + method.getReturnType().getSize();
             }
 
             private void checkMultipleMatches(MethodInstrumenter instrumenter, String name, String desc) {
@@ -398,6 +407,10 @@ public class InterceptionInstrumenter {
         return cw.toByteArray();
     }
 
+    private static org.jetbrains.asm4.commons.Method getAsmMethod(MethodData methodData) {
+        return new org.jetbrains.asm4.commons.Method(methodData.getName(), methodData.getDesc());
+    }
+
     private static void invokeMethod(
             int access,
             String instrumentedMethodName,
@@ -410,7 +423,9 @@ public class InterceptionInstrumenter {
         ia.getstatic(field.getDeclaringClass(), field.getName(), field.getDesc());
         ia.checkcast(field.getRuntimeType());
 
-        int parameterCount = methodData.getParameterCount();
+        org.jetbrains.asm4.commons.Method asmMethod = getAsmMethod(methodData);
+
+        int parameterCount = asmMethod.getArgumentTypes().length;
         if (parameterCount > 0) {
             Type[] parameterTypes = Type.getArgumentTypes(instrumentedMethodDesc);
             boolean isStatic = (access & ACC_STATIC) != 0;
@@ -457,6 +472,15 @@ public class InterceptionInstrumenter {
             }
         }
         ia.invokevirtual(methodData.getDeclaringClass(), methodData.getName(), methodData.getDesc());
+        Type type = asmMethod.getReturnType();
+        if (type.getSort() != Type.VOID) {
+            if (type.getSize() == 1) {
+                ia.pop();
+            }
+            else {
+                ia.pop2();
+            }
+        }
     }
 
     private static void applyBoxingIfNeeded(InstructionAdapter ia, Type type) {

@@ -18,7 +18,6 @@ package org.jetbrains.jet.preloading.instrumentation;
 
 interface MethodData extends MemberData {
     FieldData getOwnerField();
-    int getParameterCount();
 
     // -1 for no @This parameter
     int getThisParameterIndex();
