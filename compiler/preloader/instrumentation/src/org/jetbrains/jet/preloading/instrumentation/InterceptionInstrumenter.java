@@ -78,8 +78,8 @@ public class InterceptionInstrumenter {
                 FieldData fieldData = getFieldData(field, interceptorClass);
 
                 List<MethodData> enterData = new ArrayList<MethodData>();
-                List<MethodData> exitData = new ArrayList<MethodData>();
-                List<MethodData> errorData = new ArrayList<MethodData>();
+                List<MethodData> normalReturnData = new ArrayList<MethodData>();
+                List<MethodData> exceptionData = new ArrayList<MethodData>();
                 List<Method> dumpMethods = new ArrayList<Method>();
                 for (Method method : interceptorClass.getMethods()) {
                     String name = method.getName();
@@ -87,15 +87,15 @@ public class InterceptionInstrumenter {
                     if (name.startsWith("enter")) {
                         enterData.add(methodData);
                     }
+                    else if (name.startsWith("normalReturn")) {
+                        normalReturnData.add(methodData);
+                    }
+                    else if (name.startsWith("exception")) {
+                        exceptionData.add(methodData);
+                    }
                     else if (name.startsWith("exit")) {
-                        exitData.add(methodData);
-                    }
-                    else if (name.startsWith("error")) {
-                        errorData.add(methodData);
-                    }
-                    else if (name.startsWith("anyExit")) {
-                        exitData.add(methodData);
-                        errorData.add(methodData);
+                        normalReturnData.add(methodData);
+                        exceptionData.add(methodData);
                     }
                     else if (name.startsWith("dump")) {
                         Class<?>[] parameterTypes = method.getParameterTypes();
@@ -117,8 +117,8 @@ public class InterceptionInstrumenter {
                         compilePattern(annotation.erasedSignature()),
                         annotation.allowMultipleMatches(),
                         enterData,
-                        exitData,
-                        errorData,
+                        normalReturnData,
+                        exceptionData,
                         annotation.logInterceptions());
 
                 for (Method dumpMethod : dumpMethods) {
@@ -286,9 +286,9 @@ public class InterceptionInstrumenter {
 
                 if (applicableInstrumenters.isEmpty()) return mv;
 
-                final List<MethodData> exitData = new ArrayList<MethodData>();
+                final List<MethodData> normalReturnData = new ArrayList<MethodData>();
                 final List<MethodData> enterData = new ArrayList<MethodData>();
-                final List<MethodData> errorData = new ArrayList<MethodData>();
+                final List<MethodData> exceptionData = new ArrayList<MethodData>();
 
                 org.jetbrains.asm4.commons.Method methodBeingInstrumented = new org.jetbrains.asm4.commons.Method(name, desc);
 
@@ -302,24 +302,24 @@ public class InterceptionInstrumenter {
                         enterData.add(methodData);
                     }
 
-                    for (MethodData methodData : instrumenter.getExitData()) {
+                    for (MethodData methodData : instrumenter.getNormalReturnData()) {
                         int depth = stackDepth(methodData, methodBeingInstrumented);
                         if (maxStackDepth < depth) {
                             maxStackDepth = depth;
                         }
-                        exitData.add(methodData);
+                        normalReturnData.add(methodData);
                     }
 
-                    for (MethodData methodData : instrumenter.getErrorData()) {
+                    for (MethodData methodData : instrumenter.getExceptionData()) {
                         int depth = stackDepth(methodData, methodBeingInstrumented);
                         if (maxStackDepth < depth) {
                             maxStackDepth = depth;
                         }
-                        errorData.add(methodData);
+                        exceptionData.add(methodData);
                     }
                 }
 
-                if (enterData.isEmpty() && exitData.isEmpty()) return mv;
+                if (enterData.isEmpty() && normalReturnData.isEmpty()) return mv;
 
                 if (dumpInstrumentedMethods) {
                     mv = getDumpingVisitorWrapper(mv, name, desc);
@@ -362,12 +362,12 @@ public class InterceptionInstrumenter {
                             case FRETURN:
                             case DRETURN:
                             case ARETURN:
-                                for (MethodData methodData : exitData) {
+                                for (MethodData methodData : normalReturnData) {
                                     invokeMethod(access, name, desc, getInstructionAdapter(), methodData, false);
                                 }
                                 break;
                             case ATHROW:
-                                for (MethodData methodData : errorData) {
+                                for (MethodData methodData : exceptionData) {
                                     // A constructor may throw before calling super(), 'this' is not available in this case
                                     invokeMethod(access, name, desc, getInstructionAdapter(), methodData, isConstructor);
                                 }

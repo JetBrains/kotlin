@@ -21,9 +21,9 @@ import java.util.List;
 interface MethodInstrumenter {
     boolean isApplicable(String name, String desc);
 
-    List<MethodData> getExitData();
+    List<MethodData> getNormalReturnData();
 
-    List<MethodData> getErrorData();
+    List<MethodData> getExceptionData();
 
     List<MethodData> getEnterData();
 
