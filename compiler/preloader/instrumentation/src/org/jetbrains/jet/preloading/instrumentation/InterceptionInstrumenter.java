@@ -302,6 +302,8 @@ public class InterceptionInstrumenter {
                     mv = getDumpingVisitorWrapper(mv, name, desc);
                 }
 
+                final boolean isConstructor = "<init>".equals(name);
+
                 final int finalMaxParamCount = maxParamCount;
                 return new MethodVisitorWithUniversalHandler(ASM4, mv) {
 
@@ -331,7 +333,9 @@ public class InterceptionInstrumenter {
                         if (enterDataWritten) return;
                         enterDataWritten = true;
                         for (MethodData methodData : enterData) {
-                            invokeMethod(access, name, desc, getInstructionAdapter(), methodData, "<init>".equals(name));
+                            // At the very beginning of a constructor, i.e. before any super() call, 'this' is not available
+                            // It's too hard to detect a place right after the super() call, so we just put null instead of 'this' in such cases
+                            invokeMethod(access, name, desc, getInstructionAdapter(), methodData, isConstructor);
                         }
                     }
 
@@ -347,7 +351,9 @@ public class InterceptionInstrumenter {
                             case ARETURN:
                             case ATHROW:
                                 for (MethodData methodData : exitData) {
-                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData, false);
+                                    // A constructor may throw before calling super(), 'this' is not available in this case
+                                    boolean beforeThrowInConstructor = opcode == ATHROW && isConstructor;
+                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData, beforeThrowInConstructor);
                                 }
                                 break;
                         }
@@ -398,7 +404,7 @@ public class InterceptionInstrumenter {
             String instrumentedMethodDesc,
             InstructionAdapter ia,
             MethodData methodData,
-            boolean constructorEntryPoint
+            boolean thisUnavailable
     ) {
         FieldData field = methodData.getOwnerField();
         ia.getstatic(field.getDeclaringClass(), field.getName(), field.getDesc());
@@ -412,10 +418,9 @@ public class InterceptionInstrumenter {
             int parameterOffset = 0;
             for (int i = 0; i < parameterCount; i++) {
                 if (i == methodData.getThisParameterIndex()) {
-                    if (isStatic || constructorEntryPoint) {
+                    if (isStatic || thisUnavailable) {
                         // a) static method, 'this' is null
-                        // b) At the very beginning of a constructor, i.e. before any super() call, 'this' is not available
-                        //    It's too hard to detect a place right after the super() call, so we just put null instead of 'this' in such cases
+                        // b) this is not available (some locations in constructors
                         ia.aconst(null);
                     }
                     else {
