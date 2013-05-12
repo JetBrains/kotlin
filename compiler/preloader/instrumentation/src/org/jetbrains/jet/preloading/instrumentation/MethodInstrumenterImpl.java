@@ -27,6 +27,7 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
     private final boolean allowMultipleMatches;
     private final List<MethodData> enterData;
     private final List<MethodData> exitData;
+    private final List<MethodData> errorData;
     private final boolean logApplications;
 
     public MethodInstrumenterImpl(
@@ -36,7 +37,7 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
             boolean allowMultipleMatches,
             List<MethodData> enterData,
             List<MethodData> exitData,
-            boolean logApplications
+            List<MethodData> errorData, boolean logApplications
     ) {
         this.debugName = debugName;
         this.classPattern = classPattern;
@@ -45,6 +46,7 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
         this.allowMultipleMatches = allowMultipleMatches;
         this.enterData = enterData;
         this.exitData = exitData;
+        this.errorData = errorData;
         this.logApplications = logApplications;
     }
 
@@ -73,6 +75,11 @@ class MethodInstrumenterImpl implements MethodInstrumenter {
     @Override
     public List<MethodData> getExitData() {
         return exitData;
+    }
+
+    @Override
+    public List<MethodData> getErrorData() {
+        return errorData;
     }
 
     @Override

@@ -79,14 +79,23 @@ public class InterceptionInstrumenter {
 
                 List<MethodData> enterData = new ArrayList<MethodData>();
                 List<MethodData> exitData = new ArrayList<MethodData>();
+                List<MethodData> errorData = new ArrayList<MethodData>();
                 List<Method> dumpMethods = new ArrayList<Method>();
                 for (Method method : interceptorClass.getMethods()) {
                     String name = method.getName();
+                    MethodData methodData = getMethodData(fieldData, method);
                     if (name.startsWith("enter")) {
-                        enterData.add(getMethodData(fieldData, method));
+                        enterData.add(methodData);
                     }
                     else if (name.startsWith("exit")) {
-                        exitData.add(getMethodData(fieldData, method));
+                        exitData.add(methodData);
+                    }
+                    else if (name.startsWith("error")) {
+                        errorData.add(methodData);
+                    }
+                    else if (name.startsWith("anyExit")) {
+                        exitData.add(methodData);
+                        errorData.add(methodData);
                     }
                     else if (name.startsWith("dump")) {
                         Class<?>[] parameterTypes = method.getParameterTypes();
@@ -109,6 +118,7 @@ public class InterceptionInstrumenter {
                         annotation.allowMultipleMatches(),
                         enterData,
                         exitData,
+                        errorData,
                         annotation.logInterceptions());
 
                 for (Method dumpMethod : dumpMethods) {
@@ -278,6 +288,7 @@ public class InterceptionInstrumenter {
 
                 final List<MethodData> exitData = new ArrayList<MethodData>();
                 final List<MethodData> enterData = new ArrayList<MethodData>();
+                final List<MethodData> errorData = new ArrayList<MethodData>();
 
                 org.jetbrains.asm4.commons.Method methodBeingInstrumented = new org.jetbrains.asm4.commons.Method(name, desc);
 
@@ -297,6 +308,14 @@ public class InterceptionInstrumenter {
                             maxStackDepth = depth;
                         }
                         exitData.add(methodData);
+                    }
+
+                    for (MethodData methodData : instrumenter.getErrorData()) {
+                        int depth = stackDepth(methodData, methodBeingInstrumented);
+                        if (maxStackDepth < depth) {
+                            maxStackDepth = depth;
+                        }
+                        errorData.add(methodData);
                     }
                 }
 
@@ -352,11 +371,14 @@ public class InterceptionInstrumenter {
                             case FRETURN:
                             case DRETURN:
                             case ARETURN:
-                            case ATHROW:
                                 for (MethodData methodData : exitData) {
+                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData, false);
+                                }
+                                break;
+                            case ATHROW:
+                                for (MethodData methodData : errorData) {
                                     // A constructor may throw before calling super(), 'this' is not available in this case
-                                    boolean beforeThrowInConstructor = opcode == ATHROW && isConstructor;
-                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData, beforeThrowInConstructor);
+                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData, isConstructor);
                                 }
                                 break;
                         }

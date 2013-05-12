@@ -23,6 +23,8 @@ interface MethodInstrumenter {
 
     List<MethodData> getExitData();
 
+    List<MethodData> getErrorData();
+
     List<MethodData> getEnterData();
 
     boolean allowsMultipleMatches();
