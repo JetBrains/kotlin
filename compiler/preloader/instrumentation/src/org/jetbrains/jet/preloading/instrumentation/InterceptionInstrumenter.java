@@ -271,9 +271,22 @@ public class InterceptionInstrumenter {
 
                 final List<MethodData> exitData = new ArrayList<MethodData>();
                 final List<MethodData> enterData = new ArrayList<MethodData>();
+
+                int maxParamCount = 0;
                 for (MethodInstrumenter instrumenter : applicableInstrumenters) {
-                    enterData.addAll(instrumenter.getEnterData());
-                    exitData.addAll(instrumenter.getExitData());
+                    for (MethodData methodData : instrumenter.getEnterData()) {
+                        if (maxParamCount < methodData.getParameterCount()) {
+                            maxParamCount = methodData.getParameterCount();
+                        }
+                        enterData.add(methodData);
+                    }
+
+                    for (MethodData methodData : instrumenter.getExitData()) {
+                        if (maxParamCount < methodData.getParameterCount()) {
+                            maxParamCount = methodData.getParameterCount();
+                        }
+                        exitData.add(methodData);
+                    }
                 }
 
                 if (enterData.isEmpty() && exitData.isEmpty()) return mv;
@@ -282,6 +295,7 @@ public class InterceptionInstrumenter {
                     mv = getDumpingVisitorWrapper(mv, name, desc);
                 }
 
+                final int finalMaxParamCount = maxParamCount;
                 return new MethodVisitorWithUniversalHandler(ASM4, mv) {
 
                     private InstructionAdapter ia = null;
@@ -296,8 +310,8 @@ public class InterceptionInstrumenter {
 
                     @Override
                     public void visitMaxs(int maxStack, int maxLocals) {
-                        int sizes = Type.getArgumentsAndReturnSizes(desc);
-                        super.visitMaxs(Math.max(maxStack, sizes + 1), maxLocals);
+                        int maxInstrumentedStack = finalMaxParamCount + 2; // +1 for receiver +1 for returned value on the stack
+                        super.visitMaxs(Math.max(maxStack, maxInstrumentedStack), maxLocals);
                     }
 
                     @Override
