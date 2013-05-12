@@ -213,18 +213,14 @@ public class InterceptionInstrumenter implements Instrumenter {
 
                 if (applicableInstrumenters.isEmpty()) return mv;
 
-                InstructionAdapter ia = new InstructionAdapter(mv);
-
                 final List<MethodData> exitData = new ArrayList<MethodData>();
+                final List<MethodData> enterData = new ArrayList<MethodData>();
                 for (MethodInstrumenter instrumenter : applicableInstrumenters) {
-                    for (MethodData enterData : instrumenter.getEnterData()) {
-                        invokeMethod(access, name, desc, ia, enterData);
-                    }
-
+                    enterData.addAll(instrumenter.getEnterData());
                     exitData.addAll(instrumenter.getExitData());
                 }
 
-                if (exitData.isEmpty()) return mv;
+                if (enterData.isEmpty() && exitData.isEmpty()) return mv;
 
                 return new MethodVisitor(ASM4, mv) {
 
@@ -235,6 +231,14 @@ public class InterceptionInstrumenter implements Instrumenter {
                             ia = new InstructionAdapter(this);
                         }
                         return ia;
+                    }
+
+                    @Override
+                    public void visitCode() {
+                        for (MethodData methodData : enterData) {
+                            invokeMethod(access, name, desc, getInstructionAdapter(), methodData);
+                        }
+                        super.visitCode();
                     }
 
                     @Override
