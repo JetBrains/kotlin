@@ -71,8 +71,8 @@ public class InterceptionInstrumenter {
 
                 List<MethodData> enterData = new ArrayList<MethodData>();
                 List<MethodData> exitData = new ArrayList<MethodData>();
-                Method[] methods = interceptorClass.getMethods();
-                for (Method method : methods) {
+                List<Method> dumpMethods = new ArrayList<Method>();
+                for (Method method : interceptorClass.getMethods()) {
                     String name = method.getName();
                     if (name.startsWith("enter")) {
                         enterData.add(getMethodData(fieldData, method));
@@ -87,7 +87,7 @@ public class InterceptionInstrumenter {
                         if (parameterTypes.length == 1 && parameterTypes[0] != PrintStream.class) {
                             continue;
                         }
-                        addDumpTask(interceptor, method);
+                        dumpMethods.add(method);
                     }
                 }
 
@@ -101,6 +101,11 @@ public class InterceptionInstrumenter {
                         enterData,
                         exitData,
                         annotation.logInterceptions());
+
+                for (Method dumpMethod : dumpMethods) {
+                    addDumpTask(interceptor, dumpMethod, instrumenter);
+                }
+
                 instrumenters.add(instrumenter);
                 neverMatchedInstrumenters.add(instrumenter);
             }
@@ -139,10 +144,11 @@ public class InterceptionInstrumenter {
         );
     }
 
-    private void addDumpTask(final Object interceptor, final Method method) {
+    private void addDumpTask(final Object interceptor, final Method method, final MethodInstrumenter instrumenter) {
         dumpTasks.add(new DumpAction() {
             @Override
             public void dump(PrintStream out) {
+                out.println("<<< " + instrumenter + ": " + interceptor.getClass().getCanonicalName() + " says:");
                 try {
                     if (method.getParameterTypes().length == 0) {
                         method.invoke(interceptor);
@@ -157,6 +163,7 @@ public class InterceptionInstrumenter {
                 catch (InvocationTargetException e) {
                     throw new IllegalStateException(e);
                 }
+                out.println(">>>");
             }
         });
     }
