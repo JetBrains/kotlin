@@ -194,7 +194,7 @@ public class InterceptionInstrumenter {
 
     private byte[] instrument(byte[] classData, final List<MethodInstrumenter> instrumenters) {
         final ClassReader cr = new ClassReader(classData);
-        ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
+        ClassWriter cw = new ClassWriter(cr, 0);
         cr.accept(new ClassVisitor(ASM4, cw) {
             private final Map<MethodInstrumenter, String> matchedMethods = new HashMap<MethodInstrumenter, String>();
 
@@ -241,6 +241,12 @@ public class InterceptionInstrumenter {
                             ia = new InstructionAdapter(this);
                         }
                         return ia;
+                    }
+
+                    @Override
+                    public void visitMaxs(int maxStack, int maxLocals) {
+                        int sizes = Type.getArgumentsAndReturnSizes(desc);
+                        super.visitMaxs(Math.max(maxStack, sizes + 1), maxLocals);
                     }
 
                     @Override
