@@ -18,6 +18,8 @@ package org.jetbrains.jet.preloading.instrumentation;
 
 import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.util.Textifier;
+import org.jetbrains.asm4.util.TraceMethodVisitor;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -31,6 +33,9 @@ import static org.jetbrains.asm4.Opcodes.*;
 
 public class InterceptionInstrumenter {
     private static final Pattern ANYTHING = Pattern.compile(".*");
+
+    private final boolean dumpInstrumentedMethods = false;
+
     private final Map<String, ClassMatcher> classPatterns = new LinkedHashMap<String, ClassMatcher>();
 
     private final Set<String> neverMatchedClassPatterns = new LinkedHashSet<String>();
@@ -232,6 +237,10 @@ public class InterceptionInstrumenter {
 
                 if (enterData.isEmpty() && exitData.isEmpty()) return mv;
 
+                if (dumpInstrumentedMethods) {
+                    mv = getDumpingVisitorWrapper(mv, name, desc);
+                }
+
                 return new MethodVisitor(ASM4, mv) {
 
                     private InstructionAdapter ia = null;
@@ -287,6 +296,21 @@ public class InterceptionInstrumenter {
                                                         + erasedSignature);
                     }
                 }
+            }
+
+            private TraceMethodVisitor getDumpingVisitorWrapper(MethodVisitor mv, final String name, final String desc) {
+                return new TraceMethodVisitor(mv, new Textifier() {
+                    @Override
+                    public void visitMethodEnd() {
+                        System.out.println(cr.getClassName() + ":" + name + desc);
+                        for (Object line : getText()) {
+                            System.out.print(line);
+                        }
+                        System.out.println();
+                        System.out.println();
+                        super.visitMethodEnd();
+                    }
+                });
             }
         }, 0);
         return cw.toByteArray();
