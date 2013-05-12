@@ -147,6 +147,7 @@ public class InterceptionInstrumenter {
         int thisParameterIndex = -1;
         int methodNameParameterIndex = -1;
         int methodDescParameterIndex = -1;
+        int allArgsParameterIndex = -1;
         for (int i = 0; i < parameterAnnotations.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof This) {
@@ -167,6 +168,12 @@ public class InterceptionInstrumenter {
                     }
                     methodDescParameterIndex = i;
                 }
+                else if (annotation instanceof AllArgs) {
+                    if (allArgsParameterIndex > -1) {
+                        throw new IllegalArgumentException("Multiple @AllArgs parameters in " + method);
+                    }
+                    allArgsParameterIndex = i;
+                }
             }
         }
         return new MethodDataImpl(
@@ -177,8 +184,8 @@ public class InterceptionInstrumenter {
             method.getParameterTypes().length,
             thisParameterIndex,
             methodNameParameterIndex,
-            methodDescParameterIndex
-        );
+            methodDescParameterIndex,
+            allArgsParameterIndex);
     }
 
     private void addDumpTask(final Object interceptor, final Method method, final MethodInstrumenter instrumenter) {
@@ -275,15 +282,15 @@ public class InterceptionInstrumenter {
                 int maxParamCount = 0;
                 for (MethodInstrumenter instrumenter : applicableInstrumenters) {
                     for (MethodData methodData : instrumenter.getEnterData()) {
-                        if (maxParamCount < methodData.getParameterCount()) {
-                            maxParamCount = methodData.getParameterCount();
+                        if (maxParamCount < stackDepth(methodData)) {
+                            maxParamCount = stackDepth(methodData);
                         }
                         enterData.add(methodData);
                     }
 
                     for (MethodData methodData : instrumenter.getExitData()) {
-                        if (maxParamCount < methodData.getParameterCount()) {
-                            maxParamCount = methodData.getParameterCount();
+                        if (maxParamCount < stackDepth(methodData)) {
+                            maxParamCount = stackDepth(methodData);
                         }
                         exitData.add(methodData);
                     }
@@ -310,7 +317,7 @@ public class InterceptionInstrumenter {
 
                     @Override
                     public void visitMaxs(int maxStack, int maxLocals) {
-                        int maxInstrumentedStack = finalMaxParamCount + 2; // +1 for receiver +1 for returned value on the stack
+                        int maxInstrumentedStack = finalMaxParamCount + 1; // +1 for returned value on the stack
                         super.visitMaxs(Math.max(maxStack, maxInstrumentedStack), maxLocals);
                     }
 
@@ -347,6 +354,12 @@ public class InterceptionInstrumenter {
                         super.visitInsn(opcode);
                     }
                 };
+            }
+
+            private int stackDepth(MethodData methodData) {
+                // array + index + value
+                int allArgsStackDepth = methodData.getAllArgsParameterIndex() >= 0 ? 3 : 0;
+                return methodData.getParameterCount() + 1 /*receiver*/ + allArgsStackDepth;
             }
 
             private void checkMultipleMatches(MethodInstrumenter instrumenter, String name, String desc) {
@@ -416,6 +429,20 @@ public class InterceptionInstrumenter {
                 else if (i == methodData.getMethodDescParameterIndex()) {
                     ia.aconst(instrumentedMethodDesc);
                 }
+                else if (i == methodData.getAllArgsParameterIndex()) {
+                    ia.aconst(parameterTypes.length);
+                    ia.newarray(OBJECT_TYPE);
+                    int offset = 0;
+                    for (int parameterIndex = 0; parameterIndex < parameterTypes.length; parameterIndex++) {
+                        ia.dup();
+                        Type type = parameterTypes[parameterIndex];
+                        ia.iconst(parameterIndex);
+                        ia.load(base + offset, type);
+                        offset += type.getSize();
+                        applyBoxingIfNeeded(ia, type);
+                        ia.astore(OBJECT_TYPE);
+                    }
+                }
                 else {
                     Type type = parameterTypes[parameterOffset];
                     ia.load(base + parameterOffset, type);
@@ -425,6 +452,42 @@ public class InterceptionInstrumenter {
             }
         }
         ia.invokevirtual(methodData.getDeclaringClass(), methodData.getName(), methodData.getDesc());
+    }
+
+    private static void applyBoxingIfNeeded(InstructionAdapter ia, Type type) {
+        switch (type.getSort()) {
+            case Type.BOOLEAN:
+                box(ia, type, Boolean.class);
+                break;
+            case Type.CHAR:
+                box(ia, type, Character.class);
+                break;
+            case Type.BYTE:
+                box(ia, type, Byte.class);
+                break;
+            case Type.SHORT:
+                box(ia, type, Short.class);
+                break;
+            case Type.INT:
+                box(ia, type, Integer.class);
+                break;
+            case Type.FLOAT:
+                box(ia, type, Float.class);
+                break;
+            case Type.LONG:
+                box(ia, type, Long.class);
+                break;
+            case Type.DOUBLE:
+                box(ia, type, Double.class);
+                break;
+            default:
+                // Nothing to do, it's an object already
+        }
+    }
+
+    private static void box(InstructionAdapter ia, Type from, Class<?> boxedClass) {
+        Type boxedType = Type.getType(boxedClass);
+        ia.invokestatic(boxedType.getInternalName(), "valueOf", "(" + from.getDescriptor() + ")" + boxedType.getDescriptor());
     }
 
     public void dump(PrintStream out) {
