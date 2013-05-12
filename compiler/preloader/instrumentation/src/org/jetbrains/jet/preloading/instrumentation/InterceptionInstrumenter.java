@@ -145,6 +145,8 @@ public class InterceptionInstrumenter {
     private static MethodData getMethodData(FieldData interceptorField, Method method) {
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         int thisParameterIndex = -1;
+        int methodNameParameterIndex = -1;
+        int methodDescParameterIndex = -1;
         for (int i = 0; i < parameterAnnotations.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof This) {
@@ -152,6 +154,18 @@ public class InterceptionInstrumenter {
                         throw new IllegalArgumentException("Multiple @This parameters in " + method);
                     }
                     thisParameterIndex = i;
+                }
+                else if (annotation instanceof MethodName) {
+                    if (methodNameParameterIndex > -1) {
+                        throw new IllegalArgumentException("Multiple @MethodName parameters in " + method);
+                    }
+                    methodNameParameterIndex = i;
+                }
+                else if (annotation instanceof MethodDesc) {
+                    if (methodDescParameterIndex > -1) {
+                        throw new IllegalArgumentException("Multiple @MethodDesc parameters in " + method);
+                    }
+                    methodDescParameterIndex = i;
                 }
             }
         }
@@ -161,7 +175,10 @@ public class InterceptionInstrumenter {
             method.getName(),
             Type.getMethodDescriptor(method),
             method.getParameterTypes().length,
-            thisParameterIndex);
+            thisParameterIndex,
+            methodNameParameterIndex,
+            methodDescParameterIndex
+        );
     }
 
     private void addDumpTask(final Object interceptor, final Method method, final MethodInstrumenter instrumenter) {
@@ -293,7 +310,7 @@ public class InterceptionInstrumenter {
                         if (enterDataWritten) return;
                         enterDataWritten = true;
                         for (MethodData methodData : enterData) {
-                            invokeMethod(access, desc, getInstructionAdapter(), methodData);
+                            invokeMethod(access, name, desc, getInstructionAdapter(), methodData);
                         }
                     }
 
@@ -309,7 +326,7 @@ public class InterceptionInstrumenter {
                             case ARETURN:
                             case ATHROW:
                                 for (MethodData methodData : exitData) {
-                                    invokeMethod(access, desc, getInstructionAdapter(), methodData);
+                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData);
                                 }
                                 break;
                         }
@@ -348,7 +365,7 @@ public class InterceptionInstrumenter {
         return cw.toByteArray();
     }
 
-    private static void invokeMethod(int access, String instrumentedMethodDesc, InstructionAdapter ia, MethodData methodData) {
+    private static void invokeMethod(int access, String instrumentedMethodName, String instrumentedMethodDesc, InstructionAdapter ia, MethodData methodData) {
         FieldData field = methodData.getOwnerField();
         ia.getstatic(field.getDeclaringClass(), field.getName(), field.getDesc());
         ia.checkcast(field.getRuntimeType());
@@ -360,7 +377,7 @@ public class InterceptionInstrumenter {
             int base = isStatic ? 0 : 1;
             int parametersUsed = 0;
             for (int i = 0; i < parameterCount; i++) {
-                if (methodData.getThisParameterIndex() == i) {
+                if (i == methodData.getThisParameterIndex()) {
                     if (isStatic) {
                         // static method, 'this' is null
                         ia.aconst(null);
@@ -369,6 +386,12 @@ public class InterceptionInstrumenter {
                         // load 'this'
                         ia.load(0, OBJECT_TYPE);
                     }
+                }
+                else if (i == methodData.getMethodNameParameterIndex()) {
+                    ia.aconst(instrumentedMethodName);
+                }
+                else if (i == methodData.getMethodDescParameterIndex()) {
+                    ia.aconst(instrumentedMethodDesc);
                 }
                 else {
                     ia.load(base + parametersUsed, parameterTypes[parametersUsed]);

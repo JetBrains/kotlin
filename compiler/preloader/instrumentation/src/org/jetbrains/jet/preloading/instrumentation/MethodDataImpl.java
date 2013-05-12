@@ -20,6 +20,8 @@ public class MethodDataImpl extends MemberDataImpl implements MethodData {
     private final FieldData ownerField;
     private final int parameterCount;
     private final int thisParameterIndex;
+    private final int methodNameParameterIndex;
+    private final int methodDescParameterIndex;
 
     MethodDataImpl(
             FieldData ownerField,
@@ -27,12 +29,16 @@ public class MethodDataImpl extends MemberDataImpl implements MethodData {
             String name,
             String desc,
             int parameterCount,
-            int thisParameterIndex
+            int thisParameterIndex,
+            int methodNameParameterIndex,
+            int methodDescParameterIndex
     ) {
         super(declaringClass, name, desc);
         this.ownerField = ownerField;
         this.parameterCount = parameterCount;
         this.thisParameterIndex = thisParameterIndex;
+        this.methodNameParameterIndex = methodNameParameterIndex;
+        this.methodDescParameterIndex = methodDescParameterIndex;
     }
 
     @Override
@@ -48,5 +54,15 @@ public class MethodDataImpl extends MemberDataImpl implements MethodData {
     @Override
     public int getThisParameterIndex() {
         return thisParameterIndex;
+    }
+
+    @Override
+    public int getMethodNameParameterIndex() {
+        return methodNameParameterIndex;
+    }
+
+    @Override
+    public int getMethodDescParameterIndex() {
+        return methodDescParameterIndex;
     }
 }
