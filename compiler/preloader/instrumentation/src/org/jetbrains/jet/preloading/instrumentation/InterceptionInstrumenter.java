@@ -95,6 +95,7 @@ public class InterceptionInstrumenter {
                 String methodName = nameFromAnnotation.isEmpty() ? field.getName() : nameFromAnnotation;
                 MethodInstrumenterImpl instrumenter = new MethodInstrumenterImpl(
                         field.getDeclaringClass().getSimpleName() + "." + field.getName(),
+                        classPattern,
                         compilePattern(methodName),
                         compilePattern(annotation.erasedSignature()),
                         annotation.allowMultipleMatches(),
