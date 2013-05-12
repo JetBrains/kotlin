@@ -22,6 +22,7 @@ import org.jetbrains.asm4.util.Textifier;
 import org.jetbrains.asm4.util.TraceMethodVisitor;
 
 import java.io.PrintStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,6 +34,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 
 public class InterceptionInstrumenter {
     private static final Pattern ANYTHING = Pattern.compile(".*");
+    private static final Type OBJECT_TYPE = Type.getType(Object.class);
 
     private final boolean dumpInstrumentedMethods = false;
 
@@ -141,13 +143,25 @@ public class InterceptionInstrumenter {
     }
 
     private static MethodData getMethodData(FieldData interceptorField, Method method) {
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        int thisParameterIndex = -1;
+        for (int i = 0; i < parameterAnnotations.length; i++) {
+            for (Annotation annotation : parameterAnnotations[i]) {
+                if (annotation instanceof This) {
+                    if (thisParameterIndex > -1) {
+                        throw new IllegalArgumentException("Multiple @This parameters in " + method);
+                    }
+                    thisParameterIndex = i;
+                }
+            }
+        }
         return new MethodDataImpl(
             interceptorField,
             Type.getInternalName(method.getDeclaringClass()),
             method.getName(),
             Type.getMethodDescriptor(method),
-            method.getParameterTypes().length
-        );
+            method.getParameterTypes().length,
+            thisParameterIndex);
     }
 
     private void addDumpTask(final Object interceptor, final Method method, final MethodInstrumenter instrumenter) {
@@ -251,9 +265,10 @@ public class InterceptionInstrumenter {
                     mv = getDumpingVisitorWrapper(mv, name, desc);
                 }
 
-                return new MethodVisitor(ASM4, mv) {
+                return new MethodVisitorWithUniversalHandler(ASM4, mv) {
 
                     private InstructionAdapter ia = null;
+                    private boolean enterDataWritten = false;
 
                     private InstructionAdapter getInstructionAdapter() {
                         if (ia == null) {
@@ -269,15 +284,22 @@ public class InterceptionInstrumenter {
                     }
 
                     @Override
-                    public void visitCode() {
+                    protected boolean visitAnyInsn(int opcode) {
+                        writeEnterData();
+                        return true;
+                    }
+
+                    private void writeEnterData() {
+                        if (enterDataWritten) return;
+                        enterDataWritten = true;
                         for (MethodData methodData : enterData) {
-                            invokeMethod(access, name, desc, getInstructionAdapter(), methodData);
+                            invokeMethod(access, desc, getInstructionAdapter(), methodData);
                         }
-                        super.visitCode();
                     }
 
                     @Override
                     public void visitInsn(int opcode) {
+                        writeEnterData();
                         switch (opcode) {
                             case RETURN:
                             case IRETURN:
@@ -287,7 +309,7 @@ public class InterceptionInstrumenter {
                             case ARETURN:
                             case ATHROW:
                                 for (MethodData methodData : exitData) {
-                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData);
+                                    invokeMethod(access, desc, getInstructionAdapter(), methodData);
                                 }
                                 break;
                         }
@@ -326,18 +348,33 @@ public class InterceptionInstrumenter {
         return cw.toByteArray();
     }
 
-    private static void invokeMethod(int access, String name, String desc, InstructionAdapter ia, MethodData methodData) {
+    private static void invokeMethod(int access, String instrumentedMethodDesc, InstructionAdapter ia, MethodData methodData) {
         FieldData field = methodData.getOwnerField();
         ia.getstatic(field.getDeclaringClass(), field.getName(), field.getDesc());
         ia.checkcast(field.getRuntimeType());
 
         int parameterCount = methodData.getParameterCount();
         if (parameterCount > 0) {
-            org.jetbrains.asm4.commons.Method method = new org.jetbrains.asm4.commons.Method(name, desc);
-            Type[] parameterTypes = method.getArgumentTypes();
-            int base = (access & ACC_STATIC) != 0 ? 0 : 1;
+            Type[] parameterTypes = Type.getArgumentTypes(instrumentedMethodDesc);
+            boolean isStatic = (access & ACC_STATIC) != 0;
+            int base = isStatic ? 0 : 1;
+            int parametersUsed = 0;
             for (int i = 0; i < parameterCount; i++) {
-                ia.load(base + i, parameterTypes[i]);
+                if (methodData.getThisParameterIndex() == i) {
+                    if (isStatic) {
+                        // static method, 'this' is null
+                        ia.aconst(null);
+                    }
+                    else {
+                        // load 'this'
+                        ia.load(0, OBJECT_TYPE);
+                    }
+                }
+                else {
+                    ia.load(base + parametersUsed, parameterTypes[parametersUsed]);
+                    parametersUsed++;
+                }
+
             }
         }
         ia.invokevirtual(methodData.getDeclaringClass(), methodData.getName(), methodData.getDesc());

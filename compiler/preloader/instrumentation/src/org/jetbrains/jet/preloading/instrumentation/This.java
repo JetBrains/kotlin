@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.preloading.instrumentation;
 
-interface MethodData extends MemberData {
-    FieldData getOwnerField();
-    int getParameterCount();
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    // -1 for no @This parameter
-    int getThisParameterIndex();
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface This {
 }

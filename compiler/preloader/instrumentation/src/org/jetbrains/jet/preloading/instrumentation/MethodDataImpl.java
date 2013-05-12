@@ -19,17 +19,20 @@ package org.jetbrains.jet.preloading.instrumentation;
 public class MethodDataImpl extends MemberDataImpl implements MethodData {
     private final FieldData ownerField;
     private final int parameterCount;
+    private final int thisParameterIndex;
 
     MethodDataImpl(
             FieldData ownerField,
             String declaringClass,
             String name,
             String desc,
-            int parameterCount
+            int parameterCount,
+            int thisParameterIndex
     ) {
         super(declaringClass, name, desc);
         this.ownerField = ownerField;
         this.parameterCount = parameterCount;
+        this.thisParameterIndex = thisParameterIndex;
     }
 
     @Override
@@ -40,5 +43,10 @@ public class MethodDataImpl extends MemberDataImpl implements MethodData {
     @Override
     public int getParameterCount() {
         return parameterCount;
+    }
+
+    @Override
+    public int getThisParameterIndex() {
+        return thisParameterIndex;
     }
 }
