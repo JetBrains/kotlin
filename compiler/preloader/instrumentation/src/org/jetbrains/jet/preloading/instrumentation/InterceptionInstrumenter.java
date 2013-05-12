@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.asm4.Opcodes.*;
 
-public class InterceptionInstrumenter implements Instrumenter {
+public class InterceptionInstrumenter {
     private static final Pattern ANYTHING = Pattern.compile(".*");
     private final Map<String, ClassMatcher> classPatterns = new LinkedHashMap<String, ClassMatcher>();
 
