@@ -42,6 +42,10 @@ public class OverrideImplementLineMarkerTest extends LightCodeInsightFixtureTest
         doTest();
     }
 
+    public void testOverrideFunction() throws Throwable {
+        doTest();
+    }
+
     private void doTest() {
         try {
             myFixture.configureByFile(getTestName(false) + ".kt");
