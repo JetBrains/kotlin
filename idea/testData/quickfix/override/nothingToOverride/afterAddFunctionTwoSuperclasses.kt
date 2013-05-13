@@ -1,0 +1,10 @@
+// "Add function to supertype..." "true"
+open class A {
+}
+open class B : A() {
+    open fun f() {
+    }
+}
+class C : B() {
+    <caret>override fun f() {}
+}

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -544,5 +545,17 @@ public class DescriptorUtils {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         return "values".equals(functionDescriptor.getName().getName())
                && methodTypeParameters.isEmpty();
+    }
+
+    @NotNull
+    public static Set<ClassDescriptor> getAllSuperClasses(@NotNull ClassDescriptor klass) {
+        Set<JetType> allSupertypes = TypeUtils.getAllSupertypes(klass.getDefaultType());
+        Set<ClassDescriptor> allSuperclasses = Sets.newHashSet();
+        for (JetType supertype : allSupertypes) {
+            ClassDescriptor superclass = TypeUtils.getClassDescriptor(supertype);
+            assert superclass != null;
+            allSuperclasses.add(superclass);
+        }
+        return allSuperclasses;
     }
 }
