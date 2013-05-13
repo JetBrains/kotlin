@@ -17,6 +17,7 @@
 package org.jetbrains.jet.preloading;
 
 import org.jetbrains.jet.preloading.instrumentation.InterceptionInstrumenterAdaptor;
+import org.jetbrains.jet.preloading.instrumentation.annotations.ClassName;
 import org.jetbrains.jet.preloading.instrumentation.annotations.MethodDesc;
 import org.jetbrains.jet.preloading.instrumentation.annotations.MethodInterceptor;
 import org.jetbrains.jet.preloading.instrumentation.annotations.MethodName;
@@ -104,8 +105,8 @@ public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdapto
     public static class MethodCollector {
         private final Collection<String> l = new LinkedHashSet<String>();
 
-        public void enter(@MethodName String name, @MethodDesc String desc) {//long l, Object arg) {
-            l.add(name + desc);
+        public void enter(@ClassName String className, @MethodName String name, @MethodDesc String desc) {
+            l.add(className + "." + name + desc);
         }
 
         public void dump(PrintStream out) {

@@ -166,6 +166,7 @@ public class InterceptionInstrumenter {
     private static MethodData getMethodData(FieldData interceptorField, Method method) {
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         int thisParameterIndex = -1;
+        int classNameParameterIndex = -1;
         int methodNameParameterIndex = -1;
         int methodDescParameterIndex = -1;
         int allArgsParameterIndex = -1;
@@ -176,6 +177,12 @@ public class InterceptionInstrumenter {
                         throw new IllegalArgumentException("Multiple @This parameters in " + method);
                     }
                     thisParameterIndex = i;
+                }
+                else if (annotation instanceof ClassName) {
+                    if (classNameParameterIndex > -1) {
+                        throw new IllegalArgumentException("Multiple @ClassName parameters in " + method);
+                    }
+                    classNameParameterIndex = i;
                 }
                 else if (annotation instanceof MethodName) {
                     if (methodNameParameterIndex > -1) {
@@ -203,6 +210,7 @@ public class InterceptionInstrumenter {
             method.getName(),
             Type.getMethodDescriptor(method),
             thisParameterIndex,
+            classNameParameterIndex,
             methodNameParameterIndex,
             methodDescParameterIndex,
             allArgsParameterIndex);
@@ -338,7 +346,7 @@ public class InterceptionInstrumenter {
                         for (MethodData methodData : enterData) {
                             // At the very beginning of a constructor, i.e. before any super() call, 'this' is not available
                             // It's too hard to detect a place right after the super() call, so we just put null instead of 'this' in such cases
-                            invokeMethod(access, name, desc, getInstructionAdapter(), methodData, isConstructor);
+                            invokeMethod(access, cr.getClassName(), name, desc, getInstructionAdapter(), methodData, isConstructor);
                         }
                         super.visitCode();
                     }
@@ -353,13 +361,13 @@ public class InterceptionInstrumenter {
                             case DRETURN:
                             case ARETURN:
                                 for (MethodData methodData : normalReturnData) {
-                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData, false);
+                                    invokeMethod(access, cr.getClassName(), name, desc, getInstructionAdapter(), methodData, false);
                                 }
                                 break;
                             case ATHROW:
                                 for (MethodData methodData : exceptionData) {
                                     // A constructor may throw before calling super(), 'this' is not available in this case
-                                    invokeMethod(access, name, desc, getInstructionAdapter(), methodData, isConstructor);
+                                    invokeMethod(access, cr.getClassName(), name, desc, getInstructionAdapter(), methodData, isConstructor);
                                 }
                                 break;
                         }
@@ -445,6 +453,7 @@ public class InterceptionInstrumenter {
 
     private static void invokeMethod(
             int instrumentedMethodAccess,
+            String instrumentedClassName,
             String instrumentedMethodName,
             String instrumentedMethodDesc,
             InstructionAdapter ia,
@@ -474,6 +483,9 @@ public class InterceptionInstrumenter {
                         // load 'this'
                         ia.load(0, OBJECT_TYPE);
                     }
+                }
+                else if (i == methodData.getClassNameParameterIndex()) {
+                    ia.aconst(instrumentedClassName);
                 }
                 else if (i == methodData.getMethodNameParameterIndex()) {
                     ia.aconst(instrumentedMethodName);

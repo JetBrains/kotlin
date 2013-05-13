@@ -45,6 +45,7 @@ Whatever the type of the field, if it has methods named by the convention define
 If any of the methods above, except for ```dump.*```, have parameters, they are treated as follows:
 * *no annotation* - this parameter receives the respective parameter of the instrumented method
 * ```@This``` - this parameter receives the ```this``` of the instrumented method, or ```null``` if there's no ```this```
+* ```@ClassName``` - this parameter receives the name of the class containing the instrumented method, must be a ```String```
 * ```@MethodName``` - this parameter receives the name of the instrumented method, must be a ```String```
 * ```@MethodDesc``` - this parameter receives the JVM descriptor of the instrumented method, like ```(ILjava/lang/Object;)V```, must be a ```String```
 * ```@AllArgs``` - this parameter receives an array of all arguments of the instrumented method, must be of type ```Object[]```

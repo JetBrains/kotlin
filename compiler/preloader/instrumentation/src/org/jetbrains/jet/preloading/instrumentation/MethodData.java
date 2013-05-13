@@ -19,6 +19,7 @@ package org.jetbrains.jet.preloading.instrumentation;
 public class MethodData extends MemberData {
     private final FieldData ownerField;
     private final int thisParameterIndex;
+    private final int classNameParameterIndex;
     private final int methodNameParameterIndex;
     private final int methodDescParameterIndex;
     private final int allArgsParameterIndex;
@@ -29,6 +30,7 @@ public class MethodData extends MemberData {
             String name,
             String desc,
             int thisParameterIndex,
+            int classNameParameterIndex,
             int methodNameParameterIndex,
             int methodDescParameterIndex,
             int allArgsParameterIndex
@@ -36,6 +38,7 @@ public class MethodData extends MemberData {
         super(declaringClass, name, desc);
         this.ownerField = ownerField;
         this.thisParameterIndex = thisParameterIndex;
+        this.classNameParameterIndex = classNameParameterIndex;
         this.methodNameParameterIndex = methodNameParameterIndex;
         this.methodDescParameterIndex = methodDescParameterIndex;
         this.allArgsParameterIndex = allArgsParameterIndex;
@@ -47,6 +50,10 @@ public class MethodData extends MemberData {
 
     public int getThisParameterIndex() {
         return thisParameterIndex;
+    }
+
+    public int getClassNameParameterIndex() {
+        return classNameParameterIndex;
     }
 
     public int getMethodNameParameterIndex() {
