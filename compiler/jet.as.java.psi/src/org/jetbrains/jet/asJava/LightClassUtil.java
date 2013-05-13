@@ -133,27 +133,11 @@ public class LightClassUtil {
         PsiMethod getterWrapper = getter != null ? getLightClassAccessorMethod(getter) : null;
         PsiMethod setterWrapper = setter != null ? getLightClassAccessorMethod(setter) : null;
 
-        if (getterWrapper == null || setterWrapper == null) {
-            List<PsiMethod> wrappers = getPsiMethodWrappers(property, true);
-            assert wrappers.size() <= 2 : "Maximum two wrappers are expected to be generated for property";
+        return extractPropertyAccessors(property, getterWrapper, setterWrapper);
+    }
 
-            for (PsiMethod wrapper : wrappers) {
-                if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
-                    assert setterWrapper == null : String.format(
-                            "Setter accessor isn't expected to be reassigned (old: %s, new: %s)", setterWrapper, wrapper);
-
-                    setterWrapper = wrapper;
-                }
-                else {
-                    assert getterWrapper == null : String.format(
-                            "Getter accessor isn't expected to be reassigned (old: %s, new: %s)", getterWrapper, wrapper);
-
-                    getterWrapper = wrapper;
-                }
-            }
-        }
-
-        return new PropertyAccessorsPsiMethods(getterWrapper, setterWrapper);
+    public static PropertyAccessorsPsiMethods getLightClassPropertyMethods(@NotNull JetParameter parameter) {
+        return extractPropertyAccessors(parameter, null, null);
     }
 
     @Nullable
@@ -212,6 +196,10 @@ public class LightClassUtil {
 
     @Nullable
     private static PsiClass getWrappingClass(@NotNull JetDeclaration declaration) {
+        if (declaration instanceof JetParameter && declaration.getParent().getParent() instanceof JetClass) {
+            return getPsiClass((JetClassOrObject) declaration.getParent().getParent());
+        }
+
         if (declaration instanceof JetPropertyAccessor) {
             PsiElement propertyParent = declaration.getParent();
             assert propertyParent instanceof JetProperty : "JetProperty is expected to be parent of accessor";
@@ -244,6 +232,38 @@ public class LightClassUtil {
         }
 
         return null;
+    }
+
+    private static PropertyAccessorsPsiMethods extractPropertyAccessors(
+            @NotNull JetDeclaration jetDeclaration,
+            @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter)
+    {
+        PsiMethod getterWrapper = specialGetter;
+        PsiMethod setterWrapper = specialSetter;
+
+        if (getterWrapper == null || setterWrapper == null) {
+            // If some getter or setter isn't found yet try to get it from wrappers for general declaration
+
+            List<PsiMethod> wrappers = getPsiMethodWrappers(jetDeclaration, true);
+            assert wrappers.size() <= 2 : "Maximum two wrappers are expected to be generated for declaration: " + jetDeclaration.getText();
+
+            for (PsiMethod wrapper : wrappers) {
+                if (wrapper.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
+                    assert setterWrapper == null : String.format(
+                            "Setter accessor isn't expected to be reassigned (old: %s, new: %s)", setterWrapper, wrapper);
+
+                    setterWrapper = wrapper;
+                }
+                else {
+                    assert getterWrapper == null : String.format(
+                            "Getter accessor isn't expected to be reassigned (old: %s, new: %s)", getterWrapper, wrapper);
+
+                    getterWrapper = wrapper;
+                }
+            }
+        }
+
+        return new PropertyAccessorsPsiMethods(getterWrapper, setterWrapper);
     }
 
     public static class PropertyAccessorsPsiMethods implements Iterable<PsiMethod> {
