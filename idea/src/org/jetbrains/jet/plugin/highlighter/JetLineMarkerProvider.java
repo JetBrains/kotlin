@@ -34,6 +34,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -255,15 +256,12 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         builder.append(DescriptorRenderer.HTML.render(descriptor));
         int overrideCount = overriddenMembers.size();
         if (overrideCount >= 1) {
-            builder.append("\n").append(implementsOrOverrides).append("\n");
+            builder.append("<br/>").append(implementsOrOverrides).append("<br/>");
             builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
         }
         if (overrideCount > 1) {
-            int count = overrideCount - 1;
-            builder.append("\nand ").append(count).append(" other ").append(memberKind);
-            if (count > 1) {
-                builder.append("s");
-            }
+            int otherCount = overrideCount - 1;
+            builder.append("<br/>and ").append(otherCount).append(" other ").append(StringUtil.pluralize(memberKind, otherCount));
         }
 
         return builder.toString();
@@ -318,6 +316,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             // Not all open or abstract declarations are actually overridable, but this is heuristic
             return declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD) ||
                    declaration.hasModifier(JetTokens.OPEN_KEYWORD) ||
+                   declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD) ||
                    ((JetClass) parent.getParent()).isTrait();
         }
 
