@@ -57,7 +57,7 @@ public class InterceptionInstrumenter {
     }
 
     private void addHandlerClass(Class<?> handlerClass) {
-        for (Field field : handlerClass.getFields()) {
+        for (final Field field : handlerClass.getFields()) {
             MethodInterceptor annotation = field.getAnnotation(MethodInterceptor.class);
             if (annotation == null) continue;
 
@@ -74,7 +74,7 @@ public class InterceptionInstrumenter {
                     throw new IllegalArgumentException("Interceptor is null: " + field);
                 }
 
-                Class<?> interceptorClass = interceptor.getClass();
+                final Class<?> interceptorClass = interceptor.getClass();
 
                 FieldData fieldData = getFieldData(field, interceptorClass);
 
@@ -107,6 +107,15 @@ public class InterceptionInstrumenter {
                         }
                         dumpMethods.add(method);
                     }
+                }
+
+                if (enterData.isEmpty() && normalReturnData.isEmpty() && exceptionData.isEmpty()) {
+                    dumpTasks.add(new DumpAction() {
+                        @Override
+                        public void dump(PrintStream out) {
+                            out.println("WARNING: No relevant methods found in " + field + " of type " + interceptorClass.getCanonicalName());
+                        }
+                    });
                 }
 
                 String nameFromAnnotation = annotation.methodName();
