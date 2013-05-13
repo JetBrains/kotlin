@@ -220,7 +220,7 @@ public class InterceptionInstrumenter {
         dumpTasks.add(new DumpAction() {
             @Override
             public void dump(PrintStream out) {
-                out.println("<<< " + instrumenter + ": " + interceptor.getClass().getCanonicalName() + " says:");
+                out.println("<<< " + instrumenter + ": " + interceptor.getClass().getName() + " says:");
                 try {
                     if (method.getParameterTypes().length == 0) {
                         method.invoke(interceptor);
@@ -462,7 +462,7 @@ public class InterceptionInstrumenter {
     ) {
         FieldData field = methodData.getOwnerField();
         ia.getstatic(field.getDeclaringClass(), field.getName(), field.getDesc());
-        ia.checkcast(field.getRuntimeType());
+        ia.checkcast(Type.getObjectType(methodData.getDeclaringClass()));
 
         org.jetbrains.asm4.commons.Method asmMethod = getAsmMethod(methodData);
 
