@@ -38,4 +38,7 @@ public @interface MethodInterceptor {
 
     // if true, every method instrumented with this interceptor will be logged to stdout
     boolean logInterceptions() default false;
+
+    // if true, byte codes of every method instrumented with this interceptor will be logged to stdout
+    boolean dumpByteCode() default false;
 }

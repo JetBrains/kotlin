@@ -76,10 +76,11 @@ public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdapto
         }
     }
 
-    // Collect all strings that were capitalized using StringUtil
+    // Collect all strings that were capitalized using StringUtil, and dump its instrumented byte code
     @MethodInterceptor(className = "com/intellij/openapi/util/text/StringUtil",
                        methodName = "capitalize",
-                       methodDesc = "\\(Ljava/lang/String;\\).*")
+                       methodDesc = "\\(Ljava/lang/String;\\).*",
+                       dumpByteCode = true)
     public static Object c = new CollectFirstArguments();
 
     public static class CollectFirstArguments {

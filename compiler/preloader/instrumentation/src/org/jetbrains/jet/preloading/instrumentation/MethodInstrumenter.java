@@ -29,6 +29,7 @@ class MethodInstrumenter {
     private final List<MethodData> normalReturnData;
     private final List<MethodData> exceptionData;
     private final boolean logApplications;
+    private final boolean dumpByteCode;
 
     public MethodInstrumenter(
             String debugName,
@@ -37,7 +38,9 @@ class MethodInstrumenter {
             boolean allowMultipleMatches,
             List<MethodData> enterData,
             List<MethodData> normalReturnData,
-            List<MethodData> exceptionData, boolean logApplications
+            List<MethodData> exceptionData,
+            boolean logApplications,
+            boolean dumpByteCode
     ) {
         this.debugName = debugName;
         this.classPattern = classPattern;
@@ -48,6 +51,7 @@ class MethodInstrumenter {
         this.normalReturnData = normalReturnData;
         this.exceptionData = exceptionData;
         this.logApplications = logApplications;
+        this.dumpByteCode = dumpByteCode;
     }
 
     public boolean allowsMultipleMatches() {
@@ -74,6 +78,10 @@ class MethodInstrumenter {
 
     public List<MethodData> getExceptionData() {
         return exceptionData;
+    }
+
+    boolean shouldDumpByteCode() {
+        return dumpByteCode;
     }
 
     @Override

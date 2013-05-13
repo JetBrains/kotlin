@@ -37,9 +37,6 @@ public class InterceptionInstrumenter {
     private static final Pattern ANYTHING = Pattern.compile(".*");
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
 
-    //private final boolean dumpInstrumentedMethods = true;
-    private final boolean dumpInstrumentedMethods = false;
-
     private final Map<String, ClassMatcher> classPatterns = new LinkedHashMap<String, ClassMatcher>();
 
     private final Set<String> neverMatchedClassPatterns = new LinkedHashSet<String>();
@@ -129,7 +126,8 @@ public class InterceptionInstrumenter {
                         enterData,
                         normalReturnData,
                         exceptionData,
-                        annotation.logInterceptions());
+                        annotation.logInterceptions(),
+                        annotation.dumpByteCode());
 
                 for (Method dumpMethod : dumpMethods) {
                     addDumpTask(interceptor, dumpMethod, instrumenter);
@@ -305,6 +303,7 @@ public class InterceptionInstrumenter {
 
                 if (applicableInstrumenters.isEmpty()) return mv;
 
+                boolean dumpByteCode = false;
                 final List<MethodData> normalReturnData = new ArrayList<MethodData>();
                 final List<MethodData> enterData = new ArrayList<MethodData>();
                 final List<MethodData> exceptionData = new ArrayList<MethodData>();
@@ -314,11 +313,13 @@ public class InterceptionInstrumenter {
                     normalReturnData.addAll(instrumenter.getNormalReturnData());
 
                     exceptionData.addAll(instrumenter.getExceptionData());
+
+                    dumpByteCode |= instrumenter.shouldDumpByteCode();
                 }
 
                 if (enterData.isEmpty() && normalReturnData.isEmpty() && exceptionData.isEmpty()) return mv;
 
-                if (dumpInstrumentedMethods) {
+                if (dumpByteCode) {
                     mv = getDumpingVisitorWrapper(mv, name, desc);
                 }
 
