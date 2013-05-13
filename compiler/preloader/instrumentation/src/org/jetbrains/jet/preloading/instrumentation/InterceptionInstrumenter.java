@@ -219,6 +219,7 @@ public class InterceptionInstrumenter {
                     throw new IllegalStateException(e);
                 }
                 out.println(">>>");
+                out.println();
             }
         });
     }
