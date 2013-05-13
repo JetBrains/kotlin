@@ -16,8 +16,27 @@
 
 package org.jetbrains.jet.preloading.instrumentation;
 
-interface MemberData {
-    String getDeclaringClass();
-    String getName();
-    String getDesc();
+class MemberData {
+
+    private final String declaringClass;
+    private final String name;
+    private final String desc;
+
+    public MemberData(String declaringClass, String name, String desc) {
+        this.declaringClass = declaringClass;
+        this.name = name;
+        this.desc = desc;
+    }
+
+    public String getDeclaringClass() {
+        return declaringClass;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
 }

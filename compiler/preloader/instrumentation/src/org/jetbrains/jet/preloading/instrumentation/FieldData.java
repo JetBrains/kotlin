@@ -18,6 +18,16 @@ package org.jetbrains.jet.preloading.instrumentation;
 
 import org.jetbrains.asm4.Type;
 
-interface FieldData extends MemberData {
-    Type getRuntimeType();
+class FieldData extends MemberData {
+
+    private final Type runtimeType;
+
+    public FieldData(String declaringClass, String name, String desc, Type runtimeType) {
+        super(declaringClass, name, desc);
+        this.runtimeType = runtimeType;
+    }
+
+    public Type getRuntimeType() {
+        return runtimeType;
+    }
 }

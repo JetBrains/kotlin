@@ -111,7 +111,7 @@ public class InterceptionInstrumenter {
 
                 String nameFromAnnotation = annotation.methodName();
                 String methodName = nameFromAnnotation.isEmpty() ? field.getName() : nameFromAnnotation;
-                MethodInstrumenterImpl instrumenter = new MethodInstrumenterImpl(
+                MethodInstrumenter instrumenter = new MethodInstrumenter(
                         field.getDeclaringClass().getSimpleName() + "." + field.getName(),
                         classPattern,
                         compilePattern(methodName),
@@ -147,7 +147,7 @@ public class InterceptionInstrumenter {
     }
 
     private static FieldData getFieldData(Field field, Class<?> runtimeType) {
-        return new FieldDataImpl(
+        return new FieldData(
                             Type.getInternalName(field.getDeclaringClass()),
                             field.getName(),
                             Type.getDescriptor(field.getType()),
@@ -188,7 +188,7 @@ public class InterceptionInstrumenter {
                 }
             }
         }
-        return new MethodDataImpl(
+        return new MethodData(
             interceptorField,
             Type.getInternalName(method.getDeclaringClass()),
             method.getName(),

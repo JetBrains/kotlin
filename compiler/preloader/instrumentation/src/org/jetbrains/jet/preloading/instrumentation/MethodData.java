@@ -16,18 +16,48 @@
 
 package org.jetbrains.jet.preloading.instrumentation;
 
-interface MethodData extends MemberData {
-    FieldData getOwnerField();
+public class MethodData extends MemberData {
+    private final FieldData ownerField;
+    private final int thisParameterIndex;
+    private final int methodNameParameterIndex;
+    private final int methodDescParameterIndex;
+    private final int allArgsParameterIndex;
 
-    // -1 for no @This parameter
-    int getThisParameterIndex();
+    MethodData(
+            FieldData ownerField,
+            String declaringClass,
+            String name,
+            String desc,
+            int thisParameterIndex,
+            int methodNameParameterIndex,
+            int methodDescParameterIndex,
+            int allArgsParameterIndex
+    ) {
+        super(declaringClass, name, desc);
+        this.ownerField = ownerField;
+        this.thisParameterIndex = thisParameterIndex;
+        this.methodNameParameterIndex = methodNameParameterIndex;
+        this.methodDescParameterIndex = methodDescParameterIndex;
+        this.allArgsParameterIndex = allArgsParameterIndex;
+    }
 
-    // -1 for no @MethodName
-    int getMethodNameParameterIndex();
+    public FieldData getOwnerField() {
+        return ownerField;
+    }
 
-    // -1 for no @MethodDesc
-    int getMethodDescParameterIndex();
+    public int getThisParameterIndex() {
+        return thisParameterIndex;
+    }
 
-    // -1 for no @AllArgs
-    int getAllArgsParameterIndex();
+    public int getMethodNameParameterIndex() {
+        return methodNameParameterIndex;
+    }
+
+    public int getMethodDescParameterIndex() {
+        return methodDescParameterIndex;
+    }
+
+    public int getAllArgsParameterIndex() {
+        return allArgsParameterIndex;
+    }
 }
