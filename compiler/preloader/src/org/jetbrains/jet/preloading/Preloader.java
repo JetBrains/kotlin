@@ -54,6 +54,8 @@ public class Preloader {
         }
         finally {
             if (mode != Mode.NO_TIME) {
+                System.out.println();
+                System.out.println("=== Preloader's measurements: ");
                 long dt = System.nanoTime() - startTime;
                 System.out.format("Total time: %.3fs\n", dt / 1e9);
             }
@@ -99,7 +101,7 @@ public class Preloader {
     private static Handler getHandler(Mode mode, ClassLoader withInstrumenter) {
         if (mode == Mode.NO_TIME) return new Handler();
 
-        final Instrumenter instrumenter = mode == Mode.INSTRUMENT ? loadInstrumenter(withInstrumenter) : null;
+        final Instrumenter instrumenter = mode == Mode.INSTRUMENT ? loadInstrumenter(withInstrumenter) : Instrumenter.DO_NOTHING;
 
         final int[] counter = new int[1];
         final int[] size = new int[1];
@@ -112,8 +114,10 @@ public class Preloader {
 
             @Override
             public void done() {
+                System.out.println();
                 System.out.println("Loaded classes: " + counter[0]);
                 System.out.println("Loaded classes size: " + size[0]);
+                System.out.println();
 
                 instrumenter.dump(System.out);
             }
@@ -132,7 +136,7 @@ public class Preloader {
             return instrumenters.next();
         }
         else {
-            System.err.println("No instrumenters found");
+            System.err.println("PRELOADER WARNING: No instrumenters found");
             return Instrumenter.DO_NOTHING;
         }
     }
