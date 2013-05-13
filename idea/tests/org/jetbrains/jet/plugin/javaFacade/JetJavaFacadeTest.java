@@ -122,6 +122,18 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         doTestWrapPropertyAccessor(true);
     }
 
+    public void testWrapConstructorField() {
+        doTestWrapParameter(true, true);
+    }
+
+    public void testWrapConstructorParameter() {
+        doTestWrapParameter(false, false);
+    }
+
+    public void testWrapFunctionParameter() {
+        doTestWrapParameter(false, false);
+    }
+
     public void testEa38770() {
         myFixture.configureByFile(getTestName(true) + ".kt");
 
@@ -195,6 +207,16 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         PsiMethod psiMethod = LightClassUtil.getLightClassMethod(jetFunction);
 
         checkDeclarationMethodWrapped(shouldBeWrapped, jetFunction, psiMethod);
+    }
+
+    private void doTestWrapParameter(boolean shouldWrapGetter, boolean shouldWrapSetter) {
+        JetParameter jetParameter = getPreparedElement(JetParameter.class);
+
+        // Should not fail!
+        LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.getLightClassPropertyMethods(jetParameter);
+
+        checkDeclarationMethodWrapped(shouldWrapGetter, jetParameter, propertyAccessors.getGetter());
+        checkDeclarationMethodWrapped(shouldWrapSetter, jetParameter, propertyAccessors.getSetter());
     }
 
     private void doTestWrapProperty(boolean shouldWrapGetter, boolean shouldWrapSetter) {

@@ -29,10 +29,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
+import org.jetbrains.jet.lang.psi.*;
 
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
@@ -47,6 +44,13 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
 
         if (queryParameters instanceof JetProperty) {
             processPropertyImplementations((JetProperty) queryParameters, consumer);
+        }
+
+        if (queryParameters instanceof JetParameter) {
+            JetParameter parameter = (JetParameter) queryParameters;
+            if (parameter.getValOrVarNode() != null && queryParameters.getParent().getParent() instanceof JetClass) {
+                processPropertyImplementations(parameter, consumer);
+            }
         }
     }
 
@@ -75,6 +79,18 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
         }
     }
 
+    private static void processPropertyImplementations(@NotNull final JetParameter parameter, @NotNull Processor<PsiElement> consumer) {
+        LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
+                new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
+                    @Override
+                    public LightClassUtil.PropertyAccessorsPsiMethods compute() {
+                        return LightClassUtil.getLightClassPropertyMethods(parameter);
+                    }
+                });
+
+        processPropertyImplementationsMethods(accessorsPsiMethods, consumer);
+    }
+
     private static void processPropertyImplementations(@NotNull final JetProperty property, @NotNull Processor<PsiElement> consumer) {
         LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
@@ -84,11 +100,15 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
                     }
                 });
 
-        for (PsiMethod method : accessorsPsiMethods) {
+        processPropertyImplementationsMethods(accessorsPsiMethods, consumer);
+    }
+
+    private static void processPropertyImplementationsMethods(LightClassUtil.PropertyAccessorsPsiMethods accessors, @NotNull Processor<PsiElement> consumer) {
+        for (PsiMethod method : accessors) {
             PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method);
             for (PsiMethod implementation : implementations) {
                 PsiElement mirrorElement = implementation instanceof PsiCompiledElement ? ((PsiCompiledElement) implementation).getMirror() : null;
-                if (mirrorElement instanceof JetProperty) {
+                if (mirrorElement instanceof JetProperty || mirrorElement instanceof JetParameter) {
                     consumer.process(mirrorElement);
                 }
                 else if (mirrorElement instanceof JetPropertyAccessor && mirrorElement.getParent() instanceof JetProperty) {
