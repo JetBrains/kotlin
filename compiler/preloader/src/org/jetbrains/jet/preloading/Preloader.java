@@ -99,9 +99,7 @@ public class Preloader {
     private static Handler getHandler(ProfilingMode profilingMode, ClassLoader withInstrumenter) {
         if (profilingMode == ProfilingMode.NO_TIME) return new Handler();
 
-        ServiceLoader<Instrumenter> loader = ServiceLoader.load(Instrumenter.class, withInstrumenter);
-        Iterator<Instrumenter> instrumenters = loader.iterator();
-        final Instrumenter instrumenter = instrumenters.hasNext() ? instrumenters.next() : Instrumenter.DO_NOTHING;
+        final Instrumenter instrumenter = profilingMode == ProfilingMode.PROFILE ? loadInstrumenter(withInstrumenter) : null;
 
         final int[] counter = new int[1];
         final int[] size = new int[1];
@@ -125,6 +123,18 @@ public class Preloader {
                 return instrumenter.instrument(resourceName, data);
             }
         };
+    }
+
+    private static Instrumenter loadInstrumenter(ClassLoader withInstrumenter) {
+        ServiceLoader<Instrumenter> loader = ServiceLoader.load(Instrumenter.class, withInstrumenter);
+        Iterator<Instrumenter> instrumenters = loader.iterator();
+        if (instrumenters.hasNext()) {
+            return instrumenters.next();
+        }
+        else {
+            System.err.println("No instrumenters found");
+            return Instrumenter.DO_NOTHING;
+        }
     }
 
     private enum ProfilingMode {
