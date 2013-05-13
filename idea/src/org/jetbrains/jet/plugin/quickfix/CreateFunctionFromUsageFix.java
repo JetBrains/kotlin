@@ -237,7 +237,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 }
             } else {
                 assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
-                for (JetType type : guessTypeForExpression(expressionOfType, context)) {
+                for (JetType type : guessTypesForExpression(expressionOfType, context)) {
                     types.add(type);
                     if (variance == Variance.IN_VARIANCE) {
                         types.addAll(TypeUtils.getAllSupertypes(type));
@@ -1137,7 +1137,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private static JetType[] guessTypeForExpression(@NotNull JetExpression expr, @NotNull BindingContext context) {
+    private static JetType[] guessTypesForExpression(@NotNull JetExpression expr, @NotNull BindingContext context) {
         JetType type = context.get(BindingContext.EXPRESSION_TYPE, expr);
 
         // if we know the actual type of the expression
@@ -1350,7 +1350,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 JetType returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType();
 
                 BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
-                JetType[] returnJetTypeParameterTypes = guessTypeForExpression(variableExpr, context);
+                JetType[] returnJetTypeParameterTypes = guessTypesForExpression(variableExpr, context);
                 if (returnJetTypeParameterTypes.length != 1) return null;
 
                 TypeProjection returnJetTypeParameterType = new TypeProjection(returnJetTypeParameterTypes[0]);
