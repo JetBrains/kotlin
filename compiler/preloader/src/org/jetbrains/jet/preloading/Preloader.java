@@ -133,7 +133,11 @@ public class Preloader {
         ServiceLoader<Instrumenter> loader = ServiceLoader.load(Instrumenter.class, withInstrumenter);
         Iterator<Instrumenter> instrumenters = loader.iterator();
         if (instrumenters.hasNext()) {
-            return instrumenters.next();
+            Instrumenter instrumenter = instrumenters.next();
+            if (instrumenters.hasNext()) {
+                System.err.println("PRELOADER WARNING: Only the first instrumenter is used: " + instrumenter.getClass());
+            }
+            return instrumenter;
         }
         else {
             System.err.println("PRELOADER WARNING: No instrumenters found");
