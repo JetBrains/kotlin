@@ -17,12 +17,12 @@
 package org.jetbrains.jet.preloading;
 
 import org.jetbrains.jet.preloading.instrumentation.InterceptionInstrumenterAdaptor;
+import org.jetbrains.jet.preloading.instrumentation.annotations.MethodDesc;
 import org.jetbrains.jet.preloading.instrumentation.annotations.MethodInterceptor;
+import org.jetbrains.jet.preloading.instrumentation.annotations.MethodName;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdaptor {
@@ -90,7 +90,28 @@ public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdapto
         }
 
         public void dump(PrintStream out) {
-            System.out.println("Different values: " + new HashSet<Object>(arguments).size());
+            out.println("Different values: " + new HashSet<Object>(arguments).size());
+        }
+    }
+
+    // What methods that have a long parameter followed by some object parameter are actually called
+    @MethodInterceptor(className = ".*",
+                       methodName = ".*",
+                       methodDesc = "\\(.*JL.*?\\).*",
+                       allowMultipleMatches = true)
+    public static Object d = new MethodCollector();
+
+    public static class MethodCollector {
+        private final Collection<String> l = new LinkedHashSet<String>();
+
+        public void enter(@MethodName String name, @MethodDesc String desc) {//long l, Object arg) {
+            l.add(name + desc);
+        }
+
+        public void dump(PrintStream out) {
+            for (String s : l) {
+                out.println(s);
+            }
         }
     }
 }
