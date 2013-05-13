@@ -12,7 +12,7 @@ import java.util.*;
 public class Preloader {
 
     public static final int PRELOADER_ARG_COUNT = 4;
-    private static final String PROFILE = "profile=";
+    private static final String INSTRUMENT_PREFIX = "instrument=";
 
     public static void main(String[] args) throws Exception {
         if (args.length < PRELOADER_ARG_COUNT) {
@@ -33,9 +33,9 @@ public class Preloader {
             return;
         }
 
-        String profilingModeStr = args[3];
-        ProfilingMode profilingMode = parseMeasureTime(profilingModeStr);
-        URL[] instrumentersClasspath = parseInstrumentersClasspath(profilingMode, profilingModeStr);
+        String modeStr = args[3];
+        Mode mode = parseMode(modeStr);
+        URL[] instrumentersClasspath = parseInstrumentersClasspath(mode, modeStr);
 
         long startTime = System.nanoTime();
 
@@ -43,7 +43,7 @@ public class Preloader {
 
         ClassLoader withInstrumenter = instrumentersClasspath.length > 0 ? new URLClassLoader(instrumentersClasspath, parent) : parent;
 
-        Handler handler = getHandler(profilingMode, withInstrumenter);
+        Handler handler = getHandler(mode, withInstrumenter);
         ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, withInstrumenter, handler);
 
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
@@ -53,7 +53,7 @@ public class Preloader {
             mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
         }
         finally {
-            if (profilingMode != ProfilingMode.NO_TIME) {
+            if (mode != Mode.NO_TIME) {
                 long dt = System.nanoTime() - startTime;
                 System.out.format("Total time: %.3fs\n", dt / 1e9);
             }
@@ -61,11 +61,11 @@ public class Preloader {
         }
     }
 
-    private static URL[] parseInstrumentersClasspath(ProfilingMode profilingMode, String profilingModeStr)
+    private static URL[] parseInstrumentersClasspath(Mode mode, String modeStr)
             throws MalformedURLException {
         URL[] instrumentersClasspath;
-        if (profilingMode == ProfilingMode.PROFILE) {
-            List<File> instrumentersClassPathFiles = parseClassPath(getClassPath(profilingModeStr));
+        if (mode == Mode.INSTRUMENT) {
+            List<File> instrumentersClassPathFiles = parseClassPath(getClassPath(modeStr));
             instrumentersClasspath = new URL[instrumentersClassPathFiles.size()];
             for (int i = 0; i < instrumentersClassPathFiles.size(); i++) {
                 File file = instrumentersClassPathFiles.get(i);
@@ -78,8 +78,8 @@ public class Preloader {
         return instrumentersClasspath;
     }
 
-    private static String getClassPath(String profilingModeStr) {
-        return profilingModeStr.substring(PROFILE.length());
+    private static String getClassPath(String modeStr) {
+        return modeStr.substring(INSTRUMENT_PREFIX.length());
     }
 
     private static List<File> parseClassPath(String classpath) {
@@ -96,10 +96,10 @@ public class Preloader {
         return files;
     }
 
-    private static Handler getHandler(ProfilingMode profilingMode, ClassLoader withInstrumenter) {
-        if (profilingMode == ProfilingMode.NO_TIME) return new Handler();
+    private static Handler getHandler(Mode mode, ClassLoader withInstrumenter) {
+        if (mode == Mode.NO_TIME) return new Handler();
 
-        final Instrumenter instrumenter = profilingMode == ProfilingMode.PROFILE ? loadInstrumenter(withInstrumenter) : null;
+        final Instrumenter instrumenter = mode == Mode.INSTRUMENT ? loadInstrumenter(withInstrumenter) : null;
 
         final int[] counter = new int[1];
         final int[] size = new int[1];
@@ -137,24 +137,24 @@ public class Preloader {
         }
     }
 
-    private enum ProfilingMode {
+    private enum Mode {
         NO_TIME,
         TIME,
-        PROFILE
+        INSTRUMENT
     }
 
-    private static ProfilingMode parseMeasureTime(String arg) {
-        if ("time".equals(arg)) return ProfilingMode.TIME;
-        if ("notime".equals(arg)) return ProfilingMode.NO_TIME;
-        if (arg.startsWith(PROFILE)) return ProfilingMode.PROFILE;
+    private static Mode parseMode(String arg) {
+        if ("time".equals(arg)) return Mode.TIME;
+        if ("notime".equals(arg)) return Mode.NO_TIME;
+        if (arg.startsWith(INSTRUMENT_PREFIX)) return Mode.INSTRUMENT;
 
         System.out.println("Unrecognized argument: " + arg);
         printUsageAndExit();
-        return ProfilingMode.NO_TIME;
+        return Mode.NO_TIME;
     }
 
     private static void printUsageAndExit() {
-        System.out.println("Usage: Preloader <paths to jars> <main class> <class number estimate> <time|notime|profile=<profiling class path>> <parameters to pass to the main class>");
+        System.out.println("Usage: Preloader <paths to jars> <main class> <class number estimate> <notime|time|instrument=<instrumenters class path>> <parameters to pass to the main class>");
         System.exit(1);
     }
 
