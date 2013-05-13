@@ -466,9 +466,10 @@ public class InterceptionInstrumenter {
 
         org.jetbrains.asm4.commons.Method asmMethod = getAsmMethod(methodData);
 
-        int parameterCount = asmMethod.getArgumentTypes().length;
+        Type[] interceptingMethodParameterTypes = asmMethod.getArgumentTypes();
+        int parameterCount = interceptingMethodParameterTypes.length;
         if (parameterCount > 0) {
-            Type[] parameterTypes = Type.getArgumentTypes(instrumentedMethodDesc);
+            Type[] instrumentedMethodParameterTypes = Type.getArgumentTypes(instrumentedMethodDesc);
             boolean isStatic = (instrumentedMethodAccess & ACC_STATIC) != 0;
             int base = isStatic ? 0 : 1;
             int instrumentedMethodParameterIndex = 0;
@@ -495,25 +496,27 @@ public class InterceptionInstrumenter {
                     ia.aconst(instrumentedMethodDesc);
                 }
                 else if (i == methodData.getAllArgsParameterIndex()) {
-                    ia.aconst(parameterTypes.length);
+                    ia.aconst(instrumentedMethodParameterTypes.length);
                     ia.newarray(OBJECT_TYPE);
                     int offset = 0;
-                    for (int parameterIndex = 0; parameterIndex < parameterTypes.length; parameterIndex++) {
+                    for (int parameterIndex = 0; parameterIndex < instrumentedMethodParameterTypes.length; parameterIndex++) {
                         ia.dup();
 
                         ia.iconst(parameterIndex);
 
-                        Type type = parameterTypes[parameterIndex];
+                        Type type = instrumentedMethodParameterTypes[parameterIndex];
                         ia.load(base + offset, type);
                         offset += type.getSize();
 
-                        applyBoxingIfNeeded(ia, type);
+                        boxOrCastIfNeeded(ia, type, OBJECT_TYPE);
                         ia.astore(OBJECT_TYPE);
                     }
                 }
                 else {
-                    Type type = parameterTypes[instrumentedMethodParameterIndex];
+                    Type type = instrumentedMethodParameterTypes[instrumentedMethodParameterIndex];
                     ia.load(base + instrumentedMethodParameterOffset, type);
+                    boxOrCastIfNeeded(ia, type, interceptingMethodParameterTypes[i]);
+
                     instrumentedMethodParameterIndex++;
                     instrumentedMethodParameterOffset += type.getSize();
                 }
@@ -532,35 +535,46 @@ public class InterceptionInstrumenter {
         }
     }
 
-    private static void applyBoxingIfNeeded(InstructionAdapter ia, Type type) {
-        switch (type.getSort()) {
+    private static void boxOrCastIfNeeded(InstructionAdapter ia, Type from, Type to) {
+        if (isPrimitive(to)) {
+            if (!isPrimitive(from)) {
+                throw new IllegalArgumentException("Cannot cast " + from + " to " + to);
+            }
+            ia.cast(from, to);
+            return;
+        }
+        switch (from.getSort()) {
             case Type.BOOLEAN:
-                box(ia, type, Boolean.class);
+                box(ia, from, Boolean.class);
                 break;
             case Type.CHAR:
-                box(ia, type, Character.class);
+                box(ia, from, Character.class);
                 break;
             case Type.BYTE:
-                box(ia, type, Byte.class);
+                box(ia, from, Byte.class);
                 break;
             case Type.SHORT:
-                box(ia, type, Short.class);
+                box(ia, from, Short.class);
                 break;
             case Type.INT:
-                box(ia, type, Integer.class);
+                box(ia, from, Integer.class);
                 break;
             case Type.FLOAT:
-                box(ia, type, Float.class);
+                box(ia, from, Float.class);
                 break;
             case Type.LONG:
-                box(ia, type, Long.class);
+                box(ia, from, Long.class);
                 break;
             case Type.DOUBLE:
-                box(ia, type, Double.class);
+                box(ia, from, Double.class);
                 break;
             default:
                 // Nothing to do, it's an object already
         }
+    }
+
+    private static boolean isPrimitive(Type to) {
+        return to.getSort() <= Type.DOUBLE;
     }
 
     private static void box(InstructionAdapter ia, Type from, Class<?> boxedClass) {

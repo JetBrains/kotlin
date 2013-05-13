@@ -103,16 +103,44 @@ public class ProfilingInstrumenterExample extends InterceptionInstrumenterAdapto
     public static Object d = new MethodCollector();
 
     public static class MethodCollector {
-        private final Collection<String> l = new LinkedHashSet<String>();
+        private final Collection<String> collected = new LinkedHashSet<String>();
 
         public void enter(@ClassName String className, @MethodName String name, @MethodDesc String desc) {
-            l.add(className + "." + name + desc);
+            collected.add(className + "." + name + desc);
         }
 
         public void dump(PrintStream out) {
-            for (String s : l) {
+            for (String s : collected) {
                 out.println(s);
             }
+        }
+    }
+
+    // What integers are passed as first arguments to any methods?
+    @MethodInterceptor(className = ".*",
+                       methodName = ".*",
+                       methodDesc = "\\(.+\\).*",
+                       allowMultipleMatches = true)
+    public static Object e = new FirstArgumentCollector() {
+        @Override
+        protected boolean accept(Object arg) {
+            return arg instanceof Integer;
+        }
+    };
+
+    public static abstract class FirstArgumentCollector {
+        private final Collection<Object> collected = new HashSet<Object>();
+
+        protected abstract boolean accept(Object arg);
+
+        public void enter(Object arg) {
+            if (accept(arg)) {
+                collected.add(arg);
+            }
+        }
+
+        public void dump(PrintStream out) {
+            out.println("Arguments: " + collected.size());
         }
     }
 }
