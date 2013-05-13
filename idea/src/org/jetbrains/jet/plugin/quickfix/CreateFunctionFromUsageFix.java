@@ -1209,6 +1209,12 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         }
         if (expectedTypes.isEmpty()) {
             return new JetType[0]; // can't guess
+        } else {
+            for (JetType expectedType : expectedTypes) {
+                if (ErrorUtils.containsErrorType(expectedType)) {
+                    return new JetType[0]; // guessing resulted in an error
+                }
+            }
         }
         JetType type = TypeUtils.intersect(JetTypeChecker.INSTANCE, expectedTypes);
         if (type != null) {
