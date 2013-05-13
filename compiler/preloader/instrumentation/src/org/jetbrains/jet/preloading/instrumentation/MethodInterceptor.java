@@ -30,8 +30,8 @@ public @interface MethodInterceptor {
     // regexp, if omitted, field name is used
     String methodName() default "";
 
-    // regexp
-    String erasedSignature() default "";
+    // regexp for method descriptor, like (ILjava/lang/Object;)V for void foo(int, Object)
+    String methodDesc() default "";
 
     // if this is false, an exception is thrown when more than one method in the same class matches
     boolean allowMultipleMatches() default false;

@@ -114,7 +114,7 @@ public class InterceptionInstrumenter {
                         field.getDeclaringClass().getSimpleName() + "." + field.getName(),
                         classPattern,
                         compilePattern(methodName),
-                        compilePattern(annotation.erasedSignature()),
+                        compilePattern(annotation.methodDesc()),
                         annotation.allowMultipleMatches(),
                         enterData,
                         normalReturnData,
