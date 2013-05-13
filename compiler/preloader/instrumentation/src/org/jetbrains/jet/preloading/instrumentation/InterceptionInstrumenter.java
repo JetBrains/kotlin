@@ -20,6 +20,7 @@ import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.util.Textifier;
 import org.jetbrains.asm4.util.TraceMethodVisitor;
+import org.jetbrains.jet.preloading.instrumentation.annotations.*;
 
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
