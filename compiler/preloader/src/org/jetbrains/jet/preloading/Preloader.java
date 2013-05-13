@@ -43,7 +43,7 @@ public class Preloader {
 
         ClassLoader withInstrumenter = instrumentersClasspath.length > 0 ? new URLClassLoader(instrumentersClasspath, parent) : parent;
 
-        ClassPreloadingUtils.ClassHandler handler = getHandler(profilingMode, withInstrumenter);
+        Handler handler = getHandler(profilingMode, withInstrumenter);
         ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, withInstrumenter, handler);
 
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
@@ -96,8 +96,8 @@ public class Preloader {
         return files;
     }
 
-    private static ClassPreloadingUtils.ClassHandler getHandler(ProfilingMode profilingMode, ClassLoader withInstrumenter) {
-        if (profilingMode == ProfilingMode.NO_TIME) return new ClassPreloadingUtils.ClassHandler() {};
+    private static Handler getHandler(ProfilingMode profilingMode, ClassLoader withInstrumenter) {
+        if (profilingMode == ProfilingMode.NO_TIME) return new Handler();
 
         ServiceLoader<Instrumenter> loader = ServiceLoader.load(Instrumenter.class, withInstrumenter);
         Iterator<Instrumenter> instrumenters = loader.iterator();
@@ -105,7 +105,7 @@ public class Preloader {
 
         final int[] counter = new int[1];
         final int[] size = new int[1];
-        return new ClassPreloadingUtils.ClassHandler() {
+        return new Handler() {
             @Override
             public void beforeDefineClass(String name, int sizeInBytes) {
                 counter[0]++;
@@ -146,5 +146,9 @@ public class Preloader {
     private static void printUsageAndExit() {
         System.out.println("Usage: Preloader <paths to jars> <main class> <class number estimate> <time|notime|profile=<profiling class path>> <parameters to pass to the main class>");
         System.exit(1);
+    }
+
+    private static class Handler extends ClassPreloadingUtils.ClassHandler {
+        public void done() {}
     }
 }

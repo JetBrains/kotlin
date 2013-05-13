@@ -39,8 +39,6 @@ public class ClassPreloadingUtils {
 
         public void beforeLoadJar(File jarFile) {}
         public void afterLoadJar(File jarFile) {}
-
-        public void done() {}
     }
 
     /**
