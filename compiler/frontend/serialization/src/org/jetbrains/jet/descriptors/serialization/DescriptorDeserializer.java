@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -36,18 +35,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class DescriptorDeserializer {
-    @Nullable
-    private final DescriptorDeserializer parent;
     private final DeclarationDescriptor containingDeclaration;
     private final NameResolver nameResolver;
-    private final TIntObjectHashMap<TypeParameterDescriptorImpl> typeParameterDescriptors = new TIntObjectHashMap<TypeParameterDescriptorImpl>();
+    private final TypeDeserializer typeDeserializer;
 
     public DescriptorDeserializer(
             @Nullable DescriptorDeserializer parent,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver
     ) {
-        this.parent = parent;
+        TypeDeserializer parentTypeDeserializer = parent == null ? null : parent.typeDeserializer;
+        this.typeDeserializer = new TypeDeserializer(parentTypeDeserializer, nameResolver);
         this.containingDeclaration = containingDeclaration;
         this.nameResolver = nameResolver;
     }
@@ -55,19 +53,6 @@ public class DescriptorDeserializer {
     @NotNull
     private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
         return new DescriptorDeserializer(this, descriptor, nameResolver);
-    }
-
-    private void registerTypeParameter(int id, @NotNull TypeParameterDescriptorImpl descriptor) {
-        typeParameterDescriptors.put(id, descriptor);
-    }
-
-    @Nullable
-    private TypeParameterDescriptorImpl getTypeParameter(int id) {
-        TypeParameterDescriptorImpl descriptor = typeParameterDescriptors.get(id);
-        if (descriptor == null && parent != null) {
-            return parent.getTypeParameter(id);
-        }
-        return descriptor;
     }
 
     @NotNull
@@ -110,7 +95,7 @@ public class DescriptorDeserializer {
 
         List<JetType> supertypes = new ArrayList<JetType>(proto.getSupertypesCount());
         for (ProtoBuf.Type supertype : proto.getSupertypesList()) {
-            supertypes.add(local.type(supertype));
+            supertypes.add(local.typeDeserializer.type(supertype));
         }
         descriptor.setSupertypes(supertypes);
 
@@ -133,12 +118,12 @@ public class DescriptorDeserializer {
         );
         DescriptorDeserializer local = new DescriptorDeserializer(this, function, nameResolver);
         function.initialize(
-                local.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
+                local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 // TODO: expectedThisObject
                 null,
                 local.typeParameters(proto.getTypeParametersList()),
                 local.valueParameters(proto.getValueParametersList()),
-                local.type(proto.getReturnType()),
+                local.typeDeserializer.type(proto.getReturnType()),
                 // TODO: modality
                 Modality.OPEN,
                 // TODO: visibility
@@ -148,90 +133,6 @@ public class DescriptorDeserializer {
 
         );
         return function;
-    }
-
-    @Nullable
-    private JetType typeOrNull(@Nullable ProtoBuf.Type proto) {
-        if (proto == null) {
-            return null;
-        }
-        return type(proto);
-    }
-
-    @NotNull
-    private JetType type(@NotNull ProtoBuf.Type proto) {
-        ProtoBuf.Type.Constructor constructorProto = proto.getConstructor();
-        int id = constructorProto.getId();
-        TypeConstructor typeConstructor = typeConstructor(constructorProto);
-        if (typeConstructor == null) {
-            String message = constructorProto.getKind() == ProtoBuf.Type.Constructor.Kind.CLASS
-                             ? nameResolver.getFqName(id).getFqName()
-                             : "Unknown type parameter " + id;
-            return ErrorUtils.createErrorType(message);
-        }
-
-        List<TypeProjection> typeArguments = typeArguments(proto.getArgumentsList());
-        return new JetTypeImpl(
-            Collections.<AnnotationDescriptor>emptyList(),
-            typeConstructor,
-            proto.getNullable(),
-            typeArguments,
-            getTypeMemberScope(typeConstructor, typeArguments)
-        );
-    }
-
-    @NotNull
-    private static JetScope getTypeMemberScope(@NotNull TypeConstructor constructor, @NotNull List<TypeProjection> typeArguments) {
-        ClassifierDescriptor descriptor = constructor.getDeclarationDescriptor();
-        if (descriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            return typeParameterDescriptor.getDefaultType().getMemberScope();
-        }
-        return ((ClassDescriptor) descriptor).getMemberScope(typeArguments);
-    }
-
-    @Nullable
-    private TypeConstructor typeConstructor(@NotNull ProtoBuf.Type.Constructor proto) {
-        switch (proto.getKind()) {
-            case CLASS:
-                ClassDescriptor classDescriptor = nameResolver.getClassDescriptor(proto.getId());
-                if (classDescriptor == null) return null;
-
-                return classDescriptor.getTypeConstructor();
-            case TYPE_PARAMETER:
-                TypeParameterDescriptorImpl descriptor = getTypeParameter(proto.getId());
-                if (descriptor == null) return null;
-
-                return descriptor.getTypeConstructor();
-        }
-        throw new IllegalStateException("Unknown kind " + proto.getKind());
-    }
-
-    private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {
-        List<TypeProjection> result = new ArrayList<TypeProjection>(protos.size());
-        for (ProtoBuf.Type.Argument proto : protos) {
-            result.add(typeProjection(proto));
-        }
-        return result;
-    }
-
-    private TypeProjection typeProjection(ProtoBuf.Type.Argument proto) {
-        return new TypeProjection(
-                variance(proto.getProjection()),
-                type(proto.getType())
-        );
-    }
-
-    private static Variance variance(ProtoBuf.Type.Argument.Projection proto) {
-        switch (proto) {
-            case IN:
-                return Variance.IN_VARIANCE;
-            case OUT:
-                return Variance.OUT_VARIANCE;
-            case INV:
-                return Variance.INVARIANT;
-        }
-        throw new IllegalStateException("Unknown projection: " + proto);
     }
 
     @NotNull
@@ -255,7 +156,7 @@ public class DescriptorDeserializer {
                 variance(proto.getVariance()),
                 nameResolver.getName(proto.getName()),
                 index);
-        registerTypeParameter(id, descriptor);
+        typeDeserializer.registerTypeParameter(id, descriptor);
         // TODO: circular bounds
         descriptor.setInitialized();
         return descriptor;
@@ -290,9 +191,9 @@ public class DescriptorDeserializer {
                 // TODO
                 Collections.<AnnotationDescriptor>emptyList(),
                 nameResolver.getName(proto.getName()),
-                type(proto.getType()),
+                typeDeserializer.type(proto.getType()),
                 // TODO: declaresDefaultValue
                 false,
-                typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null));
+                typeDeserializer.typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null));
     }
 }
