@@ -59,7 +59,50 @@ public class TypeDeserializer {
     }
 
     @NotNull
-    public JetType type(@NotNull ProtoBuf.Type proto) {
+    public JetType type(@NotNull final ProtoBuf.Type proto) {
+        // Types are lazy
+        return new JetType() {
+            private TypeConstructor constructor;
+            private final List<TypeProjection> arguments = typeArguments(proto.getArgumentsList());
+            private JetScope memberScope;
+
+            @NotNull
+            @Override
+            public TypeConstructor getConstructor() {
+                if (constructor == null) {
+                    constructor = typeConstructor(proto);
+                }
+                return constructor;
+            }
+
+            @NotNull
+            @Override
+            public List<TypeProjection> getArguments() {
+                return arguments;
+            }
+
+            @Override
+            public boolean isNullable() {
+                return proto.getNullable();
+            }
+
+            @NotNull
+            @Override
+            public JetScope getMemberScope() {
+                if (memberScope == null) {
+                    memberScope = getTypeMemberScope(getConstructor(), getArguments());
+                }
+                return memberScope;
+            }
+
+            @Override
+            public List<AnnotationDescriptor> getAnnotations() {
+                return Collections.emptyList();
+            }
+        };
+    }
+
+    private TypeConstructor typeConstructor(ProtoBuf.Type proto) {
         ProtoBuf.Type.Constructor constructorProto = proto.getConstructor();
         int id = constructorProto.getId();
         TypeConstructor typeConstructor = typeConstructor(constructorProto);
@@ -67,17 +110,9 @@ public class TypeDeserializer {
             String message = constructorProto.getKind() == ProtoBuf.Type.Constructor.Kind.CLASS
                              ? nameResolver.getFqName(id).asString()
                              : "Unknown type parameter " + id;
-            return ErrorUtils.createErrorType(message);
+            typeConstructor = ErrorUtils.createErrorType(message).getConstructor();
         }
-
-        List<TypeProjection> typeArguments = typeArguments(proto.getArgumentsList());
-        return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
-                typeConstructor,
-                proto.getNullable(),
-                typeArguments,
-                getTypeMemberScope(typeConstructor, typeArguments)
-        );
+        return typeConstructor;
     }
 
     @Nullable
