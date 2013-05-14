@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="trove4j">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/trove4j.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/trove4j_src.jar!/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/trove4j_src.jar!/util/src" />
+    </SOURCES>
+  </library>
+</component>
