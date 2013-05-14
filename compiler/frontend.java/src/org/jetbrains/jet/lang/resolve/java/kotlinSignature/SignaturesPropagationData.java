@@ -242,9 +242,10 @@ public class SignaturesPropagationData {
                 continue;
             }
 
-            assert superFun instanceof FunctionDescriptor : superFun.getClass().getName();
-
-            superFunctions.add(substituteSuperFunction(superclassToSupertype, (FunctionDescriptor) superFun));
+            // TODO: Add propagation for other kotlin descriptors (KT-3621)
+            if (superFun instanceof FunctionDescriptor) {
+                superFunctions.add(substituteSuperFunction(superclassToSupertype, (FunctionDescriptor) superFun));
+            }
         }
 
         // sorting for diagnostic stability
