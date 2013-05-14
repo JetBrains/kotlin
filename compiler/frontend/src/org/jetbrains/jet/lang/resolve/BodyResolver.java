@@ -473,6 +473,17 @@ public class BodyResolver {
             @NotNull JetExpression delegateExpression,
             @NotNull JetScope parentScopeForAccessor
     ) {
+        JetScope propertyDeclarationInnerScope = getScopeForProperty(jetProperty);
+        resolvePropertyDelegate(jetProperty, propertyDescriptor, delegateExpression, parentScopeForAccessor, propertyDeclarationInnerScope);
+    }
+
+    public void resolvePropertyDelegate(
+            @NotNull JetProperty jetProperty,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetExpression delegateExpression,
+            @NotNull JetScope parentScopeForAccessor,
+            @NotNull JetScope propertyScope
+    ) {
         JetPropertyAccessor getter = jetProperty.getGetter();
         if (getter != null) {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
@@ -483,7 +494,6 @@ public class BodyResolver {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 
-        JetScope propertyScope = getScopeForProperty(jetProperty);
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
                 propertyScope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
