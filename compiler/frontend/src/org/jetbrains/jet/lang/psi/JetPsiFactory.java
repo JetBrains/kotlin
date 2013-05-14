@@ -272,4 +272,14 @@ public class JetPsiFactory {
     public static JetExpressionCodeFragment createExpressionCodeFragment(Project project, String text, PsiElement context) {
         return new JetExpressionCodeFragmentImpl(project, "fragment.kt", text, context);
     }
+
+    @Nullable
+    @IfNotParsed
+    public static JetValueArgument getArgumentWithName(@NotNull String name, @NotNull JetValueArgument argument) {
+        Project project = argument.getProject();
+        JetExpression argumentExpression = argument.getArgumentExpression();
+        if (argumentExpression == null) return null;
+        return createCallArguments(project, "(" + name + " = " + argumentExpression.getText() + ")")
+                .getArguments().get(0);
+    }
 }
