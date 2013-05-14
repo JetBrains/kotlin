@@ -33,6 +33,10 @@ public class TypeDeserializer {
     private final NameResolver nameResolver;
     private final IndexedSymbolTable<TypeParameterDescriptor> typeParameterDescriptors;
 
+    public TypeDeserializer(@NotNull TypeDeserializer parent) {
+        this(parent, parent.nameResolver);
+    }
+
     public TypeDeserializer(
             @Nullable TypeDeserializer parent,
             @NotNull NameResolver nameResolver
