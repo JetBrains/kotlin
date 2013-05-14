@@ -1,0 +1,194 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet.descriptors.serialization;
+
+option java_outer_classname = "ProtoBuf";
+option optimize_for = LITE_RUNTIME; // Smaller runtime
+option java_generic_services = false; // Less code
+
+message SimpleNameTable {
+  repeated string names = 1;
+}
+
+message QualifiedNameTable {
+
+  message QualifiedName {
+    optional int32 parentQualifiedName = 1 [default = -1];
+    required int32 shortName = 2;
+    optional Kind kind = 3 [default = PACKAGE];
+
+    enum Kind {
+      CLASS = 0;
+      PACKAGE = 1;
+    }
+  }
+
+  repeated QualifiedName qualifiedNames = 1;
+}
+
+message Type {
+  message Constructor {
+    enum Kind {
+      CLASS = 0;
+      TYPE_PARAMETER = 1;
+    }
+
+    optional Kind kind = 1 [default = CLASS];
+
+    required int32 id = 2; // CLASS - fqName id, TYPE_PARAMETER - type parameter id
+  }
+
+  required Constructor constructor = 1;
+
+  message Argument {
+    enum Projection {
+      IN = 0;
+      OUT = 1;
+      INV = 2;
+    }
+
+    optional Projection projection = 1 [default = INV];
+    required Type type = 2;
+  }
+
+  repeated Argument arguments = 2;
+
+  optional bool nullable = 3 [default = false];
+}
+
+message TypeParameter {
+  required int32 id = 1;
+  required int32 name = 2;
+
+  optional bool reified = 3 [default = false];
+
+  enum Variance {
+    IN = 0;
+    OUT = 1;
+    INV = 2;
+  }
+  optional Variance variance = 4 [default = INV];
+
+  repeated Type upperBounds = 5;
+}
+
+message Class {
+  enum Kind {
+    // 3 bits
+    CLASS = 0;
+    TRAIT = 1;
+    ENUM_CLASS = 2;
+    ENUM_ENTRY = 3;
+    ANNOTATION_CLASS = 4;
+    OBJECT = 5;
+    CLASS_OBJECT = 6;
+  }
+
+  /*
+      Modality
+      Visibility
+      ClassKind
+      is_inner
+   */
+  optional int32 flags = 1 [default = 0 /*internal final class*/];
+  optional string extra_visibility = 2; // for things like java-specific visibilities
+
+  repeated Annotation annotations = 3;
+
+  required int32 name = 4;
+
+  repeated TypeParameter typeParameters = 5;
+  repeated Type supertypes = 6;
+
+
+  message NestedClass {
+    // ??? visibility, inner, other flags
+    required int32 name = 1;
+  }
+
+  repeated NestedClass nestedClasses = 7;
+
+  optional Callable primaryConstructor = 8;
+
+  repeated Callable members = 9;
+
+  optional NestedClass classObject = 10;
+}
+
+message Callable {
+  enum Kind {
+    // 2 bits
+    DECLARATION = 0;
+    FAKE_OVERRIDE = 1;
+    DELEGATION = 2;
+    SYNTHESIZED = 3;
+  }
+
+  /*
+     fun/val/var/constructor
+     Kind
+     Modality
+     Visibility
+     setter::Modality
+     setter::Visibility
+   */
+  optional int32 flags = 1;
+  optional string extra_visibility = 2; // for things like java-specific visibilities
+
+  repeated Annotation annotations = 3;
+
+  repeated TypeParameter typeParameters = 4;
+
+  optional Type receiverType = 5;
+
+  required int32 name = 6;
+
+  message ValueParameter {
+    /*
+       declaresDefault
+    */
+    optional int32 flags = 1;
+    required int32 name = 2;
+    required Type type = 3;
+    optional Type varargElementType = 4;
+
+  }
+
+  repeated ValueParameter valueParameters = 7;
+
+  required Type returnType = 8;
+}
+
+enum Modality {
+  // 2 bits
+  FINAL = 0x00;
+  OPEN = 0x01;
+  ABSTRACT = 0x02;
+}
+
+enum Visibility {
+  // 3 bits
+  INTERNAL = 0x00;
+  PRIVATE = 0x01;
+  PROTECTED = 0x02;
+  PUBLIC = 0x03;
+  EXTRA = 0x04; // there's an extra field for the actual visibility
+}
+
+message Annotation {
+  // TODO ???
+}
