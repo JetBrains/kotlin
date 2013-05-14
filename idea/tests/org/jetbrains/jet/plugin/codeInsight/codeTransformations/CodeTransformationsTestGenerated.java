@@ -223,6 +223,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
             doTestUnfoldAssignmentToIf("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf/simpleIfWithBlocks.kt");
         }
         
+        @TestMetadata("simpleIfWithComplexAssignmentLHS.kt")
+        public void testSimpleIfWithComplexAssignmentLHS() throws Exception {
+            doTestUnfoldAssignmentToIf("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf/simpleIfWithComplexAssignmentLHS.kt");
+        }
+        
         @TestMetadata("simpleIfWithoutAssignment.kt")
         public void testSimpleIfWithoutAssignment() throws Exception {
             doTestUnfoldAssignmentToIf("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf/simpleIfWithoutAssignment.kt");
@@ -251,8 +256,13 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
             doTestUnfoldAssignmentToWhen("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToWhen/simpleWhenWithBlocks.kt");
         }
         
+        @TestMetadata("simpleWhenWithComplexAssignmentLHS.kt")
+        public void testSimpleWhenWithComplexAssignmentLHS() throws Exception {
+            doTestUnfoldAssignmentToWhen("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToWhen/simpleWhenWithComplexAssignmentLHS.kt");
+        }
+        
     }
-
+    
     @TestMetadata("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToIf")
     public static class ReturnToIf extends AbstractCodeTransformationTest {
         public void testAllFilesPresentInReturnToIf() throws Exception {

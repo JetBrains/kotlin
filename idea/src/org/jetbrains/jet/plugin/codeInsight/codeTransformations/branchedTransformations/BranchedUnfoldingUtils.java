@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransfo
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -79,7 +80,9 @@ public class BranchedUnfoldingUtils {
         thenExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, thenExpr));
         elseExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, elseExpr));
 
-        assignment.replace(newIfExpression);
+        PsiElement resultElement = assignment.replace(newIfExpression);
+
+        editor.getCaretModel().moveToOffset(resultElement.getTextOffset());
     }
 
     public static void unfoldAssignmentToWhen(@NotNull JetBinaryExpression assignment, @NotNull Editor editor) {
@@ -102,7 +105,9 @@ public class BranchedUnfoldingUtils {
             currExpr.replace(JetPsiFactory.createBinaryExpression(project, lhs, op, currExpr));
         }
 
-        assignment.replace(newWhenExpression);
+        PsiElement resultElement = assignment.replace(newWhenExpression);
+
+        editor.getCaretModel().moveToOffset(resultElement.getTextOffset());
     }
 
     public static void unfoldReturnToIf(@NotNull JetReturnExpression returnExpression) {
