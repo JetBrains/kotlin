@@ -497,12 +497,21 @@ public class BodyResolver {
         }
     }
 
-    private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer) {
+    private void resolvePropertyInitializer(
+            @NotNull JetProperty property,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetExpression initializer
+    ) {
         JetScope propertyDeclarationInnerScope = makeScopeForPropertyInitializerOrDelegate(property, propertyDescriptor);
         resolvePropertyInitializer(property, propertyDescriptor, initializer, propertyDeclarationInnerScope);
     }
 
-    public void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
+    public void resolvePropertyInitializer(
+            @NotNull JetProperty property,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetExpression initializer,
+            @NotNull JetScope scope
+    ) {
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
                 scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
