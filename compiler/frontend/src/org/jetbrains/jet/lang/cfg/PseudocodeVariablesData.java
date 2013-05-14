@@ -45,6 +45,8 @@ public class PseudocodeVariablesData {
     private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
     private final Map<Pseudocode, Set<VariableDescriptor>> usedVariablesForDeclaration = Maps.newHashMap();
 
+    private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializers;
+
     public PseudocodeVariablesData(@NotNull Pseudocode pseudocode, @NotNull BindingContext bindingContext) {
         this.pseudocode = pseudocode;
         this.bindingContext = bindingContext;
@@ -121,7 +123,11 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers() {
-        return getVariableInitializers(pseudocode);
+        if (variableInitializers == null) {
+            variableInitializers = getVariableInitializers(pseudocode);
+        }
+
+        return variableInitializers;
     }
 
     @NotNull
@@ -164,7 +170,7 @@ public class PseudocodeVariablesData {
     }
 
     @NotNull
-    private Map<VariableDescriptor, VariableInitState> prepareInitializersMapForStartInstruction(
+    private static Map<VariableDescriptor, VariableInitState> prepareInitializersMapForStartInstruction(
             @NotNull Collection<VariableDescriptor> usedVariables,
             @NotNull Collection<VariableDescriptor> declaredVariables) {
 
@@ -184,7 +190,7 @@ public class PseudocodeVariablesData {
     }
 
     @NotNull
-    private Map<VariableDescriptor, VariableInitState> mergeIncomingEdgesDataForInitializers(
+    private static Map<VariableDescriptor, VariableInitState> mergeIncomingEdgesDataForInitializers(
             @NotNull Collection<Map<VariableDescriptor, VariableInitState>> incomingEdgesData) {
 
         Set<VariableDescriptor> variablesInScope = Sets.newHashSet();
@@ -194,14 +200,20 @@ public class PseudocodeVariablesData {
 
         Map<VariableDescriptor, VariableInitState> enterInstructionData = Maps.newHashMap();
         for (VariableDescriptor variable : variablesInScope) {
-            Set<VariableInitState> edgesDataForVariable = Sets.newHashSet();
+            boolean isInitialized = true;
+            boolean isDeclared = true;
             for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
                 VariableInitState initState = edgeData.get(variable);
                 if (initState != null) {
-                    edgesDataForVariable.add(initState);
+                    if (!initState.isInitialized) {
+                        isInitialized = false;
+                    }
+                    if (!initState.isDeclared) {
+                        isDeclared = false;
+                    }
                 }
             }
-            enterInstructionData.put(variable, VariableInitState.create(edgesDataForVariable));
+            enterInstructionData.put(variable, VariableInitState.create(isInitialized, isDeclared));
         }
         return enterInstructionData;
     }
@@ -322,20 +334,6 @@ public class PseudocodeVariablesData {
 
         private static VariableInitState create(boolean isDeclaredHere, @Nullable VariableInitState mergedEdgesData) {
             return create(true, isDeclaredHere || (mergedEdgesData != null && mergedEdgesData.isDeclared));
-        }
-
-        private static VariableInitState create(@NotNull Set<VariableInitState> edgesData) {
-            boolean isInitialized = true;
-            boolean isDeclared = true;
-            for (VariableInitState edgeData : edgesData) {
-                if (!edgeData.isInitialized) {
-                    isInitialized = false;
-                }
-                if (!edgeData.isDeclared) {
-                    isDeclared = false;
-                }
-            }
-            return create(isInitialized, isDeclared);
         }
     }
 
