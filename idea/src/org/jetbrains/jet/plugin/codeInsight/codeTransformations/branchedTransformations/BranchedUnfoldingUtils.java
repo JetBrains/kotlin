@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +58,7 @@ public class BranchedUnfoldingUtils {
         assert expression != null : UNFOLD_WITHOUT_CHECK;
     }
 
-    public static void unfoldAssignmentToIf(@NotNull JetBinaryExpression assignment) {
+    public static void unfoldAssignmentToIf(@NotNull JetBinaryExpression assignment, @NotNull Editor editor) {
         Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
         JetExpression lhs = assignment.getLeft();
@@ -81,7 +82,7 @@ public class BranchedUnfoldingUtils {
         assignment.replace(newIfExpression);
     }
 
-    public static void unfoldAssignmentToWhen(@NotNull JetBinaryExpression assignment) {
+    public static void unfoldAssignmentToWhen(@NotNull JetBinaryExpression assignment, @NotNull Editor editor) {
         Project project = assignment.getProject();
         String op = assignment.getOperationReference().getText();
         JetExpression lhs = assignment.getLeft();

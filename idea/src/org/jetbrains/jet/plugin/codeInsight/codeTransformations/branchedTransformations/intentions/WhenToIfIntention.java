@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions;
 
 import com.google.common.base.Predicate;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ public class WhenToIfIntention extends AbstractCodeTransformationIntention<Trans
         }
 
         @Override
-        public void transform(@NotNull PsiElement element) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
             IfWhenUtils.transformWhenToIf((JetWhenExpression) element);
         }
     };

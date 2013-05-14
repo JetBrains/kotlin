@@ -63,6 +63,6 @@ public abstract class AbstractCodeTransformationIntention<T extends Transformer>
 
         assert target != null : "Intention is not applicable";
 
-        transformer.transform(target);
+        transformer.transform(target, editor);
     }
 }

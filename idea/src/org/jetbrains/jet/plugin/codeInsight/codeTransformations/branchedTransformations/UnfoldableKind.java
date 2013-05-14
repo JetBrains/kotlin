@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
@@ -25,25 +26,25 @@ import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransfor
 public enum UnfoldableKind implements Transformer {
     ASSIGNMENT_TO_IF("unfold.assignment.to.if") {
         @Override
-        public void transform(@NotNull PsiElement element) {
-            BranchedUnfoldingUtils.unfoldAssignmentToIf((JetBinaryExpression) element);
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+            BranchedUnfoldingUtils.unfoldAssignmentToIf((JetBinaryExpression) element, editor);
         }
     },
     RETURN_TO_IF("unfold.return.to.if") {
         @Override
-        public void transform(@NotNull PsiElement element) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
             BranchedUnfoldingUtils.unfoldReturnToIf((JetReturnExpression) element);
         }
     },
     ASSIGNMENT_TO_WHEN("unfold.assignment.to.when") {
         @Override
-        public void transform(@NotNull PsiElement element) {
-            BranchedUnfoldingUtils.unfoldAssignmentToWhen((JetBinaryExpression) element);
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+            BranchedUnfoldingUtils.unfoldAssignmentToWhen((JetBinaryExpression) element, editor);
         }
     },
     RETURN_TO_WHEN("unfold.return.to.when") {
         @Override
-        public void transform(@NotNull PsiElement element) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
             BranchedUnfoldingUtils.unfoldReturnToWhen((JetReturnExpression) element);
         }
     };

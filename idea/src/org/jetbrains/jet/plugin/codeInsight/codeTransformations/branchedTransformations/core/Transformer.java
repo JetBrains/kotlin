@@ -16,11 +16,12 @@
 
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 public interface Transformer {
     @NotNull
-    public String getKey();
-    public void transform(@NotNull PsiElement element);
+    String getKey();
+    void transform(@NotNull PsiElement element, @NotNull Editor editor);
 }
