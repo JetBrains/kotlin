@@ -385,14 +385,14 @@ public class BodyResolver {
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                     if (primaryConstructor != null) {
-                        resolvePropertyInitializer(property, propertyDescriptor, initializer);
+                        resolvePropertyInitializer(property, propertyDescriptor, initializer, getScopeForProperty(property));
                     }
                 }
 
                 JetExpression delegateExpression = property.getDelegateExpression();
                 if (delegateExpression != null) {
                     assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
-                    resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberResolution());
+                    resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberResolution(), getScopeForProperty(property));
                 }
 
                 resolvePropertyAccessors(property, propertyDescriptor);
@@ -412,14 +412,14 @@ public class BodyResolver {
 
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
-                resolvePropertyInitializer(property, propertyDescriptor, initializer);
+                resolvePropertyInitializer(property, propertyDescriptor, initializer, getScopeForProperty(property));
             }
 
             JetExpression delegateExpression = property.getDelegateExpression();
             if (delegateExpression != null) {
                 assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
                 JetScope scope = context.getDeclaringScopes().apply(property);
-                resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, scope);
+                resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, scope, getScopeForProperty(property));
             }
 
             resolvePropertyAccessors(property, propertyDescriptor);
@@ -467,16 +467,6 @@ public class BodyResolver {
         });
     }
 
-    private void resolvePropertyDelegate(
-            @NotNull JetProperty jetProperty,
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetScope parentScopeForAccessor
-    ) {
-        JetScope propertyDeclarationInnerScope = getScopeForProperty(jetProperty);
-        resolvePropertyDelegate(jetProperty, propertyDescriptor, delegateExpression, parentScopeForAccessor, propertyDeclarationInnerScope);
-    }
-
     public void resolvePropertyDelegate(
             @NotNull JetProperty jetProperty,
             @NotNull PropertyDescriptor propertyDescriptor,
@@ -507,15 +497,6 @@ public class BodyResolver {
             DelegatedPropertyUtils.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
                                                                      expressionTypingServices, trace, accessorScope);
         }
-    }
-
-    private void resolvePropertyInitializer(
-            @NotNull JetProperty property,
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression initializer
-    ) {
-        JetScope propertyDeclarationInnerScope = getScopeForProperty(property);
-        resolvePropertyInitializer(property, propertyDescriptor, initializer, propertyDeclarationInnerScope);
     }
 
     public void resolvePropertyInitializer(
