@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.references;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -24,11 +23,12 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.ArrayList;
@@ -39,9 +39,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARG
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
-
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.references.JetPsiReference");
-
     @NotNull
     protected final JetReferenceExpression myExpression;
 
@@ -103,15 +100,15 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     @Nullable
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
-        List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
+        AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        List<PsiElement> psiElements = DescriptorToDeclarationUtil.resolveToDeclarationPsiElements(analyzeExhaust, myExpression);
         if (psiElements.size() == 1) {
             return psiElements.iterator().next();
         }
         if (psiElements.size() > 1) {
             return null;
         }
-        Collection<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(bindingContext);
+        Collection<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(analyzeExhaust.getBindingContext());
         if (stdlibSymbols.size() == 1) {
             return stdlibSymbols.iterator().next();
         }
@@ -120,10 +117,11 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        BindingContext bindingContext = analyzeExhaust.getBindingContext();
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors == null) {
-            List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
+            List<PsiElement> psiElements = DescriptorToDeclarationUtil.resolveToDeclarationPsiElements(analyzeExhaust, myExpression);
             if (psiElements.size() > 1) {
                 return PsiElementResolveResult.createResults(psiElements);
             }
@@ -140,7 +138,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
         List<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
         for (DeclarationDescriptor descriptor : declarationDescriptors) {
-            List<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
+            List<PsiElement> elements = DescriptorToDeclarationUtil.descriptorToDeclarations(bindingContext, descriptor);
             for (PsiElement element : elements) {
                 results.add(new PsiElementResolveResult(element, true));
             }
