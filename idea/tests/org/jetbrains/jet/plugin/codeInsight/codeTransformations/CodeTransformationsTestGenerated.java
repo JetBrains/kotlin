@@ -252,7 +252,7 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
         }
         
     }
-    
+
     @TestMetadata("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToIf")
     public static class ReturnToIf extends AbstractCodeTransformationTest {
         public void testAllFilesPresentInReturnToIf() throws Exception {
@@ -345,6 +345,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
             doTestIfToWhen("idea/testData/codeInsight/codeTransformations/branched/ifWhen/ifToWhen/ifWithRangeTestsAndUnparenthesizedMultiConditions.kt");
         }
         
+        @TestMetadata("whenWithMultipleConditionTypes.kt")
+        public void testWhenWithMultipleConditionTypes() throws Exception {
+            doTestIfToWhen("idea/testData/codeInsight/codeTransformations/branched/ifWhen/ifToWhen/whenWithMultipleConditionTypes.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/codeInsight/codeTransformations/branched/ifWhen/whenToIf")
@@ -361,6 +366,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
         @TestMetadata("whenWithMultiConditions.kt")
         public void testWhenWithMultiConditions() throws Exception {
             doTestWhenToIf("idea/testData/codeInsight/codeTransformations/branched/ifWhen/whenToIf/whenWithMultiConditions.kt");
+        }
+        
+        @TestMetadata("whenWithMultipleConditionTypes.kt")
+        public void testWhenWithMultipleConditionTypes() throws Exception {
+            doTestWhenToIf("idea/testData/codeInsight/codeTransformations/branched/ifWhen/whenToIf/whenWithMultipleConditionTypes.kt");
         }
         
         @TestMetadata("whenWithNegativePatterns.kt")
@@ -429,6 +439,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
             doTestIntroduceWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject/whenWithEqualityTests.kt");
         }
         
+        @TestMetadata("whenWithMultipleConditionTypes.kt")
+        public void testWhenWithMultipleConditionTypes() throws Exception {
+            doTestIntroduceWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject/whenWithMultipleConditionTypes.kt");
+        }
+        
         @TestMetadata("whenWithNegativePatterns.kt")
         public void testWhenWithNegativePatterns() throws Exception {
             doTestIntroduceWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject/whenWithNegativePatterns.kt");
@@ -480,6 +495,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
         @TestMetadata("whenWithEqualityTests.kt")
         public void testWhenWithEqualityTests() throws Exception {
             doTestEliminateWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/eliminateSubject/whenWithEqualityTests.kt");
+        }
+        
+        @TestMetadata("whenWithMultipleConditionTypes.kt")
+        public void testWhenWithMultipleConditionTypes() throws Exception {
+            doTestEliminateWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/eliminateSubject/whenWithMultipleConditionTypes.kt");
         }
         
         @TestMetadata("whenWithNegativePatterns.kt")
