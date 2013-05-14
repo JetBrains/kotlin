@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -28,11 +29,14 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.*;
 
 public class DescriptorDeserializer {
     private final DeclarationDescriptor containingDeclaration;
@@ -87,14 +91,14 @@ public class DescriptorDeserializer {
                                                          "Members of " + descriptor.getName());
         descriptor.setScopeForMemberLookup(members);
 
-        for (ProtoBuf.Callable callable : proto.getMembersList()) {
+        for (Callable callable : proto.getMembersList()) {
             // TODO: properties, classes etc
             members.addFunctionDescriptor(local.loadFunction(callable));
         }
         members.changeLockLevel(WritableScope.LockLevel.READING);
 
         List<JetType> supertypes = new ArrayList<JetType>(proto.getSupertypesCount());
-        for (ProtoBuf.Type supertype : proto.getSupertypesList()) {
+        for (Type supertype : proto.getSupertypesList()) {
             supertypes.add(local.typeDeserializer.type(supertype));
         }
         descriptor.setSupertypes(supertypes);
@@ -105,7 +109,7 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    public FunctionDescriptor loadFunction(@NotNull ProtoBuf.Callable proto) {
+    public FunctionDescriptor loadFunction(@NotNull Callable proto) {
         // TODO: assert function flag
 
         SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
@@ -136,17 +140,17 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<TypeParameterDescriptor> typeParameters(@NotNull List<ProtoBuf.TypeParameter> protos) {
+    private List<TypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
         List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
-            ProtoBuf.TypeParameter proto = protos.get(i);
+            TypeParameter proto = protos.get(i);
             TypeParameterDescriptorImpl descriptor = typeParameter(proto, i);
             result.add(descriptor);
         }
         return result;
     }
 
-    private TypeParameterDescriptorImpl typeParameter(ProtoBuf.TypeParameter proto, int index) {
+    private TypeParameterDescriptorImpl typeParameter(TypeParameter proto, int index) {
         int id = proto.getId();
         TypeParameterDescriptorImpl descriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDeclaration,
@@ -162,7 +166,7 @@ public class DescriptorDeserializer {
         return descriptor;
     }
 
-    private Variance variance(ProtoBuf.TypeParameter.Variance proto) {
+    private static Variance variance(TypeParameter.Variance proto) {
         switch (proto) {
             case IN:
                 return Variance.IN_VARIANCE;
@@ -175,16 +179,16 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<ValueParameterDescriptor> valueParameters(@NotNull List<ProtoBuf.Callable.ValueParameter> protos) {
+    private List<ValueParameterDescriptor> valueParameters(@NotNull List<Callable.ValueParameter> protos) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
-            ProtoBuf.Callable.ValueParameter proto = protos.get(i);
+            Callable.ValueParameter proto = protos.get(i);
             result.add(valueParameter(proto, i));
         }
         return result;
     }
 
-    private ValueParameterDescriptor valueParameter(ProtoBuf.Callable.ValueParameter proto, int index) {
+    private ValueParameterDescriptor valueParameter(Callable.ValueParameter proto, int index) {
         return new ValueParameterDescriptorImpl(
                 containingDeclaration,
                 index,
