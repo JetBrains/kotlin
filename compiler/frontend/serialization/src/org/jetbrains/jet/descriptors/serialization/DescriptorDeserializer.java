@@ -44,14 +44,25 @@ public class DescriptorDeserializer {
     private final TypeDeserializer typeDeserializer;
 
     public DescriptorDeserializer(
+            @NotNull TypeDeserializer typeDeserializer,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull NameResolver nameResolver
+    ) {
+        this.typeDeserializer = typeDeserializer;
+        this.containingDeclaration = containingDeclaration;
+        this.nameResolver = nameResolver;
+    }
+
+    public DescriptorDeserializer(
             @Nullable DescriptorDeserializer parent,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver
     ) {
-        TypeDeserializer parentTypeDeserializer = parent == null ? null : parent.typeDeserializer;
-        this.typeDeserializer = new TypeDeserializer(parentTypeDeserializer, nameResolver);
-        this.containingDeclaration = containingDeclaration;
-        this.nameResolver = nameResolver;
+        this(
+                new TypeDeserializer(parent == null ? null : parent.typeDeserializer, nameResolver),
+                containingDeclaration,
+                nameResolver
+        );
     }
 
     @NotNull
