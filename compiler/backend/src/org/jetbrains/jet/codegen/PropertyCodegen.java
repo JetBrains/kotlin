@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -114,7 +115,10 @@ public class PropertyCodegen extends GenerationStateAware {
             modifiers |= ACC_VOLATILE;
         }
         JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, p.getDelegateExpression());
-        assert delegateType != null : "Type of delegate should be recorded: " + p.getText();
+        if (delegateType == null) {
+            // If delegate expression is unresolved reference
+            delegateType = ErrorUtils.createErrorType("Delegate type");
+        }
         Type type = typeMapper.mapType(delegateType);
         return v.newField(p, modifiers, JvmAbi.getPropertyDelegateName(propertyDescriptor.getName()), type.getDescriptor(),
                           null, null);
