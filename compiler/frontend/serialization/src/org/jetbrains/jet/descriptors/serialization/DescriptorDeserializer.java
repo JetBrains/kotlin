@@ -141,13 +141,20 @@ public class DescriptorDeserializer {
 
     @NotNull
     private List<TypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
-        List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>(protos.size());
+        List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
             TypeParameter proto = protos.get(i);
             TypeParameterDescriptorImpl descriptor = typeParameter(proto, i);
             result.add(descriptor);
         }
-        return result;
+        // Account for circular bounds:
+        for (int i = 0; i < protos.size(); i++) {
+            TypeParameter proto = protos.get(i);
+            TypeParameterDescriptorImpl descriptor = result.get(i);
+            addTypeParameterBounds(proto, descriptor);
+        }
+        //noinspection unchecked
+        return (List) result;
     }
 
     private TypeParameterDescriptorImpl typeParameter(TypeParameter proto, int index) {
@@ -161,9 +168,19 @@ public class DescriptorDeserializer {
                 nameResolver.getName(proto.getName()),
                 index);
         typeDeserializer.registerTypeParameter(id, descriptor);
-        // TODO: circular bounds
-        descriptor.setInitialized();
         return descriptor;
+    }
+
+    private void addTypeParameterBounds(TypeParameter proto, TypeParameterDescriptorImpl descriptor) {
+        if (proto.getUpperBoundsCount() == 0) {
+            descriptor.addDefaultUpperBound();
+        }
+        else {
+            for (Type upperBound : proto.getUpperBoundsList()) {
+                descriptor.addUpperBound(typeDeserializer.type(upperBound));
+            }
+        }
+        descriptor.setInitialized();
     }
 
     private static Variance variance(TypeParameter.Variance proto) {
