@@ -382,17 +382,18 @@ public class BodyResolver {
                 computeDeferredType(propertyDescriptor.getReturnType());
 
                 JetExpression initializer = property.getInitializer();
+                JetScope propertyScope = getScopeForProperty(property);
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                     if (primaryConstructor != null) {
-                        resolvePropertyInitializer(property, propertyDescriptor, initializer, getScopeForProperty(property));
+                        resolvePropertyInitializer(property, propertyDescriptor, initializer, propertyScope);
                     }
                 }
 
                 JetExpression delegateExpression = property.getDelegateExpression();
                 if (delegateExpression != null) {
                     assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
-                    resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberResolution(), getScopeForProperty(property));
+                    resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberResolution(), propertyScope);
                 }
 
                 resolvePropertyAccessors(property, propertyDescriptor);
@@ -411,15 +412,15 @@ public class BodyResolver {
             computeDeferredType(propertyDescriptor.getReturnType());
 
             JetExpression initializer = property.getInitializer();
+            JetScope propertyScope = getScopeForProperty(property);
             if (initializer != null) {
-                resolvePropertyInitializer(property, propertyDescriptor, initializer, getScopeForProperty(property));
+                resolvePropertyInitializer(property, propertyDescriptor, initializer, propertyScope);
             }
 
             JetExpression delegateExpression = property.getDelegateExpression();
             if (delegateExpression != null) {
                 assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
-                JetScope scope = context.getDeclaringScopes().apply(property);
-                resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, scope, getScopeForProperty(property));
+                resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, propertyScope, propertyScope);
             }
 
             resolvePropertyAccessors(property, propertyDescriptor);
