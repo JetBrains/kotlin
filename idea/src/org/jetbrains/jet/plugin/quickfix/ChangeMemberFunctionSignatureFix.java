@@ -31,9 +31,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.VisibilityUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -75,7 +77,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @NotNull
-    private String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature, boolean shortTypeNames) {
+    private static String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature, boolean shortTypeNames) {
         return CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
                 functionSignature, shortTypeNames);
     }
@@ -87,7 +89,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, PsiFile file)
+    protected void invoke(@NotNull final Project project, @NotNull final Editor editor, JetFile file)
             throws IncorrectOperationException {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
@@ -106,7 +108,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
      * Computes all the signatures a 'functionElement' could be changed to in order to remove NOTHING_TO_OVERRIDE error.
      */
     @NotNull
-    private List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
+    private static List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
         BindingContext context = KotlinCacheManagerUtil.getDeclarationsFromProject(functionElement).getBindingContext();
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Lists.newArrayList();
@@ -186,7 +188,15 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                 @NotNull ValueParameterDescriptor parameter,
                 @NotNull ValueParameterDescriptor superParameter
         ) {
-            return JetTypeChecker.INSTANCE.equalTypes(parameter.getType(), superParameter.getType()) ? parameter : null;
+
+            boolean equalTypes = JetTypeChecker.INSTANCE.equalTypes(OverridingUtil.getUpperBound(parameter.getType()),
+                                                      OverridingUtil.getUpperBound(superParameter.getType()));
+            if (equalTypes) {
+                return superParameter.copy(parameter.getName());
+            }
+            else {
+                return null;
+            }
         }
     };
 

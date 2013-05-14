@@ -203,8 +203,9 @@ public class OverridingUtil {
 
         return OverrideCompatibilityInfo.success();
     }
-    
-    private static JetType getUpperBound(JetType type) {
+
+    @NotNull
+    public static JetType getUpperBound(@NotNull JetType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             return type;
         }
