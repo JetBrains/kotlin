@@ -15,6 +15,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/jps-builders/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/standalone-builder/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/util/src" />
+      <root url="jar://$PROJECT_DIR$/dependencies/protobuf-java-2.5.0-sources.jar!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/jps" recursive="false" />
   </library>

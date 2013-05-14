@@ -129,6 +129,9 @@
 
         <!-- ASM 4 -->
         <get-asm4-and-rename-packages/>
+
+        <!-- Protocol Buffers -->
+        <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0" bin="false"/>
     </target>
 
     <macrodef name="get-asm4-and-rename-packages">
