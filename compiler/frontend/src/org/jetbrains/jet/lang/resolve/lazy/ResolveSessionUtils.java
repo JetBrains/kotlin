@@ -189,9 +189,13 @@ public class ResolveSessionUtils {
         PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
 
         JetExpression propertyInitializer = jetProperty.getInitializer();
-
         if (propertyInitializer != null) {
             bodyResolver.resolvePropertyInitializer(jetProperty, descriptor, propertyInitializer, propertyResolutionScope);
+        }
+
+        JetExpression propertyDelegate = jetProperty.getDelegateExpression();
+        if (propertyDelegate != null) {
+            bodyResolver.resolvePropertyDelegate(jetProperty, descriptor, propertyDelegate, propertyResolutionScope, propertyResolutionScope);
         }
 
         bodyResolver.resolvePropertyAccessors(jetProperty, descriptor);
