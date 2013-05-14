@@ -483,8 +483,10 @@ public class BodyResolver {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 
-        JetScope scope = makeScopeForPropertyInitializerOrDelegate(jetProperty, propertyDescriptor);
-        JetType delegateType = expressionTypingServices.safeGetType(scope, delegateExpression, NO_EXPECTED_TYPE,
+        JetScope propertyScope = getScopeForProperty(jetProperty);
+        JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
+                propertyScope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
+        JetType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
                                                                     DataFlowInfo.EMPTY, trace);
 
         JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, parentScopeForAccessor, descriptorResolver, trace);
@@ -502,7 +504,7 @@ public class BodyResolver {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression initializer
     ) {
-        JetScope propertyDeclarationInnerScope = makeScopeForPropertyInitializerOrDelegate(property, propertyDescriptor);
+        JetScope propertyDeclarationInnerScope = getScopeForProperty(property);
         resolvePropertyInitializer(property, propertyDescriptor, initializer, propertyDeclarationInnerScope);
     }
 
@@ -519,11 +521,10 @@ public class BodyResolver {
     }
 
     @NotNull
-    private JetScope makeScopeForPropertyInitializerOrDelegate(@NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
+    private JetScope getScopeForProperty(@NotNull JetProperty property) {
         JetScope scope = this.context.getDeclaringScopes().apply(property);
         assert scope != null : "Scope for property " + property.getText() + " should exists";
-        return descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
-                scope, descriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
+        return scope;
     }
 
     private void resolveFunctionBodies() {
