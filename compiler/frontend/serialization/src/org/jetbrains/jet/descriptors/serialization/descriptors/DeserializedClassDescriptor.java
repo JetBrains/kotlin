@@ -208,6 +208,11 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList(); // TODO
         }
+
+        @Override
+        public String toString() {
+            return getName().toString();
+        }
     }
 
     private static class DeserializedClassMemberScope extends DeserializedMemberScope {

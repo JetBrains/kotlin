@@ -99,6 +99,11 @@ public class TypeDeserializer {
             public List<AnnotationDescriptor> getAnnotations() {
                 return Collections.emptyList();
             }
+
+            @Override
+            public String toString() {
+                return TypeUtils.toString(this);
+            }
         };
     }
 
