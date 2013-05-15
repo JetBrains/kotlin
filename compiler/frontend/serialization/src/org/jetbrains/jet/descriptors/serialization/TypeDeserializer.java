@@ -90,7 +90,13 @@ public class TypeDeserializer {
             @Override
             public JetScope getMemberScope() {
                 if (memberScope == null) {
-                    memberScope = getTypeMemberScope(getConstructor(), getArguments());
+                    TypeConstructor typeConstructor = getConstructor();
+                    if (ErrorUtils.isError(typeConstructor)) {
+                        memberScope = ErrorUtils.createErrorScope(typeConstructor.toString());
+                    }
+                    else {
+                        memberScope = getTypeMemberScope(typeConstructor, getArguments());
+                    }
                 }
                 return memberScope;
             }
