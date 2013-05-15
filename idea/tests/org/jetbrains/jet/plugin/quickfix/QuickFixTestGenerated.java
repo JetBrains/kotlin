@@ -943,6 +943,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override/typeMismatchOnOverride"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
+            @TestMetadata("beforeCantChangeMultipleOverriddenPropertiesTypes.kt")
+            public void testCantChangeMultipleOverriddenPropertiesTypes() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeCantChangeMultipleOverriddenPropertiesTypes.kt");
+            }
+            
+            @TestMetadata("beforeChangeOverriddenPropertyType.kt")
+            public void testChangeOverriddenPropertyType() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverriddenPropertyType.kt");
+            }
+            
             @TestMetadata("beforeChangeOverridingPropertyTypeToFunctionType.kt")
             public void testChangeOverridingPropertyTypeToFunctionType() throws Exception {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverridingPropertyTypeToFunctionType.kt");

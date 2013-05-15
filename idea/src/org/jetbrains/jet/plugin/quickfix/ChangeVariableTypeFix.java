@@ -25,6 +25,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -32,11 +33,15 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
     private final String renderedType;
@@ -90,16 +95,43 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForPropertyOrReturnTypeMismatchOnOverride() {
-        return new JetSingleIntentionActionFactory() {
-            @Nullable
+    public static JetIntentionActionsFactory createFactoryForPropertyOrReturnTypeMismatchOnOverride() {
+        return new JetIntentionActionsFactory() {
+            @NotNull
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public List<IntentionAction> createActions(Diagnostic diagnostic) {
+                List<IntentionAction> actions = new LinkedList<IntentionAction>();
+
                 JetProperty property = QuickFixUtil.getParentElementOfType(diagnostic, JetProperty.class);
-                if (property == null) return null;
-                BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(property);
-                JetType type = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
-                return type == null ? null : new ChangeVariableTypeFix(property, type);
+                if (property != null) {
+                    BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(property);
+                    JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
+                    if (lowerBoundOfOverriddenPropertiesTypes != null) {
+                        actions.add(new ChangeVariableTypeFix(property, lowerBoundOfOverriddenPropertiesTypes));
+                    }
+
+                    PropertyDescriptor descriptor = (PropertyDescriptor) context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
+                    assert descriptor != null : "Descriptor of property not available in binding context";
+                    JetType propertyType = descriptor.getReturnType();
+                    assert propertyType != null : "Property type cannot be null if it mismatch something";
+
+                    List<PropertyDescriptor> overriddenMismatchingProperties = new LinkedList<PropertyDescriptor>();
+                    for (PropertyDescriptor overriddenProperty: descriptor.getOverriddenDescriptors()) {
+                        JetType overriddenPropertyType = overriddenProperty.getReturnType();
+                        if (overriddenPropertyType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(propertyType, overriddenPropertyType)) {
+                            overriddenMismatchingProperties.add(overriddenProperty);
+                        }
+                    }
+
+                    if (overriddenMismatchingProperties.size() == 1) {
+                        JetProperty overriddenProperty =
+                                (JetProperty) BindingContextUtils.descriptorToDeclaration(context, overriddenMismatchingProperties.get(0));
+                        if (overriddenProperty != null) {
+                            actions.add(new ChangeVariableTypeFix(overriddenProperty, propertyType));
+                        }
+                    }
+                }
+                return actions;
             }
         };
     }
