@@ -65,7 +65,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     @NotNull
     private DataFlowInfo checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
         if (condition != null) {
-            JetTypeInfo typeInfo = facade.getTypeInfo(condition, context.replaceScope(scope));
+            JetTypeInfo typeInfo = facade.getTypeInfo(condition, context.replaceScope(scope)
+                    .replaceExpectedType(KotlinBuiltIns.getInstance().getBooleanType()));
             JetType conditionType = typeInfo.getType();
 
             if (conditionType != null && !isBoolean(conditionType)) {

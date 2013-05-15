@@ -137,6 +137,10 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
+        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE) {
+            context.trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, context.expectedType);
+        }
+
         if (expressionType == null || context.expectedType == null || context.expectedType == TypeUtils.NO_EXPECTED_TYPE ||
             JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, context.expectedType)) {
             return expressionType;

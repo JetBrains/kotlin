@@ -272,4 +272,14 @@ public class JetPsiFactory {
     public static JetExpressionCodeFragment createExpressionCodeFragment(Project project, String text, PsiElement context) {
         return new JetExpressionCodeFragmentImpl(project, "fragment.kt", text, context);
     }
+
+    public static JetExpression createFunctionBody(Project project, @NotNull String bodyText) {
+        JetFunction func = createFunction(project, "fun foo() {\n" + bodyText + "\n}");
+        return func.getBodyExpression();
+    }
+
+    public static JetClassObject createEmptyClassObject(Project project) {
+        JetClass klass = createClass(project, "class foo { class object { } }");
+        return klass.getClassObject();
+    }
 }
