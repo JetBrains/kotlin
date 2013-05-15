@@ -95,30 +95,33 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static JetParameterList getParameterListOfCalledFunction(@NotNull JetCallExpression callExpression) {
+    public static JetParameterList getParameterListOfCallee(@NotNull JetCallExpression callExpression) {
         BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) callExpression.getContainingFile()).getBindingContext();
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
         if (resolvedCall == null) return null;
-        PsiElement functionDeclaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
-        if (functionDeclaration instanceof JetFunction) {
-            return ((JetFunction) functionDeclaration).getValueParameterList();
+        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
+        if (declaration instanceof JetFunction) {
+            return ((JetFunction) declaration).getValueParameterList();
+        }
+        if (declaration instanceof JetClass) {
+            return ((JetClass) declaration).getPrimaryConstructorParameterList();
         }
         return null;
     }
 
     @Nullable
-    public static JetParameter getFunctionParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
+    public static JetParameter getParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(@NotNull JetFunctionLiteralExpression functionLiteralExpression) {
         if (!(functionLiteralExpression.getParent() instanceof JetCallExpression)) {
             return null;
         }
         JetCallExpression callExpression = (JetCallExpression) functionLiteralExpression.getParent();
-        JetParameterList parameterList = getParameterListOfCalledFunction(callExpression);
+        JetParameterList parameterList = getParameterListOfCallee(callExpression);
         if (parameterList == null) return null;
         return parameterList.getParameters().get(parameterList.getParameters().size() - 1);
     }
 
     @Nullable
-    public static JetParameter getFunctionParameterCorrespondingToValueArgumentPassedInCall(@NotNull JetValueArgument valueArgument) {
+    public static JetParameter getParameterCorrespondingToValueArgumentPassedInCall(@NotNull JetValueArgument valueArgument) {
         if (!(valueArgument.getParent() instanceof JetValueArgumentList)) {
             return null;
         }
@@ -127,7 +130,7 @@ public class QuickFixUtil {
             return null;
         }
         JetCallExpression callExpression = (JetCallExpression) valueArgumentList.getParent();
-        JetParameterList parameterList = getParameterListOfCalledFunction(callExpression);
+        JetParameterList parameterList = getParameterListOfCallee(callExpression);
         if (parameterList == null) return null;
         int position = valueArgumentList.getArguments().indexOf(valueArgument);
         if (position == -1) return null;

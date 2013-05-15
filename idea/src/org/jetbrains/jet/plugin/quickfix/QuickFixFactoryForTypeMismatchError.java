@@ -89,7 +89,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
                     PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
                     if (declaration instanceof JetFunction) {
                         JetParameter binaryOperatorParameter = ((JetFunction) declaration).getValueParameterList().getParameters().get(0);
-                        actions.add(new ChangeFunctionParameterTypeFix(binaryOperatorParameter, expressionType));
+                        actions.add(new ChangeParameterTypeFix(binaryOperatorParameter, expressionType));
                     }
                 }
             }
@@ -113,20 +113,20 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
                 QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralExpression.class);
         if (functionLiteralExpression != null && functionLiteralExpression.getBodyExpression() == expression) {
             JetParameter correspondingParameter =
-                    QuickFixUtil.getFunctionParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(functionLiteralExpression);
+                    QuickFixUtil.getParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(functionLiteralExpression);
             JetType functionLiteralExpressionType = context.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression);
             if (correspondingParameter != null && functionLiteralExpressionType != null) {
-                actions.add(new ChangeFunctionParameterTypeFix(correspondingParameter, functionLiteralExpressionType));
+                actions.add(new ChangeParameterTypeFix(correspondingParameter, functionLiteralExpressionType));
             }
         }
         // 2) When an argument is passed inside value argument list:
         else {
             JetValueArgument valueArgument = QuickFixUtil.getParentElementOfType(diagnostic, JetValueArgument.class);
-            if (valueArgument != null && valueArgument.getArgumentExpression() == expression) {
-                JetParameter correspondingParameter = QuickFixUtil.getFunctionParameterCorrespondingToValueArgumentPassedInCall(valueArgument);
+            if (valueArgument != null && QuickFixUtil.canEvaluateTo(valueArgument.getArgumentExpression(), expression)) {
+                JetParameter correspondingParameter = QuickFixUtil.getParameterCorrespondingToValueArgumentPassedInCall(valueArgument);
                 JetType valueArgumentType = context.get(BindingContext.EXPRESSION_TYPE, valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
-                    actions.add(new ChangeFunctionParameterTypeFix(correspondingParameter, valueArgumentType));
+                    actions.add(new ChangeParameterTypeFix(correspondingParameter, valueArgumentType));
                 }
             }
         }
