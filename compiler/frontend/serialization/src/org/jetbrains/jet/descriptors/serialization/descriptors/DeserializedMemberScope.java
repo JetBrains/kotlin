@@ -91,22 +91,27 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
         List<ProtoBuf.Callable> functionProtos = membersProtos.get(name);
-        if (functionProtos == null || functionProtos.isEmpty()) {
-            return Collections.emptyList();
+
+        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>(functionProtos != null ? functionProtos.size() : 0);
+        if (functionProtos != null) {
+            for (ProtoBuf.Callable memberProto : functionProtos) {
+                // TODO: check that the proto is a function, and not a property
+                functions.add(deserializer.loadFunction(memberProto));
+            }
         }
 
-        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>(functionProtos.size());
-        for (ProtoBuf.Callable memberProto : functionProtos) {
-            // TODO: check that the proto is a function, and not a property
-            functions.add(deserializer.loadFunction(memberProto));
-        }
+        computeNonDeclaredFunctions(name, functions);
 
         return functions;
     }
 
+    protected void computeNonDeclaredFunctions(@NotNull Name name, @NotNull List<FunctionDescriptor> functions) {
+
+    }
+
     @NotNull
     @Override
-    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+    public final Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return functions.fun(name);
     }
 
@@ -175,17 +180,21 @@ public abstract class DeserializedMemberScope implements JetScope {
     }
 
     private Collection<DeclarationDescriptor> computeAllDescriptors() {
-        Collection<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
+        Collection<DeclarationDescriptor> result = new LinkedHashSet<DeclarationDescriptor>(0);
 
         for (Name name : membersProtos.keySet()) {
-            result.addAll(functions.fun(name));
-            result.addAll(properties.fun(name));
+            result.addAll(getFunctions(name));
+            result.addAll(getProperties(name));
         }
+
+        addNonDeclaredDescriptors(result);
 
         addAllClassDescriptors(result);
 
         return result;
     }
+
+    protected abstract void addNonDeclaredDescriptors(@NotNull Collection<DeclarationDescriptor> result);
 
     @NotNull
     @Override

@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -223,33 +224,34 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
             this.classDescriptor = classDescriptor;
         }
 
-        @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+        protected void computeNonDeclaredFunctions(
+                @NotNull Name name, @NotNull List<FunctionDescriptor> functions
+        ) {
             Collection<FunctionDescriptor> fromSupertypes = new ArrayList<FunctionDescriptor>();
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
             }
-            Collection<FunctionDescriptor> result = super.getFunctions(name);
-            generateFakeOverrides(name, fromSupertypes, result);
-            return result;
+            generateFakeOverrides(name, fromSupertypes, functions);
         }
 
         private <D extends CallableMemberDescriptor> void generateFakeOverrides(
                 @NotNull Name name,
                 @NotNull Collection<D> fromSupertypes,
-                @NotNull final Collection<D> fromCurrent
+                @NotNull final Collection<D> result
         ) {
+            List<CallableMemberDescriptor> fromCurrent = new ArrayList<CallableMemberDescriptor>(result);
             OverrideResolver.generateOverridesInFunctionGroup(
                     name,
                     fromSupertypes,
-                    new ArrayList<CallableMemberDescriptor>(fromCurrent),
+                    fromCurrent,
                     classDescriptor,
                     new OverrideResolver.DescriptorSink() {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                            OverrideResolver.resolveUnknownVisibilityForMember(null, fakeOverride, TraceUtil.TRACE_STUB);
                             //noinspection unchecked
-                            fromCurrent.add((D) fakeOverride);
+                            result.add((D) fakeOverride);
                         }
 
                         @Override
@@ -258,6 +260,21 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
                         }
                     }
             );
+        }
+
+        @Override
+        protected void addNonDeclaredDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
+            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+                for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                    if (descriptor instanceof FunctionDescriptor) {
+                        result.addAll(getFunctions(descriptor.getName()));
+                    }
+                    else if (descriptor instanceof PropertyDescriptor) {
+                        result.addAll(getProperties(descriptor.getName()));
+                    }
+                    // Nothing else is inherited
+                }
+            }
         }
 
         @Nullable
