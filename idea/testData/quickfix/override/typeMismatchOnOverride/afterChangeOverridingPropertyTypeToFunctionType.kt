@@ -1,4 +1,4 @@
-// "Change 'x' type to '(String) -> Int'" "true"
+// "Change 'B.x' type to '(String) -> Int'" "true"
 trait A {
     var x: (String) -> Int
 }

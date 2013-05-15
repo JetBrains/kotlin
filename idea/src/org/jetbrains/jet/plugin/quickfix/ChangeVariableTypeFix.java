@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
@@ -48,7 +49,11 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("change.element.type", element.getName(), renderedType);
+        String propertyName = element.getName();
+        FqName fqName = JetPsiUtil.getFQName(element);
+        if (fqName != null) propertyName = fqName.asString();
+
+        return JetBundle.message("change.element.type", propertyName, renderedType);
     }
 
     @NotNull
