@@ -184,7 +184,7 @@ public class Renderers {
         result.text(newText()
                             .normal("Cannot infer type parameter ")
                             .strong(firstConflictingParameter.getName())
-                            .normal(" in"));
+                            .normal(" in "));
         //String type = strong(firstConflictingParameter.getName());
         TableRenderer table = newTable();
         result.table(table);
