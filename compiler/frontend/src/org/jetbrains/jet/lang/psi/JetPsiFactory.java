@@ -255,8 +255,8 @@ public class JetPsiFactory {
     }
 
     @NotNull
-    public static JetBinaryExpression createBinaryExpression(Project project, @NotNull JetExpression lhs, @NotNull String op, @NotNull JetExpression rhs) {
-        return createBinaryExpression(project, lhs.getText(), op, rhs.getText());
+    public static JetBinaryExpression createBinaryExpression(Project project, @Nullable JetExpression lhs, @NotNull String op, @Nullable JetExpression rhs) {
+        return createBinaryExpression(project, lhs != null ? lhs.getText() : "", op, rhs != null ? rhs.getText() : "");
     }
 
     public static JetTypeCodeFragment createTypeCodeFragment(Project project, String text, PsiElement context) {
@@ -268,28 +268,18 @@ public class JetPsiFactory {
     }
 
     @NotNull
-    public static JetIsExpression createIsExpression(Project project, @NotNull String lhs, @NotNull String rhs, boolean negated) {
-        return (JetIsExpression) createExpression(project, lhs + " " + (negated ? "!is" : "is") + " " + rhs);
-    }
-
-    @NotNull
-    public static JetIsExpression createIsExpression(Project project, @NotNull JetExpression lhs, @NotNull JetTypeReference rhs, boolean negated) {
-        return createIsExpression(project, lhs.getText(), rhs.getText(), negated);
-    }
-
-    @NotNull
     public static JetReturnExpression createReturn(Project project, @NotNull String text) {
         return (JetReturnExpression) createExpression(project, "return " + text);
     }
 
     @NotNull
-    public static JetReturnExpression createReturn(Project project, @NotNull JetExpression expression) {
-        return createReturn(project, expression.getText());
+    public static JetReturnExpression createReturn(Project project, @Nullable JetExpression expression) {
+        return createReturn(project, expression != null ? expression.getText() : "");
     }
 
     @NotNull
     public static JetIfExpression createIf(Project project,
-            @NotNull JetExpression condition, @NotNull JetExpression thenExpr, @Nullable JetExpression elseExpr) {
+            @Nullable JetExpression condition, @Nullable JetExpression thenExpr, @Nullable JetExpression elseExpr) {
         return (JetIfExpression) createExpression(project, JetPsiUnparsingUtils.toIf(condition, thenExpr, elseExpr));
     }
 
@@ -325,8 +315,8 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public IfChainBuilder elseBranch(@NotNull JetExpression expression) {
-            return elseBranch(expression.getText());
+        public IfChainBuilder elseBranch(@Nullable JetExpression expression) {
+            return elseBranch(expression != null ? expression.getText() : "");
         }
 
         @NotNull
@@ -373,8 +363,8 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public WhenBuilder condition(@NotNull JetExpression expression) {
-            return condition(expression.getText());
+        public WhenBuilder condition(@Nullable JetExpression expression) {
+            return condition(expression != null ? expression.getText() : "");
         }
 
         @NotNull
@@ -383,8 +373,8 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public WhenBuilder pattern(@NotNull JetTypeReference typeReference, boolean negated) {
-            return pattern(typeReference.getText(), negated);
+        public WhenBuilder pattern(@Nullable JetTypeReference typeReference, boolean negated) {
+            return pattern(typeReference != null ? typeReference.getText() : "", negated);
         }
 
         @NotNull
@@ -393,8 +383,8 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public WhenBuilder range(@NotNull JetExpression argument, boolean negated) {
-            return range(argument.getText(), negated);
+        public WhenBuilder range(@Nullable JetExpression argument, boolean negated) {
+            return range(argument != null ? argument.getText() : "", negated);
         }
 
         @NotNull
@@ -409,8 +399,8 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public WhenBuilder branchExpression(@NotNull JetExpression expression) {
-            return branchExpression(expression.getText());
+        public WhenBuilder branchExpression(@Nullable JetExpression expression) {
+            return branchExpression(expression != null ? expression.getText() : "");
         }
 
         @NotNull
@@ -424,8 +414,8 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public WhenBuilder entry(@NotNull JetWhenEntry whenEntry) {
-            return entry(whenEntry.getText());
+        public WhenBuilder entry(@Nullable JetWhenEntry whenEntry) {
+            return entry(whenEntry != null ? whenEntry.getText() : "");
         }
 
         @NotNull
@@ -434,8 +424,8 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public WhenBuilder elseEntry(@NotNull JetExpression expression) {
-            return elseEntry(expression.getText());
+        public WhenBuilder elseEntry(@Nullable JetExpression expression) {
+            return elseEntry(expression != null ? expression.getText() : "");
         }
 
         @NotNull
@@ -446,21 +436,5 @@ public class JetPsiFactory {
             }
             return (JetWhenExpression) createExpression(project, sb.toString());
         }
-    }
-
-    @NotNull
-    public static JetParenthesizedExpression createParenthesizedExpression(Project project, @NotNull String text) {
-        return (JetParenthesizedExpression) createExpression(project, "(" + text + ")");
-    }
-
-    @NotNull
-    public static JetParenthesizedExpression createParenthesizedExpression(Project project, @NotNull JetExpression expression) {
-        return createParenthesizedExpression(project, expression.getText());
-    }
-
-    @NotNull
-    public static JetParenthesizedExpression createParenthesizedExpressionIfNeeded(Project project, @NotNull JetExpression expression) {
-        return (expression instanceof JetParenthesizedExpression) ?
-               (JetParenthesizedExpression) expression : createParenthesizedExpression(project, expression);
     }
 }

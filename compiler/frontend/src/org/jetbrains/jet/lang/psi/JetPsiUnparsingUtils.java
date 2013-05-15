@@ -24,8 +24,12 @@ public class JetPsiUnparsingUtils {
     }
 
     @NotNull
-    public static String toIf(@NotNull JetExpression condition, @NotNull JetExpression thenExpression, @Nullable JetExpression elseExpression) {
-        return toIf(condition.getText(), thenExpression.getText(), elseExpression != null ? elseExpression.getText() : null);
+    public static String toIf(@Nullable JetExpression condition, @Nullable JetExpression thenExpression, @Nullable JetExpression elseExpression) {
+        return toIf(
+                condition != null ? condition.getText() : "",
+                thenExpression != null ? thenExpression.getText() : "",
+                elseExpression != null ? elseExpression.getText() : null
+        );
     }
 
     @NotNull
@@ -34,8 +38,8 @@ public class JetPsiUnparsingUtils {
     }
 
     @NotNull
-    public static String toBinaryExpression(@NotNull JetExpression left, @NotNull String op, @NotNull JetElement right) {
-        return toBinaryExpression(left.getText(), op, right.getText());
+    public static String toBinaryExpression(@Nullable JetExpression left, @NotNull String op, @Nullable JetElement right) {
+        return toBinaryExpression(left != null ? left.getText() : "", op, right != null ? right.getText() : "");
     }
 
     @NotNull
@@ -44,7 +48,9 @@ public class JetPsiUnparsingUtils {
     }
 
     @NotNull
-    public static String parenthesizeIfNeeded(@NotNull JetExpression expression) {
+    public static String parenthesizeIfNeeded(@Nullable JetExpression expression) {
+        if (expression == null) return "";
+
         String text = expression.getText();
         return (expression instanceof JetParenthesizedExpression ||
                 expression instanceof JetConstantExpression ||

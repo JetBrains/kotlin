@@ -1,10 +1,12 @@
 package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*;
@@ -18,7 +20,7 @@ public class IfWhenUtils {
     }
 
     public static boolean checkIfToWhen(@NotNull JetIfExpression ifExpression) {
-        return ifExpression.getCondition() != null && ifExpression.getThen() != null && ifExpression.getElse() != null;
+        return ifExpression.getThen() != null && ifExpression.getElse() != null;
     }
 
     public static boolean checkWhenToIf(@NotNull JetWhenExpression whenExpression) {
@@ -29,7 +31,9 @@ public class IfWhenUtils {
         assert expression != null : TRANSFORM_WITHOUT_CHECK;
     }
 
-    private static List<JetExpression> splitExpressionToOrBranches(JetExpression expression) {
+    private static List<JetExpression> splitExpressionToOrBranches(@Nullable JetExpression expression) {
+        if (expression == null) return Collections.emptyList();
+
         final List<JetExpression> branches = new ArrayList<JetExpression>();
 
         expression.accept(
@@ -80,14 +84,19 @@ public class IfWhenUtils {
             JetExpression thenBranch = currIfExpression.getThen();
             JetExpression elseBranch = currIfExpression.getElse();
 
-            assertNotNull(condition);
             assertNotNull(thenBranch);
             assertNotNull(elseBranch);
 
             List<JetExpression> orBranches = splitExpressionToOrBranches(condition);
-            for (JetExpression orBranch : orBranches) {
-                builder.condition(orBranch);
+
+            if (orBranches.isEmpty()) {
+                builder.condition("");
+            } else {
+                for (JetExpression orBranch : orBranches) {
+                    builder.condition(orBranch);
+                }
             }
+
             //noinspection ConstantConditions
             builder.branchExpression(thenBranch);
 
@@ -135,19 +144,12 @@ public class IfWhenUtils {
         List<JetWhenEntry> entries = whenExpression.getEntries();
         for (JetWhenEntry entry : entries) {
             JetExpression branch = entry.getExpression();
-            assertNotNull(branch);
 
             if (entry.isElse()) {
-                //noinspection ConstantConditions
                 builder.elseBranch(branch);
             } else {
                 String branchConditionText = combineWhenConditions(entry.getConditions(), whenExpression.getSubjectExpression());
-
-                JetExpression branchExpression = entry.getExpression();
-                assertNotNull(branchExpression);
-
-                //noinspection ConstantConditions
-                builder.ifBranch(branchConditionText, branchExpression.getText());
+                builder.ifBranch(branchConditionText, branch != null ? branch.getText() : "");
             }
         }
 

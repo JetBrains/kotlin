@@ -120,10 +120,8 @@ public class WhenUtils {
 
         for (JetWhenEntry entry : whenExpression.getEntries()) {
             JetExpression branchExpression = entry.getExpression();
-            assertNotNull(branchExpression);
 
             if (entry.isElse()) {
-                //noinspection ConstantConditions
                 builder.elseEntry(branchExpression);
                 continue;
             }
@@ -135,30 +133,21 @@ public class WhenUtils {
 
                 if (conditionExpression instanceof JetIsExpression) {
                     JetIsExpression isExpression = (JetIsExpression) conditionExpression;
-
-                    JetTypeReference typeReference = isExpression.getTypeRef();
-                    assertNotNull(typeReference);
-
-                    //noinspection ConstantConditions
-                    builder.pattern(typeReference, isExpression.isNegated());
+                    builder.pattern(isExpression.getTypeRef(), isExpression.isNegated());
                 }
                 else if (conditionExpression instanceof JetBinaryExpression) {
                     JetBinaryExpression binaryExpression = (JetBinaryExpression) conditionExpression;
 
                     JetExpression rhs = binaryExpression.getRight();
-                    assertNotNull(rhs);
 
                     IElementType op = binaryExpression.getOperationToken();
                     if (op == JetTokens.IN_KEYWORD) {
-                        //noinspection ConstantConditions
                         builder.range(rhs, false);
                     }
                     else if (op == JetTokens.NOT_IN) {
-                        //noinspection ConstantConditions
                         builder.range(rhs, true);
                     }
                     else if (op == JetTokens.EQEQ) {
-                        //noinspection ConstantConditions
                         builder.condition(rhs);
                     }
                     else assert false : TRANSFORM_WITHOUT_CHECK;
@@ -166,7 +155,6 @@ public class WhenUtils {
                 else assert false : TRANSFORM_WITHOUT_CHECK;
             }
 
-            //noinspection ConstantConditions
             builder.branchExpression(branchExpression);
         }
 
@@ -176,37 +164,22 @@ public class WhenUtils {
     static String whenConditionToExpressionText(@NotNull JetWhenCondition condition, JetExpression subject) {
         if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
-
-            JetTypeReference typeReference = patternCondition.getTypeRef();
-            assertNotNull(typeReference);
-
-            assertNotNull(subject);
-
-            //noinspection ConstantConditions
-            return toBinaryExpression(subject, (patternCondition.isNegated() ? "!is" : "is"), typeReference);
+            return toBinaryExpression(subject, (patternCondition.isNegated() ? "!is" : "is"), patternCondition.getTypeRef());
         }
 
         if (condition instanceof JetWhenConditionInRange) {
             JetWhenConditionInRange rangeCondition = (JetWhenConditionInRange) condition;
-
-            JetExpression rangeExpression = rangeCondition.getRangeExpression();
-            assertNotNull(rangeExpression);
-
-            assertNotNull(subject);
-
-            //noinspection ConstantConditions
-            return toBinaryExpression(subject, rangeCondition.getOperationReference().getText(), rangeExpression);
+            return toBinaryExpression(subject, rangeCondition.getOperationReference().getText(), rangeCondition.getRangeExpression());
         }
 
         assert condition instanceof JetWhenConditionWithExpression : TRANSFORM_WITHOUT_CHECK;
 
         JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-        assertNotNull(conditionExpression);
 
-        //noinspection ConstantConditions
-        return subject != null ?
-               toBinaryExpression(parenthesizeIfNeeded(subject), "==", parenthesizeIfNeeded(conditionExpression))
-                               : conditionExpression.getText();
+        if (subject != null) {
+            return toBinaryExpression(parenthesizeIfNeeded(subject), "==", parenthesizeIfNeeded(conditionExpression));
+        }
+        return conditionExpression != null ? conditionExpression.getText() : "";
     }
 
     public static void eliminateWhenSubject(@NotNull JetWhenExpression whenExpression) {
@@ -217,10 +190,8 @@ public class WhenUtils {
 
         for (JetWhenEntry entry : whenExpression.getEntries()) {
             JetExpression branchExpression = entry.getExpression();
-            assertNotNull(branchExpression);
 
             if (entry.isElse()) {
-                //noinspection ConstantConditions
                 builder.elseEntry(branchExpression);
 
                 continue;
@@ -230,7 +201,6 @@ public class WhenUtils {
                 builder.condition(whenConditionToExpressionText(condition, subject));
             }
 
-            //noinspection ConstantConditions
             builder.branchExpression(branchExpression);
         }
 
