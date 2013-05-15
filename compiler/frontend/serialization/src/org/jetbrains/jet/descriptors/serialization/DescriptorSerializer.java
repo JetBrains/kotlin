@@ -74,6 +74,7 @@ public class DescriptorSerializer {
             // TODO: other than functions
             if (descriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor function = (FunctionDescriptor) descriptor;
+                if (function.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
                 builder.addMembers(local.functionProto(function));
             }
         }
