@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +27,8 @@ public class JetPsiUnparsingUtils {
     @NotNull
     public static String toIf(@Nullable JetExpression condition, @Nullable JetExpression thenExpression, @Nullable JetExpression elseExpression) {
         return toIf(
-                condition != null ? condition.getText() : "",
-                thenExpression != null ? thenExpression.getText() : "",
+                JetPsiUtil.getText(condition),
+                JetPsiUtil.getText(thenExpression),
                 elseExpression != null ? elseExpression.getText() : null
         );
     }
@@ -39,7 +40,7 @@ public class JetPsiUnparsingUtils {
 
     @NotNull
     public static String toBinaryExpression(@Nullable JetExpression left, @NotNull String op, @Nullable JetElement right) {
-        return toBinaryExpression(left != null ? left.getText() : "", op, right != null ? right.getText() : "");
+        return toBinaryExpression(JetPsiUtil.getText(left), op, JetPsiUtil.getText(right));
     }
 
     @NotNull
@@ -49,9 +50,8 @@ public class JetPsiUnparsingUtils {
 
     @NotNull
     public static String parenthesizeIfNeeded(@Nullable JetExpression expression) {
-        if (expression == null) return "";
+        String text = JetPsiUtil.getText(expression);
 
-        String text = expression.getText();
         return (expression instanceof JetParenthesizedExpression ||
                 expression instanceof JetConstantExpression ||
                 expression instanceof JetSimpleNameExpression)

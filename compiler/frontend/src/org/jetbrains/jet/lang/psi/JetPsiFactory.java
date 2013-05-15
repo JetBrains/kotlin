@@ -256,7 +256,7 @@ public class JetPsiFactory {
 
     @NotNull
     public static JetBinaryExpression createBinaryExpression(Project project, @Nullable JetExpression lhs, @NotNull String op, @Nullable JetExpression rhs) {
-        return createBinaryExpression(project, lhs != null ? lhs.getText() : "", op, rhs != null ? rhs.getText() : "");
+        return createBinaryExpression(project, JetPsiUtil.getText(lhs), op, JetPsiUtil.getText(rhs));
     }
 
     public static JetTypeCodeFragment createTypeCodeFragment(Project project, String text, PsiElement context) {
@@ -274,7 +274,7 @@ public class JetPsiFactory {
 
     @NotNull
     public static JetReturnExpression createReturn(Project project, @Nullable JetExpression expression) {
-        return createReturn(project, expression != null ? expression.getText() : "");
+        return createReturn(project, JetPsiUtil.getText(expression));
     }
 
     @NotNull
@@ -316,7 +316,7 @@ public class JetPsiFactory {
 
         @NotNull
         public IfChainBuilder elseBranch(@Nullable JetExpression expression) {
-            return elseBranch(expression != null ? expression.getText() : "");
+            return elseBranch(JetPsiUtil.getText(expression));
         }
 
         @NotNull
@@ -364,7 +364,7 @@ public class JetPsiFactory {
 
         @NotNull
         public WhenBuilder condition(@Nullable JetExpression expression) {
-            return condition(expression != null ? expression.getText() : "");
+            return condition(JetPsiUtil.getText(expression));
         }
 
         @NotNull
@@ -374,7 +374,7 @@ public class JetPsiFactory {
 
         @NotNull
         public WhenBuilder pattern(@Nullable JetTypeReference typeReference, boolean negated) {
-            return pattern(typeReference != null ? typeReference.getText() : "", negated);
+            return pattern(JetPsiUtil.getText(typeReference), negated);
         }
 
         @NotNull
@@ -384,7 +384,7 @@ public class JetPsiFactory {
 
         @NotNull
         public WhenBuilder range(@Nullable JetExpression argument, boolean negated) {
-            return range(argument != null ? argument.getText() : "", negated);
+            return range(JetPsiUtil.getText(argument), negated);
         }
 
         @NotNull
@@ -400,7 +400,7 @@ public class JetPsiFactory {
 
         @NotNull
         public WhenBuilder branchExpression(@Nullable JetExpression expression) {
-            return branchExpression(expression != null ? expression.getText() : "");
+            return branchExpression(JetPsiUtil.getText(expression));
         }
 
         @NotNull
@@ -415,7 +415,7 @@ public class JetPsiFactory {
 
         @NotNull
         public WhenBuilder entry(@Nullable JetWhenEntry whenEntry) {
-            return entry(whenEntry != null ? whenEntry.getText() : "");
+            return entry(JetPsiUtil.getText(whenEntry));
         }
 
         @NotNull
@@ -425,7 +425,7 @@ public class JetPsiFactory {
 
         @NotNull
         public WhenBuilder elseEntry(@Nullable JetExpression expression) {
-            return elseEntry(expression != null ? expression.getText() : "");
+            return elseEntry(JetPsiUtil.getText(expression));
         }
 
         @NotNull

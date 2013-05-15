@@ -188,7 +188,7 @@ public class WhenUtils {
         if (subject != null) {
             return toBinaryExpression(parenthesizeIfNeeded(subject), "==", parenthesizeIfNeeded(conditionExpression));
         }
-        return conditionExpression != null ? conditionExpression.getText() : "";
+        return JetPsiUtil.getText(conditionExpression);
     }
 
     @NotNull

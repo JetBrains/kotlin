@@ -154,7 +154,7 @@ public class IfWhenUtils {
                 builder.elseBranch(branch);
             } else {
                 String branchConditionText = combineWhenConditions(entry.getConditions(), whenExpression.getSubjectExpression());
-                builder.ifBranch(branchConditionText, branch != null ? branch.getText() : "");
+                builder.ifBranch(branchConditionText, JetPsiUtil.getText(branch));
             }
         }
 

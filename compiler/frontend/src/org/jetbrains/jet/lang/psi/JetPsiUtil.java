@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -718,4 +717,9 @@ public class JetPsiUtil {
             return true;
         }
     };
+
+    @NotNull
+    public static String getText(@Nullable PsiElement element) {
+        return element != null ? element.getText() : "";
+    }
 }
