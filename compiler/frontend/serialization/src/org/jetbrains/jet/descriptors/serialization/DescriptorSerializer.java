@@ -78,10 +78,10 @@ public class DescriptorSerializer {
 
         for (DeclarationDescriptor descriptor : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             // TODO: other than functions
-            if (descriptor instanceof FunctionDescriptor) {
-                FunctionDescriptor function = (FunctionDescriptor) descriptor;
-                if (function.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-                builder.addMembers(local.functionProto(function));
+            if (descriptor instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
+                if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
+                builder.addMembers(local.callableProto(member));
             }
         }
 
@@ -89,15 +89,16 @@ public class DescriptorSerializer {
     }
 
     @NotNull
-    public ProtoBuf.Callable.Builder functionProto(@NotNull FunctionDescriptor function) {
+    public ProtoBuf.Callable.Builder callableProto(@NotNull CallableMemberDescriptor descriptor) {
         ProtoBuf.Callable.Builder builder = ProtoBuf.Callable.newBuilder();
 
         // TODO setter flags
-        builder.setFlags(Flags.getCallableFlags(function.getVisibility(),
-                                                function.getModality(),
-                                                function.getKind(),
-                                                callableKind(function),
-                                                function instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) function).isInline())
+        builder.setFlags(Flags.getCallableFlags(descriptor.getVisibility(),
+                                                descriptor.getModality(),
+                                                descriptor.getKind(),
+                                                callableKind(descriptor),
+                                                descriptor instanceof SimpleFunctionDescriptor &&
+                                                ((SimpleFunctionDescriptor) descriptor).isInline())
         );
         //TODO builder.setExtraVisibility()
 
@@ -105,22 +106,22 @@ public class DescriptorSerializer {
 
         DescriptorSerializer local = this;//createChildSerializer();
 
-        for (TypeParameterDescriptor typeParameterDescriptor : function.getTypeParameters()) {
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             builder.addTypeParameters(local.typeParameter(typeParameterDescriptor));
         }
 
-        ReceiverParameterDescriptor receiverParameter = function.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         if (receiverParameter != null) {
             builder.setReceiverType(local.type(receiverParameter.getType()));
         }
 
-        builder.setName(nameTable.getSimpleNameIndex(function.getName()));
+        builder.setName(nameTable.getSimpleNameIndex(descriptor.getName()));
 
-        for (ValueParameterDescriptor valueParameterDescriptor : function.getValueParameters()) {
+        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             builder.addValueParameters(local.valueParameter(valueParameterDescriptor));
         }
 
-        builder.setReturnType(local.type(function.getReturnType()));
+        builder.setReturnType(local.type(descriptor.getReturnType()));
 
         return builder;
     }

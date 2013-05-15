@@ -31,10 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class DeserializedClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
 
@@ -227,13 +224,25 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
         @Override
         protected void computeNonDeclaredFunctions(
-                @NotNull Name name, @NotNull List<FunctionDescriptor> functions
+                @NotNull Name name, @NotNull Collection<FunctionDescriptor> functions
         ) {
             Collection<FunctionDescriptor> fromSupertypes = new ArrayList<FunctionDescriptor>();
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
             }
             generateFakeOverrides(name, fromSupertypes, functions);
+        }
+
+        @Override
+        protected void computeNonDeclaredProperties(
+                @NotNull Name name, @NotNull Collection<PropertyDescriptor> property
+        ) {
+            Collection<PropertyDescriptor> fromSupertypes = new ArrayList<PropertyDescriptor>();
+            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+                //noinspection unchecked
+                fromSupertypes.addAll((Collection) supertype.getMemberScope().getProperties(name));
+            }
+            generateFakeOverrides(name, fromSupertypes, property);
         }
 
         private <D extends CallableMemberDescriptor> void generateFakeOverrides(

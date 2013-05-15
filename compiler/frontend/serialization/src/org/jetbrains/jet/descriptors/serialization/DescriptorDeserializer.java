@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
@@ -88,11 +89,36 @@ public class DescriptorDeserializer {
                 return loadFunction(proto);
             case VAL:
             case VAR:
-                break;
+                return loadProperty(proto);
             case CONSTRUCTOR:
                 break;
         }
         throw new IllegalArgumentException("Unsupported callable kind: " + callableKind);
+    }
+
+    @NotNull
+    private PropertyDescriptor loadProperty(@NotNull Callable proto) {
+        int flags = proto.getFlags();
+        PropertyDescriptorImpl property = new PropertyDescriptorImpl(
+                containingDeclaration,
+                // TODO: annotations
+                Collections.<AnnotationDescriptor>emptyList(),
+                modality(Flags.getModality(flags)),
+                visibility(Flags.getVisibility(flags)),
+                Flags.getCallableKind(flags) == Callable.CallableKind.VAR,
+                nameResolver.getName(proto.getName()),
+                memberKind(Flags.getMemberKind(flags))
+        );
+        DescriptorDeserializer local = new DescriptorDeserializer(this, property, nameResolver);
+        List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
+        property.setType(
+                local.typeDeserializer.type(proto.getReturnType()),
+                typeParameters,
+                // TODO: expected this object
+                null,
+                local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null)
+        );
+        return property;
     }
 
     @NotNull
@@ -106,11 +132,12 @@ public class DescriptorDeserializer {
                 memberKind(Flags.getMemberKind(flags))
         );
         DescriptorDeserializer local = new DescriptorDeserializer(this, function, nameResolver);
+        List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
         function.initialize(
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 // TODO: expectedThisObject
                 null,
-                local.typeParameters(proto.getTypeParametersList()),
+                typeParameters,
                 local.valueParameters(proto.getValueParametersList()),
                 local.typeDeserializer.type(proto.getReturnType()),
                 modality(Flags.getModality(flags)),

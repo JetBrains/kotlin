@@ -34,6 +34,19 @@ import java.util.*;
 
 public abstract class DeserializedMemberScope implements JetScope {
 
+    private static final Filter<ProtoBuf.Callable.CallableKind> FUNCTION = new Filter<ProtoBuf.Callable.CallableKind>() {
+        @Override
+        public boolean accept(ProtoBuf.Callable.CallableKind value) {
+            return value == ProtoBuf.Callable.CallableKind.FUN;
+        }
+    };
+    private static final Filter<ProtoBuf.Callable.CallableKind> PROPERTY = new Filter<ProtoBuf.Callable.CallableKind>() {
+        @Override
+        public boolean accept(ProtoBuf.Callable.CallableKind value) {
+            return value == ProtoBuf.Callable.CallableKind.VAL || value == ProtoBuf.Callable.CallableKind.VAR;
+        }
+    };
+
     private final DeclarationDescriptor containingDeclaration;
     private final DescriptorDeserializer deserializer;
     private final Map<Name, List<ProtoBuf.Callable>> membersProtos;
@@ -90,13 +103,13 @@ public abstract class DeserializedMemberScope implements JetScope {
     }
 
     @NotNull
-    private <D extends CallableMemberDescriptor> List<D> computeMembersByName(Name name, ProtoBuf.Callable.CallableKind callableKind) {
+    private <D extends CallableMemberDescriptor> Collection<D> computeMembersByName(Name name, Filter<ProtoBuf.Callable.CallableKind> callableKind) {
         List<ProtoBuf.Callable> memberProtos = membersProtos.get(name);
 
-        List<D> descriptors = new ArrayList<D>(memberProtos != null ? memberProtos.size() : 0);
+        Collection<D> descriptors = new LinkedHashSet<D>(memberProtos != null ? memberProtos.size() : 0);
         if (memberProtos != null) {
             for (ProtoBuf.Callable memberProto : memberProtos) {
-                if (Flags.getCallableKind(memberProto.getFlags()) == callableKind) {
+                if (callableKind.accept(Flags.getCallableKind(memberProto.getFlags()))) {
                     //noinspection unchecked
                     descriptors.add((D) deserializer.loadCallable(memberProto));
                 }
@@ -107,13 +120,12 @@ public abstract class DeserializedMemberScope implements JetScope {
 
     @NotNull
     private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
-        List<FunctionDescriptor> descriptors = computeMembersByName(name, ProtoBuf.Callable.CallableKind.FUN);
+        Collection<FunctionDescriptor> descriptors = computeMembersByName(name, FUNCTION);
         computeNonDeclaredFunctions(name, descriptors);
         return descriptors;
     }
 
-    protected void computeNonDeclaredFunctions(@NotNull Name name, @NotNull List<FunctionDescriptor> functions) {
-
+    protected void computeNonDeclaredFunctions(@NotNull Name name, @NotNull Collection<FunctionDescriptor> functions) {
     }
 
     @NotNull
@@ -124,7 +136,13 @@ public abstract class DeserializedMemberScope implements JetScope {
 
     @NotNull
     private Collection<VariableDescriptor> computeProperties(@NotNull Name name) {
-        return Collections.emptyList(); // TODO
+        Collection<PropertyDescriptor> descriptors = computeMembersByName(name, PROPERTY);
+        computeNonDeclaredProperties(name, descriptors);
+        //noinspection unchecked
+        return (Collection) descriptors;
+    }
+
+    protected void computeNonDeclaredProperties(@NotNull Name name, @NotNull Collection<PropertyDescriptor> descriptors) {
     }
 
     @NotNull
@@ -219,6 +237,10 @@ public abstract class DeserializedMemberScope implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
         return getAllDescriptors();
+    }
+
+    private interface Filter<T> {
+        boolean accept(T value);
     }
 
 }
