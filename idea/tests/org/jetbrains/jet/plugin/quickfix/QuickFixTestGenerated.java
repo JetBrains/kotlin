@@ -1023,9 +1023,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeCantChangeMultipleOverriddenPropertiesTypes.kt");
             }
             
-            @TestMetadata("beforeChangeOverriddenPropertyType.kt")
-            public void testChangeOverriddenPropertyType() throws Exception {
-                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverriddenPropertyType.kt");
+            @TestMetadata("beforeCantChangeOverriddenPropertyTypeToMatchOverridingProperty.kt")
+            public void testCantChangeOverriddenPropertyTypeToMatchOverridingProperty() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeCantChangeOverriddenPropertyTypeToMatchOverridingProperty.kt");
+            }
+            
+            @TestMetadata("beforeCantChangePropertyTypeToMatchOverridenProperties.kt")
+            public void testCantChangePropertyTypeToMatchOverridenProperties() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeCantChangePropertyTypeToMatchOverridenProperties.kt");
+            }
+            
+            @TestMetadata("beforeChangeOverriddenPropertyType1.kt")
+            public void testChangeOverriddenPropertyType1() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverriddenPropertyType1.kt");
+            }
+            
+            @TestMetadata("beforeChangeOverriddenPropertyType2.kt")
+            public void testChangeOverriddenPropertyType2() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverriddenPropertyType2.kt");
             }
             
             @TestMetadata("beforeChangeOverridingPropertyTypeToFunctionType.kt")

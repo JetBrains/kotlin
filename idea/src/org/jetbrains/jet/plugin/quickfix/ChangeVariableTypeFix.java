@@ -106,9 +106,6 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                 if (property != null) {
                     BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(property);
                     JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
-                    if (lowerBoundOfOverriddenPropertiesTypes != null) {
-                        actions.add(new ChangeVariableTypeFix(property, lowerBoundOfOverriddenPropertiesTypes));
-                    }
 
                     PropertyDescriptor descriptor = (PropertyDescriptor) context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
                     assert descriptor != null : "Descriptor of property not available in binding context";
@@ -116,18 +113,31 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                     assert propertyType != null : "Property type cannot be null if it mismatch something";
 
                     List<PropertyDescriptor> overriddenMismatchingProperties = new LinkedList<PropertyDescriptor>();
+                    boolean canChangeOverriddenPropertyType = true;
                     for (PropertyDescriptor overriddenProperty: descriptor.getOverriddenDescriptors()) {
                         JetType overriddenPropertyType = overriddenProperty.getReturnType();
-                        if (overriddenPropertyType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(propertyType, overriddenPropertyType)) {
-                            overriddenMismatchingProperties.add(overriddenProperty);
+                        if (overriddenPropertyType != null) {
+                            if (!JetTypeChecker.INSTANCE.isSubtypeOf(propertyType, overriddenPropertyType)) {
+                                overriddenMismatchingProperties.add(overriddenProperty);
+                            }
+                            else if (overriddenProperty.isVar() && !JetTypeChecker.INSTANCE.equalTypes(overriddenPropertyType, propertyType)) {
+                                canChangeOverriddenPropertyType = false;
+                            }
+                            if (overriddenProperty.isVar() && lowerBoundOfOverriddenPropertiesTypes != null &&
+                                !JetTypeChecker.INSTANCE.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
+                                lowerBoundOfOverriddenPropertiesTypes = null;
+                            }
                         }
                     }
 
-                    if (overriddenMismatchingProperties.size() == 1) {
-                        JetProperty overriddenProperty =
-                                (JetProperty) BindingContextUtils.descriptorToDeclaration(context, overriddenMismatchingProperties.get(0));
-                        if (overriddenProperty != null) {
-                            actions.add(new ChangeVariableTypeFix(overriddenProperty, propertyType));
+                    if (lowerBoundOfOverriddenPropertiesTypes != null) {
+                        actions.add(new ChangeVariableTypeFix(property, lowerBoundOfOverriddenPropertiesTypes));
+                    }
+
+                    if (overriddenMismatchingProperties.size() == 1 && canChangeOverriddenPropertyType) {
+                        PsiElement overriddenProperty = BindingContextUtils.descriptorToDeclaration(context, overriddenMismatchingProperties.get(0));
+                        if (overriddenProperty instanceof JetProperty) {
+                            actions.add(new ChangeVariableTypeFix((JetProperty) overriddenProperty, propertyType));
                         }
                     }
                 }
