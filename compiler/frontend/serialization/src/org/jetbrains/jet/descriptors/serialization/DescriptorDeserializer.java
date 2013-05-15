@@ -246,14 +246,10 @@ public class DescriptorDeserializer {
     }
 
     private void addTypeParameterBounds(TypeParameter proto, TypeParameterDescriptorImpl descriptor) {
-        if (proto.getUpperBoundsCount() == 0) {
-            descriptor.addDefaultUpperBound();
+        for (Type upperBound : proto.getUpperBoundsList()) {
+            descriptor.addUpperBound(typeDeserializer.type(upperBound));
         }
-        else {
-            for (Type upperBound : proto.getUpperBoundsList()) {
-                descriptor.addUpperBound(typeDeserializer.type(upperBound));
-            }
-        }
+        descriptor.addDefaultUpperBound();
         descriptor.setInitialized();
     }
 
