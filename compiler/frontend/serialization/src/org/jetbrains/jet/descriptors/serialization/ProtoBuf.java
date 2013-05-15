@@ -3354,25 +3354,29 @@ public final class ProtoBuf {
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getSupertypes(int index);
     int getSupertypesCount();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Class.NestedClass nestedClasses = 7;
-    java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass> 
-        getNestedClassesList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass getNestedClasses(int index);
-    int getNestedClassesCount();
+    // repeated int32 nestedClassNames = 7;
+    java.util.List<java.lang.Integer> getNestedClassNamesList();
+    int getNestedClassNamesCount();
+    int getNestedClassNames(int index);
     
-    // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 8;
+    // repeated int32 nestedObjectNames = 8;
+    java.util.List<java.lang.Integer> getNestedObjectNamesList();
+    int getNestedObjectNamesCount();
+    int getNestedObjectNames(int index);
+    
+    // optional bool classObjectPresent = 9 [default = false];
+    boolean hasClassObjectPresent();
+    boolean getClassObjectPresent();
+    
+    // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 10;
     boolean hasPrimaryConstructor();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getPrimaryConstructor();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 9;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 11;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> 
         getMembersList();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMembers(int index);
     int getMembersCount();
-    
-    // optional .org.jetbrains.jet.descriptors.serialization.Class.NestedClass classObject = 10;
-    boolean hasClassObject();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass getClassObject();
   }
   public static final class Class extends
       com.google.protobuf.GeneratedMessageLite
@@ -3446,297 +3450,6 @@ public final class ProtoBuf {
       }
       
       // @@protoc_insertion_point(enum_scope:org.jetbrains.jet.descriptors.serialization.Class.Kind)
-    }
-    
-    public interface NestedClassOrBuilder
-        extends com.google.protobuf.MessageLiteOrBuilder {
-      
-      // required int32 name = 1;
-      boolean hasName();
-      int getName();
-    }
-    public static final class NestedClass extends
-        com.google.protobuf.GeneratedMessageLite
-        implements NestedClassOrBuilder {
-      // Use NestedClass.newBuilder() to construct.
-      private NestedClass(Builder builder) {
-        super(builder);
-      }
-      private NestedClass(boolean noInit) {}
-      
-      private static final NestedClass defaultInstance;
-      public static NestedClass getDefaultInstance() {
-        return defaultInstance;
-      }
-      
-      public NestedClass getDefaultInstanceForType() {
-        return defaultInstance;
-      }
-      
-      private int bitField0_;
-      // required int32 name = 1;
-      public static final int NAME_FIELD_NUMBER = 1;
-      private int name_;
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      public int getName() {
-        return name_;
-      }
-      
-      private void initFields() {
-        name_ = 0;
-      }
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
-        
-        if (!hasName()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        memoizedIsInitialized = 1;
-        return true;
-      }
-      
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        getSerializedSize();
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          output.writeInt32(1, name_);
-        }
-      }
-      
-      private int memoizedSerializedSize = -1;
-      public int getSerializedSize() {
-        int size = memoizedSerializedSize;
-        if (size != -1) return size;
-      
-        size = 0;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeInt32Size(1, name_);
-        }
-        memoizedSerializedSize = size;
-        return size;
-      }
-      
-      private static final long serialVersionUID = 0L;
-      @java.lang.Override
-      protected java.lang.Object writeReplace()
-          throws java.io.ObjectStreamException {
-        return super.writeReplace();
-      }
-      
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data).buildParsed();
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data, extensionRegistry)
-                 .buildParsed();
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data).buildParsed();
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return newBuilder().mergeFrom(data, extensionRegistry)
-                 .buildParsed();
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return newBuilder().mergeFrom(input).buildParsed();
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return newBuilder().mergeFrom(input, extensionRegistry)
-                 .buildParsed();
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        Builder builder = newBuilder();
-        if (builder.mergeDelimitedFrom(input)) {
-          return builder.buildParsed();
-        } else {
-          return null;
-        }
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        Builder builder = newBuilder();
-        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-          return builder.buildParsed();
-        } else {
-          return null;
-        }
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return newBuilder().mergeFrom(input).buildParsed();
-      }
-      public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return newBuilder().mergeFrom(input, extensionRegistry)
-                 .buildParsed();
-      }
-      
-      public static Builder newBuilder() { return Builder.create(); }
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass prototype) {
-        return newBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() { return newBuilder(this); }
-      
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageLite.Builder<
-            org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass, Builder>
-          implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClassOrBuilder {
-        // Construct using org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-        
-        private void maybeForceBuilderInitialization() {
-        }
-        private static Builder create() {
-          return new Builder();
-        }
-        
-        public Builder clear() {
-          super.clear();
-          name_ = 0;
-          bitField0_ = (bitField0_ & ~0x00000001);
-          return this;
-        }
-        
-        public Builder clone() {
-          return create().mergeFrom(buildPartial());
-        }
-        
-        public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass getDefaultInstanceForType() {
-          return org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.getDefaultInstance();
-        }
-        
-        public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass build() {
-          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-        
-        private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass buildParsed()
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(
-              result).asInvalidProtocolBufferException();
-          }
-          return result;
-        }
-        
-        public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass buildPartial() {
-          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass result = new org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass(this);
-          int from_bitField0_ = bitField0_;
-          int to_bitField0_ = 0;
-          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-            to_bitField0_ |= 0x00000001;
-          }
-          result.name_ = name_;
-          result.bitField0_ = to_bitField0_;
-          return result;
-        }
-        
-        public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass other) {
-          if (other == org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.getDefaultInstance()) return this;
-          if (other.hasName()) {
-            setName(other.getName());
-          }
-          return this;
-        }
-        
-        public final boolean isInitialized() {
-          if (!hasName()) {
-            
-            return false;
-          }
-          return true;
-        }
-        
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          while (true) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                
-                return this;
-              default: {
-                if (!parseUnknownField(input, extensionRegistry, tag)) {
-                  
-                  return this;
-                }
-                break;
-              }
-              case 8: {
-                bitField0_ |= 0x00000001;
-                name_ = input.readInt32();
-                break;
-              }
-            }
-          }
-        }
-        
-        private int bitField0_;
-        
-        // required int32 name = 1;
-        private int name_ ;
-        public boolean hasName() {
-          return ((bitField0_ & 0x00000001) == 0x00000001);
-        }
-        public int getName() {
-          return name_;
-        }
-        public Builder setName(int value) {
-          bitField0_ |= 0x00000001;
-          name_ = value;
-          
-          return this;
-        }
-        public Builder clearName() {
-          bitField0_ = (bitField0_ & ~0x00000001);
-          name_ = 0;
-          
-          return this;
-        }
-        
-        // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.Class.NestedClass)
-      }
-      
-      static {
-        defaultInstance = new NestedClass(true);
-        defaultInstance.initFields();
-      }
-      
-      // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.Class.NestedClass)
     }
     
     private int bitField0_;
@@ -3855,39 +3568,56 @@ public final class ProtoBuf {
       return supertypes_.get(index);
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Class.NestedClass nestedClasses = 7;
-    public static final int NESTEDCLASSES_FIELD_NUMBER = 7;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass> nestedClasses_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass> getNestedClassesList() {
-      return nestedClasses_;
+    // repeated int32 nestedClassNames = 7;
+    public static final int NESTEDCLASSNAMES_FIELD_NUMBER = 7;
+    private java.util.List<java.lang.Integer> nestedClassNames_;
+    public java.util.List<java.lang.Integer>
+        getNestedClassNamesList() {
+      return nestedClassNames_;
     }
-    public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClassOrBuilder> 
-        getNestedClassesOrBuilderList() {
-      return nestedClasses_;
+    public int getNestedClassNamesCount() {
+      return nestedClassNames_.size();
     }
-    public int getNestedClassesCount() {
-      return nestedClasses_.size();
-    }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass getNestedClasses(int index) {
-      return nestedClasses_.get(index);
-    }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClassOrBuilder getNestedClassesOrBuilder(
-        int index) {
-      return nestedClasses_.get(index);
+    public int getNestedClassNames(int index) {
+      return nestedClassNames_.get(index);
     }
     
-    // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 8;
-    public static final int PRIMARYCONSTRUCTOR_FIELD_NUMBER = 8;
+    // repeated int32 nestedObjectNames = 8;
+    public static final int NESTEDOBJECTNAMES_FIELD_NUMBER = 8;
+    private java.util.List<java.lang.Integer> nestedObjectNames_;
+    public java.util.List<java.lang.Integer>
+        getNestedObjectNamesList() {
+      return nestedObjectNames_;
+    }
+    public int getNestedObjectNamesCount() {
+      return nestedObjectNames_.size();
+    }
+    public int getNestedObjectNames(int index) {
+      return nestedObjectNames_.get(index);
+    }
+    
+    // optional bool classObjectPresent = 9 [default = false];
+    public static final int CLASSOBJECTPRESENT_FIELD_NUMBER = 9;
+    private boolean classObjectPresent_;
+    public boolean hasClassObjectPresent() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public boolean getClassObjectPresent() {
+      return classObjectPresent_;
+    }
+    
+    // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 10;
+    public static final int PRIMARYCONSTRUCTOR_FIELD_NUMBER = 10;
     private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable primaryConstructor_;
     public boolean hasPrimaryConstructor() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getPrimaryConstructor() {
       return primaryConstructor_;
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 9;
-    public static final int MEMBERS_FIELD_NUMBER = 9;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 11;
+    public static final int MEMBERS_FIELD_NUMBER = 11;
     private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> members_;
     public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> getMembersList() {
       return members_;
@@ -3907,16 +3637,6 @@ public final class ProtoBuf {
       return members_.get(index);
     }
     
-    // optional .org.jetbrains.jet.descriptors.serialization.Class.NestedClass classObject = 10;
-    public static final int CLASSOBJECT_FIELD_NUMBER = 10;
-    private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass classObject_;
-    public boolean hasClassObject() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass getClassObject() {
-      return classObject_;
-    }
-    
     private void initFields() {
       flags_ = 0;
       extraVisibility_ = "";
@@ -3924,10 +3644,11 @@ public final class ProtoBuf {
       name_ = 0;
       typeParameters_ = java.util.Collections.emptyList();
       supertypes_ = java.util.Collections.emptyList();
-      nestedClasses_ = java.util.Collections.emptyList();
+      nestedClassNames_ = java.util.Collections.emptyList();;
+      nestedObjectNames_ = java.util.Collections.emptyList();;
+      classObjectPresent_ = false;
       primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
       members_ = java.util.Collections.emptyList();
-      classObject_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3950,12 +3671,6 @@ public final class ProtoBuf {
           return false;
         }
       }
-      for (int i = 0; i < getNestedClassesCount(); i++) {
-        if (!getNestedClasses(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       if (hasPrimaryConstructor()) {
         if (!getPrimaryConstructor().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -3964,12 +3679,6 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < getMembersCount(); i++) {
         if (!getMembers(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasClassObject()) {
-        if (!getClassObject().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -3999,17 +3708,20 @@ public final class ProtoBuf {
       for (int i = 0; i < supertypes_.size(); i++) {
         output.writeMessage(6, supertypes_.get(i));
       }
-      for (int i = 0; i < nestedClasses_.size(); i++) {
-        output.writeMessage(7, nestedClasses_.get(i));
+      for (int i = 0; i < nestedClassNames_.size(); i++) {
+        output.writeInt32(7, nestedClassNames_.get(i));
+      }
+      for (int i = 0; i < nestedObjectNames_.size(); i++) {
+        output.writeInt32(8, nestedObjectNames_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(8, primaryConstructor_);
-      }
-      for (int i = 0; i < members_.size(); i++) {
-        output.writeMessage(9, members_.get(i));
+        output.writeBool(9, classObjectPresent_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeMessage(10, classObject_);
+        output.writeMessage(10, primaryConstructor_);
+      }
+      for (int i = 0; i < members_.size(); i++) {
+        output.writeMessage(11, members_.get(i));
       }
     }
     
@@ -4043,21 +3755,35 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(6, supertypes_.get(i));
       }
-      for (int i = 0; i < nestedClasses_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, nestedClasses_.get(i));
+      {
+        int dataSize = 0;
+        for (int i = 0; i < nestedClassNames_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(nestedClassNames_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getNestedClassNamesList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < nestedObjectNames_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(nestedObjectNames_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getNestedObjectNamesList().size();
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, primaryConstructor_);
-      }
-      for (int i = 0; i < members_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, members_.get(i));
+          .computeBoolSize(9, classObjectPresent_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(10, classObject_);
+          .computeMessageSize(10, primaryConstructor_);
+      }
+      for (int i = 0; i < members_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(11, members_.get(i));
       }
       memoizedSerializedSize = size;
       return size;
@@ -4173,14 +3899,16 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000010);
         supertypes_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000020);
-        nestedClasses_ = java.util.Collections.emptyList();
+        nestedClassNames_ = java.util.Collections.emptyList();;
         bitField0_ = (bitField0_ & ~0x00000040);
-        primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
+        nestedObjectNames_ = java.util.Collections.emptyList();;
         bitField0_ = (bitField0_ & ~0x00000080);
-        members_ = java.util.Collections.emptyList();
+        classObjectPresent_ = false;
         bitField0_ = (bitField0_ & ~0x00000100);
-        classObject_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.getDefaultInstance();
+        primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000200);
+        members_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000400);
         return this;
       }
       
@@ -4242,23 +3970,28 @@ public final class ProtoBuf {
         }
         result.supertypes_ = supertypes_;
         if (((bitField0_ & 0x00000040) == 0x00000040)) {
-          nestedClasses_ = java.util.Collections.unmodifiableList(nestedClasses_);
+          nestedClassNames_ = java.util.Collections.unmodifiableList(nestedClassNames_);
           bitField0_ = (bitField0_ & ~0x00000040);
         }
-        result.nestedClasses_ = nestedClasses_;
-        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+        result.nestedClassNames_ = nestedClassNames_;
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          nestedObjectNames_ = java.util.Collections.unmodifiableList(nestedObjectNames_);
+          bitField0_ = (bitField0_ & ~0x00000080);
+        }
+        result.nestedObjectNames_ = nestedObjectNames_;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
           to_bitField0_ |= 0x00000008;
         }
-        result.primaryConstructor_ = primaryConstructor_;
-        if (((bitField0_ & 0x00000100) == 0x00000100)) {
-          members_ = java.util.Collections.unmodifiableList(members_);
-          bitField0_ = (bitField0_ & ~0x00000100);
-        }
-        result.members_ = members_;
+        result.classObjectPresent_ = classObjectPresent_;
         if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
           to_bitField0_ |= 0x00000010;
         }
-        result.classObject_ = classObject_;
+        result.primaryConstructor_ = primaryConstructor_;
+        if (((bitField0_ & 0x00000400) == 0x00000400)) {
+          members_ = java.util.Collections.unmodifiableList(members_);
+          bitField0_ = (bitField0_ & ~0x00000400);
+        }
+        result.members_ = members_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -4304,15 +4037,28 @@ public final class ProtoBuf {
           }
           
         }
-        if (!other.nestedClasses_.isEmpty()) {
-          if (nestedClasses_.isEmpty()) {
-            nestedClasses_ = other.nestedClasses_;
+        if (!other.nestedClassNames_.isEmpty()) {
+          if (nestedClassNames_.isEmpty()) {
+            nestedClassNames_ = other.nestedClassNames_;
             bitField0_ = (bitField0_ & ~0x00000040);
           } else {
-            ensureNestedClassesIsMutable();
-            nestedClasses_.addAll(other.nestedClasses_);
+            ensureNestedClassNamesIsMutable();
+            nestedClassNames_.addAll(other.nestedClassNames_);
           }
           
+        }
+        if (!other.nestedObjectNames_.isEmpty()) {
+          if (nestedObjectNames_.isEmpty()) {
+            nestedObjectNames_ = other.nestedObjectNames_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+          } else {
+            ensureNestedObjectNamesIsMutable();
+            nestedObjectNames_.addAll(other.nestedObjectNames_);
+          }
+          
+        }
+        if (other.hasClassObjectPresent()) {
+          setClassObjectPresent(other.getClassObjectPresent());
         }
         if (other.hasPrimaryConstructor()) {
           mergePrimaryConstructor(other.getPrimaryConstructor());
@@ -4320,15 +4066,12 @@ public final class ProtoBuf {
         if (!other.members_.isEmpty()) {
           if (members_.isEmpty()) {
             members_ = other.members_;
-            bitField0_ = (bitField0_ & ~0x00000100);
+            bitField0_ = (bitField0_ & ~0x00000400);
           } else {
             ensureMembersIsMutable();
             members_.addAll(other.members_);
           }
           
-        }
-        if (other.hasClassObject()) {
-          mergeClassObject(other.getClassObject());
         }
         return this;
       }
@@ -4350,12 +4093,6 @@ public final class ProtoBuf {
             return false;
           }
         }
-        for (int i = 0; i < getNestedClassesCount(); i++) {
-          if (!getNestedClasses(i).isInitialized()) {
-            
-            return false;
-          }
-        }
         if (hasPrimaryConstructor()) {
           if (!getPrimaryConstructor().isInitialized()) {
             
@@ -4364,12 +4101,6 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getMembersCount(); i++) {
           if (!getMembers(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasClassObject()) {
-          if (!getClassObject().isInitialized()) {
             
             return false;
           }
@@ -4427,13 +4158,40 @@ public final class ProtoBuf {
               addSupertypes(subBuilder.buildPartial());
               break;
             }
+            case 56: {
+              ensureNestedClassNamesIsMutable();
+              nestedClassNames_.add(input.readInt32());
+              break;
+            }
             case 58: {
-              org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.newBuilder();
-              input.readMessage(subBuilder, extensionRegistry);
-              addNestedClasses(subBuilder.buildPartial());
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              while (input.getBytesUntilLimit() > 0) {
+                addNestedClassNames(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+            case 64: {
+              ensureNestedObjectNamesIsMutable();
+              nestedObjectNames_.add(input.readInt32());
               break;
             }
             case 66: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              while (input.getBytesUntilLimit() > 0) {
+                addNestedObjectNames(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+            case 72: {
+              bitField0_ |= 0x00000100;
+              classObjectPresent_ = input.readBool();
+              break;
+            }
+            case 82: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder();
               if (hasPrimaryConstructor()) {
                 subBuilder.mergeFrom(getPrimaryConstructor());
@@ -4442,19 +4200,10 @@ public final class ProtoBuf {
               setPrimaryConstructor(subBuilder.buildPartial());
               break;
             }
-            case 74: {
+            case 90: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addMembers(subBuilder.buildPartial());
-              break;
-            }
-            case 82: {
-              org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.newBuilder();
-              if (hasClassObject()) {
-                subBuilder.mergeFrom(getClassObject());
-              }
-              input.readMessage(subBuilder, extensionRegistry);
-              setClassObject(subBuilder.buildPartial());
               break;
             }
           }
@@ -4808,99 +4557,121 @@ public final class ProtoBuf {
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.Class.NestedClass nestedClasses = 7;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass> nestedClasses_ =
-        java.util.Collections.emptyList();
-      private void ensureNestedClassesIsMutable() {
+      // repeated int32 nestedClassNames = 7;
+      private java.util.List<java.lang.Integer> nestedClassNames_ = java.util.Collections.emptyList();;
+      private void ensureNestedClassNamesIsMutable() {
         if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-          nestedClasses_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass>(nestedClasses_);
+          nestedClassNames_ = new java.util.ArrayList<java.lang.Integer>(nestedClassNames_);
           bitField0_ |= 0x00000040;
          }
       }
-      
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass> getNestedClassesList() {
-        return java.util.Collections.unmodifiableList(nestedClasses_);
+      public java.util.List<java.lang.Integer>
+          getNestedClassNamesList() {
+        return java.util.Collections.unmodifiableList(nestedClassNames_);
       }
-      public int getNestedClassesCount() {
-        return nestedClasses_.size();
+      public int getNestedClassNamesCount() {
+        return nestedClassNames_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass getNestedClasses(int index) {
-        return nestedClasses_.get(index);
+      public int getNestedClassNames(int index) {
+        return nestedClassNames_.get(index);
       }
-      public Builder setNestedClasses(
-          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureNestedClassesIsMutable();
-        nestedClasses_.set(index, value);
+      public Builder setNestedClassNames(
+          int index, int value) {
+        ensureNestedClassNamesIsMutable();
+        nestedClassNames_.set(index, value);
         
         return this;
       }
-      public Builder setNestedClasses(
-          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.Builder builderForValue) {
-        ensureNestedClassesIsMutable();
-        nestedClasses_.set(index, builderForValue.build());
+      public Builder addNestedClassNames(int value) {
+        ensureNestedClassNamesIsMutable();
+        nestedClassNames_.add(value);
         
         return this;
       }
-      public Builder addNestedClasses(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureNestedClassesIsMutable();
-        nestedClasses_.add(value);
+      public Builder addAllNestedClassNames(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureNestedClassNamesIsMutable();
+        super.addAll(values, nestedClassNames_);
         
         return this;
       }
-      public Builder addNestedClasses(
-          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureNestedClassesIsMutable();
-        nestedClasses_.add(index, value);
-        
-        return this;
-      }
-      public Builder addNestedClasses(
-          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.Builder builderForValue) {
-        ensureNestedClassesIsMutable();
-        nestedClasses_.add(builderForValue.build());
-        
-        return this;
-      }
-      public Builder addNestedClasses(
-          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.Builder builderForValue) {
-        ensureNestedClassesIsMutable();
-        nestedClasses_.add(index, builderForValue.build());
-        
-        return this;
-      }
-      public Builder addAllNestedClasses(
-          java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass> values) {
-        ensureNestedClassesIsMutable();
-        super.addAll(values, nestedClasses_);
-        
-        return this;
-      }
-      public Builder clearNestedClasses() {
-        nestedClasses_ = java.util.Collections.emptyList();
+      public Builder clearNestedClassNames() {
+        nestedClassNames_ = java.util.Collections.emptyList();;
         bitField0_ = (bitField0_ & ~0x00000040);
         
         return this;
       }
-      public Builder removeNestedClasses(int index) {
-        ensureNestedClassesIsMutable();
-        nestedClasses_.remove(index);
+      
+      // repeated int32 nestedObjectNames = 8;
+      private java.util.List<java.lang.Integer> nestedObjectNames_ = java.util.Collections.emptyList();;
+      private void ensureNestedObjectNamesIsMutable() {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+          nestedObjectNames_ = new java.util.ArrayList<java.lang.Integer>(nestedObjectNames_);
+          bitField0_ |= 0x00000080;
+         }
+      }
+      public java.util.List<java.lang.Integer>
+          getNestedObjectNamesList() {
+        return java.util.Collections.unmodifiableList(nestedObjectNames_);
+      }
+      public int getNestedObjectNamesCount() {
+        return nestedObjectNames_.size();
+      }
+      public int getNestedObjectNames(int index) {
+        return nestedObjectNames_.get(index);
+      }
+      public Builder setNestedObjectNames(
+          int index, int value) {
+        ensureNestedObjectNamesIsMutable();
+        nestedObjectNames_.set(index, value);
+        
+        return this;
+      }
+      public Builder addNestedObjectNames(int value) {
+        ensureNestedObjectNamesIsMutable();
+        nestedObjectNames_.add(value);
+        
+        return this;
+      }
+      public Builder addAllNestedObjectNames(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureNestedObjectNamesIsMutable();
+        super.addAll(values, nestedObjectNames_);
+        
+        return this;
+      }
+      public Builder clearNestedObjectNames() {
+        nestedObjectNames_ = java.util.Collections.emptyList();;
+        bitField0_ = (bitField0_ & ~0x00000080);
         
         return this;
       }
       
-      // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 8;
+      // optional bool classObjectPresent = 9 [default = false];
+      private boolean classObjectPresent_ ;
+      public boolean hasClassObjectPresent() {
+        return ((bitField0_ & 0x00000100) == 0x00000100);
+      }
+      public boolean getClassObjectPresent() {
+        return classObjectPresent_;
+      }
+      public Builder setClassObjectPresent(boolean value) {
+        bitField0_ |= 0x00000100;
+        classObjectPresent_ = value;
+        
+        return this;
+      }
+      public Builder clearClassObjectPresent() {
+        bitField0_ = (bitField0_ & ~0x00000100);
+        classObjectPresent_ = false;
+        
+        return this;
+      }
+      
+      // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 10;
       private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
       public boolean hasPrimaryConstructor() {
-        return ((bitField0_ & 0x00000080) == 0x00000080);
+        return ((bitField0_ & 0x00000200) == 0x00000200);
       }
       public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getPrimaryConstructor() {
         return primaryConstructor_;
@@ -4911,18 +4682,18 @@ public final class ProtoBuf {
         }
         primaryConstructor_ = value;
         
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000200;
         return this;
       }
       public Builder setPrimaryConstructor(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder builderForValue) {
         primaryConstructor_ = builderForValue.build();
         
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000200;
         return this;
       }
       public Builder mergePrimaryConstructor(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
-        if (((bitField0_ & 0x00000080) == 0x00000080) &&
+        if (((bitField0_ & 0x00000200) == 0x00000200) &&
             primaryConstructor_ != org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance()) {
           primaryConstructor_ =
             org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder(primaryConstructor_).mergeFrom(value).buildPartial();
@@ -4930,23 +4701,23 @@ public final class ProtoBuf {
           primaryConstructor_ = value;
         }
         
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000200;
         return this;
       }
       public Builder clearPrimaryConstructor() {
         primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
         
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 9;
+      // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 11;
       private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> members_ =
         java.util.Collections.emptyList();
       private void ensureMembersIsMutable() {
-        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
           members_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable>(members_);
-          bitField0_ |= 0x00000100;
+          bitField0_ |= 0x00000400;
          }
       }
       
@@ -5018,7 +4789,7 @@ public final class ProtoBuf {
       }
       public Builder clearMembers() {
         members_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000400);
         
         return this;
       }
@@ -5026,49 +4797,6 @@ public final class ProtoBuf {
         ensureMembersIsMutable();
         members_.remove(index);
         
-        return this;
-      }
-      
-      // optional .org.jetbrains.jet.descriptors.serialization.Class.NestedClass classObject = 10;
-      private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass classObject_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.getDefaultInstance();
-      public boolean hasClassObject() {
-        return ((bitField0_ & 0x00000200) == 0x00000200);
-      }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass getClassObject() {
-        return classObject_;
-      }
-      public Builder setClassObject(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        classObject_ = value;
-        
-        bitField0_ |= 0x00000200;
-        return this;
-      }
-      public Builder setClassObject(
-          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.Builder builderForValue) {
-        classObject_ = builderForValue.build();
-        
-        bitField0_ |= 0x00000200;
-        return this;
-      }
-      public Builder mergeClassObject(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass value) {
-        if (((bitField0_ & 0x00000200) == 0x00000200) &&
-            classObject_ != org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.getDefaultInstance()) {
-          classObject_ =
-            org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.newBuilder(classObject_).mergeFrom(value).buildPartial();
-        } else {
-          classObject_ = value;
-        }
-        
-        bitField0_ |= 0x00000200;
-        return this;
-      }
-      public Builder clearClassObject() {
-        classObject_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Class.NestedClass.getDefaultInstance();
-        
-        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
       

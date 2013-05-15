@@ -114,19 +114,17 @@ message Class {
   repeated TypeParameter typeParameters = 5;
   repeated Type supertypes = 6;
 
+  // we store only names, because the actual information must reside in the corresponding .class files,
+  // to be obtainable through reflection at runtime
+  repeated int32 nestedClassNames = 7;
+  repeated int32 nestedObjectNames = 8;
 
-  message NestedClass {
-    // ??? visibility, inner, other flags
-    required int32 name = 1;
-  }
+  optional bool classObjectPresent = 9 [default = false];
 
-  repeated NestedClass nestedClasses = 7;
+  optional Callable primaryConstructor = 10;
+  // todo: other constructors?
 
-  optional Callable primaryConstructor = 8;
-
-  repeated Callable members = 9;
-
-  optional NestedClass classObject = 10;
+  repeated Callable members = 11;
 }
 
 message Callable {
