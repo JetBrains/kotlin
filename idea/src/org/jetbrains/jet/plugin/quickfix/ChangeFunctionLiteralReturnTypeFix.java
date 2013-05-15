@@ -74,12 +74,12 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
             return;
         }
 
-        JetParameter correspondingParameter = QuickFixUtil.getFunctionParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(element);
+        JetParameter correspondingParameter = QuickFixUtil.getParameterCorrespondingToFunctionLiteralPassedOutsideArgumentList(element);
         if (correspondingParameter != null) {
             JetTypeReference correspondingParameterTypeRef = correspondingParameter.getTypeReference();
             JetType parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef);
             if (parameterType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(eventualFunctionLiteralType, parameterType)) {
-                appropriateQuickFix = new ChangeFunctionParameterTypeFix(correspondingParameter, eventualFunctionLiteralType);
+                appropriateQuickFix = new ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType);
             }
             return;
         }

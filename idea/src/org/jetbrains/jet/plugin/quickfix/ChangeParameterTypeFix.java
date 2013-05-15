@@ -28,27 +28,31 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-public class ChangeFunctionParameterTypeFix extends JetIntentionAction<JetParameter> {
+public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
     private final String renderedType;
-    private final String containingFunctionName;
+    private final String containingDeclarationName;
+    private final boolean isPrimaryConstructorParameter;
 
-    public ChangeFunctionParameterTypeFix(@NotNull JetParameter element, @NotNull JetType type) {
+    public ChangeParameterTypeFix(@NotNull JetParameter element, @NotNull JetType type) {
         super(element);
         renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
-        JetFunction function = PsiTreeUtil.getParentOfType(element, JetFunction.class);
-        FqName functionFQName = function == null ? null : JetPsiUtil.getFQName(function);
-        containingFunctionName = functionFQName == null ? null : functionFQName.getFqName();
+        JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
+        isPrimaryConstructorParameter = declaration instanceof JetClass;
+        FqName declarationFQName = declaration == null ? null : JetPsiUtil.getFQName(declaration);
+        containingDeclarationName = declarationFQName == null ? null : declarationFQName.asString();
     }
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && containingFunctionName != null;
+        return super.isAvailable(project, editor, file) && containingDeclarationName != null;
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("change.function.parameter.type", element.getName(), containingFunctionName, renderedType);
+        return isPrimaryConstructorParameter ?
+            JetBundle.message("change.primary.constructor.parameter.type", element.getName(), containingDeclarationName, renderedType) :
+            JetBundle.message("change.function.parameter.type", element.getName(), containingDeclarationName, renderedType);
     }
 
     @NotNull
