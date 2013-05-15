@@ -22,13 +22,12 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.ExpectedHighlightingData;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.List;
 
-public class OverrideImplementLineMarkerTest extends LightCodeInsightFixtureTestCase {
-
+public class OverrideImplementLineMarkerTest extends JetLightCodeInsightFixtureTestCase {
     @Override
     protected String getBasePath() {
         return PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE + "/codeInsight/lineMarker";
@@ -52,7 +51,7 @@ public class OverrideImplementLineMarkerTest extends LightCodeInsightFixtureTest
 
     private void doTest() {
         try {
-            myFixture.configureByFile(getTestName(false) + ".kt");
+            myFixture.configureByFile(fileName());
             Project project = myFixture.getProject();
             Document document = myFixture.getEditor().getDocument();
 
