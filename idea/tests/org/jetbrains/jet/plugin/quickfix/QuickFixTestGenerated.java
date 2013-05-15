@@ -1439,6 +1439,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeExpectedTypeMismatch.kt");
             }
             
+            @TestMetadata("beforePropertyGetterInitializerTypeMismatch.kt")
+            public void testPropertyGetterInitializerTypeMismatch() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforePropertyGetterInitializerTypeMismatch.kt");
+            }
+            
             @TestMetadata("beforeReturnedExpresionCantEvaluateToExpresionThatTypeMismatch.kt")
             public void testReturnedExpresionCantEvaluateToExpresionThatTypeMismatch() throws Exception {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeReturnedExpresionCantEvaluateToExpresionThatTypeMismatch.kt");

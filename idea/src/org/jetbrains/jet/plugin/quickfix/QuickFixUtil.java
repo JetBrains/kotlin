@@ -175,14 +175,14 @@ public class QuickFixUtil {
         return true;
     }
 
-    public static boolean canFunctionReturnExpression(@NotNull JetFunction function, @NotNull JetExpression expression) {
-        if (function instanceof JetFunctionLiteral) {
-            JetBlockExpression functionLiteralBody = ((JetFunctionLiteral) function).getBodyExpression();
+    public static boolean canFunctionOrGetterReturnExpression(@NotNull JetDeclaration functionOrGetter, @NotNull JetExpression expression) {
+        if (functionOrGetter instanceof JetFunctionLiteral) {
+            JetBlockExpression functionLiteralBody = ((JetFunctionLiteral) functionOrGetter).getBodyExpression();
             PsiElement returnedElement = functionLiteralBody == null ? null : functionLiteralBody.getLastChild();
             return returnedElement instanceof JetExpression && canEvaluateTo((JetExpression) returnedElement, expression);
         }
         else {
-            if (function instanceof JetWithExpressionInitializer && canEvaluateTo(((JetWithExpressionInitializer) function).getInitializer(), expression)) {
+            if (functionOrGetter instanceof JetWithExpressionInitializer && canEvaluateTo(((JetWithExpressionInitializer) functionOrGetter).getInitializer(), expression)) {
                 return true;
             }
             JetReturnExpression returnExpression = PsiTreeUtil.getParentOfType(expression, JetReturnExpression.class);
