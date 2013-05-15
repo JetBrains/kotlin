@@ -66,6 +66,21 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration;
+    }
+
+    @NotNull
+    public NameResolver getNameResolver() {
+        return nameResolver;
+    }
+
+    @NotNull
+    public TypeDeserializer getTypeDeserializer() {
+        return typeDeserializer;
+    }
+
+    @NotNull
     private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
         return new DescriptorDeserializer(this, descriptor, nameResolver);
     }
@@ -151,7 +166,7 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<TypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
+    public List<TypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
         List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
             TypeParameter proto = protos.get(i);
