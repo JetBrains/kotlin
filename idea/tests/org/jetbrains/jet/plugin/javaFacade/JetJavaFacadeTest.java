@@ -20,16 +20,16 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
+public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
@@ -39,7 +39,11 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/javaFacade");
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return PluginTestCaseBase.getTestDataPathBase() + "/javaFacade";
     }
 
     public void testDoNotWrapFunFromLocalClass() {
@@ -135,7 +139,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testEa38770() {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         PsiReference reference = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
         assertNotNull(reference);
@@ -148,7 +152,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testInnerClass() throws Exception {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         JavaPsiFacade facade = myFixture.getJavaFacade();
         PsiClass mirrorClass = facade.findClass("foo.Outer.Inner", GlobalSearchScope.allScope(getProject()));
@@ -160,7 +164,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testClassObject() throws Exception {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         JavaPsiFacade facade = myFixture.getJavaFacade();
         PsiClass theClass = facade.findClass("foo.TheClass", GlobalSearchScope.allScope(getProject()));
@@ -188,7 +192,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testLightClassIsNotCreatedForBuiltins() throws Exception {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         PsiReference reference = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
         assert reference != null;
@@ -242,7 +246,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
 
     @NotNull
     private <T extends JetElement> T getPreparedElement(Class<T> elementClass) {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         int offset = myFixture.getEditor().getCaretModel().getOffset();
         PsiElement elementAt = myFixture.getFile().findElementAt(offset);
@@ -270,7 +274,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void doTestWrapClass() {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         int offset = myFixture.getEditor().getCaretModel().getOffset();
         PsiElement elementAt = myFixture.getFile().findElementAt(offset);
@@ -288,5 +292,10 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         // This invokes codegen with ClassBuilderMode = SIGNATURES
         // No exception/error should happen here
         lightClass.getDelegate();
+    }
+
+    @Override
+    protected String fileName() {
+        return getTestName(true) + ".kt";
     }
 }

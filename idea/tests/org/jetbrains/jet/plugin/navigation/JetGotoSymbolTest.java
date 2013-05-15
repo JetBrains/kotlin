@@ -16,40 +16,12 @@
 
 package org.jetbrains.jet.plugin.navigation;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-public class JetGotoSymbolTest extends LightCodeInsightFixtureTestCase {
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return new LightProjectDescriptor() {
-            @Override
-            public ModuleType getModuleType() {
-                return StdModuleTypes.JAVA;
-            }
-
-            @Override
-            public Sdk getSdk() {
-                return PluginTestCaseBase.jdkFromIdeaHome();
-            }
-
-            @Override
-            public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
-            }
-        };
-    }
-
+public class JetGotoSymbolTest extends JetLightCodeInsightFixtureTestCase {
     public void testProperties() {
         doTest();
     }
@@ -64,9 +36,12 @@ public class JetGotoSymbolTest extends LightCodeInsightFixtureTestCase {
     }
 
     protected void doTest() {
-        String fileName = getTestName(true) + ".kt";
-        myFixture.configureByFile(fileName);
-
+        myFixture.configureByFile(fileName());
         NavigationTestUtils.assertGotoSymbol(getProject(), myFixture.getEditor());
+    }
+
+    @Override
+    protected String fileName() {
+        return getTestName(true) + ".kt";
     }
 }
