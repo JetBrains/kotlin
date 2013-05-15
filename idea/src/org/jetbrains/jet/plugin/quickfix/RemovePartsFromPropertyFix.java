@@ -121,8 +121,8 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
         }
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetProperty> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
