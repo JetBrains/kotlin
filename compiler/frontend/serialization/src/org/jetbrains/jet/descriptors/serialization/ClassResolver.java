@@ -23,6 +23,14 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface ClassResolver {
 
+    ClassResolver EMPTY = new ClassResolver() {
+        @Nullable
+        @Override
+        public ClassDescriptor findClass(@NotNull FqName fqName) {
+            return null;
+        }
+    };
+
     @Nullable
     ClassDescriptor findClass(@NotNull FqName fqName);
 }
