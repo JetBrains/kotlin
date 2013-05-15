@@ -21,15 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.ArrayList;
@@ -83,55 +77,6 @@ public class DescriptorDeserializer {
     @NotNull
     private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
         return new DescriptorDeserializer(this, descriptor, nameResolver);
-    }
-
-    @NotNull
-    public ClassDescriptor loadClass(@NotNull ProtoBuf.Class proto) {
-        MutableClassDescriptor descriptor = new MutableClassDescriptor(
-                containingDeclaration,
-                // TODO: outerScope
-                JetScope.EMPTY,
-                // TODO: kind
-                ClassKind.CLASS,
-                // TODO: isInner
-                false,
-                nameResolver.getName(proto.getName())
-        );
-
-
-        // TODO: visibility
-        descriptor.setVisibility(Visibilities.INTERNAL);
-
-        // TODO: modality
-        descriptor.setModality(Modality.OPEN);
-
-        DescriptorDeserializer local = createChildDeserializer(descriptor);
-
-        descriptor.setTypeParameterDescriptors(local.typeParameters(proto.getTypeParametersList()));
-
-        // TODO: descriptor.setPrimaryConstructor();
-
-        // TODO: descriptor.setAnnotations();
-
-        WritableScopeImpl members = new WritableScopeImpl(JetScope.EMPTY, descriptor, RedeclarationHandler.DO_NOTHING,
-                                                         "Members of " + descriptor.getName());
-        descriptor.setScopeForMemberLookup(members);
-
-        for (Callable callable : proto.getMembersList()) {
-            // TODO: properties, classes etc
-            members.addFunctionDescriptor(local.loadFunction(callable));
-        }
-        members.changeLockLevel(WritableScope.LockLevel.READING);
-
-        List<JetType> supertypes = new ArrayList<JetType>(proto.getSupertypesCount());
-        for (Type supertype : proto.getSupertypesList()) {
-            supertypes.add(local.typeDeserializer.type(supertype));
-        }
-        descriptor.setSupertypes(supertypes);
-
-        descriptor.createTypeConstructor();
-
-        return descriptor;
     }
 
     @NotNull
