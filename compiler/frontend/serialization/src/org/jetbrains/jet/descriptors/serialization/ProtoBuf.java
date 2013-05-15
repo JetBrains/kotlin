@@ -4870,7 +4870,7 @@ public final class ProtoBuf {
       return defaultInstance;
     }
     
-    public enum Kind
+    public enum MemberKind
         implements com.google.protobuf.Internal.EnumLite {
       DECLARATION(0, 0),
       FAKE_OVERRIDE(1, 1),
@@ -4886,7 +4886,7 @@ public final class ProtoBuf {
       
       public final int getNumber() { return value; }
       
-      public static Kind valueOf(int value) {
+      public static MemberKind valueOf(int value) {
         switch (value) {
           case 0: return DECLARATION;
           case 1: return FAKE_OVERRIDE;
@@ -4896,25 +4896,72 @@ public final class ProtoBuf {
         }
       }
       
-      public static com.google.protobuf.Internal.EnumLiteMap<Kind>
+      public static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<Kind>
+      private static com.google.protobuf.Internal.EnumLiteMap<MemberKind>
           internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<Kind>() {
-              public Kind findValueByNumber(int number) {
-                return Kind.valueOf(number);
+            new com.google.protobuf.Internal.EnumLiteMap<MemberKind>() {
+              public MemberKind findValueByNumber(int number) {
+                return MemberKind.valueOf(number);
               }
             };
       
       private final int value;
       
-      private Kind(int index, int value) {
+      private MemberKind(int index, int value) {
         this.value = value;
       }
       
-      // @@protoc_insertion_point(enum_scope:org.jetbrains.jet.descriptors.serialization.Callable.Kind)
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.jet.descriptors.serialization.Callable.MemberKind)
+    }
+    
+    public enum CallableKind
+        implements com.google.protobuf.Internal.EnumLite {
+      FUN(0, 0),
+      VAL(1, 1),
+      VAR(2, 2),
+      CONSTRUCTOR(3, 3),
+      ;
+      
+      public static final int FUN_VALUE = 0;
+      public static final int VAL_VALUE = 1;
+      public static final int VAR_VALUE = 2;
+      public static final int CONSTRUCTOR_VALUE = 3;
+      
+      
+      public final int getNumber() { return value; }
+      
+      public static CallableKind valueOf(int value) {
+        switch (value) {
+          case 0: return FUN;
+          case 1: return VAL;
+          case 2: return VAR;
+          case 3: return CONSTRUCTOR;
+          default: return null;
+        }
+      }
+      
+      public static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<CallableKind>() {
+              public CallableKind findValueByNumber(int number) {
+                return CallableKind.valueOf(number);
+              }
+            };
+      
+      private final int value;
+      
+      private CallableKind(int index, int value) {
+        this.value = value;
+      }
+      
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.jet.descriptors.serialization.Callable.CallableKind)
     }
     
     public interface ValueParameterOrBuilder

@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;
+import org.jetbrains.jet.descriptors.serialization.Flags;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
@@ -89,20 +90,26 @@ public abstract class DeserializedMemberScope implements JetScope {
     }
 
     @NotNull
-    private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
-        List<ProtoBuf.Callable> functionProtos = membersProtos.get(name);
+    private <D extends CallableMemberDescriptor> List<D> computeMembersByName(Name name, ProtoBuf.Callable.CallableKind callableKind) {
+        List<ProtoBuf.Callable> memberProtos = membersProtos.get(name);
 
-        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>(functionProtos != null ? functionProtos.size() : 0);
-        if (functionProtos != null) {
-            for (ProtoBuf.Callable memberProto : functionProtos) {
-                // TODO: check that the proto is a function, and not a property
-                functions.add(deserializer.loadFunction(memberProto));
+        List<D> descriptors = new ArrayList<D>(memberProtos != null ? memberProtos.size() : 0);
+        if (memberProtos != null) {
+            for (ProtoBuf.Callable memberProto : memberProtos) {
+                if (Flags.getCallableKind(memberProto.getFlags()) == callableKind) {
+                    //noinspection unchecked
+                    descriptors.add((D) deserializer.loadCallable(memberProto));
+                }
             }
         }
+        return descriptors;
+    }
 
-        computeNonDeclaredFunctions(name, functions);
-
-        return functions;
+    @NotNull
+    private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
+        List<FunctionDescriptor> descriptors = computeMembersByName(name, ProtoBuf.Callable.CallableKind.FUN);
+        computeNonDeclaredFunctions(name, descriptors);
+        return descriptors;
     }
 
     protected void computeNonDeclaredFunctions(@NotNull Name name, @NotNull List<FunctionDescriptor> functions) {

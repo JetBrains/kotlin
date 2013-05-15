@@ -99,8 +99,8 @@ message Class {
   }
 
   /*
-      Modality
       Visibility
+      Modality
       ClassKind
       is_inner
    */
@@ -128,7 +128,7 @@ message Class {
 }
 
 message Callable {
-  enum Kind {
+  enum MemberKind {
     // 2 bits
     DECLARATION = 0;
     FAKE_OVERRIDE = 1;
@@ -136,11 +136,20 @@ message Callable {
     SYNTHESIZED = 3;
   }
 
+  enum CallableKind {
+    // 2 bits
+    FUN = 0;
+    VAL = 1;
+    VAR = 2;
+    CONSTRUCTOR = 3;
+  }
+
   /*
+     Visibility
+     Modality
      fun/val/var/constructor
      Kind
-     Modality
-     Visibility
+     inline
      setter::Modality
      setter::Visibility
    */

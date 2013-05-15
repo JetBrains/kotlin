@@ -69,10 +69,11 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.thisAsReceiverParameter = new ReceiverParameterDescriptorImpl(this, getDefaultType(), new ClassReceiver(this));
 
         this.name = nameResolver.getName(classProto.getName());
-        this.modality = Modality.OPEN; // TODO
-        this.visibility = Visibilities.INTERNAL; // TODO
-        this.kind = ClassKind.CLASS; // TODO
-        this.isInner = false; // TODO
+        int flags = classProto.getFlags();
+        this.modality = DescriptorDeserializer.modality(Flags.getModality(flags));
+        this.visibility = DescriptorDeserializer.visibility(Flags.getVisibility(flags));
+        this.kind = DescriptorDeserializer.classKind(Flags.getClassKind(flags));
+        this.isInner = Flags.isInner(flags);
     }
 
     @NotNull

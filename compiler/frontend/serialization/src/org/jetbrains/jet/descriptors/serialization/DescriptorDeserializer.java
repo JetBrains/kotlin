@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
@@ -80,16 +81,29 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    public FunctionDescriptor loadFunction(@NotNull Callable proto) {
-        // TODO: assert function flag
+    public CallableMemberDescriptor loadCallable(@NotNull Callable proto) {
+        Callable.CallableKind callableKind = Flags.getCallableKind(proto.getFlags());
+        switch (callableKind) {
+            case FUN:
+                return loadFunction(proto);
+            case VAL:
+            case VAR:
+                break;
+            case CONSTRUCTOR:
+                break;
+        }
+        throw new IllegalArgumentException("Unsupported callable kind: " + callableKind);
+    }
 
+    @NotNull
+    private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
+        int flags = proto.getFlags();
         SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
                 containingDeclaration,
                 // TODO: annotations
                 Collections.<AnnotationDescriptor>emptyList(),
                 nameResolver.getName(proto.getName()),
-                // TODO: kind
-                CallableMemberDescriptor.Kind.DECLARATION
+                memberKind(Flags.getMemberKind(flags))
         );
         DescriptorDeserializer local = new DescriptorDeserializer(this, function, nameResolver);
         function.initialize(
@@ -99,15 +113,77 @@ public class DescriptorDeserializer {
                 local.typeParameters(proto.getTypeParametersList()),
                 local.valueParameters(proto.getValueParametersList()),
                 local.typeDeserializer.type(proto.getReturnType()),
-                // TODO: modality
-                Modality.OPEN,
-                // TODO: visibility
-                Visibilities.PUBLIC,
-                // TODO: inline
-                false
+                modality(Flags.getModality(flags)),
+                visibility(Flags.getVisibility(flags)),
+                Flags.isInline(flags)
 
         );
         return function;
+    }
+
+    private static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {
+        switch (memberKind) {
+            case DECLARATION:
+                return CallableMemberDescriptor.Kind.DECLARATION;
+            case FAKE_OVERRIDE:
+                return CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+            case DELEGATION:
+                return CallableMemberDescriptor.Kind.DELEGATION;
+            case SYNTHESIZED:
+                return CallableMemberDescriptor.Kind.SYNTHESIZED;
+        }
+        throw new IllegalArgumentException("Unknown member kind: " + memberKind);
+    }
+
+    @NotNull
+    public static Modality modality(@NotNull ProtoBuf.Modality modality) {
+        switch (modality) {
+            case FINAL:
+                return Modality.FINAL;
+            case OPEN:
+                return Modality.OPEN;
+            case ABSTRACT:
+                return Modality.ABSTRACT;
+        }
+        throw new IllegalArgumentException("Unknown modality: " + modality);
+    }
+
+    @NotNull
+    public static Visibility visibility(@NotNull ProtoBuf.Visibility visibility) {
+        switch (visibility) {
+            case INTERNAL:
+                return Visibilities.INTERNAL;
+            case PRIVATE:
+                return Visibilities.PRIVATE;
+            case PROTECTED:
+                return Visibilities.PROTECTED;
+            case PUBLIC:
+                return Visibilities.PUBLIC;
+            case EXTRA:
+                throw new UnsupportedOperationException("Extra visibilities are not supported yet"); // TODO
+        }
+        throw new IllegalArgumentException("Unknown visibility: " + visibility);
+    }
+
+    @NotNull
+    public static ClassKind classKind(@NotNull ProtoBuf.Class.Kind kind) {
+        switch (kind) {
+            case CLASS:
+                return ClassKind.CLASS;
+            case TRAIT:
+                return ClassKind.TRAIT;
+            case ENUM_CLASS:
+                return ClassKind.ENUM_CLASS;
+            case ENUM_ENTRY:
+                return ClassKind.ENUM_ENTRY;
+            case ANNOTATION_CLASS:
+                return ClassKind.ANNOTATION_CLASS;
+            case OBJECT:
+                return ClassKind.OBJECT;
+            case CLASS_OBJECT:
+                return ClassKind.CLASS_OBJECT;
+        }
+        throw new IllegalArgumentException("Unknown class kind: " + kind);
     }
 
     @NotNull

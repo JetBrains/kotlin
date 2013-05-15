@@ -53,7 +53,13 @@ public class DescriptorSerializer {
         ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
 
         // TODO annotations
-        // TODO flags + extraVisibility
+
+        int flags = Flags.getClassFlags(classDescriptor.getVisibility(), classDescriptor.getModality(), classDescriptor.getKind(),
+                                        classDescriptor.isInner());
+        builder.setFlags(flags);
+
+        // TODO extra visibility
+
         builder.setName(nameTable.getSimpleNameIndex(classDescriptor.getName()));
 
         DescriptorSerializer local = createChildSerializer();
@@ -86,7 +92,13 @@ public class DescriptorSerializer {
     public ProtoBuf.Callable.Builder functionProto(@NotNull FunctionDescriptor function) {
         ProtoBuf.Callable.Builder builder = ProtoBuf.Callable.newBuilder();
 
-        builder.setFlags(flags(function));
+        // TODO setter flags
+        builder.setFlags(Flags.getCallableFlags(function.getVisibility(),
+                                                function.getModality(),
+                                                function.getKind(),
+                                                callableKind(function),
+                                                function instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) function).isInline())
+        );
         //TODO builder.setExtraVisibility()
 
         //TODO builder.addAnnotations()
@@ -113,9 +125,16 @@ public class DescriptorSerializer {
         return builder;
     }
 
-    private int flags(FunctionDescriptor function) {
-        // TODO
-        return 0;
+    private static ProtoBuf.Callable.CallableKind callableKind(CallableMemberDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+            return propertyDescriptor.isVar() ? ProtoBuf.Callable.CallableKind.VAR : ProtoBuf.Callable.CallableKind.VAL;
+        }
+        if (descriptor instanceof ConstructorDescriptor) {
+            return ProtoBuf.Callable.CallableKind.CONSTRUCTOR;
+        }
+        assert descriptor instanceof FunctionDescriptor : "Unknown descriptor class: " + descriptor.getClass();
+        return ProtoBuf.Callable.CallableKind.FUN;
     }
 
     private ProtoBuf.Callable.ValueParameter.Builder valueParameter(ValueParameterDescriptor descriptor) {
