@@ -37,9 +37,11 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.k2js.analyze.JsConfiguration;
 
 import java.util.List;
 
@@ -145,7 +147,7 @@ public class ImportInsertHelper {
     /**
      * Check that import is useless.
      */
-    private static boolean isImportedByDefault(@NotNull ImportPath importPath, @NotNull FqName filePackageFqn) {
+    private static boolean isImportedByDefault(@NotNull ImportPath importPath, @NotNull JetFile jetFile) {
         if (importPath.fqnPart().isRoot()) {
             return true;
         }
@@ -157,33 +159,31 @@ public class ImportInsertHelper {
             }
 
             // There's no need to import a declaration from the package of current file
-            if (filePackageFqn.equals(importPath.fqnPart().parent())) {
+            if (JetPsiUtil.getFQName(jetFile).equals(importPath.fqnPart().parent())) {
                 return true;
             }
         }
 
         if (isImportedWithKotlinDefault(importPath)) return true;
-        if (isImportedWithJavaDefault(importPath)) return true;
 
-        return false;
+        if (KotlinFrameworkDetector.isJsKotlinModule(jetFile)) {
+            return isImportedWithJsDefault(importPath);
+        }
+        else {
+            return isImportedWithJavaDefault(importPath);
+        }
     }
 
     public static boolean isImportedWithJavaDefault(ImportPath importPath) {
-        for (ImportPath defaultJavaImport : JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS) {
-            if (QualifiedNamesUtil.isImported(defaultJavaImport, importPath)) {
-                return true;
-            }
-        }
-        return false;
+        return QualifiedNamesUtil.isImported(JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS, importPath);
+    }
+
+    public static boolean isImportedWithJsDefault(ImportPath importPath) {
+        return QualifiedNamesUtil.isImported(JsConfiguration.DEFAULT_IMPORT_PATHS, importPath);
     }
 
     public static boolean isImportedWithKotlinDefault(ImportPath importPath) {
-        for (ImportPath defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
-            if (QualifiedNamesUtil.isImported(defaultJetImport, importPath)) {
-                return true;
-            }
-        }
-        return false;
+        return QualifiedNamesUtil.isImported(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS, importPath);
     }
 
     public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
@@ -196,7 +196,7 @@ public class ImportInsertHelper {
             importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder(), importPath.getAlias());
         }
 
-        if (isImportedByDefault(importPath, JetPsiUtil.getFQName(file))) {
+        if (isImportedByDefault(importPath, file)) {
             return false;
         }
 

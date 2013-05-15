@@ -22,40 +22,28 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupEvent;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
-import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 
 import java.io.File;
 
-public class CompletionHandlerTest extends LightCodeInsightFixtureTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-    }
-
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
-    }
-
+public class CompletionHandlerTest extends JetLightCodeInsightFixtureTestCase {
     public void testClassCompletionImport() {
         doTest(CompletionType.BASIC, 2, "SortedSet", null, '\n');
     }
 
     public void testDoNotInsertImportForAlreadyImported() {
+        doTest();
+    }
+
+    public void testDoNotInsertDefaultJsImports() {
         doTest();
     }
 
@@ -88,9 +76,9 @@ public class CompletionHandlerTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testSingleBrackets() {
-        myFixture.configureByFile(getBeforeFileName());
+        myFixture.configureByFile(fileName());
         myFixture.type('(');
-        myFixture.checkResultByFile(getAfterFileName());
+        myFixture.checkResultByFile(afterFileName());
     }
 
     public void testExistingSingleBrackets() {
@@ -106,9 +94,9 @@ public class CompletionHandlerTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testInsertFunctionWithBothParentheses() {
-        myFixture.configureByFile(getBeforeFileName());
+        myFixture.configureByFile(fileName());
         myFixture.type("test()");
-        myFixture.checkResultByFile(getAfterFileName());
+        myFixture.checkResultByFile(afterFileName());
     }
 
     public void testInsertImportOnTab() {
@@ -144,7 +132,7 @@ public class CompletionHandlerTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void doTest(CompletionType type, int time, @Nullable String lookupString, @Nullable String tailText, char completionChar) {
-        myFixture.configureByFile(getBeforeFileName());
+        myFixture.configureByFile(fileName());
 
         if (lookupString != null || tailText != null) {
             myFixture.complete(type, time);
@@ -158,7 +146,7 @@ public class CompletionHandlerTest extends LightCodeInsightFixtureTestCase {
             forceCompleteFirst(type, time);
         }
 
-        myFixture.checkResultByFile(getAfterFileName());
+        myFixture.checkResultByFile(afterFileName());
     }
 
     @Nullable
@@ -203,11 +191,7 @@ public class CompletionHandlerTest extends LightCodeInsightFixtureTestCase {
         return foundElement;
     }
 
-    protected String getBeforeFileName() {
-        return getTestName(false) + ".kt";
-    }
-
-    protected String getAfterFileName() {
+    protected String afterFileName() {
         return getTestName(false) + ".kt.after";
     }
 

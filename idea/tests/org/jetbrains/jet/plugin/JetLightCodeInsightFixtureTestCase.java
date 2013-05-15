@@ -35,6 +35,9 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
             projectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
         }
+        else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
+            projectDescriptor = JetStdJSProjectDescriptor.INSTANCE;
+        }
         else {
             projectDescriptor = JetLightProjectDescriptor.INSTANCE;
         }
@@ -56,5 +59,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
         return projectDescriptor;
     }
 
-    protected abstract String fileName();
+    protected String fileName() {
+        return getTestName(false) + ".kt";
+    }
 }
