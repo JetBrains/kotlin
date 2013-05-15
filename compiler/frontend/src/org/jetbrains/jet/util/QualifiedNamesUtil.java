@@ -143,6 +143,16 @@ public final class QualifiedNamesUtil {
         return isImported(alreadyImported, newImport.fqnPart());
     }
 
+    public static boolean isImported(@NotNull Iterable<ImportPath> imports, @NotNull ImportPath newImport) {
+        for (ImportPath alreadyImported : imports) {
+            if (isImported(alreadyImported, newImport)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static boolean isValidJavaFqName(@Nullable String qualifiedName) {
         if (qualifiedName == null) return false;
 

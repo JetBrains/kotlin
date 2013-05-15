@@ -29,6 +29,10 @@ public class OptimizeImportsTest extends JetLightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testDefaultJsImports() throws Exception {
+        doTest();
+    }
+
     public void testRemoveImportsIfGeneral() throws Exception {
         doTest();
     }
@@ -83,11 +87,6 @@ public class OptimizeImportsTest extends JetLightCodeInsightFixtureTestCase {
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/editor/optimizeImports").getPath() +
                File.separator;
-    }
-
-    @Override
-    public String fileName() {
-        return getTestName(false) + ".kt";
     }
 
     public String checkFileName() {
