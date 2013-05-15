@@ -958,6 +958,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeCantChangePropertyTypeToMatchOverridenProperties.kt");
             }
             
+            @TestMetadata("beforeCantChangeReturnTypeOfOverriddenFunction.kt")
+            public void testCantChangeReturnTypeOfOverriddenFunction() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeCantChangeReturnTypeOfOverriddenFunction.kt");
+            }
+            
             @TestMetadata("beforeChangeOverriddenPropertyType1.kt")
             public void testChangeOverriddenPropertyType1() throws Exception {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverriddenPropertyType1.kt");
@@ -971,6 +976,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeChangeOverridingPropertyTypeToFunctionType.kt")
             public void testChangeOverridingPropertyTypeToFunctionType() throws Exception {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeOverridingPropertyTypeToFunctionType.kt");
+            }
+            
+            @TestMetadata("beforeChangeReturnTypeOfOverriddenFunction.kt")
+            public void testChangeReturnTypeOfOverriddenFunction() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeReturnTypeOfOverriddenFunction.kt");
             }
             
             @TestMetadata("beforePropertyReturnTypeMismatchOnOverride.kt")
