@@ -86,7 +86,8 @@ public class WhenUtils {
         return whenExpression.getSubjectExpression() instanceof JetSimpleNameExpression;
     }
 
-    public static void flattenWhen(@NotNull JetWhenExpression whenExpression) {
+    @NotNull
+    public static JetWhenExpression flattenWhen(@NotNull JetWhenExpression whenExpression) {
         JetExpression subjectExpression = whenExpression.getSubjectExpression();
 
         JetExpression elseBranch = whenExpression.getElseExpression();
@@ -109,10 +110,14 @@ public class WhenUtils {
             builder.entry(entry);
         }
 
-        whenExpression.replace(builder.toExpression(whenExpression.getProject()));
+        JetWhenExpression newWhenExpression = builder.toExpression(whenExpression.getProject());
+        whenExpression.replace(newWhenExpression);
+
+        return newWhenExpression;
     }
 
-    public static void introduceWhenSubject(@NotNull JetWhenExpression whenExpression) {
+    @NotNull
+    public static JetWhenExpression introduceWhenSubject(@NotNull JetWhenExpression whenExpression) {
         JetExpression subject = getWhenSubjectCandidate(whenExpression);
         assertNotNull(subject);
 
@@ -158,9 +163,13 @@ public class WhenUtils {
             builder.branchExpression(branchExpression);
         }
 
-        whenExpression.replace(builder.toExpression(whenExpression.getProject()));
+        JetWhenExpression newWhenExpression = builder.toExpression(whenExpression.getProject());
+        whenExpression.replace(newWhenExpression);
+
+        return newWhenExpression;
     }
 
+    @NotNull
     static String whenConditionToExpressionText(@NotNull JetWhenCondition condition, JetExpression subject) {
         if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
@@ -182,7 +191,8 @@ public class WhenUtils {
         return conditionExpression != null ? conditionExpression.getText() : "";
     }
 
-    public static void eliminateWhenSubject(@NotNull JetWhenExpression whenExpression) {
+    @NotNull
+    public static JetWhenExpression eliminateWhenSubject(@NotNull JetWhenExpression whenExpression) {
         JetExpression subject = whenExpression.getSubjectExpression();
         assertNotNull(subject);
 
@@ -204,6 +214,9 @@ public class WhenUtils {
             builder.branchExpression(branchExpression);
         }
 
-        whenExpression.replace(builder.toExpression(whenExpression.getProject()));
+        JetWhenExpression newWhenExpression = builder.toExpression(whenExpression.getProject());
+        whenExpression.replace(newWhenExpression);
+
+        return newWhenExpression;
     }
 }

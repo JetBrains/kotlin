@@ -110,7 +110,12 @@ public class IfWhenUtils {
             }
         } while (currIfExpression != null);
 
-        ifExpression.replace(builder.toExpression(ifExpression.getProject()));
+        JetWhenExpression whenExpression = builder.toExpression(ifExpression.getProject());
+        if (WhenUtils.checkIntroduceWhenSubject(whenExpression)) {
+            whenExpression = WhenUtils.introduceWhenSubject(whenExpression);
+        }
+
+        ifExpression.replace(whenExpression);
     }
 
     private static String combineWhenConditions(JetWhenCondition[] conditions, JetExpression subject) {
