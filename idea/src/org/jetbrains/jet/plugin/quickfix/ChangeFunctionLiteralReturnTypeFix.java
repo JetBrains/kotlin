@@ -85,7 +85,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
         }
 
         JetFunction parentFunction = PsiTreeUtil.getParentOfType(element, JetFunction.class, true);
-        if (parentFunction != null && QuickFixUtil.canFunctionReturnExpression(parentFunction, element)) {
+        if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, element)) {
             JetTypeReference parentFunctionReturnTypeRef = parentFunction.getReturnTypeRef();
             JetType parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef);
             if (parentFunctionReturnType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType)) {
