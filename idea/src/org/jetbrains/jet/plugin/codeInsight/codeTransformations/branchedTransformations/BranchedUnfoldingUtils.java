@@ -42,12 +42,16 @@ public class BranchedUnfoldingUtils {
 
             JetExpression rhs = assignment.getRight();
             if (rhs instanceof JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF;
-            if (rhs instanceof JetWhenExpression) return UnfoldableKind.ASSIGNMENT_TO_WHEN;
+            if (rhs instanceof JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse((JetWhenExpression) rhs)) {
+                return UnfoldableKind.ASSIGNMENT_TO_WHEN;
+            }
         } else if (root instanceof JetReturnExpression) {
             JetExpression resultExpr = ((JetReturnExpression)root).getReturnedExpression();
 
             if (resultExpr instanceof JetIfExpression) return UnfoldableKind.RETURN_TO_IF;
-            if (resultExpr instanceof JetWhenExpression) return UnfoldableKind.RETURN_TO_WHEN;
+            if (resultExpr instanceof JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse((JetWhenExpression) resultExpr)) {
+                return UnfoldableKind.RETURN_TO_WHEN;
+            }
         }
 
         return null;
