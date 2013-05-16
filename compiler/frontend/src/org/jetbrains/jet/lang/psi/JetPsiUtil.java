@@ -197,8 +197,9 @@ public class JetPsiUtil {
             firstPart = getFQName((JetNamedDeclaration) parent);
         }
         else if (namedDeclaration instanceof JetParameter) {
-            if (((JetParameter) namedDeclaration).getValOrVarNode() != null && parent != null && parent.getParent() instanceof JetClassOrObject) {
-                firstPart = getFQName((JetClassOrObject) parent.getParent());
+            JetClass constructorClass = getClassIfParameterIsProperty((JetParameter) namedDeclaration);
+            if (constructorClass != null) {
+                firstPart = getFQName(constructorClass);
             }
         }
         else if (parent instanceof JetObjectDeclaration) {
@@ -572,6 +573,18 @@ public class JetPsiUtil {
 
             current = (JetClassOrObject) parent.getParent();
         }
+    }
+
+    @Nullable
+    public static JetClass getClassIfParameterIsProperty(@NotNull JetParameter jetParameter) {
+        if (jetParameter.getValOrVarNode() != null) {
+            PsiElement parent = jetParameter.getParent();
+            if (parent instanceof JetParameterList && parent.getParent() instanceof JetClass) {
+                return (JetClass) parent.getParent();
+            }
+        }
+
+        return null;
     }
 
     @Nullable
