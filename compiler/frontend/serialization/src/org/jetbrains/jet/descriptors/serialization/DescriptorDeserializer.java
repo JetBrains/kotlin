@@ -22,10 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.ArrayList;
@@ -91,7 +88,7 @@ public class DescriptorDeserializer {
             case VAR:
                 return loadProperty(proto);
             case CONSTRUCTOR:
-                break;
+                return loadConstructor(proto);
         }
         throw new IllegalArgumentException("Unsupported callable kind: " + callableKind);
     }
@@ -146,6 +143,25 @@ public class DescriptorDeserializer {
 
         );
         return function;
+    }
+
+    @NotNull
+    private CallableMemberDescriptor loadConstructor(@NotNull Callable proto) {
+        ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+        ConstructorDescriptorImpl descriptor = new ConstructorDescriptorImpl(
+                classDescriptor,
+                // TODO
+                Collections.<AnnotationDescriptor>emptyList(),
+                // TODO: primary
+                true);
+        DescriptorDeserializer local = new DescriptorDeserializer(this, descriptor, nameResolver);
+        descriptor.initialize(
+                classDescriptor.getTypeConstructor().getParameters(),
+                local.valueParameters(proto.getValueParametersList()),
+                visibility(Flags.getVisibility(proto.getFlags())),
+                !classDescriptor.isInner()
+        );
+        return descriptor;
     }
 
     private static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {

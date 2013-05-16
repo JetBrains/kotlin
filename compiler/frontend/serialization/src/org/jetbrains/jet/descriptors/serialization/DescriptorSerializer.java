@@ -73,7 +73,13 @@ public class DescriptorSerializer {
         }
 
         // TODO: nested classes
-        // TODO: constructor
+
+        ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+        if (primaryConstructor != null) {
+            builder.setPrimaryConstructor(local.callableProto(primaryConstructor));
+        }
+        // TODO: other constructors
+
         // TODO: class object
 
         for (DeclarationDescriptor descriptor : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {

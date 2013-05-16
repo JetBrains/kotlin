@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValueImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -40,6 +42,8 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final DescriptorDeserializer deserializer;
     private final DeserializedMemberScope memberScope;
     private final ReceiverParameterDescriptor thisAsReceiverParameter;
+
+    private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
     private final Name name;
     private final DeclarationDescriptor containingDeclaration;
@@ -71,6 +75,13 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.visibility = DescriptorDeserializer.visibility(Flags.getVisibility(flags));
         this.kind = DescriptorDeserializer.classKind(Flags.getClassKind(flags));
         this.isInner = Flags.isInner(flags);
+
+        this.primaryConstructor = new NullableLazyValueImpl<ConstructorDescriptor>() {
+            @Override
+            protected ConstructorDescriptor doCompute() {
+                return computePrimaryConstructor();
+            }
+        };
     }
 
     @NotNull
@@ -138,15 +149,28 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     }
 
     @Nullable
+    private ConstructorDescriptor computePrimaryConstructor() {
+        if (!classProto.hasPrimaryConstructor()) return null;
+
+        ProtoBuf.Callable constructorProto = classProto.getPrimaryConstructor();
+        return (ConstructorDescriptor) deserializer.loadCallable(constructorProto);
+    }
+
+    @Nullable
     @Override
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return null; // TODO
+        return primaryConstructor.compute();
     }
 
     @NotNull
     @Override
     public Collection<ConstructorDescriptor> getConstructors() {
-        return Collections.emptyList(); // TODO
+        ConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
+        if (constructor == null) {
+            return Collections.emptyList();
+        }
+        // TODO: other constructors
+        return Collections.singletonList(constructor);
     }
 
     @Nullable
