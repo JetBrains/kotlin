@@ -33,6 +33,11 @@ public class Flags {
     public static final int INLINE_BIT_COUNT = 1;
     public static final int INLINE_OFFSET = MEMBER_KIND_OFFSET + MEMBER_KIND_BIT_COUNT;
 
+    // Parameters
+
+    public static final int DECLARES_DEFAULT_VALUE_BIT_COUNT = 1;
+    public static final int DECLARES_DEFAULT_VALUE_OFFSET = 0;
+
     // ---
 
     private static final Boolean[] BOOLEANS = { false, true };
@@ -85,6 +90,10 @@ public class Flags {
 
     public static boolean isInline(int flags) {
         return getValue(flags, BOOLEANS, INLINE_BIT_COUNT, INLINE_OFFSET);
+    }
+
+    public static boolean declaresDefaultValue(int flags) {
+        return getValue(flags, BOOLEANS, DECLARES_DEFAULT_VALUE_BIT_COUNT, DECLARES_DEFAULT_VALUE_OFFSET);
     }
 
     public static int getClassFlags(Visibility visibility, Modality modality, ClassKind kind, boolean inner) {
@@ -182,5 +191,11 @@ public class Flags {
                 return ProtoBuf.Callable.MemberKind.SYNTHESIZED;
         }
         throw new IllegalArgumentException("Unknown member kind: " + kind);
+    }
+
+    public static int getValueParameterFlags(boolean declaresDefaultValue) {
+        int declaresDefaultValueInt = declaresDefaultValue ? 1 : 0;
+        return declaresDefaultValueInt << DECLARES_DEFAULT_VALUE_OFFSET
+                ;
     }
 }

@@ -147,7 +147,7 @@ public class DescriptorSerializer {
     private ProtoBuf.Callable.ValueParameter.Builder valueParameter(ValueParameterDescriptor descriptor) {
         ProtoBuf.Callable.ValueParameter.Builder builder = ProtoBuf.Callable.ValueParameter.newBuilder();
 
-        builder.setFlags(flags(descriptor));
+        builder.setFlags(Flags.getValueParameterFlags(descriptor.declaresDefaultValue()));
 
         builder.setName(nameTable.getSimpleNameIndex(descriptor.getName()));
 
@@ -159,11 +159,6 @@ public class DescriptorSerializer {
         }
 
         return builder;
-    }
-
-    private int flags(ValueParameterDescriptor descriptor) {
-        // TODO
-        return 0;
     }
 
     private ProtoBuf.TypeParameter.Builder typeParameter(TypeParameterDescriptor typeParameter) {

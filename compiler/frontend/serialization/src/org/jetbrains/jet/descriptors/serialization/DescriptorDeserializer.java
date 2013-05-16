@@ -299,8 +299,7 @@ public class DescriptorDeserializer {
                 Collections.<AnnotationDescriptor>emptyList(),
                 nameResolver.getName(proto.getName()),
                 typeDeserializer.type(proto.getType()),
-                // TODO: declaresDefaultValue
-                false,
+                Flags.declaresDefaultValue(proto.getFlags()),
                 typeDeserializer.typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null));
     }
 }
