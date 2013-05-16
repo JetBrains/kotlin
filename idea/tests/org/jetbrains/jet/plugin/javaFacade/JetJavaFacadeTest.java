@@ -95,6 +95,10 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         doTestWrapClass();
     }
 
+    public void testWrapTopLevelFunWithDefaultParams() {
+        doTestWrapMethod(true);
+    }
+
     public void testEa38770() {
         myFixture.configureByFile(getTestName(true) + ".kt");
 
