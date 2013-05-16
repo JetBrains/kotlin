@@ -48,7 +48,7 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
 
         if (queryParameters instanceof JetParameter) {
             JetParameter parameter = (JetParameter) queryParameters;
-            if (parameter.getValOrVarNode() != null && queryParameters.getParent().getParent() instanceof JetClass) {
+            if (JetPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
                 processPropertyImplementations(parameter, consumer);
             }
         }
