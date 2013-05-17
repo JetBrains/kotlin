@@ -182,6 +182,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     private String renderClassName(@NotNull ClassDescriptor klass) {
+        if (ErrorUtils.isError(klass)) {
+            return klass.getTypeConstructor().toString();
+        }
         if (shortNames) {
             List<Name> qualifiedNameElements = Lists.newArrayList();
 
