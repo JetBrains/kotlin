@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -80,6 +79,7 @@ public final class JavaClassResolver {
     private JavaNamespaceResolver namespaceResolver;
     private JavaClassObjectResolver classObjectResolver;
     private JavaSupertypeResolver supertypesResolver;
+    private JavaFunctionResolver functionResolver;
 
     public JavaClassResolver() {
     }
@@ -122,6 +122,11 @@ public final class JavaClassResolver {
     @Inject
     public void setSupertypesResolver(JavaSupertypeResolver supertypesResolver) {
         this.supertypesResolver = supertypesResolver;
+    }
+
+    @Inject
+    public void setFunctionResolver(JavaFunctionResolver functionResolver) {
+        this.functionResolver = functionResolver;
     }
 
     @Nullable
