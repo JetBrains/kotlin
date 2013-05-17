@@ -84,8 +84,8 @@ public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDele
         element.replace(specifier);
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetDelegatorToSuperClass> createAction(Diagnostic diagnostic) {
                 if (diagnostic.getPsiElement() instanceof JetDelegatorToSuperClass) {

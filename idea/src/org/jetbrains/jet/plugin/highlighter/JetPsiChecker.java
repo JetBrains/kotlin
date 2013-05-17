@@ -43,9 +43,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.plugin.quickfix.JetIntentionActionFactory;
+import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -217,14 +216,12 @@ public class JetPsiChecker implements Annotator {
             return null;
         }
 
-        Collection<JetIntentionActionFactory> intentionActionFactories = QuickFixes.getActionFactories(diagnostic.getFactory());
-        for (JetIntentionActionFactory intentionActionFactory : intentionActionFactories) {
-            IntentionAction action = null;
-            if (intentionActionFactory != null) {
-                action = intentionActionFactory.createAction(diagnostic);
-            }
-            if (action != null) {
-                annotation.registerFix(action);
+        Collection<JetIntentionActionsFactory> intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory());
+        for (JetIntentionActionsFactory intentionActionsFactory : intentionActionsFactories) {
+            if (intentionActionsFactory != null) {
+                for (IntentionAction action: intentionActionsFactory.createActions(diagnostic)) {
+                    annotation.registerFix(action);
+                }
             }
         }
 

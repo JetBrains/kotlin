@@ -17,12 +17,26 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
-public interface JetIntentionActionFactory {
+import java.util.LinkedList;
+import java.util.List;
+
+public abstract class JetSingleIntentionActionFactory implements JetIntentionActionsFactory {
 
     @Nullable
-    IntentionAction createAction(Diagnostic diagnostic);
+    public abstract IntentionAction createAction(Diagnostic diagnostic);
 
+    @NotNull
+    @Override
+    public final List<IntentionAction> createActions(Diagnostic diagnostic) {
+        List<IntentionAction> intentionActionList = new LinkedList<IntentionAction>();
+        IntentionAction intentionAction = createAction(diagnostic);
+        if (intentionAction != null) {
+            intentionActionList.add(intentionAction);
+        }
+        return intentionActionList;
+    }
 }

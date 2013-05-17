@@ -103,12 +103,12 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
     }
 
 
-    public static JetIntentionActionFactory createRemoveModifierFromListOwnerFactory(JetKeywordToken modifier) {
+    public static JetSingleIntentionActionFactory createRemoveModifierFromListOwnerFactory(JetKeywordToken modifier) {
         return createRemoveModifierFromListOwnerFactory(modifier, false);
     }
 
-    public static JetIntentionActionFactory createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier, final boolean isRedundant) {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier, final boolean isRedundant) {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
@@ -119,12 +119,12 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
         };
     }
 
-    public static JetIntentionActionFactory createRemoveModifierFactory() {
+    public static JetSingleIntentionActionFactory createRemoveModifierFactory() {
         return createRemoveModifierFactory(false);
     }
 
-    public static JetIntentionActionFactory createRemoveModifierFactory(final boolean isRedundant) {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveModifierFactory(final boolean isRedundant) {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
@@ -139,8 +139,8 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
         };
     }
 
-    public static JetIntentionActionFactory createRemoveProjectionFactory(final boolean isRedundant) {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveProjectionFactory(final boolean isRedundant) {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
@@ -156,8 +156,8 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
         };
     }
 
-    public static JetIntentionActionFactory createRemoveVarianceFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveVarianceFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {

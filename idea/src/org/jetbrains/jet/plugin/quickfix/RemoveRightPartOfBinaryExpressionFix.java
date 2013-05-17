@@ -57,8 +57,8 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
         }
     }
 
-    public static JetIntentionActionFactory createRemoveCastFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveCastFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
                 JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
@@ -68,8 +68,8 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
         };
     }
 
-    public static JetIntentionActionFactory createRemoveElvisOperatorFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveElvisOperatorFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetBinaryExpression> createAction(Diagnostic diagnostic) {
                 JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);

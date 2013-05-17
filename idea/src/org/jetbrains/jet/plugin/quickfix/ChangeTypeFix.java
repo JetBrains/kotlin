@@ -19,31 +19,32 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
-    private final JetType type;
+    private final String renderedType;
 
     public ChangeTypeFix(@NotNull JetTypeReference element, JetType type) {
         super(element);
-        this.type = type;
+        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("change.type", element.getText(), type);
+        return JetBundle.message("change.type", element.getText(), renderedType);
     }
 
     @NotNull
@@ -53,13 +54,13 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        element.replace(JetPsiFactory.createType(project, type.toString()));
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+        element.replace(JetPsiFactory.createType(project, renderedType));
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForExpectedParameterTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForExpectedParameterTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -74,8 +75,8 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForExpectedReturnTypeMismatch() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForExpectedReturnTypeMismatch() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

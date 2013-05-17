@@ -62,8 +62,8 @@ public class RemoveNullableFix extends JetIntentionAction<JetNullableType> {
         super.element.replace(type);
     }
 
-    public static JetIntentionActionFactory createFactory(final NullableKind typeOfError) {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory(final NullableKind typeOfError) {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetNullableType> createAction(Diagnostic diagnostic) {
                 JetNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, JetNullableType.class);
