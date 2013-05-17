@@ -54,25 +54,7 @@ public class NameResolver {
         ProtoBuf.QualifiedNameTable.QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(fqNameIndex);
         assert fqNameProto.getKind() == ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS : "Not a class fqName: " + getFqName(fqNameIndex);
 
-        if (fqNameProto.hasParentQualifiedName()) {
-            int parentFqNameIndex = fqNameProto.getParentQualifiedName();
-            ProtoBuf.QualifiedNameTable.QualifiedName parentFqNameProto = qualifiedNames.getQualifiedNames(parentFqNameIndex);
-            switch (fqNameProto.getKind()) {
-                case CLASS:
-                    return classResolver.findClass(getFqName(fqNameIndex));
-                case PACKAGE:
-                    Name name = getName(fqNameProto.getShortName());
-                    ClassDescriptor outerClass = getClassDescriptor(parentFqNameIndex);
-                    if (outerClass == null) return null;
-
-                    return (ClassDescriptor) outerClass.getUnsubstitutedInnerClassesScope().getClassifier(name);
-            }
-            throw new IllegalStateException("Unknown kind: " + fqNameProto);
-        }
-        else {
-            FqName fqName = FqName.topLevel(getName(fqNameProto.getShortName()));
-            return classResolver.findClass(fqName);
-        }
+        return classResolver.findClass(getFqName(fqNameIndex));
     }
 
     @NotNull
