@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 
@@ -30,18 +31,16 @@ import java.util.Collection;
  * @see org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
  */
 public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
-    private final boolean isSamInterface;
+    private JetType functionTypeForSamInterface;
 
     private JavaClassNonStaticMembersScope scopeForConstructorResolve;
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ClassKind kind,
-            boolean isInner,
-            boolean isSamInterface
+            boolean isInner
     ) {
         super(containingDeclaration, kind, isInner);
-        this.isSamInterface = isSamInterface;
     }
 
 
@@ -62,7 +61,12 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
         this.scopeForConstructorResolve = scopeForConstructorResolve;
     }
 
-    public boolean isSamInterface() {
-        return isSamInterface;
+    @Nullable
+    public JetType getFunctionTypeForSamInterface() {
+        return functionTypeForSamInterface;
+    }
+
+    public void setFunctionTypeForSamInterface(@NotNull JetType functionTypeForSamInterface) {
+        this.functionTypeForSamInterface = functionTypeForSamInterface;
     }
 }

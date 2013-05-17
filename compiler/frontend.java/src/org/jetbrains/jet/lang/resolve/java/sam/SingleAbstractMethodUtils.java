@@ -27,10 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Arrays;
@@ -38,7 +35,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
+
 public class SingleAbstractMethodUtils {
+
     @NotNull
     private static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
         List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
@@ -52,18 +52,67 @@ public class SingleAbstractMethodUtils {
         return abstractMembers;
     }
 
-    @NotNull
+    // TODO maybe do this in substitutor?
+    private static JetType fixProjections(@NotNull JetType functionType) {
+        //removes redundant projection kinds and detects conflicts
+
+        List<TypeProjection> arguments = Lists.newArrayList();
+        for (TypeParameterDescriptor typeParameter : functionType.getConstructor().getParameters()) {
+            Variance variance = typeParameter.getVariance();
+            TypeProjection argument = functionType.getArguments().get(typeParameter.getIndex());
+            Variance kind = argument.getProjectionKind();
+            if (kind != INVARIANT && variance != INVARIANT) {
+                if (kind == variance) {
+                    arguments.add(new TypeProjection(argument.getType()));
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                 arguments.add(argument);
+            }
+        }
+        ClassifierDescriptor classifier = functionType.getConstructor().getDeclarationDescriptor();
+        assert classifier instanceof ClassDescriptor : "Not class: " + classifier;
+        return new JetTypeImpl(
+                functionType.getAnnotations(),
+                functionType.getConstructor(),
+                functionType.isNullable(),
+                arguments,
+                ((ClassDescriptor) classifier).getMemberScope(arguments)
+        );
+    }
+
+    @Nullable
     private static JetType getFunctionTypeForSamType(@NotNull JetType samType) {
-        FunctionDescriptor function = getAbstractMethodOfSamType(samType);
+        // e.g. samType == Comparator<String>?
+
+        ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
+        if (classifier instanceof ClassDescriptorFromJvmBytecode) {
+            // Function2<T, T, Int>
+            JetType functionTypeDefault = ((ClassDescriptorFromJvmBytecode) classifier).getFunctionTypeForSamInterface();
+
+            if (functionTypeDefault != null) {
+                // Function2<String, String, Int>?
+                JetType substitute = TypeSubstitutor.create(samType).substitute(functionTypeDefault, Variance.INVARIANT);
+
+                return substitute == null ? null : fixProjections(TypeUtils.makeNullableAsSpecified(substitute, samType.isNullable()));
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    public static JetType getFunctionTypeForAbstractMethod(@NotNull FunctionDescriptor function) {
         JetType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
         List<JetType> parameterTypes = Lists.newArrayList();
         for (ValueParameterDescriptor parameter : function.getValueParameters()) {
             parameterTypes.add(parameter.getType());
         }
-        JetType functionType = KotlinBuiltIns.getInstance()
-                .getFunctionType(Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
-        return TypeUtils.makeNullableAsSpecified(functionType, samType.isNullable());
+        return KotlinBuiltIns.getInstance().getFunctionType(
+                Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
     }
 
     private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
@@ -98,6 +147,7 @@ public class SingleAbstractMethodUtils {
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 
         JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
+        assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type" + samInterface.getDefaultType();
         JetType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
@@ -121,10 +171,7 @@ public class SingleAbstractMethodUtils {
     }
 
     public static boolean isSamType(@NotNull JetType type) {
-        ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
-        return classifier instanceof ClassDescriptorFromJvmBytecode &&
-               ((ClassDescriptorFromJvmBytecode) classifier).isSamInterface() &&
-               getAbstractMembers(type).size() == 1; // Comparator<*> is not a SAM type, because substituted compare() method doesn't exist
+        return getFunctionTypeForSamType(type) != null;
     }
 
     public static boolean isSamAdapterNecessary(@NotNull SimpleFunctionDescriptor fun) {
@@ -155,7 +202,8 @@ public class SingleAbstractMethodUtils {
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         for (ValueParameterDescriptor originalParam : original.getValueParameters()) {
             JetType originalType = originalParam.getType();
-            JetType newTypeUnsubstituted = isSamType(originalType) ? getFunctionTypeForSamType(originalType) : originalType;
+            JetType functionType = getFunctionTypeForSamType(originalType);
+            JetType newTypeUnsubstituted = functionType != null ? functionType : originalType;
             JetType newType = typeParameters.substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + typeParameters.substitutor;
 

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiFormatUtil;
@@ -402,28 +403,37 @@ public final class MembersCache {
     }
 
     public static boolean isSamInterface(@NotNull PsiClass psiClass) {
+        return getSamInterfaceMethod(psiClass) != null;
+    }
+
+    // Returns null if not SAM interface
+    @Nullable
+    public static PsiMethod getSamInterfaceMethod(@NotNull PsiClass psiClass) {
+        if (psiClass.hasModifierProperty(PsiModifier.PRIVATE)) { // TODO hacky
+            return null;
+        }
         if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
-            return false;
+            return null;
         }
         String qualifiedName = psiClass.getQualifiedName();
         if (qualifiedName == null || qualifiedName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.getFqName() + ".")) {
-            return false;
+            return null;
         }
         if (!psiClass.isInterface() || psiClass.isAnnotationType()) {
-            return false;
+            return null;
         }
 
-        int foundAbstractMethods = 0;
+        List<PsiMethod> methods = Lists.newArrayList();
         for (PsiMethod method : psiClass.getAllMethods()) {
             if (!isObjectMethod(method) && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
-                foundAbstractMethods++;
+                methods.add(method);
 
                 if (method.hasTypeParameters()) {
-                    return false;
+                    return null;
                 }
             }
         }
-        return foundAbstractMethods == 1;
+        return methods.size() == 1 ? methods.get(0) : null;
     }
 
     private static abstract class RunOnce implements Runnable {

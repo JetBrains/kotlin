@@ -1229,9 +1229,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/Basic.java");
                 }
                 
+                @TestMetadata("DeepSamLoop.java")
+                public void testDeepSamLoop() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/DeepSamLoop.java");
+                }
+                
                 @TestMetadata("NonTrivialFunctionType.java")
                 public void testNonTrivialFunctionType() throws Exception {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/NonTrivialFunctionType.java");
+                }
+                
+                @TestMetadata("SelfAsParameter.java")
+                public void testSelfAsParameter() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/SelfAsParameter.java");
                 }
                 
                 @TestMetadata("SeveralSamParameters.java")
