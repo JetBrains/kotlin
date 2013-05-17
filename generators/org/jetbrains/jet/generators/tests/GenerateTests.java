@@ -32,7 +32,7 @@ import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
 import org.jetbrains.jet.jvm.compiler.*;
-import org.jetbrains.jet.lang.psi.AbstractJetPsiMatcherTest;
+import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
@@ -213,10 +213,10 @@ public class GenerateTests {
         );
 
         generateTest(
-                "compiler/tests/",
+                "idea/tests/",
                 "JetPsiMatcherTest",
                 AbstractJetPsiMatcherTest.class,
-                testModel("compiler/testData/psi/jetPsiMatcher", "doTestExpressions")
+                testModel("idea/testData/jetPsiMatcher", "doTestExpressions")
         );
 
         generateTest(

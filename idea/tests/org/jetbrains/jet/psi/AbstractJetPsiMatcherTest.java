@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi;
+package org.jetbrains.jet.psi;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +22,9 @@ import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 
 import java.io.File;
 

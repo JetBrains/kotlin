@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi;
+package org.jetbrains.jet.plugin.util;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.Arrays;
 import java.util.List;
