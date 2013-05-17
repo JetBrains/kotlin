@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullableImpl;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValueImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -45,6 +46,12 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
     private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
+    private final NestedClassResolver nestedClassResolver;
+    private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
+
+    private final NestedClassDescriptors nestedClasses;
+    private final NestedClassDescriptors nestedObjects;
+
     private final Name name;
     private final DeclarationDescriptor containingDeclaration;
     private final DeserializedClassTypeConstructor typeConstructor;
@@ -56,7 +63,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     public DeserializedClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
-            @NotNull ClassResolver classResolver,
+            @NotNull NestedClassResolver _nestedClassResolver,
             @NotNull ProtoBuf.Class classProto,
             @Nullable TypeDeserializer outerTypeDeserializer
     ) {
@@ -82,6 +89,35 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
                 return computePrimaryConstructor();
             }
         };
+
+        this.nestedClassResolver = _nestedClassResolver;
+        this.classObjectDescriptor = new NullableLazyValueImpl<ClassDescriptor>() {
+            @Override
+            protected ClassDescriptor doCompute() {
+                return computeClassObjectDecriptor();
+            }
+        };
+        this.nestedClasses = new NestedClassDescriptors(stringSet(classProto.getNestedClassNamesList(), nameResolver)) {
+            @Override
+            protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
+                return nestedClassResolver.resolveNestedClass(DeserializedClassDescriptor.this, name);
+            }
+        };
+        this.nestedObjects = new NestedClassDescriptors(stringSet(classProto.getNestedObjectNamesList(), nameResolver)) {
+            @Override
+            protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
+                return nestedClassResolver.resolveNestedClass(DeserializedClassDescriptor.this, name);
+            }
+        };
+    }
+
+    @NotNull
+    private static Set<String> stringSet(@NotNull List<Integer> nameIndices, @NotNull NameResolver nameResolver) {
+        Set<String> result = new HashSet<String>(nameIndices.size());
+        for (Integer index : nameIndices) {
+            result.add(nameResolver.getName(index).getName());
+        }
+        return result;
     }
 
     @NotNull
@@ -181,9 +217,18 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     }
 
     @Nullable
+    private ClassDescriptor computeClassObjectDecriptor() {
+        if (!classProto.getClassObjectPresent()) {
+            return null;
+        }
+
+        return nestedClassResolver.resolveClassObject(this);
+    }
+
+    @Nullable
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        return null; // TODO
+        return classObjectDescriptor.compute();
     }
 
     @NotNull
@@ -314,12 +359,54 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         @Nullable
         @Override
         protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
-            return null; // TODO inner classes
+            return classDescriptor.nestedClasses.fun(name);
         }
 
         @Override
         protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-            // TODO inner classes
+            result.addAll(classDescriptor.nestedClasses.getAllDescriptors());
+        }
+
+        @Nullable
+        @Override
+        public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
+            return classDescriptor.nestedObjects.fun(name);
+        }
+
+        @NotNull
+        @Override
+        protected Collection<ClassDescriptor> computeAllObjectDescriptors() {
+            return classDescriptor.nestedObjects.getAllDescriptors();
+        }
+    }
+
+    private abstract static class NestedClassDescriptors extends MemoizedFunctionToNullableImpl<Name, ClassDescriptor> {
+        private final Set<String> declaredNames;
+
+        public NestedClassDescriptors(@NotNull Set<String> declaredNames) {
+            this.declaredNames = declaredNames;
+        }
+
+        @Nullable
+        @Override
+        protected final ClassDescriptor doCompute(@NotNull Name name) {
+            if (!declaredNames.contains(name.getName())) return null;
+
+            return resolveNestedClass(name);
+        }
+
+        protected abstract ClassDescriptor resolveNestedClass(@NotNull Name name);
+
+        @NotNull
+        public Collection<ClassDescriptor> getAllDescriptors() {
+            Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(declaredNames.size());
+            for (String name : declaredNames) {
+                ClassDescriptor descriptor = fun(Name.identifier(name));
+                if (descriptor != null) {
+                    result.add(descriptor);
+                }
+            }
+            return result;
         }
     }
 }

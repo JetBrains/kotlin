@@ -17,8 +17,10 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.protobuf.MessageLite;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.NullableFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
@@ -35,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
@@ -45,13 +48,14 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.*;
 import java.util.*;
 
 public abstract class AbstractDescriptorSerializationTest extends KotlinTestWithEnvironment {
+
+    public static final Name TEST_PACKAGE_NAME = Name.identifier("test");
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -64,7 +68,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 JetTestUtils.createFile(ktFile.getName(), FileUtil.loadFile(ktFile), getProject())
         ), getEnvironment());
 
-        NamespaceDescriptor testNamespace = moduleDescriptor.getNamespace(FqName.topLevel(Name.identifier("test")));
+        NamespaceDescriptor testNamespace = moduleDescriptor.getNamespace(FqName.topLevel(TEST_PACKAGE_NAME));
         assert testNamespace != null;
 
         JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaDescriptorResolver(
@@ -100,43 +104,59 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
     }
 
     private static NamespaceDescriptor getDeserializedDescriptors(
-            final JavaDescriptorResolver javaDescriptorResolver,
+            JavaDescriptorResolver javaDescriptorResolver,
             List<ClassDescriptor> classes,
             List<CallableMemberDescriptor> callables
     ) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        serialize(classes, callables, out);
+        ByteArrayOutputStream serializedCallables = new ByteArrayOutputStream();
+        Map<ClassDescriptor, byte[]> serializedClasses = Maps.newHashMap();
+        serialize(classes, callables, serializedClasses, serializedCallables);
 
-        InputStream in = new ByteArrayInputStream(out.toByteArray());
+        final Map<String, ClassMetadata> classMetadata = Maps.newHashMap();
 
-        ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
-        ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
+        for (Map.Entry<ClassDescriptor, byte[]> entry : serializedClasses.entrySet()) {
+            ClassDescriptor classDescriptor = entry.getKey();
+            byte[] bytes = entry.getValue();
 
-        List<ProtoBuf.Class> classProtos = Lists.newArrayList();
-        List<ProtoBuf.Callable> callableProtos = Lists.newArrayList();
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 
-        for (int i = 0; i < classes.size(); i++) {
-            ProtoBuf.Class proto = ProtoBuf.Class.parseDelimitedFrom(in);
-            classProtos.add(proto);
-        }
+            ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
+            ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
+            ProtoBuf.Class proto = ProtoBuf.Class.parseFrom(in);
 
-        for (int i = 0; i < callables.size(); i++) {
-            ProtoBuf.Callable proto = ProtoBuf.Callable.parseDelimitedFrom(in);
-            callableProtos.add(proto);
+            classMetadata.put(getClassNameString(classDescriptor), new ClassMetadata(simpleNames, qualifiedNames, proto));
         }
 
         NamespaceDescriptorImpl namespace = createTestNamespace();
         ClassResolver javaClassResolver = new JavaClassResolver(javaDescriptorResolver);
 
         ClassResolverImpl classResolver = new ClassResolverImpl(
-                javaClassResolver, namespace, simpleNames, qualifiedNames, classProtos
+                javaClassResolver, namespace,
+                new NullableFunction<String, ClassMetadata>() {
+                    @Nullable
+                    @Override
+                    public ClassMetadata fun(String fqName) {
+                        return classMetadata.get(fqName);
+                    }
+                }
         );
 
-        for (ProtoBuf.Class proto : classProtos) {
-            FqName fqName = new FqName("test." + classResolver.getNameResolver().getName(proto.getName()));
-            ClassDescriptor descriptor = classResolver.findClass(fqName);
-            assert descriptor != null : "Class not loaded: " + fqName;
+        for (ClassDescriptor classDescriptor : classes) {
+            ClassId classId = new ClassId(DescriptorUtils.getFQName(classDescriptor.getContainingDeclaration()).toSafe(),
+                                     FqName.topLevel(classDescriptor.getName()));
+            ClassDescriptor descriptor = classResolver.findClass(classId);
+            assert descriptor != null : "Class not loaded: " + classId;
             namespace.getMemberScope().addClassifierDescriptor(descriptor);
+        }
+
+        ByteArrayInputStream in = new ByteArrayInputStream(serializedCallables.toByteArray());
+        ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
+        ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
+
+        List<ProtoBuf.Callable> callableProtos = Lists.newArrayList();
+        for (int i = 0; i < callables.size(); i++) {
+            ProtoBuf.Callable proto = ProtoBuf.Callable.parseDelimitedFrom(in);
+            callableProtos.add(proto);
         }
 
         DescriptorDeserializer deserializer =
@@ -158,6 +178,13 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         return namespace;
     }
 
+    private static String getClassNameString(ClassDescriptor classDescriptor) {
+        if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            return getClassNameString((ClassDescriptor) classDescriptor.getContainingDeclaration()) + "." + JvmAbi.CLASS_OBJECT_CLASS_NAME;
+        }
+        return DescriptorUtils.getFQName(classDescriptor).getFqName();
+    }
+
     private static NamespaceDescriptorImpl createTestNamespace() {
         ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<name>"), JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
                                                                    JavaToKotlinClassMap.getInstance());
@@ -165,30 +192,66 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
         module.setRootNamespace(rootNamespace);
         NamespaceDescriptorImpl test =
-                new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("test"));
+                new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), TEST_PACKAGE_NAME);
         test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));
         return test;
     }
 
     public static void serialize(
-            List<ClassDescriptor> classes, List<CallableMemberDescriptor> callables, @NotNull OutputStream out
+            List<ClassDescriptor> classes, List<CallableMemberDescriptor> callables,
+            Map<ClassDescriptor, byte[]> serializedClasses, OutputStream serializedCallables
     ) throws IOException {
+
+        serializeClasses(classes, serializedClasses);
+
         DescriptorSerializer descriptorSerializer = new DescriptorSerializer();
-
         List<MessageLite> messages = Lists.newArrayList();
-        for (ClassDescriptor classDescriptor : classes) {
-            messages.add(descriptorSerializer.classProto(classDescriptor).build());
-
-        }
-
         for (CallableMemberDescriptor callable : callables) {
             messages.add(descriptorSerializer.callableProto(callable).build());
         }
 
-        NameSerializationUtil.serializeNameTable(out, descriptorSerializer.getNameTable());
+        NameSerializationUtil.serializeNameTable(serializedCallables, descriptorSerializer.getNameTable());
 
         for (MessageLite message : messages) {
-            message.writeDelimitedTo(out);
+            message.writeDelimitedTo(serializedCallables);
+        }
+    }
+
+    private static void serializeClasses(Collection<ClassDescriptor> classes, Map<ClassDescriptor, byte[]> serializedClasses) throws IOException {
+        for (ClassDescriptor classDescriptor : classes) {
+            DescriptorSerializer descriptorSerializer = new DescriptorSerializer();
+
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            ProtoBuf.Class classProto = descriptorSerializer.classProto(classDescriptor).build();
+
+            NameSerializationUtil.serializeNameTable(bytes, descriptorSerializer.getNameTable());
+            classProto.writeTo(bytes);
+
+            serializedClasses.put(classDescriptor, bytes.toByteArray());
+
+            //noinspection unchecked
+            serializeClasses((Collection) classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(), serializedClasses);
+
+            ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+            if (classObjectDescriptor != null) {
+                serializeClasses(Collections.singletonList(classObjectDescriptor), serializedClasses);
+            }
+        }
+    }
+
+    private static class ClassMetadata {
+        private final ProtoBuf.SimpleNameTable simpleNames;
+        private final ProtoBuf.QualifiedNameTable qualifiedNames;
+        private final ProtoBuf.Class classProto;
+
+        private ClassMetadata(
+                ProtoBuf.SimpleNameTable simpleNames,
+                ProtoBuf.QualifiedNameTable qualifiedNames,
+                ProtoBuf.Class classProto
+        ) {
+            this.simpleNames = simpleNames;
+            this.qualifiedNames = qualifiedNames;
+            this.classProto = classProto;
         }
     }
 
@@ -196,68 +259,64 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         private final ClassResolver parentResolver;
 
         private final DeclarationDescriptor parentForClasses;
-        private final FqName parentFqName;
-        private final NameResolver nameResolver;
-        private final Map<Name, ProtoBuf.Class> classProtos;
+        private final NullableFunction<String, ClassMetadata> classMetadata;
 
-        private final MemoizedFunctionToNullable<FqName, ClassDescriptor> classes;
+        private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> classes;
 
         public ClassResolverImpl(
                 @NotNull ClassResolver parentResolver,
                 @NotNull DeclarationDescriptor parentForClasses,
-                @NotNull ProtoBuf.SimpleNameTable simpleNames,
-                @NotNull ProtoBuf.QualifiedNameTable qualifiedNames,
-                @NotNull List<ProtoBuf.Class> classProtos
+                @NotNull NullableFunction<String, ClassMetadata> classMetadata
         ) {
             this.parentResolver = parentResolver;
 
             this.parentForClasses = parentForClasses;
-            this.parentFqName = DescriptorUtils.getFQName(parentForClasses).toSafe();
 
-            this.nameResolver = new NameResolver(simpleNames, qualifiedNames, this);
-            this.classProtos = toMap(classProtos);
+            this.classMetadata = classMetadata;
 
-            this.classes = new MemoizedFunctionToNullableImpl<FqName, ClassDescriptor>() {
+            this.classes = new MemoizedFunctionToNullableImpl<ClassId, ClassDescriptor>() {
                 @Nullable
                 @Override
-                protected ClassDescriptor doCompute(@NotNull FqName fqName) {
-                    return resolveClass(fqName);
+                protected ClassDescriptor doCompute(@NotNull ClassId classId) {
+                    return resolveClass(ClassResolverImpl.this.parentForClasses, classId);
                 }
             };
         }
 
-        @NotNull
-        private Map<Name, ProtoBuf.Class> toMap(@NotNull List<ProtoBuf.Class> classProtos) {
-            Map<Name, ProtoBuf.Class> map = new HashMap<Name, ProtoBuf.Class>(classProtos.size());
-            for (ProtoBuf.Class classProto : classProtos) {
-                map.put(nameResolver.getName(classProto.getName()), classProto);
-            }
-            return map;
-        }
-
-        @NotNull
-        public NameResolver getNameResolver() {
-            return nameResolver;
-        }
-
         @Nullable
-        private ClassDescriptor resolveClass(@NotNull FqName fqName) {
-            if (!parentFqName.equals(fqName.parent())) {
-                return parentResolver.findClass(fqName);
+        private ClassDescriptor resolveClass(
+                @NotNull DeclarationDescriptor containingDeclaration,
+                @NotNull final ClassId classId
+        ) {
+            FqName fqName = classId.asSingleFqName();
+
+            ClassMetadata classMetadata = this.classMetadata.fun(fqName.getFqName());
+            if (classMetadata == null) {
+                return parentResolver.findClass(classId);
             }
 
-            ProtoBuf.Class classProto = classProtos.get(fqName.shortName());
-            if (classProto == null) {
-                return parentResolver.findClass(fqName);
-            }
+            NestedClassResolver nestedClassResolver = new NestedClassResolver() {
+                @Nullable
+                @Override
+                public ClassDescriptor resolveNestedClass(@NotNull ClassDescriptor outerClass, @NotNull Name name) {
+                    return resolveClass(outerClass, classId.createNestedClassId(name));
+                }
 
-            return new DeserializedClassDescriptor(parentForClasses, nameResolver, this, classProto, null);
+                @Nullable
+                @Override
+                public ClassDescriptor resolveClassObject(@NotNull ClassDescriptor outerClass) {
+                    return resolveClass(outerClass, classId.createNestedClassId(Name.identifier(JvmAbi.CLASS_OBJECT_CLASS_NAME)));
+                }
+            };
+
+            NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames, this);
+            return new DeserializedClassDescriptor(containingDeclaration, nameResolver, nestedClassResolver, classMetadata.classProto, null);
         }
 
         @Nullable
         @Override
-        public ClassDescriptor findClass(@NotNull FqName fqName) {
-            return classes.fun(fqName);
+        public ClassDescriptor findClass(@NotNull ClassId classId) {
+            return classes.fun(classId);
         }
     }
 
@@ -270,24 +329,31 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         @Nullable
         @Override
-        public ClassDescriptor findClass(@NotNull FqName fqName) {
-            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName);
-            if (classDescriptor != null) {
-                return classDescriptor;
+        public ClassDescriptor findClass(@NotNull ClassId classId) {
+            ClassDescriptor javaClassDescriptor = javaDescriptorResolver.resolveClass(classId.asSingleFqName());
+            if (javaClassDescriptor != null) {
+                return javaClassDescriptor;
             }
-            FqName current = fqName;
-            while (!current.isRoot()) {
-                NamespaceDescriptor namespace = getNamespace(current);
-                if (namespace != null) {
-                    ClassDescriptor classifier = (ClassDescriptor) namespace.getMemberScope().getClassifier(current.shortName());
-                    if (classifier == null) {
-                        throw new IllegalStateException("Class not found: " + fqName);
-                    }
-                    return classifier;
+            NamespaceDescriptor packageDescriptor = getNamespace(classId.getPackageFqName());
+            if (packageDescriptor == null) {
+                throw new IllegalStateException("Java package not found: " + classId.getPackageFqName() + " for " + classId);
+            }
+
+            JetScope scope = packageDescriptor.getMemberScope();
+            for (Iterator<Name> iterator = classId.getRelativeClassName().pathSegments().iterator(); iterator.hasNext(); ) {
+                Name name = iterator.next();
+                ClassifierDescriptor classifier = scope.getClassifier(name);
+                if (classifier == null) {
+                    throw new IllegalStateException("Class not found: " + classId);
                 }
-                current = current.parent();
+                ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+                if (!iterator.hasNext()) {
+                    return classDescriptor;
+                }
+                scope = classDescriptor.getUnsubstitutedInnerClassesScope();
             }
-            throw new IllegalStateException("Class not found: " + fqName);
+
+            throw new IllegalStateException("Class not found: " + classId);
         }
 
         @Nullable

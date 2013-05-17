@@ -54,6 +54,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     private final MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> functions;
     private final MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>> properties;
     private final NotNullLazyValue<Collection<DeclarationDescriptor>> allDescriptors;
+    private final NotNullLazyValue<Collection<ClassDescriptor>> objectDescriptors;
 
     public DeserializedMemberScope(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -83,6 +84,13 @@ public abstract class DeserializedMemberScope implements JetScope {
             @Override
             protected Collection<DeclarationDescriptor> doCompute() {
                 return computeAllDescriptors();
+            }
+        };
+        this.objectDescriptors = new NotNullLazyValueImpl<Collection<ClassDescriptor>>() {
+            @NotNull
+            @Override
+            protected Collection<ClassDescriptor> doCompute() {
+                return computeAllObjectDescriptors();
             }
         };
     }
@@ -164,14 +172,15 @@ public abstract class DeserializedMemberScope implements JetScope {
 
     @Nullable
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return null; // TODO
-    }
+    public abstract ClassDescriptor getObjectDescriptor(@NotNull Name name);
+
+    @NotNull
+    protected abstract Collection<ClassDescriptor> computeAllObjectDescriptors();
 
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        return Collections.emptyList(); // TODO
+        return objectDescriptors.compute();
     }
 
     @Nullable

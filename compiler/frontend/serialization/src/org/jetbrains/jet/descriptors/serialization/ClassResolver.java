@@ -19,18 +19,17 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface ClassResolver {
 
     ClassResolver EMPTY = new ClassResolver() {
         @Nullable
         @Override
-        public ClassDescriptor findClass(@NotNull FqName fqName) {
+        public ClassDescriptor findClass(@NotNull ClassId classId) {
             return null;
         }
     };
 
     @Nullable
-    ClassDescriptor findClass(@NotNull FqName fqName);
+    ClassDescriptor findClass(@NotNull ClassId classId);
 }

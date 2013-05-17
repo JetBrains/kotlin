@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.Collection;
+
 public class DescriptorSerializer {
 
     // TODO: flags
@@ -72,23 +74,35 @@ public class DescriptorSerializer {
             builder.addSupertypes(local.type(supertype));
         }
 
-        // TODO: nested classes
-
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
         if (primaryConstructor != null) {
             builder.setPrimaryConstructor(local.callableProto(primaryConstructor));
         }
         // TODO: other constructors
 
-        // TODO: class object
-
         for (DeclarationDescriptor descriptor : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            // TODO: other than functions
             if (descriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
                 if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
                 builder.addMembers(local.callableProto(member));
             }
+        }
+
+        Collection<DeclarationDescriptor> nestedClasses = classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors();
+        for (DeclarationDescriptor descriptor : nestedClasses) {
+            ClassDescriptor nestedClass = (ClassDescriptor) descriptor;
+            int nameIndex = nameTable.getSimpleNameIndex(nestedClass.getName());
+            if (nestedClass.getKind().isObject()) {
+                builder.addNestedObjectNames(nameIndex);
+            }
+            else {
+                builder.addNestedClassNames(nameIndex);
+            }
+        }
+
+        if (classDescriptor.getClassObjectDescriptor() != null) {
+            // false is default
+            builder.setClassObjectPresent(true);
         }
 
         return builder;

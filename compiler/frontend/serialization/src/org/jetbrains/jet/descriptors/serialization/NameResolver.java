@@ -22,6 +22,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.*;
+
 public class NameResolver {
     private final ProtoBuf.SimpleNameTable simpleNames;
     private final ProtoBuf.QualifiedNameTable qualifiedNames;
@@ -51,26 +53,54 @@ public class NameResolver {
             return classDescriptors[fqNameIndex];
         }
 
-        ProtoBuf.QualifiedNameTable.QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(fqNameIndex);
-        assert fqNameProto.getKind() == ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS : "Not a class fqName: " + getFqName(fqNameIndex);
+        QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(fqNameIndex);
+        assert fqNameProto.getKind() == QualifiedName.Kind.CLASS : "Not a class fqName: " + getClassId(fqNameIndex);
 
-        return classResolver.findClass(getFqName(fqNameIndex));
+
+        ClassId classId = getClassId(fqNameIndex);
+        return classResolver.findClass(classId);
     }
 
     @NotNull
-    public FqName getFqName(int index) {
-        ProtoBuf.QualifiedNameTable.QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(index);
-        StringBuilder sb = renderFqName(new StringBuilder(), fqNameProto);
-        return new FqName(sb.toString());
+    public ClassId getClassId(int index) {
+        QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(index);
+
+        StringBuilder relativeClassName = new StringBuilder();
+        QualifiedName packageFqNameProto = renderFqName(relativeClassName, fqNameProto, QualifiedName.Kind.CLASS);
+
+        FqName packageFqName;
+        if (packageFqNameProto != null) {
+            StringBuilder sb = new StringBuilder();
+            QualifiedName mustBeNull = renderFqName(sb, packageFqNameProto, QualifiedName.Kind.PACKAGE);
+            assert mustBeNull == null : "Prefix of an fqName must be all of kind PACKAGE";
+
+            packageFqName = new FqName(sb.toString());
+        }
+        else {
+            packageFqName = FqName.ROOT;
+        }
+
+        return new ClassId(packageFqName, new FqName(relativeClassName.toString()));
     }
 
-    private StringBuilder renderFqName(StringBuilder sb, ProtoBuf.QualifiedNameTable.QualifiedName fqNameProto) {
+    @Nullable
+    private QualifiedName renderFqName(
+            StringBuilder sb,
+            QualifiedName fqNameProto,
+            QualifiedName.Kind kind
+    ) {
+        QualifiedName result = null;
         if (fqNameProto.hasParentQualifiedName()) {
-            ProtoBuf.QualifiedNameTable.QualifiedName parentProto = qualifiedNames.getQualifiedNames(fqNameProto.getParentQualifiedName());
-            renderFqName(sb, parentProto);
-            sb.append(".");
+            QualifiedName parentProto = qualifiedNames.getQualifiedNames(fqNameProto.getParentQualifiedName());
+            if (kind == null || parentProto.getKind() == kind) {
+                result = renderFqName(sb, parentProto, kind);
+                sb.append(".");
+            }
+            else {
+                result = parentProto;
+            }
         }
         sb.append(simpleNames.getNames(fqNameProto.getShortName()));
-        return sb;
+        return result;
     }
 }
