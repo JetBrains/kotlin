@@ -52,6 +52,9 @@ public final class Interner<T> {
 
     public int intern(@NotNull T obj) {
         assert parent == null || parent.all.size() == firstIndex : "Parent changed in parallel with child: indexes will be wrong";
+        if (parent != null && parent.interned.contains(obj)) {
+            return parent.intern(obj);
+        }
         if (interned.contains(obj)) {
             return interned.get(obj);
         }

@@ -110,7 +110,7 @@ public class DescriptorSerializer {
 
         //TODO builder.addAnnotations()
 
-        DescriptorSerializer local = this;//createChildSerializer();
+        DescriptorSerializer local = createChildSerializer();
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             builder.addTypeParameters(local.typeParameter(typeParameterDescriptor));
