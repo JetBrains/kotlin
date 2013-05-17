@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
@@ -33,8 +34,11 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -234,7 +238,7 @@ public final class JavaClassResolver {
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(
-                containingDeclaration, kind, isInnerClass(psiClass), MembersCache.isSamInterface(psiClass));
+                containingDeclaration, kind, isInnerClass(psiClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
@@ -268,6 +272,13 @@ public final class JavaClassResolver {
         classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(psiClass, taskList));
 
         trace.record(BindingContext.CLASS, psiClass, classDescriptor);
+
+        PsiMethod samInterfaceMethod = MembersCache.getSamInterfaceMethod(psiClass);
+        if (samInterfaceMethod != null) {
+            SimpleFunctionDescriptor abstractMethod = functionResolver.resolveFunctionMutely(
+                    psiClass, new PsiMethodWrapper(samInterfaceMethod), classDescriptor);
+            classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));
+        }
 
         return classDescriptor;
     }
