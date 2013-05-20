@@ -23,7 +23,6 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
@@ -161,12 +160,10 @@ public class LightClassUtil {
         List<PsiMethod> methods = new SmartList<PsiMethod>();
         for (PsiMethod method : psiClass.getMethods()) {
             try {
-                if (method instanceof JetClsMethod) {
-                    if (method instanceof PsiCompiledElement && ((PsiCompiledElement) method).getMirror() == declaration) {
-                        methods.add(method);
-                        if (!collectAll) {
-                            return methods;
-                        }
+                if (method instanceof JetClsMethod && ((JetClsMethod) method).getOrigin() == declaration) {
+                    methods.add(method);
+                    if (!collectAll) {
+                        return methods;
                     }
                 }
             }
