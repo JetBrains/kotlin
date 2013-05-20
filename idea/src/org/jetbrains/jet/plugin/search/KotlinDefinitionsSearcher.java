@@ -21,7 +21,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
@@ -30,6 +29,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
 
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
@@ -107,7 +107,7 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
         for (PsiMethod method : accessors) {
             PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method);
             for (PsiMethod implementation : implementations) {
-                PsiElement mirrorElement = implementation instanceof PsiCompiledElement ? ((PsiCompiledElement) implementation).getMirror() : null;
+                PsiElement mirrorElement = implementation instanceof JetClsMethod ? ((JetClsMethod) implementation).getOrigin() : null;
                 if (mirrorElement instanceof JetProperty || mirrorElement instanceof JetParameter) {
                     consumer.process(mirrorElement);
                 }
