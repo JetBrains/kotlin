@@ -16,17 +16,14 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 public abstract class JetIntentionAction<T extends PsiElement> implements IntentionAction {
@@ -46,7 +43,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         if (file instanceof JetFile) {
-            if (CodeInsightUtilBase.prepareFileForWrite(element.getContainingFile())) {
+            if (FileModificationService.getInstance().prepareFileForWrite(element.getContainingFile())) {
                 invoke(project, editor, (JetFile) file);
             }
         }

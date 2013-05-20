@@ -3,15 +3,15 @@
 
     <target name="update" depends="fetch-third-party">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/82629:id"
-            build.zip="ideaIC-129.SNAPSHOT.win.zip"
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/83110:id"
+            build.zip="ideaIC-130.SNAPSHOT.win.zip"
         />
     </target>
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/1864599:id"
-            build.zip="ideaIC-129.SNAPSHOT.win.zip"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/1885470:id"
+            build.zip="ideaIC-130.SNAPSHOT.win.zip"
         />
     </target>
 
@@ -114,7 +114,7 @@
         -->
 
         <!-- Guava 12 sources-->
-        <get-maven-library prefix="com/google/guava" lib="guava" version="12.0" bin="false"/>
+        <get-maven-library prefix="com/google/guava" lib="guava" version="14.0" bin="false"/>
 
         <!-- ASM 4 -->
         <get-asm4-and-rename-packages/>
@@ -190,7 +190,7 @@
                     <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/cli-parser-1.1.jar" dest="${core}/cli-parser-1.1.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/guava-14.0.1.jar" dest="${core}/guava-14.0.1.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
 
