@@ -39,7 +39,8 @@ public class JetPairMatcher implements PairedBraceMatcher {
 
     @Override
     public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
-        return JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
+        return  lbraceType.equals(JetTokens.LONG_TEMPLATE_ENTRY_START)
+                || JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
                 || contextType == JetTokens.SEMICOLON
                 || contextType == JetTokens.COMMA
                 || contextType == JetTokens.RPAR
