@@ -2,7 +2,7 @@
 #
 ##############################################################################
 # Copyright 2002-2011, LAMP/EPFL
-# Copyright 2011, JetBrains
+# Copyright 2011-2013, JetBrains
 #
 # This is free software; see the distribution for copying conditions.
 # There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
@@ -45,6 +45,7 @@ fi
 # -D options will be available as system properties.
 declare -a java_args
 declare -a kotlin_args
+profile_preloader="notime"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -60,6 +61,10 @@ while [ $# -gt 0 ]; do
       # never be used.
       java_args=("${java_args[@]}" "${1:2}")
       kotlin_args=("${kotlin_args[@]}" "$1")
+      shift
+      ;;
+    -pp)
+      profile_preloader="time"
       shift
       ;;
     *)
@@ -82,4 +87,4 @@ CPSELECT="-cp "
   $JAVA_OPTS \
   "${java_args[@]}" \
   ${CPSELECT}"${KOTLIN_HOME}/lib/kotlin-preloader.jar" \
-  org.jetbrains.jet.preloading.Preloader "${KOTLIN_HOME}/lib/kotlin-compiler.jar" org.jetbrains.jet.cli.js.K2JSCompiler 4096 "$@"
+  org.jetbrains.jet.preloading.Preloader "${KOTLIN_HOME}/lib/kotlin-compiler.jar" org.jetbrains.jet.cli.js.K2JSCompiler 4096 $profile_preloader "$@"
