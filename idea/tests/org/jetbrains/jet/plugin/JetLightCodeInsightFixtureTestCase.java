@@ -18,21 +18,43 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
+
+import java.io.File;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
+    LightProjectDescriptor projectDescriptor = null;
+
     @Override
     protected void setUp() throws Exception {
+        String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
+        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
+            projectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        }
+        else {
+            projectDescriptor = JetLightProjectDescriptor.INSTANCE;
+        }
+
         super.setUp();
+
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+        projectDescriptor = null;
     }
 
-    protected String fileName() {
-        return getTestName(false) + ".kt";
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return projectDescriptor;
     }
+
+    protected abstract String fileName();
 }

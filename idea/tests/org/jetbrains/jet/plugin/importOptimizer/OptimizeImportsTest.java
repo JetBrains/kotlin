@@ -16,27 +16,15 @@
 
 package org.jetbrains.jet.plugin.importOptimizer;
 
-import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.testFramework.LightCodeInsightTestCase;
-import org.apache.commons.lang.SystemUtils;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer;
-import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 
-public class OptimizeImportsTest extends LightCodeInsightTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-    }
-
+public class OptimizeImportsTest extends JetLightCodeInsightFixtureTestCase {
     public void testAlreadyOptimized() throws Exception {
         doTest();
     }
@@ -54,7 +42,7 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
     }
 
     public void testUnusedImports() throws Exception {
-        doTestWithKotlinRuntime();
+        doTest();
     }
 
     public void testWithAliases() throws Exception {
@@ -86,23 +74,9 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
     }
 
     public void doTest() throws Exception {
-        configureByFile(fileName());
+        myFixture.configureByFile(fileName());
         invokeFormatFile();
-        checkResultByFile(null, checkFileName(), true);
-    }
-
-    public void doTestWithKotlinRuntime() {
-        try {
-            ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
-
-            configureByFile(fileName());
-            invokeFormatFile();
-
-            checkResultByFile(null, checkFileName(), false);
-        }
-        finally {
-            ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
-        }
+        myFixture.checkResultByFile(checkFileName(), false);
     }
 
     @Override
@@ -112,14 +86,6 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
     }
 
     @Override
-    protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
-    }
-
-    protected static Sdk getFullJavaJDK() {
-        return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
-    }
-
     public String fileName() {
         return getTestName(false) + ".kt";
     }
@@ -128,9 +94,8 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
         return getTestName(false) + "_after.kt";
     }
 
-    private static void invokeFormatFile() {
-        CommandProcessor.getInstance().executeCommand(
-                getProject(), new JetImportOptimizer().processFile(getFile()),
+    private void invokeFormatFile() {
+        CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new JetImportOptimizer().processFile(myFixture.getFile()),
                 "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
 }
