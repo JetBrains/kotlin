@@ -109,7 +109,7 @@ public final class AnalyzerWithCompilerReport {
         if (!incompletes.isEmpty()) {
             StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
             for (ClassDescriptor incomplete : incompletes) {
-                String fqName = DescriptorUtils.getFQName(incomplete).getFqName();
+                String fqName = DescriptorUtils.getFQName(incomplete).asString();
                 message.append("    ").append(fqName).append("\n");
             }
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);

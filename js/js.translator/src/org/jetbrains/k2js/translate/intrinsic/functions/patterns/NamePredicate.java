@@ -36,7 +36,7 @@ public final class NamePredicate implements Predicate<Name> {
             ContainerUtil.map(PrimitiveType.NUMBER_TYPES, new Function<PrimitiveType, String>() {
         @Override
         public String fun(PrimitiveType type) {
-            return type.getTypeName().getName();
+            return type.getTypeName().asString();
         }
     }));
 

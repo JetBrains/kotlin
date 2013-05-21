@@ -86,7 +86,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
     @Override
     @Nullable
     public PsiClass findPsiClass(@NotNull FqName qualifiedName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode) {
-        PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
+        PsiClass original = javaFacade.findClass(qualifiedName.asString(), javaSearchScope);
 
         if (original != null) {
             String classQualifiedName = original.getQualifiedName();
@@ -106,7 +106,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
 
         if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
             PsiAnnotation assertInvisibleAnnotation = JavaAnnotationResolver.findOwnAnnotation(
-                    original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+                    original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().asString());
 
             if (assertInvisibleAnnotation != null) {
                 switch (runtimeClassesHandleMode) {
@@ -131,7 +131,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
     @Override
     @Nullable
     public PsiPackage findPsiPackage(@NotNull FqName qualifiedName) {
-        return javaFacade.findPackage(qualifiedName.getFqName());
+        return javaFacade.findPackage(qualifiedName.asString());
     }
 
     @NotNull

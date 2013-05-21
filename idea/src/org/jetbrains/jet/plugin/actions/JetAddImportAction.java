@@ -107,7 +107,7 @@ public class JetAddImportAction implements QuestionAction {
                     return FINAL_CHOICE;
                 }
 
-                List<String> toExclude = AddImportAction.getAllExcludableStrings(selectedValue.getFqName());
+                List<String> toExclude = AddImportAction.getAllExcludableStrings(selectedValue.asString());
 
                 return new BaseListPopupStep<String>(null, toExclude) {
                     @NotNull
@@ -135,7 +135,7 @@ public class JetAddImportAction implements QuestionAction {
             @NotNull
             @Override
             public String getTextFor(FqName value) {
-                return value.getFqName();
+                return value.asString();
             }
 
             @Override

@@ -61,8 +61,8 @@ public class JvmClassNameTest {
     ) {
         JvmClassName mapEntryName = JvmClassName.bySignatureName(className);
         assertEquals(innerClassName, mapEntryName.getInternalName());
-        assertEquals(fqName, mapEntryName.getFqName().getFqName());
-        assertEquals(outerClassName, mapEntryName.getOuterClassFqName().getFqName());
+        assertEquals(fqName, mapEntryName.getFqName().asString());
+        assertEquals(outerClassName, mapEntryName.getOuterClassFqName().asString());
         assertEquals(innerClassNameList, mapEntryName.getInnerClassNameList());
     }
 }

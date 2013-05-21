@@ -200,7 +200,7 @@ public class FunctionCodegen extends GenerationStateAware {
         List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
         List<String> result = new ArrayList<String>(parameters.size());
         for (ValueParameterDescriptor parameter : parameters) {
-            result.add(parameter.getName().getName());
+            result.add(parameter.getName().asString());
         }
         return result;
     }
@@ -244,7 +244,7 @@ public class FunctionCodegen extends GenerationStateAware {
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = valueParameters.next();
                 Label divideLabel = labelsForSharedVars.get(parameter.getName());
-                parameterName = parameter.getName().getName();
+                parameterName = parameter.getName().asString();
                 if (divideLabel != null) {
                     mv.visitLocalVariable(parameterName, type.getDescriptor(), null, methodBegin, divideLabel, shift);
 
@@ -377,7 +377,7 @@ public class FunctionCodegen extends GenerationStateAware {
             ValueParameterDescriptor parameterDescriptor = null;
             if (kind == JvmMethodParameterKind.VALUE) {
                 parameterDescriptor = valueParameters.next();
-                parameterName = parameterDescriptor.getName().getName();
+                parameterName = parameterDescriptor.getName().asString();
             } else if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
                 //we shouldn't generate annotations for invisible in runtime parameters otherwise we get bad RuntimeInvisibleParameterAnnotations error in javac
                 continue;

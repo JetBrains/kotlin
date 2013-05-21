@@ -178,7 +178,7 @@ public class TracingStrategyImpl implements TracingStrategy {
                 JetExpression left = binaryExpression.getLeft();
                 JetExpression right = binaryExpression.getRight();
                 if (left != null && right != null) {
-                    trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.getName(), right.getText()));
+                    trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.asString(), right.getText()));
                 }
             }
             else {

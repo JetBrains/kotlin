@@ -97,7 +97,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
         // If there are many files, the first of them should contain the 'box(): String' function
         JetFile firstFile = myFiles.getPsiFiles().get(0);
-        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(firstFile)).getFqName().getFqName();
+        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(firstFile)).getFqName().asString();
 
         try {
             Class<?> namespaceClass = loader.loadClass(fqName);

@@ -132,7 +132,7 @@ public class JetChangeInfo implements ChangeInfo {
 
             for (int i = 0; i < parameters.size(); i++) {
                 ValueParameterDescriptor oldParameter = parameters.get(i);
-                map.put(oldParameter.getName().getName(), i);
+                map.put(oldParameter.getName().asString(), i);
             }
         }
 

@@ -236,7 +236,7 @@ public class ReplInterpreter {
         }
 
         try {
-            Class<?> scriptClass = classLoader.loadClass(scriptClassName.getFqName().getFqName());
+            Class<?> scriptClass = classLoader.loadClass(scriptClassName.getFqName().asString());
 
             Class<?>[] constructorParams = new Class<?>[earlierLines.size()];
             Object[] constructorArgs = new Object[earlierLines.size()];

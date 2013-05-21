@@ -272,8 +272,8 @@ public class BothSignatureWriter {
     }
 
     public void writeTypeVariable(Name name, boolean nullable, Type asmType) {
-        signatureVisitor().visitTypeVariable(name.getName());
-        jetSignatureWriter.visitTypeVariable(name.getName(), nullable);
+        signatureVisitor().visitTypeVariable(name.asString());
+        jetSignatureWriter.visitTypeVariable(name.asString(), nullable);
         generic = true;
         writeAsmType0(asmType);
     }

@@ -254,7 +254,7 @@ public class SignaturesPropagationData {
             public int compare(FunctionDescriptor fun1, FunctionDescriptor fun2) {
                 FqNameUnsafe fqName1 = getFQName(fun1.getContainingDeclaration());
                 FqNameUnsafe fqName2 = getFQName(fun2.getContainingDeclaration());
-                return fqName1.getFqName().compareTo(fqName2.getFqName());
+                return fqName1.asString().compareTo(fqName2.asString());
             }
         });
         return superFunctions;

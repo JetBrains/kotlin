@@ -39,7 +39,7 @@ public class JetGotoClassContributor implements GotoClassContributor {
             JetNamedDeclaration jetClass = (JetNamedDeclaration) item;
             FqName name = JetPsiUtil.getFQName(jetClass);
             if (name != null) {
-                return name.getFqName();
+                return name.asString();
             }
         }
 

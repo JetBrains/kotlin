@@ -99,7 +99,7 @@ public class LightClassUtil {
 
     @Nullable
     /*package*/ static PsiClass findClass(@NotNull FqName fqn, @NotNull StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub) stub).getQualifiedName())) {
+        if (stub instanceof PsiClassStub && Comparing.equal(fqn.asString(), ((PsiClassStub) stub).getQualifiedName())) {
             return (PsiClass)stub.getPsi();
         }
 
@@ -222,7 +222,7 @@ public class LightClassUtil {
             if (jvmName != null) {
                 Project project = declaration.getProject();
 
-                String fqName = jvmName.getFqName().getFqName();
+                String fqName = jvmName.getFqName().asString();
                 return JavaElementFinder.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project));
             }
         }

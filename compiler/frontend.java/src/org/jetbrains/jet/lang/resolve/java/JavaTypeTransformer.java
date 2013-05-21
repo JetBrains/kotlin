@@ -184,7 +184,7 @@ public class JavaTypeTransformer {
                                      " in " + classType.getPresentableText() + "\n PsiClass: \n" + psiClass.getText());
 
                             for (TypeParameterDescriptor parameter : parameters) {
-                                arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().getName())));
+                                arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().asString())));
                             }
                         }
                         else {
@@ -275,10 +275,10 @@ public class JavaTypeTransformer {
         if (!signatureTypeUsages.contains(originalTypeUsage)) {
             return originalTypeUsage;
         }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_MUTABLE_ANNOTATION.getFqName().getFqName()) != null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_MUTABLE_ANNOTATION.getFqName().asString()) != null) {
             return TypeUsage.MEMBER_SIGNATURE_COVARIANT;
         }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_READONLY_ANNOTATION.getFqName().getFqName()) != null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_READONLY_ANNOTATION.getFqName().asString()) != null) {
             return TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
         }
         return originalTypeUsage;

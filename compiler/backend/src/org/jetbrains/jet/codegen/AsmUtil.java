@@ -505,7 +505,7 @@ public class AsmUtil {
             Type asmType = state.getTypeMapper().mapReturnType(type);
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
-                v.visitLdcInsn(descriptor.getName().getName());
+                v.visitLdcInsn(descriptor.getName().asString());
                 v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
             }
         }
@@ -546,8 +546,8 @@ public class AsmUtil {
         Type asmType = state.getTypeMapper().mapReturnType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             v.dup();
-            v.visitLdcInsn(descriptor.getContainingDeclaration().getName().getName());
-            v.visitLdcInsn(descriptor.getName().getName());
+            v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());
+            v.visitLdcInsn(descriptor.getName().asString());
             v.invokestatic("jet/runtime/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
         }
     }

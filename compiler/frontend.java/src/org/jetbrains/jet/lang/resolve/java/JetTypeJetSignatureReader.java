@@ -86,7 +86,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     public void visitClassType(String signatureName, boolean nullable, boolean forceReal) {
         FqName fqName = JvmClassName.bySignatureName(signatureName).getFqName();
 
-        enterClass(resolveClassDescriptorByFqName(fqName, forceReal), fqName.getFqName(), nullable);
+        enterClass(resolveClassDescriptorByFqName(fqName, forceReal), fqName.asString(), nullable);
     }
 
     private void enterClass(@Nullable ClassDescriptor classDescriptor, @NotNull String className, boolean nullable) {

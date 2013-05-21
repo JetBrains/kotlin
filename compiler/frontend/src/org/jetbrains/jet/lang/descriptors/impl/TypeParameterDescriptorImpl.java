@@ -91,7 +91,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
                 this,
                 annotations,
                 false,
-                name.getName(),
+                name.asString(),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);
     }

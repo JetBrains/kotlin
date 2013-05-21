@@ -392,7 +392,7 @@ public final class JavaPropertyResolver {
 
         boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
                 characteristicMember.getType().getPsiNotNullOwner(),
-                JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null;
+                JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) != null;
 
         if (hasNotNullAnnotation || members.isStaticFinalField()) {
             propertyType = TypeUtils.makeNotNullable(propertyType);

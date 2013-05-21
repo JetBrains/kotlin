@@ -51,7 +51,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
@@ -100,7 +99,7 @@ public class CallResolver {
         Name referencedName = nameExpression.getReferencedNameAsName();
         List<CallableDescriptorCollector<? extends VariableDescriptor>> callableDescriptorCollectors = Lists.newArrayList();
         if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            referencedName = Name.identifier(referencedName.getName().substring(1));
+            referencedName = Name.identifier(referencedName.asString().substring(1));
             callableDescriptorCollectors.add(CallableDescriptorCollectors.PROPERTIES);
         }
         else {

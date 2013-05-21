@@ -112,7 +112,7 @@ public class RangeCodegenUtil {
     }
 
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {
-        if ("rangeTo".equals(rangeTo.getName().getName())) {
+        if ("rangeTo".equals(rangeTo.getName().asString())) {
             if (isPrimitiveNumberClassDescriptor(rangeTo.getContainingDeclaration())) {
                 return true;
             }

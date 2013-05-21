@@ -189,7 +189,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     private PsiJavaFileStub createJavaFileStub(@NotNull final FqName packageFqName, @NotNull VirtualFile virtualFile) {
         PsiManager manager = PsiManager.getInstance(project);
 
-        final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.getFqName(), true);
+        final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.asString(), true);
         javaFileStub.setPsiFactory(new ClsWrapperStubPsiFactory());
 
         ClsFileImpl fakeFile =
@@ -203,7 +203,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
                     @NotNull
                     @Override
                     public String getPackageName() {
-                        return packageFqName.getFqName();
+                        return packageFqName.asString();
                     }
                 };
 

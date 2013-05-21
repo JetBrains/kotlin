@@ -122,6 +122,6 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
 
     public boolean isForceReal(@NotNull JvmClassName className) {
         return JvmPrimitiveType.getByWrapperClass(className) != null
-               || mappedTypeNames.contains(className.getFqName().getFqName());
+               || mappedTypeNames.contains(className.getFqName().asString());
     }
 }

@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.io.File;
 import java.util.*;
 
 import static com.intellij.testFramework.UsefulTestCase.assertNotNull;
@@ -85,7 +84,7 @@ public class ExpectedLoadErrorsUtil {
                     ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
                     assert annotationClass != null;
 
-                    if (DescriptorUtils.getFQName(annotationClass).getFqName().equals(ANNOTATION_CLASS_NAME)) {
+                    if (DescriptorUtils.getFQName(annotationClass).asString().equals(ANNOTATION_CLASS_NAME)) {
 
                         // we expect exactly one annotation argument
                         CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();

@@ -413,7 +413,7 @@ public final class MembersCache {
             return null;
         }
         String qualifiedName = psiClass.getQualifiedName();
-        if (qualifiedName == null || qualifiedName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.getFqName() + ".")) {
+        if (qualifiedName == null || qualifiedName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".")) {
             return null;
         }
         if (!psiClass.isInterface() || psiClass.isAnnotationType()) {

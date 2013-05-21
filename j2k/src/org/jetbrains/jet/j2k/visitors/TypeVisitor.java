@@ -59,7 +59,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
         IdentifierImpl identifier = new IdentifierImpl(name);
 
         if (name.equals("void")) {
-            myResult = new PrimitiveType(new IdentifierImpl(KotlinBuiltIns.getInstance().getUnit().getName().getName()));
+            myResult = new PrimitiveType(new IdentifierImpl(KotlinBuiltIns.getInstance().getUnit().getName().asString()));
         }
         else if (Node.PRIMITIVE_TYPES.contains(name)) {
             myResult = new PrimitiveType(new IdentifierImpl(AstUtil.upperFirstCharacter(name)));

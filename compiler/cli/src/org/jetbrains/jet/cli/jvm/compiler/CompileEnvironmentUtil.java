@@ -203,7 +203,7 @@ public class CompileEnvironmentUtil {
             mainAttributes.putValue("Manifest-Version", "1.0");
             mainAttributes.putValue("Created-By", "JetBrains Kotlin");
             if (mainClass != null) {
-                mainAttributes.putValue("Main-Class", mainClass.getFqName());
+                mainAttributes.putValue("Main-Class", mainClass.asString());
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
             for (String file : factory.files()) {

@@ -339,7 +339,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
             if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
                 PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
-                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().getName()));
+                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }
         }
         return variableDescriptor;
