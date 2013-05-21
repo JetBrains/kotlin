@@ -92,12 +92,12 @@ public class DescriptorSerializer {
         for (DeclarationDescriptor descriptor : nestedClasses) {
             ClassDescriptor nestedClass = (ClassDescriptor) descriptor;
             int nameIndex = nameTable.getSimpleNameIndex(nestedClass.getName());
-            if (nestedClass.getKind().isObject()) {
-                builder.addNestedObjectNames(nameIndex);
-            }
-            else {
-                builder.addNestedClassNames(nameIndex);
-            }
+            builder.addNestedClassNames(nameIndex);
+        }
+
+        for (ClassDescriptor descriptor : classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors()) {
+            int nameIndex = nameTable.getSimpleNameIndex(descriptor.getName());
+            builder.addNestedObjectNames(nameIndex);
         }
 
         if (classDescriptor.getClassObjectDescriptor() != null) {

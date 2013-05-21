@@ -74,7 +74,9 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaDescriptorResolver(
                 getProject(), new BindingTraceContext(), moduleDescriptor).getJavaDescriptorResolver();
 
-        Collection<DeclarationDescriptor> initial = testNamespace.getMemberScope().getAllDescriptors();
+        Collection<DeclarationDescriptor> initial = new ArrayList<DeclarationDescriptor>();
+        initial.addAll(testNamespace.getMemberScope().getAllDescriptors());
+        initial.addAll(testNamespace.getMemberScope().getObjectDescriptors());
 
         NamespaceDescriptor deserialized = serializeAndDeserialize(javaDescriptorResolver, initial);
 
@@ -146,7 +148,12 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                                      FqName.topLevel(classDescriptor.getName()));
             ClassDescriptor descriptor = classResolver.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
-            namespace.getMemberScope().addClassifierDescriptor(descriptor);
+            if (descriptor.getKind().isObject()) {
+                namespace.getMemberScope().addObjectDescriptor(descriptor);
+            }
+            else {
+                namespace.getMemberScope().addClassifierDescriptor(descriptor);
+            }
         }
 
         ByteArrayInputStream in = new ByteArrayInputStream(serializedCallables.toByteArray());
@@ -231,6 +238,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
             //noinspection unchecked
             serializeClasses((Collection) classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(), serializedClasses);
+            //noinspection unchecked
+            serializeClasses((Collection) classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors(), serializedClasses);
 
             ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
             if (classObjectDescriptor != null) {
