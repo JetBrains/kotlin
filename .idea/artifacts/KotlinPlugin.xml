@@ -4,7 +4,6 @@
     <root id="root">
       <element id="directory" name="Kotlin">
         <element id="directory" name="lib">
-          <element id="library" level="project" name="asm-addons" />
           <element id="archive" name="kotlin-plugin.jar">
             <element id="module-output" name="backend" />
             <element id="module-output" name="frontend" />
