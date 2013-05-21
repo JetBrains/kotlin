@@ -23,10 +23,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetBlockExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
-import org.jetbrains.jet.lang.psi.JetWithExpressionInitializer;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public abstract class JetStubElementType<StubT extends StubElement, PsiT extends PsiElement> extends IStubElementType<StubT, PsiT> {
@@ -63,6 +60,16 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
         if (withInitializer != null) {
             JetExpression initializer = withInitializer.getInitializer();
             if (PsiTreeUtil.isAncestor(initializer, psi, true)) {
+                return false;
+            }
+        }
+
+        // Don't create stubs if declaration is inside property delegate
+        @SuppressWarnings("unchecked") JetPropertyDelegate delegate =
+                PsiTreeUtil.getParentOfType(psi, JetPropertyDelegate.class, true, JetBlockExpression.class);
+        if (delegate != null) {
+            JetExpression delegateExpression = delegate.getExpression();
+            if (PsiTreeUtil.isAncestor(delegateExpression, psi, true)) {
                 return false;
             }
         }
