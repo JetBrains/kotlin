@@ -131,7 +131,7 @@ public final class JavaClassObjectResolver {
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
                 new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
         ClassPsiDeclarationProvider data = semanticServices.getPsiDeclarationProviderFactory().createSyntheticClassObjectClassData(psiClass);
-        setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().getName()));
+        setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().asString()));
         return classObjectDescriptor;
     }
 

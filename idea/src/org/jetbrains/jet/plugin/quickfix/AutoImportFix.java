@@ -239,7 +239,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
         }
 
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            String hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.iterator().next().getFqName());
+            String hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.iterator().next().asString());
 
             HintManager.getInstance().showQuestionHint(
                     editor, hintText,

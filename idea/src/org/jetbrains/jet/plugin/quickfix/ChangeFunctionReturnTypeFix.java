@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters3;
 import org.jetbrains.jet.lang.psi.*;
@@ -58,7 +57,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
     public String getText() {
         String functionName = element.getName();
         FqName fqName = JetPsiUtil.getFQName(element);
-        if (fqName != null) functionName = fqName.getFqName();
+        if (fqName != null) functionName = fqName.asString();
 
         if (KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody()) {
             return functionName == null ?
@@ -98,7 +97,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetNamedFunc
 
     @NotNull
     public static JetMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
-        String componentName = ((DiagnosticWithParameters3<JetExpression, Name, JetType, JetType>) diagnostic).getA().getName();
+        String componentName = ((DiagnosticWithParameters3<JetExpression, Name, JetType, JetType>) diagnostic).getA().asString();
         int componentIndex = Integer.valueOf(componentName.substring(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX.length()));
         JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
         assert multiDeclaration != null : "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration";

@@ -75,7 +75,7 @@ public class OverloadResolver {
         }
         
         Key(NamespaceDescriptor namespaceDescriptor, Name name) {
-            this(DescriptorUtils.getFQName(namespaceDescriptor).getFqName(), name);
+            this(DescriptorUtils.getFQName(namespaceDescriptor).asString(), name);
         }
 
         public String getNamespace() {
@@ -149,7 +149,7 @@ public class OverloadResolver {
         }
         if (jetClass instanceof JetObjectDeclaration) {
             // must be class object
-            name = classDescriptor.getContainingDeclaration().getName().getName();
+            name = classDescriptor.getContainingDeclaration().getName().asString();
             return "class object " + name;
         }
         // safe
@@ -223,7 +223,7 @@ public class OverloadResolver {
             CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
             JetDeclaration jetDeclaration = redeclaration.getFirst();
             if (memberDescriptor instanceof PropertyDescriptor) {
-                trace.report(Errors.REDECLARATION.on(jetDeclaration, memberDescriptor.getName().getName()));
+                trace.report(Errors.REDECLARATION.on(jetDeclaration, memberDescriptor.getName().asString()));
             }
             else {
                 trace.report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, memberDescriptor, functionContainer));

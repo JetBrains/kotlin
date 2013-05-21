@@ -297,7 +297,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             innerClassInternalName = outerClassInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
         }
         else {
-            innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().getName();
+            innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
             innerClassInternalName = getInternalNameForImpl(innerClass);
         }
 
@@ -620,11 +620,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean first = true;
         for (PropertyDescriptor propertyDescriptor : properties) {
             if (first) {
-                iv.aconst(descriptor.getName() + "(" + propertyDescriptor.getName().getName()+"=");
+                iv.aconst(descriptor.getName() + "(" + propertyDescriptor.getName().asString()+"=");
                 first = false;
             }
             else {
-                iv.aconst(", " + propertyDescriptor.getName().getName()+"=");
+                iv.aconst(", " + propertyDescriptor.getName().asString()+"=");
             }
             genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
@@ -821,7 +821,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type[] argTypes = method.getArgumentTypes();
 
             String owner = typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION, isCallInsideSameModuleAsDeclared(original, context)).getInternalName();
-            MethodVisitor mv = v.newMethod(null, ACC_SYNTHETIC | ACC_STATIC, bridge.getName().getName(),
+            MethodVisitor mv = v.newMethod(null, ACC_SYNTHETIC | ACC_STATIC, bridge.getName().asString(),
                                            method.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                 genStubCode(mv);
@@ -1015,7 +1015,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type type = typeMapper.mapType(descriptor);
                 iv.load(0, classAsmType);
                 iv.load(codegen.myFrameMap.getIndex(descriptor), type);
-                iv.putfield(classAsmType.getInternalName(), descriptor.getName().getName(), type.getDescriptor());
+                iv.putfield(classAsmType.getInternalName(), descriptor.getName().asString(), type.getDescriptor());
             }
             curParam++;
         }
@@ -1097,7 +1097,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
             // final property with backing field
             field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType()), classname,
-                                     propertyDescriptor.getName().getName(), false);
+                                     propertyDescriptor.getName().asString(), false);
         }
         else {
             iv.load(0, classType);

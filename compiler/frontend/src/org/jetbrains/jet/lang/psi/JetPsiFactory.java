@@ -228,7 +228,7 @@ public class JetPsiFactory {
 
         Name alias = importPath.getAlias();
         if (alias != null) {
-            importDirectiveBuilder.append(" as ").append(alias.getName());
+            importDirectiveBuilder.append(" as ").append(alias.asString());
         }
 
         JetFile namespace = createFile(project, importDirectiveBuilder.toString());

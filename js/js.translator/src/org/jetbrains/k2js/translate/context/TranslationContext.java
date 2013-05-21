@@ -163,7 +163,7 @@ public class TranslationContext {
     //TODO: util
     @NotNull
     public JsStringLiteral nameToLiteral(@NotNull Named named) {
-        return program().getStringLiteral(named.getName().getName());
+        return program().getStringLiteral(named.getName().asString());
     }
 
     @Nullable

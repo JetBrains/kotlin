@@ -32,7 +32,7 @@ public class PackageClassUtils {
         if (packageFQN.isRoot()) {
             return DEFAULT_PACKAGE;
         }
-        return StringUtil.capitalize(packageFQN.shortName().getName()) + "Package";
+        return StringUtil.capitalize(packageFQN.shortName().asString()) + "Package";
     }
 
     public static FqName getPackageClassFqName(@NotNull FqName packageFQN) {

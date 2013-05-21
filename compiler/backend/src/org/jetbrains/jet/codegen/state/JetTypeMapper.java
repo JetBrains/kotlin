@@ -578,7 +578,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
-        String name = f.getName().getName();
+        String name = f.getName().asString();
         if (f instanceof PropertyAccessorDescriptor) {
             boolean isGetter = f instanceof PropertyGetterDescriptor;
             name = getPropertyAccessorName(((PropertyAccessorDescriptor) f).getCorrespondingProperty(), isGetter);
@@ -588,7 +588,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull Name functionName, @NotNull FunctionDescriptor f) {
-        return mapSignature(functionName.getName(), f, false, OwnerKind.IMPLEMENTATION);
+        return mapSignature(functionName.asString(), f, false, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull
@@ -675,7 +675,7 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     private void writeFormalTypeParameter(TypeParameterDescriptor typeParameterDescriptor, BothSignatureWriter signatureVisitor) {
-        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName().getName(), typeParameterDescriptor.getVariance(),
+        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName().asString(), typeParameterDescriptor.getVariance(),
                                                   typeParameterDescriptor.isReified());
 
         classBound:
@@ -730,7 +730,7 @@ public class JetTypeMapper extends BindingTraceAware {
         DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
         boolean isAnnotation = parentDescriptor instanceof ClassDescriptor &&
                                ((ClassDescriptor) parentDescriptor).getKind() == ClassKind.ANNOTATION_CLASS;
-        return isAnnotation ? descriptor.getName().getName() :
+        return isAnnotation ? descriptor.getName().asString() :
                isGetter ? PropertyCodegen.getterName(descriptor.getName()) : PropertyCodegen.setterName(descriptor.getName());
     }
 

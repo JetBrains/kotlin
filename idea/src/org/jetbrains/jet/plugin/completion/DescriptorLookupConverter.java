@@ -68,9 +68,9 @@ public final class DescriptorLookupConverter {
         }
 
         LookupElementBuilder element = LookupElementBuilder.create(
-                new JetLookupObject(descriptor, analyzer, declaration), descriptor.getName().getName());
+                new JetLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString());
 
-        String presentableText = descriptor.getName().getName();
+        String presentableText = descriptor.getName().asString();
         String typeText = "";
         String tailText = "";
         boolean tailTextGrayed = true;

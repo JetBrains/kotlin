@@ -31,7 +31,7 @@ public class JetLightPackage extends PsiPackageImpl {
     private final GlobalSearchScope scope;
 
     public JetLightPackage(PsiManager manager, FqName qualifiedName, GlobalSearchScope scope) {
-        super(manager, qualifiedName.getFqName());
+        super(manager, qualifiedName.asString());
         this.fqName = qualifiedName;
         this.scope = scope;
     }

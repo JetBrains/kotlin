@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
@@ -203,7 +202,7 @@ public final class JavaClassResolver {
 
     private static boolean isTraitImplementation(@NotNull FqName qualifiedName) {
         // TODO: only if -$$TImpl class is created by Kotlin
-        return qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX);
+        return qualifiedName.asString().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX);
     }
 
     @NotNull
@@ -295,7 +294,7 @@ public final class JavaClassResolver {
         String containerQualifiedName = methodContainer.getQualifiedName();
         assert containerQualifiedName != null : "qualified name is null for " + psiClass;
 
-        if (DescriptorUtils.getFQName(samInterface).getFqName().equals(containerQualifiedName)) {
+        if (DescriptorUtils.getFQName(samInterface).asString().equals(containerQualifiedName)) {
             SimpleFunctionDescriptor abstractMethod =
                     functionResolver.resolveFunctionMutely(new PsiMethodWrapper(samInterfaceMethod), samInterface);
             assert abstractMethod != null : "couldn't resolve method " + samInterfaceMethod;
@@ -378,7 +377,7 @@ public final class JavaClassResolver {
     private static FqNameUnsafe javaClassToKotlinFqName(@NotNull FqName rawFqName) {
         List<Name> correctedSegments = new ArrayList<Name>();
         for (Name segment : rawFqName.pathSegments()) {
-            if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.getName())) {
+            if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.asString())) {
                 assert !correctedSegments.isEmpty();
                 Name previous = correctedSegments.get(correctedSegments.size() - 1);
                 correctedSegments.add(DescriptorUtils.getClassObjectName(previous));

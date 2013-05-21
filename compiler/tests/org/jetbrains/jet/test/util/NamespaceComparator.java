@@ -131,7 +131,7 @@ public class NamespaceComparator {
     private boolean shouldSkip(@NotNull DeclarationDescriptor subDescriptor) {
         return subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                 && subDescriptor instanceof FunctionDescriptor
-                && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().getName())
+                && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().asString())
                 && !conf.includeMethodsOfJavaObject
             ||
                 subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor));

@@ -137,7 +137,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     @NotNull
     protected Class<?> generateNamespaceClass() {
         JvmClassName name = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile()));
-        return generateClass(name.getFqName().getFqName());
+        return generateClass(name.getFqName().asString());
     }
 
     @NotNull

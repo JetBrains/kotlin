@@ -69,7 +69,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
                 if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember)) {
                     return false;
                 }
-                String containingDeclarationName = overriddenDescriptor.getContainingDeclaration().getName().getName();
+                String containingDeclarationName = overriddenDescriptor.getContainingDeclaration().getName().asString();
                 overriddenMembers.add(overriddenMember);
                 containingDeclarationsNames.add(containingDeclarationName);
             }

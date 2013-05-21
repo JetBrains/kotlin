@@ -54,9 +54,9 @@ public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionActio
         }
         for (CallableDescriptor parameterFromSuperclass : parameterDescriptor.getOverriddenDescriptors()) {
             if (parameterFromSuperclassName == null) {
-                parameterFromSuperclassName = parameterFromSuperclass.getName().getName();
+                parameterFromSuperclassName = parameterFromSuperclass.getName().asString();
             }
-            else if (!parameterFromSuperclassName.equals(parameterFromSuperclass.getName().getName())) {
+            else if (!parameterFromSuperclassName.equals(parameterFromSuperclass.getName().asString())) {
                 return false;
             }
         }

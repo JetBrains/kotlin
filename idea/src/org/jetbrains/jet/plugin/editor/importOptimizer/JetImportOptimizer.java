@@ -227,7 +227,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                 for (JetSimpleNameExpression nameExpression : simpleNameExpressions) {
                     Name referencedName = nameExpression.getReferencedNameAsName();
                     if (fqName == null) {
-                        fqName = new FqName(referencedName.getName());
+                        fqName = new FqName(referencedName.asString());
                     } else {
                         fqName = QualifiedNamesUtil.combine(fqName, referencedName);
                     }

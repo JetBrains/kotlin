@@ -65,7 +65,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
             primitiveTypesMap.put(jvmPrimitiveType.getName(), KotlinBuiltIns.getInstance().getPrimitiveJetType(primitiveType));
             primitiveTypesMap.put("[" + jvmPrimitiveType.getName(), KotlinBuiltIns.getInstance().getPrimitiveArrayJetType(primitiveType));
-            primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().getFqName(), KotlinBuiltIns.getInstance().getNullablePrimitiveJetType(
+            primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().asString(), KotlinBuiltIns.getInstance().getNullablePrimitiveJetType(
                     primitiveType));
         }
         primitiveTypesMap.put("void", KotlinBuiltIns.getInstance().getUnitType());
@@ -91,7 +91,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     @Nullable
     public AnnotationDescriptor mapToAnnotationClass(@NotNull FqName fqName) {
         ClassDescriptor classDescriptor = classDescriptorMap.get(fqName);
-        if (classDescriptor != null && fqName.getFqName().equals(CommonClassNames.JAVA_LANG_DEPRECATED)) {
+        if (classDescriptor != null && fqName.asString().equals(CommonClassNames.JAVA_LANG_DEPRECATED)) {
             return DescriptorResolverUtils.getAnnotationDescriptorForJavaLangDeprecated(classDescriptor);
         }
         return null;

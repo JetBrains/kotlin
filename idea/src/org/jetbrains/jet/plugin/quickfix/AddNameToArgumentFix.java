@@ -75,7 +75,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         Set<String> usedParameters = getUsedParameters(callElement, callableDescriptor);
         List<String> names = Lists.newArrayList();
         for (ValueParameterDescriptor parameter: callableDescriptor.getValueParameters()) {
-            String name = parameter.getName().getName();
+            String name = parameter.getName().asString();
             if (usedParameters.contains(name)) continue;
             if (type == null || JetTypeChecker.INSTANCE.isSubtypeOf(type, parameter.getType())) {
                 names.add(name);
@@ -98,7 +98,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
             }
             else if (isPositionalArgument) {
                 ValueParameterDescriptor parameter = callableDescriptor.getValueParameters().get(idx);
-                usedParameters.add(parameter.getName().getName());
+                usedParameters.add(parameter.getName().asString());
                 idx++;
             }
         }

@@ -84,10 +84,10 @@ public class MemberMatching {
                 int parameterCount = type.getParameters().size();
 
                 if (type.getReceiverTypeRef() == null) {
-                    return builtIns.getFunction(parameterCount).getName().getName();
+                    return builtIns.getFunction(parameterCount).getName().asString();
                 }
                 else {
-                    return builtIns.getExtensionFunction(parameterCount).getName().getName();
+                    return builtIns.getExtensionFunction(parameterCount).getName().asString();
                 }
             }
 

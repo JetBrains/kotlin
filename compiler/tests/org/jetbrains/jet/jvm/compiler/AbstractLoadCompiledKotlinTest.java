@@ -54,7 +54,7 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
         NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
-        Assert.assertEquals("test", namespaceFromSource.getName().getName());
+        Assert.assertEquals("test", namespaceFromSource.getName().asString());
         NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
         compareNamespaces(namespaceFromSource, namespaceFromClass,

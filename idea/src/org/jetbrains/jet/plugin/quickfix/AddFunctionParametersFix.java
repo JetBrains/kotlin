@@ -65,7 +65,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
         String subjectSuffix = newParametersCnt > 1 ? "s" : "";
 
         if (functionDescriptor instanceof ConstructorDescriptor) {
-            String className = functionDescriptor.getContainingDeclaration().getName().getName();
+            String className = functionDescriptor.getContainingDeclaration().getName().asString();
 
             if (hasTypeMismatches)
                 return JetBundle.message("change.constructor.signature", className);
@@ -73,7 +73,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                 return JetBundle.message("add.parameters.to.constructor", subjectSuffix, className);
         }
         else {
-            String functionName = functionDescriptor.getName().getName();
+            String functionName = functionDescriptor.getName().asString();
 
             if (hasTypeMismatches)
                 return JetBundle.message("change.function.signature", functionName);
@@ -95,7 +95,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
             JetExpression expression = argument.getArgumentExpression();
 
             if (i < parameters.size()) {
-                validator.validateName(parameters.get(i).getName().getName());
+                validator.validateName(parameters.get(i).getName().asString());
                 JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
                 JetType parameterType = parameters.get(i).getType();
 

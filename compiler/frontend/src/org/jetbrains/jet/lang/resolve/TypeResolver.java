@@ -342,7 +342,7 @@ public class TypeResolver {
         assert size != 0 : "No projections possible for a nilary type constructor" + constructor;
         ClassifierDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
         assert declarationDescriptor != null : "No declaration descriptor for type constructor " + constructor;
-        String name = declarationDescriptor.getName().getName();
+        String name = declarationDescriptor.getName().asString();
 
         return TypeUtils.getTypeNameAndStarProjectionsString(name, size);
     }

@@ -116,7 +116,7 @@ public final class PsiCodegenPredictor {
             if (declaration instanceof JetNamedFunction) {
                 if (parentDeclaration == null) {
                     JvmClassName packageClass = addPackageClass(parentClassName);
-                    return JvmClassName.byInternalName(packageClass.getInternalName() + "$" + name.getName());
+                    return JvmClassName.byInternalName(packageClass.getInternalName() + "$" + name.asString());
                 }
 
                 if (!(parentDeclaration instanceof JetClass || parentDeclaration instanceof JetObjectDeclaration)) {
@@ -128,16 +128,16 @@ public final class PsiCodegenPredictor {
             // NOTE: looks like a bug - for class in getter of top level property class name will be $propertyName$ClassName but not
             // namespace$propertyName$ClassName
             if (declaration instanceof JetProperty) {
-                return JvmClassName.byInternalName(parentClassName.getInternalName() + "$" + name.getName());
+                return JvmClassName.byInternalName(parentClassName.getInternalName() + "$" + name.asString());
             }
 
             if (fqName.isRoot()) {
-                return JvmClassName.byInternalName(name.getName());
+                return JvmClassName.byInternalName(name.asString());
             }
 
             return JvmClassName.byInternalName(parentDeclaration == null ?
-                                               parentClassName.getInternalName() + "/" + name.getName() :
-                                               parentClassName.getInternalName() + "$" + name.getName());
+                                               parentClassName.getInternalName() + "/" + name.asString() :
+                                               parentClassName.getInternalName() + "$" + name.asString());
         }
 
         return null;

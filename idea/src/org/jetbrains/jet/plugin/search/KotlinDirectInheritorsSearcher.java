@@ -68,7 +68,7 @@ public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, 
                     for (JetType type : classDescriptor.getTypeConstructor().getSupertypes()) {
                         ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
                         if (declarationDescriptor != null) {
-                            String fqName = DescriptorUtils.getFQName(declarationDescriptor).getFqName();
+                            String fqName = DescriptorUtils.getFQName(declarationDescriptor).asString();
                             if (qualifiedName.equals(fqName)) {
                                 PsiClass psiClass = JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate);
                                 if (psiClass != null) {

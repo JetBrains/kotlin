@@ -112,7 +112,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return RANGE_TO_INTRINSIC;
         }
         if (INT_WITH_BIT_OPERATIONS.apply(descriptor)) {
-            JsBinaryOperator op = BINARY_BITWISE_OPERATIONS.get(descriptor.getName().getName());
+            JsBinaryOperator op = BINARY_BITWISE_OPERATIONS.get(descriptor.getName().asString());
             if (op != null) {
                 return new PrimitiveBinaryOperationFunctionIntrinsic(op);
             }
@@ -128,7 +128,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptor.getName());
         }
         if (token == null) {
-            assert descriptor.getName().getName().equals("xor");
+            assert descriptor.getName().asString().equals("xor");
             return JsBinaryOperator.BIT_XOR;
         }
         return OperatorTable.getBinaryOperator(token);

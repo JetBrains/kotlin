@@ -227,7 +227,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private String getName(ClassDescriptor classDescriptor) {
         String base = peekFromStack(nameStack);
         return DescriptorUtils.isTopLevelDeclaration(classDescriptor) ? base.isEmpty() ? classDescriptor.getName()
-                        .getName() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
+                        .asString() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
     }
 
     @Override
@@ -350,7 +350,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         String peek = peekFromStack(nameStack);
-        String name = descriptor.getName().getName();
+        String name = descriptor.getName().asString();
         if (containingDeclaration instanceof ClassDescriptor) {
             return peek + '$' + name;
         }

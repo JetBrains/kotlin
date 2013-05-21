@@ -79,7 +79,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
             if (new FqName("org.jdom").equals(classFqName.parent())) continue; // filter unrelated jdom annotations
             if (new FqName("java.util.concurrent.TransferQueue").equals(classFqName)) continue; // filter JDK7-specific class
 
-            PsiClass psiClass = javaPsiFacade.findClass(classFqName.getFqName(), allScope);
+            PsiClass psiClass = javaPsiFacade.findClass(classFqName.asString(), allScope);
             assertNotNull("Class has annotation, but it is not found: " + classFqName, psiClass);
 
             psiClass.accept(new JavaRecursiveElementVisitor() {
@@ -111,7 +111,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
                     if (hasAnnotation(ideaFakeAnnotationsManager, ideaOwner, AnnotationUtil.NOT_NULL)) {
                         boolean kotlinHasNotNull = hasAnnotation(kotlinFakeAnnotationsManager, kotlinOwner, AnnotationUtil.NOT_NULL);
                         boolean kotlinHasKotlinSignature = hasAnnotation(kotlinFakeAnnotationsManager, kotlinOwner,
-                                                                         JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
+                                                                         JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().asString());
                         if (kotlinOwner == ideaOwner && kotlinHasNotNull || kotlinHasKotlinSignature) {
                             // good
                         }

@@ -119,7 +119,7 @@ public class KotlinRuntimeLibraryUtil {
     @Nullable
     public static PsiClass getKotlinRuntimeMarkerClass(@NotNull GlobalSearchScope scope) {
         FqName kotlinPackageFqName = FqName.topLevel(Name.identifier("kotlin"));
-        String kotlinPackageClassFqName = PackageClassUtils.getPackageClassFqName(kotlinPackageFqName).getFqName();
+        String kotlinPackageClassFqName = PackageClassUtils.getPackageClassFqName(kotlinPackageFqName).asString();
 
         ImmutableList<String> candidateClassNames = ImmutableList.of(
                 kotlinPackageClassFqName,

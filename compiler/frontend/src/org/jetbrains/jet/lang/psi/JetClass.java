@@ -199,7 +199,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
         PsiJetClassStub stub = getStub();
         if (stub != null) {
             FqName fqName = stub.getFqName();
-            return fqName == null ? null : fqName.getFqName();
+            return fqName == null ? null : fqName.asString();
         }
 
         List<String> parts = new ArrayList<String>();

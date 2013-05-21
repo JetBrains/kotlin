@@ -363,7 +363,7 @@ public class DescriptorUtils {
 
     @NotNull
     public static Name getClassObjectName(@NotNull Name className) {
-        return getClassObjectName(className.getName());
+        return getClassObjectName(className.asString());
     }
 
     @NotNull
@@ -405,7 +405,7 @@ public class DescriptorUtils {
             String typeSuffix = rendererForTypesIfNecessary == null
                                 ? ""
                                 : ": " + rendererForTypesIfNecessary.renderType(value.getType(KotlinBuiltIns.getInstance()));
-            resultList.add(entry.getKey().getName().getName() + " = " + value.toString() + typeSuffix);
+            resultList.add(entry.getKey().getName().asString() + " = " + value.toString() + typeSuffix);
         }
         Collections.sort(resultList);
         return resultList;
@@ -536,14 +536,14 @@ public class DescriptorUtils {
     public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
-        return "valueOf".equals(functionDescriptor.getName().getName())
+        return "valueOf".equals(functionDescriptor.getName().asString())
                && methodTypeParameters.size() == 1
                && JetTypeChecker.INSTANCE.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
     }
 
     public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        return "values".equals(functionDescriptor.getName().getName())
+        return "values".equals(functionDescriptor.getName().asString())
                && methodTypeParameters.isEmpty();
     }
 

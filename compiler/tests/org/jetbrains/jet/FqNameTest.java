@@ -34,46 +34,46 @@ public class FqNameTest {
     public void pathRoot() {
         List<FqName> path = new FqName("").path();
         Assert.assertEquals(1, path.size());
-        Assert.assertEquals("", path.get(0).getFqName());
+        Assert.assertEquals("", path.get(0).asString());
     }
 
     @Test
     public void pathLevel1() {
         List<FqName> path = new FqName("com").path();
         Assert.assertEquals(2, path.size());
-        Assert.assertEquals("", path.get(0).getFqName());
-        Assert.assertEquals("com", path.get(1).getFqName());
-        Assert.assertEquals("com", path.get(1).shortName().getName());
-        Assert.assertEquals("", path.get(1).parent().getFqName());
+        Assert.assertEquals("", path.get(0).asString());
+        Assert.assertEquals("com", path.get(1).asString());
+        Assert.assertEquals("com", path.get(1).shortName().asString());
+        Assert.assertEquals("", path.get(1).parent().asString());
     }
 
     @Test
     public void pathLevel2() {
         List<FqName> path = new FqName("com.jetbrains").path();
         Assert.assertEquals(3, path.size());
-        Assert.assertEquals("", path.get(0).getFqName());
-        Assert.assertEquals("com", path.get(1).getFqName());
-        Assert.assertEquals("com", path.get(1).shortName().getName());
-        Assert.assertEquals("", path.get(1).parent().getFqName());
-        Assert.assertEquals("com.jetbrains", path.get(2).getFqName());
-        Assert.assertEquals("jetbrains", path.get(2).shortName().getName());
-        Assert.assertEquals("com", path.get(2).parent().getFqName());
+        Assert.assertEquals("", path.get(0).asString());
+        Assert.assertEquals("com", path.get(1).asString());
+        Assert.assertEquals("com", path.get(1).shortName().asString());
+        Assert.assertEquals("", path.get(1).parent().asString());
+        Assert.assertEquals("com.jetbrains", path.get(2).asString());
+        Assert.assertEquals("jetbrains", path.get(2).shortName().asString());
+        Assert.assertEquals("com", path.get(2).parent().asString());
     }
 
     @Test
     public void pathLevel3() {
         List<FqName> path = new FqName("com.jetbrains.jet").path();
         Assert.assertEquals(4, path.size());
-        Assert.assertEquals("", path.get(0).getFqName());
-        Assert.assertEquals("com", path.get(1).getFqName());
-        Assert.assertEquals("com", path.get(1).shortName().getName());
-        Assert.assertEquals("", path.get(1).parent().getFqName());
-        Assert.assertEquals("com.jetbrains", path.get(2).getFqName());
-        Assert.assertEquals("jetbrains", path.get(2).shortName().getName());
-        Assert.assertEquals("com", path.get(2).parent().getFqName());
-        Assert.assertEquals("com.jetbrains.jet", path.get(3).getFqName());
-        Assert.assertEquals("jet", path.get(3).shortName().getName());
-        Assert.assertEquals("com.jetbrains", path.get(3).parent().getFqName());
+        Assert.assertEquals("", path.get(0).asString());
+        Assert.assertEquals("com", path.get(1).asString());
+        Assert.assertEquals("com", path.get(1).shortName().asString());
+        Assert.assertEquals("", path.get(1).parent().asString());
+        Assert.assertEquals("com.jetbrains", path.get(2).asString());
+        Assert.assertEquals("jetbrains", path.get(2).shortName().asString());
+        Assert.assertEquals("com", path.get(2).parent().asString());
+        Assert.assertEquals("com.jetbrains.jet", path.get(3).asString());
+        Assert.assertEquals("jet", path.get(3).shortName().asString());
+        Assert.assertEquals("com.jetbrains", path.get(3).parent().asString());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class FqNameTest {
             List<Name> segments = new FqName(name).pathSegments();
             List<String> segmentsStrings = new ArrayList<String>();
             for (Name segment : segments) {
-                segmentsStrings.add(segment.getName());
+                segmentsStrings.add(segment.asString());
             }
             Assert.assertEquals(Arrays.asList(name.split("\\.")), segmentsStrings);
         }

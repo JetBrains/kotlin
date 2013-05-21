@@ -176,7 +176,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         checkMayWrite();
 
         Map<LabelName, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
-        LabelName name = new LabelName(descriptor.getName().getName());
+        LabelName name = new LabelName(descriptor.getName().asString());
         List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(name);
         if (declarationDescriptors == null) {
             declarationDescriptors = new ArrayList<DeclarationDescriptor>();
@@ -481,7 +481,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
         checkMayRead();
 
-        if (!fieldName.getName().startsWith("$")) {
+        if (!fieldName.asString().startsWith("$")) {
             throw new IllegalStateException();
         }
 

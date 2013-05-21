@@ -125,7 +125,7 @@ public final class JavaFunctionResolver {
             // TODO: unless maybe class explicitly extends Object
             assert containingClass != null;
             String ownerClassName = containingClass.getQualifiedName();
-            if (DescriptorResolverUtils.OBJECT_FQ_NAME.getFqName().equals(ownerClassName)) {
+            if (DescriptorResolverUtils.OBJECT_FQ_NAME.asString().equals(ownerClassName)) {
                 return null;
             }
         }
@@ -439,7 +439,7 @@ public final class JavaFunctionResolver {
             transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
         }
 
-        if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
+        if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
             null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }

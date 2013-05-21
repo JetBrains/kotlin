@@ -50,8 +50,8 @@ public final class ArrayForTranslator extends ForTranslator {
         JetType rangeType = BindingUtils.getTypeForExpression(context.bindingContext(), loopRange);
         //TODO: better check
         //TODO: IMPORTANT!
-        return getClassDescriptorForType(rangeType).getName().getName().equals("Array")
-               || getClassDescriptorForType(rangeType).getName().getName().equals("IntArray");
+        return getClassDescriptorForType(rangeType).getName().asString().equals("Array")
+               || getClassDescriptorForType(rangeType).getName().asString().equals("IntArray");
     }
 
     @NotNull

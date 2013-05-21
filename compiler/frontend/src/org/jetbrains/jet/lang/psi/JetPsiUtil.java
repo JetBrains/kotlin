@@ -408,7 +408,7 @@ public class JetPsiUtil {
             return false;
         }
 
-        return KotlinBuiltIns.getInstance().getUnit().getName().getName().equals(typeReference.getText());
+        return KotlinBuiltIns.getInstance().getUnit().getName().asString().equals(typeReference.getText());
     }
 
     public static boolean isSafeCall(@NotNull Call call) {
@@ -694,7 +694,7 @@ public class JetPsiUtil {
     public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
         for (JetElement element : block.getStatements()) {
             if (element instanceof JetVariableDeclaration) {
-                if (((JetVariableDeclaration) element).getNameAsSafeName().getName().equals(varName)) {
+                if (((JetVariableDeclaration) element).getNameAsSafeName().asString().equals(varName)) {
                     return true;
                 }
             }

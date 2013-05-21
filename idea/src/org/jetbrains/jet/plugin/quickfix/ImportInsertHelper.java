@@ -87,7 +87,7 @@ public class ImportInsertHelper {
                 boolean same = file.getManager().areElementsEquivalent(target, targetElement);
 
                 if (!same) {
-                    same = target instanceof PsiClass && importFqn.getFqName().equals(((PsiClass)target).getQualifiedName());
+                    same = target instanceof PsiClass && importFqn.asString().equals(((PsiClass)target).getQualifiedName());
                 }
 
                 if (!same) {
@@ -106,7 +106,7 @@ public class ImportInsertHelper {
                 if (!same) {
                     Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
                     TextRange refRange = reference.getElement().getTextRange();
-                    document.replaceString(refRange.getStartOffset(), refRange.getEndOffset(), importFqn.getFqName());
+                    document.replaceString(refRange.getStartOffset(), refRange.getEndOffset(), importFqn.asString());
                 }
                 return;
             }

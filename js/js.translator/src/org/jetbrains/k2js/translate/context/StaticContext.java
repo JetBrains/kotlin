@@ -202,7 +202,7 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     JsScope scope = getEnclosingScope(descriptor);
-                    return scope.declareFreshName(descriptor.getName().getName());
+                    return scope.declareFreshName(descriptor.getName().asString());
                 }
             };
             Rule<JsName> constructorHasTheSameNameAsTheClass = new Rule<JsName>() {
@@ -224,7 +224,7 @@ public final class StaticContext {
                     }
 
                     PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
-                    String propertyName = accessorDescriptor.getCorrespondingProperty().getName().getName();
+                    String propertyName = accessorDescriptor.getCorrespondingProperty().getName().asString();
                     if (isObjectDeclaration(bindingContext, accessorDescriptor.getCorrespondingProperty())) {
                         return declareName(descriptor, propertyName);
                     }
@@ -244,7 +244,7 @@ public final class StaticContext {
                             continue;
                         }
                         String name = getNameForAnnotatedObject(descriptor, annotation);
-                        name = (name != null) ? name : descriptor.getName().getName();
+                        name = (name != null) ? name : descriptor.getName().asString();
                         return getEnclosingScope(descriptor).declareName(name);
                     }
                     return null;
@@ -257,7 +257,7 @@ public final class StaticContext {
                         return null;
                     }
 
-                    String name = descriptor.getName().getName();
+                    String name = descriptor.getName().asString();
                     if (!isEcma5() || JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
                         name = Namer.getKotlinBackingFieldName(name);
                     }
@@ -272,7 +272,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof FunctionDescriptor)) {
                         return null;
                     }
-                    if (!descriptor.getName().getName().equals("toString")) {
+                    if (!descriptor.getName().asString().equals("toString")) {
                         return null;
                     }
                     if (((FunctionDescriptor) descriptor).getValueParameters().isEmpty()) {

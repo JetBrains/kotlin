@@ -84,13 +84,13 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @Nullable
     @Override
     public String getName() {
-        return packageClassFqName.shortName().getName();
+        return packageClassFqName.shortName().asString();
     }
 
     @Nullable
     @Override
     public String getQualifiedName() {
-        return packageClassFqName.getFqName();
+        return packageClassFqName.asString();
     }
 
     @Override

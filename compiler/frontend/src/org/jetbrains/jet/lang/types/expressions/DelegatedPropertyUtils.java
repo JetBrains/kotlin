@@ -136,7 +136,7 @@ public class DelegatedPropertyUtils {
         List<JetExpression> arguments = Lists.newArrayList();
         arguments.add(createExpression(project, hasThis ? "this" : "null"));
 
-        arguments.add(createExpression(project, KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().getName() + "(\"" + propertyDescriptor.getName().getName() + "\")"));
+        arguments.add(createExpression(project, KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().asString() + "(\"" + propertyDescriptor.getName().asString() + "\")"));
 
         if (!isGet) {
             JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(context.expressionTypingServices.getProject(), trace,
@@ -148,7 +148,7 @@ public class DelegatedPropertyUtils {
         }
 
         Name functionName = Name.identifier(isGet ? "get" : "set");
-        JetReferenceExpression fakeCalleeExpression = createSimpleName(project, functionName.getName());
+        JetReferenceExpression fakeCalleeExpression = createSimpleName(project, functionName.asString());
 
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
         call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);

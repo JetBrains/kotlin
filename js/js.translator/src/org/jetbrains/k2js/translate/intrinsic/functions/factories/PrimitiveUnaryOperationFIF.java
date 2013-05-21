@@ -73,7 +73,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
         Name name = descriptor.getName();
 
         JsUnaryOperator jsOperator = null;
-        if ("inv".equals(name.getName())) {
+        if ("inv".equals(name.asString())) {
             jsOperator = JsUnaryOperator.BIT_NOT;
         }
         else {

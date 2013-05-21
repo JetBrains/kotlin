@@ -66,10 +66,10 @@ public final class InitializerUtils {
     public static JsStatement create(Named named, JsExpression value, TranslationContext context) {
         JsExpression expression;
         if (context.isEcma5()) {
-            expression = JsAstUtils.defineProperty(named.getName().getName(), JsAstUtils.createDataDescriptor(value), context);
+            expression = JsAstUtils.defineProperty(named.getName().asString(), JsAstUtils.createDataDescriptor(value), context);
         }
         else {
-            expression = assignment(new JsNameRef(named.getName().getName(), JsLiteral.THIS), value);
+            expression = assignment(new JsNameRef(named.getName().asString(), JsLiteral.THIS), value);
         }
         return expression.makeStmt();
     }

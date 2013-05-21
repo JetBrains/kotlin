@@ -153,7 +153,7 @@ public class JetNameSuggester {
                         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(argument);
                         if (classDescriptor != null) {
                             Name className = classDescriptor.getName();
-                            addName(result, "arrayOf" + StringUtil.capitalize(className.getName()) + "s", validator);
+                            addName(result, "arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator);
                         }
                     }
                 }
@@ -173,7 +173,7 @@ public class JetNameSuggester {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(jetType);
         if (classDescriptor != null) {
             Name className = classDescriptor.getName();
-            addCamelNames(result, className.getName(), validator);
+            addCamelNames(result, className.asString(), validator);
         }
     }
 
