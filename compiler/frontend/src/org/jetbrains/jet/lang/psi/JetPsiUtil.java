@@ -553,6 +553,10 @@ public class JetPsiUtil {
         return getOutermostClassOrObject(classOrObject) == null;
     }
 
+    public static boolean isTrait(@NotNull JetClassOrObject classOrObject) {
+        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
+    }
+
     @Nullable
     public static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetClassOrObject current = classOrObject;

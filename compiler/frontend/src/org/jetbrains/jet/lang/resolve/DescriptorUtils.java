@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -287,6 +288,10 @@ public class DescriptorUtils {
 
     public static boolean isEnumClass(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.ENUM_CLASS);
+    }
+
+    public static boolean isClass(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.CLASS);
     }
 
     public static boolean isKindOf(@NotNull JetType jetType, @NotNull ClassKind classKind) {
@@ -571,5 +576,14 @@ public class DescriptorUtils {
             allSuperclasses.add(superclass);
         }
         return allSuperclasses;
+    }
+
+    @NotNull
+    public static PropertyDescriptor getPropertyDescriptor(@NotNull JetProperty property, @NotNull BindingContext bindingContext) {
+        VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, property);
+        if (!(descriptor instanceof PropertyDescriptor)) {
+            throw new UnsupportedOperationException("expect a property to have a property descriptor");
+        }
+        return (PropertyDescriptor) descriptor;
     }
 }

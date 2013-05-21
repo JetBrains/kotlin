@@ -53,7 +53,7 @@ public class ScriptCodegen extends MemberCodegen {
     private Method scriptConstructorMethod;
 
     public ScriptCodegen(@NotNull GenerationState state) {
-        super(state);
+        super(state, null);
     }
 
     @Inject
@@ -145,7 +145,6 @@ public class ScriptCodegen extends MemberCodegen {
 
         ImplementationBodyCodegen.generateInitializers(
                 new ExpressionCodegen(instructionAdapter, frameMap, Type.VOID_TYPE, context, state),
-                instructionAdapter,
                 scriptDeclaration.getDeclarations(),
                 bindingContext,
                 state);

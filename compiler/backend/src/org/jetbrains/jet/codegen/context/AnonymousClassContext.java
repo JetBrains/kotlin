@@ -22,9 +22,8 @@ import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
+public class AnonymousClassContext extends ClassContext {
 
-public class AnonymousClassContext extends CodegenContext {
     public AnonymousClassContext(
             @NotNull JetTypeMapper typeMapper,
             @NotNull ClassDescriptor contextDescriptor,
@@ -33,14 +32,7 @@ public class AnonymousClassContext extends CodegenContext {
             @Nullable LocalLookup localLookup
     ) {
         //noinspection SuspiciousMethodCalls
-        super(contextDescriptor, contextKind, parentContext, typeMapper.getBindingContext().get(CLOSURE, contextDescriptor),
-              contextDescriptor, localLookup);
-        initOuterExpression(typeMapper, contextDescriptor);
-    }
-
-    @Override
-    public boolean isStatic() {
-        return false;
+        super(typeMapper, contextDescriptor, contextKind, parentContext, localLookup);
     }
 
     @Override

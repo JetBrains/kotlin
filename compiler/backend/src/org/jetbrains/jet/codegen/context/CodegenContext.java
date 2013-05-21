@@ -146,31 +146,37 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return contextKind;
     }
 
+    @NotNull
     public CodegenContext intoNamespace(@NotNull NamespaceDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, OwnerKind.NAMESPACE);
     }
 
+    @NotNull
     public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 
+    @NotNull
     public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind, GenerationState state) {
         return new ClassContext(state.getTypeMapper(), descriptor, kind, this, null);
     }
 
-    public CodegenContext intoAnonymousClass(
-            ClassDescriptor descriptor,
-            ExpressionCodegen expressionCodegen
+    @NotNull
+    public ClassContext intoAnonymousClass(
+            @NotNull ClassDescriptor descriptor,
+            @NotNull ExpressionCodegen expressionCodegen
     ) {
         JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
         return new AnonymousClassContext(typeMapper, descriptor, OwnerKind.IMPLEMENTATION, this,
                                          expressionCodegen);
     }
 
+    @NotNull
     public MethodContext intoFunction(FunctionDescriptor descriptor) {
         return new MethodContext(descriptor, getContextKind(), this);
     }
 
+    @NotNull
     public ConstructorContext intoConstructor(ConstructorDescriptor descriptor) {
         if (descriptor == null) {
             descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
@@ -180,6 +186,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new ConstructorContext(descriptor, getContextKind(), this);
     }
 
+    @NotNull
     public CodegenContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
         return new ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
     }

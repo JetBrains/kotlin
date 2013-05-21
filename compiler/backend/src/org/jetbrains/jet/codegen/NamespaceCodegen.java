@@ -26,11 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -56,7 +54,7 @@ public class NamespaceCodegen extends MemberCodegen {
             GenerationState state,
             Collection<JetFile> namespaceFiles
     ) {
-        super(state);
+        super(state, null);
         checkAllFilesHaveSameNamespace(namespaceFiles);
 
         this.v = v;
@@ -218,7 +216,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
             for (JetDeclaration declaration : properties) {
                 ImplementationBodyCodegen.
-                        initializeProperty(codegen, state.getBindingContext(), new InstructionAdapter(mv), (JetProperty) declaration, true);
+                        initializeProperty(codegen, state.getBindingContext(), (JetProperty) declaration);
             }
 
             mv.visitInsn(RETURN);

@@ -87,6 +87,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private int myLastLineNumber = -1;
 
     final InstructionAdapter v;
+    final MethodVisitor methodVisitor;
     final FrameMap myFrameMap;
     final JetTypeMapper typeMapper;
 
@@ -121,8 +122,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //noinspection SuspiciousMethodCalls
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
-        CodegenContext objectContext = context.intoAnonymousClass(classDescriptor, this);
-        ImplementationBodyCodegen implementationBodyCodegen = new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state);
+        ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
+        ImplementationBodyCodegen implementationBodyCodegen = new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, null);
 
         implementationBodyCodegen.generate();
 
@@ -164,7 +165,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
         this.state = state;
-        this.v = new InstructionAdapter(v) {
+        this.methodVisitor = v;
+        this.v = createInstructionAdapter(methodVisitor);
+        this.bindingContext = state.getBindingContext();
+        this.context = context;
+        this.statementVisitor = new CodegenStatementVisitor(this);
+    }
+
+    protected InstructionAdapter createInstructionAdapter(MethodVisitor mv) {
+        return new InstructionAdapter(methodVisitor) {
             @Override
             public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
                 super.visitLocalVariable(name, desc, signature, start, end,
@@ -172,9 +181,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 localVariableNames.add(name);
             }
         };
-        this.bindingContext = state.getBindingContext();
-        this.context = context;
-        this.statementVisitor = new CodegenStatementVisitor(this);
     }
 
     public GenerationState getState() {
@@ -275,9 +281,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName(), declaration.getContainingFile()
         );
 
-        CodegenContext objectContext = context.intoAnonymousClass(descriptor, this);
+        ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
 
-        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state).generate();
+        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, null).generate();
         return StackValue.none();
     }
 
@@ -1673,26 +1679,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     public StackValue.Property intermediateValueForProperty(
-            PropertyDescriptor propertyDescriptor,
+            @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression
     ) {
-        return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, false);
+        return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, MethodKind.GENERAL);
     }
 
-    @NotNull
     public StackValue.Property intermediateValueForProperty(
-            PropertyDescriptor propertyDescriptor,
+            @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression,
-            @NotNull boolean forceSpecialFlag
+            @NotNull MethodKind methodKind
     ) {
         JetTypeMapper typeMapper = state.getTypeMapper();
 
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         assert containingDeclaration != null;
 
-        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
+        boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor || isBackingFieldInAnotherClass;
         boolean isSuper = superExpression != null;
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
         boolean isInsideModule = isCallInsideSameModuleAsDeclared(propertyDescriptor, context);
@@ -1700,10 +1706,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetType delegateType = getPropertyDelegateType(propertyDescriptor, state.getBindingContext());
         boolean isDelegatedProperty = delegateType != null;
 
+
         CallableMethod callableGetter = null;
         CallableMethod callableSetter = null;
 
-        if (!forceField) {
+        boolean skipPropertyAccessors = forceField && !isBackingFieldInAnotherClass;
+
+        CodegenContext backingFieldContext = context.getParentContext();
+
+        if (isBackingFieldInAnotherClass && forceField) {
+            //delegate call to classObject owner : OWNER
+            backingFieldContext = context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
+            int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
+            skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
+            if (!skipPropertyAccessors) {
+                propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor);
+            }
+        }
+
+        if (!skipPropertyAccessors) {
             //noinspection ConstantConditions
             if (couldUseDirectAccessToProperty(propertyDescriptor, true, isInsideClass, isDelegatedProperty)) {
                 callableGetter = null;
@@ -1721,7 +1742,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
 
                 if (propertyDescriptor.getGetter() != null) {
-                    callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper || forceSpecialFlag, isInsideClass, isInsideModule, OwnerKind.IMPLEMENTATION);
+                    callableGetter = typeMapper
+                            .mapToCallableMethod(propertyDescriptor.getGetter(), isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind,
+                                                 isInsideClass, isInsideModule, OwnerKind.IMPLEMENTATION);
                 }
             }
 
@@ -1731,7 +1754,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         callableSetter = null;
                     }
                     else {
-                        callableSetter = typeMapper.mapToCallableMethod(propertyDescriptor.getSetter(), isSuper || forceSpecialFlag, isInsideClass, isInsideModule, OwnerKind.IMPLEMENTATION);
+                        callableSetter = typeMapper.mapToCallableMethod(propertyDescriptor.getSetter(), isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, isInsideClass, isInsideModule, OwnerKind.IMPLEMENTATION);
                     }
                 }
             }
@@ -1742,7 +1765,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         propertyDescriptor = unwrapFakeOverride(propertyDescriptor);
         if (callableMethod == null) {
-            owner = typeMapper.getOwner(propertyDescriptor, context.getContextKind(), isInsideModule);
+            owner = typeMapper.getOwner(isBackingFieldInAnotherClass ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor, context.getContextKind(), isInsideModule);
         }
         else {
             owner = callableMethod.getOwner();
@@ -2316,8 +2339,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     public Type expressionType(JetExpression expr) {
-        JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
-        return asmTypeOrVoid(type);
+        return typeMapper.expressionType(expr);
     }
 
     public int indexOfLocal(JetReferenceExpression lhs) {

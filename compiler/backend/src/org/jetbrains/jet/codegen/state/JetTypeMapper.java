@@ -28,6 +28,7 @@ import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -960,5 +961,16 @@ public class JetTypeMapper extends BindingTraceAware {
             receiverParameterType = null;
         }
         return new CallableMethod(owner, null, null, descriptor, INVOKEINTERFACE, owner, receiverParameterType, owner.getAsmType());
+    }
+
+    @NotNull
+    public Type expressionType(JetExpression expr) {
+        JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
+        return asmTypeOrVoid(type);
+    }
+
+    @NotNull
+    private Type asmTypeOrVoid(@Nullable JetType type) {
+        return type == null ? Type.VOID_TYPE : mapType(type);
     }
 }

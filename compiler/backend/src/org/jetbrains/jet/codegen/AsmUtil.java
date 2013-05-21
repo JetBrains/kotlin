@@ -30,7 +30,6 @@ import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -50,6 +49,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isKindOf;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 
 public class AsmUtil {
@@ -589,10 +589,57 @@ public class AsmUtil {
         }
     }
 
+    public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
+        return isPropertyWithSpecialBackingField(propertyDescriptor.getContainingDeclaration(), ClassKind.CLASS);
+    }
+
+    public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
+        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
+        if (isDelegate || isExtensionProperty) {
+            return ACC_PRIVATE;
+        } else {
+            return areBothAccessorDefault(propertyDescriptor) ?  getVisibilityAccessFlag(descriptorForVisibility(propertyDescriptor)) : ACC_PRIVATE;
+        }
+    }
+
+    private static MemberDescriptor descriptorForVisibility(@NotNull PropertyDescriptor propertyDescriptor) {
+        if (!propertyDescriptor.isVar() ) {
+            return propertyDescriptor;
+        } else {
+            return propertyDescriptor.getSetter() != null ? propertyDescriptor.getSetter() : propertyDescriptor;
+        }
+    }
+
+    public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
+        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
+        return !propertyDescriptor.isVar() && !isExtensionProperty
+               && isPropertyWithSpecialBackingField(propertyDescriptor.getContainingDeclaration(), ClassKind.TRAIT)
+               && areBothAccessorDefault(propertyDescriptor)
+               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
+    }
+
+    public static boolean isClassObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor classObject) {
+        return isPropertyWithSpecialBackingField(classObject, ClassKind.CLASS);
+    }
+
+    private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {
+        return isAccessorWithEmptyBody(propertyDescriptor.getGetter())
+               && (!propertyDescriptor.isVar() || isAccessorWithEmptyBody(propertyDescriptor.getSetter()));
+    }
+
+    private static boolean isAccessorWithEmptyBody(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
+        return accessorDescriptor == null || !accessorDescriptor.hasBody();
+    }
+
+    private static boolean isPropertyWithSpecialBackingField(@NotNull DeclarationDescriptor classObject, ClassKind kind) {
+        return isClassObject(classObject) && isKindOf(classObject.getContainingDeclaration(), kind);
+    }
+
     public static Type comparisonOperandType(Type left, Type right) {
         if (left == Type.DOUBLE_TYPE || right == Type.DOUBLE_TYPE) return Type.DOUBLE_TYPE;
         if (left == Type.FLOAT_TYPE || right == Type.FLOAT_TYPE) return Type.FLOAT_TYPE;
         if (left == Type.LONG_TYPE || right == Type.LONG_TYPE) return Type.LONG_TYPE;
         return Type.INT_TYPE;
     }
+
 }

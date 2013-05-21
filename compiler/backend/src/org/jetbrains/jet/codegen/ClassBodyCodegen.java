@@ -17,9 +17,10 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -40,12 +41,20 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
     protected final ClassBuilder v;
-    protected final CodegenContext context;
+    protected final ClassContext context;
 
-    protected final List<CodeChunk> staticInitializerChunks = new ArrayList<CodeChunk>();
+    private MethodVisitor clInitMethod;
 
-    protected ClassBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
-        super(state);
+    private  ExpressionCodegen clInitCodegen;
+
+    protected ClassBodyCodegen(
+            @NotNull JetClassOrObject aClass,
+            @NotNull ClassContext context,
+            @NotNull ClassBuilder v,
+            @NotNull GenerationState state,
+            @Nullable MemberCodegen parentCodegen
+    ) {
+        super(state, parentCodegen);
         descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         myClass = aClass;
         this.context = context;
@@ -53,7 +62,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         this.v = v;
     }
 
-    public final void generate() {
+    public void generate() {
         generateDeclaration();
 
         generateClassBody();
@@ -72,18 +81,20 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
     private void generateClassBody() {
         FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
-        PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen);
+        PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
 
-        for (JetDeclaration declaration : myClass.getDeclarations()) {
+        if (kind != OwnerKind.TRAIT_IMPL) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
-            if (shouldProcessFirst(declaration)) {
-                generateDeclaration(propertyCodegen, declaration, functionCodegen);
+            for (JetDeclaration declaration : myClass.getDeclarations()) {
+                if (shouldProcessFirst(declaration)) {
+                    generateDeclaration(propertyCodegen, declaration);
+                }
             }
         }
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (!shouldProcessFirst(declaration)) {
-                generateDeclaration(propertyCodegen, declaration, functionCodegen);
+                generateDeclaration(propertyCodegen, declaration);
             }
         }
 
@@ -94,7 +105,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         return false == (declaration instanceof JetProperty || declaration instanceof JetNamedFunction);
     }
 
-    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
+
+    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
             genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v);
         }
@@ -137,21 +149,37 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
     }
 
     private void generateStaticInitializer() {
-        if (staticInitializerChunks.size() > 0) {
-            MethodVisitor mv = v.newMethod(null, ACC_STATIC, "<clinit>", "()V", null, null);
+        if (clInitMethod != null) {
+            createOrGetClInitMethod();
+
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                mv.visitCode();
+                ExpressionCodegen codegen = createOrGetClInitCodegen();
 
-                ExpressionCodegen codegen = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context, state);
-
-                for (CodeChunk chunk : staticInitializerChunks) {
-                    chunk.generate(codegen);
-                }
-
-                mv.visitInsn(RETURN);
+                createOrGetClInitMethod().visitInsn(RETURN);
                 FunctionCodegen.endVisit(codegen.v, "static initializer", myClass);
             }
         }
+    }
+
+    @Nullable
+    protected MethodVisitor createOrGetClInitMethod() {
+        if (clInitMethod == null) {
+            clInitMethod = v.newMethod(null, ACC_STATIC, "<clinit>", "()V", null, null);
+        }
+        return clInitMethod;
+    }
+
+    @Nullable
+    protected ExpressionCodegen createOrGetClInitCodegen() {
+        assert state.getClassBuilderMode() == ClassBuilderMode.FULL;
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            if (clInitCodegen == null) {
+                MethodVisitor method = createOrGetClInitMethod();
+                method.visitCode();
+                clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context, state);
+            }
+        }
+        return clInitCodegen;
     }
 
     private void generateRemoveInIterator() {

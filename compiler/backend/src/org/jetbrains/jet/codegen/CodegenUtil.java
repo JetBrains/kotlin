@@ -27,6 +27,7 @@ import org.jetbrains.jet.codegen.context.NamespaceContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -263,14 +264,26 @@ public class CodegenUtil {
         return false;
     }
 
-    public static boolean couldUseDirectAccessToProperty(PropertyDescriptor propertyDescriptor, boolean forGetter, boolean isInsideClass, boolean isDelegated) {
+    public static boolean couldUseDirectAccessToProperty(@NotNull PropertyDescriptor propertyDescriptor, boolean forGetter, boolean isInsideClass, boolean isDelegated) {
         PropertyAccessorDescriptor accessorDescriptor = forGetter ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
+        boolean specialTypeProperty = isDelegated ||
+                                      isExtensionProperty ||
+                                      DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
+                                      JetTypeMapper.isAccessor(propertyDescriptor);
         return isInsideClass &&
-               !isDelegated &&
-               !isExtensionProperty &&
+               !specialTypeProperty &&
                (accessorDescriptor == null ||
                 accessorDescriptor.isDefault() &&
                 (!DescriptorUtils.isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
+    }
+
+    @NotNull
+    public static ImplementationBodyCodegen getParentBodyCodegen(@Nullable MemberCodegen classBodyCodegen) {
+        assert classBodyCodegen != null &&
+               classBodyCodegen
+                       .getParentCodegen() instanceof ImplementationBodyCodegen : "Class object should have appropriate parent BodyCodegen";
+
+        return ((ImplementationBodyCodegen) classBodyCodegen.getParentCodegen());
     }
 }

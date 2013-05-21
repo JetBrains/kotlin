@@ -31,7 +31,7 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
-import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.ConstructorContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.*;
@@ -67,6 +67,7 @@ import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isKindOf;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
@@ -79,13 +80,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private final Type classAsmType;
 
     private final FunctionCodegen functionCodegen;
-    private final  PropertyCodegen propertyCodegen;
+    private final PropertyCodegen propertyCodegen;
 
-    public ImplementationBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
-        super(aClass, context, v, state);
+    private List<PropertyDescriptor> classObjectPropertiesToCopy;
+
+    public ImplementationBodyCodegen(
+            @NotNull JetClassOrObject aClass,
+            @NotNull  ClassContext context,
+            @NotNull  ClassBuilder v,
+            @NotNull  GenerationState state,
+            @Nullable MemberCodegen parentCodegen
+    ) {
+        super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
         this.functionCodegen = new FunctionCodegen(context, v, state);
-        this.propertyCodegen = new PropertyCodegen(context, v, this.functionCodegen);
+        this.propertyCodegen = new PropertyCodegen(context, v, this.functionCodegen, this);
     }
 
     @Override
@@ -429,6 +438,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void generateSyntheticParts() {
         generateFieldForSingleton();
 
+        generateClassObjectBackingFieldCopies();
+
         try {
             generatePrimaryConstructor();
         }
@@ -446,7 +457,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateSyntheticAccessors();
 
-        generateEnumMethods();
+        generateEnumMethodsAndConstInitializers();
 
         generateFunctionsForDataClasses();
 
@@ -750,25 +761,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         MethodContext functionContext = context.intoFunction(function);
         FunctionCodegen.generateDefaultIfNeeded(functionContext, state, v, methodSignature, function, OwnerKind.IMPLEMENTATION,
-                                                new DefaultParameterValueLoader() {
-                                                    @Override
-                                                    public void putValueOnStack(
-                                                            ValueParameterDescriptor descriptor,
-                                                            ExpressionCodegen codegen
-                                                    ) {
-                                                        assert (KotlinBuiltIns.getInstance()
-                                                                        .isData((ClassDescriptor) function.getContainingDeclaration()))
-                                                                : "Trying to create function with default arguments for function that isn't presented in code for class without data annotation";
-                                                        PropertyDescriptor propertyDescriptor = codegen.getBindingContext().get(
-                                                                BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor);
-                                                        assert propertyDescriptor !=
-                                                               null : "Trying to generate default value for parameter of copy function that doesn't correspond to any property";
-                                                        codegen.v.load(0, thisDescriptorType);
-                                                        Type propertyType = codegen.typeMapper.mapType(propertyDescriptor.getType());
-                                                        codegen.intermediateValueForProperty(propertyDescriptor, false, null)
-                                                                .put(propertyType, codegen.v);
-                                                    }
-                                                });
+                    new DefaultParameterValueLoader() {
+                        @Override
+                        public void putValueOnStack(
+                                ValueParameterDescriptor descriptor,
+                                ExpressionCodegen codegen
+                        ) {
+                            assert (KotlinBuiltIns.getInstance().isData((ClassDescriptor) function.getContainingDeclaration()))
+                                    : "Trying to create function with default arguments for function that isn't presented in code for class without data annotation";
+                            PropertyDescriptor propertyDescriptor = codegen.getBindingContext().get(
+                                    BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor);
+                            assert propertyDescriptor != null
+                                    : "Trying to generate default value for parameter of copy function that doesn't correspond to any property";
+                            codegen.v.load(0, thisDescriptorType);
+                            Type propertyType = codegen.typeMapper.mapType(propertyDescriptor.getType());
+                            codegen.intermediateValueForProperty(propertyDescriptor, false, null).put(propertyType, codegen.v);
+                        }
+                    });
+}
+
+    private void generateEnumMethodsAndConstInitializers() {
+        if (!myEnumConstants.isEmpty()) {
+            generateEnumMethods();
+
+            if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+                initializeEnumConstants(createOrGetClInitCodegen());
+            }
+        }
     }
 
     private void generateEnumMethods() {
@@ -827,7 +846,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    });
         }
         else if (entry.getValue() instanceof PropertyDescriptor) {
-            PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
+            final PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
             final PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
 
 
@@ -837,9 +856,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                            new FunctionGenerationStrategy.CodegenBased<PropertyGetterDescriptor>(state, getter) {
                 @Override
                 public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
-                    StackValue.Property property = codegen.intermediateValueForProperty(original, false, null, true);
                     InstructionAdapter iv = codegen.v;
-                    iv.load(0, OBJECT_TYPE);
+                    boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) && !isClassObject(bridge.getContainingDeclaration());
+                    StackValue.Property property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
+                    if (!forceField) {
+                        iv.load(0, OBJECT_TYPE);
+                    }
                     property.put(property.type, iv);
                     iv.areturn(signature.getAsmMethod().getReturnType());
                 }
@@ -854,12 +876,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                new FunctionGenerationStrategy.CodegenBased<PropertySetterDescriptor>(state, setter) {
                     @Override
                     public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
-                        StackValue.Property property = codegen.intermediateValueForProperty(original, false, null, true);
+                        boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) && !isClassObject(bridge.getContainingDeclaration());
+                        StackValue.Property property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
                         InstructionAdapter iv = codegen.v;
 
-                        iv.load(0, OBJECT_TYPE);
                         Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
-                        for (int i = 1, reg = 1; i < argTypes.length; i++) {
+                        for (int i = 0, reg = 0; i < argTypes.length; i++) {
                             Type argType = argTypes[i];
                             iv.load(reg, argType);
                             //noinspection AssignmentToForLoopParameter
@@ -915,22 +937,64 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (!(isNonLiteralObject(myClass) || hasClassObject) || isEnumClass) return;
 
-        final ClassDescriptor fieldTypeDescriptor = hasClassObject ? descriptor.getClassObjectDescriptor() : descriptor;
+        ClassDescriptor fieldTypeDescriptor = hasClassObject ? descriptor.getClassObjectDescriptor() : descriptor;
         assert fieldTypeDescriptor != null;
-        final StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
+        StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
         JetClassOrObject original = hasClassObject ? ((JetClass) myClass).getClassObject().getObjectDeclaration() : myClass;
 
         v.newField(original, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
-        staticInitializerChunks.add(new CodeChunk() {
-            @Override
-            public void generate(ExpressionCodegen codegen) {
-                ConstructorDescriptor constructorDescriptor = DescriptorUtils.getConstructorOfSingletonObject(fieldTypeDescriptor);
-                FunctionDescriptor fd = codegen.accessableFunctionDescriptor(constructorDescriptor);
-                generateMethodCallTo(fd, codegen.v);
-                field.store(field.type, codegen.v);
+        if (!AsmUtil.isClassObjectWithBackingFieldsInOuter(fieldTypeDescriptor)) {
+            genInitSingleton(fieldTypeDescriptor, field);
+        }
+    }
+
+    private void generateClassObjectBackingFieldCopies() {
+        if (classObjectPropertiesToCopy != null) {
+            for (PropertyDescriptor propertyDescriptor : classObjectPropertiesToCopy) {
+
+                v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, propertyDescriptor.getName().asString(), typeMapper.mapType(propertyDescriptor).getDescriptor(), null, null);
+
+                if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+                    ExpressionCodegen codegen = createOrGetClInitCodegen();
+                    int classObjectIndex = putClassObjectInLocalVar(codegen);
+                    StackValue.local(classObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
+                    copyFieldFromClassObject(propertyDescriptor);
+                }
             }
-        });
+        }
+    }
+
+    private int putClassObjectInLocalVar(ExpressionCodegen codegen) {
+        FrameMap frameMap = codegen.myFrameMap;
+        ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
+        int classObjectIndex = frameMap.getIndex(classObjectDescriptor);
+        if (classObjectIndex == -1) {
+            classObjectIndex = frameMap.enter(classObjectDescriptor, OBJECT_TYPE);
+            StackValue classObject = StackValue.singleton(classObjectDescriptor, typeMapper);
+            classObject.put(classObject.type, codegen.v);
+            StackValue.local(classObjectIndex, classObject.type).store(classObject.type, codegen.v);
+        }
+        return classObjectIndex;
+    }
+
+    private void copyFieldFromClassObject(PropertyDescriptor propertyDescriptor) {
+        ExpressionCodegen codegen = createOrGetClInitCodegen();
+        StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null);
+        property.put(property.type, codegen.v);
+        StackValue.Field field = StackValue.field(property.type, JvmClassName.byClassDescriptor(descriptor),
+                                                  propertyDescriptor.getName().asString(), true);
+        field.store(field.type, codegen.v);
+    }
+
+    protected void genInitSingleton(ClassDescriptor fieldTypeDescriptor, StackValue.Field field) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            ConstructorDescriptor constructorDescriptor = DescriptorUtils.getConstructorOfSingletonObject(fieldTypeDescriptor);
+            ExpressionCodegen codegen = createOrGetClInitCodegen();
+            FunctionDescriptor fd = codegen.accessableFunctionDescriptor(constructorDescriptor);
+            generateMethodCallTo(fd, codegen.v);
+            field.store(field.type, codegen.v);
+        }
     }
 
     protected void generatePrimaryConstructor() {
@@ -981,9 +1045,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generatePrimaryConstructorImpl(
-            ConstructorDescriptor constructorDescriptor,
-            ExpressionCodegen codegen,
-            MutableClosure closure
+            @Nullable ConstructorDescriptor constructorDescriptor,
+            @NotNull final ExpressionCodegen codegen,
+            @Nullable MutableClosure closure
     ) {
         List<ValueParameterDescriptor> paramDescrs = constructorDescriptor != null
                                                      ? constructorDescriptor.getValueParameters()
@@ -1035,7 +1099,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        generateInitializers(codegen, iv, myClass.getDeclarations(), bindingContext, state);
+        boolean generateInitializerInOuter = isClassObjectWithBackingFieldsInOuter(descriptor);
+        if (generateInitializerInOuter) {
+            ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
+            //generate object$
+            parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
+            parentCodegen.generateInitializers(parentCodegen.createOrGetClInitCodegen(),
+                                          myClass.getDeclarations(), bindingContext, state);
+        } else {
+            generateInitializers(codegen, myClass.getDeclarations(), bindingContext, state);
+        }
+
 
         iv.visitInsn(RETURN);
     }
@@ -1225,7 +1299,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (myClass instanceof JetClass && ((JetClass) myClass).isTrait()) {
+        if (JetPsiUtil.isTrait(myClass)) {
             return;
         }
 
@@ -1425,29 +1499,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
+    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration) {
         if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
             String desc = "L" + classAsmType.getInternalName() + ";";
             v.newField(declaration, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
-            if (myEnumConstants.isEmpty()) {
-                staticInitializerChunks.add(new CodeChunk() {
-                    @Override
-                    public void generate(ExpressionCodegen codegen) {
-                        initializeEnumConstants(codegen.v);
-                    }
-                });
-            }
             myEnumConstants.add((JetEnumEntry) declaration);
         }
 
-        super.generateDeclaration(propertyCodegen, declaration, functionCodegen);
+        super.generateDeclaration(propertyCodegen, declaration);
     }
 
     private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();
 
-    private void initializeEnumConstants(InstructionAdapter iv) {
-        ExpressionCodegen codegen = new ExpressionCodegen(iv, new FrameMap(), Type.VOID_TYPE, context, state);
+    private void initializeEnumConstants(ExpressionCodegen codegen) {
+        InstructionAdapter iv = codegen.v;
         int ordinal = -1;
         JetType myType = descriptor.getDefaultType();
         Type myAsmType = typeMapper.mapType(myType, JetTypeMapperMode.IMPL);
@@ -1509,14 +1575,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     public static void generateInitializers(
-            @NotNull ExpressionCodegen codegen, @NotNull InstructionAdapter iv, @NotNull List<JetDeclaration> declarations,
+            @NotNull ExpressionCodegen codegen, @NotNull List<JetDeclaration> declarations,
             @NotNull BindingContext bindingContext, @NotNull GenerationState state
     ) {
         JetTypeMapper typeMapper = state.getTypeMapper();
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetProperty) {
                 if (shouldInitializeProperty((JetProperty) declaration, typeMapper)) {
-                    initializeProperty(codegen, bindingContext, iv, (JetProperty) declaration, false);
+                    initializeProperty(codegen, bindingContext, (JetProperty) declaration);
                 }
             }
             else if (declaration instanceof JetClassInitializer) {
@@ -1525,16 +1591,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
+
     public static void initializeProperty(
             @NotNull ExpressionCodegen codegen,
             @NotNull BindingContext bindingContext,
-            @NotNull InstructionAdapter iv,
-            @NotNull JetProperty property,
-            boolean isStatic
+            @NotNull JetProperty property
     ) {
-        if (!isStatic) {
-            iv.load(0, OBJECT_TYPE);
-        }
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null;
@@ -1543,14 +1605,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
         JetType jetType = getPropertyOrDelegateType(bindingContext, property, propertyDescriptor);
+
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER);
+
+        if (!propValue.isStatic) {
+            codegen.v.load(0, OBJECT_TYPE);
+        }
+
         Type type = codegen.expressionType(initializer);
         if (jetType.isNullable()) {
             type = boxType(type);
         }
         codegen.gen(initializer, type);
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
-        propValue.store(type, iv);
+        propValue.store(type, codegen.v);
     }
 
     public static boolean shouldInitializeProperty(
@@ -1697,6 +1765,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
         return r;
+    }
+
+    public void addClassObjectPropertyToCopy(PropertyDescriptor descriptor) {
+        if (classObjectPropertiesToCopy == null) {
+            classObjectPropertiesToCopy = new ArrayList<PropertyDescriptor>();
+        }
+        classObjectPropertiesToCopy.add(descriptor);
     }
 
 }
