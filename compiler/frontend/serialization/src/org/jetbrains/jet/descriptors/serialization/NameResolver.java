@@ -44,7 +44,7 @@ public class NameResolver {
     @NotNull
     public Name getName(int index) {
         String name = simpleNames.getNames(index);
-        return Name.identifier(name);
+        return Name.guess(name);
     }
 
     @Nullable
