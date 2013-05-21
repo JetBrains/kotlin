@@ -26,6 +26,12 @@ public class TypedHandlerTest extends LightCodeInsightTestCase {
         checkResultByText("val x = \"${}\"");
     }
 
+    public void testKT3575() throws Exception {
+        configureFromFileText("a.kt", "val x = \"$<caret>]\"");
+        EditorTestUtil.performTypingAction(getEditor(), '{');
+        checkResultByText("val x = \"${}]\"");
+    }
+
     public void testTypeLtInFunDeclaration() throws Exception {
         doLtGtTest("fun <caret>");
     }
