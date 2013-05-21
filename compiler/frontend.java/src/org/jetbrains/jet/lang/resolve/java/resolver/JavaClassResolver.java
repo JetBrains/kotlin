@@ -44,6 +44,8 @@ import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -275,12 +277,40 @@ public final class JavaClassResolver {
 
         PsiMethod samInterfaceMethod = MembersCache.getSamInterfaceMethod(psiClass);
         if (samInterfaceMethod != null) {
-            SimpleFunctionDescriptor abstractMethod = functionResolver.resolveFunctionMutely(
-                    psiClass, new PsiMethodWrapper(samInterfaceMethod), classDescriptor);
+            SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(psiClass, samInterfaceMethod, classDescriptor);
             classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));
         }
 
         return classDescriptor;
+    }
+
+    @NotNull
+    private SimpleFunctionDescriptor resolveFunctionOfSamInterface(
+            @NotNull PsiClass psiClass,
+            @NotNull PsiMethod samInterfaceMethod,
+            @NotNull ClassDescriptorFromJvmBytecode samInterface
+    ) {
+        PsiClass methodContainer = samInterfaceMethod.getContainingClass();
+        assert methodContainer != null : "method container is null for " + methodContainer;
+        String containerQualifiedName = methodContainer.getQualifiedName();
+        assert containerQualifiedName != null : "qualified name is null for " + psiClass;
+
+        if (DescriptorUtils.getFQName(samInterface).getFqName().equals(containerQualifiedName)) {
+            SimpleFunctionDescriptor abstractMethod =
+                    functionResolver.resolveFunctionMutely(new PsiMethodWrapper(samInterfaceMethod), samInterface);
+            assert abstractMethod != null : "couldn't resolve method " + samInterfaceMethod;
+            return abstractMethod;
+        }
+        else {
+            Set<JetType> supertypes = TypeUtils.getAllSupertypes(samInterface.getDefaultType());
+            for (JetType supertype : supertypes) {
+                List<CallableMemberDescriptor> abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype);
+                if (!abstractMembers.isEmpty()) {
+                    return (SimpleFunctionDescriptor) abstractMembers.get(0);
+                }
+            }
+            throw new IllegalStateException("Couldn't find abstract method in supertypes " + supertypes);
+        }
     }
 
     private void cache(@NotNull FqNameBase fqName, @Nullable ClassDescriptor classDescriptor) {

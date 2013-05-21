@@ -1218,6 +1218,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
             }
             
+            @TestMetadata("SubstitutedSamInterface.java")
+            public void testSubstitutedSamInterface() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterface.java");
+            }
+            
+            @TestMetadata("SubstitutedSamInterfaceSubclassOfBuiltin.java")
+            public void testSubstitutedSamInterfaceSubclassOfBuiltin() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterfaceSubclassOfBuiltin.java");
+            }
+            
             @TestMetadata("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter")
             public static class Adapter extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInAdapter() throws Exception {

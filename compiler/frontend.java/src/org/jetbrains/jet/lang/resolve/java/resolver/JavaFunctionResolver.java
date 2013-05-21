@@ -92,10 +92,12 @@ public final class JavaFunctionResolver {
 
     @Nullable
     SimpleFunctionDescriptor resolveFunctionMutely(
-            @NotNull PsiClass psiClass, PsiMethodWrapper method,
+            @NotNull PsiMethodWrapper method,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
-        return resolveMethodToFunctionDescriptor(psiClass, method, DeclarationOrigin.JAVA, ownerDescriptor, false);
+        PsiClass containingClass = method.getPsiMethod().getContainingClass();
+        assert containingClass != null : "containing class is null for " + method;
+        return resolveMethodToFunctionDescriptor(containingClass, method, DeclarationOrigin.JAVA, ownerDescriptor, false);
     }
 
     @Nullable

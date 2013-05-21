@@ -409,9 +409,6 @@ public final class MembersCache {
     // Returns null if not SAM interface
     @Nullable
     public static PsiMethod getSamInterfaceMethod(@NotNull PsiClass psiClass) {
-        if (psiClass.hasModifierProperty(PsiModifier.PRIVATE)) { // TODO hacky
-            return null;
-        }
         if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
             return null;
         }

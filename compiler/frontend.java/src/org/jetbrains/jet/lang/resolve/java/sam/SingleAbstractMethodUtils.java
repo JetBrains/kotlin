@@ -40,7 +40,7 @@ import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 public class SingleAbstractMethodUtils {
 
     @NotNull
-    private static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
+    public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
         List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
         for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor &&
