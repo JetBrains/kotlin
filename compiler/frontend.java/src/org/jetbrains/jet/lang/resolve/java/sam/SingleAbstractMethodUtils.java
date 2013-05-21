@@ -147,7 +147,7 @@ public class SingleAbstractMethodUtils {
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 
         JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
-        assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type" + samInterface.getDefaultType();
+        assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type " + samInterface.getDefaultType();
         JetType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
