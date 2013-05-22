@@ -245,6 +245,11 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         return supertypes;
     }
 
+    @Override
+    public String toString() {
+        return "deserialized class " + getName().toString();
+    }
+
     private class DeserializedClassTypeConstructor implements TypeConstructor {
         private final Collection<JetType> supertypes = computeSuperTypes();
         private final List<TypeParameterDescriptor> parameters = deserializer.typeParameters(classProto.getTypeParametersList());
