@@ -30,6 +30,15 @@ public final class ClassId {
         return new ClassId(getPackageFqName(), relativeClassName.child(name));
     }
 
+    @NotNull
+    public ClassId getOuterClassId() {
+        return new ClassId(getPackageFqName(), relativeClassName.parent());
+    }
+
+    public boolean isTopLevelClass() {
+        return relativeClassName.parent().isRoot();
+    }
+
     public FqNameUnsafe asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
         return new FqNameUnsafe(packageFqName.asString() + "." + relativeClassName.asString());

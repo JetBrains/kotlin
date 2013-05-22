@@ -324,7 +324,10 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 @Nullable
                 @Override
                 protected ClassDescriptor doCompute(@NotNull ClassId classId) {
-                    return resolveClass(ClassResolverImpl.this.parentForClasses, classId);
+                    DeclarationDescriptor containingDeclaration =
+                            classId.isTopLevelClass() ? ClassResolverImpl.this.parentForClasses : findClass(classId.getOuterClassId());
+                    assert containingDeclaration != null : "Containing declaration not found: " + classId.getOuterClassId();
+                    return resolveClass(containingDeclaration, classId);
                 }
             };
         }
