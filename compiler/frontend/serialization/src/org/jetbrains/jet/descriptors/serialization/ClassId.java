@@ -2,13 +2,14 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class ClassId {
     private final FqName packageFqName;
-    private final FqName relativeClassName;
+    private final FqNameUnsafe relativeClassName;
 
-    public ClassId(@NotNull FqName packageFqName, @NotNull FqName relativeClassName) {
+    public ClassId(@NotNull FqName packageFqName, @NotNull FqNameUnsafe relativeClassName) {
         this.packageFqName = packageFqName;
         assert !relativeClassName.isRoot() : "Class name must not be root. " + packageFqName;
         this.relativeClassName = relativeClassName;
@@ -20,7 +21,7 @@ public final class ClassId {
     }
 
     @NotNull
-    public FqName getRelativeClassName() {
+    public FqNameUnsafe getRelativeClassName() {
         return relativeClassName;
     }
 
@@ -29,9 +30,9 @@ public final class ClassId {
         return new ClassId(getPackageFqName(), relativeClassName.child(name));
     }
 
-    public FqName asSingleFqName() {
+    public FqNameUnsafe asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
-        return new FqName(packageFqName.getFqName() + "." + relativeClassName.getFqName());
+        return new FqNameUnsafe(packageFqName.getFqName() + "." + relativeClassName.getFqName());
     }
 
     @Override

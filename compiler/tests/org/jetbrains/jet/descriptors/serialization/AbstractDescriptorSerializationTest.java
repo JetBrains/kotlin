@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullableImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -145,7 +146,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         for (ClassDescriptor classDescriptor : classes) {
             ClassId classId = new ClassId(DescriptorUtils.getFQName(classDescriptor.getContainingDeclaration()).toSafe(),
-                                     FqName.topLevel(classDescriptor.getName()));
+                                     FqNameUnsafe.topLevel(classDescriptor.getName()));
             ClassDescriptor descriptor = classResolver.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
             if (descriptor.getKind().isObject()) {
@@ -297,7 +298,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 @NotNull DeclarationDescriptor containingDeclaration,
                 @NotNull final ClassId classId
         ) {
-            FqName fqName = classId.asSingleFqName();
+            FqNameUnsafe fqName = classId.asSingleFqName();
 
             ClassMetadata classMetadata = this.classMetadata.fun(fqName.getFqName());
             if (classMetadata == null) {
@@ -339,7 +340,9 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @Nullable
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
-            ClassDescriptor javaClassDescriptor = javaDescriptorResolver.resolveClass(classId.asSingleFqName());
+            FqNameUnsafe fqNameUnsafe = classId.asSingleFqName();
+            assert fqNameUnsafe.isSafe() : "Unsafe fqName made it to Java resolve: " + fqNameUnsafe;
+            ClassDescriptor javaClassDescriptor = javaDescriptorResolver.resolveClass(fqNameUnsafe.toSafe());
             if (javaClassDescriptor != null) {
                 return javaClassDescriptor;
             }

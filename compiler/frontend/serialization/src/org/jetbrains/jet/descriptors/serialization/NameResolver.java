@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.*;
@@ -80,7 +81,7 @@ public class NameResolver {
             packageFqName = FqName.ROOT;
         }
 
-        return new ClassId(packageFqName, new FqName(relativeClassName.toString()));
+        return new ClassId(packageFqName, new FqNameUnsafe(relativeClassName.toString()));
     }
 
     @Nullable
