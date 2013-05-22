@@ -1,20 +1,21 @@
 <project name="Update Dependencies" default="update">
     <property name="jb.buildserver.build.id" value="1864599"/>
     <property name="public.buildserver.build.id" value="82629"/>
+    <property name="idea.archive.name" value="ideaIC-129.SNAPSHOT.win.zip"/>
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
     <target name="update" depends="fetch-third-party">
         <execute_update
             base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
-            build.zip="ideaIC-129.SNAPSHOT.win.zip"
+            build.zip="${idea.archive.name}"
         />
     </target>
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
-            build.zip="ideaIC-129.SNAPSHOT.win.zip"
+            build.zip="${idea.archive.name}"
         />
     </target>
 
