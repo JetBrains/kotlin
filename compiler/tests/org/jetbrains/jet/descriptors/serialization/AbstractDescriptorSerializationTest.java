@@ -143,7 +143,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
             ProtoBuf.Class proto = ProtoBuf.Class.parseFrom(in);
 
-            classMetadata.put(getClassNameString(classDescriptor), new ClassMetadata(simpleNames, qualifiedNames, proto));
+            classMetadata.put(getNaiveFqName(classDescriptor), new ClassMetadata(simpleNames, qualifiedNames, proto));
         }
 
         NamespaceDescriptorImpl namespace = createTestNamespace();
@@ -202,11 +202,31 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         return namespace;
     }
 
-    private static String getClassNameString(ClassDescriptor classDescriptor) {
-        if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
-            return getClassNameString((ClassDescriptor) classDescriptor.getContainingDeclaration()) + "." + JvmAbi.CLASS_OBJECT_CLASS_NAME;
+    private static String getNaiveFqName(ClassDescriptor classDescriptor) {
+        return getNaiveFqName(classDescriptor, new StringBuilder()).toString();
+    }
+
+    @NotNull
+    private static StringBuilder getNaiveFqName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof ClassDescriptor
+            || (containingDeclaration instanceof NamespaceDescriptor
+                && !DescriptorUtils.isRootNamespace((NamespaceDescriptor) containingDeclaration))) {
+            getNaiveFqName(containingDeclaration, builder);
+            builder.append(".");
         }
-        return DescriptorUtils.getFQName(classDescriptor).getFqName();
+
+        builder.append(getNaiveName(descriptor));
+
+        return builder;
+    }
+
+    private static String getNaiveName(DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) return JvmAbi.CLASS_OBJECT_CLASS_NAME;
+        }
+        return descriptor.getName().getName();
     }
 
     private static NamespaceDescriptorImpl createTestNamespace() {
