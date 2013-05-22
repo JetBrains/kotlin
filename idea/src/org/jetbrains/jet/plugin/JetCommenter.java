@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.plugin;
 
-import com.intellij.lang.Commenter;
+import com.intellij.lang.CodeDocumentationAwareCommenter;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetCommenter implements Commenter {
+public class JetCommenter implements CodeDocumentationAwareCommenter {
     @Override
     public String getLineCommentPrefix() {
         return "//";
@@ -42,5 +45,40 @@ public class JetCommenter implements Commenter {
     @Override
     public String getCommentedBlockCommentSuffix() {
         return null;
+    }
+
+    @Override
+    public IElementType getLineCommentTokenType() {
+        return JetTokens.EOL_COMMENT;
+    }
+
+    @Override
+    public IElementType getBlockCommentTokenType() {
+        return JetTokens.BLOCK_COMMENT;
+    }
+
+    @Override
+    public IElementType getDocumentationCommentTokenType() {
+        return JetTokens.DOC_COMMENT;
+    }
+
+    @Override
+    public String getDocumentationCommentPrefix() {
+        return "/**";
+    }
+
+    @Override
+    public String getDocumentationCommentLinePrefix() {
+        return "*";
+    }
+
+    @Override
+    public String getDocumentationCommentSuffix() {
+        return "*/";
+    }
+
+    @Override
+    public boolean isDocumentationComment(PsiComment element) {
+        return element.getTokenType().equals(JetTokens.DOC_COMMENT);
     }
 }
