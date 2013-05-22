@@ -239,7 +239,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
             if (resolved is PsiClass) {
                 val clazz = resolved as PsiClass
 
-                if (PrimitiveType.values() any { it.getTypeName().getName() == clazz.getName() }) {
+                if (PrimitiveType.values() any { it.getTypeName().asString() == clazz.getName() }) {
                     myResult = Identifier(clazz.getQualifiedName()!!, false)
                     return
                 }
