@@ -27,13 +27,11 @@ import java.util.Collection;
 
 public class DescriptorSerializer {
 
-    // TODO: flags
-
     private final NameTable nameTable;
     private final Interner<TypeParameterDescriptor> typeParameters;
 
-    public DescriptorSerializer() {
-        this(new NameTable(), new Interner<TypeParameterDescriptor>());
+    public DescriptorSerializer(@NotNull NameTable.Namer namer) {
+        this(new NameTable(namer), new Interner<TypeParameterDescriptor>());
     }
 
     private DescriptorSerializer(NameTable nameTable, Interner<TypeParameterDescriptor> typeParameters) {
