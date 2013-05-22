@@ -18,17 +18,20 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 public class DataFlowValueFactory {
     public static final DataFlowValueFactory INSTANCE = new DataFlowValueFactory();
@@ -42,8 +45,8 @@ public class DataFlowValueFactory {
             if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) return DataFlowValue.NULL;
         }
         if (TypeUtils.equalTypes(type, KotlinBuiltIns.getInstance().getNullableNothingType())) return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
-        Pair<Object, Boolean> result = getIdForStableIdentifier(expression, bindingContext, false);
-        return new DataFlowValue(result.first == null ? expression : result.first, type, result.second, getImmanentNullability(type));
+        IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext, false);
+        return new DataFlowValue(result.id == null ? expression : result.id, type, result.isStable, getImmanentNullability(type));
     }
 
     @NotNull
@@ -104,55 +107,156 @@ public class DataFlowValueFactory {
         return type.isNullable() || TypeUtils.hasNullableSuperType(type) ? Nullability.UNKNOWN : Nullability.NOT_NULL;
     }
 
+    private static class IdentifierInfo {
+        public final Object id;
+        public final boolean isStable;
+        public final boolean isNamespace;
+
+        private IdentifierInfo(Object id, boolean isStable, boolean isNamespace) {
+            this.id = id;
+            this.isStable = isStable;
+            this.isNamespace = isNamespace;
+        }
+    }
+
+    private static final IdentifierInfo ERROR_IDENTIFIER_INFO = new IdentifierInfo(null, false, false);
+
     @NotNull
-    private static Pair<Object, Boolean> getIdForStableIdentifier(@NotNull JetExpression expression, @NotNull BindingContext bindingContext, boolean allowNamespaces) {
+    private static IdentifierInfo createInfo(Object id, boolean isStable) {
+        return new IdentifierInfo(id, isStable, false);
+    }
+
+    @NotNull
+    private static IdentifierInfo createNamespaceInfo(Object id, boolean isStable) {
+        return new IdentifierInfo(id, isStable, true);
+    }
+
+    @NotNull
+    private static IdentifierInfo combineInfo(@Nullable IdentifierInfo receiverInfo, @NotNull IdentifierInfo selectorInfo) {
+        if (receiverInfo == null || receiverInfo == ERROR_IDENTIFIER_INFO || receiverInfo.isNamespace) {
+            return selectorInfo;
+        }
+        return createInfo(Pair.create(receiverInfo.id, selectorInfo.id), receiverInfo.isStable && selectorInfo.isStable);
+    }
+
+    @NotNull
+    private static IdentifierInfo getIdForStableIdentifier(
+            @Nullable JetExpression expression,
+            @NotNull BindingContext bindingContext,
+            boolean allowNamespaces
+    ) {
         if (expression instanceof JetParenthesizedExpression) {
             JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) expression;
             JetExpression innerExpression = parenthesizedExpression.getExpression();
-            if (innerExpression == null) {
-                return Pair.create(null, false);
-            }
+
             return getIdForStableIdentifier(innerExpression, bindingContext, allowNamespaces);
         }
         else if (expression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
+            JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
             JetExpression selectorExpression = qualifiedExpression.getSelectorExpression();
-            if (selectorExpression == null) {
-                return Pair.create(null, false);
-            }
-            Pair<Object, Boolean> receiverId = getIdForStableIdentifier(qualifiedExpression.getReceiverExpression(), bindingContext, true);
-            Pair<Object, Boolean> selectorId = getIdForStableIdentifier(selectorExpression, bindingContext, allowNamespaces);
-            return receiverId.second ? selectorId : Pair.create(receiverId.first, false);
+            IdentifierInfo receiverId = getIdForStableIdentifier(receiverExpression, bindingContext, true);
+            IdentifierInfo selectorId = getIdForStableIdentifier(selectorExpression, bindingContext, allowNamespaces);
+
+            return combineInfo(receiverId, selectorId);
         }
         if (expression instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
-            DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, simpleNameExpression);
-            if (declarationDescriptor instanceof VariableDescriptor) {
-                return Pair.create((Object) declarationDescriptor, isStableVariable((VariableDescriptor) declarationDescriptor));
-            }
-            if (declarationDescriptor instanceof NamespaceDescriptor) {
-                return Pair.create((Object) declarationDescriptor, allowNamespaces);
-            }
-            if (declarationDescriptor instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                return Pair.create((Object) classDescriptor, classDescriptor.isClassObjectAValue());
-            }
+            return getIdForSimpleNameExpression((JetSimpleNameExpression) expression, bindingContext, allowNamespaces);
         }
         else if (expression instanceof JetThisExpression) {
             JetThisExpression thisExpression = (JetThisExpression) expression;
             DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, thisExpression.getInstanceReference());
-            if (declarationDescriptor instanceof CallableDescriptor) {
-                return Pair.create((Object) ((CallableDescriptor) declarationDescriptor).getReceiverParameter().getValue(), true);
-            }
-            if (declarationDescriptor instanceof ClassDescriptor) {
-                return Pair.create((Object) ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter().getValue(), true);
-            }
-            return Pair.create(null, true);
+
+            return getIdForThisReceiver(declarationDescriptor);
         }
         else if (expression instanceof JetRootNamespaceExpression) {
-            return Pair.create((Object) JetModuleUtil.getRootNamespaceType(expression), allowNamespaces);
+            return createNamespaceInfo(JetModuleUtil.getRootNamespaceType(expression), allowNamespaces);
         }
-        return Pair.create(null, false);
+        return ERROR_IDENTIFIER_INFO;
+    }
+
+    @NotNull
+    private static IdentifierInfo getIdForSimpleNameExpression(
+            @NotNull JetSimpleNameExpression simpleNameExpression,
+            @NotNull BindingContext bindingContext,
+            boolean allowNamespaces
+    ) {
+        DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, simpleNameExpression);
+        if (declarationDescriptor instanceof VariableDescriptor) {
+            ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, simpleNameExpression);
+            // todo return assert
+            // for now it fails for resolving 'invoke' convention, return it after 'invoke' algorithm changes
+            // assert resolvedCall != null : "Cannot create right identifier info if the resolved call is not known yet for " + declarationDescriptor;
+
+            IdentifierInfo receiverInfo = resolvedCall != null ? getIdForImplicitReceiver(resolvedCall.getThisObject(), simpleNameExpression) : null;
+
+            VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
+            return combineInfo(receiverInfo, createInfo(variableDescriptor, isStableVariable(variableDescriptor)));
+        }
+        if (declarationDescriptor instanceof NamespaceDescriptor) {
+            return createNamespaceInfo(declarationDescriptor, allowNamespaces);
+        }
+        if (declarationDescriptor instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+            return createInfo(classDescriptor, classDescriptor.isClassObjectAValue());
+        }
+        return ERROR_IDENTIFIER_INFO;
+    }
+
+    @Nullable
+    private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable final JetExpression expression) {
+        return receiverValue.accept(new ReceiverValueVisitor<IdentifierInfo, Void>() {
+
+            @Override
+            public IdentifierInfo visitNoReceiver(ReceiverValue noReceiver, Void data) {
+                return null;
+            }
+
+            @Override
+            public IdentifierInfo visitTransientReceiver(TransientReceiver receiver, Void data) {
+                assert false: "Transient receiver is implicit for an explicit expression: " + expression + ". Receiver: " + receiver;
+                return null;
+            }
+
+            @Override
+            public IdentifierInfo visitExtensionReceiver(ExtensionReceiver receiver, Void data) {
+                return getIdForThisReceiver(receiver);
+            }
+
+            @Override
+            public IdentifierInfo visitExpressionReceiver(ExpressionReceiver receiver, Void data) {
+                // there is an explicit "this" expression and it was analyzed earlier
+                return null;
+            }
+
+            @Override
+            public IdentifierInfo visitClassReceiver(ClassReceiver receiver, Void data) {
+                return getIdForThisReceiver(receiver);
+            }
+
+            @Override
+            public IdentifierInfo visitScriptReceiver(ScriptReceiver receiver, Void data) {
+                return getIdForThisReceiver(receiver);
+            }
+        }, null);
+    }
+
+    @NotNull
+    private static IdentifierInfo getIdForThisReceiver(@NotNull ThisReceiver thisReceiver) {
+        return getIdForThisReceiver(thisReceiver.getDeclarationDescriptor());
+    }
+
+    @NotNull
+    private static IdentifierInfo getIdForThisReceiver(@Nullable DeclarationDescriptor descriptorOfThisReceiver) {
+        if (descriptorOfThisReceiver instanceof CallableDescriptor) {
+            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptorOfThisReceiver).getReceiverParameter();
+            assert receiverParameter != null : "'This' refers to the callable member without a receiver parameter: " + descriptorOfThisReceiver;
+            return createInfo(receiverParameter.getValue(), true);
+        }
+        if (descriptorOfThisReceiver instanceof ClassDescriptor) {
+            return createInfo(((ClassDescriptor) descriptorOfThisReceiver).getThisAsReceiverParameter().getValue(), true);
+        }
+        return ERROR_IDENTIFIER_INFO;
     }
 
     public static boolean isStableVariable(@NotNull VariableDescriptor variableDescriptor) {
