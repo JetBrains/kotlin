@@ -226,7 +226,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) return JvmAbi.CLASS_OBJECT_CLASS_NAME;
         }
-        return descriptor.getName().getName();
+        return descriptor.getName().asString();
     }
 
     private static NamespaceDescriptorImpl createTestNamespace() {
@@ -336,7 +336,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         ) {
             FqNameUnsafe fqName = classId.asSingleFqName();
 
-            ClassMetadata classMetadata = this.classMetadata.fun(fqName.getFqName());
+            ClassMetadata classMetadata = this.classMetadata.fun(fqName.asString());
             if (classMetadata == null) {
                 return parentResolver.findClass(classId);
             }

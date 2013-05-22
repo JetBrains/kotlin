@@ -115,7 +115,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private static Set<String> stringSet(@NotNull List<Integer> nameIndices, @NotNull NameResolver nameResolver) {
         Set<String> result = new HashSet<String>(nameIndices.size());
         for (Integer index : nameIndices) {
-            result.add(nameResolver.getName(index).getName());
+            result.add(nameResolver.getName(index).asString());
         }
         return result;
     }
@@ -395,7 +395,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         @Nullable
         @Override
         protected final ClassDescriptor doCompute(@NotNull Name name) {
-            if (!declaredNames.contains(name.getName())) return null;
+            if (!declaredNames.contains(name.asString())) return null;
 
             return resolveNestedClass(name);
         }

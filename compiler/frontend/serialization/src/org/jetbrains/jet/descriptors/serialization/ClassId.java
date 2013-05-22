@@ -32,7 +32,7 @@ public final class ClassId {
 
     public FqNameUnsafe asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
-        return new FqNameUnsafe(packageFqName.getFqName() + "." + relativeClassName.getFqName());
+        return new FqNameUnsafe(packageFqName.asString() + "." + relativeClassName.asString());
     }
 
     @Override
