@@ -757,6 +757,59 @@ public class JetPsiUtil {
     }
 
     @Nullable
+    public static PsiElement getOutermostParent(@NotNull PsiElement element, @NotNull PsiElement upperBound, boolean strict) {
+        PsiElement parent = strict ? element.getParent() : element;
+        while (parent != null && parent.getParent() != upperBound) {
+            parent = parent.getParent();
+        }
+
+        return parent;
+    }
+
+    public static <T extends PsiElement> T getLastChildByType(@NotNull PsiElement root, @NotNull Class<? extends T>... elementTypes) {
+        PsiElement[] children = root.getChildren();
+
+        for (int i = children.length - 1; i >= 0; i--) {
+            if (PsiTreeUtil.instanceOf(children[i], elementTypes)) {
+                //noinspection unchecked
+                return (T) children[i];
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static <T extends JetElement> T getOutermostJetElement(
+            @Nullable PsiElement root,
+            boolean first,
+            @NotNull final Class<? extends T>... elementTypes
+    ) {
+        if (!(root instanceof JetElement)) return null;
+
+        final List<T> results = Lists.newArrayList();
+
+        ((JetElement) root).accept(
+                new JetVisitorVoid() {
+                    @Override
+                    public void visitJetElement(JetElement element) {
+                        if (PsiTreeUtil.instanceOf(element, elementTypes)) {
+                            //noinspection unchecked
+                            results.add((T) element);
+                        }
+                        else {
+                            element.acceptChildren(this);
+                        }
+                    }
+                }
+        );
+
+        if (results.isEmpty()) return null;
+
+        return first ? results.get(0) : results.get(results.size() - 1);
+    }
+
+    @Nullable
     public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
         if (expression instanceof JetCallElement) {
             JetCallElement callExpression = (JetCallElement) expression;

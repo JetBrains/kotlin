@@ -1,0 +1,7 @@
+// MOVE: down
+fun(n: Int) {
+    while (true) {
+
+        val x = ""
+    }<caret>
+}

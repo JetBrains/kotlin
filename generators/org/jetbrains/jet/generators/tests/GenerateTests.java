@@ -344,7 +344,9 @@ public class GenerateTests {
                 "idea/tests/",
                 "CodeMoverTestGenerated",
                 AbstractCodeMoverTest.class,
-                testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration")
+                testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration"),
+                testModel("idea/testData/codeInsight/moveUpDown/closingBraces", "doTestExpression"),
+                testModel("idea/testData/codeInsight/moveUpDown/expressions", "doTestExpression")
         );
     }
 

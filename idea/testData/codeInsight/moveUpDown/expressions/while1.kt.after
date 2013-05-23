@@ -1,0 +1,8 @@
+// MOVE: down
+
+fun foo(x: Boolean) {
+    while (x) {
+        <caret>// test
+
+    }
+}

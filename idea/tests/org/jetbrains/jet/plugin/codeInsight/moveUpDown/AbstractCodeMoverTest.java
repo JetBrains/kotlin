@@ -26,12 +26,17 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.codeInsight.upDownMover.JetDeclarationMover;
+import org.jetbrains.jet.plugin.codeInsight.upDownMover.JetExpressionMover;
 
 import java.io.File;
 
 public abstract class AbstractCodeMoverTest extends LightCodeInsightTestCase {
     public void doTestClassBodyDeclaration(@NotNull String path) throws Exception {
         doTest(path, JetDeclarationMover.class);
+    }
+
+    public void doTestExpression(@NotNull String path) throws Exception {
+        doTest(path, JetExpressionMover.class);
     }
 
     private void doTest(@NotNull String path, @NotNull Class<? extends StatementUpDownMover> moverClass) throws Exception {

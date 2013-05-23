@@ -283,6 +283,10 @@
                         serviceImplementation="org.jetbrains.jet.plugin.editor.JetEditorOptions"/>
     <editorAppearanceConfigurable instance="org.jetbrains.jet.plugin.editor.JetSettingEditorConfigurable"/>
 
+    <statementUpDownMover id="jetExpression"
+                          implementation="org.jetbrains.jet.plugin.codeInsight.upDownMover.JetExpressionMover"
+                          order="before declaration" />
+
     <statementUpDownMover id="jetDeclaration"
                           implementation="org.jetbrains.jet.plugin.codeInsight.upDownMover.JetDeclarationMover"
                           order="before jetExpression" />
