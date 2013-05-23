@@ -19,14 +19,17 @@ package org.jetbrains.jet.lexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 
 public interface JetTokens {
     JetToken EOF   = new JetToken("EOF");
 
-    JetToken BLOCK_COMMENT = new JetToken("BLOCK_COMMENT");
-    JetToken DOC_COMMENT   = new JetToken("DOC_COMMENT");
-    JetToken EOL_COMMENT   = new JetToken("EOL_COMMENT");
-    JetToken SHEBANG_COMMENT = new JetToken("SHEBANG_COMMENT");
+    JetToken BLOCK_COMMENT     = new JetToken("BLOCK_COMMENT");
+    JetToken EOL_COMMENT       = new JetToken("EOL_COMMENT");
+    JetToken SHEBANG_COMMENT   = new JetToken("SHEBANG_COMMENT");
+
+    //JetToken DOC_COMMENT   = new JetToken("DOC_COMMENT");
+    IElementType DOC_COMMENT   = KDocTokens.KDOC;
 
     IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
 

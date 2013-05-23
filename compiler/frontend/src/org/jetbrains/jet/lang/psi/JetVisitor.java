@@ -408,5 +408,4 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     public R visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry, D data) {
         return visitStringTemplateEntry(entry, data);
     }
-
 }

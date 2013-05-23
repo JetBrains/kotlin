@@ -46,6 +46,8 @@
     <target name="lexer">
         <echo message="${flex.base}"/>
         <flex flexfile="${home}/src/org/jetbrains/jet/lexer/Jet.flex"
-              destdir="${home}//src/org/jetbrains/jet/lexer/"/>
+              destdir="${home}/src/org/jetbrains/jet/lexer/"/>
+        <flex flexfile="${home}/src/org/jetbrains/jet/kdoc/lexer/KDoc.flex"
+              destdir="${home}/src/org/jetbrains/jet/kdoc/lexer/"/>
     </target>
 </project>
