@@ -1,4 +1,5 @@
 JetFile: DocCommentAtBeginningOfFile1.jet
-  PsiComment(DOC_COMMENT)('/**')
+  KDoc
+    PsiElement(KDOC_START)('/**')
   NAMESPACE_HEADER
     <empty list>

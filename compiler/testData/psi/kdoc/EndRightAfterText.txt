@@ -1,0 +1,7 @@
+JetFile: EndRightAfterText.kt
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiElement(KDOC_TEXT)('text')
+    PsiElement(KDOC_END)('*/')
+  NAMESPACE_HEADER
+    <empty list>

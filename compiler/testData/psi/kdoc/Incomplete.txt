@@ -1,0 +1,7 @@
+JetFile: Incomplete.kt
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n      ')
+    PsiElement(KDOC_TEXT)('contents')
+  NAMESPACE_HEADER
+    <empty list>

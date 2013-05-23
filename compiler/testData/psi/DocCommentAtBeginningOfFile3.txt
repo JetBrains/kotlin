@@ -1,4 +1,0 @@
-JetFile: DocCommentAtBeginningOfFile3.jet
-  PsiComment(DOC_COMMENT)('/**\n\nfooo')
-  NAMESPACE_HEADER
-    <empty list>
