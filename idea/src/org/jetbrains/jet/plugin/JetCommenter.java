@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin;
 import com.intellij.lang.CodeDocumentationAwareCommenter;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetCommenter implements CodeDocumentationAwareCommenter {
@@ -79,6 +80,6 @@ public class JetCommenter implements CodeDocumentationAwareCommenter {
 
     @Override
     public boolean isDocumentationComment(PsiComment element) {
-        return element.getTokenType().equals(JetTokens.DOC_COMMENT);
+        return element instanceof KDoc;
     }
 }
