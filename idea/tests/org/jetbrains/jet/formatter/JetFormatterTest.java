@@ -72,6 +72,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTest();
     }
 
+    public void testKDoc() throws Exception {
+        doTest();
+    }
+
     public void testMultilineFunctionLiteral() throws Exception {
         doTest();
     }

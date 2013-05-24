@@ -25,6 +25,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
@@ -34,8 +35,9 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
     @Override
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
+        PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(JetLanguage.INSTANCE);
         JetBlock block = new JetBlock(
-            element.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
+            containingFile.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
             createSpacingBuilder(settings));
 
         return FormattingModelProvider.createFormattingModelForPsiFile(
@@ -53,6 +55,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
                 .after(IMPORT_DIRECTIVE).blankLines(1)
 
+                .before(DOC_COMMENT).lineBreakInCode()
                 .before(FUN).lineBreakInCode()
                 .before(PROPERTY).lineBreakInCode()
                 .between(FUN, FUN).blankLines(1)
@@ -105,6 +108,9 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
                 .aroundInside(ARROW, WHEN_ENTRY).spaces(1)
+
+                // KDoc
+                .between(KDocTokens.LEADING_ASTERISK, KDocTokens.TEXT).spacing(1, 100, 0, true, 100)
                 ;
     }
 
