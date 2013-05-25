@@ -41,8 +41,7 @@ JetFile: NestedComments.jet
       PsiWhiteSpace('\n')
       KDoc
         PsiElement(KDOC_START)('/**')
-        PsiWhiteSpace(' ')
-        PsiElement(KDOC_TEXT)('/***/')
+        PsiElement(KDOC_TEXT)(' /***/')
         PsiElement(KDOC_END)('*/')
       PsiWhiteSpace('\n')
       REFERENCE_EXPRESSION
@@ -50,12 +49,10 @@ JetFile: NestedComments.jet
       PsiWhiteSpace('\n')
       KDoc
         PsiElement(KDOC_START)('/**')
-        PsiWhiteSpace(' ')
-        PsiElement(KDOC_TEXT)('/**')
+        PsiElement(KDOC_TEXT)(' /**')
         PsiWhiteSpace('\n\n')
-        PsiElement(KDOC_LEADING_ASTERISK)('*')
-        PsiElement(KDOC_TEXT)('/**')
-        PsiElement(KDOC_END)('*/')
+        PsiElement(KDOC_TEXT)('*/')
+        PsiElement(KDOC_END)('***/')
       PsiWhiteSpace('\n')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('b')

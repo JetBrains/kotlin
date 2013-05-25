@@ -25,7 +25,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
@@ -108,9 +107,6 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
                 .aroundInside(ARROW, WHEN_ENTRY).spaces(1)
-
-                // KDoc
-                .between(KDocTokens.LEADING_ASTERISK, KDocTokens.TEXT).spacing(1, 100, 0, true, 100)
                 ;
     }
 

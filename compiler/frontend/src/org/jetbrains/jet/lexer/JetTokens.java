@@ -184,8 +184,14 @@ public interface JetTokens {
             PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, INLINE_KEYWORD, REIFIED_KEYWORD
     );
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
-    TokenSet COMMENTS = TokenSet.orSet(TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT, SHEBANG_COMMENT),
-                                       KDocTokens.ALL_KDOC_TOKENS);
+
+    /**
+     * Don't add KDocTokens to COMMENTS TokenSet, because it is used in JetParserDefinition.getCommentTokens(),
+     * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
+     *
+     * @see org.jetbrains.jet.lang.psi.JetPsiUtil.isInComment()
+     */
+    TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT, SHEBANG_COMMENT);
     TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.orSet(COMMENTS, TokenSet.create(WHITE_SPACE));
 
     TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART);
