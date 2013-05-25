@@ -23,6 +23,7 @@ import com.intellij.lang.PsiParser;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.kdoc.parser.KDocParser;
 import org.jetbrains.jet.kdoc.psi.impl.KDocImpl;
@@ -53,4 +54,11 @@ public interface KDocTokens {
     KDocToken LEADING_ASTERISK      = new KDocToken("KDOC_LEADING_ASTERISK");
 
     KDocToken TEXT                  = new KDocToken("KDOC_TEXT");
+    KDocToken TAG_NAME              = new KDocToken("KDOC_TAG_NAME");
+    KDocToken WIKI_LINK_OPEN        = new KDocToken("KDOC_WIKI_LINK_OPEN");
+    KDocToken WIKI_LINK_CLOSE       = new KDocToken("KDOC_WIKI_LINK_CLOSE");
+
+    KDocToken MARKDOWN_ESCAPED_CHAR                         = new KDocToken("KDOC_MARKDOWN_ESCAPED_CHAR");
+
+    TokenSet CONTENT_TOKENS = TokenSet.create(START, END, LEADING_ASTERISK, TEXT, WIKI_LINK_OPEN, WIKI_LINK_CLOSE, MARKDOWN_ESCAPED_CHAR);
 }
