@@ -17,11 +17,18 @@
 package org.jetbrains.jet.kdoc.lexer;
 
 import com.intellij.lexer.FlexAdapter;
+import com.intellij.lexer.MergingLexerAdapter;
+import com.intellij.psi.tree.TokenSet;
 
 import java.io.Reader;
 
-public class KDocLexer extends FlexAdapter {
+public class KDocLexer extends MergingLexerAdapter {
     public KDocLexer() {
-        super(new _KDocLexer((Reader) null));
+        super(
+                new FlexAdapter(
+                        new _KDocLexer((Reader) null)
+                ),
+                TokenSet.create(KDocTokens.TEXT)
+        );
     }
 }

@@ -23,18 +23,6 @@ import com.intellij.util.text.CharArrayUtil;
   private final Boolean yytextContainLineBreaks() {
     return CharArrayUtil.containLineBreaks(zzBuffer, zzStartRead, zzMarkedPos);
   }
-
-  private final void pushbackEnd() {
-    if (isLastToken() && CharArrayUtil.regionMatches(zzBuffer, zzMarkedPos - 2, zzMarkedPos, "*/")) {
-      yypushback(2);
-    }
-  }
-
-  private final void pushbackText() {
-    int i = zzStartRead;
-    while (zzBuffer.charAt(i) == '*') i++;
-    yypushback(zzMarkedPos - i);
-  }
 %}
 
 %function advance
@@ -54,22 +42,25 @@ NOT_WHITE_SPACE_CHAR=[^\ \t\f\n\r]
 
 <YYINITIAL> "/**"                         { yybegin(CONTENTS);
                                             return KDocTokens.START;            }
-"*"+ "/"                                  { if (isLastToken())
-                                              return KDocTokens.END;            }
+"*"+ "/"                                  { if (isLastToken()) return KDocTokens.END;
+                                            else return KDocTokens.TEXT; }
 
-// hack: make longest match
-<LINE_BEGINNING> "*"+ {NOT_WHITE_SPACE_CHAR}* { pushbackText();
-                                                yybegin(CONTENTS);
-                                                return KDocTokens.LEADING_ASTERISK; }
+<LINE_BEGINNING> "*"+                     { yybegin(CONTENTS);
+                                            return KDocTokens.LEADING_ASTERISK; }
 
 <CONTENTS, LINE_BEGINNING> {
-            // todo: put markdown and @tags token patterns here
+    {WHITE_SPACE_CHAR}+ {
+        if (yytextContainLineBreaks()) {
+            yybegin(LINE_BEGINNING);
+            return TokenType.WHITE_SPACE;
+        } else {
+            yybegin(CONTENTS);
+            return KDocTokens.TEXT;  // internal white space
+        }
+    }
 
-            {NOT_WHITE_SPACE_CHAR}+        { pushbackEnd();
-                                             return KDocTokens.TEXT;            }
-            {WHITE_SPACE_CHAR}+            { if (yytextContainLineBreaks())
-                                               yybegin(LINE_BEGINNING);
-                                             return TokenType.WHITE_SPACE;      }
+  . { yybegin(CONTENTS);
+      return KDocTokens.TEXT; }
 }
 
-.                                         { return TokenType.BAD_CHARACTER;     }
+. { return TokenType.BAD_CHARACTER; }
