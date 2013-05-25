@@ -1,0 +1,20 @@
+JetFile: Markdown.jet
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_LEADING_ASTERISK)('*')
+    PsiElement(KDOC_TEXT)(' ')
+    PsiElement(KDOC_WIKI_LINK_OPEN)('[[')
+    PsiElement(KDOC_TEXT)('WikiLink')
+    PsiElement(KDOC_WIKI_LINK_CLOSE)(']]')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_LEADING_ASTERISK)('*')
+    PsiElement(KDOC_TEXT)(' Just ')
+    PsiElement(KDOC_MARKDOWN_ESCAPED_CHAR)('\[')
+    PsiElement(KDOC_TEXT)('[ and ')
+    PsiElement(KDOC_MARKDOWN_ESCAPED_CHAR)('\]')
+    PsiElement(KDOC_TEXT)(']')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')
+  NAMESPACE_HEADER
+    <empty list>

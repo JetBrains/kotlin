@@ -23,7 +23,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lexer.JetLexer;
+import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
     public Lexer getHighlightingLexer() {
-        return new JetLexer();
+        return new JetHighlightingLexer();
     }
 
     @NotNull
@@ -82,6 +82,9 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys.put(JetTokens.SHEBANG_COMMENT, JetHighlightingColors.LINE_COMMENT);
         keys.put(JetTokens.BLOCK_COMMENT, JetHighlightingColors.BLOCK_COMMENT);
         keys.put(JetTokens.DOC_COMMENT, JetHighlightingColors.DOC_COMMENT);
+
+        fillMap(keys, KDocTokens.CONTENT_TOKENS, JetHighlightingColors.DOC_COMMENT);
+        keys.put(KDocTokens.TAG_NAME, JetHighlightingColors.KDOC_TAG);
 
         keys.put(TokenType.BAD_CHARACTER, JetHighlightingColors.BAD_CHARACTER);
     }
