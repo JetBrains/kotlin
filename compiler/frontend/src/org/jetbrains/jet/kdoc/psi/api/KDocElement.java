@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.kdoc.psi.api;
 
-import org.jetbrains.jet.lang.psi.JetElement;
+import com.intellij.psi.PsiElement;
 
-public interface KDocElement extends JetElement {
+public interface KDocElement extends PsiElement {
 }

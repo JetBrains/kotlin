@@ -23,7 +23,6 @@ import com.intellij.lang.PsiParser;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
-import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.kdoc.parser.KDocParser;
 import org.jetbrains.jet.kdoc.psi.impl.KDocImpl;
@@ -53,7 +52,5 @@ public interface KDocTokens {
     KDocToken END                   = new KDocToken("KDOC_END");
     KDocToken LEADING_ASTERISK      = new KDocToken("KDOC_LEADING_ASTERISK");
 
-    KDocToken TEXT      = new KDocToken("KDOC_TEXT");
-
-    TokenSet ALL_KDOC_TOKENS = TokenSet.create(START, END, LEADING_ASTERISK, TEXT);
+    KDocToken TEXT                  = new KDocToken("KDOC_TEXT");
 }

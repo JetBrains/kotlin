@@ -36,7 +36,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.codeInsight.CommentUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
@@ -103,7 +102,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 return false;
             }
 
-            return CommentUtilCore.isComment((PsiElement) element);
+            return JetPsiUtil.isInComment((PsiElement) element);
         }
 
         @Override
