@@ -16,7 +16,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-gradle-plugin</artifactId>
+    <artifactId>kotlin-gradle-plugin-core</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
