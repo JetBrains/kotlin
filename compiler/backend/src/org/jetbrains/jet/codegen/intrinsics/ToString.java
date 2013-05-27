@@ -40,6 +40,6 @@ public class ToString implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        return genToString(v, receiver);
+        return genToString(v, receiver, receiver.type);
     }
 }

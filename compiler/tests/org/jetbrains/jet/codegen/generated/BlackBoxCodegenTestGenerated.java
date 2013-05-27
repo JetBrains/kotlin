@@ -1546,8 +1546,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/constructor/kt2852.kt");
             }
             
-        }
-        
+            }
+            
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
         public static class Function extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInFunction() throws Exception {
@@ -3684,6 +3684,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("ea35743.kt")
         public void testEa35743() throws Exception {
             doTest("compiler/testData/codegen/box/strings/ea35743.kt");
+        }
+        
+        @TestMetadata("kt3652.kt")
+        public void testKt3652() throws Exception {
+            doTest("compiler/testData/codegen/box/strings/kt3652.kt");
         }
         
         @TestMetadata("kt881.kt")

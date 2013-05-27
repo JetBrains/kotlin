@@ -354,8 +354,8 @@ public class AsmUtil {
         v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;");
     }
 
-    public static StackValue genToString(InstructionAdapter v, StackValue receiver) {
-        Type type = stringValueOfOrStringBuilderAppendType(receiver.type);
+    public static StackValue genToString(InstructionAdapter v, StackValue receiver, Type receiverType) {
+        Type type = stringValueOfOrStringBuilderAppendType(receiverType);
         receiver.put(type, v);
         v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;");
         return StackValue.onStack(JAVA_STRING_TYPE);

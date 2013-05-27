@@ -1173,7 +1173,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetStringTemplateEntry[] entries = expression.getEntries();
 
         if (entries.length == 1 && entries[0] instanceof JetStringTemplateEntryWithExpression) {
-            return genToString(v, gen(entries[0].getExpression()));
+            JetExpression expr = entries[0].getExpression();
+            return genToString(v, gen(expr), expressionType(expr));
         }
 
         for (JetStringTemplateEntry entry : entries) {
