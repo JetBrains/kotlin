@@ -44,18 +44,17 @@ public class PathUtil {
 
     @NotNull
     public static KotlinPaths getKotlinPathsForJpsPlugin() {
-        return new KotlinPathsFromHomeDir(getCompilerPathForJpsPlugin());
-    }
-
-    @NotNull
-    public static KotlinPaths getKotlinPathsForJpsPluginOrJpsTests() {
         // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
         // so the path to Kotlin is specified in a system property
         String jpsKotlinHome = System.getProperty("jps.kotlin.home");
         if (jpsKotlinHome != null) {
             return new KotlinPathsFromHomeDir(new File(jpsKotlinHome));
         }
+        return new KotlinPathsFromHomeDir(getCompilerPathForJpsPlugin());
+    }
 
+    @NotNull
+    public static KotlinPaths getKotlinPathsForJpsPluginOrJpsTests() {
         if ("true".equalsIgnoreCase(System.getProperty("kotlin.jps.tests"))) {
             return getKotlinPathsForDistDirectory();
         }
