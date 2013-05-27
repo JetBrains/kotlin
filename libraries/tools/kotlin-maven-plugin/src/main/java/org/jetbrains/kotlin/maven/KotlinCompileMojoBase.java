@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.maven;
 
 import com.google.common.base.Joiner;
 import com.intellij.openapi.util.text.StringUtil;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CompilerArguments;
@@ -34,12 +36,17 @@ import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
 
@@ -81,7 +88,17 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
     // TODO not sure why this doesn't work :(
     // * @parameter default-value="$(project.basedir}/src/main/resources"
 
+    /**
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    public MavenProject project;
 
+    /**
+     * @parameter default-value="true"
+     */
+    public boolean scanForAnnotations;
 
     /**
      * Project classpath.
@@ -296,6 +313,15 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
                 }
             }
         }
+
+        if (scanForAnnotations) {
+            for (String path : scanAnnotations(log)) {
+                if (!list.contains(path)) {
+                    list.add(path);
+                }
+            }
+        }
+
         return join(list, File.pathSeparator);
     }
 
@@ -319,5 +345,56 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
 
         throw new RuntimeException("Could not get jdk annotations from Kotlin plugin`s classpath");
+    }
+
+    protected List<String> scanAnnotations(Log log) {
+        final List<String> annotations = new ArrayList<String>();
+
+        final Set<Artifact> artifacts = project.getArtifacts();
+        for (Artifact artifact : artifacts) {
+            final File file = artifact.getFile();
+            if (containsAnnotations(file, log)) {
+                log.info("Discovered kotlin annotations in: " + file);
+                try {
+                    annotations.add(file.getCanonicalPath());
+                }
+                catch (IOException e) {
+                    log.warn("Error extracting canonical path from: " + file, e);
+                }
+            }
+        }
+
+        return annotations;
+    }
+
+    protected boolean containsAnnotations(File file, Log log) {
+        log.debug("Scanning for kotlin annotations in " + file);
+
+        ZipFile zipFile = null;
+        try {
+            zipFile = new ZipFile(file);
+
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                String name = entries.nextElement().getName();
+                if (name.endsWith("/annotations.xml")) {
+                    return true;
+                }
+            }
+        }
+        catch (IOException e) {
+            log.warn("Error reading contents of jar: " + file, e);
+        }
+        finally {
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                }
+                catch (IOException e) {
+                    log.warn("Error closing: " + zipFile, e);
+                }
+            }
+        }
+        return false;
     }
 }
