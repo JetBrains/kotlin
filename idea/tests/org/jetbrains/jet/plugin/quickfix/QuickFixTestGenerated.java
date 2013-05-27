@@ -766,6 +766,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/nullables"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeMakeAllUpperBoundsNonNullable.kt")
+        public void testMakeAllUpperBoundsNonNullable() throws Exception {
+            doTest("idea/testData/quickfix/nullables/beforeMakeAllUpperBoundsNonNullable.kt");
+        }
+        
+        @TestMetadata("beforeMakeAllUpperBoundsOfFunctionParameterTypeNonNullable.kt")
+        public void testMakeAllUpperBoundsOfFunctionParameterTypeNonNullable() throws Exception {
+            doTest("idea/testData/quickfix/nullables/beforeMakeAllUpperBoundsOfFunctionParameterTypeNonNullable.kt");
+        }
+        
+        @TestMetadata("beforeRemoveNullableWhenClassHasNullableUpperBound.kt")
+        public void testRemoveNullableWhenClassHasNullableUpperBound() throws Exception {
+            doTest("idea/testData/quickfix/nullables/beforeRemoveNullableWhenClassHasNullableUpperBound.kt");
+        }
+        
         @TestMetadata("beforeRemoveRedundantNullable.kt")
         public void testRemoveRedundantNullable() throws Exception {
             doTest("idea/testData/quickfix/nullables/beforeRemoveRedundantNullable.kt");

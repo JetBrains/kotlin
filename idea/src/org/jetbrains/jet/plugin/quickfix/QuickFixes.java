@@ -241,5 +241,8 @@ public class QuickFixes {
         factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
 
         factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
+
+        factories.put(BASE_WITH_NULLABLE_UPPER_BOUND, RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.USELESS));
+        factories.put(BASE_WITH_NULLABLE_UPPER_BOUND, MakeUpperBoundsNonNullableFix.createFactory());
     }
 }
