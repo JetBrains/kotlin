@@ -208,7 +208,7 @@
                     <get src="@{base.url}/jps/jps-model.jar" dest="${jps}/jps-model.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/log4j.jar" dest="${jps}/log4j.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/nanoxml-2.2.3.jar" dest="${jps}/nanoxml-2.2.3.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/protobuf-2.4.1.jar" dest="${jps}/protobuf-2.4.1.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/protobuf-2.5.0.jar" dest="${jps}/protobuf-2.5.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/trove4j.jar" dest="${jps}/trove4j.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/ui-designer-jps-plugin.jar" dest="${jps}/ui-designer-jps-plugin.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/util.jar" dest="${jps}/util.jar" usetimestamp="true"/>
