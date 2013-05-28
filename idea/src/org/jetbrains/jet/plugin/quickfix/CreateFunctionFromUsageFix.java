@@ -1128,12 +1128,16 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
      */
     @NotNull
     private static String getNextAvailableName(@NotNull String name, @NotNull Collection<String> existingNames, @Nullable JetScope scope) {
-        if (existingNames.contains(name) || (scope != null && scope.getClassifier(Name.identifier(name)) != null)) {
+        if (isConflictingName(name, existingNames, scope)) {
             int j = 1;
-            while (existingNames.contains(name + j) || (scope != null && scope.getClassifier(Name.identifier(name + j)) != null)) j++;
+            while (isConflictingName(name + j, existingNames, scope)) j++;
             name += j;
         }
         return name;
+    }
+
+    private static boolean isConflictingName(@NotNull String name, @NotNull Collection<String> existingNames, @Nullable JetScope scope) {
+        return existingNames.contains(name) || (scope != null && scope.getClassifier(Name.identifier(name)) != null);
     }
 
     @NotNull
