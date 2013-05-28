@@ -43,11 +43,11 @@ public class JetCommenterTest  extends LightCodeInsightTestCase {
     }
 
     private void configure() throws Exception {
-        configureFromFileText("a.kt", loadFile(getTestName(false) + ".kt"));
+        configureFromFileText("a.kt", loadFile(getTestName(true) + ".kt"));
     }
 
     private void check() throws Exception {
-        checkResultByText(loadFile(getTestName(false) + "_after.kt"));
+        checkResultByText(loadFile(getTestName(true) + "_after.kt"));
     }
 
     protected static String loadFile(String name) throws Exception {
