@@ -24,6 +24,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 
 import java.io.File;
@@ -41,6 +42,24 @@ public abstract class AbstractJetPsiMatcherTest extends JetLiteFixture {
         assertTrue(
                 "JetPsiMatcher.checkElementMatch() should return " + equalityExpected,
                 equalityExpected == JetPsiMatcher.checkElementMatch(expr, expr2)
+        );
+    }
+
+    public void doTestTypes(@NotNull String path) throws Exception {
+        String fileText = FileUtil.loadFile(new File(path));
+        String fileText2 = FileUtil.loadFile(new File(path + ".2"));
+
+        boolean equalityExpected = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NOT_EQUAL") == null;
+
+        JetTypeReference typeRef = JetPsiFactory.createProperty(getProject(), fileText).getTypeRef();
+        JetTypeReference typeRef2 = JetPsiFactory.createProperty(getProject(), fileText2).getTypeRef();
+
+        assertNotNull(typeRef);
+        assertNotNull(typeRef2);
+
+        assertTrue(
+                "JetPsiMatcher.checkElementMatch() should return " + equalityExpected,
+                equalityExpected == JetPsiMatcher.checkElementMatch(typeRef, typeRef2)
         );
     }
 

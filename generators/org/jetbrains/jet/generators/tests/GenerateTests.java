@@ -216,7 +216,8 @@ public class GenerateTests {
                 "idea/tests/",
                 "JetPsiMatcherTest",
                 AbstractJetPsiMatcherTest.class,
-                testModel("idea/testData/jetPsiMatcher", "doTestExpressions")
+                testModel("idea/testData/jetPsiMatcher/expressions", "doTestExpressions"),
+                testModel("idea/testData/jetPsiMatcher/types", "doTestTypes")
         );
 
         generateTest(
