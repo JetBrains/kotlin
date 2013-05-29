@@ -1103,6 +1103,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/supercalls"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeAmbiguousSuperAbstract.kt")
+        public void testAmbiguousSuperAbstract() throws Exception {
+            doTest("idea/testData/quickfix/supercalls/beforeAmbiguousSuperAbstract.kt");
+        }
+        
+        @TestMetadata("beforeAmbiguousSuperFunArgs.kt")
+        public void testAmbiguousSuperFunArgs() throws Exception {
+            doTest("idea/testData/quickfix/supercalls/beforeAmbiguousSuperFunArgs.kt");
+        }
+        
+        @TestMetadata("beforeAmbiguousSuperPropVsFun.kt")
+        public void testAmbiguousSuperPropVsFun() throws Exception {
+            doTest("idea/testData/quickfix/supercalls/beforeAmbiguousSuperPropVsFun.kt");
+        }
+        
+        @TestMetadata("beforeAmbiguousSuperVisibility.kt")
+        public void testAmbiguousSuperVisibility() throws Exception {
+            doTest("idea/testData/quickfix/supercalls/beforeAmbiguousSuperVisibility.kt");
+        }
+        
         @TestMetadata("beforeTypeArgumentsRedundantInSuperQualifier.kt")
         public void testTypeArgumentsRedundantInSuperQualifier() throws Exception {
             doTest("idea/testData/quickfix/supercalls/beforeTypeArgumentsRedundantInSuperQualifier.kt");
