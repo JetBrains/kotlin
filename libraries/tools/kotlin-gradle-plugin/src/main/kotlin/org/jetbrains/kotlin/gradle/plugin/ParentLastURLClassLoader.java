@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.gradle.classloaders;
+package org.jetbrains.kotlin.gradle.plugin;
 
 
 import java.net.URL;
