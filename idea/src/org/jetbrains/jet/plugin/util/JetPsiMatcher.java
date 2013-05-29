@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.util;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -59,6 +58,13 @@ public class JetPsiMatcher {
             }
 
             return true;
+        }
+    };
+
+    private static final Predicate2<JetParameter, JetParameter> PARAMETER_TYPE_CHECKER = new Predicate2<JetParameter, JetParameter>() {
+        @Override
+        public boolean apply(JetParameter param1, JetParameter param2) {
+            return checkElementMatch(param1.getTypeReference(), param2.getTypeReference());
         }
     };
 
@@ -205,7 +211,9 @@ public class JetPsiMatcher {
         public Boolean visitFunctionType(JetFunctionType type1, JetElement data) {
             JetFunctionType type2 = (JetFunctionType) data;
 
-            return checkListMatch(type1.getTypeArgumentsAsTypes(), type2.getTypeArgumentsAsTypes());
+            return checkElementMatch(type1.getReceiverTypeRef(), type2.getReceiverTypeRef()) &&
+                   checkElementMatch(type1.getReturnTypeRef(), type2.getReturnTypeRef()) &&
+                   checkListMatch(type1.getParameters(), type2.getParameters(), PARAMETER_TYPE_CHECKER);
         }
 
         @Override
