@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetClassInitializer extends JetDeclarationImpl implements JetStatementExpression {
     public JetClassInitializer(@NotNull ASTNode node) {
@@ -39,5 +42,12 @@ public class JetClassInitializer extends JetDeclarationImpl implements JetStatem
         JetExpression body = findChildByClass(JetExpression.class);
         assert body != null;
         return body;
+    }
+
+    @NotNull
+    public PsiElement getOpenBraceNode() {
+        ASTNode openBraceNode = getNode().findChildByType(JetTokens.LBRACE);
+        assert openBraceNode != null;
+        return openBraceNode.getPsi();
     }
 }
