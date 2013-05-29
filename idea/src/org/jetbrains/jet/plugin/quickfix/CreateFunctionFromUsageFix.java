@@ -1385,11 +1385,11 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
                 JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
                 TypeOrExpressionThereof ownerType;
-                if (multiDeclaration == null) { // if it's not a multi-declaration, must be a multi parameter in a for-loop
+                if (multiDeclaration == null) {
                     JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
-                    if (forExpr == null) return null;
+                    assert forExpr != null; // if it's not a multi-declaration, must be a multi parameter in a for-loop
                     multiDeclaration = forExpr.getMultiParameter();
-                    if (multiDeclaration == null) return null;
+                    assert multiDeclaration != null; // for-loop must have a multi-declaration, for same reason as above
                     ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getB(), Variance.IN_VARIANCE);
                 } else {
                     JetExpression rhs = multiDeclaration.getInitializer();
