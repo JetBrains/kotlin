@@ -906,6 +906,9 @@
     <item name="java.io.StringWriter void write(char[], int, int) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.io.StringWriter void write(java.lang.String) 0">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
     <item name="java.io.StringWriter void write(java.lang.String, int, int) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
