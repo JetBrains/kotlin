@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.jps.build;
 
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
@@ -29,18 +31,26 @@ import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
 
     private static final String KOTLIN_BUILDER_NAME = "Kotlin Builder";
+
+    private static final Function<JpsModule,String> MODULE_NAME = new Function<JpsModule, String>() {
+        @Override
+        public String fun(JpsModule module) {
+            return module.getName();
+        }
+    };
 
     protected KotlinBuilder() {
         super(BuilderCategory.SOURCE_PROCESSOR);
@@ -63,10 +73,14 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
 
         if (chunk.getModules().size() > 1) {
+            // We do not support circular dependencies, but if they are present, we should not break the build,
+            // so we simply yield a warning and report NOTHING_DONE
             messageCollector.report(
-                    ERROR, "Circular dependencies are not supported: " + chunk.getModules(),
+                    WARNING, "Circular dependencies are not supported. " +
+                             "The following modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
+                             "Kotlin is not compiled for these modules",
                     CompilerMessageLocation.NO_LOCATION);
-            return ExitCode.ABORT;
+            return ExitCode.NOTHING_DONE;
         }
 
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
