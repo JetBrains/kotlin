@@ -87,14 +87,14 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
                 public void visitMethod(PsiMethod method) {
                     super.visitMethod(method);
                     if (method.getReturnType() != null) { // disabled for constructors
-                        check(method, method);
+                        checkAndReport(method);
                     }
                 }
 
                 @Override
                 public void visitField(PsiField field) {
                     super.visitField(field);
-                    check(field, field);
+                    checkAndReport(field);
                 }
 
                 @Override
@@ -103,22 +103,39 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
                     PsiMethod method = PsiTreeUtil.getParentOfType(parameter, PsiMethod.class);
                     assert method != null;
                     if (method.getReturnType() != null) { // disabled for constructors
-                        check(parameter, method);
+                        if (!check(parameter, method, AnnotationsKind.KOTLIN_SIGNATURE) &&
+                                !check(parameter, parameter, AnnotationsKind.NOT_NULL)) {
+                            declarationsWithMissingAnnotations.add(parameter);
+                        }
                     }
                 }
 
-                private void check(@NotNull PsiModifierListOwner ideaOwner, @NotNull PsiModifierListOwner kotlinOwner) {
-                    if (hasAnnotation(ideaFakeAnnotationsManager, ideaOwner, AnnotationUtil.NOT_NULL)) {
-                        boolean kotlinHasNotNull = hasAnnotation(kotlinFakeAnnotationsManager, kotlinOwner, AnnotationUtil.NOT_NULL);
-                        boolean kotlinHasKotlinSignature = hasAnnotation(kotlinFakeAnnotationsManager, kotlinOwner,
-                                                                         JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().asString());
-                        if (kotlinOwner == ideaOwner && kotlinHasNotNull || kotlinHasKotlinSignature) {
-                            // good
-                        }
-                        else {
-                            declarationsWithMissingAnnotations.add(kotlinOwner);
+                private void checkAndReport(@NotNull PsiModifierListOwner annotationOwner) {
+                    if (!check(annotationOwner, annotationOwner, AnnotationsKind.ANY)) {
+                        declarationsWithMissingAnnotations.add(annotationOwner);
+                    }
+                }
+
+                private boolean check(
+                        @NotNull PsiModifierListOwner ideaOwner,
+                        @NotNull PsiModifierListOwner kotlinOwner,
+                        @NotNull AnnotationsKind annotationsKind
+                )
+                {
+                    return !hasAnnotationInIdea(ideaOwner) || hasAnnotationInKotlin(kotlinOwner, annotationsKind);
+                }
+
+                private boolean hasAnnotationInIdea(@NotNull PsiModifierListOwner owner) {
+                    return hasAnnotation(ideaFakeAnnotationsManager, owner, AnnotationUtil.NOT_NULL);
+                }
+
+                private boolean hasAnnotationInKotlin(@NotNull PsiModifierListOwner owner, @NotNull AnnotationsKind annotationsKind) {
+                    for (String name : annotationsKind.annotationNames) {
+                        if (hasAnnotation(kotlinFakeAnnotationsManager, owner, name)) {
+                            return true;
                         }
                     }
+                    return false;
                 }
 
                 private boolean hasAnnotation(
@@ -134,9 +151,21 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
         if (!declarationsWithMissingAnnotations.isEmpty()) {
             StringBuilder builder = new StringBuilder("Annotations missing for JDK items:\n");
             for (PsiModifierListOwner declaration : declarationsWithMissingAnnotations) {
-                builder.append(PsiFormatUtil.getExternalName(declaration)).append("\n");
+                builder.append(PsiFormatUtil.getExternalName(declaration) + " " + declaration.getText()).append("\n");
             }
             fail(builder.toString());
+        }
+    }
+
+    private enum AnnotationsKind {
+        KOTLIN_SIGNATURE(JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().asString()),
+        NOT_NULL(AnnotationUtil.NOT_NULL),
+        ANY(AnnotationUtil.NOT_NULL, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().asString());
+
+        public final String[] annotationNames;
+
+        private AnnotationsKind(@NotNull String... annotationNames) {
+            this.annotationNames = annotationNames;
         }
     }
 }
