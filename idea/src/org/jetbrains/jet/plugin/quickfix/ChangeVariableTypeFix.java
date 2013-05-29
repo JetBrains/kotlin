@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -45,10 +47,12 @@ import java.util.List;
 
 public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
     private final String renderedType;
+    private final JetType type;
 
     public ChangeVariableTypeFix(@NotNull JetVariableDeclaration element, @NotNull JetType type) {
         super(element);
         renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+        this.type = type;
     }
 
     @NotNull
@@ -65,6 +69,11 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
     @Override
     public String getFamilyName() {
         return JetBundle.message("change.type.family");
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        return super.isAvailable(project, editor, file) && !ErrorUtils.containsErrorType(type);
     }
 
     @Override

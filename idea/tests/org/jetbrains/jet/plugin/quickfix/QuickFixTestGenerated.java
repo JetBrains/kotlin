@@ -1306,6 +1306,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/typeMismatch/beforeCompareToTypeMismatch.kt");
         }
         
+        @TestMetadata("beforeDontChangeOverriddenPropertyTypeToErrorType.kt")
+        public void testDontChangeOverriddenPropertyTypeToErrorType() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeDontChangeOverriddenPropertyTypeToErrorType.kt");
+        }
+        
         @TestMetadata("beforeExpectedParameterTypeMismatch.kt")
         public void testExpectedParameterTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeExpectedParameterTypeMismatch.kt");
@@ -1512,6 +1517,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeChangeFunctionReturnTypeToMatchReturnTypeOfReturnedLiteral.kt")
             public void testChangeFunctionReturnTypeToMatchReturnTypeOfReturnedLiteral() throws Exception {
                 doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeChangeFunctionReturnTypeToMatchReturnTypeOfReturnedLiteral.kt");
+            }
+            
+            @TestMetadata("beforeDontChangeFunctionReturnTypeToErrorType.kt")
+            public void testDontChangeFunctionReturnTypeToErrorType() throws Exception {
+                doTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/beforeDontChangeFunctionReturnTypeToErrorType.kt");
             }
             
             @TestMetadata("beforeExpectedTypeMismatch.kt")
