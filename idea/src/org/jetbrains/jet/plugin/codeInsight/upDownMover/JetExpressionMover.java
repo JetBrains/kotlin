@@ -291,6 +291,23 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         return sourceRange;
     }
 
+    @Nullable
+    private static PsiElement getMovableElement(@NotNull PsiElement element) {
+        return PsiTreeUtil.getNonStrictParentOfType(element, MOVABLE_ELEMENT_CLASSES);
+    }
+
+    // return true to forbid the move
+    // return false to permit the move
+    // return null to fall back to default line mover behavior
+    private static Boolean isForbiddenMove(@NotNull PsiElement element, boolean down) {
+        if (element instanceof JetParameter) {
+            PsiElement sibling = getSiblingOfType(element, down, element.getClass());
+            return (sibling != null) ? null : true;
+        }
+
+        return false;
+    }
+
     @Override
     public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
         if (!super.checkAvailable(editor, file, info, down)) return false;
@@ -309,12 +326,22 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         if (psiRange == null) return false;
 
         //noinspection unchecked
-        PsiElement firstElement = PsiTreeUtil.getNonStrictParentOfType(psiRange.getFirst(), MOVABLE_ELEMENT_CLASSES);
-        if (firstElement == null) return false;
+        PsiElement firstElement = getMovableElement(psiRange.getFirst());
+        PsiElement lastElement = getMovableElement(psiRange.getSecond());
 
-        //noinspection unchecked
-        PsiElement lastElement = PsiTreeUtil.getNonStrictParentOfType(psiRange.getSecond(), MOVABLE_ELEMENT_CLASSES);
-        if (lastElement == null) return false;
+        if (firstElement == null || lastElement == null) return false;
+
+        Boolean forbidFirst = isForbiddenMove(firstElement, down);
+        Boolean forbidLast = isForbiddenMove(lastElement, down);
+
+        if (forbidFirst == null || forbidLast == null) {
+            return true;
+        }
+
+        if (forbidFirst || forbidLast) {
+            info.toMove2 = null;
+            return true;
+        }
 
         LineRange sourceRange = getSourceRange(firstElement, lastElement, editor);
         if (sourceRange == null) return false;

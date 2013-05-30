@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
 @InnerTestClasses({CodeMoverTestGenerated.ClassBodyDeclarations.class, CodeMoverTestGenerated.ClosingBraces.class, CodeMoverTestGenerated.Expressions.class})
 public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
     @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations")
-    @InnerTestClasses({ClassBodyDeclarations.Accessors.class, ClassBodyDeclarations.Class.class, ClassBodyDeclarations.ClassInitializer.class, ClassBodyDeclarations.Enums.class, ClassBodyDeclarations.Function.class, ClassBodyDeclarations.Property.class})
+    @InnerTestClasses({ClassBodyDeclarations.Accessors.class, ClassBodyDeclarations.Class.class, ClassBodyDeclarations.ClassInitializer.class, ClassBodyDeclarations.Enums.class, ClassBodyDeclarations.Function.class, ClassBodyDeclarations.FunctionAnchors.class, ClassBodyDeclarations.Property.class, ClassBodyDeclarations.PropertyAnchors.class})
     public static class ClassBodyDeclarations extends AbstractCodeMoverTest {
         public void testAllFilesPresentInClassBodyDeclarations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -349,6 +349,74 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
         }
         
+        @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors")
+        public static class FunctionAnchors extends AbstractCodeMoverTest {
+            public void testAllFilesPresentInFunctionAnchors() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("keyword.kt")
+            public void testKeyword() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/keyword.kt");
+            }
+            
+            @TestMetadata("name.kt")
+            public void testName() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/name.kt");
+            }
+            
+            @TestMetadata("returnType.kt")
+            public void testReturnType() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/returnType.kt");
+            }
+            
+            @TestMetadata("typeParams1.kt")
+            public void testTypeParams1() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams1.kt");
+            }
+            
+            @TestMetadata("typeParams2.kt")
+            public void testTypeParams2() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams2.kt");
+            }
+            
+            @TestMetadata("typeParams3.kt")
+            public void testTypeParams3() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams3.kt");
+            }
+            
+            @TestMetadata("valueParams1.kt")
+            public void testValueParams1() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams1.kt");
+            }
+            
+            @TestMetadata("valueParams2.kt")
+            public void testValueParams2() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams2.kt");
+            }
+            
+            @TestMetadata("valueParams3.kt")
+            public void testValueParams3() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams3.kt");
+            }
+            
+            @TestMetadata("valueParams4.kt")
+            public void testValueParams4() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams4.kt");
+            }
+            
+            @TestMetadata("valueParams5.kt")
+            public void testValueParams5() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams5.kt");
+            }
+            
+            @TestMetadata("valueParams6.kt")
+            public void testValueParams6() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams6.kt");
+            }
+            
+        }
+        
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/property")
         public static class Property extends AbstractCodeMoverTest {
             public void testAllFilesPresentInProperty() throws Exception {
@@ -437,6 +505,29 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             
         }
         
+        @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors")
+        public static class PropertyAnchors extends AbstractCodeMoverTest {
+            public void testAllFilesPresentInPropertyAnchors() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("keyword.kt")
+            public void testKeyword() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/keyword.kt");
+            }
+            
+            @TestMetadata("name.kt")
+            public void testName() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/name.kt");
+            }
+            
+            @TestMetadata("returnType.kt")
+            public void testReturnType() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors/returnType.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("ClassBodyDeclarations");
             suite.addTestSuite(ClassBodyDeclarations.class);
@@ -445,7 +536,9 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             suite.addTestSuite(ClassInitializer.class);
             suite.addTestSuite(Enums.class);
             suite.addTestSuite(Function.class);
+            suite.addTestSuite(FunctionAnchors.class);
             suite.addTestSuite(Property.class);
+            suite.addTestSuite(PropertyAnchors.class);
             return suite;
         }
     }

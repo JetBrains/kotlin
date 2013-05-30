@@ -39,7 +39,7 @@ public abstract class AbstractCodeMoverTest extends LightCodeInsightTestCase {
         doTest(path, JetExpressionMover.class);
     }
 
-    private void doTest(@NotNull String path, @NotNull Class<? extends StatementUpDownMover> moverClass) throws Exception {
+    private void doTest(@NotNull String path, @NotNull Class<? extends StatementUpDownMover> defaultMoverClass) throws Exception {
         configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path));
@@ -69,8 +69,13 @@ public abstract class AbstractCodeMoverTest extends LightCodeInsightTestCase {
             }
         }
 
+        String moverClassName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVER_CLASS: ");
+        if (moverClassName == null) {
+            moverClassName = defaultMoverClass.getName();
+        }
+
         assertTrue("No mover found", actualMover != null);
-        assertEquals("Unmatched movers", moverClass, actualMover.getClass());
+        assertEquals("Unmatched movers", moverClassName, actualMover.getClass().getName());
         assertEquals("Invalid applicability", isApplicableExpected, info.toMove2 != null);
 
         if (isApplicableExpected) {

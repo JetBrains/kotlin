@@ -49,9 +49,6 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                         PsiElement equalsToken = function.getEqualsToken();
                         if (equalsToken != null) memberSuspects.add(equalsToken);
 
-                        JetParameterList parameterList = function.getValueParameterList();
-                        if (parameterList != null) memberSuspects.add(parameterList);
-
                         JetTypeParameterList typeParameterList = function.getTypeParameterList();
                         if (typeParameterList != null) memberSuspects.add(typeParameterList);
 
@@ -120,6 +117,9 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         if (element == null) return null;
 
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetDeclaration.class, false);
+        if (declaration instanceof JetTypeParameter) {
+            return getMovableDeclaration(declaration.getParent());
+        }
 
         return PsiTreeUtil.instanceOf(PsiTreeUtil.getParentOfType(declaration,
                                                                   DECLARATION_CONTAINER_CLASSES),

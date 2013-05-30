@@ -1,0 +1,15 @@
+// MOVE: down
+class A {
+    class B {
+        fun foo<<caret>T,
+                U,
+                W>(
+                b: Int,
+                a: Int,
+                c: Int
+        ) {
+
+        }
+
+    }
+}
