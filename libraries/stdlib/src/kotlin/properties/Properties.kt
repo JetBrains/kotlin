@@ -2,7 +2,6 @@ package kotlin.properties
 
 import java.util.HashMap
 import java.util.ArrayList
-import kotlin.properties.delegation.ObservableProperty
 
 public class ChangeEvent(val source: Any, val name: String, val oldValue: Any?, val newValue: Any?) {
     var propogationId: Any? = null
@@ -65,8 +64,8 @@ public abstract class ChangeSupport {
         }
     }
 
-    protected fun property<T>(init: T): ObservableProperty<T> {
-        return ObservableProperty(init) { name, oldValue, newValue -> changeProperty(name, oldValue, newValue) }
+    protected fun property<T>(init: T): ReadWriteProperty<Any?, T> {
+        return Delegates.observable(init) { desc, oldValue, newValue -> changeProperty(desc.name, oldValue, newValue) }
     }
 
     public fun onPropertyChange(fn: (ChangeEvent) -> Unit) {
