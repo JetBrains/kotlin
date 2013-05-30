@@ -810,6 +810,12 @@ public class JetPsiUtil {
     }
 
     @Nullable
+    public static PsiElement findChildByType(@NotNull PsiElement element, @NotNull IElementType type) {
+        ASTNode node = element.getNode().findChildByType(type);
+        return node == null ? null : node.getPsi();
+    }
+
+    @Nullable
     public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
         if (expression instanceof JetCallElement) {
             JetCallElement callExpression = (JetCallElement) expression;

@@ -1,7 +1,6 @@
 // MOVE: up
-// IS_APPLICABLE: false
 fun foo() {
-    class B {
+    class A {
         <caret>class B {
 
         }

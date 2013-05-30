@@ -203,7 +203,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         else {
             // moving into code block
             //noinspection unchecked
-            JetElement blockLikeElement = JetPsiUtil.getOutermostJetElement(sibling, down, JetBlockExpression.class, JetWhenExpression.class);
+            JetElement blockLikeElement = JetPsiUtil.getOutermostJetElement(sibling, down, JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class);
             if (blockLikeElement != null &&
                 !(PsiTreeUtil.instanceOf(blockLikeElement, FUNCTIONLIKE_ELEMENT_CLASSES))) {
                 if (blockLikeElement instanceof JetWhenExpression) {
@@ -212,13 +212,11 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 }
 
                 if (blockLikeElement != null) {
-                    JetBlockExpression block = (JetBlockExpression) blockLikeElement;
-
                     if (down) {
-                        end = block.getLBrace();
+                        end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
                     }
                     else {
-                        start = block.getRBrace();
+                        start = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.RBRACE);
                     }
                 }
             }

@@ -190,9 +190,6 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
             nextParent = jetClassOrObject.getParent();
 
-            // elements may be placed only to class body or file
-            if (!(nextParent instanceof JetFile || nextParent instanceof JetClassBody)) return null;
-
             if (!down) {
                 start = jetClassOrObject;
             }

@@ -1,0 +1,8 @@
+// MOVE: up
+fun foo() {
+    <caret>class B {
+
+    }
+    class A {
+    }
+}
