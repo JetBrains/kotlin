@@ -184,7 +184,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
 
         DescriptorDeserializer deserializer =
-                new DescriptorDeserializer((DescriptorDeserializer) null, namespace, new NameResolver(simpleNames, qualifiedNames, classResolver));
+                DescriptorDeserializer.create(namespace, new NameResolver(simpleNames, qualifiedNames), classResolver);
         for (ProtoBuf.Callable proto : callableProtos) {
             CallableMemberDescriptor descriptor = deserializer.loadCallable(proto);
             if (descriptor instanceof FunctionDescriptor) {
@@ -358,8 +358,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 }
             };
 
-            NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames, this);
-            return new DeserializedClassDescriptor(containingDeclaration, nameResolver, nestedClassResolver, classMetadata.classProto, null);
+            NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames);
+            return new DeserializedClassDescriptor(containingDeclaration, nameResolver, this, nestedClassResolver, classMetadata.classProto, null);
         }
 
         @Nullable

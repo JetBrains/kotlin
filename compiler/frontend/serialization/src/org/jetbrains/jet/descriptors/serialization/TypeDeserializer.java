@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -31,19 +32,28 @@ import java.util.List;
 
 public class TypeDeserializer {
     private final NameResolver nameResolver;
+    private final ClassResolver classResolver;
     private final IndexedSymbolTable<TypeParameterDescriptor> typeParameterDescriptors;
+    private final TIntObjectHashMap<ClassDescriptor> classDescriptors = new TIntObjectHashMap<ClassDescriptor>();
 
     public TypeDeserializer(@NotNull TypeDeserializer parent) {
-        this(parent, parent.nameResolver);
+        this(parent, parent.nameResolver, parent.classResolver);
     }
 
     public TypeDeserializer(
             @Nullable TypeDeserializer parent,
-            @NotNull NameResolver nameResolver
+            @NotNull NameResolver nameResolver,
+            @NotNull ClassResolver classResolver
     ) {
         IndexedSymbolTable<TypeParameterDescriptor> parentTypeParameters = parent == null ? null : parent.typeParameterDescriptors;
         this.typeParameterDescriptors = new IndexedSymbolTable<TypeParameterDescriptor>(parentTypeParameters);
         this.nameResolver = nameResolver;
+        this.classResolver = classResolver;
+    }
+
+    @NotNull
+    public ClassResolver getClassResolver() {
+        return classResolver;
     }
 
     public void registerTypeParameter(int id, TypeParameterDescriptor typeParameter) {
@@ -130,7 +140,7 @@ public class TypeDeserializer {
     private TypeConstructor typeConstructor(@NotNull ProtoBuf.Type.Constructor proto) {
         switch (proto.getKind()) {
             case CLASS:
-                ClassDescriptor classDescriptor = nameResolver.getClassDescriptor(proto.getId());
+                ClassDescriptor classDescriptor = getClassDescriptor(proto.getId());
                 if (classDescriptor == null) return null;
 
                 return classDescriptor.getTypeConstructor();
@@ -141,6 +151,19 @@ public class TypeDeserializer {
                 return descriptor.getTypeConstructor();
         }
         throw new IllegalStateException("Unknown kind " + proto.getKind());
+    }
+
+    @Nullable
+    private ClassDescriptor getClassDescriptor(int fqNameIndex) {
+        ClassDescriptor classDescriptor = classDescriptors.get(fqNameIndex);
+        if (classDescriptor != null) {
+            return classDescriptor;
+        }
+
+        ClassId classId = nameResolver.getClassId(fqNameIndex);
+        ClassDescriptor descriptor = classResolver.findClass(classId);
+        classDescriptors.put(fqNameIndex, descriptor);
+        return descriptor;
     }
 
     private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {

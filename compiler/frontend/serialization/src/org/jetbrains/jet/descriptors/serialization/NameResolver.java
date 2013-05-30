@@ -18,28 +18,22 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.*;
+import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
 public class NameResolver {
     private final ProtoBuf.SimpleNameTable simpleNames;
     private final ProtoBuf.QualifiedNameTable qualifiedNames;
-    private final ClassDescriptor[] classDescriptors;
-    private final ClassResolver classResolver;
 
     public NameResolver(
             @NotNull ProtoBuf.SimpleNameTable simpleNames,
-            @NotNull ProtoBuf.QualifiedNameTable qualifiedNames,
-            @NotNull ClassResolver classResolver
+            @NotNull ProtoBuf.QualifiedNameTable qualifiedNames
     ) {
         this.simpleNames = simpleNames;
         this.qualifiedNames = qualifiedNames;
-        this.classDescriptors = new ClassDescriptor[qualifiedNames.getQualifiedNamesCount()];
-        this.classResolver = classResolver;
     }
 
     @NotNull
@@ -48,23 +42,10 @@ public class NameResolver {
         return Name.guess(name);
     }
 
-    @Nullable
-    public ClassDescriptor getClassDescriptor(int fqNameIndex) {
-        if (classDescriptors[fqNameIndex] != null) {
-            return classDescriptors[fqNameIndex];
-        }
-
-        QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(fqNameIndex);
-        assert fqNameProto.getKind() == QualifiedName.Kind.CLASS : "Not a class fqName: " + getClassId(fqNameIndex);
-
-
-        ClassId classId = getClassId(fqNameIndex);
-        return classResolver.findClass(classId);
-    }
-
     @NotNull
     public ClassId getClassId(int index) {
         QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(index);
+        assert fqNameProto.getKind() == ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS : "Not a class fqName: " + getClassId(index);
 
         StringBuilder relativeClassName = new StringBuilder();
         QualifiedName packageFqNameProto = renderFqName(relativeClassName, fqNameProto, QualifiedName.Kind.CLASS);

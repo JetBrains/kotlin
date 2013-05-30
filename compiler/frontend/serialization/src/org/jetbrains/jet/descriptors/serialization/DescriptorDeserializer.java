@@ -17,7 +17,6 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.Visibility;
@@ -32,11 +31,39 @@ import java.util.List;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.*;
 
 public class DescriptorDeserializer {
+
+    @NotNull
+    public static DescriptorDeserializer create(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull NameResolver nameResolver,
+            @NotNull ClassResolver classResolver
+    ) {
+        return new DescriptorDeserializer(new TypeDeserializer(null, nameResolver, classResolver), containingDeclaration, nameResolver);
+    }
+
+    @NotNull
+    public static DescriptorDeserializer create(
+            @NotNull TypeDeserializer typeDeserializer,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull NameResolver nameResolver
+    ) {
+        return new DescriptorDeserializer(typeDeserializer, containingDeclaration, nameResolver);
+    }
+
+    @NotNull
+    public static DescriptorDeserializer createChild(
+            @NotNull DescriptorDeserializer parent,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull NameResolver nameResolver
+    ) {
+        return create(parent.typeDeserializer, containingDeclaration, nameResolver);
+    }
+
     private final DeclarationDescriptor containingDeclaration;
     private final NameResolver nameResolver;
     private final TypeDeserializer typeDeserializer;
 
-    public DescriptorDeserializer(
+    private DescriptorDeserializer(
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver
@@ -44,18 +71,6 @@ public class DescriptorDeserializer {
         this.typeDeserializer = typeDeserializer;
         this.containingDeclaration = containingDeclaration;
         this.nameResolver = nameResolver;
-    }
-
-    public DescriptorDeserializer(
-            @Nullable DescriptorDeserializer parent,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver
-    ) {
-        this(
-                new TypeDeserializer(parent == null ? null : parent.typeDeserializer, nameResolver),
-                containingDeclaration,
-                nameResolver
-        );
     }
 
     @NotNull
@@ -75,7 +90,7 @@ public class DescriptorDeserializer {
 
     @NotNull
     private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
-        return new DescriptorDeserializer(this, descriptor, nameResolver);
+        return createChild(this, descriptor, nameResolver);
     }
 
     @NotNull
@@ -106,7 +121,7 @@ public class DescriptorDeserializer {
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.getMemberKind(flags))
         );
-        DescriptorDeserializer local = new DescriptorDeserializer(this, property, nameResolver);
+        DescriptorDeserializer local = createChildDeserializer(property);
         List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
         property.setType(
                 local.typeDeserializer.type(proto.getReturnType()),
@@ -128,7 +143,7 @@ public class DescriptorDeserializer {
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.getMemberKind(flags))
         );
-        DescriptorDeserializer local = new DescriptorDeserializer(this, function, nameResolver);
+        DescriptorDeserializer local = createChildDeserializer(function);
         List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
         function.initialize(
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
@@ -154,7 +169,7 @@ public class DescriptorDeserializer {
                 Collections.<AnnotationDescriptor>emptyList(),
                 // TODO: primary
                 true);
-        DescriptorDeserializer local = new DescriptorDeserializer(this, descriptor, nameResolver);
+        DescriptorDeserializer local = createChildDeserializer(descriptor);
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.valueParameters(proto.getValueParametersList()),

@@ -24,24 +24,36 @@ import java.io.OutputStream;
 
 public class NameSerializationUtil {
     @NotNull
-    public static NameResolver deserializeNameResolver(@NotNull InputStream in, @NotNull ClassResolver classResolver)
+    public static NameResolver deserializeNameResolver(@NotNull InputStream in)
             throws IOException {
         ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
         ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
-        return new NameResolver(simpleNames, qualifiedNames, classResolver);
+        return new NameResolver(simpleNames, qualifiedNames);
     }
 
     public static void serializeNameTable(@NotNull OutputStream out, @NotNull NameTable nameTable) throws IOException {
+        ProtoBuf.SimpleNameTable simpleNamesProto = toSimpleNameTable(nameTable);
+        simpleNamesProto.writeDelimitedTo(out);
+
+        ProtoBuf.QualifiedNameTable qualifiedNameTable = toQualifiedNameTable(nameTable);
+        qualifiedNameTable.writeDelimitedTo(out);
+    }
+
+    @NotNull
+    public static ProtoBuf.SimpleNameTable toSimpleNameTable(@NotNull NameTable nameTable) {
         ProtoBuf.SimpleNameTable.Builder simpleNames = ProtoBuf.SimpleNameTable.newBuilder();
         for (String simpleName : nameTable.getSimpleNames()) {
             simpleNames.addNames(simpleName);
         }
-        simpleNames.build().writeDelimitedTo(out);
+        return simpleNames.build();
+    }
 
+    @NotNull
+    public static ProtoBuf.QualifiedNameTable toQualifiedNameTable(@NotNull NameTable nameTable) {
         ProtoBuf.QualifiedNameTable.Builder qualifiedNames = ProtoBuf.QualifiedNameTable.newBuilder();
         for (ProtoBuf.QualifiedNameTable.QualifiedName.Builder qName : nameTable.getFqNames()) {
             qualifiedNames.addQualifiedNames(qName);
         }
-        qualifiedNames.build().writeDelimitedTo(out);
+        return qualifiedNames.build();
     }
 }

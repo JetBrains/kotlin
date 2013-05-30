@@ -63,13 +63,14 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     public DeserializedClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
+            @NotNull ClassResolver classResolver,
             @NotNull NestedClassResolver _nestedClassResolver,
             @NotNull ProtoBuf.Class classProto,
             @Nullable TypeDeserializer outerTypeDeserializer
     ) {
         this.classProto = classProto;
-        this.typeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver);
-        this.deserializer = new DescriptorDeserializer(typeDeserializer, this, nameResolver);
+        this.typeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver, classResolver);
+        this.deserializer = DescriptorDeserializer.create(typeDeserializer, this, nameResolver);
 
         this.containingDeclaration = containingDeclaration;
         this.typeConstructor = new DeserializedClassTypeConstructor();
