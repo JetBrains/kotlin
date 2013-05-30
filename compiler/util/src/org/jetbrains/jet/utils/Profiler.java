@@ -116,7 +116,7 @@ public class Profiler {
     }
 
     public Profiler start() {
-        if (!paused) {
+        if (paused) {
             start = System.nanoTime();
             paused = false;
         }
