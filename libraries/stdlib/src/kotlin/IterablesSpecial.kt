@@ -75,3 +75,13 @@ public inline fun <T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : Li
     java.util.Collections.sort(list, comparator)
     return list
 }
+
+public inline fun <T> Iterable<T>.sort(compare: (T, T) -> Int): List<T> {
+    return sort(
+            object : java.util.Comparator<T> {
+                public override fun compare(o1: T, o2: T): Int {
+                    return compare.invoke(o1, o2)
+                }
+            }
+    )
+}
