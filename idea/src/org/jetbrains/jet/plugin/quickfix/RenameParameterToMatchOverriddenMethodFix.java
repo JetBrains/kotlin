@@ -82,8 +82,8 @@ public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionActio
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

@@ -61,8 +61,8 @@ public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCall
         editor.getCaretModel().moveToOffset(caretOffset + 1);
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction createAction(Diagnostic diagnostic) {

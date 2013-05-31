@@ -135,8 +135,8 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
     }
 
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction createAction(Diagnostic diagnostic) {

@@ -1,4 +1,4 @@
-// "Change 'x' type to 'Int'" "true"
+// "Change 'A.x' type to 'Int'" "true"
 trait X {
     val x: Int
 }

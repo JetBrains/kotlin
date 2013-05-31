@@ -103,8 +103,8 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
         return JetRefactoringUtil.getVisibilityToken(maxVisibility);
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
