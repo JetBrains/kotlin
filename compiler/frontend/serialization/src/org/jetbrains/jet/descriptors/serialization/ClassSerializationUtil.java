@@ -31,29 +31,54 @@ public class ClassSerializationUtil {
         void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto);
     }
 
-    public static void serializeClass(@NotNull ClassDescriptor classDescriptor, @NotNull DescriptorSerializer serializer, @NotNull Sink sink) {
+    public interface SerializerProvider {
+        @NotNull
+        DescriptorSerializer getSerializerFor(@NotNull ClassDescriptor classDescriptor);
+    }
+
+    public static final SerializerProvider NEW_EVERY_TIME = new SerializerProvider() {
+        @NotNull
+        @Override
+        public DescriptorSerializer getSerializerFor(@NotNull ClassDescriptor classDescriptor) {
+            return new DescriptorSerializer(NameTable.Namer.DEFAULT);
+        }
+    };
+
+    @NotNull
+    public static SerializerProvider constantSerializer(@NotNull final DescriptorSerializer serializer) {
+        return new SerializerProvider() {
+            @NotNull
+            @Override
+            public DescriptorSerializer getSerializerFor(@NotNull ClassDescriptor classDescriptor) {
+                return serializer;
+            }
+        };
+    }
+
+    public static void serializeClass(@NotNull ClassDescriptor classDescriptor, @NotNull SerializerProvider serializerProvider, @NotNull Sink sink) {
+        DescriptorSerializer serializer = serializerProvider.getSerializerFor(classDescriptor);
         ProtoBuf.Class classProto = serializer.classProto(classDescriptor).build();
         sink.writeClass(classDescriptor, classProto);
 
-        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(), serializer, sink);
+        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(), serializerProvider, sink);
 
-        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors(), serializer, sink);
+        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors(), serializerProvider, sink);
 
         ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
         if (classObjectDescriptor != null) {
-            serializeClass(classObjectDescriptor, serializer, sink);
+            serializeClass(classObjectDescriptor, serializerProvider, sink);
         }
     }
 
     public static void serializeClasses(
             @NotNull Collection<? extends DeclarationDescriptor> descriptors,
-            @NotNull DescriptorSerializer serializer,
+            @NotNull SerializerProvider serializerProvider,
             @NotNull Sink sink
     ) {
         for (DeclarationDescriptor descriptor : descriptors) {
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor nestedClass = (ClassDescriptor) descriptor;
-                serializeClass(nestedClass, serializer, sink);
+                serializeClass(nestedClass, serializerProvider, sink);
             }
         }
     }

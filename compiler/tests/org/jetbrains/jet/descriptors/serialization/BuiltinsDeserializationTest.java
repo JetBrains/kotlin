@@ -46,6 +46,8 @@ import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.util.*;
 
+import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
+
 public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
     private static final Name CLASS_OBJECT_NAME = Name.special("<class object>");
@@ -147,7 +149,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             Collection<DeclarationDescriptor> allDescriptors
     ) {
         final Map<ClassId, ProtoBuf.Class> classProtos = Maps.newHashMap();
-        ClassSerializationUtil.serializeClasses(allDescriptors, serializer, new ClassSerializationUtil.Sink() {
+        ClassSerializationUtil.serializeClasses(allDescriptors, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(
                     @NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto
