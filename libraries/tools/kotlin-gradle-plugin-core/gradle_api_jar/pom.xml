@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
+        <maven.version>3.0.4</maven.version>
+    </properties>
+
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>gradle-api</artifactId>
+    <packaging>pom</packaging>
+    <version>1.4</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>build/libs/gradle-api-1.4.jar</file>
+                                    <type>jar</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+  <distributionManagement>
+    <repository>
+      <id>utils</id>
+      <url>http://repository.jetbrains.com/utils</url>
+    </repository>
+  </distributionManagement>
+
+</project>
