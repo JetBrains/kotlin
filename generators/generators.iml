@@ -15,6 +15,7 @@
     <orderEntry type="module" module-name="frontend.java" scope="TEST" />
     <orderEntry type="module" module-name="injector-generator" scope="TEST" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
+    <orderEntry type="module" module-name="serialization" scope="TEST" />
   </component>
 </module>
 
