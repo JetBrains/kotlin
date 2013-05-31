@@ -54,7 +54,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         return file.findElementAt(lineStartOffset + lineText.indexOf('}'));
     }
 
-    private static boolean checkForMovableDownClosingBrace(
+    private static BraceStatus checkForMovableDownClosingBrace(
             @NotNull PsiElement closingBrace,
             @NotNull PsiElement block,
             @NotNull Editor editor,
@@ -78,7 +78,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
         while (current != null && !(PsiTreeUtil.instanceOf(current, BLOCKLIKE_ELEMENT_CLASSES)));
 
-        if (nextExpression == null) return false;
+        if (nextExpression == null) return BraceStatus.NOT_MOVABLE;
 
         Document doc = editor.getDocument();
 
@@ -86,10 +86,10 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         info.toMove2 = new LineRange(nextElement, nextExpression);
         info.indentSource = true;
 
-        return true;
+        return BraceStatus.MOVABLE;
     }
 
-    private static boolean checkForMovableUpClosingBrace(
+    private static BraceStatus checkForMovableUpClosingBrace(
             @NotNull PsiElement closingBrace,
             PsiElement block,
             @NotNull Editor editor,
@@ -97,7 +97,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     ) {
         //noinspection unchecked
         PsiElement prev = JetPsiUtil.getLastChildByType(block, JetExpression.class);
-        if (prev == null) return false;
+        if (prev == null) return BraceStatus.NOT_MOVABLE;
 
         Document doc = editor.getDocument();
 
@@ -105,35 +105,42 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         info.toMove2 = new LineRange(prev, prev, doc);
         info.indentSource = true;
 
-        return true;
+        return BraceStatus.MOVABLE;
+    }
+
+    private static enum BraceStatus {
+        NOT_FOUND,
+        MOVABLE,
+        NOT_MOVABLE
     }
 
     // Returns null if standalone closing brace is not found
-    private static Boolean checkForMovableClosingBrace(
+    private static BraceStatus checkForMovableClosingBrace(
             @NotNull Editor editor,
             @NotNull PsiFile file,
             @NotNull MoveInfo info,
             boolean down
     ) {
         PsiElement closingBrace = getStandaloneClosingBrace(file, editor);
-        if (closingBrace == null) return null;
+        if (closingBrace == null) return BraceStatus.NOT_FOUND;
 
         PsiElement blockLikeElement = closingBrace.getParent();
-        if (!(blockLikeElement instanceof JetBlockExpression)) return false;
-        if (blockLikeElement.getParent() instanceof JetWhenEntry) return false;
+        if (!(blockLikeElement instanceof JetBlockExpression)) return BraceStatus.NOT_MOVABLE;
+        if (blockLikeElement.getParent() instanceof JetWhenEntry) return BraceStatus.NOT_MOVABLE;
 
         PsiElement enclosingExpression = PsiTreeUtil.getParentOfType(blockLikeElement, JetExpression.class);
 
-        if (enclosingExpression instanceof JetDoWhileExpression) return false;
+        if (enclosingExpression instanceof JetDoWhileExpression) return BraceStatus.NOT_MOVABLE;
 
         if (enclosingExpression instanceof JetIfExpression) {
             JetIfExpression ifExpression = (JetIfExpression) enclosingExpression;
 
-            if (blockLikeElement == ifExpression.getThen() && ifExpression.getElse() != null) return false;
+            if (blockLikeElement == ifExpression.getThen() && ifExpression.getElse() != null) return BraceStatus.NOT_MOVABLE;
         }
 
-        return down ? checkForMovableDownClosingBrace(closingBrace, blockLikeElement, editor, info) :
-               checkForMovableUpClosingBrace(closingBrace, blockLikeElement, editor, info);
+        return down
+               ? checkForMovableDownClosingBrace(closingBrace, blockLikeElement, editor, info)
+               : checkForMovableUpClosingBrace(closingBrace, blockLikeElement, editor, info);
     }
 
     @Nullable
@@ -296,28 +303,32 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         return PsiTreeUtil.getNonStrictParentOfType(element, MOVABLE_ELEMENT_CLASSES);
     }
 
-    // return true to forbid the move
-    // return false to permit the move
-    // return null to fall back to default line mover behavior
-    private static Boolean isForbiddenMove(@NotNull PsiElement element, boolean down) {
+    private static enum MoveStatus {
+        DEFAULT,
+        FORBIDDEN,
+        PERMITTED
+    }
+
+    private static MoveStatus getMoveStatus(@NotNull PsiElement element, boolean down) {
         if (element instanceof JetParameter) {
             PsiElement sibling = getSiblingOfType(element, down, element.getClass());
-            return (sibling != null) ? null : true;
+            return (sibling != null) ? MoveStatus.DEFAULT : MoveStatus.FORBIDDEN;
         }
 
-        return false;
+        return MoveStatus.PERMITTED;
     }
 
     @Override
     public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
         if (!super.checkAvailable(editor, file, info, down)) return false;
 
-        Boolean closingBraceWin = checkForMovableClosingBrace(editor, file, info, down);
-        if (closingBraceWin != null) {
-            if (!closingBraceWin) {
+        switch (checkForMovableClosingBrace(editor, file, info, down)) {
+            case NOT_MOVABLE: {
                 info.toMove2 = null;
+                return true;
             }
-            return true;
+            case MOVABLE: return true;
+            default: break;
         }
 
         LineRange oldRange = info.toMove;
@@ -331,14 +342,14 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
         if (firstElement == null || lastElement == null) return false;
 
-        Boolean forbidFirst = isForbiddenMove(firstElement, down);
-        Boolean forbidLast = isForbiddenMove(lastElement, down);
+        MoveStatus firstMoveStatus = getMoveStatus(firstElement, down);
+        MoveStatus lastMoveStatus = getMoveStatus(lastElement, down);
 
-        if (forbidFirst == null || forbidLast == null) {
+        if (firstMoveStatus == MoveStatus.DEFAULT || lastMoveStatus == MoveStatus.DEFAULT) {
             return true;
         }
 
-        if (forbidFirst || forbidLast) {
+        if (firstMoveStatus == MoveStatus.FORBIDDEN || lastMoveStatus == MoveStatus.FORBIDDEN) {
             info.toMove2 = null;
             return true;
         }
