@@ -50,15 +50,6 @@ public class DescriptorDeserializer {
         return new DescriptorDeserializer(typeDeserializer, containingDeclaration, nameResolver);
     }
 
-    @NotNull
-    public static DescriptorDeserializer createChild(
-            @NotNull DescriptorDeserializer parent,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver
-    ) {
-        return create(parent.typeDeserializer, containingDeclaration, nameResolver);
-    }
-
     private final DeclarationDescriptor containingDeclaration;
     private final NameResolver nameResolver;
     private final TypeDeserializer typeDeserializer;
@@ -74,23 +65,13 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
-    }
-
-    @NotNull
     public NameResolver getNameResolver() {
         return nameResolver;
     }
 
     @NotNull
-    public TypeDeserializer getTypeDeserializer() {
-        return typeDeserializer;
-    }
-
-    @NotNull
     private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
-        return createChild(this, descriptor, nameResolver);
+        return create(new TypeDeserializer(typeDeserializer), descriptor, nameResolver);
     }
 
     @NotNull
