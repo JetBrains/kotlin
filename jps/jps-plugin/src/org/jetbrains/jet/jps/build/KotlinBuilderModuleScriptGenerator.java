@@ -130,6 +130,16 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
 
+        // JDK is stored locally on user's machine, so its configuration, including external annotation paths
+        // is not available on TeamCity. When running on TeamCity, one has to provide extra path to JDK annotations
+        String extraAnnotationsPaths = System.getProperty("jps.kotlin.extra.annotation.paths");
+        if (extraAnnotationsPaths != null) {
+            String[] paths = extraAnnotationsPaths.split(File.pathSeparator);
+            for (String path : paths) {
+                annotationRootFiles.add(new File(path));
+            }
+        }
+
         return annotationRootFiles;
     }
 
