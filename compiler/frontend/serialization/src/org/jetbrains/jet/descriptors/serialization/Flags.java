@@ -1,5 +1,6 @@
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.google.protobuf.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 
@@ -8,99 +9,40 @@ public class Flags {
 
     // Common
 
-    public static final int HAS_ANNOTATIONS_BIT_COUNT = 1;
-    public static final int HAS_ANNOTATIONS_OFFSET = 0;
+    public static final FlagField<Boolean> HAS_ANNOTATIONS = FlagField.booleanFirst();
 
-    public static final int VISIBILITY_BIT_COUNT = bitWidth(ProtoBuf.Visibility.values());
-    public static final int VISIBILITY_OFFSET = HAS_ANNOTATIONS_OFFSET + HAS_ANNOTATIONS_BIT_COUNT;
+    public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
 
-    public static final int MODALITY_BIT_COUNT = bitWidth(ProtoBuf.Modality.values());
-    public static final int MODALITY_OFFSET = VISIBILITY_OFFSET + VISIBILITY_BIT_COUNT;
+    public static final FlagField<ProtoBuf.Modality> MODALITY = FlagField.after(VISIBILITY, ProtoBuf.Modality.values());
 
     // Class
 
-    public static final int CLASS_KIND_BIT_COUNT = bitWidth(ProtoBuf.Class.Kind.values());
-    public static final int CLASS_KIND_OFFSET = MODALITY_OFFSET + MODALITY_BIT_COUNT;
+    public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
 
-    public static final int INNER_BIT_COUNT = 1;
-    public static final int INNER_OFFSET = CLASS_KIND_OFFSET + CLASS_KIND_BIT_COUNT;
+    public static final FlagField<Boolean> INNER = FlagField.booleanAfter(CLASS_KIND);
 
     // Callables
 
-    public static final int CALLABLE_KIND_BIT_COUNT = bitWidth(ProtoBuf.Callable.CallableKind.values());
-    public static final int CALLABLE_KIND_OFFSET = MODALITY_OFFSET + MODALITY_BIT_COUNT;
+    public static final FlagField<ProtoBuf.Callable.CallableKind> CALLABLE_KIND = FlagField.after(MODALITY,
+                                                                                                  ProtoBuf.Callable.CallableKind.values());
 
-    public static final int MEMBER_KIND_BIT_COUNT = bitWidth(ProtoBuf.Callable.MemberKind.values());
-    public static final int MEMBER_KIND_OFFSET = CALLABLE_KIND_OFFSET + CALLABLE_KIND_BIT_COUNT;
-
-    public static final int INLINE_BIT_COUNT = 1;
-    public static final int INLINE_OFFSET = MEMBER_KIND_OFFSET + MEMBER_KIND_BIT_COUNT;
+    public static final FlagField<ProtoBuf.Callable.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND,
+                                                                                              ProtoBuf.Callable.MemberKind.values());
+    public static final FlagField<Boolean> INLINE = FlagField.booleanAfter(MEMBER_KIND);
 
     // Parameters
 
-    public static final int DECLARES_DEFAULT_VALUE_BIT_COUNT = 1;
-    public static final int DECLARES_DEFAULT_VALUE_OFFSET = HAS_ANNOTATIONS_OFFSET + HAS_ANNOTATIONS_BIT_COUNT;
+    public static final FlagField<Boolean> DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
 
     // ---
 
-    private static final Boolean[] BOOLEANS = { false, true };
-
-    private static <E extends Enum<E>> int bitWidth(@NotNull E[] enumEntries) {
+    private static <E> int bitWidth(@NotNull E[] enumEntries) {
         int length = enumEntries.length - 1;
         if (length == 0) return 1;
         for (int i = 31; i >= 0; i--) {
             if ((length & (1 << i)) != 0) return i + 1;
         }
         throw new IllegalStateException("Empty enum: " + enumEntries.getClass());
-    }
-
-    @NotNull
-    private static <E> E getValue(int flags, @NotNull E[] values, int count, int offset) {
-        int maskUnshifted = (1 << count) - 1;
-        int mask = maskUnshifted << offset;
-        int value = (flags & mask) >> offset;
-        return values[value];
-    }
-
-    @NotNull
-    public static ProtoBuf.Visibility getVisibility(int flags) {
-        return getValue(flags, ProtoBuf.Visibility.values(), VISIBILITY_BIT_COUNT, VISIBILITY_OFFSET);
-    }
-
-    @NotNull
-    public static ProtoBuf.Modality getModality(int flags) {
-        return getValue(flags, ProtoBuf.Modality.values(), MODALITY_BIT_COUNT, MODALITY_OFFSET);
-    }
-
-    @NotNull
-    public static ProtoBuf.Class.Kind getClassKind(int flags) {
-        return getValue(flags, ProtoBuf.Class.Kind.values(), CLASS_KIND_BIT_COUNT, CLASS_KIND_OFFSET);
-    }
-
-    public static boolean isInner(int flags) {
-        return getValue(flags, BOOLEANS, INNER_BIT_COUNT, INNER_OFFSET);
-    }
-
-    @NotNull
-    public static ProtoBuf.Callable.CallableKind getCallableKind(int flags) {
-        return getValue(flags, ProtoBuf.Callable.CallableKind.values(), CALLABLE_KIND_BIT_COUNT, CALLABLE_KIND_OFFSET);
-    }
-
-    @NotNull
-    public static ProtoBuf.Callable.MemberKind getMemberKind(int flags) {
-        return getValue(flags, ProtoBuf.Callable.MemberKind.values(), MEMBER_KIND_BIT_COUNT, MEMBER_KIND_OFFSET);
-    }
-
-    public static boolean isInline(int flags) {
-        return getValue(flags, BOOLEANS, INLINE_BIT_COUNT, INLINE_OFFSET);
-    }
-
-    public static boolean declaresDefaultValue(int flags) {
-        return getValue(flags, BOOLEANS, DECLARES_DEFAULT_VALUE_BIT_COUNT, DECLARES_DEFAULT_VALUE_OFFSET);
-    }
-
-    public static boolean hasAnnotations(int flags) {
-        return getValue(flags, BOOLEANS, HAS_ANNOTATIONS_BIT_COUNT, HAS_ANNOTATIONS_OFFSET);
     }
 
     public static int getClassFlags(
@@ -110,16 +52,11 @@ public class Flags {
             ClassKind kind,
             boolean inner
     ) {
-        int hasAnnotationsInt = hasAnnotations ? 1 : 0;
-        int visibilityInt = visibility(visibility).getNumber();
-        int modalityInt = modality(modality).getNumber();
-        int classKindInt = classKind(kind).getNumber();
-        int innerInt = inner ? 1 : 0;
-        return hasAnnotationsInt << HAS_ANNOTATIONS_OFFSET
-               | modalityInt << MODALITY_OFFSET
-               | visibilityInt << VISIBILITY_OFFSET
-               | classKindInt << CLASS_KIND_OFFSET
-               | innerInt << INNER_OFFSET
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+               | MODALITY.toFlags(modality(modality))
+               | VISIBILITY.toFlags(visibility(visibility))
+               | CLASS_KIND.toFlags(classKind(kind))
+               | INNER.toFlags(inner)
                ;
     }
 
@@ -144,24 +81,19 @@ public class Flags {
     }
 
     public static int getCallableFlags(
-            boolean hasAnnotations, @NotNull Visibility visibility,
+            boolean hasAnnotations,
+            @NotNull Visibility visibility,
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
             @NotNull ProtoBuf.Callable.CallableKind callableKind,
             boolean inline
     ) {
-        int hasAnnotationsInt = hasAnnotations ? 1 : 0;
-        int visibilityInt = visibility(visibility).getNumber();
-        int modalityInt = modality(modality).getNumber();
-        int memberKindInt = memberKind(memberKind).getNumber();
-        int callableKindInt = callableKind.getNumber();
-        int inlineInt = inline ? 1 : 0;
-        return hasAnnotationsInt << HAS_ANNOTATIONS_OFFSET
-               | modalityInt << MODALITY_OFFSET
-               | visibilityInt << VISIBILITY_OFFSET
-               | memberKindInt << MEMBER_KIND_OFFSET
-               | callableKindInt << CALLABLE_KIND_OFFSET
-               | inlineInt << INLINE_OFFSET
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+               | MODALITY.toFlags(modality(modality))
+               | VISIBILITY.toFlags(visibility(visibility))
+               | MEMBER_KIND.toFlags(memberKind(memberKind))
+               | CALLABLE_KIND.toFlags(callableKind)
+               | INLINE.toFlags(inline)
                ;
     }
 
@@ -211,10 +143,79 @@ public class Flags {
     }
 
     public static int getValueParameterFlags(boolean hasAnnotations, boolean declaresDefaultValue) {
-        int hasAnnotationsInt = hasAnnotations ? 1 : 0;
-        int declaresDefaultValueInt = declaresDefaultValue ? 1 : 0;
-        return hasAnnotationsInt << HAS_ANNOTATIONS_OFFSET
-               | declaresDefaultValueInt << DECLARES_DEFAULT_VALUE_OFFSET
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+               | DECLARES_DEFAULT_VALUE.toFlags(declaresDefaultValue)
                ;
     }
+
+    // Infrastructure
+
+    public static abstract class FlagField<E> {
+        public static <E extends Internal.EnumLite> FlagField<E> after(FlagField<?> previousField, E[] values) {
+            int offset = previousField.offset + previousField.bitWidth;
+            return new EnumLiteFlagField<E>(offset, values);
+        }
+
+        public static <E extends Internal.EnumLite> FlagField<E> first(E[] values) {
+            return new EnumLiteFlagField<E>(0, values);
+        }
+
+        public static FlagField<Boolean> booleanFirst() {
+            return new BooleanFlagField(0);
+        }
+
+        public static FlagField<Boolean> booleanAfter(FlagField<?> previousField) {
+            int offset = previousField.offset + previousField.bitWidth;
+            return new BooleanFlagField(offset);
+        }
+
+        private final int offset;
+        private final int bitWidth;
+        private final E[] values;
+
+        private FlagField(int offset, E[] values) {
+            this.offset = offset;
+            this.bitWidth = bitWidth(values);
+            this.values = values;
+        }
+
+        public E get(int flags) {
+            int maskUnshifted = (1 << bitWidth) - 1;
+            int mask = maskUnshifted << offset;
+            int value = (flags & mask) >> offset;
+            return values[value];
+        }
+
+        public int toFlags(E value) {
+            return getIntValue(value) << offset;
+        }
+
+        protected abstract int getIntValue(E value);
+
+    }
+
+    private static class BooleanFlagField extends FlagField<Boolean> {
+        private static final Boolean[] BOOLEAN = { false, true };
+
+        public BooleanFlagField(int offset) {
+            super(offset, BOOLEAN);
+        }
+
+        @Override
+        protected int getIntValue(Boolean value) {
+            return value ? 1 : 0;
+        }
+    }
+
+    private static class EnumLiteFlagField<E extends Internal.EnumLite> extends FlagField<E> {
+        public EnumLiteFlagField(int offset, E[] values) {
+            super(offset, values);
+        }
+
+        @Override
+        protected int getIntValue(E value) {
+            return value.getNumber();
+        }
+    }
+
 }

@@ -81,10 +81,10 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
         this.name = nameResolver.getName(classProto.getName());
         int flags = classProto.getFlags();
-        this.modality = DescriptorDeserializer.modality(Flags.getModality(flags));
-        this.visibility = DescriptorDeserializer.visibility(Flags.getVisibility(flags));
-        this.kind = DescriptorDeserializer.classKind(Flags.getClassKind(flags));
-        this.isInner = Flags.isInner(flags);
+        this.modality = DescriptorDeserializer.modality(Flags.MODALITY.get(flags));
+        this.visibility = DescriptorDeserializer.visibility(Flags.VISIBILITY.get(flags));
+        this.kind = DescriptorDeserializer.classKind(Flags.CLASS_KIND.get(flags));
+        this.isInner = Flags.INNER.get(flags);
 
         this.annotationDeserializer = annotationResolver;
         this.annotations = new NotNullLazyValueImpl<List<AnnotationDescriptor>>() {
@@ -181,7 +181,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     }
 
     private List<AnnotationDescriptor> computeAnnotations() {
-        if (!Flags.hasAnnotations(classProto.getFlags())) {
+        if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
             return Collections.emptyList();
         }
         return annotationDeserializer.loadClassAnnotations(classProto);

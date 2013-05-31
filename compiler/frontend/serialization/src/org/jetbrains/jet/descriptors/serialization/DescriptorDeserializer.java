@@ -83,7 +83,7 @@ public class DescriptorDeserializer {
 
     @NotNull
     public CallableMemberDescriptor loadCallable(@NotNull Callable proto) {
-        Callable.CallableKind callableKind = Flags.getCallableKind(proto.getFlags());
+        Callable.CallableKind callableKind = Flags.CALLABLE_KIND.get(proto.getFlags());
         switch (callableKind) {
             case FUN:
                 return loadFunction(proto);
@@ -102,11 +102,11 @@ public class DescriptorDeserializer {
         PropertyDescriptorImpl property = new PropertyDescriptorImpl(
                 containingDeclaration,
                 getAnnotations(proto),
-                modality(Flags.getModality(flags)),
-                visibility(Flags.getVisibility(flags)),
-                Flags.getCallableKind(flags) == Callable.CallableKind.VAR,
+                modality(Flags.MODALITY.get(flags)),
+                visibility(Flags.VISIBILITY.get(flags)),
+                Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
                 nameResolver.getName(proto.getName()),
-                memberKind(Flags.getMemberKind(flags))
+                memberKind(Flags.MEMBER_KIND.get(flags))
         );
         DescriptorDeserializer local = createChildDeserializer(property);
         List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
@@ -127,7 +127,7 @@ public class DescriptorDeserializer {
                 containingDeclaration,
                 getAnnotations(proto),
                 nameResolver.getName(proto.getName()),
-                memberKind(Flags.getMemberKind(flags))
+                memberKind(Flags.MEMBER_KIND.get(flags))
         );
         DescriptorDeserializer local = createChildDeserializer(function);
         List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
@@ -138,9 +138,9 @@ public class DescriptorDeserializer {
                 typeParameters,
                 local.valueParameters(proto.getValueParametersList()),
                 local.typeDeserializer.type(proto.getReturnType()),
-                modality(Flags.getModality(flags)),
-                visibility(Flags.getVisibility(flags)),
-                Flags.isInline(flags)
+                modality(Flags.MODALITY.get(flags)),
+                visibility(Flags.VISIBILITY.get(flags)),
+                Flags.INLINE.get(flags)
 
         );
         return function;
@@ -158,14 +158,14 @@ public class DescriptorDeserializer {
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.valueParameters(proto.getValueParametersList()),
-                visibility(Flags.getVisibility(proto.getFlags())),
+                visibility(Flags.VISIBILITY.get(proto.getFlags())),
                 !classDescriptor.isInner()
         );
         return descriptor;
     }
 
     private List<AnnotationDescriptor> getAnnotations(Callable proto) {
-        return Flags.hasAnnotations(proto.getFlags())
+        return Flags.HAS_ANNOTATIONS.get(proto.getFlags())
                ? annotationDeserializer.loadCallableAnnotations(proto)
                : Collections.<AnnotationDescriptor>emptyList();
     }
@@ -304,12 +304,12 @@ public class DescriptorDeserializer {
                 getAnnotations(proto),
                 nameResolver.getName(proto.getName()),
                 typeDeserializer.type(proto.getType()),
-                Flags.declaresDefaultValue(proto.getFlags()),
+                Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
                 typeDeserializer.typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null));
     }
 
     private List<AnnotationDescriptor> getAnnotations(Callable.ValueParameter proto) {
-        return Flags.hasAnnotations(proto.getFlags())
+        return Flags.HAS_ANNOTATIONS.get(proto.getFlags())
                ? annotationDeserializer.loadValueParameterAnnotations(proto)
                : Collections.<AnnotationDescriptor>emptyList();
     }

@@ -117,7 +117,7 @@ public abstract class DeserializedMemberScope implements JetScope {
         Collection<D> descriptors = new LinkedHashSet<D>(memberProtos != null ? memberProtos.size() : 0);
         if (memberProtos != null) {
             for (ProtoBuf.Callable memberProto : memberProtos) {
-                if (callableKind.accept(Flags.getCallableKind(memberProto.getFlags()))) {
+                if (callableKind.accept(Flags.CALLABLE_KIND.get(memberProto.getFlags()))) {
                     //noinspection unchecked
                     descriptors.add((D) deserializer.loadCallable(memberProto));
                 }
