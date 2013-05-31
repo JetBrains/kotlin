@@ -83,9 +83,9 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         final NamespaceDescriptorImpl actualNamespace = createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.shortName().asString());
 
-        NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
+        final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
-        ClassResolver classResolver = new AbstractClassResolver(nameResolver, AnnotationDeserializer.UNSUPPORTED) {
+        ClassResolver classResolver = new AbstractClassResolver(AnnotationDeserializer.UNSUPPORTED) {
 
             @NotNull
             @Override
@@ -108,8 +108,8 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
             @Nullable
             @Override
-            protected ProtoBuf.Class getClassProto(@NotNull ClassId classId) {
-                return classProtos.get(classId);
+            protected ClassData getClassData(@NotNull ClassId classId) {
+                return new ClassData(nameResolver, classProtos.get(classId));
             }
 
             @Override

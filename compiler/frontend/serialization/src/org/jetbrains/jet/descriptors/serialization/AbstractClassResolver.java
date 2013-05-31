@@ -22,20 +22,18 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeseria
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNullImpl;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullableImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public abstract class AbstractClassResolver implements ClassResolver {
 
-    private final NameResolver nameResolver;
     private final NestedClassResolver nestedClassResolver;
-    private final MemoizedFunctionToNotNull<ClassId, ClassDescriptor> findClass;
+    private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
     private final AnnotationDeserializer annotationDeserializer;
 
-    public AbstractClassResolver(@NotNull NameResolver nameResolver, @NotNull AnnotationDeserializer annotationDeserializer) {
-        this.nameResolver = nameResolver;
+    public AbstractClassResolver(@NotNull AnnotationDeserializer annotationDeserializer) {
         this.annotationDeserializer = annotationDeserializer;
 
         this.nestedClassResolver = new NestedClassResolver() {
@@ -52,12 +50,15 @@ public abstract class AbstractClassResolver implements ClassResolver {
             }
         };
 
-        this.findClass = new MemoizedFunctionToNotNullImpl<ClassId, ClassDescriptor>() {
-            @NotNull
+        this.findClass = new MemoizedFunctionToNullableImpl<ClassId, ClassDescriptor>() {
             @Override
             protected ClassDescriptor doCompute(ClassId classId) {
-                ProtoBuf.Class classProto = getClassProto(classId);
-                assert classProto != null : "No class found: " + classId;
+                ClassData classData = getClassData(classId);
+                if (classData == null) {
+                    return null;
+                }
+
+                ProtoBuf.Class classProto = classData.getClassProto();
 
                 DeclarationDescriptor owner =
                         classId.isTopLevelClass() ? getPackage(classId.getPackageFqName()) : findClass(classId.getOuterClassId());
@@ -65,7 +66,7 @@ public abstract class AbstractClassResolver implements ClassResolver {
 
                 AbstractClassResolver outer = AbstractClassResolver.this;
                 ClassDescriptor classDescriptor = new DeserializedClassDescriptor(
-                        owner, outer.nameResolver, outer.annotationDeserializer, outer, nestedClassResolver, classProto, null
+                        owner, classData.getNameResolver(), outer.annotationDeserializer, outer, nestedClassResolver, classProto, null
                 );
                 classDescriptorCreated(classDescriptor);
                 return classDescriptor;
@@ -80,7 +81,7 @@ public abstract class AbstractClassResolver implements ClassResolver {
     }
 
     @Nullable
-    protected abstract ProtoBuf.Class getClassProto(@NotNull ClassId classId);
+    protected abstract ClassData getClassData(@NotNull ClassId classId);
 
     @NotNull
     protected abstract DeclarationDescriptor getPackage(@NotNull FqName fqName);
@@ -92,4 +93,24 @@ public abstract class AbstractClassResolver implements ClassResolver {
     protected abstract Name getClassObjectName(@NotNull ClassDescriptor outerClass);
 
     protected abstract void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor);
+
+    protected static class ClassData {
+        private final NameResolver nameResolver;
+        private final ProtoBuf.Class classProto;
+
+        public ClassData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Class classProto) {
+            this.nameResolver = nameResolver;
+            this.classProto = classProto;
+        }
+
+        @NotNull
+        public NameResolver getNameResolver() {
+            return nameResolver;
+        }
+
+        @NotNull
+        public ProtoBuf.Class getClassProto() {
+            return classProto;
+        }
+    }
 }
