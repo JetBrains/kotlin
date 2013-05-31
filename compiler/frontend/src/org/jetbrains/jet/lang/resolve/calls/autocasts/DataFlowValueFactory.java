@@ -45,7 +45,7 @@ public class DataFlowValueFactory {
             if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) return DataFlowValue.NULL;
         }
         if (TypeUtils.equalTypes(type, KotlinBuiltIns.getInstance().getNullableNothingType())) return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
-        IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext, false);
+        IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext);
         return new DataFlowValue(result.id == null ? expression : result.id, type, result.isStable, getImmanentNullability(type));
     }
 
@@ -127,8 +127,8 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    private static IdentifierInfo createNamespaceInfo(Object id, boolean isStable) {
-        return new IdentifierInfo(id, isStable, true);
+    private static IdentifierInfo createNamespaceInfo(Object id) {
+        return new IdentifierInfo(id, true, true);
     }
 
     @NotNull
@@ -142,26 +142,25 @@ public class DataFlowValueFactory {
     @NotNull
     private static IdentifierInfo getIdForStableIdentifier(
             @Nullable JetExpression expression,
-            @NotNull BindingContext bindingContext,
-            boolean allowNamespaces
+            @NotNull BindingContext bindingContext
     ) {
         if (expression instanceof JetParenthesizedExpression) {
             JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) expression;
             JetExpression innerExpression = parenthesizedExpression.getExpression();
 
-            return getIdForStableIdentifier(innerExpression, bindingContext, allowNamespaces);
+            return getIdForStableIdentifier(innerExpression, bindingContext);
         }
         else if (expression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
             JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
             JetExpression selectorExpression = qualifiedExpression.getSelectorExpression();
-            IdentifierInfo receiverId = getIdForStableIdentifier(receiverExpression, bindingContext, true);
-            IdentifierInfo selectorId = getIdForStableIdentifier(selectorExpression, bindingContext, allowNamespaces);
+            IdentifierInfo receiverId = getIdForStableIdentifier(receiverExpression, bindingContext);
+            IdentifierInfo selectorId = getIdForStableIdentifier(selectorExpression, bindingContext);
 
             return combineInfo(receiverId, selectorId);
         }
         if (expression instanceof JetSimpleNameExpression) {
-            return getIdForSimpleNameExpression((JetSimpleNameExpression) expression, bindingContext, allowNamespaces);
+            return getIdForSimpleNameExpression((JetSimpleNameExpression) expression, bindingContext);
         }
         else if (expression instanceof JetThisExpression) {
             JetThisExpression thisExpression = (JetThisExpression) expression;
@@ -170,7 +169,7 @@ public class DataFlowValueFactory {
             return getIdForThisReceiver(declarationDescriptor);
         }
         else if (expression instanceof JetRootNamespaceExpression) {
-            return createNamespaceInfo(JetModuleUtil.getRootNamespaceType(expression), allowNamespaces);
+            return createNamespaceInfo(JetModuleUtil.getRootNamespaceType(expression));
         }
         return ERROR_IDENTIFIER_INFO;
     }
@@ -178,8 +177,7 @@ public class DataFlowValueFactory {
     @NotNull
     private static IdentifierInfo getIdForSimpleNameExpression(
             @NotNull JetSimpleNameExpression simpleNameExpression,
-            @NotNull BindingContext bindingContext,
-            boolean allowNamespaces
+            @NotNull BindingContext bindingContext
     ) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, simpleNameExpression);
         if (declarationDescriptor instanceof VariableDescriptor) {
@@ -194,7 +192,7 @@ public class DataFlowValueFactory {
             return combineInfo(receiverInfo, createInfo(variableDescriptor, isStableVariable(variableDescriptor)));
         }
         if (declarationDescriptor instanceof NamespaceDescriptor) {
-            return createNamespaceInfo(declarationDescriptor, allowNamespaces);
+            return createNamespaceInfo(declarationDescriptor);
         }
         if (declarationDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
