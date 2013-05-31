@@ -52,6 +52,20 @@ public class NameTable {
             };
 
     public interface Namer {
+        Namer DEFAULT = new NameTable.Namer() {
+            @NotNull
+            @Override
+            public Name getClassName(@NotNull ClassDescriptor classDescriptor) {
+                return classDescriptor.getName();
+            }
+
+            @NotNull
+            @Override
+            public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                return namespaceDescriptor.getName();
+            }
+        };
+
         @NotNull
         Name getClassName(@NotNull ClassDescriptor classDescriptor);
 

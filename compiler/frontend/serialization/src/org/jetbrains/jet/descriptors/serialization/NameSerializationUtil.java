@@ -56,4 +56,11 @@ public class NameSerializationUtil {
         }
         return qualifiedNames.build();
     }
+
+    @NotNull
+    public static NameResolver createNameResolver(@NotNull NameTable table) {
+        return new NameResolver(
+                    toSimpleNameTable(table),
+                    toQualifiedNameTable(table));
+    }
 }
