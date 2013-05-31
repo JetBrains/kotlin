@@ -23,7 +23,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     @SuppressWarnings("FieldMayBeFinal")
     private static Class[] BLOCKLIKE_ELEMENT_CLASSES =
-            {JetBlockExpression.class, JetWhenExpression.class, JetPropertyAccessor.class, JetClassBody.class, JetFile.class};
+            {JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class, JetFile.class};
 
     @SuppressWarnings("FieldMayBeFinal")
     private static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
@@ -126,7 +126,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
         PsiElement blockLikeElement = closingBrace.getParent();
         if (!(blockLikeElement instanceof JetBlockExpression)) return BraceStatus.NOT_MOVABLE;
-        if (blockLikeElement.getParent() instanceof JetWhenEntry) return BraceStatus.NOT_MOVABLE;
+        if (blockLikeElement.getParent() instanceof JetWhenEntry) return BraceStatus.NOT_FOUND;
 
         PsiElement enclosingExpression = PsiTreeUtil.getParentOfType(blockLikeElement, JetExpression.class);
 

@@ -1,4 +1,3 @@
-// IS_APPLICABLE: false
 // MOVE: down
 
 fun foo(n: Int) {

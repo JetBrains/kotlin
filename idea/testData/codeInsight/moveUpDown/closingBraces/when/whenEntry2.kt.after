@@ -5,10 +5,10 @@ fun foo(n: Int) {
         0 -> {
 
         }
-        1 -> {
+        else -> {
 
         }<caret>
-        else -> {
+        1 -> {
 
         }
     }

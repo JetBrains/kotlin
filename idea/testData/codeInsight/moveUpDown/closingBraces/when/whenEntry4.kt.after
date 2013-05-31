@@ -2,12 +2,12 @@
 
 fun foo(n: Int) {
     when (n) {
-        0 -> {
-
-        }
         1 -> {
 
         }<caret>
+        0 -> {
+
+        }
         else -> {
 
         }
