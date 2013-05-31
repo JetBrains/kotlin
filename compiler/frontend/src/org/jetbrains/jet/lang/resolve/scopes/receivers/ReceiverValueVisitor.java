@@ -16,28 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
-public class ReceiverValueVisitor<R, D> {
-    public R visitNoReceiver(ReceiverValue noReceiver, D data) {
-        return null;
-    }
+public interface ReceiverValueVisitor<R, D> {
+    R visitNoReceiver(ReceiverValue noReceiver, D data);
 
-    public R visitTransientReceiver(TransientReceiver receiver, D data) {
-        return null;
-    }
+    R visitTransientReceiver(TransientReceiver receiver, D data);
 
-    public R visitExtensionReceiver(ExtensionReceiver receiver, D data) {
-        return null;
-    }
+    R visitExtensionReceiver(ExtensionReceiver receiver, D data);
 
-    public R visitExpressionReceiver(ExpressionReceiver receiver, D data) {
-        return null;
-    }
+    R visitExpressionReceiver(ExpressionReceiver receiver, D data);
 
-    public R visitClassReceiver(ClassReceiver receiver, D data) {
-        return null;
-    }
+    R visitClassReceiver(ClassReceiver receiver, D data);
 
-    public R visitScriptReceiver(ScriptReceiver receiver, D data) {
-        return null;
-    }
+    R visitScriptReceiver(ScriptReceiver receiver, D data);
 }
