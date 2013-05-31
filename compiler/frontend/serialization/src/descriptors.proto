@@ -101,13 +101,12 @@ message Class {
   /*
       Visibility
       Modality
+      has_annotation
       ClassKind
       is_inner
    */
-  optional int32 flags = 1 [default = 0 /*internal final class*/];
+  optional int32 flags = 1 [default = 0 /*internal final class, no annotations*/];
   optional string extra_visibility = 2; // for things like java-specific visibilities
-
-  repeated Annotation annotations = 3;
 
   required int32 name = 4;
 
@@ -147,16 +146,16 @@ message Callable {
   /*
      Visibility
      Modality
+     has_annotations
      fun/val/var/constructor
      Kind
      inline
      setter::Modality
      setter::Visibility
+     setter::has_annotations
    */
   optional int32 flags = 1;
   optional string extra_visibility = 2; // for things like java-specific visibilities
-
-  repeated Annotation annotations = 3;
 
   repeated TypeParameter typeParameters = 4;
 
@@ -167,6 +166,7 @@ message Callable {
   message ValueParameter {
     /*
        declaresDefault
+       has_annotations
     */
     optional int32 flags = 1;
     required int32 name = 2;
@@ -194,8 +194,4 @@ enum Visibility {
   PROTECTED = 0x02;
   PUBLIC = 0x03;
   EXTRA = 0x04; // there's an extra field for the actual visibility
-}
-
-message Annotation {
-  // TODO ???
 }

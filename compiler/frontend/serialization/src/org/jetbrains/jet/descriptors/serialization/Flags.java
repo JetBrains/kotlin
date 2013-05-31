@@ -8,8 +8,11 @@ public class Flags {
 
     // Common
 
+    public static final int HAS_ANNOTATIONS_BIT_COUNT = 1;
+    public static final int HAS_ANNOTATIONS_OFFSET = 0;
+
     public static final int VISIBILITY_BIT_COUNT = bitWidth(ProtoBuf.Visibility.values());
-    public static final int VISIBILITY_OFFSET = 0;
+    public static final int VISIBILITY_OFFSET = HAS_ANNOTATIONS_OFFSET + HAS_ANNOTATIONS_BIT_COUNT;
 
     public static final int MODALITY_BIT_COUNT = bitWidth(ProtoBuf.Modality.values());
     public static final int MODALITY_OFFSET = VISIBILITY_OFFSET + VISIBILITY_BIT_COUNT;
@@ -36,7 +39,7 @@ public class Flags {
     // Parameters
 
     public static final int DECLARES_DEFAULT_VALUE_BIT_COUNT = 1;
-    public static final int DECLARES_DEFAULT_VALUE_OFFSET = 0;
+    public static final int DECLARES_DEFAULT_VALUE_OFFSET = HAS_ANNOTATIONS_OFFSET + HAS_ANNOTATIONS_BIT_COUNT;
 
     // ---
 
@@ -96,13 +99,25 @@ public class Flags {
         return getValue(flags, BOOLEANS, DECLARES_DEFAULT_VALUE_BIT_COUNT, DECLARES_DEFAULT_VALUE_OFFSET);
     }
 
-    public static int getClassFlags(Visibility visibility, Modality modality, ClassKind kind, boolean inner) {
+    public static boolean hasAnnotations(int flags) {
+        return getValue(flags, BOOLEANS, HAS_ANNOTATIONS_BIT_COUNT, HAS_ANNOTATIONS_OFFSET);
+    }
+
+    public static int getClassFlags(
+            boolean hasAnnotations,
+            Visibility visibility,
+            Modality modality,
+            ClassKind kind,
+            boolean inner
+    ) {
+        int hasAnnotationsInt = hasAnnotations ? 1 : 0;
         int visibilityInt = visibility(visibility).getNumber();
         int modalityInt = modality(modality).getNumber();
         int classKindInt = classKind(kind).getNumber();
         int innerInt = inner ? 1 : 0;
-        return visibilityInt << VISIBILITY_OFFSET
+        return hasAnnotationsInt << HAS_ANNOTATIONS_OFFSET
                | modalityInt << MODALITY_OFFSET
+               | visibilityInt << VISIBILITY_OFFSET
                | classKindInt << CLASS_KIND_OFFSET
                | innerInt << INNER_OFFSET
                ;
@@ -129,19 +144,21 @@ public class Flags {
     }
 
     public static int getCallableFlags(
-            @NotNull Visibility visibility,
+            boolean hasAnnotations, @NotNull Visibility visibility,
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
             @NotNull ProtoBuf.Callable.CallableKind callableKind,
             boolean inline
     ) {
+        int hasAnnotationsInt = hasAnnotations ? 1 : 0;
         int visibilityInt = visibility(visibility).getNumber();
         int modalityInt = modality(modality).getNumber();
         int memberKindInt = memberKind(memberKind).getNumber();
         int callableKindInt = callableKind.getNumber();
         int inlineInt = inline ? 1 : 0;
-        return visibilityInt << VISIBILITY_OFFSET
+        return hasAnnotationsInt << HAS_ANNOTATIONS_OFFSET
                | modalityInt << MODALITY_OFFSET
+               | visibilityInt << VISIBILITY_OFFSET
                | memberKindInt << MEMBER_KIND_OFFSET
                | callableKindInt << CALLABLE_KIND_OFFSET
                | inlineInt << INLINE_OFFSET
@@ -193,9 +210,11 @@ public class Flags {
         throw new IllegalArgumentException("Unknown member kind: " + kind);
     }
 
-    public static int getValueParameterFlags(boolean declaresDefaultValue) {
+    public static int getValueParameterFlags(boolean hasAnnotations, boolean declaresDefaultValue) {
+        int hasAnnotationsInt = hasAnnotations ? 1 : 0;
         int declaresDefaultValueInt = declaresDefaultValue ? 1 : 0;
-        return declaresDefaultValueInt << DECLARES_DEFAULT_VALUE_OFFSET
-                ;
+        return hasAnnotationsInt << HAS_ANNOTATIONS_OFFSET
+               | declaresDefaultValueInt << DECLARES_DEFAULT_VALUE_OFFSET
+               ;
     }
 }

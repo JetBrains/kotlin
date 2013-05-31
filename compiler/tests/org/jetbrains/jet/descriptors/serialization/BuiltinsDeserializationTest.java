@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -60,13 +61,13 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         NamespaceComparator.Configuration configuration = NamespaceComparator.RECURSIVE.withRenderer(
                 new DescriptorRendererBuilder()
-                            .setWithDefinedIn(false)
-                            .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
-                            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-                            .setVerbose(true)
-                            .setAlwaysRenderAny(true)
-                            .setPrettyFunctionTypes(false)
-                            .build()
+                        .setWithDefinedIn(false)
+                        .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
+                        .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
+                        .setVerbose(true)
+                        .setAlwaysRenderAny(true)
+                        .setPrettyFunctionTypes(false)
+                        .build()
         );
         NamespaceComparator.validateAndCompareNamespaces(KotlinBuiltIns.getInstance().getBuiltInsPackage(), actualNamespace, configuration, null);
     }
@@ -82,7 +83,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
-        ClassResolver classResolver = new AbstractClassResolver(nameResolver) {
+        ClassResolver classResolver = new AbstractClassResolver(nameResolver, AnnotationDeserializer.UNSUPPORTED) {
 
             @NotNull
             @Override
@@ -177,7 +178,9 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             NameResolver nameResolver,
             ClassResolver classResolver
     ) {
-        DescriptorDeserializer descriptorDeserializer = DescriptorDeserializer.create(actualNamespace, nameResolver, classResolver);
+        DescriptorDeserializer descriptorDeserializer;
+        descriptorDeserializer =
+                DescriptorDeserializer.create(actualNamespace, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED);
         for (ProtoBuf.Callable callableProto : callableProtos) {
             CallableMemberDescriptor callableMemberDescriptor = descriptorDeserializer.loadCallable(callableProto);
             if (callableMemberDescriptor instanceof PropertyDescriptor) {

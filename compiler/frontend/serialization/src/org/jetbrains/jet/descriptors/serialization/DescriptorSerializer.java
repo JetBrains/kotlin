@@ -18,6 +18,7 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -52,10 +53,8 @@ public class DescriptorSerializer {
     public ProtoBuf.Class.Builder classProto(@NotNull ClassDescriptor classDescriptor) {
         ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
 
-        // TODO annotations
-
-        int flags = Flags.getClassFlags(classDescriptor.getVisibility(), classDescriptor.getModality(), classDescriptor.getKind(),
-                                        classDescriptor.isInner());
+        int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(),
+                                        classDescriptor.getModality(), classDescriptor.getKind(), classDescriptor.isInner());
         builder.setFlags(flags);
 
         // TODO extra visibility
@@ -111,7 +110,8 @@ public class DescriptorSerializer {
         ProtoBuf.Callable.Builder builder = ProtoBuf.Callable.newBuilder();
 
         // TODO setter flags
-        builder.setFlags(Flags.getCallableFlags(descriptor.getVisibility(),
+        // TODO setter annotations
+        builder.setFlags(Flags.getCallableFlags(hasAnnotations(descriptor), descriptor.getVisibility(),
                                                 descriptor.getModality(),
                                                 descriptor.getKind(),
                                                 callableKind(descriptor),
@@ -159,7 +159,7 @@ public class DescriptorSerializer {
     private ProtoBuf.Callable.ValueParameter.Builder valueParameter(ValueParameterDescriptor descriptor) {
         ProtoBuf.Callable.ValueParameter.Builder builder = ProtoBuf.Callable.ValueParameter.newBuilder();
 
-        builder.setFlags(Flags.getValueParameterFlags(descriptor.declaresDefaultValue()));
+        builder.setFlags(Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue()));
 
         builder.setName(nameTable.getSimpleNameIndex(descriptor.getName()));
 
@@ -282,5 +282,9 @@ public class DescriptorSerializer {
 
     private int getTypeParameterId(@NotNull TypeParameterDescriptor descriptor) {
         return typeParameters.intern(descriptor);
+    }
+
+    private static boolean hasAnnotations(Annotated descriptor) {
+        return !descriptor.getAnnotations().isEmpty();
     }
 }

@@ -18,6 +18,7 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -31,9 +32,11 @@ public abstract class AbstractClassResolver implements ClassResolver {
     private final NameResolver nameResolver;
     private final NestedClassResolver nestedClassResolver;
     private final MemoizedFunctionToNotNull<ClassId, ClassDescriptor> findClass;
+    private final AnnotationDeserializer annotationDeserializer;
 
-    public AbstractClassResolver(@NotNull NameResolver nameResolver) {
+    public AbstractClassResolver(@NotNull NameResolver nameResolver, @NotNull AnnotationDeserializer annotationDeserializer) {
         this.nameResolver = nameResolver;
+        this.annotationDeserializer = annotationDeserializer;
 
         this.nestedClassResolver = new NestedClassResolver() {
             @Nullable
@@ -55,11 +58,14 @@ public abstract class AbstractClassResolver implements ClassResolver {
             protected ClassDescriptor doCompute(ClassId classId) {
                 ProtoBuf.Class classProto = getClassProto(classId);
                 assert classProto != null : "No class found: " + classId;
+
                 DeclarationDescriptor owner =
                         classId.isTopLevelClass() ? getPackage(classId.getPackageFqName()) : findClass(classId.getOuterClassId());
                 assert owner != null : "No owner found for " + classId;
+
+                AbstractClassResolver outer = AbstractClassResolver.this;
                 ClassDescriptor classDescriptor = new DeserializedClassDescriptor(
-                        owner, AbstractClassResolver.this.nameResolver, AbstractClassResolver.this, nestedClassResolver, classProto, null
+                        owner, outer.nameResolver, outer.annotationDeserializer, outer, nestedClassResolver, classProto, null
                 );
                 classDescriptorCreated(classDescriptor);
                 return classDescriptor;

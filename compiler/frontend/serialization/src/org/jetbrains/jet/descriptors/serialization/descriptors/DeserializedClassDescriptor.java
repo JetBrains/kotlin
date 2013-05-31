@@ -25,9 +25,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullableImpl;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValueImpl;
+import org.jetbrains.jet.lang.resolve.lazy.storage.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -46,6 +44,9 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
     private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
+    private final AnnotationDeserializer annotationDeserializer;
+    private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
+
     private final NestedClassResolver nestedClassResolver;
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
@@ -63,6 +64,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     public DeserializedClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
+            @NotNull AnnotationDeserializer annotationResolver,
             @NotNull ClassResolver classResolver,
             @NotNull NestedClassResolver _nestedClassResolver,
             @NotNull ProtoBuf.Class classProto,
@@ -70,7 +72,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     ) {
         this.classProto = classProto;
         this.typeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver, classResolver);
-        this.deserializer = DescriptorDeserializer.create(typeDeserializer, this, nameResolver);
+        this.deserializer = DescriptorDeserializer.create(typeDeserializer, this, nameResolver, annotationResolver);
 
         this.containingDeclaration = containingDeclaration;
         this.typeConstructor = new DeserializedClassTypeConstructor();
@@ -83,6 +85,15 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.visibility = DescriptorDeserializer.visibility(Flags.getVisibility(flags));
         this.kind = DescriptorDeserializer.classKind(Flags.getClassKind(flags));
         this.isInner = Flags.isInner(flags);
+
+        this.annotationDeserializer = annotationResolver;
+        this.annotations = new NotNullLazyValueImpl<List<AnnotationDescriptor>>() {
+            @NotNull
+            @Override
+            protected List<AnnotationDescriptor> doCompute() {
+                return computeAnnotations();
+            }
+        };
 
         this.primaryConstructor = new NullableLazyValueImpl<ConstructorDescriptor>() {
             @Override
@@ -169,9 +180,16 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         return name;
     }
 
+    private List<AnnotationDescriptor> computeAnnotations() {
+        if (!Flags.hasAnnotations(classProto.getFlags())) {
+            return Collections.emptyList();
+        }
+        return annotationDeserializer.loadClassAnnotations(classProto);
+    }
+
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
-        return Collections.emptyList(); // TODO
+        return annotations.compute();
     }
 
     @Override

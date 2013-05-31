@@ -17,6 +17,7 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.Visibility;
@@ -36,32 +37,38 @@ public class DescriptorDeserializer {
     public static DescriptorDeserializer create(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
-            @NotNull ClassResolver classResolver
+            @NotNull ClassResolver classResolver,
+            @NotNull AnnotationDeserializer annotationDeserializer
     ) {
-        return new DescriptorDeserializer(new TypeDeserializer(null, nameResolver, classResolver), containingDeclaration, nameResolver);
+        return new DescriptorDeserializer(new TypeDeserializer(null, nameResolver, classResolver), containingDeclaration, nameResolver,
+                                          annotationDeserializer);
     }
 
     @NotNull
     public static DescriptorDeserializer create(
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotationDeserializer annotationDeserializer
     ) {
-        return new DescriptorDeserializer(typeDeserializer, containingDeclaration, nameResolver);
+        return new DescriptorDeserializer(typeDeserializer, containingDeclaration, nameResolver, annotationDeserializer);
     }
 
     private final DeclarationDescriptor containingDeclaration;
     private final NameResolver nameResolver;
     private final TypeDeserializer typeDeserializer;
+    private final AnnotationDeserializer annotationDeserializer;
 
     private DescriptorDeserializer(
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotationDeserializer annotationDeserializer
     ) {
         this.typeDeserializer = typeDeserializer;
         this.containingDeclaration = containingDeclaration;
         this.nameResolver = nameResolver;
+        this.annotationDeserializer = annotationDeserializer;
     }
 
     @NotNull
@@ -71,7 +78,7 @@ public class DescriptorDeserializer {
 
     @NotNull
     private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
-        return create(new TypeDeserializer(typeDeserializer), descriptor, nameResolver);
+        return create(new TypeDeserializer(typeDeserializer), descriptor, nameResolver, annotationDeserializer);
     }
 
     @NotNull
@@ -94,8 +101,7 @@ public class DescriptorDeserializer {
         int flags = proto.getFlags();
         PropertyDescriptorImpl property = new PropertyDescriptorImpl(
                 containingDeclaration,
-                // TODO: annotations
-                Collections.<AnnotationDescriptor>emptyList(),
+                getAnnotations(proto),
                 modality(Flags.getModality(flags)),
                 visibility(Flags.getVisibility(flags)),
                 Flags.getCallableKind(flags) == Callable.CallableKind.VAR,
@@ -119,8 +125,7 @@ public class DescriptorDeserializer {
         int flags = proto.getFlags();
         SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
                 containingDeclaration,
-                // TODO: annotations
-                Collections.<AnnotationDescriptor>emptyList(),
+                getAnnotations(proto),
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.getMemberKind(flags))
         );
@@ -146,8 +151,7 @@ public class DescriptorDeserializer {
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
         ConstructorDescriptorImpl descriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
-                // TODO
-                Collections.<AnnotationDescriptor>emptyList(),
+                getAnnotations(proto),
                 // TODO: primary
                 true);
         DescriptorDeserializer local = createChildDeserializer(descriptor);
@@ -158,6 +162,12 @@ public class DescriptorDeserializer {
                 !classDescriptor.isInner()
         );
         return descriptor;
+    }
+
+    private List<AnnotationDescriptor> getAnnotations(Callable proto) {
+        return Flags.hasAnnotations(proto.getFlags())
+               ? annotationDeserializer.loadCallableAnnotations(proto)
+               : Collections.<AnnotationDescriptor>emptyList();
     }
 
     private static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {
@@ -247,7 +257,7 @@ public class DescriptorDeserializer {
         int id = proto.getId();
         TypeParameterDescriptorImpl descriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDeclaration,
-                // TODO
+                // TODO (type parameter annotations are not supported in Java 7)
                 Collections.<AnnotationDescriptor>emptyList(),
                 proto.getReified(),
                 variance(proto.getVariance()),
@@ -291,11 +301,16 @@ public class DescriptorDeserializer {
         return new ValueParameterDescriptorImpl(
                 containingDeclaration,
                 index,
-                // TODO
-                Collections.<AnnotationDescriptor>emptyList(),
+                getAnnotations(proto),
                 nameResolver.getName(proto.getName()),
                 typeDeserializer.type(proto.getType()),
                 Flags.declaresDefaultValue(proto.getFlags()),
                 typeDeserializer.typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null));
+    }
+
+    private List<AnnotationDescriptor> getAnnotations(Callable.ValueParameter proto) {
+        return Flags.hasAnnotations(proto.getFlags())
+               ? annotationDeserializer.loadValueParameterAnnotations(proto)
+               : Collections.<AnnotationDescriptor>emptyList();
     }
 }
