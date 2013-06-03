@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 public class BuiltInsSerializer {
     private static final String BUILT_INS_SRC_DIR = "compiler/frontend/src";
-    private static final String DEST_DIR = "compiler/frontend/builtins";
+    private static final String DEST_DIR = "compiler/frontend/" + BuiltInsSerializationUtil.BUILT_INS_DIR;
 
     private static int totalSize = 0;
     private static int totalFiles = 0;
@@ -52,7 +52,8 @@ public class BuiltInsSerializer {
             System.err.println("Could not make directories: " + destDir);
         }
 
-        ClassSerializationUtil.serializeClasses(allDescriptors, ClassSerializationUtil.NEW_EVERY_TIME, new ClassSerializationUtil.Sink() {
+        DescriptorSerializer serializer = new DescriptorSerializer(NameTable.Namer.DEFAULT);
+        ClassSerializationUtil.serializeClasses(allDescriptors, ClassSerializationUtil.constantSerializer(serializer), new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(
                     @NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto
@@ -70,7 +71,6 @@ public class BuiltInsSerializer {
         });
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        DescriptorSerializer serializer = new DescriptorSerializer(NameTable.Namer.DEFAULT);
         for (DeclarationDescriptor descriptor : allDescriptors) {
             if (descriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
@@ -80,6 +80,10 @@ public class BuiltInsSerializer {
         }
 
         write(destDir, BuiltInsSerializationUtil.getPackageFilePath(namespace), stream);
+
+        ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
+        NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable());
+        write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(namespace), nameStream);
 
         System.out.println("Total bytes written: " + totalSize + " to " + totalFiles + " files");
     }
