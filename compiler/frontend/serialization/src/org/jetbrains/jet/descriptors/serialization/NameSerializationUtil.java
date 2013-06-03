@@ -24,8 +24,7 @@ import java.io.OutputStream;
 
 public class NameSerializationUtil {
     @NotNull
-    public static NameResolver deserializeNameResolver(@NotNull InputStream in)
-            throws IOException {
+    public static NameResolver deserializeNameResolver(@NotNull InputStream in) throws IOException {
         ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
         ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
         return new NameResolver(simpleNames, qualifiedNames);
