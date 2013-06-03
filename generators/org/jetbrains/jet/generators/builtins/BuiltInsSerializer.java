@@ -19,7 +19,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -42,7 +41,7 @@ public class BuiltInsSerializer {
         FqName fqName = FqName.topLevel(Name.identifier(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING));
         NamespaceDescriptor namespace = module.getNamespace(fqName);
         assert namespace != null : "No built-ins namespace: " + fqName;
-        Collection<DeclarationDescriptor> allDescriptors = namespace.getMemberScope().getAllDescriptors();
+        List<DeclarationDescriptor> allDescriptors = DescriptorSerializer.sort(namespace.getMemberScope().getAllDescriptors());
 
         final File destDir = new File(DEST_DIR);
         if (!FileUtil.delete(destDir)) {
