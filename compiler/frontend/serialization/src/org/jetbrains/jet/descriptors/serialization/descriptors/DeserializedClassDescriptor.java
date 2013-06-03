@@ -21,14 +21,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.AbstractReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
-import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
@@ -77,7 +78,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.containingDeclaration = containingDeclaration;
         this.typeConstructor = new DeserializedClassTypeConstructor();
         this.memberScope = new DeserializedClassMemberScope(this);
-        this.thisAsReceiverParameter = new ReceiverParameterDescriptorImpl(this, getDefaultType(), new ClassReceiver(this));
+        this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
 
         this.name = nameResolver.getName(classProto.getName());
         int flags = classProto.getFlags();
@@ -431,6 +432,28 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
                 }
             }
             return result;
+        }
+    }
+
+    private class LazyClassReceiverParameterDescriptor extends AbstractReceiverParameterDescriptor {
+        private final ClassReceiver classReceiver = new ClassReceiver(DeserializedClassDescriptor.this);
+
+        @NotNull
+        @Override
+        public JetType getType() {
+            return getDefaultType();
+        }
+
+        @NotNull
+        @Override
+        public ReceiverValue getValue() {
+            return classReceiver;
+        }
+
+        @NotNull
+        @Override
+        public DeclarationDescriptor getContainingDeclaration() {
+            return DeserializedClassDescriptor.this;
         }
     }
 }
