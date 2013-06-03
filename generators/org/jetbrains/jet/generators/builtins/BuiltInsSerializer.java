@@ -13,6 +13,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,13 +24,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class BuiltInsSerializer {
-    public static final String CLASS_METADATA_FILE_EXTENSION = "kotlin_class";
-    public static final String PACKAGE_FILE_NAME = ".kotlin_package";
-    public static final Name CLASS_OBJECT_NAME = Name.identifier("object");
-
     private static final String BUILT_INS_SRC_DIR = "compiler/frontend/src";
     private static final String DEST_DIR = "compiler/frontend/builtins";
-    private static final String BUILT_INS_PACKAGE_NAME = "jet";
 
     private static int totalSize = 0;
     private static int totalFiles = 0;
@@ -42,12 +39,12 @@ public class BuiltInsSerializer {
 
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, environment);
 
-        FqName fqName = FqName.topLevel(Name.identifier(BUILT_INS_PACKAGE_NAME));
+        FqName fqName = FqName.topLevel(Name.identifier(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING));
         NamespaceDescriptor namespace = module.getNamespace(fqName);
         assert namespace != null : "No built-ins namespace: " + fqName;
         Collection<DeclarationDescriptor> allDescriptors = namespace.getMemberScope().getAllDescriptors();
 
-        final File destDir = new File(new File(DEST_DIR), BUILT_INS_PACKAGE_NAME);
+        final File destDir = new File(DEST_DIR);
         if (!FileUtil.delete(destDir)) {
             System.err.println("Could not delete: " + destDir);
         }
@@ -82,7 +79,7 @@ public class BuiltInsSerializer {
             }
         }
 
-        write(destDir, getPackageFileName(namespace), stream);
+        write(destDir, BuiltInsSerializationUtil.getPackageFilePath(namespace), stream);
 
         System.out.println("Total bytes written: " + totalSize + " to " + totalFiles + " files");
     }
@@ -94,24 +91,7 @@ public class BuiltInsSerializer {
         System.out.println(stream.size() + " bytes written to " + fileName);
     }
 
-    private static String getPackageFileName(NamespaceDescriptor packageDescriptor) {
-        return PACKAGE_FILE_NAME;
-    }
-
     private static String getFileName(ClassDescriptor classDescriptor) {
-        ClassId classId = ClassSerializationUtil.getClassId(classDescriptor, new NameTable.Namer() {
-            @NotNull
-            @Override
-            public Name getClassName(@NotNull ClassDescriptor classDescriptor) {
-                return classDescriptor.getKind() == ClassKind.CLASS_OBJECT ? CLASS_OBJECT_NAME : classDescriptor.getName();
-            }
-
-            @NotNull
-            @Override
-            public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                return namespaceDescriptor.getName();
-            }
-        });
-        return classId.getRelativeClassName().asString() + "." + CLASS_METADATA_FILE_EXTENSION;
+        return BuiltInsSerializationUtil.getClassMetadataPath(BuiltInsSerializationUtil.getClassId(classDescriptor));
     }
 }

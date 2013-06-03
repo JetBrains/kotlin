@@ -68,7 +68,7 @@ public class KotlinBuiltIns {
     public static final JetScope STUB = JetScope.EMPTY;
 
     public static final String BUILT_INS_DIR = "jet";
-    private static final String BUILT_INS_PACKAGE_NAME_STRING = "jet";
+    public static final String BUILT_INS_PACKAGE_NAME_STRING = "jet";
     private static final Name BUILT_INS_PACKAGE_NAME = Name.identifier(BUILT_INS_PACKAGE_NAME_STRING);
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
 
