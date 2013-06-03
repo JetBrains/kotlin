@@ -38,7 +38,7 @@ public class BuiltInsSerializer {
         JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
         List<JetFile> files = JetTestUtils.loadToJetFiles(environment, sourceFiles);
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, environment);
+        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, environment, false);
 
         FqName fqName = FqName.topLevel(Name.identifier(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING));
         NamespaceDescriptor namespace = module.getNamespace(fqName);
