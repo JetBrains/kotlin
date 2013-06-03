@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.HierarchicalMethodSignature;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiSubstitutorImpl;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +40,11 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import static com.intellij.psi.util.TypeConversionUtil.erasure;
 
 // This class contains heuristics for processing corner cases in propagation
 class PropagationHeuristics {
@@ -122,8 +128,7 @@ class PropagationHeuristics {
     @NotNull
     static List<PsiMethod> getSuperMethods(@NotNull PsiMethod method) {
         List<PsiMethod> superMethods = Lists.newArrayList();
-        for (HierarchicalMethodSignature superSignature : method.getHierarchicalMethodSignature().getSuperSignatures()) {
-            PsiMethod superMethod = superSignature.getMethod();
+        for (PsiMethod superMethod : new SuperMethodCollector(method).collect()) {
             CallableMemberDescriptor.Kind kindFromFlags =
                     DescriptorKindUtils.flagsToKind(new PsiMethodWrapper(superMethod).getJetMethodAnnotation().kind());
             if (kindFromFlags == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
@@ -140,5 +145,111 @@ class PropagationHeuristics {
     }
 
     private PropagationHeuristics() {
+    }
+
+    private static class SuperMethodCollector {
+        private final PsiMethod initialMethod;
+        private final String initialMethodName;
+        private final List<PsiType> initialParametersErasure;
+
+        private final List<PsiClass> visitedSuperclasses = Lists.newArrayList();
+        private final List<PsiMethod> collectedMethods = Lists.newArrayList();
+
+        private SuperMethodCollector(@NotNull PsiMethod initialMethod) {
+            this.initialMethod = initialMethod;
+            initialMethodName = initialMethod.getName();
+
+            PsiParameterList parameterList = initialMethod.getParameterList();
+            initialParametersErasure = Lists.newArrayListWithExpectedSize(parameterList.getParametersCount());
+            for (PsiParameter parameter : parameterList.getParameters()) {
+                initialParametersErasure.add(erasureNoEllipsis(parameter.getType()));
+            }
+        }
+
+        public List<PsiMethod> collect() {
+            if (!canHaveSuperMethod(initialMethod)) {
+                return Collections.emptyList();
+            }
+
+            PsiClass containingClass = initialMethod.getContainingClass();
+            assert containingClass != null : " containing class is null for " + initialMethod;
+
+            for (PsiClassType superType : containingClass.getSuperTypes()) {
+                collectFromSupertype(superType);
+            }
+
+            return collectedMethods;
+        }
+
+        private void collectFromSupertype(PsiClassType type) {
+            PsiClass klass = type.resolve();
+            if (klass == null) {
+                return;
+            }
+            if (!visitedSuperclasses.add(klass)) {
+                return;
+            }
+
+            PsiSubstitutor supertypeSubstitutor = getErasedSubstitutor(type);
+            for (PsiMethod methodFromSuper : klass.getMethods()) {
+                if (isSubMethodOf(methodFromSuper, supertypeSubstitutor)) {
+                    collectedMethods.add(methodFromSuper);
+                    return;
+                }
+            }
+
+            for (PsiType superType : type.getSuperTypes()) {
+                assert superType instanceof PsiClassType : "supertype is not a PsiClassType for " + type + ": " + superType;
+                collectFromSupertype((PsiClassType) superType);
+            }
+        }
+
+        private boolean isSubMethodOf(@NotNull PsiMethod methodFromSuper, @NotNull PsiSubstitutor supertypeSubstitutor) {
+            if (!methodFromSuper.getName().equals(initialMethodName)) {
+                return false;
+            }
+
+            PsiParameterList fromSuperParameterList = methodFromSuper.getParameterList();
+
+            if (fromSuperParameterList.getParametersCount() != initialParametersErasure.size()) {
+                return false;
+            }
+
+            for (int i = 0; i < initialParametersErasure.size(); i++) {
+                PsiType originalType = initialParametersErasure.get(i);
+                PsiType typeFromSuper = fromSuperParameterList.getParameters()[i].getType();
+                PsiType typeFromSuperErased = erasureNoEllipsis(supertypeSubstitutor.substitute(typeFromSuper));
+
+                if (!Comparing.equal(originalType, typeFromSuperErased)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static PsiType erasureNoEllipsis(PsiType type) {
+            if (type instanceof PsiEllipsisType) {
+                return erasureNoEllipsis(((PsiEllipsisType) type).toArrayType());
+            }
+            return erasure(type);
+        }
+
+        private static PsiSubstitutor getErasedSubstitutor(PsiClassType type) {
+            Map<PsiTypeParameter, PsiType> unerasedMap = type.resolveGenerics().getSubstitutor().getSubstitutionMap();
+            Map<PsiTypeParameter, PsiType> erasedMap = Maps.newHashMapWithExpectedSize(unerasedMap.size());
+            for (Map.Entry<PsiTypeParameter, PsiType> entry : unerasedMap.entrySet()) {
+                erasedMap.put(entry.getKey(), erasure(entry.getValue()));
+            }
+            return PsiSubstitutorImpl.createSubstitutor(erasedMap);
+        }
+
+        private static boolean canHaveSuperMethod(PsiMethod method) {
+            if (method.isConstructor()) return false;
+            if (method.hasModifierProperty(PsiModifier.STATIC)) return false;
+            if (method.hasModifierProperty(PsiModifier.PRIVATE)) return false;
+            PsiClass containingClass = method.getContainingClass();
+            return containingClass != null && !CommonClassNames.JAVA_LANG_OBJECT.equals(containingClass.getQualifiedName());
+        }
     }
 }
