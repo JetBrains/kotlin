@@ -11,6 +11,7 @@
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="serialization" />
   </component>
 </module>
 
