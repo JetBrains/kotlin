@@ -269,6 +269,16 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
         }
         
+        @TestMetadata("classObjectInClassStaticFields.kt")
+        public void testClassObjectInClassStaticFields() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/classObjectInClassStaticFields.kt");
+        }
+        
+        @TestMetadata("classObjectInTraitStaticFields.kt")
+        public void testClassObjectInTraitStaticFields() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/classObjectInTraitStaticFields.kt");
+        }
+        
         @TestMetadata("ClassObjectPropertyInClass.kt")
         public void testClassObjectPropertyInClass() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectPropertyInClass.kt");
