@@ -17,6 +17,7 @@ public class BuiltInsSerializationUtil {
     public static final String CLASS_METADATA_FILE_EXTENSION = "kotlin_class";
     public static final String PACKAGE_FILE_NAME = ".kotlin_package";
     public static final String NAME_TABLE_FILE_NAME = ".kotlin_name_table";
+    public static final String CLASS_NAMES_FILE_NAME = ".kotlin_class_names";
     public static final Name CLASS_OBJECT_NAME = Name.identifier("object");
 
     public static final NameTable.Namer BUILTINS_NAMER = new NameTable.Namer() {
@@ -55,6 +56,12 @@ public class BuiltInsSerializationUtil {
     public static String getNameTableFilePath(@NotNull NamespaceDescriptor packageDescriptor) {
         FqNameUnsafe fqName = DescriptorUtils.getFQName(packageDescriptor);
         return packageFqNameToPath(fqName) + "/" + NAME_TABLE_FILE_NAME;
+    }
+
+    @NotNull
+    public static String getClassNamesFilePath(@NotNull NamespaceDescriptor packageDescriptor) {
+        FqNameUnsafe fqName = DescriptorUtils.getFQName(packageDescriptor);
+        return packageFqNameToPath(fqName) + "/" + CLASS_NAMES_FILE_NAME;
     }
 
     private static String packageFqNameToPath(FqNameUnsafe fqName) {
