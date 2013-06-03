@@ -728,6 +728,21 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/if4.kt");
         }
         
+        @TestMetadata("lambda1.kt")
+        public void testLambda1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/lambda1.kt");
+        }
+        
+        @TestMetadata("lambda2.kt")
+        public void testLambda2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/lambda2.kt");
+        }
+        
+        @TestMetadata("lambda3.kt")
+        public void testLambda3() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/lambda3.kt");
+        }
+        
         @TestMetadata("when1.kt")
         public void testWhen1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/when1.kt");
