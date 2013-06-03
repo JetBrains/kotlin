@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -45,18 +47,24 @@ public class DescriptorSerializer {
     };
     private final NameTable nameTable;
     private final Interner<TypeParameterDescriptor> typeParameters;
+    private final Predicate<ClassDescriptor> isSpecial;
 
     public DescriptorSerializer(@NotNull NameTable.Namer namer) {
-        this(new NameTable(namer), new Interner<TypeParameterDescriptor>());
+        this(namer, Predicates.<ClassDescriptor>alwaysFalse());
     }
 
-    private DescriptorSerializer(NameTable nameTable, Interner<TypeParameterDescriptor> typeParameters) {
+    public DescriptorSerializer(@NotNull NameTable.Namer namer, @NotNull Predicate<ClassDescriptor> isSpecial) {
+        this(new NameTable(namer), new Interner<TypeParameterDescriptor>(), isSpecial);
+    }
+
+    private DescriptorSerializer(NameTable nameTable, Interner<TypeParameterDescriptor> typeParameters, Predicate<ClassDescriptor> isSpecial) {
         this.nameTable = nameTable;
         this.typeParameters = typeParameters;
+        this.isSpecial = isSpecial;
     }
 
     private DescriptorSerializer createChildSerializer() {
-        return new DescriptorSerializer(nameTable, new Interner<TypeParameterDescriptor>(typeParameters));
+        return new DescriptorSerializer(nameTable, new Interner<TypeParameterDescriptor>(typeParameters), Predicates.<ClassDescriptor>alwaysFalse());
     }
 
     @NotNull
@@ -82,8 +90,11 @@ public class DescriptorSerializer {
             builder.addTypeParameters(local.typeParameter(typeParameterDescriptor));
         }
 
-        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            builder.addSupertypes(local.type(supertype));
+        if (!isSpecial.apply(classDescriptor)) {
+            // Special classes (Any, Nothing) have no supertypes
+            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+                builder.addSupertypes(local.type(supertype));
+            }
         }
 
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
