@@ -17,6 +17,7 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
@@ -113,8 +114,7 @@ public class DescriptorDeserializer {
         property.setType(
                 local.typeDeserializer.type(proto.getReturnType()),
                 typeParameters,
-                // TODO: expected this object
-                null,
+                getExpectedThisObject(),
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null)
         );
         return property;
@@ -133,8 +133,7 @@ public class DescriptorDeserializer {
         List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
         function.initialize(
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
-                // TODO: expectedThisObject
-                null,
+                getExpectedThisObject(),
                 typeParameters,
                 local.valueParameters(proto.getValueParametersList()),
                 local.typeDeserializer.type(proto.getReturnType()),
@@ -144,6 +143,12 @@ public class DescriptorDeserializer {
 
         );
         return function;
+    }
+
+    @Nullable
+    private ReceiverParameterDescriptor getExpectedThisObject() {
+        return containingDeclaration instanceof ClassDescriptor
+               ? ((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter() : null;
     }
 
     @NotNull
