@@ -206,12 +206,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         thisScope.addLabeledDeclaration(this);
         thisScope.changeLockLevel(WritableScope.LockLevel.READING);
 
+        ClassDescriptor classObject = getClassObjectDescriptor();
+        JetScope classObjectAdapterScope = (classObject != null) ? new ClassObjectMixinScope(classObject) : JetScope.EMPTY;
+
         return new ChainedScope(
                 this,
                 "ScopeForMemberDeclarationResolution: " + getName(),
                 thisScope,
                 getScopeForMemberLookup(),
-                getScopeForClassHeaderResolution());
+                getScopeForClassHeaderResolution(),
+                classObjectAdapterScope);
     }
 
     @NotNull

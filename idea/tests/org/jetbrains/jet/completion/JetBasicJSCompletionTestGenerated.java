@@ -79,6 +79,11 @@ public class JetBasicJSCompletionTestGenerated extends AbstractJetJSCompletionTe
             doTest("idea/testData/completion/basic/common/CallLocalLambda.kt");
         }
         
+        @TestMetadata("classObjectElementsInClass.kt")
+        public void testClassObjectElementsInClass() throws Exception {
+            doTest("idea/testData/completion/basic/common/classObjectElementsInClass.kt");
+        }
+        
         @TestMetadata("ClassRedeclaration1.kt")
         public void testClassRedeclaration1() throws Exception {
             doTest("idea/testData/completion/basic/common/ClassRedeclaration1.kt");

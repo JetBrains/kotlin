@@ -58,6 +58,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/class/ClassInnerClass.kt");
         }
         
+        @TestMetadata("ClassMemberConflict.kt")
+        public void testClassMemberConflict() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassMemberConflict.kt");
+        }
+        
         @TestMetadata("ClassOutParam.kt")
         public void testClassOutParam() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/ClassOutParam.kt");
@@ -257,6 +262,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("ClassObjectExtendsTraitWithTP.kt")
         public void testClassObjectExtendsTraitWithTP() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
+        }
+        
+        @TestMetadata("ClassObjectPropertyInClass.kt")
+        public void testClassObjectPropertyInClass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectPropertyInClass.kt");
         }
         
         @TestMetadata("InnerClassInClassObject.kt")
