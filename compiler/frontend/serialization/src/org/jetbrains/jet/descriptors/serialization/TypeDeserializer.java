@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,6 +120,24 @@ public class TypeDeserializer {
             @Override
             public String toString() {
                 return TypeUtils.toString(this);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (!(o instanceof JetType)) return false;
+
+                JetType type = (JetType) o;
+
+                return isNullable() == type.isNullable() && JetTypeChecker.INSTANCE.equalTypes(this, type);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = constructor != null ? constructor.hashCode() : 0;
+                result = 31 * result + arguments.hashCode();
+                result = 31 * result + (isNullable() ? 1 : 0);
+                return result;
             }
         };
     }
