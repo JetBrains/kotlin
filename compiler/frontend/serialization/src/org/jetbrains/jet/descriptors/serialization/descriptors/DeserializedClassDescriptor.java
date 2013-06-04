@@ -383,6 +383,12 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
         @Nullable
         @Override
+        protected ReceiverParameterDescriptor getImplicitReceiver() {
+            return classDescriptor.getThisAsReceiverParameter();
+        }
+
+        @Nullable
+        @Override
         protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
             return classDescriptor.nestedClasses.fun(name);
         }

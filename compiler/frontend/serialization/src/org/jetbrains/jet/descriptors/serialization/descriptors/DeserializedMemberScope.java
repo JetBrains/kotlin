@@ -239,8 +239,15 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
-        throw new UnsupportedOperationException("Should not be called");
+        ReceiverParameterDescriptor receiver = getImplicitReceiver();
+        if (receiver != null) {
+            return Collections.singletonList(receiver);
+        }
+        return Collections.emptyList();
     }
+
+    @Nullable
+    protected abstract ReceiverParameterDescriptor getImplicitReceiver();
 
     @NotNull
     @Override
