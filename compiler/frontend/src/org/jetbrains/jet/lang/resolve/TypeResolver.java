@@ -123,7 +123,8 @@ public class TypeResolver {
 
                         DeclarationDescriptor containing = typeParameterDescriptor.getContainingDeclaration();
                         if (containing instanceof ClassDescriptor) {
-                            DescriptorResolver.checkHasOuterClassInstance(scope, trace, referenceExpression, (ClassDescriptor) containing);
+                            // Type parameter can't be inherited from member of parent class, so we can skip subclass check
+                            DescriptorResolver.checkHasOuterClassInstance(scope, trace, referenceExpression, (ClassDescriptor) containing, false);
                         }
                     }
                     else if (classifierDescriptor instanceof ClassDescriptor) {

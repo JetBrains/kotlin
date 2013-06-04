@@ -3017,6 +3017,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inner/constructorAccess.kt");
             }
             
+            @TestMetadata("deepInnerClass.kt")
+            public void testDeepInnerClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/deepInnerClass.kt");
+            }
+            
             @TestMetadata("enumEntries.kt")
             public void testEnumEntries() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inner/enumEntries.kt");
