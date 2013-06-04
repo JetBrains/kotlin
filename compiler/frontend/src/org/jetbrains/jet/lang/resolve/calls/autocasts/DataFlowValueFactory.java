@@ -133,6 +133,9 @@ public class DataFlowValueFactory {
 
     @NotNull
     private static IdentifierInfo combineInfo(@Nullable IdentifierInfo receiverInfo, @NotNull IdentifierInfo selectorInfo) {
+        if (selectorInfo.id == null) {
+            return ERROR_IDENTIFIER_INFO;
+        }
         if (receiverInfo == null || receiverInfo == ERROR_IDENTIFIER_INFO || receiverInfo.isNamespace) {
             return selectorInfo;
         }
@@ -182,7 +185,7 @@ public class DataFlowValueFactory {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, simpleNameExpression);
         if (declarationDescriptor instanceof VariableDescriptor) {
             ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, simpleNameExpression);
-            // todo return assert
+            // todo uncomment assert
             // for now it fails for resolving 'invoke' convention, return it after 'invoke' algorithm changes
             // assert resolvedCall != null : "Cannot create right identifier info if the resolved call is not known yet for " + declarationDescriptor;
 
