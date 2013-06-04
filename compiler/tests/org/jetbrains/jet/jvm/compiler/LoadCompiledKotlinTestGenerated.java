@@ -259,6 +259,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
         }
         
+        @TestMetadata("InnerClassInClassObject.kt")
+        public void testInnerClassInClassObject() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/InnerClassInClassObject.kt");
+        }
+        
         @TestMetadata("SimpleClassObject.kt")
         public void testSimpleClassObject() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/SimpleClassObject.kt");

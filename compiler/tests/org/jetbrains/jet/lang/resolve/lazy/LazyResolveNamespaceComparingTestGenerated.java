@@ -261,6 +261,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
             }
             
+            @TestMetadata("InnerClassInClassObject.kt")
+            public void testInnerClassInClassObject() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/classObject/InnerClassInClassObject.kt");
+            }
+            
             @TestMetadata("SimpleClassObject.kt")
             public void testSimpleClassObject() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/classObject/SimpleClassObject.kt");
@@ -2135,6 +2140,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("propertyClassFileDependencyRecursion.kt")
         public void testPropertyClassFileDependencyRecursion() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/propertyClassFileDependencyRecursion.kt");
+        }
+        
+        @TestMetadata("resolveFunctionInsideClassObject.kt")
+        public void testResolveFunctionInsideClassObject() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/resolveFunctionInsideClassObject.kt");
         }
         
         @TestMetadata("sameClassNameResolve.kt")

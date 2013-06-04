@@ -163,6 +163,11 @@ public class JetResolveTestGenerated extends AbstractResolveTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/resolve/candidatesPriority"), Pattern.compile("^(.+)\\.resolve$"), true);
         }
         
+        @TestMetadata("classObjectOuterResolve.resolve")
+        public void testClassObjectOuterResolve() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/classObjectOuterResolve.resolve");
+        }
+        
         @TestMetadata("preferImplicitThisToNoReceiver.resolve")
         public void testPreferImplicitThisToNoReceiver() throws Exception {
             doTest("compiler/testData/resolve/candidatesPriority/preferImplicitThisToNoReceiver.resolve");

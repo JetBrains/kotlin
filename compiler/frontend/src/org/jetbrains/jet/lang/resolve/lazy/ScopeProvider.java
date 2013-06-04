@@ -165,8 +165,7 @@ public class ScopeProvider {
             LazyClassDescriptor classObjectDescriptor =
                     (LazyClassDescriptor) resolveSession.getClassObjectDescriptor(classObject).getContainingDeclaration();
 
-            // During class object header resolve there should be no resolution for parent class generic params
-            return new InnerClassesScopeWrapper(classObjectDescriptor.getScopeForMemberDeclarationResolution());
+            return classObjectDescriptor.getScopeForMemberDeclarationResolution();
         }
 
         throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + " " + jetDeclaration.getText());

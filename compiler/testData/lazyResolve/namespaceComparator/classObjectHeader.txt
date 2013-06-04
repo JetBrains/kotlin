@@ -5,7 +5,7 @@ internal fun testFun(/*0*/ a: jet.Int): jet.Int
 internal final class TestSome</*0*/ P> {
     /*primary*/ public constructor TestSome</*0*/ P>()
     
-    internal class object <class-object-for-TestSome> : test.ToResolve<[ERROR : P]> {
+    internal class object <class-object-for-TestSome> : test.ToResolve<P> {
         /*primary*/ private constructor <class-object-for-TestSome>()
     }
 }
