@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.NamespaceComparator;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,8 +68,12 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
 
         FqName test = new FqName("test");
+
         NamespaceDescriptor actual = lazyModule.getNamespace(test);
+        Assert.assertNotNull("Namespace for name " + test + " is null after lazy resolve", actual);
+
         NamespaceDescriptor expected = eagerModule.getNamespace(test);
+        Assert.assertNotNull("Namespace for name " + test + " is null after eager resolve", expected);
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
