@@ -574,7 +574,7 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
     }
     
     @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces")
-    @InnerTestClasses({ClosingBraces.For.class, ClosingBraces.If.class, ClosingBraces.Nested.class, ClosingBraces.When.class, ClosingBraces.While.class})
+    @InnerTestClasses({ClosingBraces.For.class, ClosingBraces.Function.class, ClosingBraces.If.class, ClosingBraces.Nested.class, ClosingBraces.When.class, ClosingBraces.While.class})
     public static class ClosingBraces extends AbstractCodeMoverTest {
         public void testAllFilesPresentInClosingBraces() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/moveUpDown/closingBraces"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -594,6 +594,34 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             @TestMetadata("for2.kt")
             public void testFor2() throws Exception {
                 doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/for/for2.kt");
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/codeInsight/moveUpDown/closingBraces/function")
+        public static class Function extends AbstractCodeMoverTest {
+            public void testAllFilesPresentInFunction() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/moveUpDown/closingBraces/function"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("function1.kt")
+            public void testFunction1() throws Exception {
+                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function1.kt");
+            }
+            
+            @TestMetadata("function2.kt")
+            public void testFunction2() throws Exception {
+                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function2.kt");
+            }
+            
+            @TestMetadata("function3.kt")
+            public void testFunction3() throws Exception {
+                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function3.kt");
+            }
+            
+            @TestMetadata("function4.kt")
+            public void testFunction4() throws Exception {
+                doTestExpression("idea/testData/codeInsight/moveUpDown/closingBraces/function/function4.kt");
             }
             
         }
@@ -714,6 +742,7 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             TestSuite suite = new TestSuite("ClosingBraces");
             suite.addTestSuite(ClosingBraces.class);
             suite.addTestSuite(For.class);
+            suite.addTestSuite(Function.class);
             suite.addTestSuite(If.class);
             suite.addTestSuite(Nested.class);
             suite.addTestSuite(When.class);

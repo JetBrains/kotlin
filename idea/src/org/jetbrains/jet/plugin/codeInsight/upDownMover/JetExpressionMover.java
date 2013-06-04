@@ -16,15 +16,12 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     public JetExpressionMover() {
     }
 
-    @SuppressWarnings("FieldMayBeFinal")
-    private static Class[] MOVABLE_ELEMENT_CLASSES = {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
+    private final static Class[] MOVABLE_ELEMENT_CLASSES = {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
 
-    @SuppressWarnings("FieldMayBeFinal")
-    private static Class[] BLOCKLIKE_ELEMENT_CLASSES =
+    private final static Class[] BLOCKLIKE_ELEMENT_CLASSES =
             {JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class, JetFile.class};
 
-    @SuppressWarnings("FieldMayBeFinal")
-    private static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
+    private final static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
             {JetFunction.class, JetPropertyAccessor.class, JetClassInitializer.class};
 
     @Nullable
@@ -113,7 +110,10 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
         PsiElement blockLikeElement = closingBrace.getParent();
         if (!(blockLikeElement instanceof JetBlockExpression)) return BraceStatus.NOT_MOVABLE;
-        if (blockLikeElement.getParent() instanceof JetWhenEntry) return BraceStatus.NOT_FOUND;
+
+        PsiElement blockParent = blockLikeElement.getParent();
+        if (blockParent instanceof JetWhenEntry) return BraceStatus.NOT_FOUND;
+        if (PsiTreeUtil.instanceOf(blockParent, FUNCTIONLIKE_ELEMENT_CLASSES)) return BraceStatus.NOT_FOUND;
 
         PsiElement enclosingExpression = PsiTreeUtil.getParentOfType(blockLikeElement, JetExpression.class);
 
