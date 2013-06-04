@@ -79,34 +79,6 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         return memberSuspects;
     }
 
-    @Nullable
-    private static LineRange adjustDeclarationRange(
-            @NotNull JetDeclaration declaration,
-            @NotNull Editor editor,
-            @NotNull LineRange lineRange
-    ) {
-        Document doc = editor.getDocument();
-        TextRange textRange = declaration.getTextRange();
-        if (doc.getTextLength() < textRange.getEndOffset()) return null;
-
-        int startLine = editor.offsetToLogicalPosition(textRange.getStartOffset()).line;
-        int endLine = editor.offsetToLogicalPosition(textRange.getEndOffset()).line + 1;
-
-        if (startLine == lineRange.startLine || startLine == lineRange.endLine
-            || endLine == lineRange.startLine || endLine == lineRange.endLine) {
-            return new LineRange(startLine, endLine);
-        }
-
-        TextRange lineTextRange = new TextRange(doc.getLineStartOffset(lineRange.startLine),
-                                                doc.getLineEndOffset(lineRange.endLine));
-        for (PsiElement anchor : getDeclarationAnchors(declaration)) {
-            TextRange suspectTextRange = anchor.getTextRange();
-            if (suspectTextRange != null && lineTextRange.intersects(suspectTextRange)) return new LineRange(startLine, endLine);
-        }
-
-        return null;
-    }
-
     private static final Class[] DECLARATION_CONTAINER_CLASSES =
             {JetClassBody.class, JetClassInitializer.class, JetFunction.class, JetPropertyAccessor.class, JetFile.class};
 
@@ -126,45 +98,35 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                                       CLASSBODYLIKE_DECLARATION_CONTAINER_CLASSES) ? declaration : null;
     }
 
-    @Nullable
-    private static LineRange getSourceRange(
-            @NotNull JetDeclaration firstDecl,
-            @NotNull JetDeclaration lastDecl,
-            @NotNull Editor editor,
-            @NotNull LineRange oldRange
-    ) {
-        if (firstDecl == lastDecl) {
-            LineRange range = adjustDeclarationRange(firstDecl, editor, oldRange);
+    @Override
+    protected boolean checkSourceElement(@NotNull PsiElement element) {
+        return element instanceof JetDeclaration;
+    }
 
-            if (range != null) {
-                range.firstElement = range.lastElement = firstDecl;
-            }
+    @Override
+    protected LineRange getElementSourceLineRange(@NotNull PsiElement element, @NotNull Editor editor, @NotNull LineRange oldRange) {
+        JetDeclaration declaration = (JetDeclaration) element;
 
-            return range;
+        Document doc = editor.getDocument();
+        TextRange textRange = declaration.getTextRange();
+        if (doc.getTextLength() < textRange.getEndOffset()) return null;
+
+        int startLine = editor.offsetToLogicalPosition(textRange.getStartOffset()).line;
+        int endLine = editor.offsetToLogicalPosition(textRange.getEndOffset()).line + 1;
+
+        if (startLine == oldRange.startLine || startLine == oldRange.endLine
+            || endLine == oldRange.startLine || endLine == oldRange.endLine) {
+            return new LineRange(startLine, endLine);
         }
 
-        PsiElement parent = PsiTreeUtil.findCommonParent(firstDecl, lastDecl);
-        if (parent == null) return null;
-
-        Pair<PsiElement, PsiElement> combinedRange = getElementRange(parent, firstDecl, lastDecl);
-
-        if (combinedRange == null
-            || !(combinedRange.first instanceof JetDeclaration)
-            || !(combinedRange.second instanceof JetDeclaration)) {
-            return null;
+        TextRange lineTextRange = new TextRange(doc.getLineStartOffset(oldRange.startLine),
+                                                doc.getLineEndOffset(oldRange.endLine));
+        for (PsiElement anchor : getDeclarationAnchors(declaration)) {
+            TextRange suspectTextRange = anchor.getTextRange();
+            if (suspectTextRange != null && lineTextRange.intersects(suspectTextRange)) return new LineRange(startLine, endLine);
         }
 
-        LineRange lineRange1 = adjustDeclarationRange((JetDeclaration) combinedRange.getFirst(), editor, oldRange);
-        if (lineRange1 == null) return null;
-
-        LineRange lineRange2 = adjustDeclarationRange((JetDeclaration) combinedRange.getSecond(), editor, oldRange);
-        if (lineRange2 == null) return null;
-
-        LineRange range = new LineRange(lineRange1.startLine, lineRange2.endLine);
-        range.firstElement = combinedRange.getFirst();
-        range.lastElement = combinedRange.getSecond();
-
-        return range;
+        return null;
     }
 
     @Nullable

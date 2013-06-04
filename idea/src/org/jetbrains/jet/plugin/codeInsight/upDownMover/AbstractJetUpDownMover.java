@@ -3,6 +3,7 @@ package org.jetbrains.jet.plugin.codeInsight.upDownMover;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -12,6 +13,45 @@ import org.jetbrains.jet.lang.psi.JetFile;
 
 public abstract class AbstractJetUpDownMover extends LineMover {
     protected AbstractJetUpDownMover() {
+    }
+
+    protected abstract boolean checkSourceElement(@NotNull PsiElement element);
+    protected abstract LineRange getElementSourceLineRange(@NotNull PsiElement element, @NotNull Editor editor, @NotNull LineRange oldRange);
+
+    @Nullable
+    protected LineRange getSourceRange(@NotNull PsiElement firstElement, @NotNull PsiElement lastElement, @NotNull Editor editor, LineRange oldRange) {
+        if (firstElement == lastElement) {
+            LineRange sourceRange = getElementSourceLineRange(firstElement, editor, oldRange);
+
+            if (sourceRange != null) {
+                sourceRange.firstElement = sourceRange.lastElement = firstElement;
+            }
+
+            return sourceRange;
+        }
+
+        PsiElement parent = PsiTreeUtil.findCommonParent(firstElement, lastElement);
+        if (parent == null) return null;
+
+        Pair<PsiElement, PsiElement> combinedRange = getElementRange(parent, firstElement, lastElement);
+
+        if (combinedRange == null
+            || !checkSourceElement(combinedRange.first)
+            || !checkSourceElement(combinedRange.second)) {
+            return null;
+        }
+
+        LineRange lineRange1 = getElementSourceLineRange(combinedRange.first, editor, oldRange);
+        if (lineRange1 == null) return null;
+
+        LineRange lineRange2 = getElementSourceLineRange(combinedRange.second, editor, oldRange);
+        if (lineRange2 == null) return null;
+
+        LineRange sourceRange = new LineRange(lineRange1.startLine, lineRange2.endLine);
+        sourceRange.firstElement = combinedRange.first;
+        sourceRange.lastElement = combinedRange.second;
+
+        return sourceRange;
     }
 
     @Nullable

@@ -31,17 +31,6 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             {JetFunction.class, JetPropertyAccessor.class, JetClassInitializer.class};
 
     @Nullable
-    private static LineRange getLineRange(@NotNull PsiElement element, @NotNull Editor editor) {
-        TextRange textRange = element.getTextRange();
-        if (editor.getDocument().getTextLength() < textRange.getEndOffset()) return null;
-
-        int startLine = editor.offsetToLogicalPosition(textRange.getStartOffset()).line;
-        int endLine = editor.offsetToLogicalPosition(textRange.getEndOffset()).line + 1;
-
-        return new LineRange(startLine, endLine);
-    }
-
-    @Nullable
     private static PsiElement getStandaloneClosingBrace(@NotNull PsiFile file, @NotNull Editor editor) {
         LineRange range = getLineRangeFromSelection(editor);
         if (range.endLine - range.startLine != 1) return null;
@@ -259,42 +248,20 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         return null;
     }
 
-    @Nullable
-    private static LineRange getSourceRange(@NotNull PsiElement firstElement, @NotNull PsiElement lastElement, @NotNull Editor editor) {
-        if (firstElement == lastElement) {
-            //noinspection ConstantConditions
-            LineRange sourceRange = getLineRange(firstElement, editor);
+    @Override
+    protected boolean checkSourceElement(@NotNull PsiElement element) {
+        return PsiTreeUtil.instanceOf(element, MOVABLE_ELEMENT_CLASSES);
+    }
 
-            if (sourceRange != null) {
-                sourceRange.firstElement = sourceRange.lastElement = firstElement;
-            }
+    @Override
+    protected LineRange getElementSourceLineRange(@NotNull PsiElement element, @NotNull Editor editor, @NotNull LineRange oldRange) {
+        TextRange textRange = element.getTextRange();
+        if (editor.getDocument().getTextLength() < textRange.getEndOffset()) return null;
 
-            return sourceRange;
-        }
+        int startLine = editor.offsetToLogicalPosition(textRange.getStartOffset()).line;
+        int endLine = editor.offsetToLogicalPosition(textRange.getEndOffset()).line + 1;
 
-        //noinspection ConstantConditions
-        PsiElement parent = PsiTreeUtil.findCommonParent(firstElement, lastElement);
-        if (parent == null) return null;
-
-        Pair<PsiElement, PsiElement> combinedRange = getElementRange(parent, firstElement, lastElement);
-
-        if (combinedRange == null
-            || !(PsiTreeUtil.instanceOf(combinedRange.first, MOVABLE_ELEMENT_CLASSES))
-            || !(PsiTreeUtil.instanceOf(combinedRange.second, MOVABLE_ELEMENT_CLASSES))) {
-            return null;
-        }
-
-        LineRange lineRange1 = getLineRange(combinedRange.first, editor);
-        if (lineRange1 == null) return null;
-
-        LineRange lineRange2 = getLineRange(combinedRange.second, editor);
-        if (lineRange2 == null) return null;
-
-        LineRange sourceRange = new LineRange(lineRange1.startLine, lineRange2.endLine);
-        sourceRange.firstElement = combinedRange.first;
-        sourceRange.lastElement = combinedRange.second;
-
-        return sourceRange;
+        return new LineRange(startLine, endLine);
     }
 
     @Nullable
@@ -415,7 +382,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             return true;
         }
 
-        LineRange sourceRange = getSourceRange(firstElement, lastElement, editor);
+        LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
         if (sourceRange == null) return false;
 
         PsiElement sibling = adjustWhiteSpaceSibling(editor, sourceRange, info, down);
