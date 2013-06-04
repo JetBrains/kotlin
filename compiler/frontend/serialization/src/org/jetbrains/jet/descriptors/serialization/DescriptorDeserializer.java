@@ -166,6 +166,7 @@ public class DescriptorDeserializer {
                 visibility(Flags.VISIBILITY.get(proto.getFlags())),
                 !classDescriptor.isInner()
         );
+        descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()));
         return descriptor;
     }
 
