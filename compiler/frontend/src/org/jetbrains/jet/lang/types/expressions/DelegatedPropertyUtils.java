@@ -123,8 +123,48 @@ public class DelegatedPropertyUtils {
         PropertyAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
         assert accessor != null : "Delegated property should have getter/setter " + propertyDescriptor + " " + delegateExpression.getText();
 
+        if (trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor) != null) return;
+
+        OverloadResolutionResults<FunctionDescriptor> functionResults = getDelegatedPropertyConventionMethod(
+                propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace, scope, isGet);
         Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor);
-        if (call != null) return;
+        assert call != null : "'getDelegatedPropertyConventionMethod' didn't record a call";
+
+        if (!functionResults.isSuccess()) {
+            String expectedFunction = renderCall(call, trace.getBindingContext());
+            if (functionResults.isIncomplete()) {
+                trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
+            }
+            else if (functionResults.isSingleResult() ||
+                     functionResults.getResultCode() == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
+                trace.report(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
+                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+            }
+            else if (functionResults.isAmbiguity()) {
+                trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
+                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+            }
+            else {
+                trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
+            }
+            return;
+        }
+
+        trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, functionResults.getResultingCall());
+    }
+
+    /* Resolve get() or set() methods from delegate */
+    public static OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetExpression delegateExpression,
+            @NotNull JetType delegateType,
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            boolean isGet
+    ) {
+        PropertyAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
+        assert accessor != null : "Delegated property should have getter/setter " + propertyDescriptor + " " + delegateExpression.getText();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, trace, scope,
@@ -144,39 +184,17 @@ public class DelegatedPropertyUtils {
                                                                              propertyDescriptor.getType());
             arguments.add(fakeArgument);
             List<ValueParameterDescriptor> valueParameters = accessor.getValueParameters();
-            context.trace.record(REFERENCE_TARGET, fakeArgument, valueParameters.get(0));
+            trace.record(REFERENCE_TARGET, fakeArgument, valueParameters.get(0));
         }
 
         Name functionName = Name.identifier(isGet ? "get" : "set");
         JetReferenceExpression fakeCalleeExpression = createSimpleName(project, functionName.asString());
 
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
-        call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
-        context.trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, call);
+        Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
+        trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, call);
 
-        OverloadResolutionResults<FunctionDescriptor> functionResults = context.resolveCallWithGivenName(call, fakeCalleeExpression, functionName);
-
-        if (!functionResults.isSuccess()) {
-            String expectedFunction = renderCall(call, trace.getBindingContext());
-            if (functionResults.isIncomplete()) {
-                context.trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
-            }
-            else if (functionResults.isSingleResult() ||
-                     functionResults.getResultCode() == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
-                context.trace.report(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
-                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
-            }
-            else if (functionResults.isAmbiguity()) {
-                context.trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
-                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
-            }
-            else {
-                context.trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
-            }
-            return;
-        }
-
-        context.trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, functionResults.getResultingCall());
+        return context.resolveCallWithGivenName(call, fakeCalleeExpression, functionName);
     }
 
     private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {

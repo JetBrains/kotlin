@@ -1888,6 +1888,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty")
+        @InnerTestClasses({DelegatedProperty.Inference.class})
         public static class DelegatedProperty extends AbstractDiagnosticsTestWithEagerResolve {
             @TestMetadata("absentErrorAboutInitializer.kt")
             public void testAbsentErrorAboutInitializer() throws Exception {
@@ -2053,6 +2054,35 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/wrongSetterReturnType.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference")
+            public static class Inference extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInInference() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/delegatedProperty/inference"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("differentDelegatedExpressions.kt")
+                public void testDifferentDelegatedExpressions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.kt");
+                }
+                
+                @TestMetadata("noErrorsForImplicitConstraints.kt")
+                public void testNoErrorsForImplicitConstraints() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/noErrorsForImplicitConstraints.kt");
+                }
+                
+                @TestMetadata("useExpectedType.kt")
+                public void testUseExpectedType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/useExpectedType.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("DelegatedProperty");
+                suite.addTestSuite(DelegatedProperty.class);
+                suite.addTestSuite(Inference.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/deparenthesize")
@@ -4717,6 +4747,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("combineWithNoSelectorInfo.kt")
+            public void testCombineWithNoSelectorInfo() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/combineWithNoSelectorInfo.kt");
+            }
+            
             @TestMetadata("kt1461.kt")
             public void testKt1461() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/smartCasts/kt1461.kt");
@@ -4945,7 +4980,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
-            suite.addTestSuite(DelegatedProperty.class);
+            suite.addTest(DelegatedProperty.innerSuite());
             suite.addTestSuite(Deparenthesize.class);
             suite.addTest(Enum.innerSuite());
             suite.addTestSuite(Extensions.class);

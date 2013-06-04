@@ -755,4 +755,25 @@ public class JetPsiUtil {
     public static boolean isInComment(PsiElement element) {
         return CommentUtilCore.isComment(element) || element instanceof KDocElement;
     }
+
+    @Nullable
+    public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
+        if (expression instanceof JetCallElement) {
+            JetCallElement callExpression = (JetCallElement) expression;
+            return callExpression.getCalleeExpression();
+        }
+        if (expression instanceof JetQualifiedExpression) {
+            JetExpression selectorExpression = ((JetQualifiedExpression) expression).getSelectorExpression();
+            if (selectorExpression != null) {
+                return getCalleeExpressionIfAny(selectorExpression);
+            }
+        }
+        if (expression instanceof JetUnaryExpression) {
+            return ((JetUnaryExpression) expression).getOperationReference();
+        }
+        if (expression instanceof JetBinaryExpression) {
+            return ((JetBinaryExpression) expression).getOperationReference();
+        }
+        return null;
+    }
 }
