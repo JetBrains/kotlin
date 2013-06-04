@@ -63,7 +63,7 @@ public class Converter {
 
     public Converter(@NotNull Project project) {
         this.project = project;
-        KotlinBuiltIns.initialize(project, KotlinBuiltIns.InitializationMode.MULTI_THREADED);
+        KotlinBuiltIns.initialize();
     }
 
     @NotNull
