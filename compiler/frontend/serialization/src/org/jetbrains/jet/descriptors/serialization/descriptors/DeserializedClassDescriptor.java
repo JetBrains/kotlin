@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -61,6 +62,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final Visibility visibility;
     private final ClassKind kind;
     private final boolean isInner;
+    private final InnerClassesScopeWrapper innerClassesScope;
 
     public DeserializedClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -78,6 +80,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.containingDeclaration = containingDeclaration;
         this.typeConstructor = new DeserializedClassTypeConstructor();
         this.memberScope = new DeserializedClassMemberScope(this);
+        this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
         this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
 
         this.name = nameResolver.getName(classProto.getName());
@@ -201,7 +204,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     @NotNull
     @Override
     public JetScope getUnsubstitutedInnerClassesScope() {
-        return JetScope.EMPTY; // TODO inner classes
+        return innerClassesScope;
     }
 
     @Nullable
