@@ -119,7 +119,7 @@ public class DataFlowValueFactory {
         }
     }
 
-    private static final IdentifierInfo ERROR_IDENTIFIER_INFO = new IdentifierInfo(null, false, false);
+    private static final IdentifierInfo NO_IDENTIFIER_INFO = new IdentifierInfo(null, false, false);
 
     @NotNull
     private static IdentifierInfo createInfo(Object id, boolean isStable) {
@@ -134,9 +134,9 @@ public class DataFlowValueFactory {
     @NotNull
     private static IdentifierInfo combineInfo(@Nullable IdentifierInfo receiverInfo, @NotNull IdentifierInfo selectorInfo) {
         if (selectorInfo.id == null) {
-            return ERROR_IDENTIFIER_INFO;
+            return NO_IDENTIFIER_INFO;
         }
-        if (receiverInfo == null || receiverInfo == ERROR_IDENTIFIER_INFO || receiverInfo.isNamespace) {
+        if (receiverInfo == null || receiverInfo == NO_IDENTIFIER_INFO || receiverInfo.isNamespace) {
             return selectorInfo;
         }
         return createInfo(Pair.create(receiverInfo.id, selectorInfo.id), receiverInfo.isStable && selectorInfo.isStable);
@@ -174,7 +174,7 @@ public class DataFlowValueFactory {
         else if (expression instanceof JetRootNamespaceExpression) {
             return createNamespaceInfo(JetModuleUtil.getRootNamespaceType(expression));
         }
-        return ERROR_IDENTIFIER_INFO;
+        return NO_IDENTIFIER_INFO;
     }
 
     @NotNull
@@ -201,7 +201,7 @@ public class DataFlowValueFactory {
             ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
             return createInfo(classDescriptor, classDescriptor.isClassObjectAValue());
         }
-        return ERROR_IDENTIFIER_INFO;
+        return NO_IDENTIFIER_INFO;
     }
 
     @Nullable
@@ -257,7 +257,7 @@ public class DataFlowValueFactory {
         if (descriptorOfThisReceiver instanceof ClassDescriptor) {
             return createInfo(((ClassDescriptor) descriptorOfThisReceiver).getThisAsReceiverParameter().getValue(), true);
         }
-        return ERROR_IDENTIFIER_INFO;
+        return NO_IDENTIFIER_INFO;
     }
 
     public static boolean isStableVariable(@NotNull VariableDescriptor variableDescriptor) {
