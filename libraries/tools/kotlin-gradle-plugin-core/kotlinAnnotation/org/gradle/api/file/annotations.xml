@@ -1,0 +1,5 @@
+<root>
+    <item name='org.gradle.api.file.FileCollection org.gradle.api.file.FileCollection filter(org.gradle.api.specs.Spec&lt;? super java.io.File&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

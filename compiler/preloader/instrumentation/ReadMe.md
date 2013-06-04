@@ -27,7 +27,7 @@ This is determined by the ```src/META-INF/services/org.jetbrains.jet.preloading.
 Preloader loads the **first** instrumenter service found on the class path.
 Services are provided through the [standard JDK mechanism](http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html).
 
-Every preloaded class is run through the instrumenter. Before exiting the program instrumenter's dupm() method is called.
+Every preloaded class is run through the instrumenter. Before exiting the program instrumenter's dump() method is called.
 **Note** JDK classes and everything in the Preloader's own class path are not preloaded, thus not instrumented.
 
 The ```instrumentation``` module provides a convenient way to define useful instrumenters:

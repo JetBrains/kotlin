@@ -126,17 +126,9 @@
 
     <macrodef name="get-asm4-and-rename-packages">
         <sequential>
-            <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources -->
-            <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="4.0"/>
-
-            <!-- Rename packages in the jars -->
-            <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
-
-            <jarjar jarfile="dependencies/jetbrains-asm-debug-all-4.0.jar">
-                <zipfileset src="dependencies/download/asm-debug-all-4.0.jar"/>
-
-                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
-            </jarjar>
+            <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources from idea13 build (with debug info and patched for java 8) -->
+            <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/83470:id/jps/asm4-all.jar" dest="dependencies/jetbrains-asm-debug-all-4.0.jar" usetimestamp="true"/>
+            <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="4.0" bin="false"/>
 
             <!-- Rename packages in the sources -->
             <delete dir="dependencies/download/asm-src" failonerror="false"/>

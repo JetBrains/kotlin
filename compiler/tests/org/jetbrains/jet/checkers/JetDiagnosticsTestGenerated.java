@@ -4722,6 +4722,26 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/smartCasts/kt1461.kt");
             }
             
+            @TestMetadata("kt2422.kt")
+            public void testKt2422() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/kt2422.kt");
+            }
+            
+            @TestMetadata("noErrorCheckForPackageLevelVal.kt")
+            public void testNoErrorCheckForPackageLevelVal() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/noErrorCheckForPackageLevelVal.kt");
+            }
+            
+            @TestMetadata("thisWithLabel.kt")
+            public void testThisWithLabel() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
+            }
+            
+            @TestMetadata("thisWithLabelAsReceiverPart.kt")
+            public void testThisWithLabelAsReceiverPart() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabelAsReceiverPart.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/substitutions")

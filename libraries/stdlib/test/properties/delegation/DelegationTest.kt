@@ -3,8 +3,6 @@ package test.properties.delegation
 import junit.framework.TestCase
 import kotlin.test.*
 import kotlin.properties.*
-import kotlin.properties.delegation.*
-import kotlin.properties.delegation.lazy.*
 
 trait WithBox {
     fun box(): String
@@ -27,8 +25,8 @@ class DelegationTest(): DelegationTestBase() {
 }
 
 public class TestNotNullVar<T>(val a1: String, val b1: T): WithBox {
-    var a: String by NotNullVar<String>()
-    var b by NotNullVar<T>()
+    var a: String by Delegates.notNull<String>()
+    var b by Delegates.notNull<T>()
 
     override fun box(): String {
         a = a1

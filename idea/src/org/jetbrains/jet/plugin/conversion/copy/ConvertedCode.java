@@ -43,12 +43,12 @@ class ConvertedCode implements TextBlockTransferableData {
 
     @Override
     public int getOffsets(int[] offsets, int index) {
-        return 0;
+        return index;
     }
 
     @Override
     public int setOffsets(int[] offsets, int index) {
-        return 0;
+        return index;
     }
 
     public String getData() {

@@ -78,8 +78,8 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         editor.getCaretModel().moveToOffset(insertedWhenEntry.getTextOffset() + cursorOffset);
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction createAction(Diagnostic diagnostic) {

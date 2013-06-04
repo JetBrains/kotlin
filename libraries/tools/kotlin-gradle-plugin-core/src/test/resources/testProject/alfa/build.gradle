@@ -1,0 +1,49 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven {
+        url 'file://' + pathToKotlinPlugin
+    }
+  }
+  dependencies {
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin-core:0.1-SNAPSHOT'
+  }
+}
+
+apply plugin: org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
+
+sourceSets {
+ deploy
+}
+
+repositories {
+  maven {
+     url 'file://' + pathToKotlinPlugin
+  }
+  mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:12.0'
+    deployCompile 'com.google.guava:guava:12.0'
+    testCompile  'org.testng:testng:6.8'
+    testRuntime  'org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT'
+}
+
+test {
+    useTestNG()
+}
+
+task show << {
+   buildscript.configurations.classpath.each { println it }
+}
+
+
+compileKotlin {
+    kotlinOptions.annotations = "externalAnnotations"
+}
+
+
+task wrapper(type: Wrapper) {
+  gradleVersion="1.4"
+}

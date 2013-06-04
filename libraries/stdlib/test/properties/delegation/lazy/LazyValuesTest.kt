@@ -1,8 +1,8 @@
 package test.properties.delegation.lazy
 
-import kotlin.properties.delegation.lazy.*
 import test.properties.delegation.WithBox
 import test.properties.delegation.DelegationTestBase
+import kotlin.properties.*
 
 class LazyValuesTest(): DelegationTestBase() {
 
@@ -33,7 +33,7 @@ class LazyValuesTest(): DelegationTestBase() {
 
 class TestLazyVal: WithBox {
     var result = 0
-    val a by LazyVal {
+    val a by Delegates.lazy {
         ++result
     }
 
@@ -48,8 +48,8 @@ class TestNullableLazyVal: WithBox {
     var resultA = 0
     var resultB = 0
 
-    val a: Int? by NullableLazyVal { resultA++; null}
-    val b by NullableLazyVal { foo() }
+    val a: Int? by Delegates.lazy { resultA++; null}
+    val b by Delegates.lazy { foo() }
 
     override fun box(): String {
         a
@@ -70,7 +70,7 @@ class TestNullableLazyVal: WithBox {
 
 class TestAtomicLazyVal: WithBox {
     var result = 0
-    val a by AtomicLazyVal {
+    val a by Delegates.blockingLazy {
         ++result
     }
 
@@ -85,8 +85,8 @@ class TestVolatileNullableLazyVal: WithBox {
     var resultA = 0
     var resultB = 0
 
-    val a: Int? by VolatileNullableLazyVal { resultA++; null}
-    val b by VolatileNullableLazyVal { foo() }
+    val a: Int? by Delegates.blockingLazy { resultA++; null}
+    val b by Delegates.blockingLazy { foo() }
 
     override fun box(): String {
         a
@@ -107,7 +107,7 @@ class TestVolatileNullableLazyVal: WithBox {
 
 class TestVolatileLazyVal: WithBox {
     var result = 0
-    val a by VolatileLazyVal {
+    val a by Delegates.blockingLazy {
         ++result
     }
 
@@ -122,8 +122,8 @@ class TestAtomicNullableLazyVal: WithBox {
     var resultA = 0
     var resultB = 0
 
-    val a: Int? by AtomicNullableLazyVal { resultA++; null}
-    val b by AtomicNullableLazyVal { foo() }
+    val a: Int? by Delegates.blockingLazy { resultA++; null}
+    val b by Delegates.blockingLazy { foo() }
 
     override fun box(): String {
         a

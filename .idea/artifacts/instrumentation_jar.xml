@@ -4,7 +4,7 @@
     <root id="archive" name="instrumentation.jar">
       <element id="module-output" name="instrumentation" />
       <element id="extracted-dir" path="$PROJECT_DIR$/ideaSDK/lib/guava-12.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/ideaSDK/lib/asm4-all.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/ideaSDK/lib/jetbrains-asm-debug-all-4.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

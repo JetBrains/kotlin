@@ -1,0 +1,7 @@
+<root>
+    <item name='org.gradle.api.initialization.dsl.ScriptHandler org.gradle.api.artifacts.ConfigurationContainer getConfigurations()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getConfigurations() : ConfigurationContainer&quot;"/>
+        </annotation>
+    </item>
+</root>
