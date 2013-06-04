@@ -149,7 +149,11 @@ public class ScopeProvider {
                 return classDescriptor.getScopeForPropertyInitializerResolution();
             }
             if (jetDeclaration instanceof JetEnumEntry) {
-                return ((LazyClassDescriptor) classDescriptor.getClassObjectDescriptor()).getScopeForMemberDeclarationResolution();
+                LazyClassDescriptor descriptor = (LazyClassDescriptor) classDescriptor.getClassObjectDescriptor();
+                assert descriptor != null : "There should be class object descriptor for enum class " + parentDeclaration.getText() +
+                                            " on entry " + jetDeclaration.getText();
+
+                return descriptor.getScopeForMemberDeclarationResolution();
             }
             return classDescriptor.getScopeForMemberDeclarationResolution();
         }
