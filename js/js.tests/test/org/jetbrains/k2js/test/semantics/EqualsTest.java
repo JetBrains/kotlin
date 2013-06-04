@@ -45,4 +45,8 @@ public final class EqualsTest extends AbstractExpressionTest {
     public void testKt2370() throws Exception {
         fooBoxTest();
     }
+
+    public void testEqualsNullOrUndefined() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
@@ -32,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
 public final class TranslationUtils {
     private TranslationUtils() {
@@ -64,19 +64,15 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation notNullConditionalTestExpression(@NotNull TemporaryVariable cachedValue) {
-        return and(inequality(cachedValue.assignmentExpression(), JsLiteral.NULL),
-                   inequality(cachedValue.reference(), JsLiteral.UNDEFINED));
+    public static JsBinaryOperation isNotNullCheck(@NotNull JsExpression expressionToCheck) {
+        return nullCheck(expressionToCheck, true);
     }
 
     @NotNull
     public static JsBinaryOperation nullCheck(@NotNull JsExpression expressionToCheck, boolean isNegated) {
-        JsBinaryOperator operator = isNegated ? JsBinaryOperator.REF_NEQ : JsBinaryOperator.REF_EQ;
-        return new JsBinaryOperation(isNegated ? JsBinaryOperator.AND : JsBinaryOperator.OR,
-                                     new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL),
-                                     new JsBinaryOperation(operator, expressionToCheck, JsLiteral.UNDEFINED));
+        JsBinaryOperator operator = isNegated ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
+        return new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL);
     }
-
     @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
             @NotNull List<? extends ValueArgument> jetArguments) {
