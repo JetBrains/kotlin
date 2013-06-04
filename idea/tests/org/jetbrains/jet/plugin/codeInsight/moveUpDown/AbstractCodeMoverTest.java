@@ -19,9 +19,11 @@ package org.jetbrains.jet.plugin.codeInsight.moveUpDown;
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction;
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction;
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
@@ -83,9 +85,14 @@ public abstract class AbstractCodeMoverTest extends LightCodeInsightTestCase {
         }
     }
 
-    private void invokeAndCheck(@NotNull String path, boolean down) {
-        EditorAction action = down ? new MoveStatementDownAction() : new MoveStatementUpAction();
-        action.actionPerformed(getEditor(), getCurrentEditorDataContext());
+    private void invokeAndCheck(@NotNull String path, final boolean down) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                EditorAction action = down ? new MoveStatementDownAction() : new MoveStatementUpAction();
+                action.actionPerformed(getEditor(), getCurrentEditorDataContext());
+            }
+        });
         checkResultByFile(path + ".after");
     }
 

@@ -385,6 +385,36 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
                 doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/typeParams3.kt");
             }
             
+            @TestMetadata("valueArgs1.kt")
+            public void testValueArgs1() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs1.kt");
+            }
+            
+            @TestMetadata("valueArgs2.kt")
+            public void testValueArgs2() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs2.kt");
+            }
+            
+            @TestMetadata("valueArgs3.kt")
+            public void testValueArgs3() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs3.kt");
+            }
+            
+            @TestMetadata("valueArgs4.kt")
+            public void testValueArgs4() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs4.kt");
+            }
+            
+            @TestMetadata("valueArgs5.kt")
+            public void testValueArgs5() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs5.kt");
+            }
+            
+            @TestMetadata("valueArgs6.kt")
+            public void testValueArgs6() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueArgs6.kt");
+            }
+            
             @TestMetadata("valueParams1.kt")
             public void testValueParams1() throws Exception {
                 doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors/valueParams1.kt");

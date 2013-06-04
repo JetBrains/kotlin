@@ -5,10 +5,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +17,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @SuppressWarnings("FieldMayBeFinal")
-    private static Class[] MOVABLE_ELEMENT_CLASSES = {JetExpression.class, JetWhenEntry.class, PsiComment.class};
+    private static Class[] MOVABLE_ELEMENT_CLASSES = {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
 
     @SuppressWarnings("FieldMayBeFinal")
     private static Class[] BLOCKLIKE_ELEMENT_CLASSES =
@@ -231,12 +228,35 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private static LineRange getTargetRange(
+    private LineRange getValueParamOrArgTargetRange(@NotNull Editor editor, @NotNull PsiElement elementToCheck, @NotNull PsiElement sibling, boolean down) {
+        PsiElement next = sibling;
+
+        if (next.getNode().getElementType() == JetTokens.COMMA) {
+            next = firstNonWhiteSibling(next, down);
+        }
+
+        LineRange range = (next instanceof JetParameter || next instanceof JetValueArgument)
+               ? new LineRange(next, next, editor.getDocument())
+               : null;
+
+        if (range != null) {
+            parametersOrArgsToMove = new Pair<PsiElement, PsiElement>(elementToCheck, next);
+        }
+
+        return range;
+    }
+
+    @Nullable
+    private LineRange getTargetRange(
             @NotNull Editor editor,
             @Nullable PsiElement elementToCheck,
             @NotNull PsiElement sibling,
             boolean down
     ) {
+        if (elementToCheck instanceof JetParameter || elementToCheck instanceof JetValueArgument) {
+            return getValueParamOrArgTargetRange(editor, elementToCheck, sibling, down);
+        }
+
         if (elementToCheck instanceof JetExpression || elementToCheck instanceof PsiComment) {
             return getExpressionTargetRange(editor, sibling, down);
         }
@@ -276,19 +296,16 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         return movableElement;
     }
 
-    private static enum MoveStatus {
-        DEFAULT,
-        FORBIDDEN,
-        PERMITTED
+    private static boolean isLastOfItsKind(@NotNull PsiElement element, boolean down) {
+        return getSiblingOfType(element, down, element.getClass()) == null;
     }
 
-    private static MoveStatus getMoveStatus(@NotNull PsiElement element, boolean down) {
-        if (element instanceof JetParameter) {
-            PsiElement sibling = getSiblingOfType(element, down, element.getClass());
-            return (sibling != null) ? MoveStatus.DEFAULT : MoveStatus.FORBIDDEN;
+    private static boolean isForbiddenMove(@NotNull PsiElement element, boolean down) {
+        if (element instanceof JetParameter || element instanceof JetValueArgument) {
+            return isLastOfItsKind(element, down);
         }
 
-        return MoveStatus.PERMITTED;
+        return false;
     }
 
     private static boolean isBracelessBlock(@NotNull PsiElement element) {
@@ -348,6 +365,8 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     @Override
     public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
+        parametersOrArgsToMove = null;
+
         if (!super.checkAvailable(editor, file, info, down)) return false;
 
         switch (checkForMovableClosingBrace(editor, file, info, down)) {
@@ -370,16 +389,13 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
         if (firstElement == null || lastElement == null) return false;
 
-        MoveStatus firstMoveStatus = getMoveStatus(firstElement, down);
-        MoveStatus lastMoveStatus = getMoveStatus(lastElement, down);
-
-        if (firstMoveStatus == MoveStatus.DEFAULT || lastMoveStatus == MoveStatus.DEFAULT) {
+        if (isForbiddenMove(firstElement, down) || isForbiddenMove(lastElement, down)) {
+            info.toMove2 = null;
             return true;
         }
 
-        if (firstMoveStatus == MoveStatus.FORBIDDEN || lastMoveStatus == MoveStatus.FORBIDDEN) {
-            info.toMove2 = null;
-            return true;
+        if ((firstElement instanceof JetParameter || firstElement instanceof JetValueArgument) && PsiTreeUtil.isAncestor(lastElement, firstElement, false)) {
+            lastElement = firstElement;
         }
 
         LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
@@ -393,5 +409,40 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         info.toMove = sourceRange;
         info.toMove2 = getTargetRange(editor, sourceRange.firstElement, sibling, down);
         return true;
+    }
+
+    @Nullable
+    private Pair<PsiElement, PsiElement> parametersOrArgsToMove;
+
+    private static PsiElement getComma(@NotNull PsiElement element) {
+        PsiElement sibling = firstNonWhiteSibling(element, true);
+        return sibling != null && (sibling.getNode().getElementType() == JetTokens.COMMA) ? sibling : null;
+    }
+
+    private static void fixCommaIfNeeded(@NotNull PsiElement element, boolean willBeLast) {
+        PsiElement comma = getComma(element);
+        if (willBeLast && comma != null) {
+            comma.delete();
+        }
+        else if (!willBeLast && comma == null) {
+            PsiElement parent = element.getParent();
+            assert parent != null;
+
+            parent.addAfter(JetPsiFactory.createComma(parent.getProject()), element);
+        }
+    }
+
+    @Override
+    public void beforeMove(@NotNull Editor editor, @NotNull MoveInfo info, boolean down) {
+        if (parametersOrArgsToMove != null) {
+            PsiElement element1 = parametersOrArgsToMove.first;
+            PsiElement element2 = parametersOrArgsToMove.second;
+
+            fixCommaIfNeeded(element1, down && isLastOfItsKind(element2, true));
+            fixCommaIfNeeded(element2, !down && isLastOfItsKind(element1, true));
+
+            //noinspection ConstantConditions
+            PsiDocumentManager.getInstance(editor.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());
+        }
     }
 }

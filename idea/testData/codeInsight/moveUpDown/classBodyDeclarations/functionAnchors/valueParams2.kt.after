@@ -5,9 +5,9 @@ class A {
             U,
             W>(
             b: Int,
-            c: Int
-            <caret>a: Int,
-            ) {
+            c: Int,
+            <caret>a: Int
+    ) {
 
     }
     class B {

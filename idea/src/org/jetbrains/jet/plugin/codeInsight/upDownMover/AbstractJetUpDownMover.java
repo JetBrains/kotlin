@@ -64,6 +64,11 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         return firstNonWhiteElement(down ? lineRange.lastElement.getNextSibling() : lineRange.firstElement.getPrevSibling(), down);
     }
 
+    @Nullable
+    protected static PsiElement firstNonWhiteSibling(@NotNull PsiElement element, boolean down) {
+        return firstNonWhiteElement(down ? element.getNextSibling() : element.getPrevSibling(), down);
+    }
+
     @Override
     public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
         return (file instanceof JetFile) && super.checkAvailable(editor, file, info, down);
