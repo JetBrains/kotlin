@@ -2075,6 +2075,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/useExpectedType.kt");
                 }
                 
+                @TestMetadata("useExpectedTypeForVal.kt")
+                public void testUseExpectedTypeForVal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/useExpectedTypeForVal.kt");
+                }
+                
             }
             
             public static Test innerSuite() {

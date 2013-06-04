@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
@@ -576,12 +577,14 @@ public class BodyResolver {
             private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
                 ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
                 ReceiverParameterDescriptor thisObject = propertyDescriptor.getExpectedThisObject();
-                if (receiverParameter == null && thisObject == null) return;
+                JetType typeOfThis =
+                        receiverParameter != null ? receiverParameter.getType() :
+                        thisObject != null ? thisObject.getType() :
+                        KotlinBuiltIns.getInstance().getNullableNothingType();
 
                 List<ValueParameterDescriptor> valueParameters = resultingDescriptor.getValueParameters();
                 if (valueParameters.isEmpty()) return;
                 ValueParameterDescriptor valueParameterForThis = valueParameters.get(0);
-                JetType typeOfThis = receiverParameter != null ? receiverParameter.getType() : thisObject.getType();
                 constraintSystem.addSubtypeConstraint(typeOfThis, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
             }
         };
