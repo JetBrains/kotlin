@@ -25,7 +25,7 @@ class DelegationTest(): DelegationTestBase() {
 }
 
 public class TestNotNullVar<T>(val a1: String, val b1: T): WithBox {
-    var a: String by Delegates.notNull<String>()
+    var a: String by Delegates.notNull()
     var b by Delegates.notNull<T>()
 
     override fun box(): String {
