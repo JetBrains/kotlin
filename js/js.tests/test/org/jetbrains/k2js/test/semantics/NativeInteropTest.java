@@ -50,7 +50,7 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     }
 
     public void testVararg() throws Exception {
-        fooBoxTest();
+        checkFooBoxIsOk();
     }
 
     public void testUndefined() throws Exception {
