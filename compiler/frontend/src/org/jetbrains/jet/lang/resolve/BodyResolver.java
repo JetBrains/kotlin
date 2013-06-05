@@ -26,6 +26,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -36,6 +40,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
@@ -46,7 +51,8 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
@@ -487,10 +493,25 @@ public class BodyResolver {
 
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
                 propertyScope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
-        JetType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
-                                                                    DataFlowInfo.EMPTY, trace);
+        TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
+        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
+                propertyDescriptor, parentScopeForAccessor, descriptorResolver, trace);
 
-        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, parentScopeForAccessor, descriptorResolver, trace);
+        JetExpression calleeExpression = JetPsiUtil.getCalleeExpressionIfAny(delegateExpression);
+        ConstraintSystemCompleter completer =
+                createConstraintSystemCompleter(jetProperty, propertyDescriptor, delegateExpression, accessorScope);
+        if (calleeExpression != null) {
+            traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
+        }
+        JetType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
+                                                                    DataFlowInfo.EMPTY, traceToResolveDelegatedProperty);
+        traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
+            @Override
+            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
+                return slice != CONSTRAINT_SYSTEM_COMPLETER;
+            }
+        }, true);
+
         DelegatedPropertyUtils.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
                                                                  expressionTypingServices, trace, accessorScope);
 
@@ -498,6 +519,75 @@ public class BodyResolver {
             DelegatedPropertyUtils.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
                                                                      expressionTypingServices, trace, accessorScope);
         }
+    }
+
+    private ConstraintSystemCompleter createConstraintSystemCompleter(
+            JetProperty property,
+            final PropertyDescriptor propertyDescriptor,
+            final JetExpression delegateExpression,
+            final JetScope accessorScope
+    ) {
+        final JetType expectedType = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
+        return new ConstraintSystemCompleter() {
+            @Override
+            public void completeConstraintSystem(
+                    @NotNull ConstraintSystem constraintSystem, @NotNull ResolvedCall<?> resolvedCall
+            ) {
+                JetType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
+                if (returnType == null) return;
+
+                TemporaryBindingTrace traceToResolveConventionMethods =
+                        TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods");
+                OverloadResolutionResults<FunctionDescriptor>
+                        getMethodResults = DelegatedPropertyUtils.getDelegatedPropertyConventionMethod(
+                        propertyDescriptor, delegateExpression, returnType, expressionTypingServices,
+                        traceToResolveConventionMethods, accessorScope, true);
+
+                if (conventionMethodFound(getMethodResults)) {
+                    FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
+                    JetType returnTypeOfGetMethod = descriptor.getReturnType();
+                    if (returnTypeOfGetMethod != null) {
+                        constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, ConstraintPosition.FROM_COMPLETER);
+                    }
+                    addConstraintForThisValue(constraintSystem, descriptor);
+                }
+                if (propertyDescriptor.isVar()) {
+                    OverloadResolutionResults<FunctionDescriptor> setMethodResults =
+                            DelegatedPropertyUtils.getDelegatedPropertyConventionMethod(
+                                    propertyDescriptor, delegateExpression, returnType, expressionTypingServices,
+                                    traceToResolveConventionMethods, accessorScope, false);
+
+                    if (conventionMethodFound(setMethodResults)) {
+                        FunctionDescriptor descriptor = setMethodResults.getResultingDescriptor();
+                        List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+                        if (valueParameters.size() == 3) {
+                            ValueParameterDescriptor valueParameterForThis = valueParameters.get(2);
+                            constraintSystem.addSubtypeConstraint(expectedType, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
+                            addConstraintForThisValue(constraintSystem, descriptor);
+                        }
+                    }
+                }
+            }
+
+            private boolean conventionMethodFound(@NotNull OverloadResolutionResults<FunctionDescriptor> results) {
+                return results.isSuccess() ||
+                       (results.isSingleResult() && results.getResultCode() == Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
+            }
+
+            private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
+                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
+                ReceiverParameterDescriptor thisObject = propertyDescriptor.getExpectedThisObject();
+                JetType typeOfThis =
+                        receiverParameter != null ? receiverParameter.getType() :
+                        thisObject != null ? thisObject.getType() :
+                        KotlinBuiltIns.getInstance().getNullableNothingType();
+
+                List<ValueParameterDescriptor> valueParameters = resultingDescriptor.getValueParameters();
+                if (valueParameters.isEmpty()) return;
+                ValueParameterDescriptor valueParameterForThis = valueParameters.get(0);
+                constraintSystem.addSubtypeConstraint(typeOfThis, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
+            }
+        };
     }
 
     public void resolvePropertyInitializer(

@@ -235,6 +235,21 @@ public class CandidateResolver {
 
         constraintSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(), ConstraintPosition.EXPECTED_TYPE_POSITION);
 
+        ConstraintSystemCompleter constraintSystemCompleter = context.trace.get(
+                BindingContext.CONSTRAINT_SYSTEM_COMPLETER, context.call.getCalleeExpression());
+        if (constraintSystemCompleter != null) {
+            ConstraintSystemImpl backup = (ConstraintSystemImpl) constraintSystem.copy();
+
+            //todo improve error reporting with errors in constraints from completer
+            constraintSystemCompleter.completeConstraintSystem(constraintSystem, resolvedCall);
+            if (constraintSystem.hasTypeConstructorMismatchAt(ConstraintPosition.FROM_COMPLETER) ||
+                (constraintSystem.hasContradiction() && !backup.hasContradiction())) {
+
+                constraintSystem = backup;
+                resolvedCall.setConstraintSystem(backup);
+            }
+        }
+
         if (constraintSystem.hasContradiction()) {
             return reportInferenceError(context);
         }
