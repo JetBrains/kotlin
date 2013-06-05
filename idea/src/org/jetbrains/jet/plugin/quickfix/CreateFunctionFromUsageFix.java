@@ -732,9 +732,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             assert classContainingFile instanceof JetFile;
             containingFile = (JetFile) classContainingFile;
 
-            if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                NavigationUtil.activateFileWithPsiElement(containingFile);
-            }
+            NavigationUtil.activateFileWithPsiElement(containingFile);
             containingFileEditor = FileEditorManager.getInstance(project).getSelectedTextEditor();
 
             JetClassBody classBody = ownerClass.getBody();
