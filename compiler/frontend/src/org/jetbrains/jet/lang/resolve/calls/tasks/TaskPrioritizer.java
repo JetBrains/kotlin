@@ -181,11 +181,11 @@ public class TaskPrioritizer {
             TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, scope.getContainingDeclaration(), locals, nonlocals);
 
             result.addLocalExtensions(locals);
-            result.addNonLocalExtensions(nonlocals);
 
             for (ReceiverValue implicitReceiver : implicitReceivers) {
                 doComputeTasks(scope, implicitReceiver, name, result, context, callableDescriptorCollector);
             }
+            result.addNonLocalExtensions(nonlocals);
         }
     }
 
