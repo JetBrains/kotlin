@@ -477,7 +477,8 @@ public class CallResolver {
         //  }
         ImmutableSet<OverloadResolutionResults.Code> someFailed = ImmutableSet.of(OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES,
                                                                         OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
-        if (someFailed.contains(results.getResultCode()) && !task.call.getFunctionLiteralArguments().isEmpty()) {
+        if (someFailed.contains(results.getResultCode()) && !task.call.getFunctionLiteralArguments().isEmpty()
+                && task.resolveMode == ResolveMode.TOP_LEVEL_CALL) { //For nested calls there are no such cases
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps

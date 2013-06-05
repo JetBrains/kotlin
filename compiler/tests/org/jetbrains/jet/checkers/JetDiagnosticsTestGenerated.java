@@ -169,11 +169,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/CyclicHierarchy.kt");
         }
         
-        @TestMetadata("DanglingFunctionLiteral.kt")
-        public void testDanglingFunctionLiteral() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/DanglingFunctionLiteral.kt");
-        }
-        
         @TestMetadata("DefaultValuesTypechecking.kt")
         public void testDefaultValuesTypechecking() throws Exception {
             doTest("compiler/testData/diagnostics/tests/DefaultValuesTypechecking.kt");
@@ -2300,6 +2295,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("DanglingFunctionLiteral.kt")
+            public void testDanglingFunctionLiteral() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/DanglingFunctionLiteral.kt");
+            }
+            
             @TestMetadata("ExpectedParameterTypeMismatchVariance.kt")
             public void testExpectedParameterTypeMismatchVariance() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/ExpectedParameterTypeMismatchVariance.kt");
@@ -2313,6 +2313,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("kt2906.kt")
             public void testKt2906() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");
+            }
+            
+            @TestMetadata("NoDanglingFunctionLiteralForNestedCalls.kt")
+            public void testNoDanglingFunctionLiteralForNestedCalls() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/NoDanglingFunctionLiteralForNestedCalls.kt");
             }
             
             @TestMetadata("unusedLiteral.kt")
