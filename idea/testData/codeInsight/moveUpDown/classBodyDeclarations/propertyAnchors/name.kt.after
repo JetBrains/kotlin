@@ -1,0 +1,13 @@
+// MOVE: down
+class A {
+    class B {
+        val x<caret>: String
+            get() {
+                return ""
+            }
+            set(v: String) {
+
+            }
+
+    }
+}

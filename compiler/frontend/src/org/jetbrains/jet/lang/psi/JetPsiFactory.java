@@ -73,6 +73,13 @@ public class JetPsiFactory {
         return star;
     }
 
+    @NotNull
+    public static PsiElement createComma(Project project) {
+        PsiElement comma = createType(project, "T<X, Y>").findElementAt(3);
+        assert comma != null;
+        return comma;
+    }
+
     //the pair contains the first and the last elements of a range
     public static Pair<PsiElement, PsiElement> createColonAndWhiteSpaces(Project project) {
         JetProperty property = createProperty(project, "val x : Int");

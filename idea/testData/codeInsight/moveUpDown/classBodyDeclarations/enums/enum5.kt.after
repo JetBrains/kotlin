@@ -1,0 +1,10 @@
+// MOVE: up
+enum class A {
+    U
+    V
+
+    <caret>X
+    enum class B {
+        Y
+    }
+}

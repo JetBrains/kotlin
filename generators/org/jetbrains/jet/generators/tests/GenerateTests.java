@@ -32,7 +32,8 @@ import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
 import org.jetbrains.jet.jvm.compiler.*;
-import org.jetbrains.jet.lang.psi.AbstractJetPsiMatcherTest;
+import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
+import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
@@ -213,10 +214,11 @@ public class GenerateTests {
         );
 
         generateTest(
-                "compiler/tests/",
+                "idea/tests/",
                 "JetPsiMatcherTest",
                 AbstractJetPsiMatcherTest.class,
-                testModel("compiler/testData/psi/jetPsiMatcher", "doTestExpressions")
+                testModel("idea/testData/jetPsiMatcher/expressions", "doTestExpressions"),
+                testModel("idea/testData/jetPsiMatcher/types", "doTestTypes")
         );
 
         generateTest(
@@ -336,6 +338,15 @@ public class GenerateTests {
                 testModelWithDirectories("idea/testData/hierarchy/class/type", "doTypeClassHierarchyTest"),
                 testModelWithDirectories("idea/testData/hierarchy/class/super", "doSuperClassHierarchyTest"),
                 testModelWithDirectories("idea/testData/hierarchy/class/sub", "doSubClassHierarchyTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "CodeMoverTestGenerated",
+                AbstractCodeMoverTest.class,
+                testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration"),
+                testModel("idea/testData/codeInsight/moveUpDown/closingBraces", "doTestExpression"),
+                testModel("idea/testData/codeInsight/moveUpDown/expressions", "doTestExpression")
         );
     }
 

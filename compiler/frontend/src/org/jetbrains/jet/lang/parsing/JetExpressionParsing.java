@@ -53,7 +53,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, EXCLEXCL,
-//            MUL,
+            //            MUL,
             PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
             EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
@@ -111,17 +111,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
-        EXPRESSION_FIRST,
-        TokenSet.create(
-            // declaration
-            LBRACKET, // attribute
-            FUN_KEYWORD,
-            VAL_KEYWORD, VAR_KEYWORD,
-            TRAIT_KEYWORD,
-            CLASS_KEYWORD,
-            TYPE_KEYWORD
-        ),
-        MODIFIER_KEYWORDS
+            EXPRESSION_FIRST,
+            TokenSet.create(
+                    // declaration
+                    LBRACKET, // attribute
+                    FUN_KEYWORD,
+                    VAL_KEYWORD, VAR_KEYWORD,
+                    TRAIT_KEYWORD,
+                    CLASS_KEYWORD,
+                    TYPE_KEYWORD
+            ),
+            MODIFIER_KEYWORDS
     );
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
@@ -174,7 +174,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
-//        ARROW(JetTokens.ARROW),
+        //        ARROW(JetTokens.ARROW),
         ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
         ;
 
@@ -287,7 +287,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * see the precedence table
      */
     private void parseBinaryExpression(Precedence precedence) {
-//        System.out.println(precedence.name() + " at " + myBuilder.getTokenText());
+        //        System.out.println(precedence.name() + " at " + myBuilder.getTokenText());
 
         PsiBuilder.Marker expression = mark();
 
@@ -300,7 +300,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             JetNodeType resultType = precedence.parseRightHandSide(operation, this);
             expression.done(resultType);
-             expression = expression.precede();
+            expression = expression.precede();
         }
 
         expression.drop();
@@ -310,7 +310,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * operation? prefixExpression
      */
     private void parsePrefixExpression() {
-//        System.out.println("pre at "  + myBuilder.getTokenText());
+        //        System.out.println("pre at "  + myBuilder.getTokenText());
 
         if (at(LBRACKET)) {
             if (!parseLocalDeclaration()) {
@@ -485,10 +485,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
-//        while (!myBuilder.newlineBeforeCurrentToken()
-//                && (at(LBRACE)
+        //        while (!myBuilder.newlineBeforeCurrentToken()
+        //                && (at(LBRACE)
         while ((at(LBRACE)
-                    || atSet(LABELS) && lookahead(1) == LBRACE)) {
+                || atSet(LABELS) && lookahead(1) == LBRACE)) {
             if (!at(LBRACE)) {
                 assert _atSet(LABELS);
                 parsePrefixExpression();
@@ -520,7 +520,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseAtomicExpression() {
-//        System.out.println("atom at "  + myBuilder.getTokenText());
+        //        System.out.println("atom at "  + myBuilder.getTokenText());
 
         if (at(LPAR)) {
             parseParenthesizedExpression();
@@ -574,7 +574,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseDoWhile();
         }
         else if (atSet(CLASS_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
-                VAR_KEYWORD, TYPE_KEYWORD)) {
+                       VAR_KEYWORD, TYPE_KEYWORD)) {
             parseLocalDeclaration();
         }
         else if (at(FIELD_IDENTIFIER)) {
@@ -784,7 +784,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             if (!at(ARROW)) {
                 errorUntil("Expecting '->'", TokenSet.create(ARROW,
-                        RBRACE, EOL_OR_SEMICOLON));
+                                                             RBRACE, EOL_OR_SEMICOLON));
             }
 
             if (at(ARROW)) {
@@ -798,7 +798,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 }
             }
             else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
-                 errorAndAdvance("Expecting '->'");
+                errorAndAdvance("Expecting '->'");
             }
         }
         else {
@@ -982,8 +982,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseFunctionLiteralParametersAndType();
 
                 paramsFound = preferParamsToExpressions ?
-                                    rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
-                                    rollbackOrDropAt(rollbackMarker, ARROW);
+                              rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
+                              rollbackOrDropAt(rollbackMarker, ARROW);
             }
 
             if (!paramsFound) {
@@ -1047,8 +1047,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     private boolean rollbackOrDrop(PsiBuilder.Marker rollbackMarker,
-                                   JetToken expected, String expectMessage,
-                                   IElementType validForDrop) {
+            JetToken expected, String expectMessage,
+            IElementType validForDrop) {
         if (at(expected)) {
             advance(); // dropAt
             rollbackMarker.drop();
@@ -1074,8 +1074,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         while (!eof()) {
             PsiBuilder.Marker parameter = mark();
 
-//            int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
-//            createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
+            //            int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
+            //            createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
 
             expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
 
@@ -1135,8 +1135,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         return preferParamsToExpressions ?
-                      rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
-                      rollbackOrDropAt(rollbackMarker, ARROW);
+               rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
+               rollbackOrDropAt(rollbackMarker, ARROW);
     }
 
     private void parseFunctionLiteralParametersAndType() {
@@ -1252,38 +1252,38 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private IElementType parseLocalDeclarationRest(boolean isEnum) {
-         IElementType keywordToken = tt();
-         IElementType declType = null;
-         if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
-             declType = myJetParsing.parseClass(isEnum);
-         }
-         else if (keywordToken == FUN_KEYWORD) {
-             declType = myJetParsing.parseFunction();
-         }
-         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-             declType = myJetParsing.parseProperty(true);
-         }
-         else if (keywordToken == TYPE_KEYWORD) {
-             declType = myJetParsing.parseTypeDef();
-         }
-         else if (keywordToken == OBJECT_KEYWORD) {
-             // Object expression may appear at the statement position: should parse it
-             // as expression instead of object declaration
-             // sample:
-             // {
-             //   object : Thread() {
-             //   }
-             // }
-             IElementType lookahead = lookahead(1);
-             if (lookahead == COLON || lookahead == LBRACE) {
-                 return null;
-             }
-             
-             myJetParsing.parseObject(true, true);
-             declType = OBJECT_DECLARATION;
-         }
-         return declType;
-     }
+        IElementType keywordToken = tt();
+        IElementType declType = null;
+        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
+            declType = myJetParsing.parseClass(isEnum);
+        }
+        else if (keywordToken == FUN_KEYWORD) {
+            declType = myJetParsing.parseFunction();
+        }
+        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
+            declType = myJetParsing.parseProperty(true);
+        }
+        else if (keywordToken == TYPE_KEYWORD) {
+            declType = myJetParsing.parseTypeDef();
+        }
+        else if (keywordToken == OBJECT_KEYWORD) {
+            // Object expression may appear at the statement position: should parse it
+            // as expression instead of object declaration
+            // sample:
+            // {
+            //   object : Thread() {
+            //   }
+            // }
+            IElementType lookahead = lookahead(1);
+            if (lookahead == COLON || lookahead == LBRACE) {
+                return null;
+            }
+
+            myJetParsing.parseObject(true, true);
+            declType = OBJECT_DECLARATION;
+        }
+        return declType;
+    }
 
     /*
      * doWhile

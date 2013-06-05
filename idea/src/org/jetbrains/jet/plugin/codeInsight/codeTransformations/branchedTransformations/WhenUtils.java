@@ -4,6 +4,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 
 import static org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*;
 
