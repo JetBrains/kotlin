@@ -2065,6 +2065,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.kt");
                 }
                 
+                @TestMetadata("extensionGet.kt")
+                public void testExtensionGet() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/extensionGet.kt");
+                }
+                
+                @TestMetadata("extensionProperty.kt")
+                public void testExtensionProperty() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/extensionProperty.kt");
+                }
+                
                 @TestMetadata("noErrorsForImplicitConstraints.kt")
                 public void testNoErrorsForImplicitConstraints() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/noErrorsForImplicitConstraints.kt");
