@@ -44,10 +44,9 @@ public class JetClassInitializer extends JetDeclarationImpl implements JetStatem
         return body;
     }
 
-    @NotNull
+    @Nullable
     public PsiElement getOpenBraceNode() {
-        ASTNode openBraceNode = getNode().findChildByType(JetTokens.LBRACE);
-        assert openBraceNode != null;
-        return openBraceNode.getPsi();
+        JetExpression body = getBody();
+        return (body instanceof JetBlockExpression) ? ((JetBlockExpression) body).getLBrace() : null;
     }
 }

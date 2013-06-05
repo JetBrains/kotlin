@@ -35,7 +35,10 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                 new JetVisitorVoid() {
                     @Override
                     public void visitAnonymousInitializer(JetClassInitializer initializer) {
-                        memberSuspects.add(initializer.getOpenBraceNode());
+                        PsiElement brace = initializer.getOpenBraceNode();
+                        if (brace != null) {
+                            memberSuspects.add(brace);
+                        }
                     }
 
                     @Override
