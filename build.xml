@@ -439,8 +439,6 @@
     </target>
 
     <target name="jdkAnnotations">
-        <cleandir dir="${output}/classes/stdlib"/>
-
         <pack_annotations jarfile="kotlin-jdk-annotations.jar"
                           annotationsdir="${basedir}/jdk-annotations"
                           title="Kotlin Compiler JDK Annotations"/>
