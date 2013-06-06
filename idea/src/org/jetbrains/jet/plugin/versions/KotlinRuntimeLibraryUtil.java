@@ -88,13 +88,20 @@ public class KotlinRuntimeLibraryUtil {
     }
 
     public static void addJdkAnnotations(@NotNull Module module) {
+        addAnnotations(module, PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath());
+    }
+
+    public static void addAndroidSdkAnnotations(@NotNull Module module) {
+        addAnnotations(module, PathUtil.getKotlinPathsForIdeaPlugin().getAndroidSdkAnnotationsPath());
+    }
+
+    private static void addAnnotations(@NotNull Module module, @NotNull File annotationsPath) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         if (sdk == null) {
             return;
         }
-        File annotationsIoFile = PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath();
-        if (annotationsIoFile.exists()) {
-            VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsIoFile);
+        if (annotationsPath.exists()) {
+            VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsPath);
             if (jdkAnnotationsJar != null) {
                 SdkModificator modificator = sdk.getSdkModificator();
                 modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(jdkAnnotationsJar),
@@ -105,13 +112,21 @@ public class KotlinRuntimeLibraryUtil {
     }
 
     public static boolean jdkAnnotationsArePresent(@NotNull Module module) {
+        return areAnnotationsPresent(module, PathUtil.JDK_ANNOTATIONS_JAR);
+    }
+
+    public static boolean androidSdkAnnotationsArePresent(@NotNull Module module) {
+        return areAnnotationsPresent(module, PathUtil.ANDROID_SDK_ANNOTATIONS_JAR);
+    }
+
+    private static boolean areAnnotationsPresent(@NotNull Module module, @NotNull final String jarFileName) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         if (sdk == null) return false;
         return ContainerUtil.exists(sdk.getRootProvider().getFiles(AnnotationOrderRootType.getInstance()),
                                     new Condition<VirtualFile>() {
                                         @Override
                                         public boolean value(VirtualFile file) {
-                                            return PathUtil.JDK_ANNOTATIONS_JAR.equals(file.getName());
+                                            return jarFileName.equals(file.getName());
                                         }
                                     });
     }

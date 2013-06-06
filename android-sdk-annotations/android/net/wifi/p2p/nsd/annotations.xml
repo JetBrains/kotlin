@@ -1,0 +1,8 @@
+<root>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceRequest void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

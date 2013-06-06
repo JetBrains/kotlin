@@ -29,6 +29,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
@@ -53,17 +54,33 @@ public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provi
 
         GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
         if (JavaPsiFacade.getInstance(project).findClass("jet.JetObject", scope) == null) return null;
-        if (KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(module)) return null;
 
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         if (sdk == null) return null;
 
+        return createMissingSdkAnnotationsPanelIfNeeded(module, sdk);
+    }
+
+    private EditorNotificationPanel createMissingSdkAnnotationsPanelIfNeeded(final Module module, @NotNull Sdk sdk) {
+        final boolean isAndroidSdk = isAndroidSdk(sdk);
+        if (KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(module)) {
+            if (!isAndroidSdk || KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(module)) {
+                return null;
+            }
+        }
+
         EditorNotificationPanel panel = new EditorNotificationPanel();
-        panel.setText("Kotlin external annotations for JDK are not set for '" + sdk.getName() + "'.");
-        panel.createActionLabel("Set up Kotlin JDK annotations", new Runnable() {
+        String sdkKind = isAndroidSdk ? "Android SDK" : "JDK";
+        panel.setText("Kotlin external annotations for " + sdkKind + " are not set for '" + sdk.getName() + "'.");
+        panel.createActionLabel("Set up Kotlin " + sdkKind + " annotations", new Runnable() {
             @Override
             public void run() {
-                KotlinRuntimeLibraryUtil.addJdkAnnotations(module);
+                if (!KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(module)) {
+                    KotlinRuntimeLibraryUtil.addJdkAnnotations(module);
+                }
+                if (isAndroidSdk && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(module)) {
+                    KotlinRuntimeLibraryUtil.addAndroidSdkAnnotations(module);
+                }
             }
         });
 
@@ -73,5 +90,9 @@ public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provi
     @Override
     public Key<EditorNotificationPanel> getKey() {
         return KEY;
+    }
+
+    private static boolean isAndroidSdk(@NotNull Sdk sdk) {
+        return sdk.getSdkType().getName().equals("Android SDK");
     }
 }

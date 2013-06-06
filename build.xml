@@ -441,19 +441,37 @@
     <target name="jdkAnnotations">
         <cleandir dir="${output}/classes/stdlib"/>
 
-        <jar destfile="${kotlin-home}/lib/kotlin-jdk-annotations.jar">
-            <fileset dir="${basedir}/jdk-annotations"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-            <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
-
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler JDK Annotations"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
+        <pack_annotations jarfile="kotlin-jdk-annotations.jar"
+                          annotationsdir="${basedir}/jdk-annotations"
+                          title="Kotlin Compiler JDK Annotations"/>
     </target>
+
+    <target name="androidSdkAnnotations">
+        <pack_annotations jarfile="kotlin-android-sdk-annotations.jar"
+                          annotationsdir="${basedir}/android-sdk-annotations"
+                          title="Kotlin Compiler Android SDK Annotations"/>
+    </target>
+
+    <macrodef name="pack_annotations">
+        <attribute name="annotationsdir"/>
+        <attribute name="jarfile"/>
+        <attribute name="title"/>
+
+        <sequential>
+            <jar destfile="${kotlin-home}/lib/@{jarfile}">
+                <fileset dir="@{annotationsdir}"/>
+                <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+                <manifest>
+                  <attribute name="Built-By" value="JetBrains"/>
+
+                  <attribute name="Implementation-Vendor" value="JetBrains"/>
+                  <attribute name="Implementation-Title" value="@{title}"/>
+                  <attribute name="Implementation-Version" value="${build.number}"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
 
     <target name="annotationsExt">
         <cleandir dir="${output}/classes/annotations-ext"/>
@@ -541,11 +559,11 @@
 
     <!-- builds redistributables from sources -->
     <target name="dist"
-            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler,compilerSources,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist_quick"
-            depends="clean,init,prepareDist,preloader,compiler_quick,antTools,jdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,preloader,compiler_quick,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
 
     <!-- builds compiler jar from project out dir -->
     <target name="dist_quick_compiler_only"

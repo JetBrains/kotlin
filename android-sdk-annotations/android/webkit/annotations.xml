@@ -1,0 +1,194 @@
+<root>
+    <item name='android.webkit.WebView boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.ZoomDensity CLOSE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void onConfigurationChanged(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String guessUrl(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String stripAnchor(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onHoverEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void onVisibilityChanged(android.view.View, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.ConsoleMessage.MessageLevel LOG'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings void setTextSize(android.webkit.WebSettings.TextSize) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.LayoutAlgorithm SINGLE_COLUMN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onReceivedSslError(android.webkit.WebView, android.webkit.SslErrorHandler, android.net.http.SslError) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.TextSize LARGEST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.MimeTypeMap java.lang.String getFileExtensionFromUrl(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.TextSize LARGER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onUnhandledKeyEvent(android.webkit.WebView, android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.ConsoleMessage.MessageLevel ERROR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView SCHEME_GEO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.LayoutAlgorithm NARROW_COLUMNS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebChromeClient void onExceededDatabaseQuota(java.lang.String, java.lang.String, long, long, long, android.webkit.WebStorage.QuotaUpdater) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.TextSize NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.ConsoleMessage.MessageLevel TIP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String guessUrl(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String guessFileName(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil byte[] decode(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebChromeClient void onReachedMaxAppCacheSize(long, long, android.webkit.WebStorage.QuotaUpdater) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.RenderPriority NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.LayoutAlgorithm NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewFragment android.view.View onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onFormResubmission(android.webkit.WebView, android.os.Message, android.os.Message) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.ConsoleMessage.MessageLevel WARNING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onReceivedHttpAuthRequest(android.webkit.WebView, android.webkit.HttpAuthHandler, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.MimeTypeMap android.webkit.MimeTypeMap getSingleton()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.PluginStub android.view.View getEmbeddedView(int, android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.ZoomDensity FAR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onUnhandledKeyEvent(android.webkit.WebView, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onTooManyRedirects(android.webkit.WebView, android.os.Message, android.os.Message) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.DateSorter DateSorter(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.TextSize SMALLER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.RenderPriority LOW'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onKeyDown(int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.PluginState OFF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void onDraw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.PluginStub android.view.View getFullScreenView(int, android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView SCHEME_TEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.RenderPriority HIGH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String composeSearchUrl(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.PluginState ON_DEMAND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.TextSize SMALLEST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onKeyUp(int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebChromeClient boolean onConsoleMessage(android.webkit.ConsoleMessage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil byte[] decode(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.ConsoleMessage.MessageLevel DEBUG'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView SCHEME_MAILTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onTouchEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.PluginState ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.ZoomDensity MEDIUM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String composeSearchUrl(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

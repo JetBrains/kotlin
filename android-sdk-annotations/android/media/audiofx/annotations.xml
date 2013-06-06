@@ -1,0 +1,26 @@
+<root>
+    <item name='android.media.audiofx.AudioEffect ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect EXTRA_AUDIO_SESSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect EFFECT_INSERT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect EXTRA_PACKAGE_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect EXTRA_CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect EFFECT_AUXILIARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

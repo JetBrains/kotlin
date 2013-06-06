@@ -1,0 +1,56 @@
+<root>
+    <item name='android.app.backup.FileBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupDataInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onRestoreFile(android.os.ParcelFileDescriptor, long, java.io.File, int, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onFullBackup(android.app.backup.FullBackupDataOutput) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.SharedPreferencesBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.SharedPreferencesBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper FileBackupHelper(android.content.Context, java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.SharedPreferencesBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.SharedPreferencesBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void fullBackupFile(java.io.File, android.app.backup.FullBackupDataOutput) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void fullBackupFile(java.io.File, android.app.backup.FullBackupDataOutput) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

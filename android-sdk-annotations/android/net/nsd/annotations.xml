@@ -1,0 +1,17 @@
+<root>
+    <item name='android.net.nsd.NsdManager void resolveService(android.net.nsd.NsdServiceInfo, android.net.nsd.NsdManager.ResolveListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.nsd.NsdManager ACTION_NSD_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.nsd.NsdManager EXTRA_NSD_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.nsd.NsdManager void registerService(android.net.nsd.NsdServiceInfo, int, android.net.nsd.NsdManager.RegistrationListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.nsd.NsdServiceInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

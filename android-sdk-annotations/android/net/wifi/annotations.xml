@@ -1,0 +1,125 @@
+<root>
+    <item name='android.net.wifi.WifiConfiguration.KeyMgmt varName'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState UNINITIALIZED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiConfiguration.Protocol varName'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager SCAN_RESULTS_AVAILABLE_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_NETWORK_INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState INVALID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.ScanResult void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState DISCONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState ASSOCIATING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_NEW_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState ASSOCIATED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiInfo LINK_SPEED_UNITS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiConfiguration.AuthAlgorithm varName'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_NEW_RSSI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState SCANNING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WpsInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager RSSI_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_PREVIOUS_WIFI_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState INTERFACE_DISABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState FOUR_WAY_HANDSHAKE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager NETWORK_STATE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiConfiguration.PairwiseCipher varName'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_BSSID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiConfiguration.GroupCipher varName'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager SUPPLICANT_STATE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_SUPPLICANT_ERROR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState GROUP_HANDSHAKE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager SUPPLICANT_CONNECTION_CHANGE_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_SUPPLICANT_CONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager ACTION_PICK_WIFI_NETWORK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_WIFI_INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState INACTIVE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState AUTHENTICATING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager WIFI_STATE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState COMPLETED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager NETWORK_IDS_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager EXTRA_WIFI_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState DORMANT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiConfiguration void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
