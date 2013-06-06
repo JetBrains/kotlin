@@ -100,6 +100,12 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         return this;
     }
 
+    public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
+        return new ResolutionTask<D, F>(
+                candidates, reference, tracing, trace, scope, newCall, expectedType, dataFlowInfo, resolveMode, checkArguments,
+                expressionPosition, resolutionResultsCache);
+    }
+
     public interface DescriptorCheckStrategy {
         <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing);
     }
