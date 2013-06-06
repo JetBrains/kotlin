@@ -7,7 +7,6 @@ kotlin.io
 kotlin.jdbc
 kotlin.math
 kotlin.modules
-kotlin.nullable
 kotlin.swing
 kotlin.template
 kotlin.test

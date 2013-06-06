@@ -87,7 +87,7 @@
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ServiceLoader</span><span>
 
-</span><span class='hl-comment'>/** Asserts that a block fails with a specific exception being thrown */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Asserts that a block fails with a specific exception being thrown </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Throwable</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>failsWith</span><span class='LPAR'>(</span><span class='IDENTIFIER'>exceptionClass</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Any</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -101,10 +101,10 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Comments out a block of test code until it is implemented while keeping a link to the code
- * to implement in your unit test output
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Comments out a block of test code until it is implemented while keeping a link to the code</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> to implement in your unit test output</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>todo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Any</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>TODO at </span><span class='CLOSING_QUOTE'>&quot;</span><span> </span><span class='PLUS'>+</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Exception</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>Throwable</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>getStackTrace</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span> </span><span class='PLUS'>+</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'> for </span><span class='CLOSING_QUOTE'>&quot;</span><span> </span><span class='PLUS'>+</span><span> </span><span class='IDENTIFIER'>block</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -135,9 +135,9 @@
     </span><span class='RBRACE'>}</span><span>
 
 
-</span><span class='hl-comment'>/**
- * Default implementation to avoid dependency on JUnit or TestNG
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Default implementation to avoid dependency on JUnit or TestNG</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>DefaultAsserter</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Asserter</span><span> </span><span class='LBRACE'>{</span><span>
 
     </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>assertTrue</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>actual</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>

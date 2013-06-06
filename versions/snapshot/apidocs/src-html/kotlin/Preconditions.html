@@ -87,22 +87,22 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>IllegalArgumentException</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>IllegalStateException</span><span>
 
-</span><span class='hl-comment'>/**
- * Throws an [[IllegalArgumentException]] with an optional *message* if the *value* is false.
- *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingRequireWithMessage
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Throws an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>IllegalArgumentException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with an optional *message* if the *value* is false.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/PreconditionsTest.kt failingRequireWithMessage</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>require</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>message</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Failed requirement</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalArgumentException</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Throws an [[IllegalArgumentException]] with the *lazyMessage* if the *value* is false.
- *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingRequireWithLazyMessage
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Throws an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>IllegalArgumentException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with the *lazyMessage* if the *value* is false.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/PreconditionsTest.kt failingRequireWithLazyMessage</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>require</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>lazyMessage</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>message</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>lazyMessage</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -110,12 +110,12 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Throws an [[IllegalArgumentException]] with the given *message* if the *value* is null otherwise
- * the not null value is returned.
- *
- *  @includeFunctionBody ../../test/PreconditionsTest.kt requireNotNull
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Throws an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>IllegalArgumentException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with the given *message* if the *value* is null otherwise</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> the not null value is returned.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'>  </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/PreconditionsTest.kt requireNotNull</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>requireNotNull</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>message</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Required value was null</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalArgumentException</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
@@ -124,22 +124,22 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Throws an [[IllegalStateException]] with an optional *message* if the *value* is false.
- *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithMessage
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Throws an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>IllegalStateException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with an optional *message* if the *value* is false.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/PreconditionsTest.kt failingCheckWithMessage</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>check</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>message</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Check failed</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalStateException</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Throws an [[IllegalStateException]] with the *lazyMessage* if the *value* is false.
- *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithLazyMessage
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Throws an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>IllegalStateException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with the *lazyMessage* if the *value* is false.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/PreconditionsTest.kt failingCheckWithLazyMessage</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>check</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>lazyMessage</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>message</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>lazyMessage</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -147,12 +147,12 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Throws an [[IllegalStateException]] with the given *message* if the *value* is null otherwise
- * the not null value is returned.
- *
- *  @includeFunctionBody ../../test/PreconditionsTest.kt checkNotNull
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Throws an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>IllegalStateException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with the given *message* if the *value* is null otherwise</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> the not null value is returned.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'>  </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/PreconditionsTest.kt checkNotNull</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>checkNotNull</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>message</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Required value was null</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalStateException</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>

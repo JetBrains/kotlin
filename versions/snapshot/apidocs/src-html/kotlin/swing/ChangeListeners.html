@@ -112,9 +112,9 @@
 </span><span class='EOL_COMMENT'>// TODO this file may be deleted when this issue is implemented</span><span>
 </span><span class='EOL_COMMENT'>// http://youtrack.jetbrains.com/issue/KT-1752</span><span>
 
-</span><span class='hl-comment'>/**
- * Creates a [[ChangeListener]] for the given function for processing each [[ChangeEvent]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>ChangeListener</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> for the given function for processing each </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>ChangeEvent</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>changeListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ChangeEvent</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ChangeListener</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FunctionChangeListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='RPAR'>)</span><span>
 
 </span><span class='private'>private</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>FunctionChangeListener</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ChangeEvent</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ChangeListener</span><span> </span><span class='LBRACE'>{</span><span>

@@ -78,61 +78,6 @@
 <a href='#77' name='77'>77</a>
 <a href='#78' name='78'>78</a>
 <a href='#79' name='79'>79</a>
-<a href='#80' name='80'>80</a>
-<a href='#81' name='81'>81</a>
-<a href='#82' name='82'>82</a>
-<a href='#83' name='83'>83</a>
-<a href='#84' name='84'>84</a>
-<a href='#85' name='85'>85</a>
-<a href='#86' name='86'>86</a>
-<a href='#87' name='87'>87</a>
-<a href='#88' name='88'>88</a>
-<a href='#89' name='89'>89</a>
-<a href='#90' name='90'>90</a>
-<a href='#91' name='91'>91</a>
-<a href='#92' name='92'>92</a>
-<a href='#93' name='93'>93</a>
-<a href='#94' name='94'>94</a>
-<a href='#95' name='95'>95</a>
-<a href='#96' name='96'>96</a>
-<a href='#97' name='97'>97</a>
-<a href='#98' name='98'>98</a>
-<a href='#99' name='99'>99</a>
-<a href='#100' name='100'>100</a>
-<a href='#101' name='101'>101</a>
-<a href='#102' name='102'>102</a>
-<a href='#103' name='103'>103</a>
-<a href='#104' name='104'>104</a>
-<a href='#105' name='105'>105</a>
-<a href='#106' name='106'>106</a>
-<a href='#107' name='107'>107</a>
-<a href='#108' name='108'>108</a>
-<a href='#109' name='109'>109</a>
-<a href='#110' name='110'>110</a>
-<a href='#111' name='111'>111</a>
-<a href='#112' name='112'>112</a>
-<a href='#113' name='113'>113</a>
-<a href='#114' name='114'>114</a>
-<a href='#115' name='115'>115</a>
-<a href='#116' name='116'>116</a>
-<a href='#117' name='117'>117</a>
-<a href='#118' name='118'>118</a>
-<a href='#119' name='119'>119</a>
-<a href='#120' name='120'>120</a>
-<a href='#121' name='121'>121</a>
-<a href='#122' name='122'>122</a>
-<a href='#123' name='123'>123</a>
-<a href='#124' name='124'>124</a>
-<a href='#125' name='125'>125</a>
-<a href='#126' name='126'>126</a>
-<a href='#127' name='127'>127</a>
-<a href='#128' name='128'>128</a>
-<a href='#129' name='129'>129</a>
-<a href='#130' name='130'>130</a>
-<a href='#131' name='131'>131</a>
-<a href='#132' name='132'>132</a>
-<a href='#133' name='133'>133</a>
-<a href='#134' name='134'>134</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>support</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>NoSuchElementException</span><span>
@@ -148,13 +93,13 @@
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>Failed</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>3</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * A base class to simplify implementing iterators so that implementations only have to implement [[computeNext()]]
- * to implement the iterator, calling [[done()]] when the iteration is complete.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A base class to simplify implementing iterators so that implementations only have to implement </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>computeNext()</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> to implement the iterator, calling </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>done()</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> when the iteration is complete.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='abstract'>abstract</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>state</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>State</span><span class='DOT'>.</span><span class='IDENTIFIER'>NotReady</span><span>
-    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>next</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
+    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>nextValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
 
     </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>require</span><span class='LPAR'>(</span><span class='IDENTIFIER'>state</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='IDENTIFIER'>State</span><span class='DOT'>.</span><span class='IDENTIFIER'>Failed</span><span class='RPAR'>)</span><span>
@@ -168,13 +113,13 @@
     </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>NoSuchElementException</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
         </span><span class='IDENTIFIER'>state</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>State</span><span class='DOT'>.</span><span class='IDENTIFIER'>NotReady</span><span>
-        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>next</span><span class='EXCLEXCL'>!!</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>nextValue</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>T</span><span>
     </span><span class='RBRACE'>}</span><span>
 
-    </span><span class='hl-comment'>/** Returns the next element in the iteration without advancing the iteration */</span><span>
+    </span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the next element in the iteration without advancing the iteration </span><span class='KDOC_END'>*/</span><span>
     </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>peek</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>NoSuchElementException</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>next</span><span class='EXCLEXCL'>!!</span><span class='SEMICOLON'>;</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>nextValue</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>T</span><span class='SEMICOLON'>;</span><span>
     </span><span class='RBRACE'>}</span><span>
 
     </span><span class='private'>private</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>tryToComputeNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
@@ -183,88 +128,33 @@
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>state</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>State</span><span class='DOT'>.</span><span class='IDENTIFIER'>Ready</span><span>
     </span><span class='RBRACE'>}</span><span>
 
-    </span><span class='hl-comment'>/**
-     * Computes the next item in the iterator.
-     *
-     * This callback method should call one of these two methods
-     *
-     * * [[setNext(T)]] with the next value of the iteration
-     * * [[done()]] to indicate there are no more elements
-     *
-     * Failure to call either method will result in the iteration terminating with a failed state
-     */</span><span>
+    </span><span class='KDOC_START'>/**</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Computes the next item in the iterator.</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This callback method should call one of these two methods</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> * </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>setNext(T)</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with the next value of the iteration</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> * </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>done()</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to indicate there are no more elements</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Failure to call either method will result in the iteration terminating with a failed state</span><span>
+     </span><span class='KDOC_END'>*/</span><span>
     </span><span class='abstract'>abstract</span><span> </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>computeNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span>
 
-    </span><span class='hl-comment'>/**
-     * Sets the next value in the iteration, called from the [[computeNext()]] function
-     */</span><span>
+    </span><span class='KDOC_START'>/**</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Sets the next value in the iteration, called from the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>computeNext()</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> function</span><span>
+     </span><span class='KDOC_END'>*/</span><span>
     </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>setNext</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='IDENTIFIER'>next</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
+        </span><span class='IDENTIFIER'>nextValue</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
         </span><span class='IDENTIFIER'>state</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>State</span><span class='DOT'>.</span><span class='IDENTIFIER'>Ready</span><span>
     </span><span class='RBRACE'>}</span><span>
 
-    </span><span class='hl-comment'>/**
-     * Sets the state to done so that the iteration terminates
-     */</span><span>
+    </span><span class='KDOC_START'>/**</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Sets the state to done so that the iteration terminates</span><span>
+     </span><span class='KDOC_END'>*/</span><span>
     </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>done</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>state</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>State</span><span class='DOT'>.</span><span class='IDENTIFIER'>Done</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** An [[Iterator]] which invokes a function to calculate the next value in the iteration until the function returns *null* */</span><span>
-</span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>FunctionIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>nextFunction</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-
-    </span><span class='override'>override</span><span> </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>computeNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>next</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>nextFunction</span><span class='RPAR'>)</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>next</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='IDENTIFIER'>done</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='IDENTIFIER'>setNext</span><span class='LPAR'>(</span><span class='IDENTIFIER'>next</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span>
-    </span><span class='RBRACE'>}</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span><span class='hl-comment'>/** An [[Iterator]] which iterates over a number of iterators in sequence */</span><span>
-</span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>CompositeIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='vararg'>vararg</span><span> </span><span class='IDENTIFIER'>iterators</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-
-    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iteratorsIter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterators</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>currentIter</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
-
-    </span><span class='override'>override</span><span> </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>computeNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>true</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>currentIter</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-                </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iteratorsIter</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-                    </span><span class='IDENTIFIER'>currentIter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iteratorsIter</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-                </span><span class='RBRACE'>}</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
-                    </span><span class='IDENTIFIER'>done</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-                    </span><span class='hl-keyword'>return</span><span>
-                </span><span class='RBRACE'>}</span><span>
-            </span><span class='RBRACE'>}</span><span>
-            </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>currentIter</span><span>
-            </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iter</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-                </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iter</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-                    </span><span class='IDENTIFIER'>setNext</span><span class='LPAR'>(</span><span class='IDENTIFIER'>iter</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
-                    </span><span class='hl-keyword'>return</span><span>
-                </span><span class='RBRACE'>}</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
-                    </span><span class='IDENTIFIER'>currentIter</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
-                </span><span class='RBRACE'>}</span><span>
-            </span><span class='RBRACE'>}</span><span>
-        </span><span class='RBRACE'>}</span><span>
-    </span><span class='RBRACE'>}</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span><span class='hl-comment'>/** A singleton [[Iterator]] which invokes once over a value */</span><span>
-</span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>SingleIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>first</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>true</span><span>
-
-    </span><span class='override'>override</span><span> </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>computeNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>first</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='IDENTIFIER'>first</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>false</span><span>
-            </span><span class='IDENTIFIER'>setNext</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='IDENTIFIER'>done</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span>
-    </span><span class='RBRACE'>}</span><span>
-</span><span class='RBRACE'>}</span><span>
 
 </span></td></tr></table></body></html>

@@ -76,48 +76,6 @@
 <a href='#75' name='75'>75</a>
 <a href='#76' name='76'>76</a>
 <a href='#77' name='77'>77</a>
-<a href='#78' name='78'>78</a>
-<a href='#79' name='79'>79</a>
-<a href='#80' name='80'>80</a>
-<a href='#81' name='81'>81</a>
-<a href='#82' name='82'>82</a>
-<a href='#83' name='83'>83</a>
-<a href='#84' name='84'>84</a>
-<a href='#85' name='85'>85</a>
-<a href='#86' name='86'>86</a>
-<a href='#87' name='87'>87</a>
-<a href='#88' name='88'>88</a>
-<a href='#89' name='89'>89</a>
-<a href='#90' name='90'>90</a>
-<a href='#91' name='91'>91</a>
-<a href='#92' name='92'>92</a>
-<a href='#93' name='93'>93</a>
-<a href='#94' name='94'>94</a>
-<a href='#95' name='95'>95</a>
-<a href='#96' name='96'>96</a>
-<a href='#97' name='97'>97</a>
-<a href='#98' name='98'>98</a>
-<a href='#99' name='99'>99</a>
-<a href='#100' name='100'>100</a>
-<a href='#101' name='101'>101</a>
-<a href='#102' name='102'>102</a>
-<a href='#103' name='103'>103</a>
-<a href='#104' name='104'>104</a>
-<a href='#105' name='105'>105</a>
-<a href='#106' name='106'>106</a>
-<a href='#107' name='107'>107</a>
-<a href='#108' name='108'>108</a>
-<a href='#109' name='109'>109</a>
-<a href='#110' name='110'>110</a>
-<a href='#111' name='111'>111</a>
-<a href='#112' name='112'>112</a>
-<a href='#113' name='113'>113</a>
-<a href='#114' name='114'>114</a>
-<a href='#115' name='115'>115</a>
-<a href='#116' name='116'>116</a>
-<a href='#117' name='117'>117</a>
-<a href='#118' name='118'>118</a>
-<a href='#119' name='119'>119</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 </span><span class='EOL_COMMENT'>// Number of extension function for java.lang.Iterable that shouldn't participate in auto generation</span><span>
 
@@ -125,12 +83,12 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Comparator</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ArrayList</span><span>
 
-</span><span class='hl-comment'>/**
- * Count the number of elements in collection.
- *
- * If base collection implements [[Collection]] interface method [[Collection.size()]] will be used.
- * Otherwise, this method determines the count by iterating through the all items.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Count the number of elements in collection.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> If base collection implements </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Collection</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> interface method </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Collection.size()</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> will be used.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Otherwise, this method determines the count by iterating through the all items.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>count</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
   </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>Collection</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -149,60 +107,32 @@
 </span><span class='RBRACE'>}</span><span>
 
 
-</span><span class='hl-comment'>/**
- * Get the first element in the collection.
- *
- * Will throw an exception if there are no elements
- */</span><span>
-</span><span class='EOL_COMMENT'>// TODO: Specify type of the exception</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Get the first element in the collection.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Will throw an exception if there are no elements</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>first</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
-  </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>AbstractList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span>
+  </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>first</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
   </span><span class='RBRACE'>}</span><span>
 
   </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Get the last element in the collection.
- *
- * If base collection implements [[List]] interface, the combination of size() and get()
- * methods will be used for getting last element. Otherwise, this method determines the
- * last item by iterating through the all items.
- *
- * Will throw an exception if there are no elements.
- *
- * @includeFunctionBody ../../test/CollectionTest.kt last
- */</span><span>
-</span><span class='EOL_COMMENT'>// TODO: Specify type of the exception</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>last</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
-  </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span>
-  </span><span class='RBRACE'>}</span><span>
-
-  </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-  </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>last</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-
-  </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='IDENTIFIER'>last</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-  </span><span class='RBRACE'>}</span><span>
-
-  </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>last</span><span class='SEMICOLON'>;</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span><span class='hl-comment'>/**
- * Checks if collection contains given item.
- *
- * Method checks equality of the objects with T.equals method.
- * If collection implements [[java.util.AbstractCollection]] an overridden implementation of the contains
- * method will be used.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Checks if collection contains given item.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Method checks equality of the objects with T.equals method.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> If collection implements </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>java.util.AbstractCollection</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> an overridden implementation of the contains</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> method will be used.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>containsItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>item</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
   </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>AbstractCollection</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>contains</span><span class='LPAR'>(</span><span class='IDENTIFIER'>item</span><span class='RPAR'>)</span><span class='SEMICOLON'>;</span><span>
   </span><span class='RBRACE'>}</span><span>
 
-  </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>elem</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+  </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>elem</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>elem</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>item</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
       </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>true</span><span>
     </span><span class='RBRACE'>}</span><span>
@@ -211,20 +141,6 @@
   </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>false</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Convert collection of arbitrary elements to a List of tuples of the index and the element
- *
- * @includeFunctionBody ../../test/ListTest.kt withIndices
- */</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>withIndices</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Pair</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Int</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Pair</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Int</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>nextIndex</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
-    </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>e</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='IDENTIFIER'>answer</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>Pair</span><span class='LPAR'>(</span><span class='IDENTIFIER'>nextIndex</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>e</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
-        </span><span class='IDENTIFIER'>nextIndex</span><span class='PLUSPLUS'>++</span><span>
-    </span><span class='RBRACE'>}</span><span>
-    </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
-</span><span class='RBRACE'>}</span><span>
 
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>MutableIterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>sort</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>list</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>

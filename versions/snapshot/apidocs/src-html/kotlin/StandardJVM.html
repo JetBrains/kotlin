@@ -48,6 +48,17 @@
 <a href='#47' name='47'>47</a>
 <a href='#48' name='48'>48</a>
 <a href='#49' name='49'>49</a>
+<a href='#50' name='50'>50</a>
+<a href='#51' name='51'>51</a>
+<a href='#52' name='52'>52</a>
+<a href='#53' name='53'>53</a>
+<a href='#54' name='54'>54</a>
+<a href='#55' name='55'>55</a>
+<a href='#56' name='56'>56</a>
+<a href='#57' name='57'>57</a>
+<a href='#58' name='58'>58</a>
+<a href='#59' name='59'>59</a>
+<a href='#60' name='60'>60</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ArrayList</span><span>
@@ -61,40 +72,51 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>io</span><span class='DOT'>.</span><span class='IDENTIFIER'>PrintStream</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>Callable</span><span>
 
-</span><span class='hl-comment'>/**
- * Add iterated elements to a [[LinkedHashSet]] to preserve insertion order
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Add iterated elements to a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>LinkedHashSet</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to preserve insertion order</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toLinkedSet</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>LinkedHashSet</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>LinkedHashSet</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/**
- * Add iterated elements to [[SortedSet]] with the given *comparator* to ensure iteration is in the order of the given comparator
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Add iterated elements to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>SortedSet</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> with the given *comparator* to ensure iteration is in the order of the given comparator</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toSortedSet</span><span class='LPAR'>(</span><span class='IDENTIFIER'>comparator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>SortedSet</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>TreeSet</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>comparator</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 
 
-</span><span class='hl-comment'>/**
- * Allows a stack trace to be printed from Kotlin's [[Throwable]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Allows a stack trace to be printed from Kotlin's </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Throwable</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Throwable</span><span class='DOT'>.</span><span class='IDENTIFIER'>printStackTrace</span><span class='LPAR'>(</span><span class='IDENTIFIER'>writer</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PrintWriter</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>jlt</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>Throwable</span><span>
     </span><span class='IDENTIFIER'>jlt</span><span class='DOT'>.</span><span class='IDENTIFIER'>printStackTrace</span><span class='LPAR'>(</span><span class='IDENTIFIER'>writer</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Allows a stack trace to be printed from Kotlin's [[Throwable]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Allows a stack trace to be printed from Kotlin's </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Throwable</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Throwable</span><span class='DOT'>.</span><span class='IDENTIFIER'>printStackTrace</span><span class='LPAR'>(</span><span class='IDENTIFIER'>stream</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PrintStream</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>jlt</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>Throwable</span><span>
     </span><span class='IDENTIFIER'>jlt</span><span class='DOT'>.</span><span class='IDENTIFIER'>printStackTrace</span><span class='LPAR'>(</span><span class='IDENTIFIER'>stream</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
 
-</span><span class='hl-comment'>/**
- * A helper method for creating a [[Callable]] from a function
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for creating a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Callable</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> from a function</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>callable</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Callable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>object</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Callable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>call</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>action</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for creating a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Runnable</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> from a function</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
+</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>runnable</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Runnable</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>object</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Runnable</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>run</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='IDENTIFIER'>action</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 </span></td></tr></table></body></html>

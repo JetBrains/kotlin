@@ -188,18 +188,18 @@
 </span><span class='EOL_COMMENT'>// in jet.StringTemplate</span><span>
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>values</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
 
-    </span><span class='hl-comment'>/**
-     * Converts the template into a String
-     */</span><span>
+    </span><span class='KDOC_START'>/**</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts the template into a String</span><span>
+     </span><span class='KDOC_END'>*/</span><span>
     </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>out</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>StringBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
         </span><span class='IDENTIFIER'>forEach</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>append</span><span class='LPAR'>(</span><span class='IDENTIFIER'>it</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
 
-    </span><span class='hl-comment'>/**
-     * Performs the given function on each value in the collection
-     */</span><span>
+    </span><span class='KDOC_START'>/**</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Performs the given function on each value in the collection</span><span>
+     </span><span class='KDOC_END'>*/</span><span>
     </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>forEach</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>v</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>values</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
             </span><span class='IDENTIFIER'>fn</span><span class='LPAR'>(</span><span class='IDENTIFIER'>v</span><span class='RPAR'>)</span><span>
@@ -207,23 +207,23 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Converts the string template into a string using the given formatter
- * to encode values as Strings performing any special encoding (such as for HTML)
- * or internationalisation.
- *
- * See [[HtmlFormatter] and [[LocaleFormatter] respectively.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts the string template into a string using the given formatter</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> to encode values as Strings performing any special encoding (such as for HTML)</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> or internationalisation.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> See </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>HtmlFormatter] and </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>LocaleFormatter] respectively.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>formatter</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Formatter</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>buffer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>StringBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>append</span><span class='LPAR'>(</span><span class='IDENTIFIER'>buffer</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>formatter</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>buffer</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Appends the text representation of this string template to the given output
- * using the supplied formatter
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Appends the text representation of this string template to the given output</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> using the supplied formatter</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='DOT'>.</span><span class='IDENTIFIER'>append</span><span class='LPAR'>(</span><span class='IDENTIFIER'>out</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Appendable</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>formatter</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Formatter</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>constantText</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>true</span><span>
     </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>forEach</span><span> </span><span class='LBRACE'>{</span><span>
@@ -241,30 +241,30 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Converts this string template to internationalised text using the supplied
- * [[LocaleFormatter]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts this string template to internationalised text using the supplied</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>LocaleFormatter</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='DOT'>.</span><span class='IDENTIFIER'>toLocale</span><span class='LPAR'>(</span><span class='IDENTIFIER'>formatter</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>LocaleFormatter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>LocaleFormatter</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>formatter</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/**
- * Converts this string template to HTML text
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts this string template to HTML text</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='DOT'>.</span><span class='IDENTIFIER'>toHtml</span><span class='LPAR'>(</span><span class='IDENTIFIER'>formatter</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>HtmlFormatter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>HtmlFormatter</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>formatter</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/**
- * Represents a formatter and encoder of values in a [[StringTemplate]] which understands
- * how to format values for a particular [[Locale]] such as with the [[LocaleFormatter]] or
- * to escape particular characters in different output formats such as [[HtmlFormatter]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Represents a formatter and encoder of values in a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>StringTemplate</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which understands</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> how to format values for a particular </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Locale</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> such as with the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>LocaleFormatter</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> or</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> to escape particular characters in different output formats such as </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>HtmlFormatter]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>trait</span><span> </span><span class='IDENTIFIER'>Formatter</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>format</span><span class='LPAR'>(</span><span class='IDENTIFIER'>buffer</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Appendable</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>value</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span>
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>format</span><span class='LPAR'>(</span><span class='IDENTIFIER'>buffer</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Appendable</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Formats strings with no special encoding other than allowing the null text to be
- * configured
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Formats strings with no special encoding other than allowing the null text to be</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> configured</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>ToStringFormatter</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Formatter</span><span> </span><span class='LBRACE'>{</span><span>
 
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>nullString</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>null</span><span class='CLOSING_QUOTE'>&quot;</span><span>
@@ -281,10 +281,10 @@
         </span><span class='RBRACE'>}</span><span>
     </span><span class='RBRACE'>}</span><span>
 
-    </span><span class='hl-comment'>/**
-     * Formats the given string allowing derived classes to override this method
-     * to escape strings with special characters such as for HTML
-     */</span><span>
+    </span><span class='KDOC_START'>/**</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Formats the given string allowing derived classes to override this method</span><span>
+     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> to escape strings with special characters such as for HTML</span><span>
+     </span><span class='KDOC_END'>*/</span><span>
     </span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>format</span><span class='LPAR'>(</span><span class='IDENTIFIER'>out</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Appendable</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>text</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>append</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
@@ -292,9 +292,9 @@
 
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>defaultLocale</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Locale</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Locale</span><span class='DOT'>.</span><span class='IDENTIFIER'>getDefault</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/**
- * Formats values using a given [[Locale]] for internationalisation
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Formats values using a given </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Locale</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> for internationalisation</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>LocaleFormatter</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>locale</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Locale</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultLocale</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ToStringFormatter</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
 
     </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>LocaleFormatter{</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>locale</span><span class='REGULAR_STRING_PART'>}</span><span class='CLOSING_QUOTE'>&quot;</span><span>
@@ -322,9 +322,9 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Formats values for HTML encoding, escaping special characters in HTML.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Formats values for HTML encoding, escaping special characters in HTML.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>HtmlFormatter</span><span class='LPAR'>(</span><span class='IDENTIFIER'>locale</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Locale</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultLocale</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>LocaleFormatter</span><span class='LPAR'>(</span><span class='IDENTIFIER'>locale</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
 
     </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>HtmlFormatter{</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>locale</span><span class='REGULAR_STRING_PART'>}</span><span class='CLOSING_QUOTE'>&quot;</span><span>

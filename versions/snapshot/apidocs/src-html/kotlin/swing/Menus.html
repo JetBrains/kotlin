@@ -182,30 +182,30 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Helper method to create a new [JMenuItem]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper method to create a new [JMenuItem]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>menuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>description</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>mnemonic</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>accelerator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>KeyStroke</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JMenuItem</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>configureMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>JMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>description</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>mnemonic</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>accelerator</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Helper method to create a new [JCheckBoxMenuItem]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper method to create a new [JCheckBoxMenuItem]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>checkBoxMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>description</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>mnemonic</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>accelerator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>KeyStroke</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JCheckBoxMenuItem</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>configureMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>JCheckBoxMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>description</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>mnemonic</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>accelerator</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Helper method to create a new [JRadioButtonMenuItem]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper method to create a new [JRadioButtonMenuItem]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>radioButtonMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>description</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>mnemonic</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>accelerator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>KeyStroke</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JRadioButtonMenuItem</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>configureMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>JRadioButtonMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>description</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>mnemonic</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>accelerator</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Helper method to create a new [JMenuItem]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper method to create a new [JMenuItem]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JMenuItem</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>configureMenuItem</span><span class='LPAR'>(</span><span class='IDENTIFIER'>answer</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>description</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>mnemonic</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>accelerator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>KeyStroke</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>description</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>answer</span><span class='DOT'>.</span><span class='IDENTIFIER'>getAccessibleContext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>setAccessibleDescription</span><span class='LPAR'>(</span><span class='IDENTIFIER'>description</span><span class='RPAR'>)</span><span>
@@ -219,9 +219,9 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Helper function to create a [KeyStroke]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper function to create a [KeyStroke]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>keyStroke</span><span class='LPAR'>(</span><span class='IDENTIFIER'>keyChar</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>modifiers</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>KeyStroke</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>modifiers</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>KeyStroke</span><span class='DOT'>.</span><span class='IDENTIFIER'>getKeyStroke</span><span class='LPAR'>(</span><span class='IDENTIFIER'>keyChar</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>modifiers</span><span class='RPAR'>)</span><span>
@@ -230,18 +230,18 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Creates a [JMenuBar] from a list of [JMenu] objects
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a [JMenuBar] from a list of [JMenu] objects</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>menuBar</span><span class='LPAR'>(</span><span class='IDENTIFIER'>init</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JMenuBar</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JMenuBar</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>JMenuBar</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>answer</span><span class='DOT'>.</span><span class='IDENTIFIER'>init</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Creates a [JPopupMenu] from a list of [JMenu] objects
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a [JPopupMenu] from a list of [JMenu] objects</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>popupMenu</span><span class='LPAR'>(</span><span class='IDENTIFIER'>init</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JPopupMenu</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>JPopupMenu</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>JPopupMenu</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>answer</span><span class='DOT'>.</span><span class='IDENTIFIER'>init</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>

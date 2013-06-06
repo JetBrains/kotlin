@@ -43,25 +43,6 @@
 <a href='#42' name='42'>42</a>
 <a href='#43' name='43'>43</a>
 <a href='#44' name='44'>44</a>
-<a href='#45' name='45'>45</a>
-<a href='#46' name='46'>46</a>
-<a href='#47' name='47'>47</a>
-<a href='#48' name='48'>48</a>
-<a href='#49' name='49'>49</a>
-<a href='#50' name='50'>50</a>
-<a href='#51' name='51'>51</a>
-<a href='#52' name='52'>52</a>
-<a href='#53' name='53'>53</a>
-<a href='#54' name='54'>54</a>
-<a href='#55' name='55'>55</a>
-<a href='#56' name='56'>56</a>
-<a href='#57' name='57'>57</a>
-<a href='#58' name='58'>58</a>
-<a href='#59' name='59'>59</a>
-<a href='#60' name='60'>60</a>
-<a href='#61' name='61'>61</a>
-<a href='#62' name='62'>62</a>
-<a href='#63' name='63'>63</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Comparator</span><span>
@@ -72,57 +53,38 @@
 
 </span><span class='EOL_COMMENT'>// Map APIs</span><span>
 
-</span><span class='hl-comment'>/**
- * Converts this [[Map]] to a [[LinkedHashMap]] so future insertion orders are maintained
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts this </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Map</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>LinkedHashMap</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> so future insertion orders are maintained</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toLinkedMap</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>LinkedHashMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>LinkedHashMap</span><span class='LPAR'>(</span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>LinkedHashMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span>
 
-</span><span class='hl-comment'>/**
- * Converts this [[Map]] to a [[SortedMap]] so iteration order will be in key order
- *
- * @includeFunctionBody ../../test/MapTest.kt toSortedMap
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts this </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Map</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>SortedMap</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> so iteration order will be in key order</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/MapTest.kt toSortedMap</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toSortedMap</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>SortedMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>TreeMap</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>SortedMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span>
 
-</span><span class='hl-comment'>/**
- * Converts this [[Map]] to a [[SortedMap]] using the given *comparator* so that iteration order will be in the order
- * defined by the comparator
- *
- * @includeFunctionBody ../../test/MapTest.kt toSortedMapWithComparator
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts this </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Map</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>SortedMap</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> using the given *comparator* so that iteration order will be in the order</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> defined by the comparator</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/MapTest.kt toSortedMapWithComparator</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toSortedMap</span><span class='LPAR'>(</span><span class='IDENTIFIER'>comparator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>SortedMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>TreeMap</span><span class='LPAR'>(</span><span class='IDENTIFIER'>comparator</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>SortedMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span>
 
 
-</span><span class='hl-comment'>/**
- * Converts this [[Map]] to a [[Properties]] object
- *
- * @includeFunctionBody ../../test/MapTest.kt toProperties
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Converts this </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Map</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Properties</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> object</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/MapTest.kt toProperties</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toProperties</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Properties</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Properties</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>e</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>answer</span><span class='DOT'>.</span><span class='IDENTIFIER'>put</span><span class='LPAR'>(</span><span class='IDENTIFIER'>e</span><span class='DOT'>.</span><span class='IDENTIFIER'>key</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>e</span><span class='DOT'>.</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span><span class='hl-comment'>/**
- * Returns a new List containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
- *
- * @includeFunctionBody ../../test/CollectionTest.kt map
- */</span><span>
-</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='COMMA'>,</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>transform</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Map</span><span class='DOT'>.</span><span class='IDENTIFIER'>Entry</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>mapTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>transform</span><span class='RPAR'>)</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-
-</span><span class='hl-comment'>/**
- * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
- *
- * @includeFunctionBody ../../test/MapTest.kt mapValues
- */</span><span>
-</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='COMMA'>,</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>mapValues</span><span class='LPAR'>(</span><span class='IDENTIFIER'>transform</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Map</span><span class='DOT'>.</span><span class='IDENTIFIER'>Entry</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>mapValuesTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>HashMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>transform</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
 </span></td></tr></table></body></html>

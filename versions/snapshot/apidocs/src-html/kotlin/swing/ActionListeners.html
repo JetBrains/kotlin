@@ -84,9 +84,9 @@
 </span><span class='EOL_COMMENT'>// TODO this file may be deleted when this issue is implemented</span><span>
 </span><span class='EOL_COMMENT'>// http://youtrack.jetbrains.com/issue/KT-1752</span><span>
 
-</span><span class='hl-comment'>/**
- * Creates a [[ActionListener]] for the given function for processing each [[ActionEvent]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>ActionListener</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> for the given function for processing each </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>ActionEvent</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>actionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ActionEvent</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ActionListener</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FunctionActionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='RPAR'>)</span><span>
 
 </span><span class='private'>private</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>FunctionActionListener</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ActionEvent</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ActionListener</span><span> </span><span class='LBRACE'>{</span><span>

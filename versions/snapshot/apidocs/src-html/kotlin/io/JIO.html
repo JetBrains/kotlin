@@ -343,99 +343,99 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>NoSuchElementException</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>net</span><span class='DOT'>.</span><span class='IDENTIFIER'>URL</span><span>
 
-</span><span class='hl-comment'>/**
- * Returns the default buffer size when working with buffered streams
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the default buffer size when working with buffered streams</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>defaultBufferSize</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>64</span><span> </span><span class='MUL'>*</span><span> </span><span class='INTEGER_LITERAL'>1024</span><span>
 
-</span><span class='hl-comment'>/**
- * Returns the default [[Charset]] which defaults to UTF-8
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the default </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Charset</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which defaults to UTF-8</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>defaultCharset</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Charset</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='DOT'>.</span><span class='IDENTIFIER'>forName</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>UTF-8</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 
 
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Byte</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Short</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>print</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Byte</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Short</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Float</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints the given message and newline to [[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints the given message and newline to </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/** Prints a newline t[[System.out]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Prints a newline t</span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.out</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>println</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -478,10 +478,10 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/** Reads a line of input from [[System.in]] */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Reads a line of input from </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>System.in</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>readLine</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>stdin</span><span class='DOT'>.</span><span class='IDENTIFIER'>readLine</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/** Uses the given resource then closes it down correctly whether an exception is thrown or not */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Uses the given resource then closes it down correctly whether an exception is thrown or not </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Closeable</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>closed</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>false</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
@@ -507,7 +507,7 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns an [Iterator] of bytes over an input stream */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns an [Iterator] of bytes over an input stream </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>InputStream</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteIterator</span><span> </span><span class='EQ'>=</span><span>
 </span><span class='hl-keyword'>object</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteIterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>available</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
@@ -515,7 +515,7 @@
     </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>nextByte</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Byte</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>read</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByte</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Creates a buffered input stream */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Creates a buffered input stream </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>InputStream</span><span class='DOT'>.</span><span class='IDENTIFIER'>buffered</span><span class='LPAR'>(</span><span class='IDENTIFIER'>bufferSize</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultBufferSize</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>InputStream</span><span>
 </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>BufferedInputStream</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>this</span><span>
@@ -546,9 +546,9 @@
 </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>if</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>BufferedWriter</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>BufferedWriter</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>bufferSize</span><span class='RPAR'>)</span><span>
 
 
-</span><span class='hl-comment'>/**
- * Iterates through each line of this reader then closing the [[Reader]] when its completed
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Iterates through each line of this reader then closing the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Reader</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> when its completed</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Reader</span><span class='DOT'>.</span><span class='IDENTIFIER'>forEachLine</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Any</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>buffered</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>lineIterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -561,14 +561,14 @@
 
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Reader</span><span class='DOT'>.</span><span class='IDENTIFIER'>useLines</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>buffered</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>BufferedReader</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>lineIterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Returns an iterator over each line.
- * &lt;b&gt;Note&lt;/b&gt; the caller must close the underlying &lt;code&gt;BufferedReader&lt;/code&gt;
- * when the iteration is finished; as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator
- * may terminate the iteration early.
- * &lt;br&gt;
- * We suggest you try the method useLines() instead which closes the stream when the processing is complete.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns an iterator over each line.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> &lt;b&gt;Note&lt;/b&gt; the caller must close the underlying &lt;code&gt;BufferedReader&lt;/code&gt;</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> when the iteration is finished; as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> may terminate the iteration early.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> &lt;br&gt;</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> We suggest you try the method useLines() instead which closes the stream when the processing is complete.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>BufferedReader</span><span class='DOT'>.</span><span class='IDENTIFIER'>lineIterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>LineIterator</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
 
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>LineIterator</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>reader</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>BufferedReader</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
@@ -596,33 +596,33 @@
 
 
 
-</span><span class='hl-comment'>/**
- * Reads this stream completely into a byte array
- *
- * **Note** it is the callers responsibility to close this resource
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads this stream completely into a byte array</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> **Note** it is the callers responsibility to close this resource</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>InputStream</span><span class='DOT'>.</span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>estimatedSize</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultBufferSize</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>buffer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ByteArrayOutputStream</span><span class='LPAR'>(</span><span class='IDENTIFIER'>estimatedSize</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>copyTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>buffer</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>buffer</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByteArray</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Reads this reader completely as a String
- *
- * **Note** it is the callers responsibility to close this resource
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads this reader completely as a String</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> **Note** it is the callers responsibility to close this resource</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Reader</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>buffer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>StringWriter</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>copyTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>buffer</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>buffer</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Copies this stream to the given output stream, returning the number of bytes copied
- *
- * **Note** it is the callers responsibility to close both of these resources
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies this stream to the given output stream, returning the number of bytes copied</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> **Note** it is the callers responsibility to close both of these resources</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>InputStream</span><span class='DOT'>.</span><span class='IDENTIFIER'>copyTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>out</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>OutputStream</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>bufferSize</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultBufferSize</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>bytesCopied</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>buffer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>bufferSize</span><span class='RPAR'>)</span><span>
@@ -635,11 +635,11 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>bytesCopied</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Copies this reader to the given output writer, returning the number of bytes copied.
- *
- * **Note** it is the callers responsibility to close both of these resources
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies this reader to the given output writer, returning the number of bytes copied.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> **Note** it is the callers responsibility to close both of these resources</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Reader</span><span class='DOT'>.</span><span class='IDENTIFIER'>copyTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>out</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Writer</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>bufferSize</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultBufferSize</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>charsCopied</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>buffer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>bufferSize</span><span class='RPAR'>)</span><span>
@@ -652,25 +652,25 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>charsCopied</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Reads the entire content of the URL as a String with an optional character set name
- *
- * This method is not recommended on huge files.
- */</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>URL</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads the entire content of the URL as a String with a character set name</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This method is not recommended on huge files.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>URL</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='DOT'>.</span><span class='IDENTIFIER'>defaultCharset</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/**
- * Reads the entire content of the URL as a String with the specified character encoding.
- *
- * This method is not recommended on huge files.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads the entire content of the URL as a String with the specified character encoding.</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This method is not recommended on huge files.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>URL</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/**
- * Reads the entire content of the URL as bytes
- *
- * This method is not recommended on huge files.
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads the entire content of the URL as bytes</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This method is not recommended on huge files.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>URL</span><span class='DOT'>.</span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>openStream</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>InputStream</span><span class='COMMA'>,</span><span class='IDENTIFIER'>ByteArray</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 
 </span></td></tr></table></body></html>
