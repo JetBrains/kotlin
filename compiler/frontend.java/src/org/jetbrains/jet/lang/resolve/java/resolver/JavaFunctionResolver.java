@@ -280,7 +280,9 @@ public final class JavaFunctionResolver {
             if (function != null) {
                 functionsFromCurrent.add(function);
 
-                ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
+                if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
+                    ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
+                }
             }
         }
 
