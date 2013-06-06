@@ -348,12 +348,6 @@
     <item name="java.security.ProtectionDomain java.lang.String toString()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
-    <item name="java.security.Provider java.lang.Object put(java.lang.Object, java.lang.Object) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.security.Provider java.lang.Object put(java.lang.Object, java.lang.Object) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.security.Provider java.lang.String getProperty(java.lang.String) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
