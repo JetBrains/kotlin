@@ -45,6 +45,7 @@ import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
+import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
@@ -78,6 +79,13 @@ public class GenerateTests {
                 AbstractDiagnosticsTestWithEagerResolve.class,
                 testModel("compiler/testData/diagnostics/tests"),
                 testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "JetResolveTestGenerated",
+                AbstractResolveTest.class,
+                testModel("compiler/testData/resolve", true, "resolve", "doTest")
         );
 
         GenerateRangesCodegenTestData.main(args);
