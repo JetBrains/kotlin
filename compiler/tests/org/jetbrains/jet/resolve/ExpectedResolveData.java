@@ -303,7 +303,7 @@ public abstract class ExpectedResolveData {
             else {
                 assertEquals(
                         "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
-                        expected, actual);
+                        expected.getText(), actual.getText());
             }
         }
 
