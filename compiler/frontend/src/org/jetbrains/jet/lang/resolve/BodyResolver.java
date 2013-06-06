@@ -551,20 +551,21 @@ public class BodyResolver {
                     }
                     addConstraintForThisValue(constraintSystem, descriptor);
                 }
-                if (propertyDescriptor.isVar()) {
-                    OverloadResolutionResults<FunctionDescriptor> setMethodResults =
-                            DelegatedPropertyUtils.getDelegatedPropertyConventionMethod(
-                                    propertyDescriptor, delegateExpression, returnType, expressionTypingServices,
-                                    traceToResolveConventionMethods, accessorScope, false);
+                if (!propertyDescriptor.isVar()) return;
 
-                    if (conventionMethodFound(setMethodResults)) {
-                        FunctionDescriptor descriptor = setMethodResults.getResultingDescriptor();
-                        List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
-                        if (valueParameters.size() == 3) {
-                            ValueParameterDescriptor valueParameterForThis = valueParameters.get(2);
-                            constraintSystem.addSubtypeConstraint(expectedType, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
-                            addConstraintForThisValue(constraintSystem, descriptor);
-                        }
+                OverloadResolutionResults<FunctionDescriptor> setMethodResults =
+                        DelegatedPropertyUtils.getDelegatedPropertyConventionMethod(
+                                propertyDescriptor, delegateExpression, returnType, expressionTypingServices,
+                                traceToResolveConventionMethods, accessorScope, false);
+
+                if (conventionMethodFound(setMethodResults)) {
+                    FunctionDescriptor descriptor = setMethodResults.getResultingDescriptor();
+                    List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+                    if (valueParameters.size() == 3) {
+                        ValueParameterDescriptor valueParameterForThis = valueParameters.get(2);
+
+                        constraintSystem.addSubtypeConstraint(expectedType, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
+                        addConstraintForThisValue(constraintSystem, descriptor);
                     }
                 }
             }
@@ -585,6 +586,7 @@ public class BodyResolver {
                 List<ValueParameterDescriptor> valueParameters = resultingDescriptor.getValueParameters();
                 if (valueParameters.isEmpty()) return;
                 ValueParameterDescriptor valueParameterForThis = valueParameters.get(0);
+
                 constraintSystem.addSubtypeConstraint(typeOfThis, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
             }
         };
