@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -149,6 +151,7 @@ public final class JavaConstructorResolver {
                 ConstructorDescriptor constructor = resolveConstructor(psiClass, isStatic, psiConstructor, containingClass);
                 if (constructor != null) {
                     constructors.add(constructor);
+                    ContainerUtil.addIfNotNull(constructors, resolveSamAdapter(constructor));
                 }
             }
         }
@@ -217,5 +220,17 @@ public final class JavaConstructorResolver {
                                          aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;
+    }
+
+    @Nullable
+    private ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
+        if (SingleAbstractMethodUtils.isSamAdapterNecessary(original)) {
+            ConstructorDescriptor adapterFunction = SingleAbstractMethodUtils.createSamAdapterConstructor(original);
+
+            trace.record(BindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
+            trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
+            return adapterFunction;
+        }
+        return null;
     }
 }

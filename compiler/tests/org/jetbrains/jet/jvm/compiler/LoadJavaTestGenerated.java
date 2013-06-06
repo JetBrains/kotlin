@@ -1239,6 +1239,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/Basic.java");
                 }
                 
+                @TestMetadata("Constructor.java")
+                public void testConstructor() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/Constructor.java");
+                }
+                
                 @TestMetadata("DeepSamLoop.java")
                 public void testDeepSamLoop() throws Exception {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/DeepSamLoop.java");

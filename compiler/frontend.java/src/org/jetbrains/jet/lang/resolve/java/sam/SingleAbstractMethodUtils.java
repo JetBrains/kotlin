@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
@@ -174,7 +175,7 @@ public class SingleAbstractMethodUtils {
         return getFunctionTypeForSamType(type) != null;
     }
 
-    public static boolean isSamAdapterNecessary(@NotNull SimpleFunctionDescriptor fun) {
+    public static boolean isSamAdapterNecessary(@NotNull FunctionDescriptor fun) {
         for (ValueParameterDescriptor param : fun.getValueParameters()) {
             if (isSamType(param.getType())) {
                 return true;
@@ -184,20 +185,77 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SimpleFunctionDescriptor createSamAdapterFunction(@NotNull SimpleFunctionDescriptor original) {
-        SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
+    public static SimpleFunctionDescriptor createSamAdapterFunction(@NotNull final SimpleFunctionDescriptor original) {
+        final SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
                 original.getContainingDeclaration(),
                 original.getAnnotations(),
                 original.getName(),
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
+        FunctionInitializer initializer = new FunctionInitializer() {
+            @Override
+            public void initialize(
+                    @NotNull List<TypeParameterDescriptor> typeParameters,
+                    @NotNull List<ValueParameterDescriptor> valueParameters,
+                    @Nullable JetType returnType
+            ) {
+                result.initialize(
+                        null,
+                        original.getExpectedThisObject(),
+                        typeParameters,
+                        valueParameters,
+                        returnType,
+                        original.getModality(),
+                        original.getVisibility(),
+                        false
+                );
+            }
+        };
+        return initSamAdapter(original, result, initializer);
+    }
 
-        TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), result);
+    @NotNull
+    public static ConstructorDescriptor createSamAdapterConstructor(@NotNull final ConstructorDescriptor original) {
+        final ConstructorDescriptorImpl result = new ConstructorDescriptorImpl(
+                original.getContainingDeclaration(),
+                original.getAnnotations(),
+                original.isPrimary(),
+                CallableMemberDescriptor.Kind.SYNTHESIZED
+        );
+        FunctionInitializer initializer = new FunctionInitializer() {
+            @Override
+            public void initialize(
+                    @NotNull List<TypeParameterDescriptor> typeParameters,
+                    @NotNull List<ValueParameterDescriptor> valueParameters,
+                    @Nullable JetType returnType
+            ) {
+                result.initialize(
+                        typeParameters,
+                        valueParameters,
+                        original.getVisibility(),
+                        original.getExpectedThisObject() == ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
+                );
+            }
+        };
+        return initSamAdapter(original, result, initializer);
+    }
+
+    private static <F extends FunctionDescriptor> F initSamAdapter(
+            @NotNull F original,
+            @NotNull F adapter,
+            @NotNull FunctionInitializer initializer
+    ) {
+        TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
 
         JetType returnTypeUnsubstituted = original.getReturnType();
-        assert returnTypeUnsubstituted != null : original;
-        JetType returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
-        assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParameters.substitutor;
+        JetType returnType;
+        if (returnTypeUnsubstituted == null) { // return type may be null for not yet initialized constructors
+            returnType = null;
+        }
+        else {
+            returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
+            assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParameters.substitutor;
+        }
 
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         for (ValueParameterDescriptor originalParam : original.getValueParameters()) {
@@ -208,22 +266,12 @@ public class SingleAbstractMethodUtils {
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + typeParameters.substitutor;
 
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
-                    result, originalParam.getIndex(), originalParam.getAnnotations(), originalParam.getName(), newType, false, null);
+                    adapter, originalParam.getIndex(), originalParam.getAnnotations(), originalParam.getName(), newType, false, null);
             valueParameters.add(newParam);
         }
 
-        result.initialize(
-                null,
-                original.getExpectedThisObject(),
-                typeParameters.descriptors,
-                valueParameters,
-                returnType,
-                original.getModality(),
-                original.getVisibility(),
-                false
-        );
-
-        return result;
+        initializer.initialize(typeParameters.descriptors, valueParameters, returnType);
+        return adapter;
     }
 
     @NotNull
@@ -272,5 +320,13 @@ public class SingleAbstractMethodUtils {
             this.descriptors = descriptors;
             this.substitutor = substitutor;
         }
+    }
+
+    private static abstract class FunctionInitializer {
+        public abstract void initialize(
+                @NotNull List<TypeParameterDescriptor> typeParameters,
+                @NotNull List<ValueParameterDescriptor> valueParameters,
+                @Nullable JetType returnType
+        );
     }
 }

@@ -1897,7 +1897,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         SimpleFunctionDescriptor original = ((SimpleFunctionDescriptor) fun).getOriginal();
         if (original.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            return bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
+            return (SimpleFunctionDescriptor) bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original); // TODO support constructor
         }
         if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             for (FunctionDescriptor overridden : original.getOverriddenDescriptors()) {
