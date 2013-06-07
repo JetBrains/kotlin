@@ -5,9 +5,9 @@ trait Test {
 }
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test, prop
+// TESTED_OBJECTS: Test, prop$ext
 // ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
-// TESTED_OBJECTS: Test$object, prop
+// TESTED_OBJECTS: Test$object, prop$ext
 // FLAGS: ACC_PRIVATE

@@ -473,7 +473,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         }
         
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
-        @InnerTestClasses({ClassObject.Class.class, ClassObject.Trait.class})
+        @InnerTestClasses({ClassObject.Class.class, ClassObject.Rename.class, ClassObject.Trait.class})
         public static class ClassObject extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObject() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -578,6 +578,44 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 @TestMetadata("publicVarPublicSet.kt")
                 public void testPublicVarPublicSet() throws Exception {
                     doTest("compiler/testData/writeFlags/property/classObject/class/publicVarPublicSet.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/writeFlags/property/classObject/rename")
+            public static class Rename extends AbstractWriteFlagsTest {
+                public void testAllFilesPresentInRename() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("constructorAndClassObject.kt")
+                public void testConstructorAndClassObject() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/constructorAndClassObject.kt");
+                }
+                
+                @TestMetadata("delegatedAndDelegated.kt")
+                public void testDelegatedAndDelegated() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/delegatedAndDelegated.kt");
+                }
+                
+                @TestMetadata("delegatedAndProperty.kt")
+                public void testDelegatedAndProperty() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/delegatedAndProperty.kt");
+                }
+                
+                @TestMetadata("extensionAndExtension.kt")
+                public void testExtensionAndExtension() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/extensionAndExtension.kt");
+                }
+                
+                @TestMetadata("extensionAndProperty.kt")
+                public void testExtensionAndProperty() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/extensionAndProperty.kt");
+                }
+                
+                @TestMetadata("propertyAndProperty.kt")
+                public void testPropertyAndProperty() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/propertyAndProperty.kt");
                 }
                 
             }
@@ -689,6 +727,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 TestSuite suite = new TestSuite("ClassObject");
                 suite.addTestSuite(ClassObject.class);
                 suite.addTestSuite(Class.class);
+                suite.addTestSuite(Rename.class);
                 suite.addTestSuite(Trait.class);
                 return suite;
             }

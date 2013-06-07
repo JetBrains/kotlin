@@ -105,7 +105,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
             int expectedAccess = getExpectedFlags(testedObject.textData);
 
             if (isObjectExists) {
-                assertEquals("Wrong access flag \n" + factory.asText(className), expectedAccess, classVisitor.getAccess());
+                assertEquals("Wrong access flag for " + testedObject + " \n" + factory.asText(className), expectedAccess, classVisitor.getAccess());
             }
         }
     }
