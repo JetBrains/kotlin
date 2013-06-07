@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetReturnExpression;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
 
@@ -29,6 +30,12 @@ public enum UnfoldableKind implements Transformer {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
             BranchedUnfoldingUtils.unfoldAssignmentToIf((JetBinaryExpression) element, editor);
+        }
+    },
+    PROPERTY_TO_IF("unfold.property.to.if") {
+        @Override
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
+            BranchedUnfoldingUtils.unfoldPropertyToIf((JetProperty) element, file);
         }
     },
     RETURN_TO_IF("unfold.return.to.if") {
@@ -41,6 +48,12 @@ public enum UnfoldableKind implements Transformer {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
             BranchedUnfoldingUtils.unfoldAssignmentToWhen((JetBinaryExpression) element, editor);
+        }
+    },
+    PROPERTY_TO_WHEN("unfold.property.to.when") {
+        @Override
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
+            BranchedUnfoldingUtils.unfoldPropertyToWhen((JetProperty) element, file);
         }
     },
     RETURN_TO_WHEN("unfold.return.to.when") {

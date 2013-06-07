@@ -332,7 +332,17 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldBranchedExpressionIntention$UnfoldPropertyToIfIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldBranchedExpressionIntention$UnfoldAssignmentToWhenIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.UnfoldBranchedExpressionIntention$UnfoldPropertyToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

@@ -42,9 +42,21 @@ public abstract class UnfoldBranchedExpressionIntention extends AbstractCodeTran
         }
     }
 
+    public static class UnfoldPropertyToIfIntention extends UnfoldBranchedExpressionIntention {
+        public UnfoldPropertyToIfIntention() {
+            super(UnfoldableKind.PROPERTY_TO_IF);
+        }
+    }
+
     public static class UnfoldAssignmentToWhenIntention extends UnfoldBranchedExpressionIntention {
         public UnfoldAssignmentToWhenIntention() {
             super(UnfoldableKind.ASSIGNMENT_TO_WHEN);
+        }
+    }
+
+    public static class UnfoldPropertyToWhenIntention extends UnfoldBranchedExpressionIntention {
+        public UnfoldPropertyToWhenIntention() {
+            super(UnfoldableKind.PROPERTY_TO_WHEN);
         }
     }
 

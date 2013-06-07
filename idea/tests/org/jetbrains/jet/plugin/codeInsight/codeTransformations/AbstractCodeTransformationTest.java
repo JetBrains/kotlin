@@ -54,6 +54,14 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTest(path, new UnfoldBranchedExpressionIntention.UnfoldAssignmentToWhenIntention());
     }
 
+    public void doTestUnfoldPropertyToIf(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldPropertyToIfIntention());
+    }
+
+    public void doTestUnfoldPropertyToWhen(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldPropertyToWhenIntention());
+    }
+
     public void doTestUnfoldReturnToIf(@NotNull String path) throws Exception {
         doTest(path, new UnfoldBranchedExpressionIntention.UnfoldReturnToIfIntention());
     }

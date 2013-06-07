@@ -1,0 +1,6 @@
+fun test(n: Int): String {
+    val <caret>res: String
+    if (n == 1) res = "one" else res = "two"
+
+    return res
+}

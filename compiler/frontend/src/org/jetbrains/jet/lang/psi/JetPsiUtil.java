@@ -743,6 +743,11 @@ public class JetPsiUtil {
         return element != null ? element.getText() : "";
     }
 
+    @Nullable
+    public static String getNullableText(@Nullable PsiElement element) {
+        return element != null ? element.getText() : null;
+    }
+
     /**
      * CommentUtilCore.isComment fails if element <strong>inside</strong> comment.
      *
