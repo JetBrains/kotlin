@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE;
+import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE_ALL;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 
 public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
@@ -38,6 +38,6 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
     public void testBuiltIns() throws Exception {
         NamespaceDescriptor builtInsPackage = KotlinBuiltIns.getInstance().getBuiltInsPackage();
         DescriptorValidator.validate(builtInsPackage);
-        compareNamespaceWithFile(builtInsPackage, RECURSIVE, new File("compiler/testData/builtin-classes.txt"));
+        compareNamespaceWithFile(builtInsPackage, RECURSIVE_ALL, new File("compiler/testData/builtin-classes.txt"));
     }
 }
