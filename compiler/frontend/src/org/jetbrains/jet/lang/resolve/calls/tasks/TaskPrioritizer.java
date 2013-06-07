@@ -147,29 +147,26 @@ public class TaskPrioritizer {
         if (receiver.exists()) {
             List<ReceiverValue> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiver);
 
-            Collection<ResolutionCandidate<D>> extensionFunctions = convertWithImpliedThis(scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(scope, name));
-            List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
-            List<ResolutionCandidate<D>> locals = Lists.newArrayList();
-            //noinspection unchecked,RedundantTypeArguments
-            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(extensionFunctions, scope.getContainingDeclaration(), locals, nonlocals);
-
             Collection<ResolutionCandidate<D>> members = Lists.newArrayList();
             for (ReceiverValue variant : variantsForExplicitReceiver) {
                 Collection<? extends D> membersForThisVariant = callableDescriptorCollector.getMembersByName(variant.getType(), name);
-                convertWithReceivers(membersForThisVariant, Collections.singletonList(variant), Collections.singletonList(NO_RECEIVER), members, hasExplicitThisObject);
+                convertWithReceivers(membersForThisVariant, Collections.singletonList(variant),
+                                     Collections.singletonList(NO_RECEIVER), members, hasExplicitThisObject);
             }
 
-            result.addLocalExtensions(locals);
-            result.addMembers(members);
+            result.addCandidates(members);
 
             for (ReceiverValue implicitReceiver : implicitReceivers) {
                 Collection<? extends D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
                         implicitReceiver.getType().getMemberScope(), name);
                 List<ReceiverValue> variantsForImplicitReceiver = autoCastService.getVariantsForReceiver(implicitReceiver);
-                result.addNonLocalExtensions(convertWithReceivers(memberExtensions, variantsForImplicitReceiver, variantsForExplicitReceiver, hasExplicitThisObject));
+                result.addCandidates(convertWithReceivers(memberExtensions, variantsForImplicitReceiver,
+                                                          variantsForExplicitReceiver, hasExplicitThisObject));
             }
 
-            result.addNonLocalExtensions(nonlocals);
+            Collection<ResolutionCandidate<D>> extensionFunctions = convertWithImpliedThis(
+                    scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(scope, name));
+            result.addCandidates(extensionFunctions);
         }
         else {
             Collection<ResolutionCandidate<D>> functions = convertWithImpliedThis(scope, Collections.singletonList(receiver), callableDescriptorCollector
@@ -180,12 +177,12 @@ public class TaskPrioritizer {
             //noinspection unchecked,RedundantTypeArguments
             TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, scope.getContainingDeclaration(), locals, nonlocals);
 
-            result.addLocalExtensions(locals);
+            result.addCandidates(locals);
 
             for (ReceiverValue implicitReceiver : implicitReceivers) {
                 doComputeTasks(scope, implicitReceiver, name, result, context, callableDescriptorCollector);
             }
-            result.addNonLocalExtensions(nonlocals);
+            result.addCandidates(nonlocals);
         }
     }
 

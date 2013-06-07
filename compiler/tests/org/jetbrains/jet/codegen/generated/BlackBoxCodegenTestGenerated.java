@@ -1105,11 +1105,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/classes/propertyInInitializer.kt");
         }
         
-        @TestMetadata("resolveOrder.kt")
-        public void testResolveOrder() throws Exception {
-            doTest("compiler/testData/codegen/box/classes/resolveOrder.kt");
-        }
-        
         @TestMetadata("rightHandOverride.kt")
         public void testRightHandOverride() throws Exception {
             doTest("compiler/testData/codegen/box/classes/rightHandOverride.kt");

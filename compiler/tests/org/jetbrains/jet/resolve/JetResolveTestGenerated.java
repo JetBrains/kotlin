@@ -162,15 +162,80 @@ public class JetResolveTestGenerated extends AbstractResolveTest {
         public void testAllFilesPresentInCandidatesPriority() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/resolve/candidatesPriority"), Pattern.compile("^(.+)\\.resolve$"), true);
         }
-        
+
         @TestMetadata("classObjectOuterResolve.resolve")
         public void testClassObjectOuterResolve() throws Exception {
             doTest("compiler/testData/resolve/candidatesPriority/classObjectOuterResolve.resolve");
         }
         
-        @TestMetadata("preferImplicitThisToNoReceiver.resolve")
-        public void testPreferImplicitThisToNoReceiver() throws Exception {
-            doTest("compiler/testData/resolve/candidatesPriority/preferImplicitThisToNoReceiver.resolve");
+        @TestMetadata("closerReceiver1.resolve")
+        public void testCloserReceiver1() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/closerReceiver1.resolve");
+        }
+        
+        @TestMetadata("closerReceiver2.resolve")
+        public void testCloserReceiver2() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/closerReceiver2.resolve");
+        }
+        
+        @TestMetadata("closerReceiver3.resolve")
+        public void testCloserReceiver3() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/closerReceiver3.resolve");
+        }
+        
+        @TestMetadata("closerScope.resolve")
+        public void testCloserScope() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/closerScope.resolve");
+        }
+        
+        @TestMetadata("extensionToCloserReceiverVsMember.resolve")
+        public void testExtensionToCloserReceiverVsMember() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/extensionToCloserReceiverVsMember.resolve");
+        }
+        
+        @TestMetadata("implicitThisVsNoReceiver.resolve")
+        public void testImplicitThisVsNoReceiver() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/implicitThisVsNoReceiver.resolve");
+        }
+        
+        @TestMetadata("implicitThisVsNoReceiver2.resolve")
+        public void testImplicitThisVsNoReceiver2() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/implicitThisVsNoReceiver2.resolve");
+        }
+        
+        @TestMetadata("localVsImplicitThis.resolve")
+        public void testLocalVsImplicitThis() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/localVsImplicitThis.resolve");
+        }
+        
+        @TestMetadata("memberVsExtension1.resolve")
+        public void testMemberVsExtension1() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/memberVsExtension1.resolve");
+        }
+        
+        @TestMetadata("memberVsExtension2.resolve")
+        public void testMemberVsExtension2() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/memberVsExtension2.resolve");
+        }
+        
+        @TestMetadata("memberVsExtension3.resolve")
+        public void testMemberVsExtension3() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/memberVsExtension3.resolve");
+        }
+        
+        @TestMetadata("memberVsLocalExtension.resolve")
+        public void testMemberVsLocalExtension() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/memberVsLocalExtension.resolve");
+        }
+        
+        @TestMetadata("receiverVsThisObject.resolve")
+        public void testReceiverVsThisObject() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/receiverVsThisObject.resolve");
+        }
+        
+        @TestMetadata("receiverVsThisObject2.resolve")
+        public void testReceiverVsThisObject2() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/receiverVsThisObject2.resolve");
         }
         
     }

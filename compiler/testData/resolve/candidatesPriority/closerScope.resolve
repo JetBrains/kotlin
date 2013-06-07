@@ -1,0 +1,8 @@
+class A
+fun A.foo() = 2
+
+class B {
+    ~foo~fun A.foo() = 1
+
+    fun A.bar() = `foo`foo()
+}
