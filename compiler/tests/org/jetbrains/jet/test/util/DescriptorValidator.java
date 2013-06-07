@@ -35,8 +35,6 @@ public class DescriptorValidator {
     public static final ValidationVisitor FORBID_ERROR_TYPES = new ValidationVisitor(false);
     public static final ValidationVisitor ALLOW_ERROR_TYPES = new ValidationVisitor(true);
 
-    private DescriptorValidator() {}
-
     public static void validate(DeclarationDescriptor... descriptors) {
         validate(FORBID_ERROR_TYPES, Arrays.asList(descriptors));
     }
@@ -61,13 +59,12 @@ public class DescriptorValidator {
         RecursiveDescriptorProcessor.process(descriptor, collector, validator);
     }
 
-    public interface DiagnosticCollector {
-
-        void report(@NotNull Diagnostic diagnostic);
-    }
-
     private static void report(@NotNull DiagnosticCollector collector, @NotNull DeclarationDescriptor descriptor, @NotNull String message) {
         collector.report(new Diagnostic(descriptor, message));
+    }
+
+    public interface DiagnosticCollector {
+        void report(@NotNull Diagnostic diagnostic);
     }
 
     public static class ValidationVisitor implements DeclarationDescriptorVisitor<Boolean, DiagnosticCollector> {
@@ -510,4 +507,5 @@ public class DescriptorValidator {
         }
     }
 
+    private DescriptorValidator() {}
 }
