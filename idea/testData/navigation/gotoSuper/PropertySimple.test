@@ -1,0 +1,14 @@
+// FILE: b.kt
+trait Some {
+    val test: Int
+}
+class SomeObject: Some {
+    override val <caret>test: Int = 1
+}
+// FILE: a.kt
+trait Some {
+    val <caret>test: Int
+}
+class SomeObject: Some {
+    override val test: Int = 1
+}

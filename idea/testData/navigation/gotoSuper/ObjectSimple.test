@@ -1,0 +1,6 @@
+// FILE: b.kt
+trait Some
+object <caret>SomeObject: Some
+// FILE: a.kt
+trait <caret>Some
+object SomeObject: Some

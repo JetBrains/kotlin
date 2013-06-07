@@ -43,6 +43,7 @@ import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTes
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
+import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
@@ -281,6 +282,12 @@ public class GenerateTests {
                 "JetJavaLibCompletionTestGenerated",
                 AbstractJavaWithLibCompletionTest.class,
                 testModel("idea/testData/completion/basic/custom", false, "doTestWithJar"));
+
+        generateTest(
+                "idea/tests",
+                "JetGotoSuperTestGenerated",
+                JetAbstractGotoSuperTest.class,
+                testModel("idea/testData/navigation/gotoSuper", false, "test", "doTest"));
 
         generateTest(
                 "idea/tests/",
