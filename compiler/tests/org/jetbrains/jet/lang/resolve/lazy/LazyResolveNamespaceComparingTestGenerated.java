@@ -160,6 +160,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/class/NamedObject.kt");
             }
             
+            @TestMetadata("NamedObjectInClass.kt")
+            public void testNamedObjectInClass() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/class/NamedObjectInClass.kt");
+            }
+            
             @TestMetadata("NamedObjectInClassObject.kt")
             public void testNamedObjectInClassObject() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/class/NamedObjectInClassObject.kt");

@@ -158,6 +158,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObject.kt");
         }
         
+        @TestMetadata("NamedObjectInClass.kt")
+        public void testNamedObjectInClass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObjectInClass.kt");
+        }
+        
         @TestMetadata("NamedObjectInClassObject.kt")
         public void testNamedObjectInClassObject() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObjectInClassObject.kt");

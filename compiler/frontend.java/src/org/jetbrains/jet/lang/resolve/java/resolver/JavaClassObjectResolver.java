@@ -149,7 +149,7 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.createTypeConstructor();
         JavaClassNonStaticMembersScope classMembersScope = new JavaClassNonStaticMembersScope(classObjectDescriptor, data, semanticServices);
         WritableScopeImpl writableScope =
-                new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
+                new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classObjectDescriptor.setScopeForMemberLookup(writableScope);
         classObjectDescriptor.setScopeForConstructorResolve(classMembersScope);

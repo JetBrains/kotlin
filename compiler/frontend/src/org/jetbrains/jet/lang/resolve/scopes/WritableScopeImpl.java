@@ -33,6 +33,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private final Multimap<Name, DeclarationDescriptor> declaredDescriptorsAccessibleBySimpleName = HashMultimap.create();
     private boolean allDescriptorsDone = false;
 
+    private Set<ClassDescriptor> allObjectDescriptors = null;
+
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
 
@@ -401,13 +403,26 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return getObjectDescriptorsMap().get(name);
+        ClassDescriptor descriptor = getObjectDescriptorsMap().get(name);
+        if (descriptor != null) return descriptor;
+
+        ClassDescriptor fromWorker = getWorkerScope().getObjectDescriptor(name);
+        if (fromWorker != null) return fromWorker;
+
+        return super.getObjectDescriptor(name);
     }
 
     @NotNull
     @Override
     public Set<ClassDescriptor> getObjectDescriptors() {
-        return Sets.newHashSet(getObjectDescriptorsMap().values());
+        if (allObjectDescriptors == null) {
+            allObjectDescriptors = Sets.newHashSet(getObjectDescriptorsMap().values());
+            allObjectDescriptors.addAll(getWorkerScope().getObjectDescriptors());
+            for (JetScope imported : getImports()) {
+                allObjectDescriptors.addAll(imported.getObjectDescriptors());
+            }
+        }
+        return allObjectDescriptors;
     }
 
     @Override
