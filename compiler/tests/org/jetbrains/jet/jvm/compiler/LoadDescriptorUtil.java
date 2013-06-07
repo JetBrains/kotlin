@@ -108,7 +108,7 @@ public final class LoadDescriptorUtil {
                 javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         assert namespaceDescriptor != null;
 
-        DescriptorValidator.validate(namespaceDescriptor);
+        DescriptorValidator.validateIgnoringErrorTypes(namespaceDescriptor);
         return Pair.create(namespaceDescriptor, injector.getBindingTrace().getBindingContext());
     }
 

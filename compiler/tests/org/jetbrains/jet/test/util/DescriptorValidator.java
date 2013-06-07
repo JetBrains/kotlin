@@ -32,28 +32,33 @@ import java.util.List;
 
 public class DescriptorValidator {
 
+    public static final ValidationVisitor FORBID_ERROR_TYPES = new ValidationVisitor(false);
+    public static final ValidationVisitor ALLOW_ERROR_TYPES = new ValidationVisitor(true);
+
     private DescriptorValidator() {}
 
     public static void validate(DeclarationDescriptor... descriptors) {
-        validate(Arrays.asList(descriptors));
+        validate(FORBID_ERROR_TYPES, Arrays.asList(descriptors));
     }
 
-    public static void validate(@NotNull Collection<DeclarationDescriptor> descriptors) {
+    public static void validateIgnoringErrorTypes(DeclarationDescriptor... descriptors) {
+        validate(ALLOW_ERROR_TYPES, Arrays.asList(descriptors));
+    }
+
+    public static void validate(@NotNull ValidationVisitor validator, @NotNull Collection<DeclarationDescriptor> descriptors) {
         DiagnosticCollectorForTests collector = new DiagnosticCollectorForTests();
         for (DeclarationDescriptor descriptor : descriptors) {
-            validate(descriptor, collector);
+            validate(validator, descriptor, collector);
         }
         collector.done();
     }
 
-    public static void validate(@NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull DiagnosticCollector collector) {
-        for (DeclarationDescriptor descriptor : descriptors) {
-            validate(descriptor, collector);
-        }
-    }
-
-    public static void validate(@NotNull DeclarationDescriptor descriptor, @NotNull DiagnosticCollector collector) {
-        RecursiveDescriptorProcessor.process(descriptor, collector, ValidationVisitor.INSTANCE);
+    public static void validate(
+            @NotNull ValidationVisitor validator,
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull DiagnosticCollector collector
+    ) {
+        RecursiveDescriptorProcessor.process(descriptor, collector, validator);
     }
 
     public interface DiagnosticCollector {
@@ -65,11 +70,13 @@ public class DescriptorValidator {
         collector.report(new Diagnostic(descriptor, message));
     }
 
-    private static class ValidationVisitor implements DeclarationDescriptorVisitor<Boolean, DiagnosticCollector> {
+    public static class ValidationVisitor implements DeclarationDescriptorVisitor<Boolean, DiagnosticCollector> {
 
-        public static final ValidationVisitor INSTANCE = new ValidationVisitor();
+        private final boolean allowErrorTypes;
 
-        private ValidationVisitor() {}
+        private ValidationVisitor(boolean allowErrorTypes) {
+            this.allowErrorTypes = allowErrorTypes;
+        }
 
         private static void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
             for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
@@ -77,7 +84,7 @@ public class DescriptorValidator {
             }
         }
 
-        private static void validateType(
+        private void validateType(
                 @NotNull DeclarationDescriptor descriptor,
                 @Nullable JetType type,
                 @NotNull DiagnosticCollector collector
@@ -87,7 +94,7 @@ public class DescriptorValidator {
                 return;
             }
 
-            if (ErrorUtils.isErrorType(type)) {
+            if (!allowErrorTypes && ErrorUtils.isErrorType(type)) {
                 report(collector, descriptor, "Error type: " + type);
                 return;
             }
@@ -95,7 +102,7 @@ public class DescriptorValidator {
             validateScope(type.getMemberScope(), collector);
         }
 
-        private static void validateReturnType(CallableDescriptor descriptor, DiagnosticCollector collector) {
+        private void validateReturnType(CallableDescriptor descriptor, DiagnosticCollector collector) {
             validateType(descriptor, descriptor.getReturnType(), collector);
         }
 
@@ -117,7 +124,7 @@ public class DescriptorValidator {
             }
         }
 
-        private static void validateTypes(
+        private void validateTypes(
                 DeclarationDescriptor descriptor,
                 DiagnosticCollector collector,
                 Collection<JetType> types
@@ -127,7 +134,7 @@ public class DescriptorValidator {
             }
         }
 
-        private static void validateCallable(CallableDescriptor descriptor, DiagnosticCollector collector) {
+        private void validateCallable(CallableDescriptor descriptor, DiagnosticCollector collector) {
             validateReturnType(descriptor, collector);
             validateTypeParameters(collector, descriptor.getTypeParameters());
             validateValueParameters(collector, descriptor.getValueParameters());
