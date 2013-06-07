@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 import org.junit.Assert;
 
@@ -70,6 +71,7 @@ public abstract class AbstractCompileKotlinAgainstCustomJavaTest extends TestCas
         NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceFqn);
         assertNotNull("Failed to find namespace: " + namespaceFqn, namespaceDescriptor);
 
+        DescriptorValidator.validate(namespaceDescriptor);
         compareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
     }
 

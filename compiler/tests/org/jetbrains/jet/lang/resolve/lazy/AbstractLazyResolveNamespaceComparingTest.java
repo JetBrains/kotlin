@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 import org.junit.Assert;
 
@@ -76,6 +77,8 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         Assert.assertNotNull("Namespace for name " + test + " is null after eager resolve", expected);
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
+
+        DescriptorValidator.validate(expected, actual);
 
         NamespaceComparator.compareNamespaces(
                 expected, actual, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(

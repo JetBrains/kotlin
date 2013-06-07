@@ -23,6 +23,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
@@ -55,8 +56,12 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().asString());
+
+        DescriptorValidator.validate(namespaceFromSource);
+
         NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
+
         compareNamespaces(namespaceFromSource, namespaceFromClass,
                           NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                                   .checkPrimaryConstructors(true)

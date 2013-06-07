@@ -28,9 +28,9 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -42,13 +42,15 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
-import static org.jetbrains.jet.lang.psi.JetPsiFactory.createFile;
 
 public final class LoadDescriptorUtil {
 
@@ -105,6 +107,8 @@ public final class LoadDescriptorUtil {
         NamespaceDescriptor namespaceDescriptor =
                 javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         assert namespaceDescriptor != null;
+
+        DescriptorValidator.validate(namespaceDescriptor);
         return Pair.create(namespaceDescriptor, injector.getBindingTrace().getBindingContext());
     }
 
@@ -137,6 +141,7 @@ public final class LoadDescriptorUtil {
         NamespaceDescriptor namespace =
                 fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
         assert namespace != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
+        DescriptorValidator.validate(namespace);
         return namespace;
     }
 
