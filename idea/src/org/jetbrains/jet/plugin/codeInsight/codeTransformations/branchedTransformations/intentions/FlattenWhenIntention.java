@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.WhenUtils;
@@ -19,7 +20,7 @@ public class FlattenWhenIntention extends AbstractCodeTransformationIntention<Tr
         }
 
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, @NotNull JetFile file) {
             WhenUtils.flattenWhen((JetWhenExpression) element);
         }
     };

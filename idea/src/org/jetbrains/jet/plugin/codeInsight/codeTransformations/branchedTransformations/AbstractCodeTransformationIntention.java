@@ -26,6 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
@@ -63,6 +64,6 @@ public abstract class AbstractCodeTransformationIntention<T extends Transformer>
 
         assert target != null : "Intention is not applicable";
 
-        transformer.transform(target, editor);
+        transformer.transform(target, editor, (JetFile) file);
     }
 }

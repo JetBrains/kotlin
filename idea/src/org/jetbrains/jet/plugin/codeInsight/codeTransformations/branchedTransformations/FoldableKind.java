@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransfo
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetIfExpression;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
@@ -26,31 +27,31 @@ import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransfor
 public enum FoldableKind implements Transformer {
     IF_TO_ASSIGNMENT("fold.if.to.assignment") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, @NotNull JetFile file) {
             BranchedFoldingUtils.foldIfExpressionWithAssignments((JetIfExpression) element);
         }
     },
     IF_TO_RETURN("fold.if.to.return") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, @NotNull JetFile file) {
             BranchedFoldingUtils.foldIfExpressionWithReturns((JetIfExpression) element);
         }
     },
     IF_TO_RETURN_ASYMMETRICALLY("fold.if.to.return") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, @NotNull JetFile file) {
             BranchedFoldingUtils.foldIfExpressionWithAsymmetricReturns((JetIfExpression) element);
         }
     },
     WHEN_TO_ASSIGNMENT("fold.when.to.assignment") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, @NotNull JetFile file) {
             BranchedFoldingUtils.foldWhenExpressionWithAssignments((JetWhenExpression) element);
         }
     },
     WHEN_TO_RETURN("fold.when.to.return") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, @NotNull JetFile file) {
             BranchedFoldingUtils.foldWhenExpressionWithReturns((JetWhenExpression) element);
         }
     };

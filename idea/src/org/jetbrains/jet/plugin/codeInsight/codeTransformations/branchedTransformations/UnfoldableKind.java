@@ -20,31 +20,32 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReturnExpression;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
 
 public enum UnfoldableKind implements Transformer {
     ASSIGNMENT_TO_IF("unfold.assignment.to.if") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
             BranchedUnfoldingUtils.unfoldAssignmentToIf((JetBinaryExpression) element, editor);
         }
     },
     RETURN_TO_IF("unfold.return.to.if") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
             BranchedUnfoldingUtils.unfoldReturnToIf((JetReturnExpression) element);
         }
     },
     ASSIGNMENT_TO_WHEN("unfold.assignment.to.when") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
             BranchedUnfoldingUtils.unfoldAssignmentToWhen((JetBinaryExpression) element, editor);
         }
     },
     RETURN_TO_WHEN("unfold.return.to.when") {
         @Override
-        public void transform(@NotNull PsiElement element, @NotNull Editor editor) {
+        public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
             BranchedUnfoldingUtils.unfoldReturnToWhen((JetReturnExpression) element);
         }
     };

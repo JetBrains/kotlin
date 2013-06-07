@@ -19,9 +19,10 @@ package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransfo
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
 
 public interface Transformer {
     @NotNull
     String getKey();
-    void transform(@NotNull PsiElement element, @NotNull Editor editor);
+    void transform(@NotNull PsiElement element, @NotNull Editor editor, @NotNull JetFile file);
 }
