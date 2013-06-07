@@ -1234,6 +1234,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter"), Pattern.compile("^(.+)\\.java$"), true);
                 }
                 
+                @TestMetadata("AmbiguousAdapters.java")
+                public void testAmbiguousAdapters() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/AmbiguousAdapters.java");
+                }
+                
                 @TestMetadata("Basic.java")
                 public void testBasic() throws Exception {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/Basic.java");
