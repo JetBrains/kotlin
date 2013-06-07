@@ -1891,17 +1891,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Nullable
-    private SimpleFunctionDescriptor getOriginalIfSamAdapter(@NotNull CallableDescriptor fun) {
-        if (!(fun instanceof SimpleFunctionDescriptor)) {
+    private FunctionDescriptor getOriginalIfSamAdapter(@NotNull CallableDescriptor fun) {
+        if (!(fun instanceof FunctionDescriptor)) {
             return null;
         }
-        SimpleFunctionDescriptor original = ((SimpleFunctionDescriptor) fun).getOriginal();
+        FunctionDescriptor original = ((FunctionDescriptor) fun).getOriginal();
         if (original.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            return (SimpleFunctionDescriptor) bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original); // TODO support constructor
+            return bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
         }
         if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             for (FunctionDescriptor overridden : original.getOverriddenDescriptors()) {
-                SimpleFunctionDescriptor originalIfSamAdapter = getOriginalIfSamAdapter(overridden);
+                FunctionDescriptor originalIfSamAdapter = getOriginalIfSamAdapter(overridden);
                 if (originalIfSamAdapter != null) {
                     return originalIfSamAdapter;
                 }
@@ -2059,7 +2059,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return typeMapper.mapToFunctionInvokeCallableMethod(createInvoke(fd));
         }
         else {
-            SimpleFunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);
+            SimpleFunctionDescriptor originalOfSamAdapter = (SimpleFunctionDescriptor) getOriginalIfSamAdapter(fd);
             return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall,
                                                   isCallInsideSameClassAsDeclared(fd, context),
                                                   isCallInsideSameModuleAsDeclared(fd, context),
@@ -2293,7 +2293,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         int mask = 0;
 
-        SimpleFunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);
+        FunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);
 
         for (ValueParameterDescriptor valueParameter : fd.getValueParameters()) {
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
@@ -3263,7 +3263,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //See StackValue.receiver for more info
         pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists());
 
-        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
+        ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) getOriginalIfSamAdapter(constructorDescriptor);
+        CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructorDescriptor : originalOfSamAdapter);
         invokeMethodWithArguments(method, resolvedCall, null, StackValue.none());
 
         return StackValue.onStack(type);
