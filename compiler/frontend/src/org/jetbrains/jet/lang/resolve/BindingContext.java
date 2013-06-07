@@ -168,10 +168,10 @@ public interface BindingContext {
             else if (propertyDescriptor.isVar() && setter == null) {
                 return true;
             }
-            else if (setter != null && !setter.hasBody() && setter.getModality() != Modality.ABSTRACT) {
+            else if (setter != null && !setter.isDefault() && setter.getModality() != Modality.ABSTRACT) {
                 return true;
             }
-            else if (!getter.hasBody() && getter.getModality() != Modality.ABSTRACT) {
+            else if (!getter.isDefault() && getter.getModality() != Modality.ABSTRACT) {
                 return true;
             }
             return backingFieldRequired;
