@@ -653,8 +653,9 @@ public class JetPsiUtil {
                JetTokens.ALL_ASSIGNMENTS.contains(((JetBinaryExpression) element).getOperationToken());
     }
 
-    public static boolean isBranchedExpression(@Nullable PsiElement element) {
-        return element instanceof JetIfExpression || element instanceof JetWhenExpression;
+    public static boolean isOrdinaryAssignment(@NotNull PsiElement element) {
+        return element instanceof JetBinaryExpression &&
+               ((JetBinaryExpression) element).getOperationToken().equals(JetTokens.EQ);
     }
 
     @Nullable
@@ -703,17 +704,6 @@ public class JetPsiUtil {
         }
 
         return false;
-    }
-
-    @NotNull
-    public static <C extends Collection<JetVariableDeclaration>> C getBlockVariableDeclarations(@NotNull JetBlockExpression block, @NotNull C collection) {
-        for (JetElement element : block.getStatements()) {
-            if (element instanceof JetVariableDeclaration) {
-                collection.add((JetVariableDeclaration) element);
-            }
-        }
-
-        return collection;
     }
 
     public static boolean checkWhenExpressionHasSingleElse(@NotNull JetWhenExpression whenExpression) {
