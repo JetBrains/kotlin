@@ -75,57 +75,40 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2.1</version>
+                <!-- Github's site-maven-plugin uses this plugin, but we don't need it and we just skip it. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/zip.xml</descriptor>
-                    </descriptors>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.8</version>
+                <configuration>
+                    <message>Update Kotlin API Docs (build ${build.number})</message>
+                    <server>jetbrains-kotlin</server>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-zip</id>
-                        <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>site</goal>
                         </goals>
+                        <phase>site</phase>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
 
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.scm</groupId>
-                <artifactId>maven-scm-provider-gitexe</artifactId>
-                <version>1.6</version>
-            </extension>
-            <extension>
-                <groupId>org.apache.maven.scm</groupId>
-                <artifactId>maven-scm-manager-plexus</artifactId>
-                <version>1.6</version>
-            </extension>
-            <extension>
-                <groupId>com.github.stephenc.wagon</groupId>
-                <artifactId>wagon-gitsite</artifactId>
-                <version>0.4.1</version>
-            </extension>
-        </extensions>
     </build>
 
-    <distributionManagement>
-        <!--
-        To deploy this add this to your ~/.m2/settings.xml
+    <scm>
+        <url>https://github.com/JetBrains/kotlin</url>
+        <connection>scm:git:git@github.com:JetBrains/kotlin.git</connection>
+        <developerConnection>scm:git:git@github.com:JetBrains/kotlin.git</developerConnection>
+    </scm>
 
-       <server>
-           <id>github-project-site</id>
-           <username>git</username>
-       </server>
-        -->
-
-        <site>
-            <id>github-project-site</id>
-            <url>gitsite:git@github.com/JetBrains/kotlin.git</url>
-        </site>
-    </distributionManagement>
 </project>
