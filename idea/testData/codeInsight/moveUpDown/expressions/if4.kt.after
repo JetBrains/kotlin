@@ -1,0 +1,9 @@
+// MOVE: up
+
+fun foo(x: Boolean) {
+    if (x) {
+        <caret>// test
+    }
+    else {
+    }
+}

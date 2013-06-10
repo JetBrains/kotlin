@@ -92,8 +92,8 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(module.getProject(), context);
         JetRunConfiguration configuration = (JetRunConfiguration) settings.getConfiguration();
         configuration.setModule(module);
-        configuration.setName(StringUtil.trimEnd(fqName.getFqName(), "." + PackageClassUtils.getPackageClassName(fqName)));
-        configuration.setRunClass(fqName.getFqName());
+        configuration.setName(StringUtil.trimEnd(fqName.asString(), "." + PackageClassUtils.getPackageClassName(fqName)));
+        configuration.setRunClass(fqName.asString());
         return settings;
     }
 
@@ -111,7 +111,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         for (RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
             if (existingConfiguration.getType() instanceof JetRunConfigurationType) {
                 JetRunConfiguration jetConfiguration = (JetRunConfiguration)existingConfiguration.getConfiguration();
-                if (Comparing.equal(jetConfiguration.getRunClass(), startClassFQName.getFqName())) {
+                if (Comparing.equal(jetConfiguration.getRunClass(), startClassFQName.asString())) {
                     if (Comparing.equal(location.getModule(), jetConfiguration.getConfigurationModule().getModule())) {
                         return existingConfiguration;
                     }

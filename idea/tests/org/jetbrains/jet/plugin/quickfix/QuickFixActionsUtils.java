@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.Nullable;
@@ -73,16 +73,16 @@ public class QuickFixActionsUtils {
 
     public static void checkAvailableActionsAreExpected(JetFile file, Collection<IntentionAction> availableActions) {
         List<String> validActions = Ordering.natural().sortedCopy(
-                Sets.newHashSet(InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:")));
+                Lists.newArrayList(InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:")));
 
         Collection<String> actualActions = Ordering.natural().sortedCopy(
-                Collections2.transform(availableActions, new Function<IntentionAction, String>() {
+                Lists.newArrayList(Collections2.transform(availableActions, new Function<IntentionAction, String>() {
                     @Override
                     public String apply(@Nullable IntentionAction input) {
                         assert input != null;
                         return input.getText();
                     }
-                }));
+                })));
 
         UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position: %s. Use // ACTION: directive",
                                            actualActions, validActions);

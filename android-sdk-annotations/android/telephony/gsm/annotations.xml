@@ -1,0 +1,17 @@
+<root>
+    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage.MessageClass UNKNOWN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -1,0 +1,9 @@
+JetFile: DocCommentAtBeginningOfFile4.jet
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n\n')
+    PsiElement(KDOC_TEXT)('/**foo*/')
+    PsiWhiteSpace('\n\n')
+    PsiElement(KDOC_TEXT)('asdfas')
+  NAMESPACE_HEADER
+    <empty list>

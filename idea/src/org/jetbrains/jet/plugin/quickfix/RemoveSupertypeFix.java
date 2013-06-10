@@ -63,8 +63,8 @@ public class RemoveSupertypeFix extends JetIntentionAction<JetDelegationSpecifie
         superClass.delete();
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetDelegationSpecifier> createAction(Diagnostic diagnostic) {
                 JetDelegationSpecifier superClass = QuickFixUtil.getParentElementOfType(diagnostic, JetDelegationSpecifier.class);

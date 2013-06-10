@@ -14,7 +14,7 @@ package toplevelObjectDeclarations
     }
   }
 
-  object B : <!UNRESOLVED_REFERENCE!>A<!> {}
+  object B : <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>A<!> {}
 
   val x = A.foo()
 

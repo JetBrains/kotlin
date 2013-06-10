@@ -1,5 +1,10 @@
 JetFile: MutableArray.jet
-  PsiComment(DOC_COMMENT)('/**\n  These declarations are "shallow" in the sense that they are not really compiled, only the type-checker uses them\n*/')
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n  ')
+    PsiElement(KDOC_TEXT)('These declarations are "shallow" in the sense that they are not really compiled, only the type-checker uses them')
+    PsiWhiteSpace('\n')
+    PsiElement(KDOC_END)('*/')
   PsiWhiteSpace('\n\n')
   NAMESPACE_HEADER
     <empty list>

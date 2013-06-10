@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Set;
@@ -57,7 +58,7 @@ public interface ValueParameterDescriptor extends VariableDescriptor, Annotated 
     ValueParameterDescriptor getOriginal();
 
     @NotNull
-    ValueParameterDescriptor copy(DeclarationDescriptor newOwner);
+    ValueParameterDescriptor copy(DeclarationDescriptor newOwner, Name newName);
 
     /**
      * Parameter p1 overrides p2 iff

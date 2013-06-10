@@ -1,0 +1,10 @@
+// MOVE: down
+fun(n: Int) {
+    if (n > 0) {
+
+    }
+    else {
+
+        val x = ""
+    }<caret>
+}

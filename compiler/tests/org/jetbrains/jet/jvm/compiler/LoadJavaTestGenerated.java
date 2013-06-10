@@ -1218,6 +1218,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
             }
             
+            @TestMetadata("SubstitutedSamInterface.java")
+            public void testSubstitutedSamInterface() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterface.java");
+            }
+            
+            @TestMetadata("SubstitutedSamInterfaceSubclassOfBuiltin.java")
+            public void testSubstitutedSamInterfaceSubclassOfBuiltin() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterfaceSubclassOfBuiltin.java");
+            }
+            
             @TestMetadata("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter")
             public static class Adapter extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInAdapter() throws Exception {
@@ -1229,9 +1239,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/Basic.java");
                 }
                 
+                @TestMetadata("DeepSamLoop.java")
+                public void testDeepSamLoop() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/DeepSamLoop.java");
+                }
+                
                 @TestMetadata("NonTrivialFunctionType.java")
                 public void testNonTrivialFunctionType() throws Exception {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/NonTrivialFunctionType.java");
+                }
+                
+                @TestMetadata("SelfAsParameter.java")
+                public void testSelfAsParameter() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/SelfAsParameter.java");
                 }
                 
                 @TestMetadata("SeveralSamParameters.java")

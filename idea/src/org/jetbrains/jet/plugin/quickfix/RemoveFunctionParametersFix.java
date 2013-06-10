@@ -44,7 +44,7 @@ public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("remove.parameter", parameterToRemove.getName().getName());
+        return JetBundle.message("remove.parameter", parameterToRemove.getName().asString());
     }
 
     @Override

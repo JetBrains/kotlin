@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
@@ -34,13 +35,16 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -80,6 +84,7 @@ public final class JavaClassResolver {
     private JavaNamespaceResolver namespaceResolver;
     private JavaClassObjectResolver classObjectResolver;
     private JavaSupertypeResolver supertypesResolver;
+    private JavaFunctionResolver functionResolver;
 
     public JavaClassResolver() {
     }
@@ -122,6 +127,11 @@ public final class JavaClassResolver {
     @Inject
     public void setSupertypesResolver(JavaSupertypeResolver supertypesResolver) {
         this.supertypesResolver = supertypesResolver;
+    }
+
+    @Inject
+    public void setFunctionResolver(JavaFunctionResolver functionResolver) {
+        this.functionResolver = functionResolver;
     }
 
     @Nullable
@@ -192,7 +202,7 @@ public final class JavaClassResolver {
 
     private static boolean isTraitImplementation(@NotNull FqName qualifiedName) {
         // TODO: only if -$$TImpl class is created by Kotlin
-        return qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX);
+        return qualifiedName.asString().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX);
     }
 
     @NotNull
@@ -229,7 +239,7 @@ public final class JavaClassResolver {
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(
-                containingDeclaration, kind, isInnerClass(psiClass), MembersCache.isSamInterface(psiClass));
+                containingDeclaration, kind, isInnerClass(psiClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
@@ -264,7 +274,42 @@ public final class JavaClassResolver {
 
         trace.record(BindingContext.CLASS, psiClass, classDescriptor);
 
+        PsiMethod samInterfaceMethod = MembersCache.getSamInterfaceMethod(psiClass);
+        if (samInterfaceMethod != null) {
+            SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(psiClass, samInterfaceMethod, classDescriptor);
+            classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));
+        }
+
         return classDescriptor;
+    }
+
+    @NotNull
+    private SimpleFunctionDescriptor resolveFunctionOfSamInterface(
+            @NotNull PsiClass psiClass,
+            @NotNull PsiMethod samInterfaceMethod,
+            @NotNull ClassDescriptorFromJvmBytecode samInterface
+    ) {
+        PsiClass methodContainer = samInterfaceMethod.getContainingClass();
+        assert methodContainer != null : "method container is null for " + methodContainer;
+        String containerQualifiedName = methodContainer.getQualifiedName();
+        assert containerQualifiedName != null : "qualified name is null for " + psiClass;
+
+        if (DescriptorUtils.getFQName(samInterface).asString().equals(containerQualifiedName)) {
+            SimpleFunctionDescriptor abstractMethod =
+                    functionResolver.resolveFunctionMutely(new PsiMethodWrapper(samInterfaceMethod), samInterface);
+            assert abstractMethod != null : "couldn't resolve method " + samInterfaceMethod;
+            return abstractMethod;
+        }
+        else {
+            Set<JetType> supertypes = TypeUtils.getAllSupertypes(samInterface.getDefaultType());
+            for (JetType supertype : supertypes) {
+                List<CallableMemberDescriptor> abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype);
+                if (!abstractMembers.isEmpty()) {
+                    return (SimpleFunctionDescriptor) abstractMembers.get(0);
+                }
+            }
+            throw new IllegalStateException("Couldn't find abstract method in supertypes " + supertypes);
+        }
     }
 
     private void cache(@NotNull FqNameBase fqName, @Nullable ClassDescriptor classDescriptor) {
@@ -332,7 +377,7 @@ public final class JavaClassResolver {
     private static FqNameUnsafe javaClassToKotlinFqName(@NotNull FqName rawFqName) {
         List<Name> correctedSegments = new ArrayList<Name>();
         for (Name segment : rawFqName.pathSegments()) {
-            if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.getName())) {
+            if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.asString())) {
                 assert !correctedSegments.isEmpty();
                 Name previous = correctedSegments.get(correctedSegments.size() - 1);
                 correctedSegments.add(DescriptorUtils.getClassObjectName(previous));

@@ -1,0 +1,5 @@
+package test
+
+public trait Runnable {
+    internal abstract fun run(): jet.Unit
+}

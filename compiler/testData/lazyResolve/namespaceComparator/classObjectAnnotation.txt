@@ -3,7 +3,7 @@ package test
 internal final class Some {
     /*primary*/ public constructor Some()
     
-    [ERROR : Unresolved annotation type]() internal class object <class-object-for-Some> {
+    test.Some.TestAnnotation() internal class object <class-object-for-Some> {
         /*primary*/ private constructor <class-object-for-Some>()
         
         internal final annotation class TestAnnotation : jet.Annotation {

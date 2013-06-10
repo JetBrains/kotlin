@@ -59,7 +59,7 @@ fun qualifiedName(descriptor: DeclarationDescriptor?): String {
         return ""
     } else {
         val parent = containerName(descriptor)
-        var name = descriptor.getName()?.getName() ?: ""
+        var name = descriptor.getName()?.asString() ?: ""
         if (name.startsWith("<")) {
             name = ""
         }
@@ -385,7 +385,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             val descriptors = scope.getAllDescriptors()
             for (descriptor in descriptors) {
                 if (descriptor is PropertyDescriptor) {
-                    val name = descriptor.getName().getName()
+                    val name = descriptor.getName().asString()
                     val returnType = getType(descriptor.getReturnType())
                     if (returnType != null) {
                         val receiver = descriptor.getReceiverParameter()
@@ -413,7 +413,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName().getName()
+            val name = descriptor.getName().asString()
             val parameters = ArrayList<KParameter>()
             val params = descriptor.getValueParameters()
             for (param in params) {
@@ -450,7 +450,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     }
 
     protected fun createTypeParameter(descriptor: TypeParameterDescriptor): KTypeParameter? {
-        val name = descriptor.getName().getName()
+        val name = descriptor.getName().asString()
         val answer = KTypeParameter(name, descriptor, this)
         configureComments(answer, descriptor)
         return answer
@@ -459,7 +459,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName().getName()
+            val name = descriptor.getName().asString()
             val answer = KParameter(descriptor, name, returnType)
             configureComments(answer, descriptor)
             return answer
@@ -704,7 +704,7 @@ $highlight"""
     }
 
     fun getClass(classElement: ClassDescriptor): KClass? {
-        val name = classElement.getName().getName()
+        val name = classElement.getName().asString()
         var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
         while (dec != null) {
             val container = dec
@@ -958,7 +958,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     fun toString() = "KPackage($name)"
 
     fun getClass(descriptor: ClassDescriptor): KClass {
-        val name = descriptor.getName().getName()
+        val name = descriptor.getName().asString()
         var created = false
         val klass = classMap.getOrPut(name) {
             created = true
@@ -1074,7 +1074,7 @@ class KClass(
         val sourceInfo: SourceInfo?)
     : KClassOrPackage(pkg.model, descriptor), Comparable<KClass>
 {
-    val simpleName = descriptor.getName().getName()
+    val simpleName = descriptor.getName().asString()
     var group: String = "Other"
     var annotations: List<KAnnotation> = arrayList<KAnnotation>()
     var typeParameters: MutableList<KTypeParameter> = arrayList<KTypeParameter>()
@@ -1130,7 +1130,7 @@ class KClass(
         return $url
     }
 
-    public val name: String = pkg.qualifiedName(descriptor.getName().getName())
+    public val name: String = pkg.qualifiedName(descriptor.getName().asString())
 
     public val packageName: String = pkg.name
 

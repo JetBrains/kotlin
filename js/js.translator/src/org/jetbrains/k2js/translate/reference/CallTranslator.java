@@ -93,7 +93,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     //TODO:
     private boolean isInvoke() {
-        return descriptor.getName().getName().equals("invoke");
+        return descriptor.getName().asString().equals("invoke");
     }
 
     @NotNull

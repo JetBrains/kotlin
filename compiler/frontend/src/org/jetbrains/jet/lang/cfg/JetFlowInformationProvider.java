@@ -277,9 +277,6 @@ public class JetFlowInformationProvider {
         }
 
         boolean isInitializedNotHere = ctxt.enterInitState.isInitialized;
-        if (expression.getParent() instanceof JetProperty && ((JetProperty)expression).getInitializer() != null) {
-            isInitializedNotHere = false;
-        }
         boolean hasBackingField = true;
         if (variableDescriptor instanceof PropertyDescriptor) {
             hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor);

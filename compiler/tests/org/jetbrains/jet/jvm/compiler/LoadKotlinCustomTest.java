@@ -22,6 +22,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
@@ -44,7 +45,6 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
             throws Exception {
         NamespaceDescriptor namespaceFromClass =
                 compileKotlinAndLoadTestNamespaceDescriptorFromBinary(kotlinFile, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
-
         compareNamespaceWithFile(namespaceFromClass, DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
     }
 
@@ -54,6 +54,7 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
         NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
+        DescriptorValidator.validate(namespaceFromSource);
         compareNamespaceWithFile(namespaceFromSource, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.checkPrimaryConstructors(true),
                                  expectedFile);
     }

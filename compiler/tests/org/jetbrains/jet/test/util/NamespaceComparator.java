@@ -47,6 +47,7 @@ import java.util.List;
 public class NamespaceComparator {
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, Predicates.<FqNameUnsafe>alwaysTrue());
     public static final Configuration RECURSIVE = new Configuration(false, false, true, Predicates.<FqNameUnsafe>alwaysTrue());
+    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, Predicates.<FqNameUnsafe>alwaysTrue());
 
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
@@ -131,7 +132,7 @@ public class NamespaceComparator {
     private boolean shouldSkip(@NotNull DeclarationDescriptor subDescriptor) {
         return subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                 && subDescriptor instanceof FunctionDescriptor
-                && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().getName())
+                && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().asString())
                 && !conf.includeMethodsOfJavaObject
             ||
                 subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor));

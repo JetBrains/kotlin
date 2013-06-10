@@ -57,7 +57,9 @@ public class Profiler {
 
     private final String name;
     private final PrintStream out;
-    private long start;
+    private long start = Long.MAX_VALUE;
+    private long cumulative = 0;
+    private boolean paused = true;
     private StackTraceElement[] stackTrace;
     private boolean mute;
 
@@ -114,22 +116,38 @@ public class Profiler {
     }
 
     public Profiler start() {
-        start = System.nanoTime();
+        if (paused) {
+            start = System.nanoTime();
+            paused = false;
+        }
         return this;
     }
 
     public Profiler end() {
-        long delta = System.nanoTime() - start;
+        long result = cumulative;
+        if (!paused) {
+            result += System.nanoTime() - start;
+        }
+        paused = true;
+        cumulative = 0;
 
         OUT_LOCK.lock();
         try {
-            println(name, " took ", format(delta));
+            println(name, " took ", format(result));
             printStackTrace();
         }
         finally {
             OUT_LOCK.unlock();
         }
 
+        return this;
+    }
+
+    public Profiler pause() {
+        if (!paused) {
+            cumulative += System.nanoTime() - start;
+            paused = true;
+        }
         return this;
     }
 

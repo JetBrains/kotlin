@@ -1,0 +1,7 @@
+package test
+
+internal fun foo(/*0*/ r: java.lang.Runnable): jet.Unit
+
+public trait TaskObject {
+    internal abstract fun foo(/*0*/ r: java.lang.Runnable): jet.Unit
+}

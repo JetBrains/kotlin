@@ -54,7 +54,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                "\n" +
                "/**\n" +
                " * Doc comment here for `SomeClass`\n" +
-               " * @see Iterator#next()\n" +
+               " * <KDOC_TAG>@see</KDOC_TAG> Iterator#next()\n" +
                " */\n" +
                "[<ANNOTATION>Deprecated</ANNOTATION>]\n" +
                "<BUILTIN_ANNOTATION>public</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <INSTANCE_PROPERTY><MUTABLE_VARIABLE>prop1</MUTABLE_VARIABLE></INSTANCE_PROPERTY> : Int) {\n" +
@@ -126,6 +126,8 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.block.comment"), JetHighlightingColors.BLOCK_COMMENT),
 
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.comment"), JetHighlightingColors.DOC_COMMENT),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.tag"), JetHighlightingColors.KDOC_TAG),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.value"), JetHighlightingColors.KDOC_TAG_VALUE),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.class"), JetHighlightingColors.CLASS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.type.parameter"), JetHighlightingColors.TYPE_PARAMETER),

@@ -1,0 +1,11 @@
+<root>
+    <item name='android.hardware.display.DisplayManager DISPLAY_CATEGORY_PRESENTATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.DisplayManager android.view.Display[] getDisplays(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.DisplayManager android.view.Display[] getDisplays()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -11,7 +11,7 @@ class A {
     
     class object {
         fun main() {
-            ::<!UNRESOLVED_REFERENCE!>Nested<!>  // KT-3261
+            ::Nested
             val y = A::Nested
 
             y : KFunction0<A.Nested>

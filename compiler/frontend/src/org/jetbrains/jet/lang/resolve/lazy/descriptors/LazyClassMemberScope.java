@@ -124,7 +124,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                                                                                                                   fromCurrent);
                         assert declaration != null : "fromCurrent can not be a fake override";
                         trace.report(Errors.CONFLICTING_OVERLOADS
-                                             .on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
+                                             .on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
                     }
                 }
         );

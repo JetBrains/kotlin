@@ -12,3 +12,5 @@ class Action {
         val test : ArrayList<Int>? = null
     }
 }
+
+// RUNTIME

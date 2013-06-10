@@ -1,0 +1,18 @@
+// FILE: before.kt
+trait Some {
+  fun test()
+}
+class SomeObject: Some {
+  override fun <caret>test() {
+
+  }
+}
+// FILE: after.kt
+trait Some {
+  fun <caret>test()
+}
+class SomeObject: Some {
+  override fun test() {
+
+  }
+}

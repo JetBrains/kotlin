@@ -31,11 +31,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
@@ -70,13 +68,13 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        return JetFullClassNameIndex.getInstance().get(fqName.getFqName(), project, kotlinSources(searchScope));
+        return JetFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope));
     }
 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull final FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqName.getFqName(), project, kotlinSources(searchScope));
+        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope));
         return ContainerUtil.filter(files, new Condition<JetFile>() {
             @Override
             public boolean value(JetFile file) {
@@ -90,20 +88,20 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     public Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
             @NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope
     ) {
-        return JetClassByPackageIndex.getInstance().get(packageFqName.getFqName(), project, kotlinSources(searchScope));
+        return JetClassByPackageIndex.getInstance().get(packageFqName.asString(), project, kotlinSources(searchScope));
     }
 
     @Override
     public boolean packageExists(
             @NotNull FqName fqName, @NotNull GlobalSearchScope scope
     ) {
-        return !JetAllPackagesIndex.getInstance().get(fqName.getFqName(), project, kotlinSources(scope)).isEmpty();
+        return !JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(scope)).isEmpty();
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqn.getFqName(), project, kotlinSources(scope));
+        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqn.asString(), project, kotlinSources(scope));
 
         Set<FqName> result = Sets.newHashSet();
         for (JetFile file : files) {
@@ -141,7 +139,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             Collection<JetFile> files = findFilesForPackage(new FqName(packageFqName), scope);
             if (!files.isEmpty()) {
                 FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(new FqName(packageFqName));
-                result.putValue(packageClassFqName.shortName().getName(), packageClassFqName);
+                result.putValue(packageClassFqName.shortName().asString(), packageClassFqName);
             }
 
         }

@@ -1471,13 +1471,30 @@ public class DescriptorResolver {
             @NotNull PsiElement reportErrorsOn,
             @NotNull ClassDescriptor target
     ) {
+        return checkHasOuterClassInstance(scope, trace, reportErrorsOn, target, true);
+    }
+
+    public static boolean checkHasOuterClassInstance(
+            @NotNull JetScope scope,
+            @NotNull BindingTrace trace,
+            @NotNull PsiElement reportErrorsOn,
+            @NotNull ClassDescriptor target,
+            boolean doSuperClassCheck
+    ) {
         DeclarationDescriptor descriptor = getContainingClass(scope);
+
         while (descriptor != null) {
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                if (isSubclass(classDescriptor, target)) {
+
+                if (classDescriptor == target) {
                     return true;
                 }
+
+                if (doSuperClassCheck && isSubclass(classDescriptor, target)) {
+                    return true;
+                }
+
                 if (isStaticNestedClass(classDescriptor)) {
                     trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, classDescriptor));
                     return false;

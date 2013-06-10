@@ -601,9 +601,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @Override
-    public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        assert file instanceof JetFile;
-        currentFile = (JetFile) file;
+    public void invoke(@NotNull final Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+        currentFile = file;
         currentFileEditor = editor;
         currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile).getBindingContext();
 
@@ -825,7 +824,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(allTypeParametersNotInScope);
         List<String> typeParameterNames = new ArrayList<String>();
         for (TypeParameterDescriptor typeParameter : typeParameters) {
-            typeParameterNames.add(getNextAvailableName(typeParameter.getName().getName(), typeParameterNames, scope));
+            typeParameterNames.add(getNextAvailableName(typeParameter.getName().asString(), typeParameterNames, scope));
         }
         assert typeParameters.size() == typeParameterNames.size();
         Map<TypeParameterDescriptor, String> typeParameterNameMap = new HashMap<TypeParameterDescriptor, String>();
@@ -900,8 +899,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             assert returnTypeRef != null;
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, returnTypeRef.getText());
         }
-        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerClassDescriptor).getFqName());
-        properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerClassDescriptor.getName().getName());
+        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerClassDescriptor).asString());
+        properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerClassDescriptor.getName().asString());
         properties.setProperty(ATTRIBUTE_FUNCTION_NAME, functionName);
 
         @NonNls String bodyText;
@@ -1056,9 +1055,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     ) {
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             String replacement = typeParameterNameMap.get(declarationDescriptor);
-            return replacement == null ? declarationDescriptor.getName().getName() : replacement;
+            return replacement == null ? declarationDescriptor.getName().asString() : replacement;
         } else {
-            return fq ? DescriptorUtils.getFQName(declarationDescriptor).getFqName() : declarationDescriptor.getName().getName();
+            return fq ? DescriptorUtils.getFQName(declarationDescriptor).asString() : declarationDescriptor.getName().asString();
         }
     }
 
@@ -1227,8 +1226,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateGetFunctionFromUsageFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createCreateGetFunctionFromUsageFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -1252,8 +1251,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateSetFunctionFromUsageFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createCreateSetFunctionFromUsageFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -1284,8 +1283,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateHasNextFunctionFromUsageFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createCreateHasNextFunctionFromUsageFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -1305,8 +1304,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateNextFunctionFromUsageFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createCreateNextFunctionFromUsageFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -1330,8 +1329,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateIteratorFunctionFromUsageFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createCreateIteratorFunctionFromUsageFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -1366,8 +1365,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createCreateComponentFunctionFromUsageFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createCreateComponentFunctionFromUsageFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

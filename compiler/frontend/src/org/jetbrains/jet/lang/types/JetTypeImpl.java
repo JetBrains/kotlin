@@ -102,11 +102,11 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof JetType)) return false;
 
-        JetTypeImpl type = (JetTypeImpl) o;
+        JetType type = (JetType) o;
 
-        return nullable == type.nullable && JetTypeChecker.INSTANCE.equalTypes(this, type);
+        return nullable == type.isNullable() && JetTypeChecker.INSTANCE.equalTypes(this, type);
     }
 
     @Override

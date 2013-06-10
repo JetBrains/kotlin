@@ -1,0 +1,1 @@
+val x: Map<String, Collection<Int>>

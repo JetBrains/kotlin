@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.junit.Assert;
 
 import java.io.File;
@@ -164,6 +165,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
         assert namespaceDescriptor != null : "Test namespace not found";
 
+        DescriptorValidator.validate(namespaceDescriptor);
         checkJavaNamespace(expectedFile, namespaceDescriptor, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
     }
 

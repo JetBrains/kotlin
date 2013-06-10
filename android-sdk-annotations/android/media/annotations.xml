@@ -1,0 +1,179 @@
+<root>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_EXISTING_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_SHOW_SILENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_PROCESSING_METHOD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_ALTITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_IMAGE_LENGTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager PROPERTY_OUTPUT_FRAMES_PER_BUFFER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_FRAME_RATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_PICKED_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_DATETIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_CHANNEL_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_DATESTAMP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_AAC_PROFILE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager EXTRA_VIBRATE_SETTING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager VIBRATE_SETTING_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_FLAC_COMPRESSION_LEVEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_DEFAULT_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager ACTION_RINGTONE_PICKER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager EXTRA_RINGER_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager EXTRA_SCO_AUDIO_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer MEDIA_MIMETYPE_TEXT_SUBRIP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_HEIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_IS_ADTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_MODEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_MIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_FOCAL_LENGTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_WIDTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_EXPOSURE_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_I_FRAME_INTERVAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_DURATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_SAMPLE_RATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_CHANNEL_MASK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_APERTURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_MAKE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_LATITUDE_REF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_IMAGE_WIDTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_SHOW_DEFAULT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_INCLUDE_DRM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager ACTION_SCO_AUDIO_STATE_UPDATED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_BIT_RATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager ACTION_AUDIO_BECOMING_NOISY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_ALTITUDE_REF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_ORIENTATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager PROPERTY_OUTPUT_SAMPLE_RATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_LATITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_ISO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_LONGITUDE_REF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager RINGER_MODE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_COLOR_FORMAT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager EXTRA_VIBRATE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_FLASH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat KEY_MAX_INPUT_SIZE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer.TrackInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_LONGITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_GPS_TIMESTAMP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.ExifInterface TAG_WHITE_BALANCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RingtoneManager EXTRA_RINGTONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager EXTRA_SCO_AUDIO_PREVIOUS_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager ACTION_SCO_AUDIO_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

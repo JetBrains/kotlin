@@ -1,0 +1,12 @@
+package test
+
+public trait A</*0*/ T> {
+    internal abstract fun bar(): T
+    internal open fun foo(): T
+}
+
+public final class B : test.A<jet.String> {
+    /*primary*/ public constructor B()
+    internal open override /*1*/ fun bar(): jet.String
+    internal open override /*1*/ /*fake_override*/ fun foo(): jet.String
+}

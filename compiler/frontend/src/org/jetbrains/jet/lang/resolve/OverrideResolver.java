@@ -155,7 +155,7 @@ public class OverrideResolver {
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
                             JetDeclaration declaration = (JetDeclaration) BindingContextUtils
                                     .descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
-                            trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
+                            trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
                         }
                     });
         }
@@ -586,7 +586,7 @@ public class OverrideResolver {
     private void checkOverrideForMember(@NotNull final CallableMemberDescriptor declared) {
         if (declared.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
             // TODO: this should be replaced soon by a framework of synthesized member generation tools
-            if (declared.getName().getName().startsWith(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX)) {
+            if (declared.getName().asString().startsWith(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX)) {
                 checkOverrideForComponentFunction(declared);
             }
             return;

@@ -39,8 +39,8 @@ public final class QualifiedNamesUtil {
             return true;
         }
 
-        String subpackageNameStr = subpackageName.getFqName();
-        String packageNameStr = packageName.getFqName();
+        String subpackageNameStr = subpackageName.asString();
+        String packageNameStr = packageName.asString();
 
         return (subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr.charAt(packageNameStr.length()) == '.');
     }
@@ -54,7 +54,7 @@ public final class QualifiedNamesUtil {
     }
 
     public static boolean isOneSegmentFQN(@NotNull FqName fqn) {
-        return isOneSegmentFQN(fqn.getFqName());
+        return isOneSegmentFQN(fqn.asString());
     }
 
     @NotNull
@@ -74,7 +74,7 @@ public final class QualifiedNamesUtil {
             return FqName.ROOT;
         }
 
-        String fqNameStr = fqName.getFqName();
+        String fqNameStr = fqName.asString();
         return new FqName(fqNameStr.substring(fqNameStr.indexOf('.'), fqNameStr.length()));
     }
 
@@ -93,12 +93,12 @@ public final class QualifiedNamesUtil {
     @NotNull
     public static String tail(@NotNull FqName headFQN, @NotNull FqName fullFQN) {
         if (!isSubpackageOf(fullFQN, headFQN) || headFQN.isRoot()) {
-            return fullFQN.getFqName();
+            return fullFQN.asString();
         }
 
         return fullFQN.equals(headFQN) ?
                "" :
-               fullFQN.getFqName().substring(headFQN.getFqName().length() + 1); // (headFQN + '.').length
+               fullFQN.asString().substring(headFQN.asString().length() + 1); // (headFQN + '.').length
     }
 
     /**
@@ -141,6 +141,16 @@ public final class QualifiedNamesUtil {
         }
 
         return isImported(alreadyImported, newImport.fqnPart());
+    }
+
+    public static boolean isImported(@NotNull Iterable<ImportPath> imports, @NotNull ImportPath newImport) {
+        for (ImportPath alreadyImported : imports) {
+            if (isImported(alreadyImported, newImport)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static boolean isValidJavaFqName(@Nullable String qualifiedName) {

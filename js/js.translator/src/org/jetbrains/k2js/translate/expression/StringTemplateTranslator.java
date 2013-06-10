@@ -96,10 +96,10 @@ public final class StringTemplateTranslator extends AbstractTranslator {
                 return true;
             }
             //TODO: this is a hacky optimization, should use some generic approach
-            if (typeName.getName().equals("String")) {
+            if (typeName.asString().equals("String")) {
                 return false;
             }
-            if (typeName.getName().equals("Int") && resultingExpression != null) {
+            if (typeName.asString().equals("Int") && resultingExpression != null) {
                 return false;
             }
             return true;

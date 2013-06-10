@@ -1,0 +1,23 @@
+JetFile: Simple.kt
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiElement(KDOC_TEXT)(' line 0')
+    PsiWhiteSpace('\n  ')
+    PsiElement(KDOC_TEXT)('line 1      //')
+    PsiWhiteSpace('\n   ')
+    PsiElement(KDOC_LEADING_ASTERISK)('**')
+    PsiElement(KDOC_TEXT)(' line 2  /*')
+    PsiWhiteSpace('\n    ')
+    PsiElement(KDOC_TEXT)('line 3    /**')
+    PsiWhiteSpace('\n')
+    PsiElement(KDOC_LEADING_ASTERISK)('*')
+    PsiElement(KDOC_TEXT)(' line * 4')
+    PsiWhiteSpace('\n    ')
+    PsiElement(KDOC_LEADING_ASTERISK)('***')
+    PsiElement(KDOC_TEXT)(' line */ 5')
+    PsiWhiteSpace('\n    ')
+    PsiElement(KDOC_LEADING_ASTERISK)('**')
+    PsiElement(KDOC_TEXT)(' line 6 ')
+    PsiElement(KDOC_END)('*/')
+  NAMESPACE_HEADER
+    <empty list>

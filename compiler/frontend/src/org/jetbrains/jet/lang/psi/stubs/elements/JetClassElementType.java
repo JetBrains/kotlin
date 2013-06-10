@@ -54,7 +54,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = JetPsiUtil.getFQName(psi);
         boolean isEnumEntry = psi instanceof JetEnumEntry;
-        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, fqName != null ? fqName.getFqName() : null, psi.getName(),
+        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, fqName != null ? fqName.asString() : null, psi.getName(),
                                        psi.getSuperNames(), psi.isTrait(), psi.isEnum(), isEnumEntry, psi.isAnnotation(), psi.isInner());
     }
 
@@ -62,7 +62,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     public void serialize(PsiJetClassStub stub, StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         FqName fqName = stub.getFqName();
-        dataStream.writeName(fqName == null ? null : fqName.getFqName());
+        dataStream.writeName(fqName == null ? null : fqName.asString());
         dataStream.writeBoolean(stub.isTrait());
         dataStream.writeBoolean(stub.isEnumClass());
         dataStream.writeBoolean(stub.isEnumEntry());

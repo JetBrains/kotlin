@@ -1,0 +1,1 @@
+class Test(var field: Int, <caret>parameter: Int)

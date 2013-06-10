@@ -913,7 +913,7 @@ public abstract class StackValue {
         }
 
         private String getPropertyName() {
-            return isDelegated ? JvmAbi.getPropertyDelegateName(descriptor.getName()) : descriptor.getName().getName();
+            return isDelegated ? JvmAbi.getPropertyDelegateName(descriptor.getName()) : descriptor.getName().asString();
         }
     }
 

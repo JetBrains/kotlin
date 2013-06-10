@@ -68,8 +68,8 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
         return true;
     }
 
-    public static JetIntentionActionFactory createFactoryForIsExpression() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForIsExpression() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 assert diagnostic.getFactory() == Errors.NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION;
@@ -84,8 +84,8 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
         };
     }
 
-    public static JetIntentionActionFactory createFactoryForJavaClass() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForJavaClass() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 assert diagnostic.getFactory() == Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;

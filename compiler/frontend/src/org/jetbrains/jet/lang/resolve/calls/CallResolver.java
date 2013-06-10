@@ -51,7 +51,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
@@ -100,7 +99,7 @@ public class CallResolver {
         Name referencedName = nameExpression.getReferencedNameAsName();
         List<CallableDescriptorCollector<? extends VariableDescriptor>> callableDescriptorCollectors = Lists.newArrayList();
         if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            referencedName = Name.identifier(referencedName.getName().substring(1));
+            referencedName = Name.identifier(referencedName.asString().substring(1));
             callableDescriptorCollectors.add(CallableDescriptorCollectors.PROPERTIES);
         }
         else {
@@ -404,7 +403,7 @@ public class CallResolver {
         for (ResolutionTask<D, F> task : prioritizedTasks) {
             TemporaryBindingTrace taskTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.reference);
             OverloadResolutionResultsImpl<F> results = performResolutionGuardedForExtraFunctionLiteralArguments(
-                    task.replaceBindingTrace(taskTrace), callTransformer, context.trace);
+                    task.replaceBindingTrace(taskTrace), callTransformer);
             if (results.isSuccess() || results.isAmbiguity()) {
                 taskTrace.commit();
 
@@ -457,9 +456,9 @@ public class CallResolver {
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolutionGuardedForExtraFunctionLiteralArguments(
             @NotNull ResolutionTask<D, F> task,
-            @NotNull CallTransformer<D, F> callTransformer,
-            @NotNull BindingTrace traceForResolutionCache) {
-        OverloadResolutionResultsImpl<F> results = performResolution(task, callTransformer, traceForResolutionCache);
+            @NotNull CallTransformer<D, F> callTransformer
+    ) {
+        OverloadResolutionResultsImpl<F> results = performResolution(task, callTransformer);
 
         // If resolution fails, we should check for some of the following situations:
         //   class A {
@@ -478,21 +477,23 @@ public class CallResolver {
         //  }
         ImmutableSet<OverloadResolutionResults.Code> someFailed = ImmutableSet.of(OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES,
                                                                         OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
-        if (someFailed.contains(results.getResultCode()) && !task.call.getFunctionLiteralArguments().isEmpty()) {
+        if (someFailed.contains(results.getResultCode()) && !task.call.getFunctionLiteralArguments().isEmpty()
+                && task.resolveMode == ResolveMode.TOP_LEVEL_CALL) { //For nested calls there are no such cases
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps
-            ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(task.getCandidates(), task.reference, task.tracing,
-                        TemporaryBindingTrace.create(task.trace, "trace for resolution guarded for extra function literal arguments"),
-                        task.scope, new DelegatingCall(task.call) {
-                            @NotNull
-                            @Override
-                            public List<JetExpression> getFunctionLiteralArguments() {
-                                return Collections.emptyList();
-                            }
-                        }, task.expectedType, task.dataFlowInfo, task.resolveMode, task.checkArguments,
-                           task.expressionPosition, task.resolutionResultsCache);
-            OverloadResolutionResultsImpl<F> resultsWithFunctionLiteralsStripped = performResolution(newTask, callTransformer, traceForResolutionCache);
+            DelegatingCall callWithoutFLArgs = new DelegatingCall(task.call) {
+                @NotNull
+                @Override
+                public List<JetExpression> getFunctionLiteralArguments() {
+                    return Collections.emptyList();
+                }
+            };
+            TemporaryBindingTrace temporaryTrace =
+                    TemporaryBindingTrace.create(task.trace, "trace for resolution guarded for extra function literal arguments");
+            ResolutionTask<D, F> newTask = task.replaceBindingTrace(temporaryTrace).replaceCall(callWithoutFLArgs);
+
+            OverloadResolutionResultsImpl<F> resultsWithFunctionLiteralsStripped = performResolution(newTask, callTransformer);
             if (resultsWithFunctionLiteralsStripped.isSuccess() || resultsWithFunctionLiteralsStripped.isAmbiguity()) {
                 task.tracing.danglingFunctionLiteralArgumentSuspected(task.trace, task.call.getFunctionLiteralArguments());
             }
@@ -504,8 +505,8 @@ public class CallResolver {
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolution(
             @NotNull ResolutionTask<D, F> task,
-            @NotNull CallTransformer<D, F> callTransformer,
-            @NotNull BindingTrace traceForResolutionCache) {
+            @NotNull CallTransformer<D, F> callTransformer
+    ) {
 
         for (ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
             TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(

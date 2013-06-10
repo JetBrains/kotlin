@@ -64,7 +64,7 @@ public class Renderers {
         @Override
         public String render(@NotNull Object element) {
             if (element instanceof Named) {
-                return ((Named) element).getName().getName();
+                return ((Named) element).getName().asString();
             }
             return element.toString();
         }
@@ -184,7 +184,7 @@ public class Renderers {
         result.text(newText()
                             .normal("Cannot infer type parameter ")
                             .strong(firstConflictingParameter.getName())
-                            .normal(" in"));
+                            .normal(" in "));
         //String type = strong(firstConflictingParameter.getName());
         TableRenderer table = newTable();
         result.table(table);
@@ -299,7 +299,7 @@ public class Renderers {
             StringBuilder sb = new StringBuilder();
             int index = 0;
             for (ClassDescriptor descriptor : descriptors) {
-                sb.append(DescriptorUtils.getFQName(descriptor).getFqName());
+                sb.append(DescriptorUtils.getFQName(descriptor).asString());
                 index++;
                 if (index <= descriptors.size() - 2) {
                     sb.append(", ");

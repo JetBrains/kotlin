@@ -32,6 +32,8 @@ import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
 import org.jetbrains.jet.jvm.compiler.*;
+import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
+import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
@@ -41,8 +43,10 @@ import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTes
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
+import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
+import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
@@ -76,6 +80,13 @@ public class GenerateTests {
                 AbstractDiagnosticsTestWithEagerResolve.class,
                 testModel("compiler/testData/diagnostics/tests"),
                 testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "JetResolveTestGenerated",
+                AbstractResolveTest.class,
+                testModel("compiler/testData/resolve", true, "resolve", "doTest")
         );
 
         GenerateRangesCodegenTestData.main(args);
@@ -213,6 +224,14 @@ public class GenerateTests {
 
         generateTest(
                 "idea/tests/",
+                "JetPsiMatcherTest",
+                AbstractJetPsiMatcherTest.class,
+                testModel("idea/testData/jetPsiMatcher/expressions", "doTestExpressions"),
+                testModel("idea/testData/jetPsiMatcher/types", "doTestTypes")
+        );
+
+        generateTest(
+                "idea/tests/",
                 "JetPsiCheckerTestGenerated",
                 AbstractJetPsiCheckerTest.class,
                 testModel("idea/testData/checker", false, "kt", "doTest"),
@@ -265,6 +284,12 @@ public class GenerateTests {
                 testModel("idea/testData/completion/basic/custom", false, "doTestWithJar"));
 
         generateTest(
+                "idea/tests",
+                "JetGotoSuperTestGenerated",
+                JetAbstractGotoSuperTest.class,
+                testModel("idea/testData/navigation/gotoSuper", false, "test", "doTest"));
+
+        generateTest(
                 "idea/tests/",
                 "QuickFixMultiFileTestGenerated",
                 AbstractQuickFixMultiFileTest.class,
@@ -305,9 +330,22 @@ public class GenerateTests {
                 "idea/tests/",
                 "CodeTransformationsTestGenerated",
                 AbstractCodeTransformationTest.class,
-                testModel("idea/testData/codeInsight/codeTransformations/ifStatementWithAssignmentsToExpression", "doTestIfStatementWithAssignmentsToExpression"),
-                testModel("idea/testData/codeInsight/codeTransformations/assignmentWithIfExpressionToStatement", "doTestAssignmentWithIfExpressionToStatement"),
-                testModel("idea/testData/codeInsight/codeTransformations/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToAssignment", "doTestFoldIfToAssignment"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturn", "doTestFoldIfToReturn"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturnAsymmetrically", "doTestFoldIfToReturnAsymmetrically"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToAssignment", "doTestFoldWhenToAssignment"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToReturn", "doTestFoldWhenToReturn"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/propertyToIf", "doTestUnfoldPropertyToIf"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/propertyToWhen", "doTestUnfoldPropertyToWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/whenToIf", "doTestWhenToIf"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/when/flatten", "doTestFlattenWhen"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
+                testModel("idea/testData/codeInsight/codeTransformations/branched/when/eliminateSubject", "doTestEliminateWhenSubject")
         );
 
         generateTest(
@@ -317,6 +355,15 @@ public class GenerateTests {
                 testModelWithDirectories("idea/testData/hierarchy/class/type", "doTypeClassHierarchyTest"),
                 testModelWithDirectories("idea/testData/hierarchy/class/super", "doSuperClassHierarchyTest"),
                 testModelWithDirectories("idea/testData/hierarchy/class/sub", "doSubClassHierarchyTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "CodeMoverTestGenerated",
+                AbstractCodeMoverTest.class,
+                testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration"),
+                testModel("idea/testData/codeInsight/moveUpDown/closingBraces", "doTestExpression"),
+                testModel("idea/testData/codeInsight/moveUpDown/expressions", "doTestExpression")
         );
     }
 

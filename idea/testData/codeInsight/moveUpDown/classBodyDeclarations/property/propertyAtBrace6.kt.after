@@ -1,0 +1,6 @@
+// MOVE: up
+fun foo() {
+    <caret>val y = ""
+    class B {
+    }
+}

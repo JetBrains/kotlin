@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 
@@ -61,7 +62,8 @@ public final class CompilerEnvironment {
             messageCollector.report(ERROR, "[Internal Error] No output directory", NO_LOCATION);
         }
         if (!kotlinPaths.getHomePath().exists()) {
-            messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.getHomePath() + ". Make sure plugin is properly installed", NO_LOCATION);
+            messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.getHomePath() + ". Make sure plugin is properly installed, " +
+                                           "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", NO_LOCATION);
         }
     }
 

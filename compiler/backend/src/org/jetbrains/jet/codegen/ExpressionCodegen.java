@@ -560,7 +560,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     @Override
                     public void run() {
                         myFrameMap.leave(parameterDescriptor);
-                        v.visitLocalVariable(parameterDescriptor.getName().getName(),
+                        v.visitLocalVariable(parameterDescriptor.getName().asString(),
                                              asmTypeForParameter.getDescriptor(), null,
                                              bodyStart, bodyEnd,
                                              loopParameterVar);
@@ -601,7 +601,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     @Override
                     public void run() {
                         myFrameMap.leave(componentDescriptor);
-                        v.visitLocalVariable(componentDescriptor.getName().getName(),
+                        v.visitLocalVariable(componentDescriptor.getName().asString(),
                                              componentAsmType.getDescriptor(), null,
                                              bodyStart, bodyEnd,
                                              componentVarIndex);
@@ -1173,7 +1173,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetStringTemplateEntry[] entries = expression.getEntries();
 
         if (entries.length == 1 && entries[0] instanceof JetStringTemplateEntryWithExpression) {
-            return genToString(v, gen(entries[0].getExpression()));
+            JetExpression expr = entries[0].getExpression();
+            return genToString(v, gen(expr), expressionType(expr));
         }
 
         for (JetStringTemplateEntry entry : entries) {
@@ -1414,7 +1415,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         v.store(index, OBJECT_TYPE);
                     }
                 }
-                v.visitLocalVariable(variableDescriptor.getName().getName(), type.getDescriptor(), null, scopeStart, blockEnd,
+                v.visitLocalVariable(variableDescriptor.getName().asString(), type.getDescriptor(), null, scopeStart, blockEnd,
                                      index);
                 return null;
             }
@@ -1628,7 +1629,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ClassDescriptor containing = (ClassDescriptor) variableDescriptor.getContainingDeclaration().getContainingDeclaration();
             assert containing != null;
             Type type = typeMapper.mapType(containing);
-            return StackValue.field(type, JvmClassName.byType(type), variableDescriptor.getName().getName(), true);
+            return StackValue.field(type, JvmClassName.byType(type), variableDescriptor.getName().asString(), true);
         }
         else {
             return StackValue.singleton(objectClassDescriptor, typeMapper);
@@ -2924,7 +2925,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             DeclarationDescriptor cls = op.getContainingDeclaration();
             CallableMethod callableMethod = (CallableMethod) callable;
-            if (isPrimitiveNumberClassDescriptor(cls) || !(op.getName().getName().equals("inc") || op.getName().getName().equals("dec"))) {
+            if (isPrimitiveNumberClassDescriptor(cls) || !(op.getName().asString().equals("inc") || op.getName().asString().equals("dec"))) {
                 return invokeOperation(expression, (FunctionDescriptor) op, callableMethod);
             }
             else {
@@ -2981,14 +2982,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (op instanceof FunctionDescriptor) {
             Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (op.getName().getName().equals("inc") || op.getName().getName().equals("dec")) {
+            if (op.getName().asString().equals("inc") || op.getName().asString().equals("dec")) {
                 if (isPrimitiveNumberClassDescriptor(cls)) {
                     receiver.put(receiver.type, v);
                     JetExpression operand = expression.getBaseExpression();
                     if (operand instanceof JetReferenceExpression) {
                         int index = indexOfLocal((JetReferenceExpression) operand);
                         if (index >= 0 && isIntPrimitive(asmType)) {
-                            int increment = op.getName().getName().equals("inc") ? 1 : -1;
+                            int increment = op.getName().asString().equals("inc") ? 1 : -1;
                             return StackValue.postIncrement(index, increment);
                         }
                     }
@@ -3053,7 +3054,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private void generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand, StackValue receiver) {
-        int increment = op.getName().getName().equals("inc") ? 1 : -1;
+        int increment = op.getName().asString().equals("inc") ? 1 : -1;
         if (operand instanceof JetReferenceExpression) {
             int index = indexOfLocal((JetReferenceExpression) operand);
             if (index >= 0 && isIntPrimitive(asmType)) {
@@ -3513,7 +3514,7 @@ The "returned" value of try expression with no finally is either the last expres
                 value.put(boxType(value.type), v);
 
                 if (opToken != JetTokens.AS_SAFE) {
-                    if (!rightType.isNullable()) {
+                    if (!CodegenUtil.isNullableType(rightType)) {
                         v.dup();
                         Label nonnull = new Label();
                         v.ifnonnull(nonnull);
@@ -3626,13 +3627,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
 
         Label end = new Label();
-        boolean hasElse = false;
-        for (JetWhenEntry whenEntry : expression.getEntries()) {
-            if (whenEntry.isElse()) {
-                hasElse = true;
-                break;
-            }
-        }
+        boolean hasElse = JetPsiUtil.checkWhenExpressionHasSingleElse(expression);
 
         Label nextCondition = null;
         for (JetWhenEntry whenEntry : expression.getEntries()) {

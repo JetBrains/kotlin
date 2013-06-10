@@ -27,9 +27,12 @@ import java.io.File;
 
 public class PathUtil {
 
+    public static final String JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home";
+
     public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
     public static final String JS_LIB_JS_NAME = "kotlinEcma3.js";
     public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
+    public static final String ANDROID_SDK_ANNOTATIONS_JAR = "kotlin-android-sdk-annotations.jar";
     public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
     public static final String HOME_FOLDER_NAME = "kotlinc";
 
@@ -44,6 +47,12 @@ public class PathUtil {
 
     @NotNull
     public static KotlinPaths getKotlinPathsForJpsPlugin() {
+        // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
+        // so the path to Kotlin is specified in a system property
+        String jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY);
+        if (jpsKotlinHome != null) {
+            return new KotlinPathsFromHomeDir(new File(jpsKotlinHome));
+        }
         return new KotlinPathsFromHomeDir(getCompilerPathForJpsPlugin());
     }
 

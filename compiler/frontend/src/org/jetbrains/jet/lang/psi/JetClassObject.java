@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetClassObject extends JetDeclarationImpl implements JetStatementExpression {
     public JetClassObject(@NotNull ASTNode node) {
@@ -41,4 +43,9 @@ public class JetClassObject extends JetDeclarationImpl implements JetStatementEx
         return (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);
     }
 
+    @Nullable @IfNotParsed
+    public PsiElement getClassKeywordNode() {
+        ASTNode keywordNode = getNode().findChildByType(JetTokens.CLASS_KEYWORD);
+        return keywordNode != null ? keywordNode.getPsi() : null;
+    }
 }

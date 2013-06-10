@@ -242,9 +242,10 @@ public class SignaturesPropagationData {
                 continue;
             }
 
-            assert superFun instanceof FunctionDescriptor : superFun.getClass().getName();
-
-            superFunctions.add(substituteSuperFunction(superclassToSupertype, (FunctionDescriptor) superFun));
+            // TODO: Add propagation for other kotlin descriptors (KT-3621)
+            if (superFun instanceof FunctionDescriptor) {
+                superFunctions.add(substituteSuperFunction(superclassToSupertype, (FunctionDescriptor) superFun));
+            }
         }
 
         // sorting for diagnostic stability
@@ -253,7 +254,7 @@ public class SignaturesPropagationData {
             public int compare(FunctionDescriptor fun1, FunctionDescriptor fun2) {
                 FqNameUnsafe fqName1 = getFQName(fun1.getContainingDeclaration());
                 FqNameUnsafe fqName2 = getFQName(fun2.getContainingDeclaration());
-                return fqName1.getFqName().compareTo(fqName2.getFqName());
+                return fqName1.asString().compareTo(fqName2.asString());
             }
         });
         return superFunctions;

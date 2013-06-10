@@ -34,10 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.*;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -94,9 +91,19 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
+    SimpleFunctionDescriptor resolveFunctionMutely(
+            @NotNull PsiMethodWrapper method,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+    ) {
+        PsiClass containingClass = method.getPsiMethod().getContainingClass();
+        assert containingClass != null : "containing class is null for " + method;
+        return resolveMethodToFunctionDescriptor(containingClass, method, DeclarationOrigin.JAVA, ownerDescriptor, false);
+    }
+
+    @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull PsiClass psiClass, PsiMethodWrapper method,
-            @NotNull PsiDeclarationProvider scopeData, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull DeclarationOrigin declarationOrigin, @NotNull ClassOrNamespaceDescriptor ownerDescriptor, boolean record
     ) {
         if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method.getPsiMember())) {
             return null;
@@ -114,11 +121,11 @@ public final class JavaFunctionResolver {
 
         PsiMethod psiMethod = method.getPsiMethod();
         PsiClass containingClass = psiMethod.getContainingClass();
-        if (scopeData.getDeclarationOrigin() == KOTLIN) {
+        if (declarationOrigin == KOTLIN) {
             // TODO: unless maybe class explicitly extends Object
             assert containingClass != null;
             String ownerClassName = containingClass.getQualifiedName();
-            if (DescriptorResolverUtils.OBJECT_FQ_NAME.getFqName().equals(ownerClassName)) {
+            if (DescriptorResolverUtils.OBJECT_FQ_NAME.asString().equals(ownerClassName)) {
                 return null;
             }
         }
@@ -189,11 +196,11 @@ public final class JavaFunctionResolver {
                 /*isInline = */ false
         );
 
-        if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+        if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION && record) {
             BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, psiMethod, functionDescriptorImpl);
         }
 
-        if (scopeData.getDeclarationOrigin() == JAVA) {
+        if (declarationOrigin == JAVA && record) {
             trace.record(BindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
         }
 
@@ -208,7 +215,9 @@ public final class JavaFunctionResolver {
                 checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
             }
             else {
-                trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
+                if (record) {
+                    trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
+                }
             }
         }
 
@@ -267,11 +276,13 @@ public final class JavaFunctionResolver {
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.getMethods()) {
-            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData, owner);
+            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData.getDeclarationOrigin(), owner, true);
             if (function != null) {
                 functionsFromCurrent.add(function);
 
-                ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
+                if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
+                    ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
+                }
             }
         }
 
@@ -430,7 +441,7 @@ public final class JavaFunctionResolver {
             transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
         }
 
-        if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
+        if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
             null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }

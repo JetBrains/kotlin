@@ -1,7 +1,5 @@
 package kotlin.properties
 
-import kotlin.*
-import kotlin.util.*
 import java.util.HashMap
 import java.util.ArrayList
 
@@ -64,6 +62,10 @@ public abstract class ChangeSupport {
                 listener.onPropertyChange(event)
             }
         }
+    }
+
+    protected fun property<T>(init: T): ReadWriteProperty<Any?, T> {
+        return Delegates.observable(init) { desc, oldValue, newValue -> changeProperty(desc.name, oldValue, newValue) }
     }
 
     public fun onPropertyChange(fn: (ChangeEvent) -> Unit) {

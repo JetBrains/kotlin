@@ -149,7 +149,11 @@ public class ScopeProvider {
                 return classDescriptor.getScopeForPropertyInitializerResolution();
             }
             if (jetDeclaration instanceof JetEnumEntry) {
-                return ((LazyClassDescriptor) classDescriptor.getClassObjectDescriptor()).getScopeForMemberDeclarationResolution();
+                LazyClassDescriptor descriptor = (LazyClassDescriptor) classDescriptor.getClassObjectDescriptor();
+                assert descriptor != null : "There should be class object descriptor for enum class " + parentDeclaration.getText() +
+                                            " on entry " + jetDeclaration.getText();
+
+                return descriptor.getScopeForMemberDeclarationResolution();
             }
             return classDescriptor.getScopeForMemberDeclarationResolution();
         }
@@ -161,8 +165,7 @@ public class ScopeProvider {
             LazyClassDescriptor classObjectDescriptor =
                     (LazyClassDescriptor) resolveSession.getClassObjectDescriptor(classObject).getContainingDeclaration();
 
-            // During class object header resolve there should be no resolution for parent class generic params
-            return new InnerClassesScopeWrapper(classObjectDescriptor.getScopeForMemberDeclarationResolution());
+            return classObjectDescriptor.getScopeForMemberDeclarationResolution();
         }
 
         throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + " " + jetDeclaration.getText());

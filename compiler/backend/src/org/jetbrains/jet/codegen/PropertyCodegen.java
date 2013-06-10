@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -114,7 +115,10 @@ public class PropertyCodegen extends GenerationStateAware {
             modifiers |= ACC_VOLATILE;
         }
         JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, p.getDelegateExpression());
-        assert delegateType != null : "Type of delegate should be recorded: " + p.getText();
+        if (delegateType == null) {
+            // If delegate expression is unresolved reference
+            delegateType = ErrorUtils.createErrorType("Delegate type");
+        }
         Type type = typeMapper.mapType(delegateType);
         return v.newField(p, modifiers, JvmAbi.getPropertyDelegateName(propertyDescriptor.getName()), type.getDescriptor(),
                           null, null);
@@ -122,9 +126,9 @@ public class PropertyCodegen extends GenerationStateAware {
 
     private FieldVisitor generateBackingFieldAccess(PsiElement p, PropertyDescriptor propertyDescriptor) {
         Object value = null;
-        JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
-        if (initializer != null) {
-            if (initializer instanceof JetConstantExpression && !propertyDescriptor.getType().isNullable()) {
+        if (p instanceof JetProperty && !ImplementationBodyCodegen.shouldInitializeProperty((JetProperty) p, typeMapper)) {
+            JetExpression initializer = ((JetProperty) p).getInitializer();
+            if (initializer != null) {
                 CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
                 value = compileTimeValue != null ? compileTimeValue.getValue() : null;
             }
@@ -144,7 +148,7 @@ public class PropertyCodegen extends GenerationStateAware {
             modifiers |= ACC_VOLATILE;
         }
         Type type = typeMapper.mapType(propertyDescriptor);
-        return v.newField(p, modifiers, propertyDescriptor.getName().getName(), type.getDescriptor(), null, value);
+        return v.newField(p, modifiers, propertyDescriptor.getName().asString(), type.getDescriptor(), null, value);
     }
 
     private void generateGetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor getter) {
@@ -244,7 +248,7 @@ public class PropertyCodegen extends GenerationStateAware {
             iv.visitFieldInsn(
                     kind == OwnerKind.NAMESPACE ? GETSTATIC : GETFIELD,
                     typeMapper.getOwner(propertyDescriptor, kind, isCallInsideSameModuleAsDeclared(propertyDescriptor, context)).getInternalName(),
-                    propertyDescriptor.getName().getName(),
+                    propertyDescriptor.getName().asString(),
                     type.getDescriptor());
             iv.areturn(type);
         }
@@ -261,7 +265,7 @@ public class PropertyCodegen extends GenerationStateAware {
             iv.load(paramCode, type);
             iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? PUTSTATIC : PUTFIELD,
                               typeMapper.getOwner(propertyDescriptor, kind, isCallInsideSameModuleAsDeclared(propertyDescriptor, context)).getInternalName(),
-                              propertyDescriptor.getName().getName(),
+                              propertyDescriptor.getName().asString(),
                               type.getDescriptor());
 
             iv.visitInsn(RETURN);
@@ -332,11 +336,11 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public static String getterName(Name propertyName) {
-        return JvmAbi.GETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.getName());
+        return JvmAbi.GETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.asString());
     }
 
     public static String setterName(Name propertyName) {
-        return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.getName());
+        return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.asString());
     }
 
     public void genDelegate(PropertyDescriptor delegate, PropertyDescriptor overridden, StackValue field) {

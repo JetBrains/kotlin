@@ -30,6 +30,10 @@ import java.util.zip.ZipInputStream;
 public class ClassPreloadingUtils {
 
     public static abstract class ClassHandler {
+        public byte[] instrument(String resourceName, byte[] data) {
+            return data;
+        }
+
         public void beforeDefineClass(String name, int sizeInBytes) {}
         public void afterDefineClass(String name) {}
 
@@ -150,7 +154,12 @@ public class ClassPreloadingUtils {
                         bytes.write(buffer, 0, count);
                     }
 
-                    resources.put(name, new ResourceData(jarFile, name, bytes.toByteArray()));
+                    byte[] data = bytes.toByteArray();
+                    if (handler != null) {
+                        data = handler.instrument(name, data);
+                    }
+
+                    resources.put(name, new ResourceData(jarFile, name, data));
                 }
             }
             finally {

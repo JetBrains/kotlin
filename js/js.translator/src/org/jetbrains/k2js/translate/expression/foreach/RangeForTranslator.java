@@ -48,7 +48,7 @@ public final class RangeForTranslator extends ForTranslator {
         JetType rangeType = BindingUtils.getTypeForExpression(context.bindingContext(), loopRange);
         //TODO: better check
         //TODO: long range?
-        return getClassDescriptorForType(rangeType).getName().getName().equals("IntRange");
+        return getClassDescriptorForType(rangeType).getName().asString().equals("IntRange");
     }
 
     @NotNull

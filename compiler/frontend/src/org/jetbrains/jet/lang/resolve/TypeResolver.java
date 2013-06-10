@@ -123,7 +123,8 @@ public class TypeResolver {
 
                         DeclarationDescriptor containing = typeParameterDescriptor.getContainingDeclaration();
                         if (containing instanceof ClassDescriptor) {
-                            DescriptorResolver.checkHasOuterClassInstance(scope, trace, referenceExpression, (ClassDescriptor) containing);
+                            // Type parameter can't be inherited from member of parent class, so we can skip subclass check
+                            DescriptorResolver.checkHasOuterClassInstance(scope, trace, referenceExpression, (ClassDescriptor) containing, false);
                         }
                     }
                     else if (classifierDescriptor instanceof ClassDescriptor) {
@@ -342,7 +343,7 @@ public class TypeResolver {
         assert size != 0 : "No projections possible for a nilary type constructor" + constructor;
         ClassifierDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
         assert declarationDescriptor != null : "No declaration descriptor for type constructor " + constructor;
-        String name = declarationDescriptor.getName().getName();
+        String name = declarationDescriptor.getName().asString();
 
         return TypeUtils.getTypeNameAndStarProjectionsString(name, size);
     }

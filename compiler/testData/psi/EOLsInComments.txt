@@ -25,7 +25,10 @@ JetFile: EOLsInComments.jet
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n  ')
-      PsiComment(DOC_COMMENT)('/** */')
+      KDoc
+        PsiElement(KDOC_START)('/**')
+        PsiElement(KDOC_TEXT)(' ')
+        PsiElement(KDOC_END)('*/')
       PREFIX_EXPRESSION
         OPERATION_REFERENCE
           PsiElement(PLUS)('+')
@@ -72,7 +75,10 @@ JetFile: EOLsInComments.jet
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
-        PsiComment(DOC_COMMENT)('/**\n  */')
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiWhiteSpace('\n  ')
+          PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('  ')
         OPERATION_REFERENCE
           PsiElement(PLUS)('+')

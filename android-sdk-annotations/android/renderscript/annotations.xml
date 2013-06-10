@@ -1,0 +1,320 @@
+<root>
+    <item name='android.renderscript.Element.DataType UNSIGNED_32'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Value LINEAR_MIP_LINEAR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc NOT_EQUAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.RSSurfaceView void surfaceChanged(android.view.SurfaceHolder, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Primitive LINE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace NEGATIVE_X'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType SIGNED_16'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace POSITIVE_Z'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Value WRAP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_PROGRAM_VERTEX'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType UNSIGNED_5_6_5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc SRC_COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc DST_COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font.Style BOLD_ITALIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc ZERO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType FLOAT_64'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataKind PIXEL_DEPTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font.Style NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType SIGNED_32'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc ONE_MINUS_SRC_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc ONE_MINUS_DST_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Program.TextureType TEXTURE_2D'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode REPLACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc ONE_MINUS_DST_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font.Style ITALIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType BOOLEAN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc ONE_MINUS_SRC_COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc ONE_MINUS_DST_COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType UNSIGNED_64'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_ALLOCATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.RenderScript.Priority LOW'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc GREATER_OR_EQUAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Primitive TRIANGLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Allocation.MipmapControl MIPMAP_FULL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc ZERO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace POSITIVE_X'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FileA3D.EntryType MESH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.RSSurfaceView void surfaceCreated(android.view.SurfaceHolder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType NONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.Format RGBA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType SIGNED_64'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc GREATER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc LESS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc SRC_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc DST_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType UNSIGNED_8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_FONT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataKind PIXEL_A'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc SRC_ALPHA_SATURATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace POSITIVE_Y'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_ELEMENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramRaster.CullMode BACK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc ONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType UNSIGNED_16'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataKind PIXEL_RGBA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType MATRIX_4X4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_PROGRAM_FRAGMENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Value LINEAR_MIP_NEAREST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc ONE_MINUS_SRC_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType FLOAT_32'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataKind USER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType SIGNED_8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Program.TextureType TEXTURE_CUBE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_PROGRAM_STORE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.Format RGB'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_SAMPLER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc ALWAYS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font.Style BOLD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Value LINEAR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Allocation.MipmapControl MIPMAP_ON_SYNC_TO_TEXTURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramRaster.CullMode NONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Value CLAMP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Primitive LINE_STRIP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataKind PIXEL_LA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Value NEAREST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_PROGRAM_RASTER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FileA3D.EntryType UNKNOWN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace POSITVE_X'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace NEGATIVE_Z'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Primitive TRIANGLE_FAN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType MATRIX_2X2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType UNSIGNED_4_4_4_4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.Format ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc ONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc SRC_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Allocation.MipmapControl MIPMAP_NONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType UNSIGNED_5_5_5_1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace POSITVE_Y'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc EQUAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.Format LUMINANCE_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace NEGATIVE_Y'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramRaster.CullMode FRONT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_MESH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataKind PIXEL_RGB'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode DECAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Primitive POINT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.RenderScript.Priority NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType MATRIX_3X3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataType RS_SCRIPT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element.DataKind PIXEL_L'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc LESS_OR_EQUAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Primitive TRIANGLE_STRIP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc DST_ALPHA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.CubemapFace POSITVE_Z'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode MODULATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

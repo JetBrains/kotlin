@@ -3,6 +3,9 @@
 // ERROR: 'else' entry must be the last one in a when-expression
 // ERROR: Unreachable code
 // ERROR: Unreachable code
+// ACTION: Disable 'Eliminate Argument of 'when''
+// ACTION: Edit intention settings
+// ACTION: Eliminate argument of 'when'
 package foo
 
 fun foo() {

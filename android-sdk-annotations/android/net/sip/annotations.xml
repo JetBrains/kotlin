@@ -1,0 +1,11 @@
+<root>
+    <item name='android.net.sip.SipProfile void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager EXTRA_CALL_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager EXTRA_OFFER_SD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

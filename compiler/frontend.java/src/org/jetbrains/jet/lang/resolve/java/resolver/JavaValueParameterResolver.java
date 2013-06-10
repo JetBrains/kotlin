@@ -90,7 +90,7 @@ public final class JavaValueParameterResolver {
         else {
 
             JetType transformedType;
-            if (JavaAnnotationResolver.findAnnotationWithExternal(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
+            if (JavaAnnotationResolver.findAnnotationWithExternal(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
                 null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
             }

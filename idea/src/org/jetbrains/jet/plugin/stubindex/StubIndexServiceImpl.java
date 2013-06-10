@@ -33,7 +33,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         FqName fqName = new FqName(packageName == null ? "" : packageName);
 
         while (true) {
-            sink.occurrence(JetAllPackagesIndex.getInstance().getKey(), fqName.getFqName());
+            sink.occurrence(JetAllPackagesIndex.getInstance().getKey(), fqName.asString());
             if (fqName.isRoot()) {
                 return;
             }
@@ -50,7 +50,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         
         FqName fqn = stub.getFqName();
         if (fqn != null) {
-            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn.getFqName());
+            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn.asString());
         }
 
         for (String superName : stub.getSuperNames()) {
@@ -87,7 +87,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         }
 
         if (fqName != null) {
-            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.getFqName());
+            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.asString());
         }
 
         recordClassOrObjectByPackage(stub, sink);
@@ -119,7 +119,7 @@ public class StubIndexServiceImpl implements StubIndexService {
 
                 FqName topFQName = stub.getTopFQName();
                 if (topFQName != null) {
-                    sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), topFQName.getFqName());
+                    sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), topFQName.asString());
                 }
             }
 
@@ -134,7 +134,7 @@ public class StubIndexServiceImpl implements StubIndexService {
             if (stub.isTopLevel()) {
                 FqName topFQName = stub.getTopFQName();
                 if (topFQName != null) {
-                    sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), topFQName.getFqName());
+                    sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), topFQName.asString());
                 }
             }
 

@@ -54,7 +54,17 @@ public class JetBlockExpression extends JetExpressionImpl implements JetStatemen
 
     @Nullable
     public TextRange getLastBracketRange() {
-        PsiElement rBrace = findChildByType(JetTokens.RBRACE);
+        PsiElement rBrace = getRBrace();
         return rBrace != null ? rBrace.getTextRange() : null;
+    }
+
+    @Nullable
+    public PsiElement getRBrace() {
+        return findChildByType(JetTokens.RBRACE);
+    }
+
+    @Nullable
+    public PsiElement getLBrace() {
+        return findChildByType(JetTokens.LBRACE);
     }
 }

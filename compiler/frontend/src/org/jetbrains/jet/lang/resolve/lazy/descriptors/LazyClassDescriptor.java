@@ -89,7 +89,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
 
-
     public LazyClassDescriptor(
             @NotNull ResolveSession resolveSession,
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -108,6 +107,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 classLikeInfo.getClassKind() != ClassKind.ENUM_CLASS ? classLikeInfo : noEnumEntries(classLikeInfo);
         this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
         this.containingDeclaration = containingDeclaration;
+
         this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
         this.unsubstitutedInnerClassesScope = new InnerClassesScopeWrapper(unsubstitutedMemberScope);
 
@@ -182,18 +182,17 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     private JetScope computeScopeForClassHeaderResolution() {
-        WritableScopeImpl scope = new WritableScopeImpl(
-                JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with type parameters for " + name);
         for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
             scope.addClassifierDescriptor(typeParameterDescriptor);
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         PsiElement scopeAnchor = declarationProvider.getOwnerInfo().getScopeAnchor();
-        return new ChainedScope(
-                this,
-                "ScopeForClassHeaderResolution: " + getName(),
-                scope, getScopeProvider().getResolutionScopeForDeclaration(scopeAnchor));
+
+        return new ChainedScope(this, "ScopeForClassHeaderResolution: " + getName(),
+                scope,
+                getScopeProvider().getResolutionScopeForDeclaration(scopeAnchor));
     }
 
     @NotNull
@@ -203,15 +202,20 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     private JetScope computeScopeForMemberDeclarationResolution() {
-        WritableScopeImpl scope = new WritableScopeImpl(
-                JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
-        scope.addLabeledDeclaration(this);
-        scope.changeLockLevel(WritableScope.LockLevel.READING);
+        WritableScopeImpl thisScope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with 'this' for " + name);
+        thisScope.addLabeledDeclaration(this);
+        thisScope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        ClassDescriptor classObject = getClassObjectDescriptor();
+        JetScope classObjectAdapterScope = (classObject != null) ? new ClassObjectMixinScope(classObject) : JetScope.EMPTY;
 
         return new ChainedScope(
                 this,
                 "ScopeForMemberDeclarationResolution: " + getName(),
-                scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
+                thisScope,
+                getScopeForMemberLookup(),
+                getScopeForClassHeaderResolution(),
+                classObjectAdapterScope);
     }
 
     @NotNull
@@ -224,14 +228,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         ConstructorDescriptor primaryConstructor = getUnsubstitutedPrimaryConstructor();
         if (primaryConstructor == null) return getScopeForMemberDeclarationResolution();
 
-        WritableScopeImpl scope = new WritableScopeImpl(
-                JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Property Initializer Resolution");
-
-        List<ValueParameterDescriptor> parameters = primaryConstructor.getValueParameters();
-        for (ValueParameterDescriptor valueParameterDescriptor : parameters) {
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + name);
+        for (ValueParameterDescriptor valueParameterDescriptor : primaryConstructor.getValueParameters()) {
             scope.addVariableDescriptor(valueParameterDescriptor);
         }
-
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         return new ChainedScope(

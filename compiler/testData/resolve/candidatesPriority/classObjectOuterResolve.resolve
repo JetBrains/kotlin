@@ -1,0 +1,10 @@
+fun ~test~test() = 1
+
+class Test {
+    class object {
+        fun call() = `test`test()
+    }
+
+    fun test() = 2
+}
+

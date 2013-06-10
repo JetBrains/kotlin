@@ -21,16 +21,73 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.intentions.*;
 
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
-    public void doTestIfStatementWithAssignmentsToExpression(@NotNull String path) throws Exception {
-        doTest(path, new IfStatementWithAssignmentsToExpressionIntention());
+    public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
+        doTest(path, new FoldBranchedExpressionIntention.FoldIfToAssignmentIntention());
     }
 
-    public void doTestAssignmentWithIfExpressionToStatement(@NotNull String path) throws Exception {
-        doTest(path, new AssignmentWithIfExpressionToStatementIntention());
+    public void doTestFoldIfToReturn(@NotNull String path) throws Exception {
+        doTest(path, new FoldBranchedExpressionIntention.FoldIfToReturnIntention());
+    }
+
+    public void doTestFoldIfToReturnAsymmetrically(@NotNull String path) throws Exception {
+        doTest(path, new FoldBranchedExpressionIntention.FoldIfToReturnAsymmetricallyIntention());
+    }
+
+    public void doTestFoldWhenToAssignment(@NotNull String path) throws Exception {
+        doTest(path, new FoldBranchedExpressionIntention.FoldWhenToAssignmentIntention());
+    }
+
+    public void doTestFoldWhenToReturn(@NotNull String path) throws Exception {
+        doTest(path, new FoldBranchedExpressionIntention.FoldWhenToReturnIntention());
+    }
+
+    public void doTestUnfoldAssignmentToIf(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldAssignmentToIfIntention());
+    }
+
+    public void doTestUnfoldAssignmentToWhen(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldAssignmentToWhenIntention());
+    }
+
+    public void doTestUnfoldPropertyToIf(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldPropertyToIfIntention());
+    }
+
+    public void doTestUnfoldPropertyToWhen(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldPropertyToWhenIntention());
+    }
+
+    public void doTestUnfoldReturnToIf(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldReturnToIfIntention());
+    }
+
+    public void doTestUnfoldReturnToWhen(@NotNull String path) throws Exception {
+        doTest(path, new UnfoldBranchedExpressionIntention.UnfoldReturnToWhenIntention());
+    }
+
+    public void doTestIfToWhen(@NotNull String path) throws Exception {
+        doTest(path, new IfToWhenIntention());
+    }
+
+    public void doTestWhenToIf(@NotNull String path) throws Exception {
+        doTest(path, new WhenToIfIntention());
+    }
+
+    public void doTestFlattenWhen(@NotNull String path) throws Exception {
+        doTest(path, new FlattenWhenIntention());
+    }
+
+    public void doTestIntroduceWhenSubject(@NotNull String path) throws Exception {
+        doTest(path, new IntroduceWhenSubjectIntention());
+    }
+
+    public void doTestEliminateWhenSubject(@NotNull String path) throws Exception {
+        doTest(path, new EliminateWhenSubjectIntention());
     }
 
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {

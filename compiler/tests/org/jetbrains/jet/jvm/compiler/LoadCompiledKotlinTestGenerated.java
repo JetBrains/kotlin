@@ -58,6 +58,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/class/ClassInnerClass.kt");
         }
         
+        @TestMetadata("ClassMemberConflict.kt")
+        public void testClassMemberConflict() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassMemberConflict.kt");
+        }
+        
         @TestMetadata("ClassOutParam.kt")
         public void testClassOutParam() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/ClassOutParam.kt");
@@ -128,6 +133,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/class/InheritClassWithParam.kt");
         }
         
+        @TestMetadata("InheritSubstitutedMethod.kt")
+        public void testInheritSubstitutedMethod() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/InheritSubstitutedMethod.kt");
+        }
+        
         @TestMetadata("InheritTraitWithParam.kt")
         public void testInheritTraitWithParam() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/InheritTraitWithParam.kt");
@@ -146,6 +156,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObject.kt");
+        }
+        
+        @TestMetadata("NamedObjectInClass.kt")
+        public void testNamedObjectInClass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObjectInClass.kt");
         }
         
         @TestMetadata("NamedObjectInClassObject.kt")
@@ -252,6 +267,16 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("ClassObjectExtendsTraitWithTP.kt")
         public void testClassObjectExtendsTraitWithTP() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
+        }
+        
+        @TestMetadata("ClassObjectPropertyInClass.kt")
+        public void testClassObjectPropertyInClass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectPropertyInClass.kt");
+        }
+        
+        @TestMetadata("InnerClassInClassObject.kt")
+        public void testInnerClassInClassObject() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/InnerClassInClassObject.kt");
         }
         
         @TestMetadata("SimpleClassObject.kt")
@@ -407,6 +432,16 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     public static class Fun extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInFun() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("NoSamAdapter.kt")
+        public void testNoSamAdapter() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/NoSamAdapter.kt");
+        }
+        
+        @TestMetadata("NoSamConstructor.kt")
+        public void testNoSamConstructor() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/NoSamConstructor.kt");
         }
         
         @TestMetadata("PropagateDeepSubclass.kt")

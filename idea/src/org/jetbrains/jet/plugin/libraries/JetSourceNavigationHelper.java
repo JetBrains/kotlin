@@ -255,7 +255,7 @@ public class JetSourceNavigationHelper {
             return null;
         }
         Collection<JetClassOrObject> classes = JetFullClassNameIndex.getInstance()
-                .get(classFqName.getFqName(), decompiledClassOrObject.getProject(), librarySourcesScope);
+                .get(classFqName.asString(), decompiledClassOrObject.getProject(), librarySourcesScope);
         if (classes.isEmpty()) {
             return null;
         }
@@ -274,7 +274,7 @@ public class JetSourceNavigationHelper {
         //noinspection unchecked
         StringStubIndexExtension<JetNamedDeclaration> index =
                 (StringStubIndexExtension<JetNamedDeclaration>) getIndexForTopLevelPropertyOrFunction(decompiledDeclaration);
-        return index.get(memberFqName.getFqName(), decompiledDeclaration.getProject(), librarySourcesScope);
+        return index.get(memberFqName.asString(), decompiledDeclaration.getProject(), librarySourcesScope);
     }
 
     private static StringStubIndexExtension<? extends JetNamedDeclaration> getIndexForTopLevelPropertyOrFunction(
@@ -360,7 +360,7 @@ public class JetSourceNavigationHelper {
                 if (javaAnalog.getSort() != Type.OBJECT) {
                     return null;
                 }
-                String fqName = JvmClassName.byType(javaAnalog).getFqName().getFqName();
+                String fqName = JvmClassName.byType(javaAnalog).getFqName().asString();
                 return JavaPsiFacade.getInstance(classOrObject.getProject()).
                         findClass(fqName, GlobalSearchScope.allScope(classOrObject.getProject()));
             }
@@ -378,7 +378,7 @@ public class JetSourceNavigationHelper {
         if (className == null) {
             return null;
         }
-        String fqName = className.getFqName().getFqName();
+        String fqName = className.getFqName().asString();
 
         JetFile file = (JetFile) classOrObject.getContainingFile();
 

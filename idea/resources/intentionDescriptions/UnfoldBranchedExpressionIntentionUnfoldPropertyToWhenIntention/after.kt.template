@@ -1,0 +1,6 @@
+val res: String
+when (n) {
+  1 -> res = "one"
+  2 -> res = "two"
+  else -> res = "many"
+}

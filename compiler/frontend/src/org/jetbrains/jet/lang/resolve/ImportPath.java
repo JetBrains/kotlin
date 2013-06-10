@@ -50,12 +50,12 @@ public final class ImportPath {
     }
 
     public String getPathStr() {
-        return fqName.getFqName() + (isAllUnder ? ".*" : "");
+        return fqName.asString() + (isAllUnder ? ".*" : "");
     }
 
     @Override
     public String toString() {
-        return getPathStr() + (alias != null ? " as " + alias.getName() : "");
+        return getPathStr() + (alias != null ? " as " + alias.asString() : "");
     }
 
     @NotNull
