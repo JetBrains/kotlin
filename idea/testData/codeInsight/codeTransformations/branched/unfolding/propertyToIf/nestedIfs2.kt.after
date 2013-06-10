@@ -1,6 +1,6 @@
 fun test(n: Int): String? {
-    var res:<caret> String?
-    if (n == 1) {
+    var res: String?
+    <caret>if (n == 1) {
         res = if (3 > 2) {
             println("***")
             "one"

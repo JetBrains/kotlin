@@ -1,6 +1,6 @@
 fun test(n: Int): String {
-    var <caret>res: String
-    if (n == 1) res = "one" else res = "two"
+    var res: String
+    <caret>if (n == 1) res = "one" else res = "two"
 
     return res
 }

@@ -22,13 +22,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-
-import java.util.Collections;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.declarations.DeclarationUtils;
 
 public class BranchedUnfoldingUtils {
     private BranchedUnfoldingUtils() {
@@ -133,91 +127,14 @@ public class BranchedUnfoldingUtils {
         editor.getCaretModel().moveToOffset(resultElement.getTextOffset());
     }
 
-    private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property, @NotNull JetFile file) {
-        if (property.getTypeRef() != null) return null;
-        return AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext().get(BindingContext.EXPRESSION_TYPE, property.getInitializer());
+    public static void unfoldPropertyToIf(@NotNull JetProperty property, @NotNull JetFile file, @NotNull Editor editor) {
+        JetBinaryExpression assignment = DeclarationUtils.splitPropertyDeclaration(property, file);
+        unfoldAssignmentToIf(assignment, editor);
     }
 
-    protected interface PropertyUnfolder<T extends JetExpression> {
-        void processInitializer(@NotNull T newInitializer, @NotNull JetExpression propertyRef, @NotNull Project project);
-    }
-
-    protected static final PropertyUnfolder<JetIfExpression> IF_EXPRESSION_PROPERTY_UNFOLDER = new PropertyUnfolder<JetIfExpression>() {
-        @Override
-        public void processInitializer(
-                @NotNull JetIfExpression newInitializer, @NotNull JetExpression propertyRef, @NotNull Project project
-        ) {
-            JetExpression thenExpr = getOutermostLastBlockElement(newInitializer.getThen());
-            JetExpression elseExpr = getOutermostLastBlockElement(newInitializer.getElse());
-
-            assertNotNull(thenExpr);
-            assertNotNull(elseExpr);
-
-            thenExpr.replace(JetPsiFactory.createBinaryExpression(project, propertyRef, "=", thenExpr));
-            elseExpr.replace(JetPsiFactory.createBinaryExpression(project, propertyRef, "=", elseExpr));
-        }
-    };
-
-    protected static final PropertyUnfolder<JetWhenExpression> WHEN_EXPRESSION_PROPERTY_UNFOLDER = new PropertyUnfolder<JetWhenExpression>() {
-        @Override
-        public void processInitializer(
-                @NotNull JetWhenExpression newInitializer, @NotNull JetExpression propertyRef, @NotNull Project project
-        ) {
-            for (JetWhenEntry entry : newInitializer.getEntries()) {
-                JetExpression currExpr = getOutermostLastBlockElement(entry.getExpression());
-
-                assertNotNull(currExpr);
-
-                //noinspection ConstantConditions
-                currExpr.replace(JetPsiFactory.createBinaryExpression(project, propertyRef, "=", currExpr));
-            }
-        }
-    };
-
-    private static <T extends JetExpression> void unfoldProperty(
-            @NotNull JetProperty property, @NotNull JetFile file, PropertyUnfolder<T> unfolder
-    ) {
-        Project project = property.getProject();
-
-        PsiElement parent = property.getParent();
-        assertNotNull(parent);
-
-        //noinspection unchecked
-        T initializer = (T) property.getInitializer();
-        assertNotNull(initializer);
-
-        JetSimpleNameExpression propertyName = JetPsiFactory.createSimpleName(project, property.getName());
-
-        //noinspection ConstantConditions, unchecked
-        T newInitializer = (T) initializer.copy();
-
-        unfolder.processInitializer(newInitializer, propertyName, project);
-
-        parent.addAfter(newInitializer, property);
-        parent.addAfter(JetPsiFactory.createNewLine(project), property);
-
-        //noinspection ConstantConditions
-        JetType inferredType = getPropertyTypeIfNeeded(property, file);
-
-        String typeStr = inferredType != null
-                            ? DescriptorRenderer.TEXT.renderType(inferredType)
-                            : JetPsiUtil.getNullableText(property.getTypeRef());
-
-        property = (JetProperty) property.replace(
-                JetPsiFactory.createProperty(project, property.getName(), typeStr, property.isVar())
-        );
-
-        if (inferredType != null) {
-            ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property.getTypeRef()));
-        }
-    }
-
-    public static void unfoldPropertyToIf(@NotNull JetProperty property, @NotNull JetFile file) {
-        unfoldProperty(property, file, IF_EXPRESSION_PROPERTY_UNFOLDER);
-    }
-
-    public static void unfoldPropertyToWhen(@NotNull JetProperty property, @NotNull JetFile file) {
-        unfoldProperty(property, file, WHEN_EXPRESSION_PROPERTY_UNFOLDER);
+    public static void unfoldPropertyToWhen(@NotNull JetProperty property, @NotNull JetFile file, @NotNull Editor editor) {
+        JetBinaryExpression assignment = DeclarationUtils.splitPropertyDeclaration(property, file);
+        unfoldAssignmentToWhen(assignment, editor);
     }
 
     public static void unfoldReturnToIf(@NotNull JetReturnExpression returnExpression) {

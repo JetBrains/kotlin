@@ -1,6 +1,6 @@
 fun test(n: Int): String {
-    var res<caret>: String
-    when (n) {
+    var res: String
+    <caret>when (n) {
         1 -> {
             println("***")
             res = "one"
