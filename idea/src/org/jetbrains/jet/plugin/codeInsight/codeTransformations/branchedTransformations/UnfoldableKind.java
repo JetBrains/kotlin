@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetReturnExpression;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.Transformer;
 
 public enum UnfoldableKind implements Transformer {
     ASSIGNMENT_TO_IF("unfold.assignment.to.if") {

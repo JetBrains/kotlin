@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.AbstractCodeTransformationIntention;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.WhenUtils;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.Transformer;
 
 public class EliminateWhenSubjectIntention extends AbstractCodeTransformationIntention<Transformer> {
     private static final Transformer TRANSFORMER = new Transformer() {

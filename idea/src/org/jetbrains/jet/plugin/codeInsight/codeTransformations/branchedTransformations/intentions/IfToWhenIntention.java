@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetIfExpression;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.AbstractCodeTransformationIntention;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.IfWhenUtils;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.Transformer;
 
 public class IfToWhenIntention extends AbstractCodeTransformationIntention<Transformer> {
     private static final Transformer TRANSFORMER = new Transformer() {

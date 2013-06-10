@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations;
+package org.jetbrains.jet.plugin.codeInsight.codeTransformations;
 
 import com.google.common.base.Predicate;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.Transformer;
 
 public abstract class AbstractCodeTransformationIntention<T extends Transformer> extends BaseIntentionAction {
     private final T transformer;

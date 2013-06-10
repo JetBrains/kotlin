@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core;
+package org.jetbrains.jet.plugin.codeInsight.codeTransformations;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;

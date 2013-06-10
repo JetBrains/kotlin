@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.AbstractCodeTransformationIntention;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.BranchedFoldingUtils;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.FoldableKind;
 

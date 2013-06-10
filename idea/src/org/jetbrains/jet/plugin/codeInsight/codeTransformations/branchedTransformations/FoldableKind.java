@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetIfExpression;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.core.Transformer;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.Transformer;
 
 public enum FoldableKind implements Transformer {
     IF_TO_ASSIGNMENT("fold.if.to.assignment") {

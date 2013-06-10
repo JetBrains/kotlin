@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.plugin.codeInsight.codeTransformations.branchedTransformations.*;
+import org.jetbrains.jet.plugin.codeInsight.codeTransformations.AbstractCodeTransformationIntention;
 
 public abstract class UnfoldBranchedExpressionIntention extends AbstractCodeTransformationIntention<UnfoldableKind> {
     protected UnfoldBranchedExpressionIntention(@NotNull final UnfoldableKind unfoldableKind) {
