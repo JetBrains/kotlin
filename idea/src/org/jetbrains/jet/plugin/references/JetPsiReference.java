@@ -102,16 +102,16 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     @Nullable
     protected PsiElement doResolve() {
-        JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
-        List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
+        BindingContext context = WholeProjectAnalyzerFacade.getContextForExpression(myExpression);
+
+        List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(context, myExpression);
         if (psiElements.size() == 1) {
             return psiElements.iterator().next();
         }
         if (psiElements.size() > 1) {
             return null;
         }
-        Collection<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(bindingContext);
+        Collection<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(context);
         if (stdlibSymbols.size() == 1) {
             return stdlibSymbols.iterator().next();
         }
