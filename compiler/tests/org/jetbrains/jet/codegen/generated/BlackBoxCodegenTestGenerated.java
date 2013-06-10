@@ -2449,6 +2449,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/localClasses/innerClassInLocalClass.kt");
         }
         
+        @TestMetadata("kt2700.kt")
+        public void testKt2700() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/kt2700.kt");
+        }
+        
         @TestMetadata("kt2873.kt")
         public void testKt2873() throws Exception {
             doTest("compiler/testData/codegen/box/localClasses/kt2873.kt");
