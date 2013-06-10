@@ -37,6 +37,7 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -132,6 +133,8 @@ public class FunctionCodegen extends GenerationStateAware {
         endVisit(mv, null, origin);
 
         generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
+
+        methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, typeMapper);
     }
 
     @Nullable
@@ -180,7 +183,9 @@ public class FunctionCodegen extends GenerationStateAware {
 
             labelsForSharedVars.putAll(createSharedVarsForParameters(mv, functionDescriptor, frameMap));
 
-            genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
+            if (!JetTypeMapper.isAccessor(functionDescriptor)) {
+                genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
+            }
 
             strategy.generateBody(mv, signature, context);
 

@@ -105,8 +105,12 @@ public class CallableMethod implements Callable {
             @NotNull GenerationState state,
             @NotNull ResolvedCall resolvedCall
     ) {
-        invoke(v);
+        invokeWithoutAssertions(v);
         AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
+    }
+
+    public void invokeWithoutAssertions(@NotNull InstructionAdapter v) {
+        invoke(v);
     }
 
     @Nullable

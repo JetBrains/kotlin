@@ -24,7 +24,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 
-public class ClassContext extends CodegenContext {
+public class ClassContext extends CodegenContext<ClassDescriptor> {
+
     public ClassContext(
             @NotNull JetTypeMapper typeMapper,
             @NotNull ClassDescriptor contextDescriptor,
@@ -36,6 +37,15 @@ public class ClassContext extends CodegenContext {
         super(contextDescriptor, contextKind, parentContext, typeMapper.getBindingContext().get(CLOSURE, contextDescriptor),
               contextDescriptor, localLookup);
         initOuterExpression(typeMapper, contextDescriptor);
+    }
+
+
+    @Nullable
+    public CodegenContext getClassObjectContext() {
+        if (getContextDescriptor().getClassObjectDescriptor() != null) {
+            return findChildContext(getContextDescriptor().getClassObjectDescriptor());
+        }
+        return null;
     }
 
     @Override

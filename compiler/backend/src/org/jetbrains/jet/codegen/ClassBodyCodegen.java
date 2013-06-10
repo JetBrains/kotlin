@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -76,10 +75,23 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
-            generateDeclaration(propertyCodegen, declaration, functionCodegen);
+            //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
+            if (shouldProcessFirst(declaration)) {
+                generateDeclaration(propertyCodegen, declaration, functionCodegen);
+            }
+        }
+
+        for (JetDeclaration declaration : myClass.getDeclarations()) {
+            if (!shouldProcessFirst(declaration)) {
+                generateDeclaration(propertyCodegen, declaration, functionCodegen);
+            }
         }
 
         generatePrimaryConstructorProperties(propertyCodegen, myClass);
+    }
+
+    private boolean shouldProcessFirst(JetDeclaration declaration) {
+        return false == (declaration instanceof JetProperty || declaration instanceof JetNamedFunction);
     }
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
@@ -126,18 +138,18 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
-            MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
+            MethodVisitor mv = v.newMethod(null, ACC_STATIC, "<clinit>", "()V", null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
 
-                InstructionAdapter v = new InstructionAdapter(mv);
+                ExpressionCodegen codegen = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context, state);
 
                 for (CodeChunk chunk : staticInitializerChunks) {
-                    chunk.generate(v);
+                    chunk.generate(codegen);
                 }
 
                 mv.visitInsn(RETURN);
-                FunctionCodegen.endVisit(v, "static initializer", myClass);
+                FunctionCodegen.endVisit(codegen.v, "static initializer", myClass);
             }
         }
     }

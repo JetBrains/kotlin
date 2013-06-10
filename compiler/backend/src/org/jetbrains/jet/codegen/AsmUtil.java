@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -48,6 +49,7 @@ import java.util.Set;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 
 public class AsmUtil {
@@ -239,15 +241,13 @@ public class AsmUtil {
             return null;
         }
         // the following code is only for PRIVATE visibility of member
-        if (isClassObject(containingDeclaration)) {
+        if (isEnumEntry(memberDescriptor)) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
         if (memberDescriptor instanceof ConstructorDescriptor) {
             ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
             if (kind == ClassKind.OBJECT) {
-                //TODO: should be NO_FLAG_PACKAGE_PRIVATE
-                // see http://youtrack.jetbrains.com/issue/KT-2700
-                return ACC_PUBLIC;
+                return NO_FLAG_PACKAGE_PRIVATE;
             }
             else if (kind == ClassKind.ENUM_ENTRY) {
                 return NO_FLAG_PACKAGE_PRIVATE;

@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.lang.resolve.calls;
 
-public interface CodeChunk {
-    void generate(ExpressionCodegen codegen);
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
+
+public interface CallResolverExtension {
+    <F extends CallableDescriptor> void run(@NotNull OverloadResolutionResultsImpl<F> results, @NotNull BasicCallResolutionContext context);
 }

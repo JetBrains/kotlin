@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
@@ -70,6 +71,8 @@ public class CallResolver {
     private CandidateResolver candidateResolver;
     @NotNull
     private ArgumentTypeResolver argumentTypeResolver;
+    @Nullable
+    private CallResolverExtension extension;
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -89,6 +92,11 @@ public class CallResolver {
     @Inject
     public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {
         this.argumentTypeResolver = argumentTypeResolver;
+    }
+
+    @Inject
+    public void setExtension(@NotNull CallResolverExtension extension) {
+        this.extension = extension;
     }
 
     @NotNull
@@ -142,7 +150,7 @@ public class CallResolver {
         ProgressIndicatorProvider.checkCanceled();
 
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> prioritizedTasks;
-        
+
         JetExpression calleeExpression = context.call.getCalleeExpression();
         JetReferenceExpression functionReference;
         if (calleeExpression instanceof JetSimpleNameExpression) {
@@ -239,7 +247,7 @@ public class CallResolver {
                     }
                     return checkArgumentTypesAndFail(context);
                 }
-                
+
                 FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), Name.special("<for expression " + calleeExpression.getText() + ">"));
                 FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER_PARAMETER, Modality.FINAL,
                                                                   Visibilities.LOCAL);
@@ -296,12 +304,17 @@ public class CallResolver {
         }
         traceToResolveCall.commit();
 
-        if (prioritizedTasks.isEmpty()) {
-            return results;
+        if (prioritizedTasks.isEmpty() || context.resolveMode == ResolveMode.NESTED_CALL) {
+            //do nothing
+        } else {
+            results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
         }
-        if (context.resolveMode == ResolveMode.NESTED_CALL) return results;
 
-        return completeTypeInferenceDependentOnExpectedType(context, results, tracing);
+        if (extension != null) {
+            extension.run(results, context);
+        }
+
+        return results;
     }
 
     private <D extends CallableDescriptor> void completeTypeInferenceDependentOnFunctionLiterals(

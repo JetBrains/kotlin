@@ -1562,7 +1562,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
             JetExpression r = getReceiverForSelector(expression);
             boolean isSuper = r instanceof JetSuperExpression;
-            propertyDescriptor = accessablePropertyDescriptor(context, propertyDescriptor);
+            propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
             StackValue.Property iValue =
                 intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
             if (directToField) {
@@ -1677,16 +1677,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             boolean forceField,
             @Nullable JetSuperExpression superExpression
     ) {
-        return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, state, context, false);
+        return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, false);
     }
 
     @NotNull
-    public static StackValue.Property intermediateValueForProperty(
+    public StackValue.Property intermediateValueForProperty(
             PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression,
-            @NotNull GenerationState state,
-            @NotNull CodegenContext context,
             @NotNull boolean forceSpecialFlag
     ) {
         JetTypeMapper typeMapper = state.getTypeMapper();
@@ -1720,7 +1718,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     }
                 }
 
-                propertyDescriptor = accessablePropertyDescriptor(context, propertyDescriptor);
+                propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
 
                 if (propertyDescriptor.getGetter() != null) {
                     callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper || forceSpecialFlag, isInsideClass, isInsideModule, OwnerKind.IMPLEMENTATION);
@@ -1854,47 +1852,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private static PropertyDescriptor accessablePropertyDescriptor(CodegenContext context, PropertyDescriptor propertyDescriptor) {
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-
-        int flag = getVisibilityAccessFlag(propertyDescriptor) |
-                         (getter == null ? 0 : getVisibilityAccessFlag(getter)) |
-                         (setter == null ? 0 : getVisibilityAccessFlag(setter));
-
-        if ((flag & ACC_PRIVATE) == 0) {
-            return propertyDescriptor;
-        }
-
-        return (PropertyDescriptor) accessibleDescriptor(context, propertyDescriptor);
+    @NotNull
+    private PropertyDescriptor accessablePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+        return context.accessablePropertyDescriptor(propertyDescriptor);
     }
 
-    private FunctionDescriptor accessableFunctionDescriptor(FunctionDescriptor fd) {
-        int flag = getVisibilityAccessFlag(fd);
-        if ((flag & ACC_PRIVATE) == 0) {
-            return fd;
-        }
-
-        return (FunctionDescriptor) accessibleDescriptor(context, fd);
+    @NotNull
+    protected FunctionDescriptor accessableFunctionDescriptor(FunctionDescriptor fd) {
+        return context.accessableFunctionDescriptor(fd);
     }
 
-    private static MemberDescriptor accessibleDescriptor(CodegenContext context, DeclarationDescriptor descriptor) {
-        if (context.getClassOrNamespaceDescriptor() != descriptor.getContainingDeclaration()) {
-            DeclarationDescriptor enclosed = descriptor.getContainingDeclaration();
-            if (context.hasThisDescriptor() && enclosed != context.getThisDescriptor()) {
-                CodegenContext c = context;
-                while (c.getContextDescriptor() != enclosed) {
-                    c = c.getParentContext();
-                    if (c == null) {
-                        return (MemberDescriptor) descriptor;
-                    }
-                }
-                return (MemberDescriptor) c.getAccessor(descriptor);
-            }
-        }
-        return (MemberDescriptor) descriptor;
-    }
-
+    @NotNull
     public StackValue invokeFunction(
             Call call,
             StackValue receiver,
@@ -1943,7 +1911,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Nullable
-    private static JetSuperExpression getSuperCallExpression(Call call) {
+    private static JetSuperExpression getSuperCallExpression(@NotNull Call call) {
         ReceiverValue explicitReceiver = call.getExplicitReceiver();
         if (explicitReceiver instanceof ExpressionReceiver) {
             JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
@@ -1954,7 +1922,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return null;
     }
 
-    private static boolean isSuperCall(Call call) {
+    private static boolean isSuperCall(@NotNull Call call) {
         return getSuperCallExpression(call) != null;
     }
 
@@ -1972,6 +1940,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
+    @NotNull
     private StackValue returnValueAsStackValue(FunctionDescriptor fd, Type callReturnType) {
         if (callReturnType != Type.VOID_TYPE) {
             JetType type = fd.getReturnType();

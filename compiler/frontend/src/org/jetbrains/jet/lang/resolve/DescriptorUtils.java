@@ -420,10 +420,24 @@ public class DescriptorUtils {
         return (ClassDescriptor) classifier;
     }
 
+    @NotNull
     public static ConstructorDescriptor getConstructorOfDataClass(ClassDescriptor classDescriptor) {
+        ConstructorDescriptor descriptor = getConstructorDescriptorIfOnlyOne(classDescriptor);
+        assert descriptor != null : "Data class must have only one constructor: " + classDescriptor.getConstructors();
+        return descriptor;
+    }
+
+    @NotNull
+    public static ConstructorDescriptor getConstructorOfSingletonObject(ClassDescriptor classDescriptor) {
+        ConstructorDescriptor descriptor = getConstructorDescriptorIfOnlyOne(classDescriptor);
+        assert descriptor != null : "Class of singleton object must have only one constructor: " + classDescriptor.getConstructors();
+        return descriptor;
+    }
+
+    @Nullable
+    private static ConstructorDescriptor getConstructorDescriptorIfOnlyOne(ClassDescriptor classDescriptor) {
         Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-        assert constructors.size() == 1 : "Data class must have only one constructor: " + constructors;
-        return constructors.iterator().next();
+        return constructors.size() != 1 ? null : constructors.iterator().next();
     }
 
     @Nullable

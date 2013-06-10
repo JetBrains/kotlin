@@ -131,7 +131,7 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static StackValue field(@NotNull Type type, @NotNull JvmClassName owner, @NotNull String name, boolean isStatic) {
+    public static Field field(@NotNull Type type, @NotNull JvmClassName owner, @NotNull String name, boolean isStatic) {
         return new Field(type, owner, name, isStatic);
     }
 
@@ -338,7 +338,7 @@ public abstract class StackValue {
         return receiverWithParameter;
     }
 
-    public static StackValue singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+    public static Field singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
         FieldInfo info = FieldInfo.createForSingleton(classDescriptor, typeMapper);
         return field(info.getFieldType(), JvmClassName.byInternalName(info.getOwnerInternalName()), info.getFieldName(), true);
     }
