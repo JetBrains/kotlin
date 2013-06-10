@@ -28,9 +28,14 @@ public class WhenUtils {
 
         if (condition instanceof JetBinaryExpression) {
             JetBinaryExpression binaryExpression = (JetBinaryExpression) condition;
+            JetExpression lhs = binaryExpression.getLeft();
+
             IElementType op = binaryExpression.getOperationToken();
-            if (op == JetTokens.EQEQ || op == JetTokens.IN_KEYWORD || op == JetTokens.NOT_IN) {
-                return ((JetBinaryExpression) condition).getLeft();
+            if (op == JetTokens.IN_KEYWORD || op == JetTokens.NOT_IN) {
+                return lhs;
+            }
+            if (op == JetTokens.EQEQ) {
+                return lhs instanceof JetSimpleNameExpression ? lhs : binaryExpression.getRight();
             }
         }
 
@@ -144,6 +149,7 @@ public class WhenUtils {
                 else if (conditionExpression instanceof JetBinaryExpression) {
                     JetBinaryExpression binaryExpression = (JetBinaryExpression) conditionExpression;
 
+                    JetExpression lhs = binaryExpression.getLeft();
                     JetExpression rhs = binaryExpression.getRight();
 
                     IElementType op = binaryExpression.getOperationToken();
@@ -154,7 +160,11 @@ public class WhenUtils {
                         builder.range(rhs, true);
                     }
                     else if (op == JetTokens.EQEQ) {
-                        builder.condition(rhs);
+                        if (JetPsiMatcher.checkElementMatch(subject, lhs)) {
+                            builder.condition(rhs);
+                        } else {
+                            builder.condition(lhs);
+                        }
                     }
                     else assert false : TRANSFORM_WITHOUT_CHECK;
                 }

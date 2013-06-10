@@ -585,6 +585,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
             doTestIntroduceWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject/whenWithSubject.kt");
         }
         
+        @TestMetadata("whenWithSwappedEqualityTests.kt")
+        public void testWhenWithSwappedEqualityTests() throws Exception {
+            doTestIntroduceWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject/whenWithSwappedEqualityTests.kt");
+        }
+        
         @TestMetadata("whenWithUnmatchedCandidateSubjects.kt")
         public void testWhenWithUnmatchedCandidateSubjects() throws Exception {
             doTestIntroduceWhenSubject("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject/whenWithUnmatchedCandidateSubjects.kt");
