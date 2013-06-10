@@ -291,6 +291,8 @@
                           implementation="org.jetbrains.jet.plugin.codeInsight.upDownMover.JetDeclarationMover"
                           order="before jetExpression" />
 
+    <joinLinesHandler implementation="org.jetbrains.jet.plugin.codeInsight.codeTransformations.declarations.JetDeclarationJoinLinesHandler"/>
+
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction</className>
       <category>Kotlin</category>
@@ -383,6 +385,11 @@
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.RemoveUnnecessaryParenthesesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.codeInsight.codeTransformations.declarations.SplitPropertyDeclarationIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

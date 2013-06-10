@@ -830,4 +830,24 @@ public class JetPsiUtil {
         }
         return null;
     }
+
+    @Nullable
+    public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
+        if (element == null) return null;
+        for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
+            if (elementsToSkip.apply(e)) continue;
+            return e;
+        }
+        return null;
+    }
+
+    @Nullable
+    public static PsiElement skipSiblingsForwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
+        if (element == null) return null;
+        for (PsiElement e = element.getNextSibling(); e != null; e = e.getNextSibling()) {
+            if (elementsToSkip.apply(e)) continue;
+            return e;
+        }
+        return null;
+    }
 }
