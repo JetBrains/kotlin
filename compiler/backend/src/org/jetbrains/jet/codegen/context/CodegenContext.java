@@ -317,12 +317,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public PropertyDescriptor accessablePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+    public PropertyDescriptor accessiblePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
         return (PropertyDescriptor) accessibleDescriptorIfNeeded(propertyDescriptor, true);
     }
 
     @NotNull
-    public FunctionDescriptor accessableFunctionDescriptor(FunctionDescriptor fd) {
+    public FunctionDescriptor accessibleFunctionDescriptor(FunctionDescriptor fd) {
         return (FunctionDescriptor) accessibleDescriptorIfNeeded(fd, true);
     }
 

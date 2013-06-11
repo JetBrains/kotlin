@@ -1629,7 +1629,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL;
             JetExpression r = getReceiverForSelector(expression);
             boolean isSuper = r instanceof JetSuperExpression;
-            propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
+            propertyDescriptor = accessiblePropertyDescriptor(propertyDescriptor);
             StackValue iValue =
                 intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
             if (directToField) {
@@ -1800,7 +1800,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     }
                 }
 
-                propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
+                propertyDescriptor = accessiblePropertyDescriptor(propertyDescriptor);
 
                 if (propertyDescriptor.getGetter() != null) {
                     callableGetter = typeMapper
@@ -1865,7 +1865,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new UnsupportedOperationException("unknown type of callee descriptor: " + funDescriptor);
         }
 
-        funDescriptor = accessableFunctionDescriptor((FunctionDescriptor) funDescriptor);
+        funDescriptor = accessibleFunctionDescriptor((FunctionDescriptor) funDescriptor);
 
         if (funDescriptor instanceof ConstructorDescriptor) {
             return generateNewCall(expression, resolvedCall, receiver);
@@ -1944,13 +1944,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private PropertyDescriptor accessablePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
-        return context.accessablePropertyDescriptor(propertyDescriptor);
+    private PropertyDescriptor accessiblePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+        return context.accessiblePropertyDescriptor(propertyDescriptor);
     }
 
     @NotNull
-    protected FunctionDescriptor accessableFunctionDescriptor(FunctionDescriptor fd) {
-        return context.accessableFunctionDescriptor(fd);
+    protected FunctionDescriptor accessibleFunctionDescriptor(FunctionDescriptor fd) {
+        return context.accessibleFunctionDescriptor(fd);
     }
 
     @NotNull
@@ -1972,7 +1972,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        fd = accessableFunctionDescriptor(fd);
+        fd = accessibleFunctionDescriptor(fd);
 
         Callable callable = resolveToCallable(fd, superCall);
         if (callable instanceof CallableMethod) {

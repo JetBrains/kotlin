@@ -996,7 +996,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             ConstructorDescriptor constructorDescriptor = DescriptorUtils.getConstructorOfSingletonObject(fieldTypeDescriptor);
             ExpressionCodegen codegen = createOrGetClInitCodegen();
-            FunctionDescriptor fd = codegen.accessableFunctionDescriptor(constructorDescriptor);
+            FunctionDescriptor fd = codegen.accessibleFunctionDescriptor(constructorDescriptor);
             generateMethodCallTo(fd, codegen.v);
             field.store(field.type, codegen.v);
         }
@@ -1112,7 +1112,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             //generate object$
             parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
             parentCodegen.generateInitializers(parentCodegen.createOrGetClInitCodegen(),
-                                          myClass.getDeclarations(), bindingContext, state);
+                                               myClass.getDeclarations(), bindingContext, state);
         } else {
             generateInitializers(codegen, myClass.getDeclarations(), bindingContext, state);
         }
