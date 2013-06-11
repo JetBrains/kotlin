@@ -26,13 +26,13 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.test.util.DescriptorValidator;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.test.util.NamespaceComparator.*;
+import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE;
+import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaces;
 
 public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
 
@@ -47,7 +47,6 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
         NamespaceDescriptor expected = eagerModule.getNamespace(FqName.ROOT);
         NamespaceDescriptor actual = lazyModule.getNamespace(FqName.ROOT);
-        DescriptorValidator.validate(expected, actual);
 
         String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
         File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);
@@ -55,7 +54,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         // Only recurse into those namespaces mentioned in the files
         // Otherwise we'll be examining the whole JDK
         final Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
-        compareNamespaces(
+        validateAndCompareNamespaces(
                 expected, actual,
                 RECURSIVE.filterRecursion(new Predicate<FqNameUnsafe>() {
                     @Override

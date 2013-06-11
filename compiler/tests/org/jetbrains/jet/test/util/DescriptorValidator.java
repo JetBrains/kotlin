@@ -32,15 +32,12 @@ import java.util.List;
 
 public class DescriptorValidator {
 
-    public static final ValidationVisitor FORBID_ERROR_TYPES = new ValidationVisitor(false);
-    public static final ValidationVisitor ALLOW_ERROR_TYPES = new ValidationVisitor(true);
-
     public static void validate(DeclarationDescriptor... descriptors) {
-        validate(FORBID_ERROR_TYPES, Arrays.asList(descriptors));
+        validate(ValidationVisitor.FORBID_ERROR_TYPES, Arrays.asList(descriptors));
     }
 
-    public static void validateIgnoringErrorTypes(DeclarationDescriptor... descriptors) {
-        validate(ALLOW_ERROR_TYPES, Arrays.asList(descriptors));
+    public static void validate(@NotNull ValidationVisitor validationStrategy, DeclarationDescriptor... descriptors) {
+        validate(validationStrategy, Arrays.asList(descriptors));
     }
 
     public static void validate(@NotNull ValidationVisitor validator, @NotNull Collection<DeclarationDescriptor> descriptors) {
@@ -68,6 +65,8 @@ public class DescriptorValidator {
     }
 
     public static class ValidationVisitor implements DeclarationDescriptorVisitor<Boolean, DiagnosticCollector> {
+        public static final ValidationVisitor FORBID_ERROR_TYPES = new ValidationVisitor(false);
+        public static final ValidationVisitor ALLOW_ERROR_TYPES = new ValidationVisitor(true);
 
         private final boolean allowErrorTypes;
 

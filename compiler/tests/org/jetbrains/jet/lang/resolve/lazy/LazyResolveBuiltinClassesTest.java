@@ -20,13 +20,11 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.test.util.DescriptorValidator;
-import org.junit.Test;
 
 import java.io.File;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE_ALL;
-import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
+import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
 
 public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
     @Override
@@ -34,10 +32,8 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 
-    @Test
     public void testBuiltIns() throws Exception {
         NamespaceDescriptor builtInsPackage = KotlinBuiltIns.getInstance().getBuiltInsPackage();
-        DescriptorValidator.validate(builtInsPackage);
-        compareNamespaceWithFile(builtInsPackage, RECURSIVE_ALL, new File("compiler/testData/builtin-classes.txt"));
+        validateAndCompareNamespaceWithFile(builtInsPackage, RECURSIVE_ALL, new File("compiler/testData/builtin-classes.txt"));
     }
 }

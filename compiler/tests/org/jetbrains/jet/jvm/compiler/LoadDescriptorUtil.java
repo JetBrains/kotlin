@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.test.util.DescriptorValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,7 +107,6 @@ public final class LoadDescriptorUtil {
                 javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         assert namespaceDescriptor != null;
 
-        DescriptorValidator.validateIgnoringErrorTypes(namespaceDescriptor);
         return Pair.create(namespaceDescriptor, injector.getBindingTrace().getBindingContext());
     }
 
@@ -141,7 +139,6 @@ public final class LoadDescriptorUtil {
         NamespaceDescriptor namespace =
                 fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
         assert namespace != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
-        DescriptorValidator.validate(namespace);
         return namespace;
     }
 

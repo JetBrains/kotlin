@@ -44,6 +44,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
+
 public class NamespaceComparator {
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, Predicates.<FqNameUnsafe>alwaysTrue());
     public static final Configuration RECURSIVE = new Configuration(false, false, true, Predicates.<FqNameUnsafe>alwaysTrue());
@@ -177,6 +179,44 @@ public class NamespaceComparator {
                                                "Invoke compareNamespaceWithFile() instead.");
         }
         doCompareNamespaces(expectedNamespace, actualNamespace, configuration, txtFile);
+    }
+
+    public static void validateAndCompareNamespaceWithFile(
+        @NotNull NamespaceDescriptor actualNamespace,
+        @NotNull Configuration configuration,
+        @NotNull File txtFile
+    ) {
+        validateAndCompareNamespaceWithFile(FORBID_ERROR_TYPES, actualNamespace, configuration, txtFile);
+    }
+
+    public static void validateAndCompareNamespaceWithFile(
+            @NotNull DescriptorValidator.ValidationVisitor validationStrategy,
+            @NotNull NamespaceDescriptor actualNamespace,
+            @NotNull Configuration configuration,
+            @NotNull File txtFile
+    ) {
+        DescriptorValidator.validate(validationStrategy, actualNamespace);
+        compareNamespaceWithFile(actualNamespace, configuration, txtFile);
+    }
+
+    public static void validateAndCompareNamespaces(
+        @NotNull NamespaceDescriptor expectedNamespace,
+        @NotNull NamespaceDescriptor actualNamespace,
+        @NotNull Configuration configuration,
+        @Nullable File txtFile
+    ) {
+        validateAndCompareNamespaces(FORBID_ERROR_TYPES, expectedNamespace, actualNamespace, configuration, txtFile);
+    }
+
+    public static void validateAndCompareNamespaces(
+            @NotNull DescriptorValidator.ValidationVisitor validationStrategy,
+            @NotNull NamespaceDescriptor expectedNamespace,
+            @NotNull NamespaceDescriptor actualNamespace,
+            @NotNull Configuration configuration,
+            @Nullable File txtFile
+    ) {
+        DescriptorValidator.validate(validationStrategy, expectedNamespace, actualNamespace);
+        compareNamespaces(expectedNamespace, actualNamespace, configuration, txtFile);
     }
 
     private static void doCompareNamespaces(
