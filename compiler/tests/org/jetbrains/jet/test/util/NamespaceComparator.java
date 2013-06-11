@@ -47,9 +47,10 @@ import java.util.List;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
 
 public class NamespaceComparator {
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, Predicates.<FqNameUnsafe>alwaysTrue());
-    public static final Configuration RECURSIVE = new Configuration(false, false, true, Predicates.<FqNameUnsafe>alwaysTrue());
-    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, Predicates.<FqNameUnsafe>alwaysTrue());
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, Predicates.<FqNameUnsafe>alwaysTrue(),
+                                                                                         FORBID_ERROR_TYPES);
+    public static final Configuration RECURSIVE = new Configuration(false, false, true, Predicates.<FqNameUnsafe>alwaysTrue(), FORBID_ERROR_TYPES);
+    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, Predicates.<FqNameUnsafe>alwaysTrue(), FORBID_ERROR_TYPES);
 
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
@@ -160,7 +161,7 @@ public class NamespaceComparator {
         }
     }
 
-    public static void compareNamespaceWithFile(
+    private static void compareNamespaceWithFile(
             @NotNull NamespaceDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @NotNull File txtFile
@@ -168,7 +169,7 @@ public class NamespaceComparator {
         doCompareNamespaces(null, actualNamespace, configuration, txtFile);
     }
 
-    public static void compareNamespaces(
+    private static void compareNamespaces(
             @NotNull NamespaceDescriptor expectedNamespace,
             @NotNull NamespaceDescriptor actualNamespace,
             @NotNull Configuration configuration,
@@ -182,40 +183,21 @@ public class NamespaceComparator {
     }
 
     public static void validateAndCompareNamespaceWithFile(
-        @NotNull NamespaceDescriptor actualNamespace,
-        @NotNull Configuration configuration,
-        @NotNull File txtFile
-    ) {
-        validateAndCompareNamespaceWithFile(FORBID_ERROR_TYPES, actualNamespace, configuration, txtFile);
-    }
-
-    public static void validateAndCompareNamespaceWithFile(
-            @NotNull DescriptorValidator.ValidationVisitor validationStrategy,
             @NotNull NamespaceDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @NotNull File txtFile
     ) {
-        DescriptorValidator.validate(validationStrategy, actualNamespace);
+        DescriptorValidator.validate(configuration.validationStrategy, actualNamespace);
         compareNamespaceWithFile(actualNamespace, configuration, txtFile);
     }
 
     public static void validateAndCompareNamespaces(
-        @NotNull NamespaceDescriptor expectedNamespace,
-        @NotNull NamespaceDescriptor actualNamespace,
-        @NotNull Configuration configuration,
-        @Nullable File txtFile
-    ) {
-        validateAndCompareNamespaces(FORBID_ERROR_TYPES, expectedNamespace, actualNamespace, configuration, txtFile);
-    }
-
-    public static void validateAndCompareNamespaces(
-            @NotNull DescriptorValidator.ValidationVisitor validationStrategy,
             @NotNull NamespaceDescriptor expectedNamespace,
             @NotNull NamespaceDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {
-        DescriptorValidator.validate(validationStrategy, expectedNamespace, actualNamespace);
+        DescriptorValidator.validate(configuration.validationStrategy, expectedNamespace, actualNamespace);
         compareNamespaces(expectedNamespace, actualNamespace, configuration, txtFile);
     }
 
@@ -260,28 +242,40 @@ public class NamespaceComparator {
         private final boolean includeMethodsOfJavaObject;
         private final Predicate<FqNameUnsafe> recurseIntoPackage;
 
+        private final DescriptorValidator.ValidationVisitor validationStrategy;
+
         public Configuration(
                 boolean checkPrimaryConstructors,
                 boolean checkPropertyAccessors,
                 boolean includeMethodsOfJavaObject,
-                Predicate<FqNameUnsafe> recurseIntoPackage
+                Predicate<FqNameUnsafe> recurseIntoPackage,
+                DescriptorValidator.ValidationVisitor validationStrategy
         ) {
             this.checkPrimaryConstructors = checkPrimaryConstructors;
             this.checkPropertyAccessors = checkPropertyAccessors;
             this.includeMethodsOfJavaObject = includeMethodsOfJavaObject;
             this.recurseIntoPackage = recurseIntoPackage;
+            this.validationStrategy = validationStrategy;
         }
 
         public Configuration filterRecursion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+                                     validationStrategy);
         }
 
         public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+                                     validationStrategy);
         }
 
         public Configuration checkPropertyAccessors(boolean checkPropertyAccessors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage);
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+                                     validationStrategy);
+        }
+
+        public Configuration withValidationStrategy(@NotNull DescriptorValidator.ValidationVisitor validationStrategy) {
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+                                     validationStrategy);
         }
     }
 }

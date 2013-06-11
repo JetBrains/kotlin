@@ -81,13 +81,16 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
         NamespaceComparator.validateAndCompareNamespaces(
-                allowErrorTypes ? ALLOW_ERROR_TYPES : FORBID_ERROR_TYPES,
                 expected, actual, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
                 new Predicate<FqNameUnsafe>() {
                     @Override
                     public boolean apply(FqNameUnsafe fqName) {
                         return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.toUnsafe().equals(fqName);
                     }
-                }).checkPrimaryConstructors(checkPrimaryConstructors).checkPropertyAccessors(checkPropertyAccessors), serializeResultsTo);
+                })
+                .checkPrimaryConstructors(checkPrimaryConstructors)
+                .checkPropertyAccessors(checkPropertyAccessors)
+                .withValidationStrategy(allowErrorTypes ? ALLOW_ERROR_TYPES : FORBID_ERROR_TYPES),
+                serializeResultsTo);
     }
 }

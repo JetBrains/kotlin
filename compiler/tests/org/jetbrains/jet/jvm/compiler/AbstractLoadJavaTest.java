@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.junit.Assert;
 
 import java.io.File;
@@ -56,7 +55,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.NamespaceComparator.*;
 
 /*
@@ -117,7 +115,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
                 srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(getTxtFile(javaFileName), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration, FORBID_ERROR_TYPES);
+        checkJavaNamespace(getTxtFile(javaFileName), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration);
     }
 
     protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
@@ -131,7 +129,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = loadTestNamespaceAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second, DONT_INCLUDE_METHODS_OF_OBJECT, ALLOW_ERROR_TYPES);
+        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
+                           DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -175,7 +174,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
         assert namespaceDescriptor != null : "Test namespace not found";
 
-        checkJavaNamespace(expectedFile, namespaceDescriptor, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT, FORBID_ERROR_TYPES);
+        checkJavaNamespace(expectedFile, namespaceDescriptor, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
     }
 
     private static void checkForLoadErrorsAndCompare(
@@ -223,13 +222,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             final File txtFile,
             final NamespaceDescriptor javaNamespace,
             BindingContext bindingContext,
-            final Configuration configuration,
-            final DescriptorValidator.ValidationVisitor validationStrategy
+            final Configuration configuration
     ) {
         checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
             @Override
             public void run() {
-                validateAndCompareNamespaceWithFile(validationStrategy, javaNamespace, configuration, txtFile);
+                validateAndCompareNamespaceWithFile(javaNamespace, configuration, txtFile);
             }
         });
     }
