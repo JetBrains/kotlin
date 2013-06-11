@@ -149,6 +149,21 @@ public class DescriptorValidator {
             }
         }
 
+        private static <T> void assertEqualTypes(
+                DeclarationDescriptor descriptor,
+                DiagnosticCollector collector,
+                String name,
+                JetType expected,
+                JetType actual
+        ) {
+            if (ErrorUtils.isErrorType(expected) && ErrorUtils.isErrorType(actual)) {
+                assertEquals(descriptor, collector, name, expected.toString(), actual.toString());
+            }
+            else if (!expected.equals(actual)) {
+                report(collector, descriptor, "Wrong " + name + ": " + actual + " must be " + expected);
+            }
+        }
+
         private static void validateAccessor(
                 PropertyDescriptor descriptor,
                 DiagnosticCollector collector,
@@ -241,7 +256,7 @@ public class DescriptorValidator {
         ) {
             visitFunctionDescriptor(constructorDescriptor, collector);
 
-            assertEquals(constructorDescriptor, collector,
+            assertEqualTypes(constructorDescriptor, collector,
                          "return type",
                          constructorDescriptor.getContainingDeclaration().getDefaultType(),
                          constructorDescriptor.getReturnType());
@@ -264,14 +279,14 @@ public class DescriptorValidator {
 
             PropertyGetterDescriptor getter = descriptor.getGetter();
             if (getter != null) {
-                assertEquals(getter, collector, "getter return type", descriptor.getType(), getter.getReturnType());
+                assertEqualTypes(getter, collector, "getter return type", descriptor.getType(), getter.getReturnType());
                 validateAccessor(descriptor, collector, getter, "getter");
             }
 
             PropertySetterDescriptor setter = descriptor.getSetter();
             if (setter != null) {
                 assertEquals(setter, collector, "setter parameter count", 1, setter.getValueParameters().size());
-                assertEquals(setter, collector, "setter parameter type", descriptor.getType(), setter.getValueParameters().get(0).getType());
+                assertEqualTypes(setter, collector, "setter parameter type", descriptor.getType(), setter.getValueParameters().get(0).getType());
                 assertEquals(setter, collector, "corresponding property", descriptor, setter.getCorrespondingProperty());
             }
 
