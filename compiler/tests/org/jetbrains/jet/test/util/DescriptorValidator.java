@@ -60,11 +60,11 @@ public class DescriptorValidator {
     }
 
     private static void report(@NotNull DiagnosticCollector collector, @NotNull DeclarationDescriptor descriptor, @NotNull String message) {
-        collector.report(new Diagnostic(descriptor, message));
+        collector.report(new ValidationDiagnostic(descriptor, message));
     }
 
     public interface DiagnosticCollector {
-        void report(@NotNull Diagnostic diagnostic);
+        void report(@NotNull ValidationDiagnostic diagnostic);
     }
 
     public static class ValidationVisitor implements DeclarationDescriptorVisitor<Boolean, DiagnosticCollector> {
@@ -452,13 +452,13 @@ public class DescriptorValidator {
         }
     }
 
-    public static class Diagnostic {
+    public static class ValidationDiagnostic {
 
         private final DeclarationDescriptor descriptor;
         private final String message;
         private final Throwable stackTrace;
 
-        private Diagnostic(@NotNull DeclarationDescriptor descriptor, @NotNull String message) {
+        private ValidationDiagnostic(@NotNull DeclarationDescriptor descriptor, @NotNull String message) {
             this.descriptor = descriptor;
             this.message = message;
             this.stackTrace = new Throwable();
@@ -495,7 +495,7 @@ public class DescriptorValidator {
         private boolean errorsFound = false;
 
         @Override
-        public void report(@NotNull Diagnostic diagnostic) {
+        public void report(@NotNull ValidationDiagnostic diagnostic) {
             diagnostic.printStackTrace(System.err);
             errorsFound = true;
         }
