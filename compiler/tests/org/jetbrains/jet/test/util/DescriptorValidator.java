@@ -190,6 +190,9 @@ public class DescriptorValidator {
                 TypeParameterDescriptor descriptor, DiagnosticCollector collector
         ) {
             validateTypes(descriptor, collector, descriptor.getUpperBounds());
+
+            validateType(descriptor, descriptor.getDefaultType(), collector);
+
             return true;
         }
 
@@ -269,6 +272,7 @@ public class DescriptorValidator {
             if (setter != null) {
                 assertEquals(setter, collector, "setter parameter count", 1, setter.getValueParameters().size());
                 assertEquals(setter, collector, "setter parameter type", descriptor.getType(), setter.getValueParameters().get(0).getType());
+                assertEquals(setter, collector, "corresponding property", descriptor, setter.getCorrespondingProperty());
             }
 
             return true;
