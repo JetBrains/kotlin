@@ -65,7 +65,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Assert.assertTrue("A java file expected: " + javaFileName, javaFileName.endsWith(".java"));
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
-        File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
+        File txtFile = getTxtFile(javaFile.getPath());
         Disposable tmpDisposable = Disposer.newDisposable();
         try {
             NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, tmpDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
@@ -114,12 +114,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
                 srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(new File(javaFileName.replaceFirst("\\.java$", ".txt")), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration);
+        checkJavaNamespace(getTxtFile(javaFileName), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration);
     }
 
     protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
         File originalJavaFile = new File(javaFileName);
-        File expectedFile = new File(javaFileName.replaceFirst("\\.java$", ".txt"));
+        File expectedFile = getTxtFile(javaFileName);
 
         File testPackageDir = new File(tmpdir, "test");
         assertTrue(testPackageDir.mkdir());
@@ -228,5 +228,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 validateAndCompareNamespaceWithFile(javaNamespace, configuration, txtFile);
             }
         });
+    }
+
+    private static File getTxtFile(String javaFileName) {
+        return new File(javaFileName.replaceFirst("\\.java$", ".txt"));
     }
 }
