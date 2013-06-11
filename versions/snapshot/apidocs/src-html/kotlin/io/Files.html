@@ -208,22 +208,6 @@
 <a href='#207' name='207'>207</a>
 <a href='#208' name='208'>208</a>
 <a href='#209' name='209'>209</a>
-<a href='#210' name='210'>210</a>
-<a href='#211' name='211'>211</a>
-<a href='#212' name='212'>212</a>
-<a href='#213' name='213'>213</a>
-<a href='#214' name='214'>214</a>
-<a href='#215' name='215'>215</a>
-<a href='#216' name='216'>216</a>
-<a href='#217' name='217'>217</a>
-<a href='#218' name='218'>218</a>
-<a href='#219' name='219'>219</a>
-<a href='#220' name='220'>220</a>
-<a href='#221' name='221'>221</a>
-<a href='#222' name='222'>222</a>
-<a href='#223' name='223'>223</a>
-<a href='#224' name='224'>224</a>
-<a href='#225' name='225'>225</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>io</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>io</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
@@ -233,9 +217,9 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>net</span><span class='DOT'>.</span><span class='IDENTIFIER'>URL</span><span>
 
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Recursively process this file and all children with the given block</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Recursively process this file and all children with the given block
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>recurse</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>File</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>children</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>listFiles</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -246,33 +230,33 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns this if the file is a directory or the parent if its a file inside a directory</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns this if the file is a directory or the parent if its a file inside a directory
+ */</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>directory</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>File</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>isDirectory</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>getParentFile</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the canonical path of the file</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the canonical path of the file
+ */</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>canonicalPath</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>getCanonicalPath</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the file name or &quot;&quot; for an empty name</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the file name or &quot;&quot; for an empty name
+ */</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>getName</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the file path or &quot;&quot; for an empty name</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the file path or &quot;&quot; for an empty name
+ */</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>path</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>getPath</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns true if the file ends with the given extension</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns true if the file ends with the given extension
+ */</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>extension</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>text</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span>
@@ -284,16 +268,16 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
-</span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns true if the given file is in the same directory or a descendant directory</span><span>
-</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+* Returns true if the given file is in the same directory or a descendant directory
+*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>isDescendant</span><span class='LPAR'>(</span><span class='IDENTIFIER'>file</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>File</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>file</span><span class='DOT'>.</span><span class='IDENTIFIER'>directory</span><span class='DOT'>.</span><span class='IDENTIFIER'>canonicalPath</span><span class='DOT'>.</span><span class='IDENTIFIER'>startsWith</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>directory</span><span class='DOT'>.</span><span class='IDENTIFIER'>canonicalPath</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the relative path of the given descendant of this file if its a descendant</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the relative path of the given descendant of this file if its a descendant
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>relativePath</span><span class='LPAR'>(</span><span class='IDENTIFIER'>descendant</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>File</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>prefix</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>directory</span><span class='DOT'>.</span><span class='IDENTIFIER'>canonicalPath</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>descendant</span><span class='DOT'>.</span><span class='IDENTIFIER'>canonicalPath</span><span>
@@ -307,76 +291,60 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a new </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>FileReader</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> for this file</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates a new [[FileReader]] for this file
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>reader</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>FileReader</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FileReader</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads the entire content of the file as bytes</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This method is not recommended on huge files.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Reads the entire content of the file as bytes
+ *
+ * This method is not recommended on huge files.
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>FileInputStream</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>FileInputStream</span><span class='COMMA'>,</span><span class='IDENTIFIER'>ByteArray</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>length</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toInt</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Writes the bytes as the contents of the file</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Writes the bytes as the contents of the file
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>writeBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>data</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>FileOutputStream</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>FileOutputStream</span><span class='COMMA'>,</span><span class='IDENTIFIER'>Unit</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>write</span><span class='LPAR'>(</span><span class='IDENTIFIER'>data</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
+</span><span class='hl-comment'>/**
+ * Reads the entire content of the file as a String using the optional
+ * character encoding.  The default platform encoding is used if the character
+ * encoding is not specified or null.
+ *
+ * This method is not recommended on huge files.
+ */</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Appends bytes to the contents of the file.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>appendBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>data</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-   </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>FileOutputStream</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>true</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>FileOutputStream</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>write</span><span class='LPAR'>(</span><span class='IDENTIFIER'>data</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
-</span><span class='RBRACE'>}</span><span>
+</span><span class='hl-comment'>/**
+ * Reads the entire content of the file as a String using the
+ * character encoding.
+ *
+ * This method is not recommended on huge files.
+ */</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span class='IDENTIFIER'>Charset</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads the entire content of the file as a String using the a character encoding.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This method is not recommended on huge files.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='DOT'>.</span><span class='IDENTIFIER'>defaultCharset</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span>
+</span><span class='hl-comment'>/**
+ * Writes the text as the contents of the file using the optional
+ * character encoding.  The default platform encoding is used if the character
+ * encoding is not specified or null.
+ */</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>writeText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span class='EQ'>=</span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>writeBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByteArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads the entire content of the file as a String using a character encoding.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This method is not recommended on huge files.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>readText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readBytes</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span>
+</span><span class='hl-comment'>/**
+ * Writes the text as the contents of the file using the optional
+ * character encoding.  The default platform encoding is used if the character
+ * encoding is not specified or null.
+ */</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>writeText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span class='IDENTIFIER'>Charset</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>writeBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByteArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Writes the text as the contents of the file using the a</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> character encoding.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>writeText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='DOT'>.</span><span class='IDENTIFIER'>defaultCharset</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>writeBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByteArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
-
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Writes the text as the contents of the file using a character encoding.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>writeText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>writeBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByteArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
-
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Appends text to the contents of the file using a given character encoding.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>appendText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='IDENTIFIER'>appendBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByteArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Appends text to the contents of the file using a character encoding.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>appendText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>encoding</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Charset</span><span class='DOT'>.</span><span class='IDENTIFIER'>defaultCharset</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='IDENTIFIER'>appendBytes</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='DOT'>.</span><span class='IDENTIFIER'>toByteArray</span><span class='LPAR'>(</span><span class='IDENTIFIER'>encoding</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies this file to the given output file, returning the number of bytes copied</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Copies this file to the given output file, returning the number of bytes copied
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>copyTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>file</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>File</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>bufferSize</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultBufferSize</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>file</span><span class='DOT'>.</span><span class='IDENTIFIER'>directory</span><span class='DOT'>.</span><span class='IDENTIFIER'>mkdirs</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>input</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FileInputStream</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
@@ -388,12 +356,12 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads file by byte blocks and calls closure for each block read. Block size depends on implementation but never less than 512.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> This functions passes byte array and amount of bytes in this buffer to the closure function.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> You can use this function for huge files</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Reads file by byte blocks and calls closure for each block read. Block size depends on implementation but never less than 512.
+ * This functions passes byte array and amount of bytes in this buffer to the closure function.
+ *
+ * You can use this function for huge files
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>forEachBlock</span><span class='LPAR'>(</span><span class='IDENTIFIER'>closure</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ByteArray</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>arr</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ByteArray</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>4096</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>fis</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FileInputStream</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
@@ -412,11 +380,11 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads file line by line. Default charset is UTF-8.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> You may use this function on huge files</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Reads file line by line. Default charset is UTF-8.
+ *
+ * You may use this function on huge files
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>forEachLine</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>charset</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>UTF-8</span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>closure</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>line</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>reader</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>BufferedReader</span><span class='LPAR'>(</span><span class='IDENTIFIER'>InputStreamReader</span><span class='LPAR'>(</span><span class='IDENTIFIER'>FileInputStream</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>charset</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
@@ -426,11 +394,11 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reads file content as strings list. By default uses UTF-8 charset.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Do not use this function for huge files.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Reads file content as strings list. By default uses UTF-8 charset.
+ *
+ * Do not use this function for huge files.
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>readLines</span><span class='LPAR'>(</span><span class='IDENTIFIER'>charset</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>UTF-8</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rs</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
@@ -441,9 +409,9 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>rs</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns an array of files and directories in the directory that satisfy the specified filter.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns an array of files and directories in the directory that satisfy the specified filter.
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>File</span><span class='DOT'>.</span><span class='IDENTIFIER'>listFiles</span><span class='LPAR'>(</span><span class='IDENTIFIER'>filter</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>file</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>File</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>File</span><span class='GT'>&gt;</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>listFiles</span><span class='LPAR'>(</span><span>
     </span><span class='hl-keyword'>object</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>FileFilter</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>accept</span><span class='LPAR'>(</span><span class='IDENTIFIER'>file</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>File</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>filter</span><span class='LPAR'>(</span><span class='IDENTIFIER'>file</span><span class='RPAR'>)</span><span>

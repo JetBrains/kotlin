@@ -20,18 +20,18 @@
 <a href='#19' name='19'>19</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
-</span><span class='KDOC_TEXT'>Executes current block and returns elapsed time in milliseconds</span><span>
-</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+Executes current block and returns elapsed time in milliseconds
+*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>measureTimeMillis</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>start</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>currentTimeMillis</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>currentTimeMillis</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span> </span><span class='IDENTIFIER'>start</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
-</span><span class='KDOC_TEXT'>Executes current block and returns elapsed time in nanoseconds</span><span>
-</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+Executes current block and returns elapsed time in nanoseconds
+*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>measureTimeNano</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>start</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>System</span><span class='DOT'>.</span><span class='IDENTIFIER'>nanoTime</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>

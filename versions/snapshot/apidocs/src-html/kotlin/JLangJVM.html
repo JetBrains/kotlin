@@ -78,57 +78,57 @@
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.javaClass.function</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>javaClass</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span>
 
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling hashCode() on Kotlin objects</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports equals() and hashCode()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling hashCode() on Kotlin objects
+ * TODO remove when Any supports equals() and hashCode()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.hashCode</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Any</span><span class='DOT'>.</span><span class='IDENTIFIER'>hashCode</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>lang</span><span class='DOT'>.</span><span class='IDENTIFIER'>Object</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>hashCode</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Byte</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Short</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Char</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Int</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Float</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Long</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> A helper method for calling toString() on Kotlin primitives</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> TODO remove when Any supports toString()</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * A helper method for calling toString() on Kotlin primitives
+ * TODO remove when Any supports toString()
+ */</span><span>
 </span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>Intrinsic</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>kotlin.toString</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACKET'>]</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Double</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span>
 </span></td></tr></table></body></html>

@@ -391,72 +391,72 @@
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns *true* if all elements match the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns *true* if all elements match the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>all</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>predicate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>false</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>true</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns *true* if any elements match the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns *true* if any elements match the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>any</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>true</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>false</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the number of elements which match the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the number of elements which match the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>count</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>count</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>count</span><span class='PLUSPLUS'>++</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>count</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the first element which matches the given *predicate* or *null* if none matched</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the first element which matches the given *predicate* or *null* if none matched
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>find</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>element</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>null</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing all elements which match the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing all elements which match the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>filter</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>filterTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Filters all elements which match the given predicate into the given list</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Filters all elements which match the given predicate into the given list
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>C</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableCollection</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>filterTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>result</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>result</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing all elements which do not match the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing all elements which do not match the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>filterNot</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>filterNotTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing all elements which do not match the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing all elements which do not match the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>C</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableCollection</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>filterNotTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>result</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>predicate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>result</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Partitions this collection into a pair of collections</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Partitions this collection into a pair of collections
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>partition</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Pair</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>first</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>second</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -470,33 +470,33 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>Pair</span><span class='LPAR'>(</span><span class='IDENTIFIER'>first</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>second</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a new List containing the results of applying the given *transform* function to each element in this collection</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a new List containing the results of applying the given *transform* function to each element in this collection
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>transform</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>mapTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>transform</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Transforms each element of this collection with the given *transform* function and</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> adds each return value to the given *results* collection</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Transforms each element of this collection with the given *transform* function and
+ * adds each return value to the given *results* collection
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>C</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableCollection</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>mapTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>result</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>transform</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>item</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
         </span><span class='IDENTIFIER'>result</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>transform</span><span class='LPAR'>(</span><span class='IDENTIFIER'>item</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the result of transforming each element to one or more values which are concatenated together into a single list</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the result of transforming each element to one or more values which are concatenated together into a single list
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>flatMap</span><span class='LPAR'>(</span><span class='IDENTIFIER'>transform</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>flatMapTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>transform</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the result of transforming each element to one or more values which are concatenated together into a single collection</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the result of transforming each element to one or more values which are concatenated together into a single collection
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>C</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableCollection</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>flatMapTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>result</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>transform</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>list</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>transform</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span>
@@ -505,25 +505,25 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Performs the given *operation* on each element</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Performs the given *operation* on each element
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>forEach</span><span class='LPAR'>(</span><span class='IDENTIFIER'>operation</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>operation</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Folds all elements from from left to right with the *initial* value to perform the operation on sequential pairs of elements</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Folds all elements from from left to right with the *initial* value to perform the operation on sequential pairs of elements
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>fold</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initial</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>operation</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>initial</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>operation</span><span class='LPAR'>(</span><span class='IDENTIFIER'>answer</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Folds all elements from right to left with the *initial* value to perform the operation on sequential pairs of elements</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Folds all elements from right to left with the *initial* value to perform the operation on sequential pairs of elements
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>foldRight</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initial</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>operation</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>r</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>initial</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>index</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>size</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span>
@@ -535,10 +535,10 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>r</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Applies binary operation to all elements of iterable, going from left to right.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Similar to fold function, but uses the first element as initial value</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Applies binary operation to all elements of iterable, going from left to right.
+ * Similar to fold function, but uses the first element as initial value
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>reduce</span><span class='LPAR'>(</span><span class='IDENTIFIER'>operation</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>iterator</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -553,10 +553,10 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Applies binary operation to all elements of iterable, going from right to left.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Similar to foldRight function, but uses the last element as initial value</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Applies binary operation to all elements of iterable, going from right to left.
+ * Similar to foldRight function, but uses the last element as initial value
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>reduceRight</span><span class='LPAR'>(</span><span class='IDENTIFIER'>operation</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>index</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>size</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>index</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -571,9 +571,9 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>r</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Groups the elements in the collection into a new </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Map</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> using the supplied *toKey* function to calculate the key to group the elements by</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>groupBy</span><span class='LPAR'>(</span><span class='IDENTIFIER'>toKey</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>K</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>groupByTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>HashMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>MutableList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>toKey</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -587,23 +587,23 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing everything but the first *n* elements</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing everything but the first *n* elements
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>drop</span><span class='LPAR'>(</span><span class='IDENTIFIER'>n</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>dropWhile</span><span class='LPAR'>(</span><span class='IDENTIFIER'>countTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>n</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing the everything but the first elements that satisfy the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>dropWhile</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>dropWhileTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing the everything but the first elements that satisfy the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>L</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableList</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>dropWhileTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>result</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>L</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>L</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>start</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>true</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -617,76 +617,76 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing the first *n* elements</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing the first *n* elements
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>take</span><span class='LPAR'>(</span><span class='IDENTIFIER'>n</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>takeWhile</span><span class='LPAR'>(</span><span class='IDENTIFIER'>countTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>n</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing the first elements that satisfy the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing the first elements that satisfy the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>takeWhile</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>takeWhileTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a list containing the first elements that satisfy the given *predicate*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a list containing the first elements that satisfy the given *predicate*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>C</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableCollection</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>takeWhileTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>result</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>result</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>break</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies all elements into the given collection</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Copies all elements into the given collection
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>C</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableCollection</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>result</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>C</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>result</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Reverses the order the elements into a list</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Reverses the order the elements into a list
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>reverse</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>list</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>Collections</span><span class='DOT'>.</span><span class='IDENTIFIER'>reverse</span><span class='LPAR'>(</span><span class='IDENTIFIER'>list</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>list</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies all elements into a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>LinkedList</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Copies all elements into a [[LinkedList]]
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>toLinkedList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>LinkedList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>LinkedList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies all elements into a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>List</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Copies all elements into a [[List]]
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>toList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies all elements into a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Set</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Copies all elements into a [[Set]]
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>toSet</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Set</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>LinkedHashSet</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies all elements into a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>SortedSet</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Copies all elements into a [[SortedSet]]
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>toSortedSet</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>SortedSet</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>TreeSet</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which iterates over this iterator then the given element at the end</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>plus</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>answer</span><span class='RPAR'>)</span><span>
@@ -694,9 +694,9 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which iterates over this iterator then the following iterator</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>plus</span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>answer</span><span class='RPAR'>)</span><span>
@@ -706,24 +706,24 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which iterates over this iterator then the following collection</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>plus</span><span class='LPAR'>(</span><span class='IDENTIFIER'>collection</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>plus</span><span class='LPAR'>(</span><span class='IDENTIFIER'>collection</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns an iterator of Pairs(index, data)</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns an iterator of Pairs(index, data)
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>withIndices</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Pair</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Int</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>IndexIterator</span><span class='LPAR'>(</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Copies all elements into a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>List</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> and sorts it by value of compare_function(element)</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> E.g. arrayList(&quot;two&quot; to 2, &quot;one&quot; to 1).sortBy({it.second}) returns list sorted by second element of pair</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * E.g. arrayList(&quot;two&quot; to 2, &quot;one&quot; to 1).sortBy({it.second}) returns list sorted by second element of pair
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>sortBy</span><span class='LPAR'>(</span><span class='IDENTIFIER'>f</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>sortedList</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>sortBy</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>comparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Char</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span class='LPAR'>(</span><span class='IDENTIFIER'>x</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>y</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span>
@@ -735,11 +735,11 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>sortedList</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> a special *truncated* separator (which defaults to &quot;...&quot;</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to &quot;...&quot;
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>appendString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>buffer</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Appendable</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>separator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>, </span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>prefix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>postfix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>limit</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='MINUS'>-</span><span class='INTEGER_LITERAL'>1</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>truncated</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>...</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>buffer</span><span class='DOT'>.</span><span class='IDENTIFIER'>append</span><span class='LPAR'>(</span><span class='IDENTIFIER'>prefix</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>count</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
@@ -754,11 +754,11 @@
     </span><span class='IDENTIFIER'>buffer</span><span class='DOT'>.</span><span class='IDENTIFIER'>append</span><span class='LPAR'>(</span><span class='IDENTIFIER'>postfix</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> a special *truncated* separator (which defaults to &quot;...&quot;</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to &quot;...&quot;
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharArray</span><span class='DOT'>.</span><span class='IDENTIFIER'>makeString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>separator</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>, </span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>prefix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>postfix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>limit</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='MINUS'>-</span><span class='INTEGER_LITERAL'>1</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>truncated</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>...</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>buffer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>StringBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>appendString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>buffer</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>separator</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>prefix</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>postfix</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>limit</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>truncated</span><span class='RPAR'>)</span><span>

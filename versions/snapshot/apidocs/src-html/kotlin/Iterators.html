@@ -153,9 +153,9 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>support</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Collections</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns *null*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns *null*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>iterate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>nextFunction</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>FunctionIterator</span><span class='LPAR'>(</span><span class='IDENTIFIER'>nextFunction</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -230,7 +230,7 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> An </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which invokes a function to calculate the next value in the iteration until the function returns *null* </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** An [[Iterator]] which invokes a function to calculate the next value in the iteration until the function returns *null* */</span><span>
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>FunctionIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>nextFunction</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
 
     </span><span class='override'>override</span><span> </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>computeNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
@@ -243,7 +243,7 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> An </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which iterates over a number of iterators in sequence </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** An [[Iterator]] which iterates over a number of iterators in sequence */</span><span>
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>CompositeIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='vararg'>vararg</span><span> </span><span class='IDENTIFIER'>iterators</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
 
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>iteratorsIter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>iterators</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -272,7 +272,7 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> A singleton </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> which invokes once over a value </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** A singleton [[Iterator]] which invokes once over a value */</span><span>
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>SingleIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>first</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>true</span><span>
 

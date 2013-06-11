@@ -77,9 +77,9 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>org</span><span class='DOT'>.</span><span class='IDENTIFIER'>w3c</span><span class='DOT'>.</span><span class='IDENTIFIER'>dom</span><span class='DOT'>.</span><span class='IDENTIFIER'>Node</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>org</span><span class='DOT'>.</span><span class='IDENTIFIER'>w3c</span><span class='DOT'>.</span><span class='IDENTIFIER'>dom</span><span class='DOT'>.</span><span class='IDENTIFIER'>events</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
-</span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Turns an event handler function into an [EventListener]</span><span>
-</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+* Turns an event handler function into an [EventListener]
+*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>eventHandler</span><span class='LPAR'>(</span><span class='IDENTIFIER'>handler</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Event</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>EventListener</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>EventListenerHandler</span><span class='LPAR'>(</span><span class='IDENTIFIER'>handler</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -105,16 +105,16 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Registers a handler on the named event</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Registers a handler on the named event
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>on</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>capture</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>handler</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Event</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Closeable</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>on</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>capture</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>eventHandler</span><span class='LPAR'>(</span><span class='IDENTIFIER'>handler</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Registers an [EventListener] on the named event</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Registers an [EventListener] on the named event
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>on</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>capture</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>listener</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>EventListener</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Closeable</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>is</span><span> </span><span class='IDENTIFIER'>EventTarget</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>addEventListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>listener</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>capture</span><span class='RPAR'>)</span><span>

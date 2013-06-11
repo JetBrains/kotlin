@@ -104,10 +104,10 @@
 <a href='#103' name='103'>103</a>
 <a href='#104' name='104'>104</a>
 <a href='#105' name='105'>105</a>
-<a href='#106' name='106'>106</a>
-<a href='#107' name='107'>107</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>properties</span><span>
 
+</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
+</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>HashMap</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ArrayList</span><span>
 
@@ -121,11 +121,11 @@
     </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>onPropertyChange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>event</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ChangeEvent</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Represents an object where properties can be listened to and notified on</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> updates for easier binding to user interfaces, undo/redo command stacks and</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> change tracking mechanisms for persistence or distributed change notifications.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Represents an object where properties can be listened to and notified on
+ * updates for easier binding to user interfaces, undo/redo command stacks and
+ * change tracking mechanisms for persistence or distributed change notifications.
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='abstract'>abstract</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>ChangeSupport</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>allListeners</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>ChangeListener</span><span class='GT'>&gt;</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
     </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>nameListeners</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>MutableList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>ChangeListener</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
@@ -170,10 +170,6 @@
                 </span><span class='IDENTIFIER'>listener</span><span class='DOT'>.</span><span class='IDENTIFIER'>onPropertyChange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>event</span><span class='RPAR'>)</span><span>
             </span><span class='RBRACE'>}</span><span>
         </span><span class='RBRACE'>}</span><span>
-    </span><span class='RBRACE'>}</span><span>
-
-    </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>property</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>init</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>Delegates</span><span class='DOT'>.</span><span class='IDENTIFIER'>observable</span><span class='LPAR'>(</span><span class='IDENTIFIER'>init</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>oldValue</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>newValue</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>changeProperty</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>oldValue</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>newValue</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
     </span><span class='RBRACE'>}</span><span>
 
     </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>onPropertyChange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ChangeEvent</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>

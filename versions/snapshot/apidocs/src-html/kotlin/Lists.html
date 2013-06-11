@@ -83,31 +83,31 @@
 <a href='#82' name='82'>82</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Get the first element in the list or throws </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>EmptyIterableException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> if list is empty.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Get the first element in the list or throws [[EmptyIterableException]] if list is empty.
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>first</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>size</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>EmptyIterableException</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Get the first element in the list or *null* if list is empty.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Get the first element in the list or *null* if list is empty.
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>firstOrNull</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>size</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>null</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Get the last element in the list or throws </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>EmptyIterableException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> if list is empty.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Get the last element in the list or throws [[EmptyIterableException]] if list is empty.
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>last</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>s</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>size</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>s</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>s</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>EmptyIterableException</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Get the last element in the list or *null* if list is empty.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Get the last element in the list or *null* if list is empty.
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>lastOrNull</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>s</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>size</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>s</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>s</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>null</span><span>
@@ -119,9 +119,9 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Folds all elements from right to left with the *initial* value to perform the operation on sequential pairs of elements</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Folds all elements from right to left with the *initial* value to perform the operation on sequential pairs of elements
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>foldRight</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initial</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>operation</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>r</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>initial</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>index</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>size</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span>
@@ -133,10 +133,10 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>r</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Applies binary operation to all elements of iterable, going from right to left.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Similar to foldRight function, but uses the last element as initial value</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Applies binary operation to all elements of iterable, going from right to left.
+ * Similar to foldRight function, but uses the last element as initial value
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>reduceRight</span><span class='LPAR'>(</span><span class='IDENTIFIER'>operation</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>index</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>size</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>index</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -151,9 +151,9 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>r</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a original Iterable containing all the non-*null* elements, throwing an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>IllegalArgumentException</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> if there are any null elements</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>requireNoNulls</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>

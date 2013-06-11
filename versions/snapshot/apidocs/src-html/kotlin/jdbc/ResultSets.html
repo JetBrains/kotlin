@@ -113,9 +113,9 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>sql</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ArrayList</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Executes the specfied block with result set and then closes it</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Executes the specfied block with result set and then closes it
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>R</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>R</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
@@ -124,9 +124,9 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
-</span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates an iterator through a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>ResultSet</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
-</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+* Creates an iterator through a [[ResultSet]]
+*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>ResultSet</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rs</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>object</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>ResultSet</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span>
@@ -136,9 +136,9 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns iterable that calls to the specified mapper function for each row</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns iterable that calls to the specified mapper function for each row
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rs</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span>
 
@@ -153,28 +153,28 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns array with column names</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns array with column names
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>getColumnNames</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>meta</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>getMetaData</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>meta</span><span class='DOT'>.</span><span class='IDENTIFIER'>getColumnCount</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='LBRACE'>{</span><span class='IDENTIFIER'>meta</span><span class='DOT'>.</span><span class='IDENTIFIER'>getColumnName</span><span class='LPAR'>(</span><span class='IDENTIFIER'>it</span><span> </span><span class='PLUS'>+</span><span> </span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RBRACE'>}</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Return array filled with values from current row in the cursor. Values will have the same order as column's order</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@columnNames</span><span class='KDOC_TEXT'> you can specify column names to extract otherwise all columns will be extracted</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Return array filled with values from current row in the cursor. Values will have the same order as column's order
+ * @columnNames you can specify column names to extract otherwise all columns will be extracted
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>getValues</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnNames</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>getColumnNames</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnNames</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span class='COMMA'>,</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>this</span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>columnNames</span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>it</span><span class='RBRACKET'>]</span><span class='RBRACKET'>]</span><span>
     </span><span class='RBRACE'>}</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Return map filled with values from current row in the cursor. Uses column names as keys for result map.</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@param</span><span class='KDOC_TEXT'> columnNames you can specify column names to extract otherwise all columns will be extracted</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Return map filled with values from current row in the cursor. Uses column names as keys for result map.
+ * @param columnNames you can specify column names to extract otherwise all columns will be extracted
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>getValuesAsMap</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnNames</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>Array</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>getColumnNames</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>result</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>HashMap</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnNames</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
 
@@ -185,14 +185,14 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>result</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the value at the given column index (starting at 1)</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the value at the given column index (starting at 1)
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnId</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>getObject</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnId</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the value at the given column name</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the value at the given column name
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnName</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>getObject</span><span class='LPAR'>(</span><span class='IDENTIFIER'>columnName</span><span class='RPAR'>)</span><span>
 
 </span><span class='private'>private</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>ensureHasRow</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span> </span><span class='LBRACE'>{</span><span>
@@ -202,19 +202,19 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns int value from the cursor at first column. May be useful to get result of count(*)</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns int value from the cursor at first column. May be useful to get result of count(*)
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>singleInt</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ensureHasRow</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>getInt</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns long value from the cursor at first column.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns long value from the cursor at first column.
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>singleLong</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Long</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ensureHasRow</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>getLong</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns double value from the cursor at first column.</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns double value from the cursor at first column.
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>ResultSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>singleDouble</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Double</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ensureHasRow</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>getDouble</span><span class='LPAR'>(</span><span class='INTEGER_LITERAL'>1</span><span class='RPAR'>)</span><span>
 
 </span></td></tr></table></body></html>

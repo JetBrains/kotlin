@@ -84,10 +84,10 @@
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Comparator</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
-</span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper method for implementing </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Comparable</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> methods using a list of functions</span><span>
-</span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> to calculate the values to compare</span><span>
-</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+* Helper method for implementing [[Comparable]] methods using a list of functions
+* to calculate the values to compare
+*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>compareBy</span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>b</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='vararg'>vararg</span><span> </span><span class='IDENTIFIER'>functions</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Comparable</span><span class='LT'>&lt;</span><span class='MUL'>*</span><span class='GT'>&gt;</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>require</span><span class='LPAR'>(</span><span class='IDENTIFIER'>functions</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span> </span><span class='EQEQEQ'>===</span><span> </span><span class='IDENTIFIER'>b</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>return</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
@@ -102,11 +102,11 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Compares the two values which may be </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Comparable</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> otherwise</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> they are compared via </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>#equals()</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> and if they are not the same then</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>#hashCode()</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> method is used as the difference</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Compares the two values which may be [[Comparable]] otherwise
+ * they are compared via [[#equals()]] and if they are not the same then
+ * the [[#hashCode()]] method is used as the difference
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparable</span><span class='LT'>&lt;</span><span class='MUL'>*</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>compareValues</span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>b</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span> </span><span class='EQEQEQ'>===</span><span> </span><span class='IDENTIFIER'>b</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>return</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>return</span><span> </span><span class='MINUS'>-</span><span> </span><span class='INTEGER_LITERAL'>1</span><span>
@@ -115,9 +115,9 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Comparable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>compareTo</span><span class='LPAR'>(</span><span class='IDENTIFIER'>b</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a comparator using the sequence of functions used to calculate a value to compare on</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates a comparator using the sequence of functions used to calculate a value to compare on
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>comparator</span><span class='LPAR'>(</span><span class='vararg'>vararg</span><span> </span><span class='IDENTIFIER'>functions</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Comparable</span><span class='LT'>&lt;</span><span class='MUL'>*</span><span class='GT'>&gt;</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>FunctionComparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='MUL'>*</span><span class='IDENTIFIER'>functions</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -138,9 +138,9 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a comparator using the sequence of functions used to calculate a value to compare on</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates a comparator using the sequence of functions used to calculate a value to compare on
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>comparator</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>Function2Comparator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>

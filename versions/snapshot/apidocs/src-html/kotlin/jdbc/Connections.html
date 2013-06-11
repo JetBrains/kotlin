@@ -230,24 +230,24 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>math</span><span class='DOT'>.</span><span class='IDENTIFIER'>BigDecimal</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Properties</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> create connection for the specified jdbc url with no credentials</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * create connection for the specified jdbc url with no credentials
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Connection</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>DriverManager</span><span class='DOT'>.</span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> create connection for the specified jdbc url and properties</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * create connection for the specified jdbc url and properties
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>info</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Connection</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>DriverManager</span><span class='DOT'>.</span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>info</span><span class='DOT'>.</span><span class='IDENTIFIER'>toProperties</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> create connection for the specified jdbc url and credentials</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * create connection for the specified jdbc url and credentials
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>user</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>password</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Connection</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>DriverManager</span><span class='DOT'>.</span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>user</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>password</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Executes specified block with connection and close connection after this</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Executes specified block with connection and close connection after this
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Connection</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
@@ -256,9 +256,9 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper method to process a statement on this connection</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Helper method to process a statement on this connection
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>statement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Statement</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>statement</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>createStatement</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>statement</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -268,25 +268,25 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Perform an SQL update on the connection</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Perform an SQL update on the connection
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>update</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>statement</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>executeUpdate</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Performs the SQL update using the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>StringTemplate</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Performs the SQL update using the [[StringTemplate]]
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>update</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>preparedStatement</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>prepare</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>preparedStatement</span><span class='DOT'>.</span><span class='IDENTIFIER'>update</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Perform a query on the connection and processes the result set with a function</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Perform a query on the connection and processes the result set with a function
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>statement</span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rs</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>executeQuery</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='RPAR'>)</span><span>
@@ -296,18 +296,18 @@
 
 
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Perform a query on the connection using the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>StringTemplate</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to generate the SQL text</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> and processes the result set with a function</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Perform a query on the connection using the [[StringTemplate]] to generate the SQL text
+ * and processes the result set with a function
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>resultBlock</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>preparedStatement</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>prepare</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>preparedStatement</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>resultBlock</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>PreparedStatement</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> from the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>StringTemplate</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Creates a [[PreparedStatement]] from the [[StringTemplate]]
+ */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>prepare</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PreparedStatement</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>builder</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>PreparedStatementBuilder</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>builder</span><span class='DOT'>.</span><span class='IDENTIFIER'>bind</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -321,9 +321,9 @@
 
     </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>statement</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PreparedStatement</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>lookupOrCreateStatement</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-    </span><span class='KDOC_START'>/**</span><span>
-     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Binds the values in the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>StringTemplate</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> to the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>PreparedStatement</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
-     </span><span class='KDOC_END'>*/</span><span>
+    </span><span class='hl-comment'>/**
+     * Binds the values in the [[StringTemplate]] to the [[PreparedStatement]]
+     */</span><span>
     </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>bind</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>constantText</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>true</span><span>
         </span><span class='IDENTIFIER'>template</span><span class='DOT'>.</span><span class='IDENTIFIER'>forEach</span><span class='LBRACE'>{</span><span>
@@ -422,9 +422,9 @@
 
     </span><span class='EOL_COMMENT'>// TODO bind other kinds!</span><span>
 
-    </span><span class='KDOC_START'>/**</span><span>
-     </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Looks up the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>PreparedStatement</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> in a cache or creates a new one</span><span>
-     </span><span class='KDOC_END'>*/</span><span>
+    </span><span class='hl-comment'>/**
+     * Looks up the [[PreparedStatement]] in a cache or creates a new one
+     */</span><span>
     </span><span class='protected'>protected</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>lookupOrCreateStatement</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PreparedStatement</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>prepareStatement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='RPAR'>)</span><span>
         </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>

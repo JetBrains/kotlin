@@ -235,9 +235,9 @@
 <a href='#234' name='234'>234</a>
 <a href='#235' name='235'>235</a>
 <a href='#236' name='236'>236</a>
-</td><td><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> JVM specific API implementations using JAXP and so forth which would not be used when compiling to JS</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</td><td><span class='hl-comment'>/**
+ * JVM specific API implementations using JAXP and so forth which would not be used when compiling to JS
+ */</span><span>
 </span><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>dom</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>io</span><span class='DOT'>.</span><span class='IDENTIFIER'>File</span><span>
@@ -330,28 +330,28 @@
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>getLength</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the HTML representation of the node</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the HTML representation of the node
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>outerHTML</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toXmlString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the HTML representation of the node</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the HTML representation of the node
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>innerHTML</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>childNodes</span><span class='DOT'>.</span><span class='IDENTIFIER'>outerHTML</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the HTML representation of the nodes</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the HTML representation of the nodes
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>NodeList</span><span class='DOT'>.</span><span class='IDENTIFIER'>outerHTML</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>map</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>innerHTML</span><span> </span><span class='RBRACE'>}</span><span class='DOT'>.</span><span class='IDENTIFIER'>makeString</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> of all the next </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Element</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> siblings </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns an [[Iterator]] of all the next [[Element]] siblings */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>nextElements</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>nextSiblings</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>filterIsInstance</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>javaClass</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> of all the previous </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Element</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> siblings </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns an [[Iterator]] of all the previous [[Element]] siblings */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>previousElements</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>previousSiblings</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>filterIsInstance</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>javaClass</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 
 
@@ -370,7 +370,7 @@
     </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>classes</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span class='DOT'>.</span><span class='IDENTIFIER'>makeString</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'> </span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Adds the given CSS class to this element's 'class' attribute </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Adds the given CSS class to this element's 'class' attribute */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>addClass</span><span class='LPAR'>(</span><span class='IDENTIFIER'>cssClass</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>classSet</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>classSet</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>classSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>cssClass</span><span class='RPAR'>)</span><span>
@@ -380,7 +380,7 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Removes the given CSS class to this element's 'class' attribute </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Removes the given CSS class to this element's 'class' attribute */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>removeClass</span><span class='LPAR'>(</span><span class='IDENTIFIER'>cssClass</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>classSet</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>classSet</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>classSet</span><span class='DOT'>.</span><span class='IDENTIFIER'>remove</span><span class='LPAR'>(</span><span class='IDENTIFIER'>cssClass</span><span class='RPAR'>)</span><span>
@@ -392,60 +392,60 @@
 
 
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Creates a new document with the given document builder</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Creates a new document with the given document builder*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>createDocument</span><span class='LPAR'>(</span><span class='IDENTIFIER'>builder</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilder</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>builder</span><span class='DOT'>.</span><span class='IDENTIFIER'>newDocument</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Creates a new document with an optional DocumentBuilderFactory </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Creates a new document with an optional DocumentBuilderFactory */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>createDocument</span><span class='LPAR'>(</span><span class='IDENTIFIER'>builderFactory</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilderFactory</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilderFactory</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>createDocument</span><span class='LPAR'>(</span><span class='IDENTIFIER'>builderFactory</span><span class='DOT'>.</span><span class='IDENTIFIER'>newDocumentBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the default </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>DocumentBuilderFactory</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the default [[DocumentBuilderFactory]]
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilderFactory</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilderFactory</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>DocumentBuilderFactory</span><span class='DOT'>.</span><span class='IDENTIFIER'>newInstance</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the default </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>DocumentBuilder</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Returns the default [[DocumentBuilder]]
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilder</span><span class='LPAR'>(</span><span class='IDENTIFIER'>builderFactory</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilderFactory</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilderFactory</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilder</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>builderFactory</span><span class='DOT'>.</span><span class='IDENTIFIER'>newDocumentBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Parses the XML document using the given *file*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Parses the XML document using the given *file*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>parseXml</span><span class='LPAR'>(</span><span class='IDENTIFIER'>file</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>File</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>builder</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilder</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>builder</span><span class='DOT'>.</span><span class='IDENTIFIER'>parse</span><span class='LPAR'>(</span><span class='IDENTIFIER'>file</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Parses the XML document using the given *uri*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Parses the XML document using the given *uri*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>parseXml</span><span class='LPAR'>(</span><span class='IDENTIFIER'>uri</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>builder</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilder</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>builder</span><span class='DOT'>.</span><span class='IDENTIFIER'>parse</span><span class='LPAR'>(</span><span class='IDENTIFIER'>uri</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Parses the XML document using the given *inputStream*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Parses the XML document using the given *inputStream*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>parseXml</span><span class='LPAR'>(</span><span class='IDENTIFIER'>inputStream</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>InputStream</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>builder</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilder</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>builder</span><span class='DOT'>.</span><span class='IDENTIFIER'>parse</span><span class='LPAR'>(</span><span class='IDENTIFIER'>inputStream</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Parses the XML document using the given *inputSource*</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Parses the XML document using the given *inputSource*
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>parseXml</span><span class='LPAR'>(</span><span class='IDENTIFIER'>inputSource</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>InputSource</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>builder</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DocumentBuilder</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultDocumentBuilder</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>builder</span><span class='DOT'>.</span><span class='IDENTIFIER'>parse</span><span class='LPAR'>(</span><span class='IDENTIFIER'>inputSource</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Creates a new TrAX transformer </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Creates a new TrAX transformer */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>createTransformer</span><span class='LPAR'>(</span><span class='IDENTIFIER'>source</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Source</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>factory</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>TransformerFactory</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>TransformerFactory</span><span class='DOT'>.</span><span class='IDENTIFIER'>newInstance</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Transformer</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>transformer</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>source</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>factory</span><span class='DOT'>.</span><span class='IDENTIFIER'>newTransformer</span><span class='LPAR'>(</span><span class='IDENTIFIER'>source</span><span class='RPAR'>)</span><span>
@@ -455,17 +455,17 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>transformer</span><span class='EXCLEXCL'>!!</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Converts the node to an XML String </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Converts the node to an XML String */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>toXmlString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toXmlString</span><span class='LPAR'>(</span><span class='hl-keyword'>false</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Converts the node to an XML String </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Converts the node to an XML String */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>toXmlString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>xmlDeclaration</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>writer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>StringWriter</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>writeXmlString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>writer</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>xmlDeclaration</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>writer</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Converts the node to an XML String and writes it to the given </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Writer</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Converts the node to an XML String and writes it to the given [[Writer]] */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>writeXmlString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>writer</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Writer</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>xmlDeclaration</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>transformer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>createTransformer</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>transformer</span><span class='DOT'>.</span><span class='IDENTIFIER'>setOutputProperty</span><span class='LPAR'>(</span><span class='IDENTIFIER'>OutputKeys</span><span class='DOT'>.</span><span class='IDENTIFIER'>OMIT_XML_DECLARATION</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>xmlDeclaration</span><span class='RPAR'>)</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>no</span><span class='CLOSING_QUOTE'>&quot;</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>yes</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>

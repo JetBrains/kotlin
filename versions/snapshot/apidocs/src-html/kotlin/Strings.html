@@ -74,13 +74,13 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>HashSet</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>LinkedList</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the string with leading and trailing text matching the given string removed </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns the string with leading and trailing text matching the given string removed */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>String</span><span class='DOT'>.</span><span class='IDENTIFIER'>trim</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>trimLeading</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>trimTrailing</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the string with the prefix and postfix text trimmed </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns the string with the prefix and postfix text trimmed */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>String</span><span class='DOT'>.</span><span class='IDENTIFIER'>trim</span><span class='LPAR'>(</span><span class='IDENTIFIER'>prefix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>postfix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>trimLeading</span><span class='LPAR'>(</span><span class='IDENTIFIER'>prefix</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>trimTrailing</span><span class='LPAR'>(</span><span class='IDENTIFIER'>postfix</span><span class='RPAR'>)</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the string with the leading prefix of this string removed </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns the string with the leading prefix of this string removed */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>String</span><span class='DOT'>.</span><span class='IDENTIFIER'>trimLeading</span><span class='LPAR'>(</span><span class='IDENTIFIER'>prefix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>answer</span><span class='DOT'>.</span><span class='IDENTIFIER'>startsWith</span><span class='LPAR'>(</span><span class='IDENTIFIER'>prefix</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -89,7 +89,7 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the string with the trailing postfix of this string removed </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns the string with the trailing postfix of this string removed */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>String</span><span class='DOT'>.</span><span class='IDENTIFIER'>trimTrailing</span><span class='LPAR'>(</span><span class='IDENTIFIER'>postfix</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>answer</span><span class='DOT'>.</span><span class='IDENTIFIER'>endsWith</span><span class='LPAR'>(</span><span class='IDENTIFIER'>postfix</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -98,12 +98,12 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>answer</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns true if the string is not null and not empty </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns true if the string is not null and not empty */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>notEmpty</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span> </span><span class='ANDAND'>&amp;&amp;</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>length</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
-</span><span class='KDOC_TEXT'>Iterator for characters of given CharSequence</span><span>
-</span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+Iterator for characters of given CharSequence
+*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>CharSequence</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>CharIterator</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>object</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>CharIterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>index</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
 
@@ -112,7 +112,7 @@
     </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>index</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>length</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the string if it is not null or the empty string if its null </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/** Returns the string if it is not null or the empty string if its null */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>orEmpty</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span>
 
 
@@ -121,11 +121,11 @@
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>CharSequence</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>length</span><span>
 
-</span><span class='KDOC_START'>/**</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Counts the number of characters which match the given predicate</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span>
- </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> </span><span class='KDOC_TAG_NAME'>@includeFunctionBody</span><span class='KDOC_TEXT'> ../../test/StringTest.kt count</span><span>
- </span><span class='KDOC_END'>*/</span><span>
+</span><span class='hl-comment'>/**
+ * Counts the number of characters which match the given predicate
+ *
+ * @includeFunctionBody ../../test/StringTest.kt count
+ */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>String</span><span class='DOT'>.</span><span class='IDENTIFIER'>count</span><span class='LPAR'>(</span><span class='IDENTIFIER'>predicate</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Char</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>c</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
