@@ -347,7 +347,8 @@ public class GenerateTests {
                 testModel("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
                 testModel("idea/testData/codeInsight/codeTransformations/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
                 testModel("idea/testData/codeInsight/codeTransformations/declarations/split", "doTestSplitProperty"),
-                testModel("idea/testData/codeInsight/codeTransformations/declarations/join", "doTestJoinProperty")
+                testModel("idea/testData/codeInsight/codeTransformations/declarations/join", "doTestJoinProperty"),
+                testModel("idea/testData/codeInsight/codeTransformations/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
         );
 
         generateTest(
