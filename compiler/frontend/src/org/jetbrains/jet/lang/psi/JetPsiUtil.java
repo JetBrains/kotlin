@@ -896,4 +896,18 @@ public class JetPsiUtil {
         }
         return null;
     }
+
+    public static NavigatablePsiElement getPackageReference(@NotNull JetFile file, int partIndex) {
+        JetNamespaceHeader header = file.getNamespaceHeader();
+        if (header == null) {
+            throw new IllegalArgumentException("Should be called only for files with namespace: " + file);
+        }
+
+        List<JetSimpleNameExpression> names = header.getParentNamespaceNames();
+        if (!(0 <= partIndex && partIndex < names.size() + 1)) {
+            throw new IndexOutOfBoundsException(String.format("%s index for file with header %s is out of range", partIndex, header.getText()));
+        }
+
+        return (names.size() > partIndex) ? names.get(partIndex) : header.getLastPartExpression();
+    }
 }

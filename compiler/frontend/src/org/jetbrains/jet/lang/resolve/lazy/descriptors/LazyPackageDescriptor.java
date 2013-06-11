@@ -16,11 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
+import com.google.common.collect.Iterables;
+import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
@@ -51,6 +54,11 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
         this.lazyScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
 
         this.memberScope = new ChainedScope(this, "Lazy package members scope: " + name, lazyScope, scope);
+
+        NavigatablePsiElement declaration = Iterables.getFirst(declarationProvider.getPackageDeclarations(getFqName()), null);
+        if (declaration != null) {
+            resolveSession.getTrace().record(BindingContext.NAMESPACE, declaration, this);
+        }
     }
 
     @NotNull

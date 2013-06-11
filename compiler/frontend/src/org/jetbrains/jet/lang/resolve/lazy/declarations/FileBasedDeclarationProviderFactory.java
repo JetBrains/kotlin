@@ -18,23 +18,25 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.intellij.openapi.util.Computable;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 public class FileBasedDeclarationProviderFactory implements DeclarationProviderFactory {
@@ -114,6 +116,27 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
                 return !fqName.isRoot() && fqName.parent().equals(parent);
             }
         });
+    }
+
+    /*package*/ Collection<NavigatablePsiElement> getPackageDeclarations(@NotNull final FqName fqName) {
+        if (fqName.isRoot()) {
+            return Collections.emptyList();
+        }
+
+        Collection<NavigatablePsiElement> resultElements = Lists.newArrayList();
+        for (FqName declaredPackage : index.compute().filesByPackage.keys()) {
+            if (QualifiedNamesUtil.isSubpackageOf(declaredPackage, fqName)) {
+                Collection<JetFile> files = index.compute().filesByPackage.get(declaredPackage);
+                resultElements.addAll(ContainerUtil.map(files, new Function<JetFile, NavigatablePsiElement>() {
+                    @Override
+                    public NavigatablePsiElement fun(JetFile file) {
+                        return JetPsiUtil.getPackageReference(file, QualifiedNamesUtil.numberOfSegments(fqName) - 1);
+                    }
+                }));
+            }
+        }
+
+        return resultElements;
     }
 
     @Override

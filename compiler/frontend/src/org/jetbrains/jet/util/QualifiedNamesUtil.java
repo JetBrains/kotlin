@@ -42,7 +42,7 @@ public final class QualifiedNamesUtil {
         String subpackageNameStr = subpackageName.asString();
         String packageNameStr = packageName.asString();
 
-        return (subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr.charAt(packageNameStr.length()) == '.');
+        return isSubpackageOf(subpackageNameStr, packageNameStr);
     }
 
     public static boolean isOneSegmentFQN(@NotNull String fqn) {
@@ -76,6 +76,14 @@ public final class QualifiedNamesUtil {
 
         String fqNameStr = fqName.asString();
         return new FqName(fqNameStr.substring(fqNameStr.indexOf('.'), fqNameStr.length()));
+    }
+
+    public static int numberOfSegments(@NotNull FqName fqName) {
+        if (fqName.isRoot()) {
+            return 0;
+        }
+
+        return 1 + numberOfSegments(fqName.parent());
     }
 
     @NotNull
@@ -185,5 +193,10 @@ public final class QualifiedNamesUtil {
         }
 
         return state != AFTER_DOT;
+    }
+
+    public static boolean isSubpackageOf(String subpackageNameStr, String packageNameStr) {
+        return subpackageNameStr.equals(packageNameStr) ||
+                (subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr.charAt(packageNameStr.length()) == '.');
     }
 }
