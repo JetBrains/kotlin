@@ -5,5 +5,5 @@ val prop: Int = 0
         return $prop + 1
     }
 
-// 2 INVOKESTATIC a/APackage\$src\$1\$[\-]*[0-9]*\.getProp \(\)I
-// 1 GETSTATIC a/APackage\$src\$1\$[\-]*[0-9]*\.prop \: I
+// 2 INVOKESTATIC a/APackage\$src\$1\$[0-9a-f]+\.getProp \(\)I
+// 1 GETSTATIC a/APackage\$src\$1\$[0-9a-f]+\.prop \: I
