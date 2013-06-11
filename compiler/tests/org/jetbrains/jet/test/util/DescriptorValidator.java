@@ -155,7 +155,7 @@ public class DescriptorValidator {
                 PropertyAccessorDescriptor accessor,
                 String name
         ) {
-            // TODO
+            // TODO: fix the discrepancies in descriptor construction and enable these checks
             //assertEquals(accessor, collector, name + " visibility", descriptor.getVisibility(), accessor.getVisibility());
             //assertEquals(accessor, collector, name + " modality", descriptor.getModality(), accessor.getModality());
             assertEquals(accessor, collector, "corresponding property", descriptor, accessor.getCorrespondingProperty());
@@ -278,8 +278,7 @@ public class DescriptorValidator {
         public Boolean visitValueParameterDescriptor(
                 ValueParameterDescriptor descriptor, DiagnosticCollector collector
         ) {
-            visitVariableDescriptor(descriptor, collector);
-            return true;
+            return visitVariableDescriptor(descriptor, collector);
         }
 
         @Override
