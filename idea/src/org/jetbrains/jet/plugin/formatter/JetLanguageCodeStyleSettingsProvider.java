@@ -95,18 +95,20 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AROUND_RANGE", "Around range (..)",
                                           CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS);
 
-                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON", "Space after colon, before declarations' type",
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
+                                          "Space before colon, after declarations' name",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
-                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON", "Space before colon, after declarations' name",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
-
-                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_EXTEND_COLON",
-                                          "Space after colon in new type definition",
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
+                                          "Space after colon, before declarations' type",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_EXTEND_COLON",
                                           "Space before colon in new type definition",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_EXTEND_COLON",
+                                          "Space after colon in new type definition",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD",
