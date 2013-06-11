@@ -17,6 +17,8 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import com.google.common.base.Predicates;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
@@ -64,10 +66,16 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
-        NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
-                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-        checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
+        Disposable tmpDisposable = Disposer.newDisposable();
+        try {
+            NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, tmpDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+            Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+                    Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+            checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
+        }
+        finally {
+            Disposer.dispose(tmpDisposable);
+        }
     }
 
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
