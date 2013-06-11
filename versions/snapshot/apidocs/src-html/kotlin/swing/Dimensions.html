@@ -37,29 +37,29 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>awt</span><span class='DOT'>.</span><span class='IDENTIFIER'>Component</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>javax</span><span class='DOT'>.</span><span class='IDENTIFIER'>swing</span><span class='DOT'>.</span><span class='IDENTIFIER'>JComponent</span><span>
 
-</span><span class='hl-comment'>/**
- * Returns the width of the dimension or zero if its null
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the width of the dimension or zero if its null</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Dimension</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>width</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='INTEGER_LITERAL'>0</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>width</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Returns the height of the dimension or zero if its null
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns the height of the dimension or zero if its null</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Dimension</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>height</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='INTEGER_LITERAL'>0</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>height</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Returns a new dimension with the same height and the given width
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a new dimension with the same height and the given width</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Dimension</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>width</span><span class='LPAR'>(</span><span class='IDENTIFIER'>newValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Dimension</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>Dimension</span><span class='LPAR'>(</span><span class='IDENTIFIER'>newValue</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>height</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
-</span><span class='hl-comment'>/**
- * Returns a new dimension with the same width and the given height
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Returns a new dimension with the same width and the given height</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Dimension</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>height</span><span class='LPAR'>(</span><span class='IDENTIFIER'>newValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Dimension</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>Dimension</span><span class='LPAR'>(</span><span class='IDENTIFIER'>width</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>newValue</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>

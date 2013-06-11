@@ -616,6 +616,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/io/java/io/File-extensions.html#appendBytes(jet.ByteArray)</href>
+  <name>appendBytes() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Array-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>appendString() [jet.Array]</name>
   <kind>fun</kind>
@@ -763,6 +768,11 @@
 <search>
   <href>kotlin/jet/String-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>appendString() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#appendText(jet.String, java.nio.charset.Charset)</href>
+  <name>appendText() [java.io.File]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -7721,7 +7731,7 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/ByteArray-extensions.html#toString(java.nio.charset.Charset)</href>
+  <href>kotlin/jet/ByteArray-extensions.html#toString()</href>
   <name>toString() [jet.ByteArray]</name>
   <kind>fun</kind>
 </search>
@@ -7836,12 +7846,12 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/String-extensions.html#trimLeading(jet.String)</href>
+  <href>kotlin/jet/String-extensions.html#trimLeading()</href>
   <name>trimLeading() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/String-extensions.html#trimTrailing(jet.String)</href>
+  <href>kotlin/jet/String-extensions.html#trimTrailing()</href>
   <name>trimTrailing() [jet.String]</name>
   <kind>fun</kind>
 </search>

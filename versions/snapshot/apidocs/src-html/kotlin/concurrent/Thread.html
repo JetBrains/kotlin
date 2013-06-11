@@ -125,33 +125,33 @@
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>thread</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Executes the given block on the [[Executor]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Executes the given block on the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Executor</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Executor</span><span class='DOT'>.</span><span class='IDENTIFIER'>execute</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>execute</span><span class='LPAR'>(</span><span class='IDENTIFIER'>runnable</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Allows you to use the executor as a function to
- * execute the given block on the [[Executor]].
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Allows you to use the executor as a function to</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> execute the given block on the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Executor</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'>.</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Executor</span><span class='DOT'>.</span><span class='IDENTIFIER'>invoke</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>execute</span><span class='LPAR'>(</span><span class='IDENTIFIER'>runnable</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Executes the given block on the [[Executor]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Executes the given block on the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Executor</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='IDENTIFIER'>ExecutorService</span><span class='DOT'>.</span><span class='IDENTIFIER'>submit</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span class='IDENTIFIER'>Future</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>c</span><span class='COLON'>:</span><span class='IDENTIFIER'>Callable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>callable</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>submit</span><span class='LPAR'>(</span><span class='IDENTIFIER'>c</span><span class='RPAR'>)</span><span class='SEMICOLON'>;</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
-* Allows you to use the executor as a function to
-* execute the given block on the [[Executor]].
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Allows you to use the executor as a function to</span><span>
+</span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> execute the given block on the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Executor</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'>.</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='IDENTIFIER'>ExecutorService</span><span class='DOT'>.</span><span class='IDENTIFIER'>invoke</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span class='IDENTIFIER'>Future</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>submit</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span></td></tr></table></body></html>

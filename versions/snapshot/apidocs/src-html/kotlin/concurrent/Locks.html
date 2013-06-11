@@ -77,10 +77,10 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>locks</span><span class='DOT'>.</span><span class='IDENTIFIER'>ReentrantReadWriteLock</span><span class='DOT'>.</span><span class='IDENTIFIER'>ReadLock</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>CountDownLatch</span><span>
 
-</span><span class='hl-comment'>/**
-Executes given calculation under lock
-Returns result of the calculation
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_TEXT'>Executes given calculation under lock</span><span>
+</span><span class='KDOC_TEXT'>Returns result of the calculation</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Lock</span><span class='DOT'>.</span><span class='IDENTIFIER'>withLock</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>lock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
@@ -91,10 +91,10 @@ Returns result of the calculation
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
-Executes given calculation under read lock
-Returns result of the calculation
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_TEXT'>Executes given calculation under read lock</span><span>
+</span><span class='KDOC_TEXT'>Returns result of the calculation</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>ReentrantReadWriteLock</span><span class='DOT'>.</span><span class='IDENTIFIER'>read</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>rl</span><span class='DOT'>.</span><span class='IDENTIFIER'>lock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -106,12 +106,12 @@ Returns result of the calculation
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
-Executes given calculation under write lock.
-The method does upgrade from read to write lock if needed
-If such write has been initiated by checking some condition, the condition must be rechecked inside the action to avoid possible races
-Returns result of the calculation
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_TEXT'>Executes given calculation under write lock.</span><span>
+</span><span class='KDOC_TEXT'>The method does upgrade from read to write lock if needed</span><span>
+</span><span class='KDOC_TEXT'>If such write has been initiated by checking some condition, the condition must be rechecked inside the action to avoid possible races</span><span>
+</span><span class='KDOC_TEXT'>Returns result of the calculation</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>ReentrantReadWriteLock</span><span class='DOT'>.</span><span class='IDENTIFIER'>write</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
@@ -129,10 +129,10 @@ Returns result of the calculation
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
-Execute given calculation and await for CountDownLatch
-Returns result of the calculation
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_TEXT'>Execute given calculation and await for CountDownLatch</span><span>
+</span><span class='KDOC_TEXT'>Returns result of the calculation</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Int</span><span class='DOT'>.</span><span class='IDENTIFIER'>latch</span><span class='LPAR'>(</span><span class='IDENTIFIER'>op</span><span class='COLON'>:</span><span>  </span><span class='IDENTIFIER'>CountDownLatch</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>cdl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>CountDownLatch</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>res</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>cdl</span><span class='DOT'>.</span><span class='IDENTIFIER'>op</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>

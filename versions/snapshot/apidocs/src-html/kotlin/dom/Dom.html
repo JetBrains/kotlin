@@ -487,53 +487,53 @@
     </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>setAttribute</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>class</span><span class='CLOSING_QUOTE'>&quot;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns true if the element has the given CSS class style in its 'class' attribute */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns true if the element has the given CSS class style in its 'class' attribute </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>hasClass</span><span class='LPAR'>(</span><span class='IDENTIFIER'>cssClass</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>c</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>classes</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>c</span><span class='DOT'>.</span><span class='IDENTIFIER'>matches</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;&quot;&quot;</span><span class='REGULAR_STRING_PART'>(^|.*</span><span class='REGULAR_STRING_PART'>\</span><span class='REGULAR_STRING_PART'>s+)</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>cssClass</span><span class='REGULAR_STRING_PART'>(</span><span class='REGULAR_STRING_PART'>$</span><span class='REGULAR_STRING_PART'>|</span><span class='REGULAR_STRING_PART'>\</span><span class='REGULAR_STRING_PART'>s+.*)</span><span class='CLOSING_QUOTE'>&quot;&quot;&quot;</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
 
-</span><span class='hl-comment'>/** Returns the children of the element as a list */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the children of the element as a list </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>children</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>childNodes</span><span class='DOT'>.</span><span class='IDENTIFIER'>toList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns the child elements of this element */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the child elements of this element </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>childElements</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>children</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>filter</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>nodeType</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>ELEMENT_NODE</span><span> </span><span class='RBRACE'>}</span><span class='DOT'>.</span><span class='IDENTIFIER'>map</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Element</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns the child elements of this element with the given name */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the child elements of this element with the given name </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>childElements</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>children</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>filter</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>nodeType</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>ELEMENT_NODE</span><span> </span><span class='ANDAND'>&amp;&amp;</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>nodeName</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>name</span><span> </span><span class='RBRACE'>}</span><span class='DOT'>.</span><span class='IDENTIFIER'>map</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Element</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** The descendent elements of this document */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> The descendent elements of this document </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>elements</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>getElementsByTagName</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>*</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toElementList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-</span><span class='hl-comment'>/** The descendant elements of this elements */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> The descendant elements of this elements </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>Element</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>elements</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span>
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>getElementsByTagName</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>*</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toElementList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
 
-</span><span class='hl-comment'>/** Returns all the descendant elements given the local element name */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns all the descendant elements given the local element name </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>elements</span><span class='LPAR'>(</span><span class='IDENTIFIER'>localName</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>getElementsByTagName</span><span class='LPAR'>(</span><span class='IDENTIFIER'>localName</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toElementList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns all the descendant elements given the local element name */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns all the descendant elements given the local element name </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>elements</span><span class='LPAR'>(</span><span class='IDENTIFIER'>localName</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>getElementsByTagName</span><span class='LPAR'>(</span><span class='IDENTIFIER'>localName</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toElementList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns all the descendant elements given the namespace URI and local element name */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns all the descendant elements given the namespace URI and local element name </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>elements</span><span class='LPAR'>(</span><span class='IDENTIFIER'>namespaceUri</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>localName</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>getElementsByTagNameNS</span><span class='LPAR'>(</span><span class='IDENTIFIER'>namespaceUri</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>localName</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toElementList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns all the descendant elements given the namespace URI and local element name */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns all the descendant elements given the namespace URI and local element name </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>elements</span><span class='LPAR'>(</span><span class='IDENTIFIER'>namespaceUri</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>localName</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>getElementsByTagNameNS</span><span class='LPAR'>(</span><span class='IDENTIFIER'>namespaceUri</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>localName</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>toElementList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -559,7 +559,7 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>selector</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>root</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='SAFE_ACCESS'>?.</span><span class='IDENTIFIER'>documentElement</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>root</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -583,7 +583,7 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>selector</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>List</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Element</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>selector</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>*</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>elements</span><span>
@@ -604,36 +604,36 @@
 
 </span><span class='EOL_COMMENT'>// Helper methods</span><span>
 
-</span><span class='hl-comment'>/** TODO this approach generates compiler errors...
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> TODO this approach generates compiler errors...</span><span>
 
-fun Element.addClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
-    val set = this.classSet
-    var answer = false
-    for (cs in cssClasses) {
-        if (set.add(cs)) {
-            answer = true
-        }
-    }
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
-}
+</span><span class='KDOC_TEXT'>fun Element.addClass(varargs cssClasses: Array&lt;String&gt;): Boolean {</span><span>
+    </span><span class='KDOC_TEXT'>val set = this.classSet</span><span>
+    </span><span class='KDOC_TEXT'>var answer = false</span><span>
+    </span><span class='KDOC_TEXT'>for (cs in cssClasses) {</span><span>
+        </span><span class='KDOC_TEXT'>if (set.add(cs)) {</span><span>
+            </span><span class='KDOC_TEXT'>answer = true</span><span>
+        </span><span class='KDOC_TEXT'>}</span><span>
+    </span><span class='KDOC_TEXT'>}</span><span>
+    </span><span class='KDOC_TEXT'>if (answer) {</span><span>
+        </span><span class='KDOC_TEXT'>this.classSet = classSet</span><span>
+    </span><span class='KDOC_TEXT'>}</span><span>
+    </span><span class='KDOC_TEXT'>return answer</span><span>
+</span><span class='KDOC_TEXT'>}</span><span>
 
-fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
-    val set = this.classSet
-    var answer = false
-    for (cs in cssClasses) {
-        if (set.remove(cs)) {
-            answer = true
-        }
-    }
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
-}
-*/</span><span>
+</span><span class='KDOC_TEXT'>fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {</span><span>
+    </span><span class='KDOC_TEXT'>val set = this.classSet</span><span>
+    </span><span class='KDOC_TEXT'>var answer = false</span><span>
+    </span><span class='KDOC_TEXT'>for (cs in cssClasses) {</span><span>
+        </span><span class='KDOC_TEXT'>if (set.remove(cs)) {</span><span>
+            </span><span class='KDOC_TEXT'>answer = true</span><span>
+        </span><span class='KDOC_TEXT'>}</span><span>
+    </span><span class='KDOC_TEXT'>}</span><span>
+    </span><span class='KDOC_TEXT'>if (answer) {</span><span>
+        </span><span class='KDOC_TEXT'>this.classSet = classSet</span><span>
+    </span><span class='KDOC_TEXT'>}</span><span>
+    </span><span class='KDOC_TEXT'>return answer</span><span>
+</span><span class='KDOC_TEXT'>}</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>NodeListAsList</span><span class='LPAR'>(</span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>nodeList</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>NodeList</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>index</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Node</span><span> </span><span class='LBRACE'>{</span><span>
@@ -664,7 +664,7 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
 
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Removes all the children from this node */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Removes all the children from this node </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>clear</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>true</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>child</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>firstChild</span><span>
@@ -676,7 +676,7 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns an [[Iterator]] over the next siblings of this node */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> over the next siblings of this node </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>nextSiblings</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>NextSiblingIterator</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
 
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>NextSiblingIterator</span><span class='LPAR'>(</span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>node</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Node</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -692,7 +692,7 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns an [[Iterator]] over the next siblings of this node */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns an </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>Iterator</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> over the next siblings of this node </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>previousSiblings</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>PreviousSiblingIterator</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
 
 </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>PreviousSiblingIterator</span><span class='LPAR'>(</span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>node</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Node</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AbstractIterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -708,13 +708,13 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns true if this node is a Text node or a CDATA node */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns true if this node is a Text node or a CDATA node </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>isText</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>nt</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>nodeType</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>nt</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>TEXT_NODE</span><span> </span><span class='OROR'>||</span><span> </span><span class='IDENTIFIER'>nt</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>CDATA_SECTION_NODE</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns the attribute value or empty string if its not present */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the attribute value or empty string if its not present </span><span class='KDOC_END'>*/</span><span>
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>attribute</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>getAttribute</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='RPAR'>)</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span>
 </span><span class='RBRACE'>}</span><span>
@@ -739,7 +739,7 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
 </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>tail</span><span>
 
 
-</span><span class='hl-comment'>/** Converts the node list to an XML String */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Converts the node list to an XML String </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>NodeList</span><span class='QUEST'>?</span><span class='DOT'>.</span><span class='IDENTIFIER'>toXmlString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>xmlDeclaration</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>false</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span>
         </span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
@@ -747,7 +747,7 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Converts the collection of nodes to an XML String */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Converts the collection of nodes to an XML String </span><span class='KDOC_END'>*/</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>nodesToXmlString</span><span class='LPAR'>(</span><span class='IDENTIFIER'>nodes</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Node</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>xmlDeclaration</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>false</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='EOL_COMMENT'>// TODO this should work...</span><span>
     </span><span class='EOL_COMMENT'>// return this.map{it.toXmlString()}.makeString(&quot;&quot;)</span><span>
@@ -774,25 +774,25 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
 
 </span><span class='EOL_COMMENT'>// Builder</span><span>
 
-</span><span class='hl-comment'>/**
- * Creates a new element which can be configured via a function
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a new element which can be configured via a function</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Document</span><span class='DOT'>.</span><span class='IDENTIFIER'>createElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>init</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>elem</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>createElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
     </span><span class='IDENTIFIER'>elem</span><span class='DOT'>.</span><span class='IDENTIFIER'>init</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>elem</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Creates a new element to an element which has an owner Document which can be configured via a function
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Creates a new element to an element which has an owner Document which can be configured via a function</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>createElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>doc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>init</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>elem</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ownerDocument</span><span class='LPAR'>(</span><span class='IDENTIFIER'>doc</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>createElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
     </span><span class='IDENTIFIER'>elem</span><span class='DOT'>.</span><span class='IDENTIFIER'>init</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>elem</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/** Returns the owner document of the element or uses the provided document */</span><span>
+</span><span class='KDOC_START'>/**</span><span class='KDOC_TEXT'> Returns the owner document of the element or uses the provided document </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>ownerDocument</span><span class='LPAR'>(</span><span class='IDENTIFIER'>doc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>nodeType</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>Node</span><span class='DOT'>.</span><span class='IDENTIFIER'>DOCUMENT_NODE</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>this</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Document</span><span>
     </span><span class='hl-keyword'>else</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>doc</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>ownerDocument</span><span>
@@ -805,27 +805,27 @@ fun Element.removeClass(varargs cssClasses: Array&lt;String&gt;): Boolean {
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
-Adds a newly created element which can be configured via a function
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_TEXT'>Adds a newly created element which can be configured via a function</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Document</span><span class='DOT'>.</span><span class='IDENTIFIER'>addElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>init</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>child</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>createElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>init</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>appendChild</span><span class='LPAR'>(</span><span class='IDENTIFIER'>child</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>child</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
-Adds a newly created element to an element which has an owner Document which can be configured via a function
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_TEXT'>Adds a newly created element to an element which has an owner Document which can be configured via a function</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>addElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>doc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>init</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>child</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>createElement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>doc</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>init</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>appendChild</span><span class='LPAR'>(</span><span class='IDENTIFIER'>child</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>child</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
-Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter
-*/</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+</span><span class='KDOC_TEXT'>Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter</span><span>
+</span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Element</span><span class='DOT'>.</span><span class='IDENTIFIER'>addText</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>doc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Element</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>child</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>ownerDocument</span><span class='LPAR'>(</span><span class='IDENTIFIER'>doc</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>createTextNode</span><span class='LPAR'>(</span><span class='IDENTIFIER'>text</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>

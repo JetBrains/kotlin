@@ -61,9 +61,9 @@
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>javax</span><span class='DOT'>.</span><span class='IDENTIFIER'>sql</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>template</span><span class='DOT'>.</span><span class='IDENTIFIER'>StringTemplate</span><span>
 
-</span><span class='hl-comment'>/**
- * Processes a connection from the pool using the given function block
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Processes a connection from the pool using the given function block</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>DataSource</span><span class='DOT'>.</span><span class='IDENTIFIER'>useDataSource</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Connection</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='EOL_COMMENT'>// TODO rename to &quot;use&quot; when KT-2493 is fixed</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>connection</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>connection</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -77,37 +77,37 @@
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Helper method to process a statement on this collection
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Helper method to process a statement on this collection</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>DataSource</span><span class='DOT'>.</span><span class='IDENTIFIER'>statement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Statement</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>useDataSource</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>statement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Perform an SQL update on the connection
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Perform an SQL update on the connection</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>DataSource</span><span class='DOT'>.</span><span class='IDENTIFIER'>update</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>useDataSource</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>update</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Perform a query on the connection and processes the result set with a function
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Perform a query on the connection and processes the result set with a function</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>DataSource</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>useDataSource</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Performs the update using the given SQL using a [[StringTemplate]]
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Performs the update using the given SQL using a </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>StringTemplate</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>DataSource</span><span class='DOT'>.</span><span class='IDENTIFIER'>update</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>useDataSource</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>update</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='hl-comment'>/**
- * Perform a query on the connection using the SQL from the [[StringTemplate]] and processes the result set with a function
- */</span><span>
+</span><span class='KDOC_START'>/**</span><span>
+ </span><span class='KDOC_LEADING_ASTERISK'>*</span><span class='KDOC_TEXT'> Perform a query on the connection using the SQL from the </span><span class='KDOC_WIKI_LINK_OPEN'>[[</span><span class='KDOC_TEXT'>StringTemplate</span><span class='KDOC_WIKI_LINK_CLOSE'>]]</span><span class='KDOC_TEXT'> and processes the result set with a function</span><span>
+ </span><span class='KDOC_END'>*/</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>DataSource</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>StringTemplate</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>resultBlock</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>useDataSource</span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>template</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>resultBlock</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>

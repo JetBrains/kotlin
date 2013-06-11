@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html><head><title>Delegation.kt xref</title><link rel='stylesheet' type='text/css' href='highlight.css'></link></head><body><table style='white-space: pre; font-size: 10pt; font-family: Monaco, monospace'><tr><td style='margin-right: 1.5em; text-align: right'><a href='#1' name='1'>1</a>
+<a href='#2' name='2'>2</a>
+<a href='#3' name='3'>3</a>
+<a href='#4' name='4'>4</a>
+<a href='#5' name='5'>5</a>
+<a href='#6' name='6'>6</a>
+<a href='#7' name='7'>7</a>
+<a href='#8' name='8'>8</a>
+<a href='#9' name='9'>9</a>
+<a href='#10' name='10'>10</a>
+<a href='#11' name='11'>11</a>
+<a href='#12' name='12'>12</a>
+<a href='#13' name='13'>13</a>
+<a href='#14' name='14'>14</a>
+<a href='#15' name='15'>15</a>
+<a href='#16' name='16'>16</a>
+<a href='#17' name='17'>17</a>
+<a href='#18' name='18'>18</a>
+<a href='#19' name='19'>19</a>
+<a href='#20' name='20'>20</a>
+<a href='#21' name='21'>21</a>
+<a href='#22' name='22'>22</a>
+<a href='#23' name='23'>23</a>
+<a href='#24' name='24'>24</a>
+<a href='#25' name='25'>25</a>
+<a href='#26' name='26'>26</a>
+<a href='#27' name='27'>27</a>
+<a href='#28' name='28'>28</a>
+<a href='#29' name='29'>29</a>
+<a href='#30' name='30'>30</a>
+<a href='#31' name='31'>31</a>
+<a href='#32' name='32'>32</a>
+<a href='#33' name='33'>33</a>
+<a href='#34' name='34'>34</a>
+<a href='#35' name='35'>35</a>
+<a href='#36' name='36'>36</a>
+<a href='#37' name='37'>37</a>
+<a href='#38' name='38'>38</a>
+<a href='#39' name='39'>39</a>
+<a href='#40' name='40'>40</a>
+<a href='#41' name='41'>41</a>
+<a href='#42' name='42'>42</a>
+<a href='#43' name='43'>43</a>
+<a href='#44' name='44'>44</a>
+<a href='#45' name='45'>45</a>
+<a href='#46' name='46'>46</a>
+<a href='#47' name='47'>47</a>
+<a href='#48' name='48'>48</a>
+<a href='#49' name='49'>49</a>
+<a href='#50' name='50'>50</a>
+<a href='#51' name='51'>51</a>
+<a href='#52' name='52'>52</a>
+<a href='#53' name='53'>53</a>
+<a href='#54' name='54'>54</a>
+<a href='#55' name='55'>55</a>
+<a href='#56' name='56'>56</a>
+<a href='#57' name='57'>57</a>
+<a href='#58' name='58'>58</a>
+<a href='#59' name='59'>59</a>
+<a href='#60' name='60'>60</a>
+<a href='#61' name='61'>61</a>
+<a href='#62' name='62'>62</a>
+<a href='#63' name='63'>63</a>
+<a href='#64' name='64'>64</a>
+<a href='#65' name='65'>65</a>
+<a href='#66' name='66'>66</a>
+<a href='#67' name='67'>67</a>
+<a href='#68' name='68'>68</a>
+<a href='#69' name='69'>69</a>
+<a href='#70' name='70'>70</a>
+<a href='#71' name='71'>71</a>
+<a href='#72' name='72'>72</a>
+<a href='#73' name='73'>73</a>
+<a href='#74' name='74'>74</a>
+<a href='#75' name='75'>75</a>
+<a href='#76' name='76'>76</a>
+<a href='#77' name='77'>77</a>
+<a href='#78' name='78'>78</a>
+<a href='#79' name='79'>79</a>
+<a href='#80' name='80'>80</a>
+<a href='#81' name='81'>81</a>
+<a href='#82' name='82'>82</a>
+<a href='#83' name='83'>83</a>
+<a href='#84' name='84'>84</a>
+<a href='#85' name='85'>85</a>
+<a href='#86' name='86'>86</a>
+<a href='#87' name='87'>87</a>
+<a href='#88' name='88'>88</a>
+<a href='#89' name='89'>89</a>
+<a href='#90' name='90'>90</a>
+<a href='#91' name='91'>91</a>
+<a href='#92' name='92'>92</a>
+<a href='#93' name='93'>93</a>
+<a href='#94' name='94'>94</a>
+<a href='#95' name='95'>95</a>
+<a href='#96' name='96'>96</a>
+<a href='#97' name='97'>97</a>
+<a href='#98' name='98'>98</a>
+<a href='#99' name='99'>99</a>
+<a href='#100' name='100'>100</a>
+<a href='#101' name='101'>101</a>
+<a href='#102' name='102'>102</a>
+<a href='#103' name='103'>103</a>
+<a href='#104' name='104'>104</a>
+<a href='#105' name='105'>105</a>
+<a href='#106' name='106'>106</a>
+<a href='#107' name='107'>107</a>
+<a href='#108' name='108'>108</a>
+<a href='#109' name='109'>109</a>
+<a href='#110' name='110'>110</a>
+<a href='#111' name='111'>111</a>
+<a href='#112' name='112'>112</a>
+<a href='#113' name='113'>113</a>
+<a href='#114' name='114'>114</a>
+<a href='#115' name='115'>115</a>
+<a href='#116' name='116'>116</a>
+<a href='#117' name='117'>117</a>
+<a href='#118' name='118'>118</a>
+<a href='#119' name='119'>119</a>
+<a href='#120' name='120'>120</a>
+<a href='#121' name='121'>121</a>
+<a href='#122' name='122'>122</a>
+<a href='#123' name='123'>123</a>
+<a href='#124' name='124'>124</a>
+<a href='#125' name='125'>125</a>
+<a href='#126' name='126'>126</a>
+<a href='#127' name='127'>127</a>
+<a href='#128' name='128'>128</a>
+<a href='#129' name='129'>129</a>
+<a href='#130' name='130'>130</a>
+<a href='#131' name='131'>131</a>
+<a href='#132' name='132'>132</a>
+<a href='#133' name='133'>133</a>
+<a href='#134' name='134'>134</a>
+<a href='#135' name='135'>135</a>
+<a href='#136' name='136'>136</a>
+<a href='#137' name='137'>137</a>
+<a href='#138' name='138'>138</a>
+<a href='#139' name='139'>139</a>
+<a href='#140' name='140'>140</a>
+<a href='#141' name='141'>141</a>
+<a href='#142' name='142'>142</a>
+<a href='#143' name='143'>143</a>
+<a href='#144' name='144'>144</a>
+<a href='#145' name='145'>145</a>
+<a href='#146' name='146'>146</a>
+<a href='#147' name='147'>147</a>
+<a href='#148' name='148'>148</a>
+<a href='#149' name='149'>149</a>
+<a href='#150' name='150'>150</a>
+<a href='#151' name='151'>151</a>
+<a href='#152' name='152'>152</a>
+<a href='#153' name='153'>153</a>
+<a href='#154' name='154'>154</a>
+<a href='#155' name='155'>155</a>
+<a href='#156' name='156'>156</a>
+<a href='#157' name='157'>157</a>
+<a href='#158' name='158'>158</a>
+<a href='#159' name='159'>159</a>
+<a href='#160' name='160'>160</a>
+<a href='#161' name='161'>161</a>
+<a href='#162' name='162'>162</a>
+<a href='#163' name='163'>163</a>
+<a href='#164' name='164'>164</a>
+<a href='#165' name='165'>165</a>
+<a href='#166' name='166'>166</a>
+<a href='#167' name='167'>167</a>
+<a href='#168' name='168'>168</a>
+<a href='#169' name='169'>169</a>
+<a href='#170' name='170'>170</a>
+<a href='#171' name='171'>171</a>
+<a href='#172' name='172'>172</a>
+<a href='#173' name='173'>173</a>
+<a href='#174' name='174'>174</a>
+<a href='#175' name='175'>175</a>
+</td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>properties</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>trait</span><span> </span><span class='IDENTIFIER'>ReadOnlyProperty</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>trait</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span>
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>set</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>R</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>object</span><span> </span><span class='IDENTIFIER'>Delegates</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>notNull</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>NotNullVar</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>lazy</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadOnlyProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>LazyVal</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='RPAR'>)</span><span>
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>blockingLazy</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadOnlyProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>BlockingLazyVal</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='RPAR'>)</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>observable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initial</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>onChange</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>oldValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>newValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>ObservableProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initial</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>old</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>new</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span>
+            </span><span class='IDENTIFIER'>onChange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>old</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>new</span><span class='RPAR'>)</span><span>
+            </span><span class='hl-keyword'>true</span><span>
+        </span><span class='RBRACE'>}</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>vetoable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initial</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>onChange</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>oldValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>newValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>ObservableProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initial</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>onChange</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>mapVar</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>map</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableMap</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span>
+                         </span><span class='IDENTIFIER'>default</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultValueProvider</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>FixedMapVar</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>map</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>defaultKeyProvider</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>default</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>mapVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>map</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span>
+                         </span><span class='IDENTIFIER'>default</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultValueProvider</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadOnlyProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>FixedMapVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>map</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>defaultKeyProvider</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>default</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>NotNullVar</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>value</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalStateException</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Property </span><span class='LONG_TEMPLATE_ENTRY_START'>${</span><span class='IDENTIFIER'>desc</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='LONG_TEMPLATE_ENTRY_END'>}</span><span class='REGULAR_STRING_PART'> should be initialized before get</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>set</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>ObservableProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initialValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>onChange</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>name</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>jet</span><span class='DOT'>.</span><span class='IDENTIFIER'>PropertyMetadata</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>oldValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>newValue</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Boolean</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>initialValue</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>value</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>set</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>onChange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>value</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
+        </span><span class='RBRACE'>}</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>NULL_VALUE</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Any</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>escape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>value</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='IDENTIFIER'>NULL_VALUE</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>NULL_VALUE</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>value</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>LazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadOnlyProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>escape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>T</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>BlockingLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadOnlyProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>lock</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>lock</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='hl-keyword'>this</span><span>
+    </span><span class='private'>private</span><span> </span><span class='IDENTIFIER'>volatile</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>_v1</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v1</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v1</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>T</span><span>
+        </span><span class='RBRACE'>}</span><span>
+
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>synchronized</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>_v2</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
+            </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v2</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+                </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v2</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>T</span><span>
+            </span><span class='RBRACE'>}</span><span>
+            </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
+                </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>typedValue</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+                </span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>escape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>typedValue</span><span class='RPAR'>)</span><span>
+                </span><span class='IDENTIFIER'>typedValue</span><span>
+            </span><span class='RBRACE'>}</span><span>
+        </span><span class='RBRACE'>}</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>KeyMissingException</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>RuntimeException</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='abstract'>abstract</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>MapVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ReadOnlyProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='protected'>protected</span><span> </span><span class='abstract'>abstract</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span>
+    </span><span class='protected'>protected</span><span> </span><span class='abstract'>abstract</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>key</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>K</span><span>
+
+    </span><span class='protected'>protected</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>default</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>V</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>KeyMissingException</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Key </span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>desc</span><span class='REGULAR_STRING_PART'> is missing in </span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>ref</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>V</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>map</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='RPAR'>)</span><span>
+        </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>key</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>key</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='EXCL'>!</span><span class='IDENTIFIER'>map</span><span class='DOT'>.</span><span class='IDENTIFIER'>containsKey</span><span class='LPAR'>(</span><span class='IDENTIFIER'>key</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>default</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
+
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>map</span><span class='LBRACKET'>[</span><span class='IDENTIFIER'>key</span><span class='RBRACKET'>]</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>V</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='abstract'>abstract</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>MapVar</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MapVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>ReadWriteProperty</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='protected'>protected</span><span> </span><span class='abstract'>abstract</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableMap</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>set</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>V</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>map</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='RPAR'>)</span><span>
+        </span><span class='IDENTIFIER'>map</span><span class='DOT'>.</span><span class='IDENTIFIER'>put</span><span class='LPAR'>(</span><span class='IDENTIFIER'>key</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>defaultKeyProvider</span><span class='COLON'>:</span><span class='LPAR'>(</span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='EQ'>=</span><span> </span><span class='LBRACE'>{</span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>name</span><span class='RBRACE'>}</span><span>
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>defaultValueProvider</span><span class='COLON'>:</span><span class='LPAR'>(</span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Nothing</span><span> </span><span class='EQ'>=</span><span> </span><span class='LBRACE'>{</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>key</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>KeyMissingException</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>key</span><span class='REGULAR_STRING_PART'> is missing from </span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>thisRef</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>FixedMapVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='out'>out</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>map</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span>
+                                              </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>key</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span>
+                                              </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>default</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>key</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>K</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>V</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultValueProvider</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MapVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='protected'>protected</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>map</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='protected'>protected</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>key</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>K</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>key</span><span class='RPAR'>)</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='protected'>protected</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>default</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>V</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>default</span><span class='RPAR'>)</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>key</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>FixedMapVar</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>map</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableMap</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span>
+                                          </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>key</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span>
+                                          </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>default</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>key</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>K</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>V</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>defaultValueProvider</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MapVar</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>V</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='protected'>protected</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>map</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>MutableMap</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>K</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>map</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='protected'>protected</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>key</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>K</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>key</span><span class='RPAR'>)</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+
+    </span><span class='protected'>protected</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>default</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>V</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>default</span><span class='RPAR'>)</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ref</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>key</span><span class='LPAR'>(</span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+</span></td></tr></table></body></html>
