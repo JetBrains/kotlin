@@ -15,6 +15,11 @@
     <servers>
         <server>
             <id>jetbrains-kotlin</id>
+            <username>tc-kotlin</username>
+            <password>${tc-kotlin.password}</password>
+        </server>
+        <server>
+            <id>jetbrains-kotlin-github</id>
             <password>${KOTLIN_GITHUB_OAUTH_TOKEN}</password>
         </server>
     </servers>

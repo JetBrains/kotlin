@@ -90,7 +90,7 @@
                 <version>0.8</version>
                 <configuration>
                     <message>Update Kotlin API Docs (build ${build.number})</message>
-                    <server>jetbrains-kotlin</server>
+                    <server>jetbrains-kotlin-github</server>
                 </configuration>
                 <executions>
                     <execution>
