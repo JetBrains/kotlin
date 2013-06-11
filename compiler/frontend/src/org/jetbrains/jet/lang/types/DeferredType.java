@@ -96,13 +96,7 @@ public class DeferredType implements JetType {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        JetType actualType = getActualType();
-        if (actualType == obj) return true;
-
-        if (!(obj instanceof JetType)) return false;
-
-        return TypeUtils.equalTypes(actualType, (JetType) obj);
+        return getActualType().equals(obj);
     }
 
     @Override
