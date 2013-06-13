@@ -135,11 +135,6 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/samAdapters"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
-        @TestMetadata("cantCallInherited.kt")
-        public void testCantCallInherited() throws Exception {
-            doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/cantCallInherited.kt");
-        }
-        
         @TestMetadata("comparator.kt")
         public void testComparator() throws Exception {
             doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/comparator.kt");
@@ -153,6 +148,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("fileFilter.kt")
         public void testFileFilter() throws Exception {
             doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/fileFilter.kt");
+        }
+        
+        @TestMetadata("inheritedSimple.kt")
+        public void testInheritedSimple() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/inheritedSimple.kt");
         }
         
         @TestMetadata("nonLiteralAndLiteralRunnable.kt")
