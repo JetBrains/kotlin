@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -45,6 +46,9 @@ public class BuiltInsSerializer {
         FqName fqName = FqName.topLevel(Name.identifier(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING));
         NamespaceDescriptor namespace = module.getNamespace(fqName);
         assert namespace != null : "No built-ins namespace: " + fqName;
+
+        DescriptorValidator.validate(namespace);
+
         List<DeclarationDescriptor> allDescriptors = DescriptorSerializer.sort(namespace.getMemberScope().getAllDescriptors());
 
         final File destDir = new File(DEST_DIR);
