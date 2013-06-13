@@ -277,6 +277,8 @@ public class NamespaceCodegen extends MemberCodegen {
             substringTo = name.length();
         }
 
+        // Conversion to system-dependent name seems to be unnecessary, but it's hard to check now:
+        // it was introduced when fixing KT-2839, which appeared again (KT-3639).
         String pathHashCode = Integer.toHexString(FileUtil.toSystemDependentName(file.getVirtualFile().getPath()).hashCode());
 
         // path hashCode to prevent same name / different path collision
