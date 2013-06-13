@@ -100,6 +100,12 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         @NotNull
         @Override
+        public List<AnnotationDescriptor> loadSetterAnnotations(@NotNull ProtoBuf.Callable callableProto) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
         public List<AnnotationDescriptor> loadValueParameterAnnotations(
                 @NotNull ProtoBuf.Callable.ValueParameter parameterProto
         ) {

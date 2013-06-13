@@ -147,15 +147,23 @@ message Callable {
      Visibility
      Modality
      has_annotations
-     fun/val/var/constructor
-     Kind
+     CallableKind
+     MemberKind
      inline
-     setter::Modality
-     setter::Visibility
-     setter::has_annotations
+     hasGetter
+     hasSetter
    */
   optional int32 flags = 1;
   optional string extra_visibility = 2; // for things like java-specific visibilities
+
+    /*
+     isNotDefault
+     Visibility
+     Modality
+     has_annotations
+   */
+  optional int32 getterFlags = 9 /* absent => same as property */;
+  optional int32 setterFlags = 10 /* absent => same as property */;
 
   repeated TypeParameter typeParameters = 4;
 

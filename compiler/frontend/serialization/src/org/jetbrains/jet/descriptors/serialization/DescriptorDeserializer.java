@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.ArrayList;
@@ -118,6 +119,44 @@ public class DescriptorDeserializer {
                 getExpectedThisObject(),
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null)
         );
+
+        PropertyGetterDescriptorImpl getter = null;
+        PropertySetterDescriptorImpl setter = null;
+
+        if (Flags.HAS_GETTER.get(flags)) {
+            int getterFlags = proto.getGetterFlags();
+            Boolean isNotDefault = proto.hasGetterFlags() || Flags.IS_NOT_DEFAULT.get(getterFlags);
+            if (!isNotDefault) {
+                getter = DescriptorResolver.createDefaultGetter(property);
+            }
+            else {
+                getter = new PropertyGetterDescriptorImpl(
+                        property, Collections.<AnnotationDescriptor>emptyList(),
+                        modality(Flags.MODALITY.get(getterFlags)), visibility(Flags.VISIBILITY.get(getterFlags)),
+                        isNotDefault, !isNotDefault, property.getKind()
+                );
+            }
+            getter.initialize(property.getReturnType());
+        }
+
+        if (Flags.HAS_SETTER.get(flags)) {
+            int setterFlags = proto.getSetterFlags();
+            Boolean isNotDefault = proto.hasSetterFlags() || Flags.IS_NOT_DEFAULT.get(setterFlags);
+            if (!isNotDefault) {
+                setter = DescriptorResolver.createDefaultSetter(property);
+            }
+            else {
+                setter = new PropertySetterDescriptorImpl(
+                        property, getSetterAnnotations(proto, setterFlags),
+                        modality(Flags.MODALITY.get(setterFlags)), visibility(Flags.VISIBILITY.get(setterFlags)),
+                        isNotDefault, !isNotDefault, property.getKind()
+                );
+                setter.initializeDefault();
+            }
+        }
+
+        property.initialize(getter, setter);
+
         return property;
     }
 
@@ -175,6 +214,11 @@ public class DescriptorDeserializer {
         return Flags.HAS_ANNOTATIONS.get(proto.getFlags())
                ? annotationDeserializer.loadCallableAnnotations(proto)
                : Collections.<AnnotationDescriptor>emptyList();
+    }
+
+    private List<AnnotationDescriptor> getSetterAnnotations(Callable proto, int setterFlags) {
+        return Flags.HAS_ANNOTATIONS.get(setterFlags) ? annotationDeserializer.loadSetterAnnotations(proto) : Collections
+                .<AnnotationDescriptor>emptyList();
     }
 
     private static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {

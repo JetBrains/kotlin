@@ -132,18 +132,49 @@ public class DescriptorSerializer {
     public ProtoBuf.Callable.Builder callableProto(@NotNull CallableMemberDescriptor descriptor) {
         ProtoBuf.Callable.Builder builder = ProtoBuf.Callable.newBuilder();
 
-        // TODO setter flags
-        // TODO setter annotations
-        builder.setFlags(Flags.getCallableFlags(hasAnnotations(descriptor), descriptor.getVisibility(),
-                                                descriptor.getModality(),
-                                                descriptor.getKind(),
-                                                callableKind(descriptor),
-                                                descriptor instanceof SimpleFunctionDescriptor &&
-                                                ((SimpleFunctionDescriptor) descriptor).isInline())
-        );
-        //TODO builder.setExtraVisibility()
+        boolean hasGetter = false;
+        boolean hasSetter = false;
+        if (descriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-        //TODO builder.addAnnotations()
+            int propertyFlags = Flags.getAccessorFlags(
+                    hasAnnotations(propertyDescriptor),
+                    propertyDescriptor.getVisibility(),
+                    propertyDescriptor.getModality(),
+                    true
+            );
+
+            PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+            if (getter != null) {
+                hasGetter = true;
+                int accessorFlags = getAccessorFlags(getter);
+                if (accessorFlags != propertyFlags) {
+                    builder.setGetterFlags(accessorFlags);
+                }
+            }
+
+            PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+            if (setter != null) {
+                hasGetter = true;
+                int accessorFlags = getAccessorFlags(setter);
+                if (accessorFlags != propertyFlags) {
+                    builder.setSetterFlags(accessorFlags);
+                }
+            }
+        }
+
+        builder.setFlags(Flags.getCallableFlags(
+                hasAnnotations(descriptor),
+                descriptor.getVisibility(),
+                descriptor.getModality(),
+                descriptor.getKind(),
+                callableKind(descriptor),
+                descriptor instanceof SimpleFunctionDescriptor &&
+                ((SimpleFunctionDescriptor) descriptor).isInline(),
+                hasGetter,
+                hasSetter
+        ));
+        //TODO builder.setExtraVisibility()
 
         DescriptorSerializer local = createChildSerializer();
 
@@ -165,6 +196,15 @@ public class DescriptorSerializer {
         builder.setReturnType(local.type(descriptor.getReturnType()));
 
         return builder;
+    }
+
+    private static int getAccessorFlags(@NotNull PropertyAccessorDescriptor accessor) {
+        return Flags.getAccessorFlags(
+                hasAnnotations(accessor),
+                accessor.getVisibility(),
+                accessor.getModality(),
+                !accessor.isDefault()
+        );
     }
 
     private static ProtoBuf.Callable.CallableKind callableKind(CallableMemberDescriptor descriptor) {

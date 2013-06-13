@@ -4675,6 +4675,14 @@ public final class ProtoBuf {
     boolean hasExtraVisibility();
     String getExtraVisibility();
     
+    // optional int32 getterFlags = 9;
+    boolean hasGetterFlags();
+    int getGetterFlags();
+    
+    // optional int32 setterFlags = 10;
+    boolean hasSetterFlags();
+    int getSetterFlags();
+    
     // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 4;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> 
         getTypeParametersList();
@@ -5396,6 +5404,26 @@ public final class ProtoBuf {
       }
     }
     
+    // optional int32 getterFlags = 9;
+    public static final int GETTERFLAGS_FIELD_NUMBER = 9;
+    private int getterFlags_;
+    public boolean hasGetterFlags() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public int getGetterFlags() {
+      return getterFlags_;
+    }
+    
+    // optional int32 setterFlags = 10;
+    public static final int SETTERFLAGS_FIELD_NUMBER = 10;
+    private int setterFlags_;
+    public boolean hasSetterFlags() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public int getSetterFlags() {
+      return setterFlags_;
+    }
+    
     // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 4;
     public static final int TYPEPARAMETERS_FIELD_NUMBER = 4;
     private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameters_;
@@ -5421,7 +5449,7 @@ public final class ProtoBuf {
     public static final int RECEIVERTYPE_FIELD_NUMBER = 5;
     private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type receiverType_;
     public boolean hasReceiverType() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getReceiverType() {
       return receiverType_;
@@ -5431,7 +5459,7 @@ public final class ProtoBuf {
     public static final int NAME_FIELD_NUMBER = 6;
     private int name_;
     public boolean hasName() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+      return ((bitField0_ & 0x00000020) == 0x00000020);
     }
     public int getName() {
       return name_;
@@ -5462,7 +5490,7 @@ public final class ProtoBuf {
     public static final int RETURNTYPE_FIELD_NUMBER = 8;
     private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type returnType_;
     public boolean hasReturnType() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getReturnType() {
       return returnType_;
@@ -5471,6 +5499,8 @@ public final class ProtoBuf {
     private void initFields() {
       flags_ = 0;
       extraVisibility_ = "";
+      getterFlags_ = 0;
+      setterFlags_ = 0;
       typeParameters_ = java.util.Collections.emptyList();
       receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
       name_ = 0;
@@ -5528,17 +5558,23 @@ public final class ProtoBuf {
       for (int i = 0; i < typeParameters_.size(); i++) {
         output.writeMessage(4, typeParameters_.get(i));
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeMessage(5, receiverType_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeInt32(6, name_);
       }
       for (int i = 0; i < valueParameters_.size(); i++) {
         output.writeMessage(7, valueParameters_.get(i));
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeMessage(8, returnType_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(9, getterFlags_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeInt32(10, setterFlags_);
       }
     }
     
@@ -5560,11 +5596,11 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, typeParameters_.get(i));
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, receiverType_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, name_);
       }
@@ -5572,9 +5608,17 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(7, valueParameters_.get(i));
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(8, returnType_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, getterFlags_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(10, setterFlags_);
       }
       memoizedSerializedSize = size;
       return size;
@@ -5682,16 +5726,20 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         extraVisibility_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
-        typeParameters_ = java.util.Collections.emptyList();
+        getterFlags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
-        receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
+        setterFlags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000008);
-        name_ = 0;
+        typeParameters_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
-        valueParameters_ = java.util.Collections.emptyList();
+        receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000020);
-        returnType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
+        name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
+        valueParameters_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        returnType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
       
@@ -5733,26 +5781,34 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.extraVisibility_ = extraVisibility_;
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          typeParameters_ = java.util.Collections.unmodifiableList(typeParameters_);
-          bitField0_ = (bitField0_ & ~0x00000004);
-        }
-        result.typeParameters_ = typeParameters_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
-        result.receiverType_ = receiverType_;
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+        result.getterFlags_ = getterFlags_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000008;
         }
+        result.setterFlags_ = setterFlags_;
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          typeParameters_ = java.util.Collections.unmodifiableList(typeParameters_);
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.typeParameters_ = typeParameters_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.receiverType_ = receiverType_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000020;
+        }
         result.name_ = name_;
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
           valueParameters_ = java.util.Collections.unmodifiableList(valueParameters_);
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000080);
         }
         result.valueParameters_ = valueParameters_;
-        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-          to_bitField0_ |= 0x00000010;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+          to_bitField0_ |= 0x00000040;
         }
         result.returnType_ = returnType_;
         result.bitField0_ = to_bitField0_;
@@ -5767,10 +5823,16 @@ public final class ProtoBuf {
         if (other.hasExtraVisibility()) {
           setExtraVisibility(other.getExtraVisibility());
         }
+        if (other.hasGetterFlags()) {
+          setGetterFlags(other.getGetterFlags());
+        }
+        if (other.hasSetterFlags()) {
+          setSetterFlags(other.getSetterFlags());
+        }
         if (!other.typeParameters_.isEmpty()) {
           if (typeParameters_.isEmpty()) {
             typeParameters_ = other.typeParameters_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000010);
           } else {
             ensureTypeParametersIsMutable();
             typeParameters_.addAll(other.typeParameters_);
@@ -5786,7 +5848,7 @@ public final class ProtoBuf {
         if (!other.valueParameters_.isEmpty()) {
           if (valueParameters_.isEmpty()) {
             valueParameters_ = other.valueParameters_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000080);
           } else {
             ensureValueParametersIsMutable();
             valueParameters_.addAll(other.valueParameters_);
@@ -5876,7 +5938,7 @@ public final class ProtoBuf {
               break;
             }
             case 48: {
-              bitField0_ |= 0x00000010;
+              bitField0_ |= 0x00000040;
               name_ = input.readInt32();
               break;
             }
@@ -5893,6 +5955,16 @@ public final class ProtoBuf {
               }
               input.readMessage(subBuilder, extensionRegistry);
               setReturnType(subBuilder.buildPartial());
+              break;
+            }
+            case 72: {
+              bitField0_ |= 0x00000004;
+              getterFlags_ = input.readInt32();
+              break;
+            }
+            case 80: {
+              bitField0_ |= 0x00000008;
+              setterFlags_ = input.readInt32();
               break;
             }
           }
@@ -5958,13 +6030,55 @@ public final class ProtoBuf {
         
       }
       
+      // optional int32 getterFlags = 9;
+      private int getterFlags_ ;
+      public boolean hasGetterFlags() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public int getGetterFlags() {
+        return getterFlags_;
+      }
+      public Builder setGetterFlags(int value) {
+        bitField0_ |= 0x00000004;
+        getterFlags_ = value;
+        
+        return this;
+      }
+      public Builder clearGetterFlags() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        getterFlags_ = 0;
+        
+        return this;
+      }
+      
+      // optional int32 setterFlags = 10;
+      private int setterFlags_ ;
+      public boolean hasSetterFlags() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public int getSetterFlags() {
+        return setterFlags_;
+      }
+      public Builder setSetterFlags(int value) {
+        bitField0_ |= 0x00000008;
+        setterFlags_ = value;
+        
+        return this;
+      }
+      public Builder clearSetterFlags() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        setterFlags_ = 0;
+        
+        return this;
+      }
+      
       // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 4;
       private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameters_ =
         java.util.Collections.emptyList();
       private void ensureTypeParametersIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
           typeParameters_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter>(typeParameters_);
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000010;
          }
       }
       
@@ -6036,7 +6150,7 @@ public final class ProtoBuf {
       }
       public Builder clearTypeParameters() {
         typeParameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000010);
         
         return this;
       }
@@ -6050,7 +6164,7 @@ public final class ProtoBuf {
       // optional .org.jetbrains.jet.descriptors.serialization.Type receiverType = 5;
       private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
       public boolean hasReceiverType() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
+        return ((bitField0_ & 0x00000020) == 0x00000020);
       }
       public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getReceiverType() {
         return receiverType_;
@@ -6061,18 +6175,18 @@ public final class ProtoBuf {
         }
         receiverType_ = value;
         
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000020;
         return this;
       }
       public Builder setReceiverType(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
         receiverType_ = builderForValue.build();
         
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000020;
         return this;
       }
       public Builder mergeReceiverType(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
-        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+        if (((bitField0_ & 0x00000020) == 0x00000020) &&
             receiverType_ != org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance()) {
           receiverType_ =
             org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.newBuilder(receiverType_).mergeFrom(value).buildPartial();
@@ -6080,32 +6194,32 @@ public final class ProtoBuf {
           receiverType_ = value;
         }
         
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000020;
         return this;
       }
       public Builder clearReceiverType() {
         receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
         
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
       
       // required int32 name = 6;
       private int name_ ;
       public boolean hasName() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
+        return ((bitField0_ & 0x00000040) == 0x00000040);
       }
       public int getName() {
         return name_;
       }
       public Builder setName(int value) {
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000040;
         name_ = value;
         
         return this;
       }
       public Builder clearName() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000040);
         name_ = 0;
         
         return this;
@@ -6115,9 +6229,9 @@ public final class ProtoBuf {
       private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> valueParameters_ =
         java.util.Collections.emptyList();
       private void ensureValueParametersIsMutable() {
-        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
           valueParameters_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter>(valueParameters_);
-          bitField0_ |= 0x00000020;
+          bitField0_ |= 0x00000080;
          }
       }
       
@@ -6189,7 +6303,7 @@ public final class ProtoBuf {
       }
       public Builder clearValueParameters() {
         valueParameters_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000080);
         
         return this;
       }
@@ -6203,7 +6317,7 @@ public final class ProtoBuf {
       // required .org.jetbrains.jet.descriptors.serialization.Type returnType = 8;
       private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type returnType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
       public boolean hasReturnType() {
-        return ((bitField0_ & 0x00000040) == 0x00000040);
+        return ((bitField0_ & 0x00000100) == 0x00000100);
       }
       public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getReturnType() {
         return returnType_;
@@ -6214,18 +6328,18 @@ public final class ProtoBuf {
         }
         returnType_ = value;
         
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000100;
         return this;
       }
       public Builder setReturnType(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
         returnType_ = builderForValue.build();
         
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000100;
         return this;
       }
       public Builder mergeReturnType(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
-        if (((bitField0_ & 0x00000040) == 0x00000040) &&
+        if (((bitField0_ & 0x00000100) == 0x00000100) &&
             returnType_ != org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance()) {
           returnType_ =
             org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.newBuilder(returnType_).mergeFrom(value).buildPartial();
@@ -6233,13 +6347,13 @@ public final class ProtoBuf {
           returnType_ = value;
         }
         
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000100;
         return this;
       }
       public Builder clearReturnType() {
         returnType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
         
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
       

@@ -29,10 +29,17 @@ public class Flags {
     public static final FlagField<ProtoBuf.Callable.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND,
                                                                                               ProtoBuf.Callable.MemberKind.values());
     public static final FlagField<Boolean> INLINE = FlagField.booleanAfter(MEMBER_KIND);
+    public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(INLINE);
+    public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
 
     // Parameters
 
     public static final FlagField<Boolean> DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
+
+    // Accessors
+
+    // It's important that this flag is negated: "is NOT default" instead of "is default"
+    public static final FlagField<Boolean> IS_NOT_DEFAULT = FlagField.booleanAfter(MODALITY);
 
     // ---
 
@@ -86,7 +93,9 @@ public class Flags {
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
             @NotNull ProtoBuf.Callable.CallableKind callableKind,
-            boolean inline
+            boolean inline,
+            boolean hasGetter,
+            boolean hasSetter
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -94,6 +103,21 @@ public class Flags {
                | MEMBER_KIND.toFlags(memberKind(memberKind))
                | CALLABLE_KIND.toFlags(callableKind)
                | INLINE.toFlags(inline)
+               | HAS_GETTER.toFlags(hasGetter)
+               | HAS_SETTER.toFlags(hasSetter)
+               ;
+    }
+
+    public static int getAccessorFlags(
+            boolean hasAnnotations,
+            @NotNull Visibility visibility,
+            @NotNull Modality modality,
+            boolean isNotDefault
+    ) {
+        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
+               | MODALITY.toFlags(modality(modality))
+               | VISIBILITY.toFlags(visibility(visibility))
+               | IS_NOT_DEFAULT.toFlags(isNotDefault)
                ;
     }
 

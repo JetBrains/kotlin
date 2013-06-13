@@ -26,6 +26,12 @@ public interface AnnotationDeserializer {
 
         @NotNull
         @Override
+        public List<AnnotationDescriptor> loadSetterAnnotations(@NotNull ProtoBuf.Callable callableProto) {
+            return notSupported();
+        }
+
+        @NotNull
+        @Override
         public List<AnnotationDescriptor> loadValueParameterAnnotations(
                 @NotNull ProtoBuf.Callable.ValueParameter parameterProto
         ) {
@@ -49,4 +55,7 @@ public interface AnnotationDeserializer {
     List<AnnotationDescriptor> loadValueParameterAnnotations(
             @NotNull ProtoBuf.Callable.ValueParameter parameterProto
     );
+
+    @NotNull
+    List<AnnotationDescriptor> loadSetterAnnotations(@NotNull ProtoBuf.Callable callableProto);
 }
