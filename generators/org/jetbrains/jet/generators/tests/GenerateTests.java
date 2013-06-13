@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.AbstractCodeTransformationTest;
+import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
@@ -330,25 +330,25 @@ public class GenerateTests {
                 "idea/tests/",
                 "CodeTransformationsTestGenerated",
                 AbstractCodeTransformationTest.class,
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToAssignment", "doTestFoldIfToAssignment"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturn", "doTestFoldIfToReturn"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturnAsymmetrically", "doTestFoldIfToReturnAsymmetrically"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToAssignment", "doTestFoldWhenToAssignment"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToReturn", "doTestFoldWhenToReturn"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/propertyToIf", "doTestUnfoldPropertyToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/propertyToWhen", "doTestUnfoldPropertyToWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/whenToIf", "doTestWhenToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/when/flatten", "doTestFlattenWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
-                testModel("idea/testData/codeInsight/codeTransformations/declarations/split", "doTestSplitProperty"),
-                testModel("idea/testData/codeInsight/codeTransformations/declarations/join", "doTestJoinProperty"),
-                testModel("idea/testData/codeInsight/codeTransformations/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
+                testModel("idea/testData/intentions/branched/folding/ifToAssignment", "doTestFoldIfToAssignment"),
+                testModel("idea/testData/intentions/branched/folding/ifToReturn", "doTestFoldIfToReturn"),
+                testModel("idea/testData/intentions/branched/folding/ifToReturnAsymmetrically", "doTestFoldIfToReturnAsymmetrically"),
+                testModel("idea/testData/intentions/branched/folding/whenToAssignment", "doTestFoldWhenToAssignment"),
+                testModel("idea/testData/intentions/branched/folding/whenToReturn", "doTestFoldWhenToReturn"),
+                testModel("idea/testData/intentions/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
+                testModel("idea/testData/intentions/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
+                testModel("idea/testData/intentions/branched/unfolding/propertyToIf", "doTestUnfoldPropertyToIf"),
+                testModel("idea/testData/intentions/branched/unfolding/propertyToWhen", "doTestUnfoldPropertyToWhen"),
+                testModel("idea/testData/intentions/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
+                testModel("idea/testData/intentions/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen"),
+                testModel("idea/testData/intentions/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
+                testModel("idea/testData/intentions/branched/ifWhen/whenToIf", "doTestWhenToIf"),
+                testModel("idea/testData/intentions/branched/when/flatten", "doTestFlattenWhen"),
+                testModel("idea/testData/intentions/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
+                testModel("idea/testData/intentions/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
+                testModel("idea/testData/intentions/declarations/split", "doTestSplitProperty"),
+                testModel("idea/testData/intentions/declarations/join", "doTestJoinProperty"),
+                testModel("idea/testData/intentions/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
         );
 
         generateTest(
