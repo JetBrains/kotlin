@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -47,9 +48,9 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 public class SamWrapperCodegen extends GenerationStateAware {
     private static final String FUNCTION_FIELD_NAME = "function";
 
-    @NotNull private final ClassDescriptor samInterface;
+    @NotNull private final ClassDescriptorFromJvmBytecode samInterface;
 
-    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull ClassDescriptor samInterface) {
+    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull ClassDescriptorFromJvmBytecode samInterface) {
         super(state);
         this.samInterface = samInterface;
     }

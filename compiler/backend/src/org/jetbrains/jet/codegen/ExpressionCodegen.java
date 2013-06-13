@@ -54,6 +54,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
@@ -1883,7 +1884,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
             if (samInterface != null) {
-                return invokeSamConstructor(expression, resolvedCall, (SimpleFunctionDescriptor) funDescriptor, samInterface);
+                return invokeSamConstructor(expression, resolvedCall, (SimpleFunctionDescriptor) funDescriptor,
+                                            (ClassDescriptorFromJvmBytecode) samInterface);
             }
         }
 
@@ -1914,7 +1916,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetCallExpression expression,
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
             SimpleFunctionDescriptor funDescriptor,
-            ClassDescriptor samInterface
+            ClassDescriptorFromJvmBytecode samInterface
     ) {
         ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
         if (!(argument instanceof ExpressionValueArgument)) {
