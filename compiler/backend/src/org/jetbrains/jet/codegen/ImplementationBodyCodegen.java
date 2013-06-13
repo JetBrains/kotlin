@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -66,6 +67,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isKindOf;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
@@ -1322,7 +1324,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
 
-    private void generateDelegationToTraitImpl(@NotNull FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
+    private void generateDelegationToTraitImpl(final @NotNull FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return;
@@ -1339,20 +1341,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Method methodToGenerate = delegateInfo.methodToGenerate;
         Method methodInTrait = delegateInfo.methodInTrait;
 
-        MethodVisitor mv = v.newMethod(myClass, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null, null);
+        PsiElement origin = descriptorToDeclaration(bindingContext, fun);
+        MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null, null);
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(fun);
-
-        writeAnnotationForDelegateToTraitImpl(fun, inheritedFun, mv);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            writeAnnotationForDelegateToTraitImpl(fun, inheritedFun, mv);
+
             Type returnType = methodToGenerate.getReturnType();
 
             mv.visitCode();
             FrameMap frameMap = context.prepareFrame(typeMapper);
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context, state);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context.intoFunction(inheritedFun), state);
             codegen.generateThisOrOuter(descriptor, false);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?
 
             Type[] argTypes = methodToGenerate.getArgumentTypes();

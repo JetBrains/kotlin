@@ -28,7 +28,9 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -38,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -159,7 +162,7 @@ public class NamespaceCodegen extends MemberCodegen {
                 }
             }
 
-            generateStaticInitializers(builder, file);
+            generateStaticInitializers(descriptor, builder, file);
 
             builder.done();
         }
@@ -203,16 +206,24 @@ public class NamespaceCodegen extends MemberCodegen {
         }
     }
 
-    private void generateStaticInitializers(@NotNull ClassBuilder builder, @NotNull JetFile file) {
+    private void generateStaticInitializers(NamespaceDescriptor descriptor, @NotNull ClassBuilder builder, @NotNull JetFile file) {
         List<JetProperty> properties = collectPropertiesToInitialize(file);
         if (properties.isEmpty()) return;
 
-        MethodVisitor mv = builder.newMethod(file, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
+        MethodVisitor mv = builder.newMethod(file, ACC_STATIC, "<clinit>", "()V", null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
             FrameMap frameMap = new FrameMap();
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC, state);
+
+            SimpleFunctionDescriptorImpl clInit =
+                    new SimpleFunctionDescriptorImpl(descriptor, Collections.<AnnotationDescriptor>emptyList(),
+                                                     Name.special("<clinit>"),
+                                                     CallableMemberDescriptor.Kind.SYNTHESIZED);
+            clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
+
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC.intoFunction(clInit), state);
 
             for (JetDeclaration declaration : properties) {
                 ImplementationBodyCodegen.

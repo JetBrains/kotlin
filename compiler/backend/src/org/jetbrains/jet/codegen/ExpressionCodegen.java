@@ -95,7 +95,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private final Type returnType;
 
     private final BindingContext bindingContext;
-    final CodegenContext context;
+    final MethodContext context;
     private final CodegenStatementVisitor statementVisitor;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
@@ -155,11 +155,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
 
     public ExpressionCodegen(
-            MethodVisitor v,
-            FrameMap myMap,
-            Type returnType,
-            CodegenContext context,
-            GenerationState state
+            @NotNull MethodVisitor v,
+            @NotNull FrameMap myMap,
+            @NotNull Type returnType,
+            @NotNull MethodContext context,
+            @NotNull GenerationState state
     ) {
         this.myFrameMap = myMap;
         this.typeMapper = state.getTypeMapper();

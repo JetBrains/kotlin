@@ -22,13 +22,14 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
     private MethodVisitor clInitMethod;
 
-    private  ExpressionCodegen clInitCodegen;
+    private ExpressionCodegen clInitCodegen;
 
     protected ClassBodyCodegen(
             @NotNull JetClassOrObject aClass,
@@ -176,7 +177,14 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             if (clInitCodegen == null) {
                 MethodVisitor method = createOrGetClInitMethod();
                 method.visitCode();
-                clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context, state);
+                SimpleFunctionDescriptorImpl clInit =
+                        new SimpleFunctionDescriptorImpl(descriptor, Collections.<AnnotationDescriptor>emptyList(),
+                                                         Name.special("<clinit>"),
+                                                         CallableMemberDescriptor.Kind.SYNTHESIZED);
+                clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+                                  Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
+
+                clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state);
             }
         }
         return clInitCodegen;
