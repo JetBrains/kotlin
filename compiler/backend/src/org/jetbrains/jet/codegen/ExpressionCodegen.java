@@ -51,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
@@ -1569,7 +1570,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetExpression r = getReceiverForSelector(expression);
             boolean isSuper = r instanceof JetSuperExpression;
             propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
-            StackValue.Property iValue =
+            StackValue iValue =
                 intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
@@ -1678,7 +1679,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public StackValue.Property intermediateValueForProperty(
+    public StackValue intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression
@@ -1686,7 +1687,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, MethodKind.GENERAL);
     }
 
-    public StackValue.Property intermediateValueForProperty(
+    public StackValue.StackValueWithSimpleReceiver intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression,
@@ -1754,7 +1755,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         callableSetter = null;
                     }
                     else {
-                        callableSetter = typeMapper.mapToCallableMethod(propertyDescriptor.getSetter(), isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, isInsideClass, isInsideModule, OwnerKind.IMPLEMENTATION);
+                        callableSetter = typeMapper
+                                .mapToCallableMethod(propertyDescriptor.getSetter(), isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind,
+                                                     isInsideClass, isInsideModule, OwnerKind.IMPLEMENTATION);
                     }
                 }
             }
@@ -1765,20 +1768,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         propertyDescriptor = unwrapFakeOverride(propertyDescriptor);
         if (callableMethod == null) {
-            owner = typeMapper.getOwner(isBackingFieldInAnotherClass ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor, context.getContextKind(), isInsideModule);
+            owner = typeMapper.getOwner(isBackingFieldInAnotherClass ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
+                                        context.getContextKind(), isInsideModule);
         }
         else {
             owner = callableMethod.getOwner();
         }
 
-        if (isDelegatedProperty && forceField) {
-            return StackValue.property(propertyDescriptor, owner, typeMapper.mapType(delegateType),
-                                       isStatic, true, callableGetter, callableSetter, state);
+        String name;
+        if (propertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
+            assert backingFieldContext instanceof FieldOwnerContext : "Actual context is " + backingFieldContext + " but should be instance of FieldOwnerContext" ;
+            name = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
+        } else {
+            name = JvmAbi.getDefaultPropertyName(propertyDescriptor.getName(), isDelegatedProperty, propertyDescriptor.getReceiverParameter() != null);
         }
-        else {
-            return StackValue.property(propertyDescriptor, owner, typeMapper.mapType(propertyDescriptor.getOriginal().getType()),
-                                       isStatic, false, callableGetter, callableSetter, state);
-        }
+
+        return StackValue.property(propertyDescriptor, owner,
+                            typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
+                            isStatic, name, callableGetter, callableSetter, state);
+
     }
 
     @Override

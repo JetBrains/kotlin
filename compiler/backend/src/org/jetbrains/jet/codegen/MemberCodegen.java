@@ -20,14 +20,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-
-import java.util.List;
 
 
 public class MemberCodegen extends GenerationStateAware {
@@ -46,7 +45,7 @@ public class MemberCodegen extends GenerationStateAware {
     }
 
     public void genFunctionOrProperty(
-            CodegenContext context,
+            @NotNull FieldOwnerContext context,
             @NotNull JetTypeParameterListOwner functionOrProperty,
             @NotNull ClassBuilder classBuilder
     ) {

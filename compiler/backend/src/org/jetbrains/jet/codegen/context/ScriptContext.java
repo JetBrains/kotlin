@@ -23,7 +23,7 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 
-public class ScriptContext extends CodegenContext {
+public class ScriptContext extends FieldOwnerContext<ClassDescriptor> {
     @NotNull
     private final ScriptDescriptor scriptDescriptor;
 

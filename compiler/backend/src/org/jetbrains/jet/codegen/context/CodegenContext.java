@@ -147,12 +147,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public CodegenContext intoNamespace(@NotNull NamespaceDescriptor descriptor) {
+    public FieldOwnerContext intoNamespace(@NotNull NamespaceDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, OwnerKind.NAMESPACE);
     }
 
     @NotNull
-    public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
+    public FieldOwnerContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 

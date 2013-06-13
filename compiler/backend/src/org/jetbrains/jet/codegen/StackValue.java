@@ -116,10 +116,12 @@ public abstract class StackValue {
         return new Invert(stackValue);
     }
 
+    @NotNull
     public static StackValue arrayElement(Type type, boolean unbox) {
         return new ArrayElement(type, unbox);
     }
 
+    @NotNull
     public static StackValue collectionElement(
             Type type,
             ResolvedCall<FunctionDescriptor> getter,
@@ -135,19 +137,21 @@ public abstract class StackValue {
         return new Field(type, owner, name, isStatic);
     }
 
+    @NotNull
     public static Property property(
-            PropertyDescriptor descriptor,
-            JvmClassName methodOwner,
-            Type type,
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull JvmClassName methodOwner,
+            @NotNull Type type,
             boolean isStatic,
-            boolean isDelegated,
+            @NotNull String name,
             @Nullable CallableMethod getter,
             @Nullable CallableMethod setter,
             GenerationState state
     ) {
-        return new Property(descriptor, methodOwner, getter, setter, isStatic, isDelegated, type, state);
+        return new Property(descriptor, methodOwner, getter, setter, isStatic, name, type, state);
     }
 
+    @NotNull
     public static StackValue expression(Type type, JetExpression expression, ExpressionCodegen generator) {
         return new Expression(type, expression, generator);
     }
@@ -870,12 +874,13 @@ public abstract class StackValue {
         private final PropertyDescriptor descriptor;
         @NotNull
         private final GenerationState state;
-        private final boolean isDelegated;
+
+        private final String name;
 
         public Property(
                 @NotNull PropertyDescriptor descriptor, @NotNull JvmClassName methodOwner,
                 @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStatic,
-                boolean isDelegated, @NotNull Type type, @NotNull GenerationState state
+                @NotNull String name, @NotNull Type type, @NotNull GenerationState state
         ) {
             super(type, isStatic);
             this.methodOwner = methodOwner;
@@ -883,7 +888,7 @@ public abstract class StackValue {
             this.setter = setter;
             this.descriptor = descriptor;
             this.state = state;
-            this.isDelegated = isDelegated;
+            this.name = name;
         }
 
         @Override
@@ -913,7 +918,7 @@ public abstract class StackValue {
         }
 
         private String getPropertyName() {
-            return isDelegated ? JvmAbi.getPropertyDelegateName(descriptor.getName()) : descriptor.getName().asString();
+            return name;
         }
     }
 
@@ -1244,7 +1249,7 @@ public abstract class StackValue {
         }
     }
 
-    private abstract static class StackValueWithSimpleReceiver extends StackValue {
+    public abstract static class StackValueWithSimpleReceiver extends StackValue {
 
         protected final boolean isStatic;
 

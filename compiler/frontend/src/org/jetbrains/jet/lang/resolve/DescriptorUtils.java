@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -585,5 +586,14 @@ public class DescriptorUtils {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
         return (PropertyDescriptor) descriptor;
+    }
+
+
+    @NotNull
+    public static PropertyDescriptor getPropertyDescriptor(@NotNull JetParameter constructorParameter, @NotNull BindingContext bindingContext) {
+        assert constructorParameter.getValOrVarNode() != null;
+        PropertyDescriptor descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, constructorParameter);
+        assert descriptor != null;
+        return descriptor;
     }
 }

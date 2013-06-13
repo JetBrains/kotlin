@@ -471,8 +471,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetParameter parameter : getPrimaryConstructorParameters()) {
             if (parameter.getValOrVarNode() == null) continue;
 
-            PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
-            assert propertyDescriptor != null;
+            PropertyDescriptor propertyDescriptor = DescriptorUtils.getPropertyDescriptor(parameter, bindingContext);
 
             result.add(propertyDescriptor);
         }
@@ -860,7 +859,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
                     InstructionAdapter iv = codegen.v;
                     boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) && !isClassObject(bridge.getContainingDeclaration());
-                    StackValue.Property property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
+                    StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
                     if (!forceField) {
                         iv.load(0, OBJECT_TYPE);
                     }
@@ -879,7 +878,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @Override
                     public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
                         boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) && !isClassObject(bridge.getContainingDeclaration());
-                        StackValue.Property property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
+                        StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
                         InstructionAdapter iv = codegen.v;
 
                         Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
@@ -955,7 +954,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (classObjectPropertiesToCopy != null) {
             for (PropertyDescriptor propertyDescriptor : classObjectPropertiesToCopy) {
 
-                v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, propertyDescriptor.getName().asString(), typeMapper.mapType(propertyDescriptor).getDescriptor(), null, null);
+                v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor), typeMapper.mapType(propertyDescriptor).getDescriptor(), null, null);
 
                 if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                     ExpressionCodegen codegen = createOrGetClInitCodegen();
@@ -1048,7 +1047,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generatePrimaryConstructorImpl(
             @Nullable ConstructorDescriptor constructorDescriptor,
-            @NotNull final ExpressionCodegen codegen,
+            @NotNull ExpressionCodegen codegen,
             @Nullable MutableClosure closure
     ) {
         List<ValueParameterDescriptor> paramDescrs = constructorDescriptor != null
@@ -1096,7 +1095,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type type = typeMapper.mapType(descriptor);
                 iv.load(0, classAsmType);
                 iv.load(codegen.myFrameMap.getIndex(descriptor), type);
-                iv.putfield(classAsmType.getInternalName(), descriptor.getName().asString(), type.getDescriptor());
+                iv.putfield(classAsmType.getInternalName(),
+                            context.getFieldName(DescriptorUtils.getPropertyDescriptor(parameter, bindingContext)),
+                            type.getDescriptor());
             }
             curParam++;
         }
@@ -1609,7 +1610,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         JetType jetType = getPropertyOrDelegateType(bindingContext, property, propertyDescriptor);
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER);
+        StackValue.StackValueWithSimpleReceiver propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER);
 
         if (!propValue.isStatic) {
             codegen.v.load(0, OBJECT_TYPE);

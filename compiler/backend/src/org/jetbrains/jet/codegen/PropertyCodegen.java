@@ -17,15 +17,14 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
@@ -41,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -63,7 +61,7 @@ public class PropertyCodegen extends GenerationStateAware {
     private final ClassBuilder v;
 
     @NotNull
-    private final CodegenContext context;
+    private final FieldOwnerContext context;
 
     @Nullable
     private MemberCodegen classBodyCodegen;
@@ -72,7 +70,7 @@ public class PropertyCodegen extends GenerationStateAware {
     private final OwnerKind kind;
 
     public PropertyCodegen(
-            @NotNull CodegenContext context,
+            @NotNull FieldOwnerContext context,
             @NotNull ClassBuilder v,
             @NotNull FunctionCodegen functionCodegen,
             @Nullable MemberCodegen classBodyCodegen
@@ -145,9 +143,12 @@ public class PropertyCodegen extends GenerationStateAware {
 
         ClassBuilder builder = v;
 
+        FieldOwnerContext backingFieldContext = context;
         if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
             modifiers |= ACC_STATIC | getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
-            builder = getParentBodyCodegen(classBodyCodegen).v;
+            ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
+            builder = codegen.v;
+            backingFieldContext = codegen.context;
         } else {
             if (kind != OwnerKind.NAMESPACE || isDelegate) {
                 modifiers |= ACC_PRIVATE;
@@ -159,7 +160,7 @@ public class PropertyCodegen extends GenerationStateAware {
             parentBodyCodegen.addClassObjectPropertyToCopy(propertyDescriptor);
         }
 
-        String name = isDelegate ? JvmAbi.getPropertyDelegateName(propertyDescriptor.getName()) : propertyDescriptor.getName().asString();
+        String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
 
         return builder.newField(element, modifiers, name, type.getDescriptor(),
                                 null, defaultValue);
@@ -333,7 +334,7 @@ public class PropertyCodegen extends GenerationStateAware {
                 iv.load(0, OBJECT_TYPE);
             }
 
-            StackValue.Property delegatedProperty = codegen.intermediateValueForProperty(property, true, null);
+            StackValue delegatedProperty = codegen.intermediateValueForProperty(property, true, null);
             StackValue lastValue = codegen.invokeFunction(call, delegatedProperty, resolvedCall);
 
             if (lastValue.type != Type.VOID_TYPE) {

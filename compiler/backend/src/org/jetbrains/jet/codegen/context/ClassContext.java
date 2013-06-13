@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 
-public class ClassContext extends CodegenContext<ClassDescriptor> {
+public class ClassContext extends FieldOwnerContext<ClassDescriptor> {
 
     public ClassContext(
             @NotNull JetTypeMapper typeMapper,

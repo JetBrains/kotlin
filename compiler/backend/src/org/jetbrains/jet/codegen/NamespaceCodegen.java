@@ -27,6 +27,7 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -147,22 +148,20 @@ public class NamespaceCodegen extends MemberCodegen {
             );
             builder.visitSource(file.getName(), null);
 
+            FieldOwnerContext nameSpaceContext =
+                    CodegenContext.STATIC.intoNamespace(descriptor);
+
+            FieldOwnerContext nameSpacePart =
+                    CodegenContext.STATIC.intoNamespacePart(className, descriptor);
+
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                    {
-                        CodegenContext context =
-                                CodegenContext.STATIC.intoNamespace(descriptor);
-                        genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, builder);
-                    }
-                    {
-                        CodegenContext context =
-                                CodegenContext.STATIC.intoNamespacePart(className, descriptor);
-                        genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
-                    }
+                    genFunctionOrProperty(nameSpaceContext, (JetTypeParameterListOwner) declaration, builder);
+                    genFunctionOrProperty(nameSpacePart, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                 }
             }
 
-            generateStaticInitializers(descriptor, builder, file);
+            generateStaticInitializers(descriptor, builder, file, nameSpaceContext);
 
             builder.done();
         }
@@ -206,7 +205,12 @@ public class NamespaceCodegen extends MemberCodegen {
         }
     }
 
-    private void generateStaticInitializers(NamespaceDescriptor descriptor, @NotNull ClassBuilder builder, @NotNull JetFile file) {
+    private void generateStaticInitializers(
+            NamespaceDescriptor descriptor,
+            @NotNull ClassBuilder builder,
+            @NotNull JetFile file,
+            @NotNull FieldOwnerContext context
+    ) {
         List<JetProperty> properties = collectPropertiesToInitialize(file);
         if (properties.isEmpty()) return;
 
@@ -223,7 +227,7 @@ public class NamespaceCodegen extends MemberCodegen {
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                               Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
 
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC.intoFunction(clInit), state);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context.intoFunction(clInit), state);
 
             for (JetDeclaration declaration : properties) {
                 ImplementationBodyCodegen.
