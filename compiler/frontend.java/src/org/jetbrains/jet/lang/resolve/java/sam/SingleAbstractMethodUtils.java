@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -45,8 +46,8 @@ public class SingleAbstractMethodUtils {
         List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
         for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor &&
-                ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT &&
-                ((CallableMemberDescriptor) member).getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
+                    ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT &&
+                    !CallResolverUtil.isOrOverridesSynthesized((CallableMemberDescriptor) member)) {
                 abstractMembers.add((CallableMemberDescriptor) member);
             }
         }

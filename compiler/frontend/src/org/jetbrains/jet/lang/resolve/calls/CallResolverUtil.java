@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
@@ -170,5 +169,20 @@ public class CallResolverUtil {
         return new JetTypeImpl(
                 receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isNullable(),
                 fakeTypeArguments, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true));
+    }
+
+    public static boolean isOrOverridesSynthesized(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            return true;
+        }
+        if (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                if (!isOrOverridesSynthesized(overridden)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -1254,6 +1254,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/DeepSamLoop.java");
                 }
                 
+                @TestMetadata("InheritedSimple.java")
+                public void testInheritedSimple() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/InheritedSimple.java");
+                }
+                
                 @TestMetadata("NonTrivialFunctionType.java")
                 public void testNonTrivialFunctionType() throws Exception {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/NonTrivialFunctionType.java");

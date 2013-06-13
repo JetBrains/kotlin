@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class TaskPrioritizer {
@@ -106,22 +107,8 @@ public class TaskPrioritizer {
 
             private boolean isSynthesized(ResolutionCandidate<D> call) {
                 D descriptor = call.getDescriptor();
-                return descriptor instanceof CallableMemberDescriptor && isOrOverridesSynthesized((CallableMemberDescriptor) descriptor);
-            }
-
-            private boolean isOrOverridesSynthesized(CallableMemberDescriptor descriptor) {
-                if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-                    return true;
-                }
-                if (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                    for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
-                        if (!isOrOverridesSynthesized(overridden)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-                return false;
+                return descriptor instanceof CallableMemberDescriptor &&
+                       isOrOverridesSynthesized((CallableMemberDescriptor) descriptor);
             }
         };
 
