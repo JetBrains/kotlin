@@ -13,7 +13,7 @@ public interface AnnotationDeserializer {
         public List<AnnotationDescriptor> loadClassAnnotations(
                 @NotNull ProtoBuf.Class classProto
         ) {
-            throw new UnsupportedOperationException("Annotations are not supported");
+            return notSupported();
         }
 
         @NotNull
@@ -21,7 +21,7 @@ public interface AnnotationDeserializer {
         public List<AnnotationDescriptor> loadCallableAnnotations(
                 @NotNull ProtoBuf.Callable callableProto
         ) {
-            throw new UnsupportedOperationException("Annotations are not supported");
+            return notSupported();
         }
 
         @NotNull
@@ -29,6 +29,10 @@ public interface AnnotationDeserializer {
         public List<AnnotationDescriptor> loadValueParameterAnnotations(
                 @NotNull ProtoBuf.Callable.ValueParameter parameterProto
         ) {
+            return notSupported();
+        }
+
+        private List<AnnotationDescriptor> notSupported() {
             throw new UnsupportedOperationException("Annotations are not supported");
         }
     };
