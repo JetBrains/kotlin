@@ -1884,8 +1884,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
             if (samInterface != null) {
-                return invokeSamConstructor(expression, resolvedCall, (SimpleFunctionDescriptor) funDescriptor,
-                                            (ClassDescriptorFromJvmBytecode) samInterface);
+                return invokeSamConstructor(expression, resolvedCall, (ClassDescriptorFromJvmBytecode) samInterface);
             }
         }
 
@@ -1915,7 +1914,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue invokeSamConstructor(
             JetCallExpression expression,
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            SimpleFunctionDescriptor funDescriptor,
             ClassDescriptorFromJvmBytecode samInterface
     ) {
         ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
@@ -1926,18 +1924,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
         assert valueArgument != null : "getValueArgument() is null for " + expression.getText();
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
+        assert argumentExpression != null : "getArgumentExpression() is null for " + expression.getText();
 
+        return genSamInterfaceValue(argumentExpression, samInterface);
+    }
+
+    private StackValue genSamInterfaceValue(
+            @NotNull JetExpression argumentExpression,
+            @NotNull ClassDescriptorFromJvmBytecode samInterface
+    ) {
         if (argumentExpression instanceof JetFunctionLiteralExpression) {
             return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
         }
         else {
             JvmClassName className =
-                    state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
+                    state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) argumentExpression.getContainingFile());
 
             v.anew(className.getAsmType());
             v.dup();
 
-            JetType functionType = funDescriptor.getValueParameters().get(0).getType();
+            JetType functionType = samInterface.getFunctionTypeForSamInterface();
             gen(argumentExpression, typeMapper.mapType(functionType));
 
             v.invokespecial(className.getInternalName(), "<init>",
@@ -2309,10 +2315,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (originalOfSamAdapter != null) {
                     JetType samAdapterType = originalOfSamAdapter.getValueParameters().get(valueParameter.getIndex()).getType();
                     if (SingleAbstractMethodUtils.isSamType(samAdapterType)) {
-                        ClassDescriptor samInterface = (ClassDescriptor) samAdapterType.getConstructor().getDeclarationDescriptor();
+                        ClassDescriptorFromJvmBytecode samInterface = (ClassDescriptorFromJvmBytecode) samAdapterType.getConstructor().getDeclarationDescriptor();
 
-                        // TODO support not literals
-                        genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
+                        genSamInterfaceValue(argumentExpression, samInterface);
                         continue;
                     }
                 }

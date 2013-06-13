@@ -155,6 +155,26 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/fileFilter.kt");
         }
         
+        @TestMetadata("nonLiteralAndLiteralRunnable.kt")
+        public void testNonLiteralAndLiteralRunnable() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/nonLiteralAndLiteralRunnable.kt");
+        }
+        
+        @TestMetadata("nonLiteralComparator.kt")
+        public void testNonLiteralComparator() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/nonLiteralComparator.kt");
+        }
+        
+        @TestMetadata("nonLiteralInConstructor.kt")
+        public void testNonLiteralInConstructor() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/nonLiteralInConstructor.kt");
+        }
+        
+        @TestMetadata("nonLiteralRunnable.kt")
+        public void testNonLiteralRunnable() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/nonLiteralRunnable.kt");
+        }
+        
         @TestMetadata("severalSamParameters.kt")
         public void testSeveralSamParameters() throws Exception {
             doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/severalSamParameters.kt");
