@@ -74,7 +74,9 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
             @Nullable TypeDeserializer outerTypeDeserializer
     ) {
         this.classProto = classProto;
-        this.typeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver, classResolver);
+        this.name = nameResolver.getName(classProto.getName());
+
+        this.typeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver, classResolver, "Deserializer for class " + name);
         this.deserializer = DescriptorDeserializer.create(typeDeserializer, this, nameResolver, annotationResolver);
 
         this.containingDeclaration = containingDeclaration;
@@ -83,7 +85,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
         this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
 
-        this.name = nameResolver.getName(classProto.getName());
         int flags = classProto.getFlags();
         this.modality = DescriptorDeserializer.modality(Flags.MODALITY.get(flags));
         this.visibility = DescriptorDeserializer.visibility(Flags.VISIBILITY.get(flags));

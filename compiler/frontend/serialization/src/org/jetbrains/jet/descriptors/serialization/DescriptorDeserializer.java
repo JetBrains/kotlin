@@ -41,8 +41,8 @@ public class DescriptorDeserializer {
             @NotNull ClassResolver classResolver,
             @NotNull AnnotationDeserializer annotationDeserializer
     ) {
-        return new DescriptorDeserializer(new TypeDeserializer(null, nameResolver, classResolver), containingDeclaration, nameResolver,
-                                          annotationDeserializer);
+        return new DescriptorDeserializer(new TypeDeserializer(null, nameResolver, classResolver, "Deserializer for " + containingDeclaration),
+                                          containingDeclaration, nameResolver, annotationDeserializer);
     }
 
     @NotNull
@@ -79,7 +79,8 @@ public class DescriptorDeserializer {
 
     @NotNull
     private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
-        return create(new TypeDeserializer(typeDeserializer), descriptor, nameResolver, annotationDeserializer);
+        return create(new TypeDeserializer(typeDeserializer, "Child deserializer for " + descriptor),
+                      descriptor, nameResolver, annotationDeserializer);
     }
 
     @NotNull

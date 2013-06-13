@@ -37,19 +37,23 @@ public class TypeDeserializer {
     private final IndexedSymbolTable<TypeParameterDescriptor> typeParameterDescriptors;
     private final TIntObjectHashMap<ClassDescriptor> classDescriptors = new TIntObjectHashMap<ClassDescriptor>();
 
-    public TypeDeserializer(@NotNull TypeDeserializer parent) {
-        this(parent, parent.nameResolver, parent.classResolver);
+    private final String debugName;
+
+    public TypeDeserializer(@NotNull TypeDeserializer parent, @NotNull String debugName) {
+        this(parent, parent.nameResolver, parent.classResolver, debugName);
     }
 
     public TypeDeserializer(
             @Nullable TypeDeserializer parent,
             @NotNull NameResolver nameResolver,
-            @NotNull ClassResolver classResolver
-    ) {
+            @NotNull ClassResolver classResolver,
+            @NotNull String debugName
+            ) {
         IndexedSymbolTable<TypeParameterDescriptor> parentTypeParameters = parent == null ? null : parent.typeParameterDescriptors;
         this.typeParameterDescriptors = new IndexedSymbolTable<TypeParameterDescriptor>(parentTypeParameters);
         this.nameResolver = nameResolver;
         this.classResolver = classResolver;
+        this.debugName = debugName + (parent == null ? "" : ". Child of " + parent.debugName);
     }
 
     @NotNull
@@ -220,5 +224,10 @@ public class TypeDeserializer {
             return typeParameterDescriptor.getDefaultType().getMemberScope();
         }
         return ((ClassDescriptor) descriptor).getMemberScope(typeArguments);
+    }
+
+    @Override
+    public String toString() {
+        return debugName;
     }
 }
