@@ -20,7 +20,8 @@
         </server>
         <server>
             <id>jetbrains-kotlin-github</id>
-            <password>${KOTLIN_GITHUB_OAUTH_TOKEN}</password>
+            <username>${GITHUB_LOGIN}</username>
+            <password>${GITHUB_PASSWORD}</password>
         </server>
     </servers>
 </settings>
