@@ -51,6 +51,19 @@ import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil
 public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
     private static final Name CLASS_OBJECT_NAME = Name.special("<class object>");
+    private static final NameTable.Namer NAMER = new NameTable.Namer() {
+        @NotNull
+        @Override
+        public Name getClassName(@NotNull ClassDescriptor classDescriptor) {
+            return classDescriptor.getKind() == ClassKind.CLASS_OBJECT ? CLASS_OBJECT_NAME : classDescriptor.getName();
+        }
+
+        @NotNull
+        @Override
+        public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
+            return namespaceDescriptor.getName();
+        }
+    };
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -75,7 +88,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     }
 
     private static NamespaceDescriptorImpl getDeserializedDescriptorsAsNamespace(Collection<DeclarationDescriptor> allDescriptors) {
-        DescriptorSerializer serializer = new DescriptorSerializer(NameTable.Namer.DEFAULT);
+        DescriptorSerializer serializer = new DescriptorSerializer(NAMER);
 
         final Map<ClassId, ProtoBuf.Class> classProtos = serializeClasses(serializer, allDescriptors);
 
@@ -109,7 +122,9 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             @Nullable
             @Override
             protected ClassData getClassData(@NotNull ClassId classId) {
-                return new ClassData(nameResolver, classProtos.get(classId));
+                ProtoBuf.Class classProto = classProtos.get(classId);
+                assert classProto != null : "Class not found: " + classId;
+                return new ClassData(nameResolver, classProto);
             }
 
             @Override
@@ -197,19 +212,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     }
 
     private static ClassId getClassId(ClassDescriptor classDescriptor) {
-        return ClassSerializationUtil.getClassId(classDescriptor, new NameTable.Namer() {
-            @NotNull
-            @Override
-            public Name getClassName(@NotNull ClassDescriptor classDescriptor) {
-                return classDescriptor.getKind() == ClassKind.CLASS_OBJECT ? CLASS_OBJECT_NAME : classDescriptor.getName();
-            }
-
-            @NotNull
-            @Override
-            public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                return namespaceDescriptor.getName();
-            }
-        });
+        return ClassSerializationUtil.getClassId(classDescriptor, NAMER);
     }
 
     private static NamespaceDescriptorImpl createTestNamespace(String testPackageName) {

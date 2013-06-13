@@ -59,7 +59,7 @@ public class BuiltInsSerializer {
             System.err.println("Could not make directories: " + destDir);
         }
 
-        final DescriptorSerializer serializer = new DescriptorSerializer(NameTable.Namer.DEFAULT, new Predicate<ClassDescriptor>() {
+        final DescriptorSerializer serializer = new DescriptorSerializer(BuiltInsSerializationUtil.BUILTINS_NAMER, new Predicate<ClassDescriptor>() {
             private final ImmutableSet<String> set = ImmutableSet.of("Any", "Nothing");
 
             @Override
