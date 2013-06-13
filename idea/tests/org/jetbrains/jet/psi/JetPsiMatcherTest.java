@@ -250,6 +250,11 @@ public class JetPsiMatcherTest extends AbstractJetPsiMatcherTest {
                 doTestExpressions("idea/testData/jetPsiMatcher/expressions/simpleName/simpleName.kt");
             }
             
+            @TestMetadata("simpleName2.kt")
+            public void testSimpleName2() throws Exception {
+                doTestExpressions("idea/testData/jetPsiMatcher/expressions/simpleName/simpleName2.kt");
+            }
+            
             @TestMetadata("_simpleName.kt")
             public void test_simpleName() throws Exception {
                 doTestExpressions("idea/testData/jetPsiMatcher/expressions/simpleName/_simpleName.kt");
