@@ -123,7 +123,9 @@ public class ResolveSessionUtils {
 
         @SuppressWarnings("unchecked")
         PsiElement topmostCandidateForAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(expression,
-                JetNamedFunction.class, JetClassInitializer.class, JetProperty.class, JetDelegationSpecifierList.class);
+                JetNamedFunction.class, JetClassInitializer.class,
+                JetProperty.class, JetDelegationSpecifierList.class,
+                JetImportDirective.class);
 
         if (topmostCandidateForAdditionalResolve != null) {
             if (topmostCandidateForAdditionalResolve instanceof JetNamedFunction) {
@@ -138,6 +140,13 @@ public class ResolveSessionUtils {
             else if (topmostCandidateForAdditionalResolve instanceof JetDelegationSpecifierList) {
                 delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) topmostCandidateForAdditionalResolve,
                                                      trace, file);
+            }
+            else if (topmostCandidateForAdditionalResolve instanceof JetImportDirective) {
+                JetImportDirective importDirective = (JetImportDirective) topmostCandidateForAdditionalResolve;
+                JetScope scope = resolveSession.getInjector().getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
+
+                // Get all descriptors to force resolving all imports
+                scope.getAllDescriptors();
             }
             else {
                 assert false : "Invalid type of the topmost parent";

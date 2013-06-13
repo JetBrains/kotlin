@@ -36,9 +36,19 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/resolve/references"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("ClassReferenceInImport.kt")
+    public void testClassReferenceInImport() throws Exception {
+        doTest("idea/testData/resolve/references/ClassReferenceInImport.kt");
+    }
+    
     @TestMetadata("CtrlClickResolve.kt")
     public void testCtrlClickResolve() throws Exception {
         doTest("idea/testData/resolve/references/CtrlClickResolve.kt");
+    }
+    
+    @TestMetadata("PackageReferenceInImport.kt")
+    public void testPackageReferenceInImport() throws Exception {
+        doTest("idea/testData/resolve/references/PackageReferenceInImport.kt");
     }
     
     @TestMetadata("ResolveClass.kt")
