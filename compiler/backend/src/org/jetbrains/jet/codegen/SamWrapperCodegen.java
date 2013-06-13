@@ -139,7 +139,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
         FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
         String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(
                 PackageClassUtils.getPackageClassFqName(fqName)).getInternalName();
-        return packageInternalName + "$sam$" + samInterface.getName().asString() +
-               "$" + Integer.toHexString(CodegenUtil.getPathHashCode(containingFile)); // TODO add class FQ name hash
+        return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
+               Integer.toHexString(CodegenUtil.getPathHashCode(containingFile) * 31 + DescriptorUtils.getFQName(samInterface).hashCode());
     }
 }
