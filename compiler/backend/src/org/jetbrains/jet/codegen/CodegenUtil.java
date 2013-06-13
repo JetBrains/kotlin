@@ -17,6 +17,8 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -285,5 +287,11 @@ public class CodegenUtil {
                        .getParentCodegen() instanceof ImplementationBodyCodegen : "Class object should have appropriate parent BodyCodegen";
 
         return ((ImplementationBodyCodegen) classBodyCodegen.getParentCodegen());
+    }
+
+    static int getPathHashCode(@NotNull PsiFile file) {
+        // Conversion to system-dependent name seems to be unnecessary, but it's hard to check now:
+        // it was introduced when fixing KT-2839, which appeared again (KT-3639).
+        return FileUtil.toSystemDependentName(file.getVirtualFile().getPath()).hashCode();
     }
 }
