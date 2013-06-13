@@ -381,13 +381,13 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 @Nullable
                 @Override
                 public ClassDescriptor resolveNestedClass(@NotNull ClassDescriptor outerClass, @NotNull Name name) {
-                    return resolveClass(outerClass, classId.createNestedClassId(name));
+                    return findClass(classId.createNestedClassId(name));
                 }
 
                 @Nullable
                 @Override
                 public ClassDescriptor resolveClassObject(@NotNull ClassDescriptor outerClass) {
-                    return resolveClass(outerClass, classId.createNestedClassId(Name.identifier(JvmAbi.CLASS_OBJECT_CLASS_NAME)));
+                    return findClass(classId.createNestedClassId(Name.identifier(JvmAbi.CLASS_OBJECT_CLASS_NAME)));
                 }
             };
 
