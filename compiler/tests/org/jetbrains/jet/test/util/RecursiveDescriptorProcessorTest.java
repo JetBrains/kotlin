@@ -61,7 +61,7 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
             fail("Test data file did not exist and was created from the results of the test: " + txtFile);
         }
 
-        assertEquals(FileUtil.loadFile(txtFile), actualText);
+        assertSameLinesWithFile(txtFile.getAbsolutePath(), actualText);
     }
 
     private static Class closestInterface(Class<?> aClass) {
