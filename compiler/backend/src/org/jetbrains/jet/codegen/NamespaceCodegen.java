@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
@@ -35,11 +36,13 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -268,21 +271,14 @@ public class NamespaceCodegen extends MemberCodegen {
 
     @NotNull
     private static String getMultiFileNamespaceInternalName(@NotNull String namespaceInternalName, @NotNull PsiFile file) {
-        String name = FileUtil.toSystemDependentName(file.getName());
-
-        int substringFrom = name.lastIndexOf(File.separator) + 1;
-
-        int substringTo = name.lastIndexOf('.');
-        if (substringTo == -1) {
-            substringTo = name.length();
-        }
+        String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // Conversion to system-dependent name seems to be unnecessary, but it's hard to check now:
         // it was introduced when fixing KT-2839, which appeared again (KT-3639).
         String pathHashCode = Integer.toHexString(FileUtil.toSystemDependentName(file.getVirtualFile().getPath()).hashCode());
 
         // path hashCode to prevent same name / different path collision
-        return namespaceInternalName + "$src$" + replaceSpecialSymbols(name.substring(substringFrom, substringTo)) + "$" + pathHashCode;
+        return namespaceInternalName + "$src$" + replaceSpecialSymbols(fileName) + "$" + pathHashCode;
     }
 
     private static String replaceSpecialSymbols(@NotNull String str) {
