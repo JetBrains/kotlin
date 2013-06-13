@@ -279,7 +279,6 @@ public class NamespaceCodegen extends MemberCodegen {
 
         String pathHashCode = Integer.toHexString(FileUtil.toSystemDependentName(file.getVirtualFile().getPath()).hashCode());
 
-        // dollar sign in the end is to prevent synthetic class from having "Test" or other parseable suffix
         // path hashCode to prevent same name / different path collision
         return namespaceInternalName + "$src$" + replaceSpecialSymbols(name.substring(substringFrom, substringTo)) + "$" + pathHashCode;
     }
