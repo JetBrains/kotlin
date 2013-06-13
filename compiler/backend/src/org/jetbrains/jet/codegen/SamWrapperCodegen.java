@@ -20,25 +20,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
@@ -55,33 +53,18 @@ public class SamWrapperCodegen extends GenerationStateAware {
         this.samInterface = samInterface;
     }
 
-    public JvmClassName genWrapper(JetCallExpression callExpression, JetExpression argumentExpression) {
-        // Example: we generate SAM constructor call Comparator(f), where f: (Int, Int) -> Int
-
+    public JvmClassName genWrapper(@NotNull JetFile file) {
         // Name for generated class, in form of whatever$1
-        JvmClassName name = bindingContext.get(CodegenBinding.FQN_FOR_SAM_CONSTRUCTOR, callExpression);
-        assert name != null : "internal class name not found for " + callExpression.getText();
+        JvmClassName name = JvmClassName.byInternalName(getWrapperName(file));
 
-        // e.g. (Int, Int) -> Int
-        JetType functionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
-        assert functionType != null && KotlinBuiltIns.getInstance().isFunctionType(functionType) :
-                "not a function type of " + argumentExpression.getText() + ": " + functionType;
+        // e.g. (T, T) -> Int
+        JetType functionType = samInterface.getFunctionTypeForSamInterface();
+        assert functionType != null : samInterface.toString();
+        // e.g. compare(T, T)
+        SimpleFunctionDescriptor interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
 
-        // SAM constructor call
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
-        assert resolvedCall != null : "couldn't find resolved call for " + callExpression.getText();
-
-        // e.g. Comparator<Int, Int>
-        JetType resultType = resolvedCall.getResultingDescriptor().getReturnType();
-        assert resultType != null && resultType.getConstructor() == samInterface.getTypeConstructor() :
-                "unexpected result type: " + resultType;
-
-        // e.g. compare(Int, Int)
-        SimpleFunctionDescriptor interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamType(resultType);
-
-        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), callExpression.getContainingFile());
-        cv.defineClass(callExpression,
+        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), file);
+        cv.defineClass(file,
                        V1_6,
                        ACC_FINAL,
                        name.getInternalName(),
@@ -89,7 +72,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
                        OBJECT_TYPE.getInternalName(),
                        new String[]{JvmClassName.byClassDescriptor(samInterface).getInternalName()}
         );
-        cv.visitSource(callExpression.getContainingFile().getName(), null);
+        cv.visitSource(file.getName(), null);
 
         // e.g. ASM type for Function2
         Type functionAsmType = state.getTypeMapper().mapType(functionType, JetTypeMapperMode.VALUE);
@@ -148,5 +131,15 @@ public class SamWrapperCodegen extends GenerationStateAware {
                 .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();
         StackValue functionField = StackValue.field(functionType, JvmClassName.byType(ownerType), FUNCTION_FIELD_NAME, false);
         codegen.genDelegate(interfaceFunction, invokeFunction, functionField);
+    }
+
+    private String getWrapperName(@NotNull JetFile containingFile) {
+        NamespaceDescriptor namespace = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, containingFile);
+        assert namespace != null : "couldn't find namespace for file: " + containingFile.getVirtualFile();
+        FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
+        String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(
+                PackageClassUtils.getPackageClassFqName(fqName)).getInternalName();
+        return packageInternalName + "$sam$" + samInterface.getName().asString() +
+               "$" + Integer.toHexString(CodegenUtil.getPathHashCode(containingFile)); // TODO add class FQ name hash
     }
 }

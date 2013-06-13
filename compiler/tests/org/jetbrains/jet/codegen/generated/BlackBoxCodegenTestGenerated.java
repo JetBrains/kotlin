@@ -3756,6 +3756,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/sam/runnableAccessingClosure2.kt");
         }
         
+        @TestMetadata("sameWrapperClass.kt")
+        public void testSameWrapperClass() throws Exception {
+            doTest("compiler/testData/codegen/box/sam/sameWrapperClass.kt");
+        }
+        
         @TestMetadata("syntheticVsReal.kt")
         public void testSyntheticVsReal() throws Exception {
             doTest("compiler/testData/codegen/box/sam/syntheticVsReal.kt");

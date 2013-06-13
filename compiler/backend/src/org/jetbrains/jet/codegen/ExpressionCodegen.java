@@ -1931,7 +1931,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
         }
         else {
-            JvmClassName className = new SamWrapperCodegen(state, samInterface).genWrapper(expression, argumentExpression);
+            JvmClassName className =
+                    state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
 
             v.anew(className.getAsmType());
             v.dup();
