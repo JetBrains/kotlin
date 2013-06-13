@@ -2282,9 +2282,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/extensions/kt2317.kt");
             }
             
+            @TestMetadata("kt3563.kt")
+            public void testKt3563() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/extensions/kt3563.kt");
+            }
+            
             @TestMetadata("kt819ExtensionProperties.kt")
             public void testKt819ExtensionProperties() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/extensions/kt819ExtensionProperties.kt");
+            }
+            
+            @TestMetadata("throwOutCandidatesByReceiver.kt")
+            public void testThrowOutCandidatesByReceiver() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/extensions/throwOutCandidatesByReceiver.kt");
             }
             
         }

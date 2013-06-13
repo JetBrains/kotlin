@@ -20,10 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -38,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
@@ -152,5 +150,39 @@ public class CallResolverUtil {
         PsiElement callElement = context.call.getCallElement();
         if (!(callElement instanceof JetExpression)) return null;
         return CallKey.create(context.call.getCallType(), (JetExpression) callElement);
+    }
+
+    public static boolean checkArgumentCannotBeReceiver(
+            @NotNull JetType receiverArgumentType,
+            @NotNull CallableDescriptor descriptor
+    ) {
+        JetType effectiveReceiverArgumentType = TypeUtils.makeNotNullable(receiverArgumentType);
+
+        JetType erasedReceiverType = getErasedReceiverType(descriptor);
+        if (erasedReceiverType == null) return true;
+
+        return !JetTypeChecker.INSTANCE.isSubtypeOf(effectiveReceiverArgumentType, erasedReceiverType);
+    }
+
+    @Nullable
+    private static JetType getErasedReceiverType(@NotNull CallableDescriptor descriptor) {
+        ReceiverParameterDescriptor receiverDescriptor = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor expectedThisObjectDescriptor = descriptor.getExpectedThisObject();
+        JetType receiverType = receiverDescriptor != null ? receiverDescriptor.getType() :
+                           expectedThisObjectDescriptor != null ? expectedThisObjectDescriptor.getType() : null;
+        if (receiverType == null) return null;
+
+        for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
+            if (typeParameter.getTypeConstructor().equals(receiverType.getConstructor())) {
+                return typeParameter.getUpperBoundsAsType();
+            }
+        }
+        List<TypeProjection> fakeTypeArguments = Lists.newArrayList();
+        for (TypeProjection typeProjection : receiverType.getArguments()) {
+            fakeTypeArguments.add(new TypeProjection(typeProjection.getProjectionKind(), DONT_CARE));
+        }
+        return new JetTypeImpl(
+                receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isNullable(),
+                fakeTypeArguments, receiverType.getMemberScope());
     }
 }

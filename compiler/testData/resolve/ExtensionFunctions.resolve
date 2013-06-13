@@ -1,4 +1,4 @@
-fun <~T~T, ~E~E> `T`T.foo(x : `E`E, y : `A`A) : `T`T   {
+~T.foo~fun <~T~T, ~E~E> `T`T.foo(x : `E`E, y : `A`A) : `T`T   {
   y.`+`plus(1)
   y `+`plus 1
   y `+1`+ 1.0
@@ -13,7 +13,8 @@ fun <~T~T, ~E~E> `T`T.foo(x : `E`E, y : `A`A) : `T`T   {
 ~+1~fun `A`A.plus(a : Any) {
 
   1.`foo`foo()
-  true.`!null`foo()
+  true.`T.foo`foo()
+  3.`!null`foo(4)
 
   1
 }
