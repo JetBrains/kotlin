@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
@@ -48,29 +46,23 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
     }
 
     private void doTest(@NotNull String ktFileName, boolean includeAccessors) throws Exception {
-        Disposable tmpDisposable = Disposer.newDisposable();
-        try {
-            File ktFile = new File(ktFileName);
-            File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
-            AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, tmpDisposable,
-                                                                            ConfigurationKind.JDK_ONLY);
+        File ktFile = new File(ktFileName);
+        File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
+        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(),
+                                                                        ConfigurationKind.JDK_ONLY);
 
-            NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                                                                                      TEST_PACKAGE_FQNAME);
-            assert namespaceFromSource != null;
-            Assert.assertEquals("test", namespaceFromSource.getName().asString());
+        NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
+                                                                                  TEST_PACKAGE_FQNAME);
+        assert namespaceFromSource != null;
+        Assert.assertEquals("test", namespaceFromSource.getName().asString());
 
-            NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
-                    tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
+        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
+                tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
 
-            validateAndCompareNamespaces(namespaceFromSource, namespaceFromClass,
-                                         NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
-                                                 .checkPrimaryConstructors(true)
-                                                 .checkPropertyAccessors(includeAccessors),
-                                         txtFile);
-        }
-        finally {
-            Disposer.dispose(tmpDisposable);
-        }
+        validateAndCompareNamespaces(namespaceFromSource, namespaceFromClass,
+                                     NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                                             .checkPrimaryConstructors(true)
+                                             .checkPropertyAccessors(includeAccessors),
+                                     txtFile);
     }
 }

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -92,8 +91,6 @@ public final class LoadDescriptorUtil {
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
     ) {
-        Disposer.dispose(disposable);
-
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(),
                 javaRoot,
