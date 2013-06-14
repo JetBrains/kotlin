@@ -41,7 +41,7 @@ public final class Namer {
     private static final String ROOT_NAMESPACE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
-    private static final String THROW_NPE_FUN_NAME = "throwNPE";
+    private static final String ENSURE_NULL_SAFE_FUN_NAME = "ensureNullSafe";
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -156,8 +156,8 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression throwNPEFunctionCall() {
-        return new JsInvocation(new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject()));
+    public JsExpression ensureNullSafeFunctionCall(JsExpression arg) {
+        return new JsInvocation(kotlin(ENSURE_NULL_SAFE_FUN_NAME), arg);
     }
 
     @NotNull
