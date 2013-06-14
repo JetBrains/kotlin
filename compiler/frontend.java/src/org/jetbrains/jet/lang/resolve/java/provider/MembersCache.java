@@ -18,10 +18,12 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
+import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
 import com.intellij.psi.util.PsiFormatUtil;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -37,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.intellij.psi.util.MethodSignatureUtil.areSignaturesErasureEqual;
 import static com.intellij.psi.util.PsiFormatUtilBase.*;
 
 public final class MembersCache {
@@ -420,17 +423,66 @@ public final class MembersCache {
             return null;
         }
 
-        List<PsiMethod> methods = Lists.newArrayList();
-        for (PsiMethod method : psiClass.getAllMethods()) {
-            if (!isObjectMethod(method) && method.hasModifierProperty(PsiModifier.ABSTRACT)) {
-                methods.add(method);
+        return findOnlyAbstractMethod(psiClass);
+    }
 
-                if (method.hasTypeParameters()) {
-                    return null;
-                }
+    @Nullable
+    private static PsiMethod findOnlyAbstractMethod(@NotNull PsiClass psiClass) {
+        Ref<MethodSignatureBackedByPsiMethod> foundRef = Ref.create();
+        if (findOnlyAbstractMethod(JavaPsiFacade.getElementFactory(psiClass.getProject()).createType(psiClass), foundRef)) {
+            MethodSignatureBackedByPsiMethod found = foundRef.get();
+            return found == null ? null : found.getMethod();
+        }
+        return null;
+    }
+
+    private static boolean findOnlyAbstractMethod(
+            @NotNull PsiClassType classType,
+            @NotNull Ref<MethodSignatureBackedByPsiMethod> foundRef
+    ) {
+        PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
+        PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
+        PsiClass psiClass = classResolveResult.getElement();
+        if (psiClass == null) {
+            return false; // can't resolve class -> not a SAM interface
+        }
+        if (CommonClassNames.JAVA_LANG_OBJECT.equals(psiClass.getQualifiedName())) {
+            return true;
+        }
+        for (PsiMethod method : psiClass.getMethods()) {
+            if (isObjectMethod(method)) { // e.g., ignore toString() declared in interface
+                continue;
+            }
+            if (method.hasTypeParameters()) {
+                return false; // if interface has generic methods, it is not a SAM interface
+            }
+
+            MethodSignatureBackedByPsiMethod found = foundRef.get();
+            if (found == null) {
+                foundRef.set((MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor));
+                continue;
+            }
+            if (!found.getName().equals(method.getName())) {
+                return false; // optimizing heuristic
+            }
+            MethodSignatureBackedByPsiMethod current = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
+            if (!areSignaturesErasureEqual(current, found) || isVarargMethod(method) != isVarargMethod(found.getMethod())) {
+                return false; // different signatures
             }
         }
-        return methods.size() == 1 ? methods.get(0) : null;
+
+        for (PsiType t : classType.getSuperTypes()) {
+            if (!findOnlyAbstractMethod((PsiClassType) t, foundRef)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isVarargMethod(@NotNull PsiMethod method) {
+        PsiParameter lastParameter = ArrayUtil.getLastElement(method.getParameterList().getParameters());
+        return lastParameter != null && lastParameter.getType() instanceof PsiEllipsisType;
     }
 
     private static abstract class RunOnce implements Runnable {

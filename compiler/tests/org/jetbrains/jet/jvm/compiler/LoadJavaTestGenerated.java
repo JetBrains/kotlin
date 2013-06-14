@@ -1218,6 +1218,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
             }
             
+            @TestMetadata("SamSubinterfaceOfTwo.java")
+            public void testSamSubinterfaceOfTwo() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SamSubinterfaceOfTwo.java");
+            }
+            
+            @TestMetadata("SamSubinterfaceOverridding.java")
+            public void testSamSubinterfaceOverridding() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SamSubinterfaceOverridding.java");
+            }
+            
             @TestMetadata("SubstitutedSamInterface.java")
             public void testSubstitutedSamInterface() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterface.java");

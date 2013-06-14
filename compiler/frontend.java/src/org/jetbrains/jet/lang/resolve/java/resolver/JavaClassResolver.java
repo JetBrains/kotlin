@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -301,15 +302,28 @@ public final class JavaClassResolver {
             return abstractMethod;
         }
         else {
-            Set<JetType> supertypes = TypeUtils.getAllSupertypes(samInterface.getDefaultType());
-            for (JetType supertype : supertypes) {
-                List<CallableMemberDescriptor> abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype);
-                if (!abstractMembers.isEmpty()) {
-                    return (SimpleFunctionDescriptor) abstractMembers.get(0);
-                }
+            return findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(samInterface.getDefaultType()));
+        }
+    }
+
+    private static SimpleFunctionDescriptor findFunctionWithMostSpecificReturnType(@NotNull Set<JetType> supertypes) {
+        List<SimpleFunctionDescriptor> candidates = Lists.newArrayList();
+        for (JetType supertype : supertypes) {
+            List<CallableMemberDescriptor> abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype);
+            if (!abstractMembers.isEmpty()) {
+                candidates.add((SimpleFunctionDescriptor) abstractMembers.get(0));
             }
+        }
+        if (candidates.isEmpty()) {
             throw new IllegalStateException("Couldn't find abstract method in supertypes " + supertypes);
         }
+        SimpleFunctionDescriptor currentMostSpecificType = candidates.get(0);
+        for (SimpleFunctionDescriptor candidate : candidates) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(candidate.getReturnType(), currentMostSpecificType.getReturnType())) {
+                currentMostSpecificType = candidate;
+            }
+        }
+        return currentMostSpecificType;
     }
 
     private void cache(@NotNull FqNameBase fqName, @Nullable ClassDescriptor classDescriptor) {
