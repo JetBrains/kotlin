@@ -67,7 +67,7 @@ public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<Jet
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("make.element.modifier", classDeclaration.getName(), "open");
+        return JetBundle.message("make.element.modifier", classDeclaration != null ? classDeclaration.getName() : "<unknown>", "open");
     }
 
     @NotNull
