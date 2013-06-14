@@ -25,7 +25,6 @@ public interface VariableDescriptor extends CallableDescriptor {
     JetType getType();
 
     @Override
-    @SuppressWarnings({"NullableProblems"})
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
 

@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class FunctionGenerationStrategy<T extends CallableDescriptor> {
+public abstract class FunctionGenerationStrategy {
 
     private final Collection<String> localVariableNames = new ArrayList<String>();
 
@@ -77,12 +77,12 @@ public abstract class FunctionGenerationStrategy<T extends CallableDescriptor> {
         }
 
         @Override
-        public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
+        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             codegen.returnExpression(declaration.getBodyExpression());
         }
     }
 
-    public abstract static class CodegenBased<T extends CallableDescriptor> extends FunctionGenerationStrategy<T> {
+    public abstract static class CodegenBased<T extends CallableDescriptor> extends FunctionGenerationStrategy {
 
         protected final GenerationState state;
 
