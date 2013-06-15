@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -28,6 +29,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
@@ -76,7 +78,11 @@ public final class TranslationUtils {
     @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
             @NotNull List<? extends ValueArgument> jetArguments) {
-        List<JsExpression> jsArguments = new ArrayList<JsExpression>();
+        if (jetArguments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<JsExpression> jsArguments = new SmartList<JsExpression>();
         for (ValueArgument argument : jetArguments) {
             jsArguments.add(translateArgument(context, argument));
         }

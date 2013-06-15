@@ -16,11 +16,8 @@
 
 package org.jetbrains.k2js.translate.expression;
 
-import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.JsBlock;
-import com.google.dart.compiler.backend.js.ast.JsCatch;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsTry;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -70,7 +67,7 @@ public final class TryTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsCatch> translateCatches() {
-        List<JsCatch> result = Lists.newArrayList();
+        List<JsCatch> result = new SmartList<JsCatch>();
         for (JetCatchClause catchClause : expression.getCatchClauses()) {
             result.add(translateCatchClause(catchClause));
         }
