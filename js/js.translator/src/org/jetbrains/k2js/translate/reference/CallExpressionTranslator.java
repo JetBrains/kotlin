@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
+import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
@@ -57,7 +57,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
     private final boolean isNativeFunctionCall;
     private boolean hasSpreadOperator = false;
-    private TemporaryVariable cachedReceiver = null;
+    private TemporaryConstVariable cachedReceiver = null;
     private List<JsExpression> translatedArguments = null;
     private JsExpression translatedReceiver = null;
     private JsExpression translatedCallee = null;
@@ -172,7 +172,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             }
 
             if (receiver != null) {
-                cachedReceiver = context().declareTemporary(receiver);
+                cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver);
                 result.add(0, cachedReceiver.reference());
             }
             else {

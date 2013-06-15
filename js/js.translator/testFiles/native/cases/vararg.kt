@@ -85,5 +85,9 @@ fun box(): String {
   if (!(testCallOrder(1, 2, 3, 4)))
     return "failed when test calling order when using spread operator without args"
 
+  val baz: Bar? = Bar(1)
+  if (!(baz!!)?.test(0, 1, 1))
+    return "failed when combined SureCall and SafeCall, maybe we lost cached expression"
+
   return "OK"
 }

@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
+import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.reference.CallType;
@@ -58,8 +58,14 @@ public final class UnaryOperationTranslator {
 
     @NotNull
     private static JsExpression translateExclExclOperator(@NotNull JetUnaryExpression expression, @NotNull TranslationContext context) {
-        TemporaryVariable cachedValue = context.declareTemporary(translateAsExpression(getBaseExpression(expression), context));
-        return new JsConditional(isNotNullCheck(cachedValue.assignmentExpression()), cachedValue.reference(), context.namer().throwNPEFunctionCall());
+        JsExpression translatedExpression = translateAsExpression(getBaseExpression(expression), context);
+        TemporaryConstVariable tempVar = context.getOrDeclareTemporaryConstVariable(translatedExpression);
+
+        JsConditional ensureNotNull = new JsConditional(isNotNullCheck(tempVar.value()), tempVar.value(), context.namer().throwNPEFunctionCall());
+
+        // associate (cache) ensureNotNull expression to new LazyValue with same name.
+        context.associateExpressionToLazyValue(ensureNotNull, new TemporaryConstVariable(tempVar.name(), ensureNotNull));
+        return ensureNotNull;
     }
 
     @NotNull
