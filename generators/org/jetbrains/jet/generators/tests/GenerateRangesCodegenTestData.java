@@ -36,9 +36,11 @@ public class GenerateRangesCodegenTestData {
     private static final Pattern TEST_FUN_PATTERN = Pattern.compile("test fun (\\w+)\\(\\) \\{.+?}", Pattern.DOTALL);
     private static final Pattern SUBTEST_INVOCATION_PATTERN = Pattern.compile("doTest\\(([^,]+), [^,]+, [^,]+, [^,]+,\\s+listOf[\\w<>]*\\(([^\\n]*)\\)\\)", Pattern.DOTALL);
 
+    // $LIST.size() check is needed in order for tests not to run forever
     public static final String LITERAL_TEMPLATE =    "    val $LIST = ArrayList<$TYPE>()\n" +
                                                      "    for (i in $RANGE_EXPR) {\n" +
                                                      "        $LIST.add(i)\n" +
+                                                     "        if ($LIST.size() > 23) break\n" +
                                                      "    }\n" +
                                                      "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
                                                      "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
@@ -49,6 +51,7 @@ public class GenerateRangesCodegenTestData {
                                                      "    val $RANGE = $RANGE_EXPR\n" +
                                                      "    for (i in $RANGE) {\n" +
                                                      "        $LIST.add(i)\n" +
+                                                     "        if ($LIST.size() > 23) break\n" +
                                                      "    }\n" +
                                                      "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
                                                      "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
