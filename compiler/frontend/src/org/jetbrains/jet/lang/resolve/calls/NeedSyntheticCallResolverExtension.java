@@ -38,7 +38,7 @@ public class NeedSyntheticCallResolverExtension implements CallResolverExtension
             ResolvedCallWithTrace<F> resolvedCall = results.getResultingCall();
             CallableDescriptor targetDescriptor = resolvedCall.getResultingDescriptor();
             if (needSyntheticAccessor(context.scope, targetDescriptor)) {
-                context.trace.record(NEED_SYNTHETIC_ACCESSOR, (CallableMemberDescriptor) targetDescriptor, Boolean.TRUE);
+                context.trace.record(NEED_SYNTHETIC_ACCESSOR, (CallableMemberDescriptor) targetDescriptor.getOriginal(), Boolean.TRUE);
             }
         }
     }

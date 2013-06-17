@@ -680,6 +680,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/classes/classObjectNotOfEnum.kt");
         }
         
+        @TestMetadata("classObjectWithPrivateGenericMember.kt")
+        public void testClassObjectWithPrivateGenericMember() throws Exception {
+            doTest("compiler/testData/codegen/box/classes/classObjectWithPrivateGenericMember.kt");
+        }
+        
         @TestMetadata("classObjectsWithParentClasses.kt")
         public void testClassObjectsWithParentClasses() throws Exception {
             doTest("compiler/testData/codegen/box/classes/classObjectsWithParentClasses.kt");
