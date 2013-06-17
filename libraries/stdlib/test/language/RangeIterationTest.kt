@@ -4,6 +4,17 @@ import kotlin.test.assertEquals
 import org.junit.Test as test
 import java.lang as j
 
+import java.lang.Integer.MAX_VALUE as MaxI
+import java.lang.Integer.MIN_VALUE as MinI
+import java.lang.Byte.MAX_VALUE as MaxB
+import java.lang.Byte.MIN_VALUE as MinB
+import java.lang.Short.MAX_VALUE as MaxS
+import java.lang.Short.MIN_VALUE as MinS
+import java.lang.Long.MAX_VALUE as MaxL
+import java.lang.Long.MIN_VALUE as MinL
+import java.lang.Character.MAX_VALUE as MaxC
+import java.lang.Character.MIN_VALUE as MinC
+
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
 public class RangeIterationTest {
     private fun <N> doTest(
@@ -279,5 +290,32 @@ public class RangeIterationTest {
         doTest(j.Float.NaN..j.Float.NaN, j.Float.NaN, j.Float.NaN, 1.0.toFloat(), listOf())
         doTest(j.Double.NaN downTo j.Double.NaN, j.Double.NaN, j.Double.NaN, -1.0, listOf())
         doTest(j.Float.NaN downTo j.Float.NaN, j.Float.NaN, j.Float.NaN, -1.0.toFloat(), listOf())
+    }
+
+    test fun maxValueToMaxValue() {
+        doTest(MaxI..MaxI, MaxI, MaxI, 1, listOf(MaxI))
+        doTest(MaxB..MaxB, MaxB, MaxB, 1, listOf(MaxB))
+        doTest(MaxS..MaxS, MaxS, MaxS, 1, listOf(MaxS))
+        doTest(MaxL..MaxL, MaxL, MaxL, 1.toLong(), listOf(MaxL))
+
+        doTest(MaxC..MaxC, MaxC, MaxC, 1, listOf(MaxC))
+    }
+
+    test fun maxValueMinusTwoToMaxValue() {
+        doTest((MaxI - 2)..MaxI, MaxI - 2, MaxI, 1, listOf(MaxI - 2, MaxI - 1, MaxI))
+        doTest((MaxB - 2).toByte()..MaxB, (MaxB - 2).toByte(), MaxB, 1, listOf((MaxB - 2).toByte(), (MaxB - 1).toByte(), MaxB))
+        doTest((MaxS - 2).toShort()..MaxS, (MaxS - 2).toShort(), MaxS, 1, listOf((MaxS - 2).toShort(), (MaxS - 1).toShort(), MaxS))
+        doTest((MaxL - 2).toLong()..MaxL, (MaxL - 2).toLong(), MaxL, 1.toLong(), listOf((MaxL - 2).toLong(), (MaxL - 1).toLong(), MaxL))
+
+        doTest((MaxC - 2).toChar()..MaxC, (MaxC - 2).toChar(), MaxC, 1, listOf((MaxC - 2).toChar(), (MaxC - 1).toChar(), MaxC))
+    }
+
+    test fun maxValueToMinValue() {
+        doTest(MaxI..MinI, MaxI, MinI, 1, listOf())
+        doTest(MaxB..MinB, MaxB, MinB, 1, listOf())
+        doTest(MaxS..MinS, MaxS, MinS, 1, listOf())
+        doTest(MaxL..MinL, MaxL, MinL, 1.toLong(), listOf())
+
+        doTest(MaxC..MinC, MaxC, MinC, 1, listOf())
     }
 }

@@ -439,6 +439,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/infiniteSteps.kt");
             }
             
+            @TestMetadata("maxValueMinusTwoToMaxValue.kt")
+            public void testMaxValueMinusTwoToMaxValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/maxValueMinusTwoToMaxValue.kt");
+            }
+            
+            @TestMetadata("maxValueToMaxValue.kt")
+            public void testMaxValueToMaxValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/maxValueToMaxValue.kt");
+            }
+            
+            @TestMetadata("maxValueToMinValue.kt")
+            public void testMaxValueToMinValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/maxValueToMinValue.kt");
+            }
+            
             @TestMetadata("nanEnds.kt")
             public void testNanEnds() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/nanEnds.kt");
@@ -540,6 +555,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("infiniteSteps.kt")
             public void testInfiniteSteps() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/literal/infiniteSteps.kt");
+            }
+            
+            @TestMetadata("maxValueMinusTwoToMaxValue.kt")
+            public void testMaxValueMinusTwoToMaxValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/literal/maxValueMinusTwoToMaxValue.kt");
+            }
+            
+            @TestMetadata("maxValueToMaxValue.kt")
+            public void testMaxValueToMaxValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/literal/maxValueToMaxValue.kt");
+            }
+            
+            @TestMetadata("maxValueToMinValue.kt")
+            public void testMaxValueToMinValue() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/literal/maxValueToMinValue.kt");
             }
             
             @TestMetadata("nanEnds.kt")

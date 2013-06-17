@@ -509,6 +509,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Label continueLabel = new Label();
 
         generator.beforeLoop();
+        generator.checkEmptyLoop(loopExit);
 
         v.mark(loopEntry);
         generator.conditionAndJump(loopExit);
@@ -518,7 +519,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         generator.body();
         blockStackElements.pop();
         v.mark(continueLabel);
-        generator.afterBody();
+        generator.afterBody(loopExit);
 
         v.goTo(loopEntry);
 
@@ -583,6 +584,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
+        public abstract void checkEmptyLoop(@NotNull Label loopExit);
+
         public abstract void conditionAndJump(@NotNull Label loopExit);
 
         public void beforeBody() {
@@ -628,7 +631,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         protected abstract void assignToLoopParameter();
 
-        protected abstract void increment();
+        protected abstract void increment(@NotNull Label loopExit);
 
         public void body() {
             gen(forExpression.getBody(), Type.VOID_TYPE);
@@ -649,8 +652,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return varIndex;
         }
 
-        public void afterBody() {
-            increment();
+        public void afterBody(@NotNull Label loopExit) {
+            increment(loopExit);
 
             v.mark(bodyEnd);
         }
@@ -713,6 +716,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
+        public void checkEmptyLoop(@NotNull Label loopExit) {
+        }
+
+        @Override
         public void conditionAndJump(@NotNull Label loopExit) {
             // tmp<iterator>.hasNext()
 
@@ -741,7 +748,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void increment() {
+        protected void increment(@NotNull Label loopExit) {
         }
     }
 
@@ -778,6 +785,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
+        public void checkEmptyLoop(@NotNull Label loopExit) {
+        }
+
+        @Override
         public void conditionAndJump(@NotNull Label loopExit) {
             v.load(indexVar, Type.INT_TYPE);
             v.load(arrayVar, OBJECT_TYPE);
@@ -803,7 +814,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void increment() {
+        protected void increment(@NotNull Label loopExit) {
             v.iinc(indexVar, 1);
         }
     }
@@ -811,8 +822,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private abstract class AbstractForInRangeLoopGenerator extends AbstractForLoopGenerator {
         protected int endVar;
 
+        // True iff instead of comparing loopParameterVar < endVar at the beginning of an iteration we check whether
+        // loopParameterVar == endVar at the end of the iteration (and also if there should be any iterations at all, before the loop)
+        private final boolean checkEqualityInsteadOfComparison;
+
         private AbstractForInRangeLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
+            checkEqualityInsteadOfComparison = asmElementType.getSort() == Type.INT || asmElementType.getSort() == Type.LONG;
         }
 
         @Override
@@ -823,25 +839,39 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             storeRangeStartAndEnd();
         }
 
+        @Override
+        public void checkEmptyLoop(@NotNull Label loopExit) {
+            if (!checkEqualityInsteadOfComparison) return;
+
+            v.load(loopParameterVar, asmElementType);
+            v.load(endVar, asmElementType);
+            if (asmElementType.getSort() == Type.INT) {
+                v.ificmpgt(loopExit);
+            }
+            else if (asmElementType.getSort() == Type.LONG) {
+                v.lcmp();
+                v.ifgt(loopExit);
+            }
+            else {
+                throw new IllegalStateException("Unexpected type for empty loop checking: " + asmElementType);
+            }
+        }
+
         protected abstract void storeRangeStartAndEnd();
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
+            if (checkEqualityInsteadOfComparison) return;
+
             v.load(loopParameterVar, asmElementType);
             v.load(endVar, asmElementType);
 
             int sort = asmElementType.getSort();
             switch (sort) {
-                case Type.INT:
                 case Type.CHAR:
                 case Type.BYTE:
                 case Type.SHORT:
                     v.ificmpgt(loopExit);
-                    break;
-
-                case Type.LONG:
-                    v.lcmp();
-                    v.ifgt(loopExit);
                     break;
 
                 case Type.FLOAT:
@@ -859,8 +889,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected void assignToLoopParameter() {
         }
 
+        private void checkPostCondition(@NotNull Label loopExit) {
+            v.load(loopParameterVar, asmElementType);
+            v.load(endVar, asmElementType);
+            if (asmElementType.getSort() == Type.INT) {
+                v.ificmpeq(loopExit);
+            }
+            else if (asmElementType.getSort() == Type.LONG) {
+                v.lcmp();
+                v.ifeq(loopExit);
+            }
+            else {
+                throw new IllegalStateException("Unexpected type for equality: " + asmElementType);
+            }
+        }
+
         @Override
-        protected void increment() {
+        protected void increment(@NotNull Label loopExit) {
+            if (checkEqualityInsteadOfComparison) {
+                checkPostCondition(loopExit);
+            }
+
             int sort = asmElementType.getSort();
             switch (sort) {
                 case Type.INT:
@@ -868,11 +917,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 case Type.BYTE:
                 case Type.SHORT:
                     v.iinc(loopParameterVar, 1);
-                    if (sort != Type.INT) {
-                        v.load(loopParameterVar, Type.INT_TYPE);
-                        StackValue.coerce(Type.INT_TYPE, asmElementType, v);
-                        v.store(loopParameterVar, asmElementType);
-                    }
                     break;
 
                 case Type.LONG:
@@ -974,6 +1018,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
+        public void checkEmptyLoop(@NotNull Label loopExit) {
+        }
+
+        @Override
         public void conditionAndJump(@NotNull Label loopExit) {
             v.load(loopParameterVar, asmElementType);
             v.load(incrementVar, asmElementType);
@@ -1059,7 +1107,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void increment() {
+        protected void increment(@NotNull Label loopExit) {
 
             v.load(loopParameterVar, asmElementType);
             v.load(incrementVar, asmElementType);
