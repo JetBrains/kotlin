@@ -195,8 +195,13 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                 if (descriptor instanceof ValueParameterDescriptor)
                     return new RemoveFunctionParametersFix(declaration, context, functionDescriptor, (ValueParameterDescriptor) descriptor);
                 else {
-                    boolean hasTypeMismatches = hasTypeMismatches(functionDescriptor.getValueParameters(), callElement.getValueArguments(), bindingContext);
-                    return new AddFunctionParametersFix(declaration, callElement, functionDescriptor, hasTypeMismatches);
+                    List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+                    List<? extends ValueArgument> arguments = callElement.getValueArguments();
+
+                    if (arguments.size() > parameters.size()) {
+                        boolean hasTypeMismatches = hasTypeMismatches(parameters, arguments, bindingContext);
+                        return new AddFunctionParametersFix(declaration, callElement, functionDescriptor, hasTypeMismatches);
+                    }
                 }
             }
         }
