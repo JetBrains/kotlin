@@ -14,9 +14,6 @@
 
   <project-components>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.BuiltInsInitializer</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
     </component>
     <component>

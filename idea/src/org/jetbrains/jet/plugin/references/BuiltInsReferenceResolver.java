@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.BuiltInsInitializer;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.net.URL;
@@ -59,11 +58,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
     private Set<? extends PsiFile> builtInsSources = Sets.newHashSet();
 
-    public BuiltInsReferenceResolver(
-            Project project,
-            // This parameter is needed to initialize built-ins before this component
-            BuiltInsInitializer ignored
-    ) {
+    public BuiltInsReferenceResolver(Project project) {
         super(project);
     }
 
