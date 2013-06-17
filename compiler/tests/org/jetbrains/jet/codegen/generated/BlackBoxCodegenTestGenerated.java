@@ -1556,8 +1556,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/defaultArguments/constructor/kt2852.kt");
             }
             
-            }
-            
+        }
+        
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
         public static class Function extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInFunction() throws Exception {
