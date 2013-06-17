@@ -183,6 +183,6 @@ public class CallResolverUtil {
         }
         return new JetTypeImpl(
                 receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isNullable(),
-                fakeTypeArguments, receiverType.getMemberScope());
+                fakeTypeArguments, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true));
     }
 }
