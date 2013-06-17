@@ -9,7 +9,7 @@ class Customer(name: String)
 fun foo(f: File, c: Customer) {
     f.name
 
-    c.<!UNRESOLVED_REFERENCE!>name<!> // name should be unresolved here
+    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>name<!> // name should be unresolved here
 }
 
 //from standard library

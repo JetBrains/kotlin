@@ -41,6 +41,10 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
         return new OverloadResolutionResultsImpl<D>(Code.MANY_FAILED_CANDIDATES, failedCandidates);
     }
 
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> candidatesWithWrongReceiver(Collection<ResolvedCallWithTrace<D>> failedCandidates) {
+        return new OverloadResolutionResultsImpl<D>(Code.CANDIDATES_WITH_WRONG_RECEIVER, failedCandidates);
+    }
+
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<ResolvedCallWithTrace<D>> candidates) {
         return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, candidates);
     }
@@ -94,7 +98,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
 
     @Override
     public boolean isSingleResult() {
-        return results.size() == 1;
+        return results.size() == 1 && getResultCode() != Code.CANDIDATES_WITH_WRONG_RECEIVER;
     }
 
     @Override

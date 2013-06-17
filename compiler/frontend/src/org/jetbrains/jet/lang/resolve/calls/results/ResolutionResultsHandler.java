@@ -44,6 +44,7 @@ public class ResolutionResultsHandler {
         Set<ResolvedCallWithTrace<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failedCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> incompleteCandidates = Sets.newLinkedHashSet();
+        Set<ResolvedCallWithTrace<D>> candidatesWithWrongReceiver = Sets.newLinkedHashSet();
         for (ResolvedCallWithTrace<D> candidateCall : candidates) {
             ResolutionStatus status = candidateCall.getStatus();
             assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
@@ -53,7 +54,10 @@ public class ResolutionResultsHandler {
             else if (status == INCOMPLETE_TYPE_INFERENCE) {
                 incompleteCandidates.add(candidateCall);
             }
-            else if (candidateCall.getStatus() != STRONG_ERROR) {
+            else if (candidateCall.getStatus() == RECEIVER_TYPE_ERROR) {
+                candidatesWithWrongReceiver.add(candidateCall);
+            }
+            else if (candidateCall.getStatus() != RECEIVER_PRESENCE_ERROR) {
                 failedCandidates.add(candidateCall);
             }
         }
@@ -65,10 +69,12 @@ public class ResolutionResultsHandler {
         else if (!failedCandidates.isEmpty()) {
             return computeFailedResult(trace, tracing, failedCandidates);
         }
-        else {
-            tracing.unresolvedReference(trace);
-            return OverloadResolutionResultsImpl.nameNotFound();
+        if (!candidatesWithWrongReceiver.isEmpty()) {
+            tracing.unresolvedReferenceWrongReceiver(trace, candidatesWithWrongReceiver);
+            return OverloadResolutionResultsImpl.candidatesWithWrongReceiver(candidatesWithWrongReceiver);
         }
+        tracing.unresolvedReference(trace);
+        return OverloadResolutionResultsImpl.nameNotFound();
     }
 
     @NotNull

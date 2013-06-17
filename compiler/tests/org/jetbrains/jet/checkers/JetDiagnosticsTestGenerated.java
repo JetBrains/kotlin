@@ -2297,6 +2297,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/extensions/throwOutCandidatesByReceiver.kt");
             }
             
+            @TestMetadata("throwOutCandidatesByReceiver2.kt")
+            public void testThrowOutCandidatesByReceiver2() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/extensions/throwOutCandidatesByReceiver2.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/functionLiterals")

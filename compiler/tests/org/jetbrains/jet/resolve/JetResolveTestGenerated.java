@@ -238,6 +238,11 @@ public class JetResolveTestGenerated extends AbstractResolveTest {
             doTest("compiler/testData/resolve/candidatesPriority/receiverVsThisObject2.resolve");
         }
         
+        @TestMetadata("wrongReceiverVsOtherError.resolve")
+        public void testWrongReceiverVsOtherError() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/wrongReceiverVsOtherError.resolve");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/resolve/delegatedProperty")

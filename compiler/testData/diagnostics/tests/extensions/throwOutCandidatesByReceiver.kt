@@ -6,26 +6,28 @@ package bar
 fun <R> List<R>.a() {}
 
 fun test1(i: Int?) {
-    1.<!UNRESOLVED_REFERENCE!>a<!>()
-    i.<!UNRESOLVED_REFERENCE!>a<!>()
+    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
+    i.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
 }
 
 fun <R> test2(c: Collection<R>) {
-    c.<!UNRESOLVED_REFERENCE!>a<!>()
+    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
 }
 
 fun Int.foo() {}
 
 fun test3(s: String?) {
-    "".<!UNRESOLVED_REFERENCE!>foo<!>()
-    s.<!UNRESOLVED_REFERENCE!>foo<!>()
+    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
+    s.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
+    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>(1)
+    s.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>("a")
 }
 
 trait A
 fun <T: A> T.c() {}
 
 fun test4() {
-    1.<!UNRESOLVED_REFERENCE!>c<!>()
+    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>c<!>()
 }
 
 
@@ -45,5 +47,9 @@ fun <T> test6(l: List<T>?) {
 fun List<String>.b() {}
 
 fun test7(l: List<String?>) {
+    <!TYPE_MISMATCH!>l<!>.b()
+}
+
+fun test8(l: List<Any>?) {
     <!TYPE_MISMATCH!>l<!>.b()
 }

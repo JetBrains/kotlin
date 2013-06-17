@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.diagnostics.rendering.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.NAME;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
@@ -93,6 +92,7 @@ public class IdeErrorMessages {
         MAP.put(NONE_APPLICABLE, "<html>None of the following functions can be called with the arguments supplied. <ul>{0}</ul></html>",
                 HTML_NONE_APPLICABLE_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE, "<html>Cannot choose among the following candidates without completing type inference: <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
+        MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "<html>Unresolved reference. <br/> None of the following candidates is applicable because of receiver type mismatch: <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
 
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "<html>Overload resolution ambiguity on method ''{0}''. All these functions match. <ul>{1}</ul></html>", TO_STRING, HTML_AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "<html>Property delegate must have a ''{0}'' method. None of the following functions is suitable. <ul>{1}</ul></html>",
