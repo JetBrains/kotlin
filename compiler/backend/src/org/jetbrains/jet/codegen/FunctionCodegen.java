@@ -817,7 +817,8 @@ public class FunctionCodegen extends GenerationStateAware {
             StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
 
             iv.areturn(delegateMethod.getReturnType());
-            endVisit(mv, "delegate method", descriptorToDeclaration(bindingContext, functionDescriptor));
+            endVisit(mv, "Delegate method " + functionDescriptor + " to " + jvmOverriddenMethodSignature,
+                     descriptorToDeclaration(bindingContext, functionDescriptor.getContainingDeclaration()));
 
             generateBridgeIfNeeded(owner, state, v, jvmDelegateMethodSignature.getAsmMethod(), functionDescriptor);
         }

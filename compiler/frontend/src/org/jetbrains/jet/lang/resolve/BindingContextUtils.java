@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -25,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
@@ -188,7 +186,8 @@ public class BindingContextUtils {
         Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
         if (overriddenDescriptors.size() != 1) {
             throw new IllegalStateException(
-                    "cannot find declaration: fake descriptor has more than one overridden descriptor: " + callable);
+                    "Cannot find declaration: fake descriptor " + callable + " has more than one overridden descriptor:\n" +
+                    StringUtil.join(overriddenDescriptors, ",\n"));
         }
 
         return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
