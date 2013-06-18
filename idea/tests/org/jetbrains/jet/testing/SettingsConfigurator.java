@@ -24,13 +24,16 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class SettingsConfigurator {
+    public static final String SET_TRUE_DIRECTIVE = "SET_TRUE:";
+    public static final String SET_FALSE_DIRECTIVE = "SET_FALSE:";
+
     private final String[] settingsToTrue;
     private final String[] settingsToFalse;
     private final Object[] objects;
 
     public SettingsConfigurator(String fileText, Object... objects) {
-        settingsToTrue = InTextDirectivesUtils.findArrayWithPrefixes(fileText, "// SET_TRUE:");
-        settingsToFalse = InTextDirectivesUtils.findArrayWithPrefixes(fileText, "// SET_FALSE:");
+        settingsToTrue = InTextDirectivesUtils.findArrayWithPrefixes(fileText, SET_TRUE_DIRECTIVE);
+        settingsToFalse = InTextDirectivesUtils.findArrayWithPrefixes(fileText, SET_FALSE_DIRECTIVE);
         this.objects = objects;
     }
 
