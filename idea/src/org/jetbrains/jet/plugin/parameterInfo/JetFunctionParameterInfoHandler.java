@@ -26,6 +26,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.Gray;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +57,7 @@ import java.util.List;
  */
 public class JetFunctionParameterInfoHandler implements
         ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, Object, JetValueArgument> {
-    public final static Color GREEN_BACKGROUND = new Color(231, 254, 234);
+    public final static Color GREEN_BACKGROUND = new JBColor(new Color(231, 254, 234), Gray._100);
 
     @NotNull
     @Override
