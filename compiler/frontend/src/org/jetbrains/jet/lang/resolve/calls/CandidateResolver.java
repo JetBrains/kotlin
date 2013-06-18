@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -83,7 +84,7 @@ public class CandidateResolver {
         ResolvedCallImpl<D> candidateCall = context.candidateCall;
         D candidate = candidateCall.getCandidateDescriptor();
 
-        candidateCall.addStatus(checkReceiver(context, context.trace, /*checkOnlyReceiverTypeError=*/true));
+        candidateCall.addStatus(checkReceiverTypeError(context.candidateCall));
 
         if (ErrorUtils.isError(candidate)) {
             candidateCall.addStatus(SUCCESS);
@@ -578,6 +579,8 @@ public class CandidateResolver {
         ResolutionStatus resultStatus = SUCCESS;
         ResolvedCall<D> candidateCall = context.candidateCall;
 
+        resultStatus = resultStatus.combine(checkReceiverTypeError(candidateCall));
+
         // Comment about a very special case.
         // Call 'b.foo(1)' where class 'Foo' has an extension member 'fun B.invoke(Int)' should be checked two times for safe call (in 'checkReceiver'), because
         // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
@@ -586,14 +589,14 @@ public class CandidateResolver {
         resultStatus = resultStatus.combine(checkReceiver(
                 context, candidateCall, trace,
                 candidateCall.getResultingDescriptor().getReceiverParameter(),
-                candidateCall.getReceiverArgument(), candidateCall.getExplicitReceiverKind().isReceiver(), false, checkOnlyReceiverTypeError));
+                candidateCall.getReceiverArgument(), candidateCall.getExplicitReceiverKind().isReceiver(), false));
 
         resultStatus = resultStatus.combine(checkReceiver(
                 context, candidateCall, trace,
                 candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
                 candidateCall.getExplicitReceiverKind().isThisObject(),
                 // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
-                context.call instanceof CallForImplicitInvoke, checkOnlyReceiverTypeError));
+                context.call instanceof CallForImplicitInvoke));
         return resultStatus;
     }
 
@@ -673,6 +676,37 @@ public class CandidateResolver {
         return null;
     }
 
+    private static <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
+            @NotNull ResolvedCall<D> candidateCall
+    ) {
+        D candidateDescriptor = candidateCall.getCandidateDescriptor();
+        if (candidateDescriptor instanceof ExpressionAsFunctionDescriptor) return SUCCESS;
+
+        ReceiverParameterDescriptor receiverDescriptor = candidateDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor expectedThisObjectDescriptor = candidateDescriptor.getExpectedThisObject();
+        ReceiverParameterDescriptor receiverParameterDescriptor;
+        JetType receiverArgumentType;
+        if (receiverDescriptor != null && candidateCall.getReceiverArgument().exists()) {
+            receiverParameterDescriptor = receiverDescriptor;
+            receiverArgumentType = candidateCall.getReceiverArgument().getType();
+        }
+        else if (expectedThisObjectDescriptor != null && candidateCall.getThisObject().exists()) {
+            receiverParameterDescriptor = expectedThisObjectDescriptor;
+            receiverArgumentType = candidateCall.getThisObject().getType();
+        }
+        else {
+            return SUCCESS;
+        }
+
+        JetType effectiveReceiverArgumentType = TypeUtils.makeNotNullable(receiverArgumentType);
+        JetType erasedReceiverType = CallResolverUtil.getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor);
+
+        if (!JetTypeChecker.INSTANCE.isSubtypeOf(effectiveReceiverArgumentType, erasedReceiverType)) {
+            return RECEIVER_TYPE_ERROR;
+        }
+        return SUCCESS;
+    }
+
     private static <D extends CallableDescriptor> ResolutionStatus checkReceiver(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull ResolvedCall<D> candidateCall,
@@ -680,28 +714,18 @@ public class CandidateResolver {
             @Nullable ReceiverParameterDescriptor receiverParameter,
             @NotNull ReceiverValue receiverArgument,
             boolean isExplicitReceiver,
-            boolean implicitInvokeCheck,
-            boolean checkOnlyReceiverTypeError
+            boolean implicitInvokeCheck
     ) {
         if (receiverParameter == null || !receiverArgument.exists()) return SUCCESS;
 
         JetType receiverArgumentType = receiverArgument.getType();
         JetType effectiveReceiverArgumentType = TypeUtils.makeNotNullable(receiverArgumentType);
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
-        if (!ArgumentTypeResolver.isSubtypeOfForArgumentType(effectiveReceiverArgumentType, receiverParameter.getType())) {
-
-            if (CallResolverUtil.checkArgumentCannotBeReceiver(effectiveReceiverArgumentType, candidateDescriptor)
-                    && !(candidateDescriptor instanceof ExpressionAsFunctionDescriptor)) {
-                return RECEIVER_TYPE_ERROR;
-            }
-            //todo
-            if (!TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())
-                    && !checkOnlyReceiverTypeError) {
-                context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument);
-                return OTHER_ERROR;
-            }
+        if (!ArgumentTypeResolver.isSubtypeOfForArgumentType(effectiveReceiverArgumentType, receiverParameter.getType())
+                && !TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) {
+            context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument);
+            return OTHER_ERROR;
         }
-        if (checkOnlyReceiverTypeError) return SUCCESS;
 
         BindingContext bindingContext = trace.getBindingContext();
         boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
@@ -727,7 +751,6 @@ public class CandidateResolver {
             this.status = status;
             this.argumentTypes = argumentTypes;
         }
-
     }
 
     @NotNull

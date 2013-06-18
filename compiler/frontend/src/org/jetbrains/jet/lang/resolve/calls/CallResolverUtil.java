@@ -152,29 +152,15 @@ public class CallResolverUtil {
         return CallKey.create(context.call.getCallType(), (JetExpression) callElement);
     }
 
-    public static boolean checkArgumentCannotBeReceiver(
-            @NotNull JetType receiverArgumentType,
+    @NotNull
+    public static JetType getErasedReceiverType(
+            @NotNull ReceiverParameterDescriptor receiverParameterDescriptor,
             @NotNull CallableDescriptor descriptor
     ) {
-        JetType effectiveReceiverArgumentType = TypeUtils.makeNotNullable(receiverArgumentType);
-
-        JetType erasedReceiverType = getErasedReceiverType(descriptor);
-        if (erasedReceiverType == null) return true;
-
-        return !JetTypeChecker.INSTANCE.isSubtypeOf(effectiveReceiverArgumentType, erasedReceiverType);
-    }
-
-    @Nullable
-    private static JetType getErasedReceiverType(@NotNull CallableDescriptor descriptor) {
-        ReceiverParameterDescriptor receiverDescriptor = descriptor.getReceiverParameter();
-        ReceiverParameterDescriptor expectedThisObjectDescriptor = descriptor.getExpectedThisObject();
-        JetType receiverType = receiverDescriptor != null ? receiverDescriptor.getType() :
-                           expectedThisObjectDescriptor != null ? expectedThisObjectDescriptor.getType() : null;
-        if (receiverType == null) return null;
-
+        JetType receiverType = receiverParameterDescriptor.getType();
         for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
             if (typeParameter.getTypeConstructor().equals(receiverType.getConstructor())) {
-                return typeParameter.getUpperBoundsAsType();
+                receiverType = typeParameter.getUpperBoundsAsType();
             }
         }
         List<TypeProjection> fakeTypeArguments = Lists.newArrayList();
