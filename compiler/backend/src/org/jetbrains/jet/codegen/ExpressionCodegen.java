@@ -1024,6 +1024,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
             v.load(loopParameterVar, asmElementType);
+            v.load(endVar, asmElementType);
+
             v.load(incrementVar, asmElementType);
 
             Label negativeIncrement = new Label();
@@ -1038,13 +1040,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.ifle(negativeIncrement); // if increment < 0, jump
 
                     // increment > 0
-                    v.load(endVar, asmElementType);
                     v.ificmpgt(loopExit);
                     v.goTo(afterIf);
 
                     // increment < 0
                     v.visitLabel(negativeIncrement);
-                    v.load(endVar, asmElementType);
                     v.ificmplt(loopExit);
                     v.visitLabel(afterIf);
 
@@ -1056,14 +1056,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.ifle(negativeIncrement); // if increment < 0, jump
 
                     // increment > 0
-                    v.load(endVar, asmElementType);
                     v.lcmp();
                     v.ifgt(loopExit);
                     v.goTo(afterIf);
 
                     // increment < 0
                     v.visitLabel(negativeIncrement);
-                    v.load(endVar, asmElementType);
                     v.lcmp();
                     v.iflt(loopExit);
                     v.visitLabel(afterIf);
@@ -1082,14 +1080,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.ifle(negativeIncrement); // if increment < 0, jump
 
                     // increment > 0
-                    v.load(endVar, asmElementType);
                     v.cmpg(asmElementType); // if loop parameter is NaN, exit from loop, as well
                     v.ifgt(loopExit);
                     v.goTo(afterIf);
 
                     // increment < 0
                     v.visitLabel(negativeIncrement);
-                    v.load(endVar, asmElementType);
                     v.cmpl(asmElementType); // if loop parameter is NaN, exit from loop, as well
                     v.iflt(loopExit);
                     v.visitLabel(afterIf);
