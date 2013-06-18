@@ -36,12 +36,16 @@ import java.util.List;
 public class TypeDeserializer {
     private final NameResolver nameResolver;
     private final ClassResolver classResolver;
-    private final IndexedSymbolTable<TypeParameterDescriptor> typeParameterDescriptors;
+    private final TypeDeserializer parent;
+    private final TIntObjectHashMap<TypeParameterDescriptor> typeParameterDescriptors = new TIntObjectHashMap<TypeParameterDescriptor>();
     private final TIntObjectHashMap<ClassDescriptor> classDescriptors = new TIntObjectHashMap<ClassDescriptor>();
 
     private final String debugName;
 
-    public TypeDeserializer(@NotNull TypeDeserializer parent, @NotNull String debugName) {
+    public TypeDeserializer(
+            @NotNull TypeDeserializer parent,
+            @NotNull String debugName
+    ) {
         this(parent, parent.nameResolver, parent.classResolver, debugName);
     }
 
@@ -50,9 +54,8 @@ public class TypeDeserializer {
             @NotNull NameResolver nameResolver,
             @NotNull ClassResolver classResolver,
             @NotNull String debugName
-            ) {
-        IndexedSymbolTable<TypeParameterDescriptor> parentTypeParameters = parent == null ? null : parent.typeParameterDescriptors;
-        this.typeParameterDescriptors = new IndexedSymbolTable<TypeParameterDescriptor>(parentTypeParameters);
+    ) {
+        this.parent = parent;
         this.nameResolver = nameResolver;
         this.classResolver = classResolver;
         this.debugName = debugName + (parent == null ? "" : ". Child of " + parent.debugName);
@@ -64,7 +67,7 @@ public class TypeDeserializer {
     }
 
     public void registerTypeParameter(int id, TypeParameterDescriptor typeParameter) {
-        typeParameterDescriptors.registerSymbol(id, typeParameter);
+        typeParameterDescriptors.put(id, typeParameter);
     }
 
     @Nullable
@@ -102,7 +105,10 @@ public class TypeDeserializer {
 
                 return classDescriptor.getTypeConstructor();
             case TYPE_PARAMETER:
-                TypeParameterDescriptor descriptor = typeParameterDescriptors.getSymbol(proto.getId());
+                TypeParameterDescriptor descriptor = typeParameterDescriptors.get(proto.getId());
+                if (descriptor == null && parent != null) {
+                    descriptor = parent.typeParameterDescriptors.get(proto.getId());
+                }
                 if (descriptor == null) return null;
 
                 return descriptor.getTypeConstructor();
