@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValueImpl;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -165,22 +167,34 @@ public class TypeDeserializer {
 
     private class DeserializedType implements JetType {
         private final ProtoBuf.Type typeProto;
-        private TypeConstructor constructor;
+        private final NotNullLazyValue<TypeConstructor> constructor;
         private final List<TypeProjection> arguments;
-        private JetScope memberScope;
+        private final NotNullLazyValue<JetScope> memberScope;
 
-        public DeserializedType(@NotNull ProtoBuf.Type typeProto) {
-            this.typeProto = typeProto;
-            this.arguments = typeArguments(typeProto.getArgumentsList());
+        public DeserializedType(@NotNull ProtoBuf.Type proto) {
+            this.typeProto = proto;
+            this.arguments = typeArguments(proto.getArgumentsList());
+
+            this.constructor = new NotNullLazyValueImpl<TypeConstructor>() {
+                @NotNull
+                @Override
+                protected TypeConstructor doCompute() {
+                    return typeConstructor(typeProto);
+                }
+            };
+            this.memberScope = new NotNullLazyValueImpl<JetScope>() {
+                @NotNull
+                @Override
+                protected JetScope doCompute() {
+                    return computeMemberScope();
+                }
+            };
         }
 
         @NotNull
         @Override
         public TypeConstructor getConstructor() {
-            if (constructor == null) {
-                constructor = typeConstructor(typeProto);
-            }
-            return constructor;
+            return constructor.compute();
         }
 
         @NotNull
@@ -195,18 +209,20 @@ public class TypeDeserializer {
         }
 
         @NotNull
+        private JetScope computeMemberScope() {
+            TypeConstructor typeConstructor = getConstructor();
+            if (ErrorUtils.isError(typeConstructor)) {
+                return ErrorUtils.createErrorScope(typeConstructor.toString());
+            }
+            else {
+                return getTypeMemberScope(typeConstructor, getArguments());
+            }
+        }
+
+        @NotNull
         @Override
         public JetScope getMemberScope() {
-            if (memberScope == null) {
-                TypeConstructor typeConstructor = getConstructor();
-                if (ErrorUtils.isError(typeConstructor)) {
-                    memberScope = ErrorUtils.createErrorScope(typeConstructor.toString());
-                }
-                else {
-                    memberScope = getTypeMemberScope(typeConstructor, getArguments());
-                }
-            }
-            return memberScope;
+            return memberScope.compute();
         }
 
         @Override
