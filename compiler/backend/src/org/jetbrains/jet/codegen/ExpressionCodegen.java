@@ -1108,19 +1108,68 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         protected void increment(@NotNull Label loopExit) {
-
             v.load(loopParameterVar, asmElementType);
             v.load(incrementVar, asmElementType);
             v.add(asmElementType);
 
             int sort = asmElementType.getSort();
-            if (sort == Type.CHAR || sort == Type.BYTE || sort == Type.SHORT) {
-                StackValue.coerce(Type.INT_TYPE, asmElementType, v);
+            if (sort == Type.INT || sort == Type.LONG) {
+                checkNewLoopParameterValue(loopExit);
             }
 
             v.store(loopParameterVar, asmElementType);
         }
+
+        // Checks that (increment > 0) == (new value of loop parameter > old value of loop parameter).
+        // Old value should be stored in loopParameterVar, new value should be on top of the stack
+        private void checkNewLoopParameterValue(@NotNull Label loopExit) {
+            Label negativeIncrement = new Label();
+            Label afterIf = new Label();
+            Label popAndExit = new Label();
+
+            dup(v, asmElementType);
+            v.load(loopParameterVar, asmElementType);
+
+            v.load(incrementVar, asmElementType);
+
+            if (asmElementType.getSort() == Type.LONG) {
+                v.lconst(0L);
+                v.lcmp();
+                v.ifle(negativeIncrement);
+
+                // increment > 0
+                v.lcmp();
+                v.iflt(popAndExit);
+                v.goTo(afterIf);
+
+                // increment < 0
+                v.mark(negativeIncrement);
+                v.lcmp();
+                v.ifgt(popAndExit);
+                v.goTo(afterIf);
+            }
+            else {
+                v.ifle(negativeIncrement);
+
+                // increment > 0
+                v.ificmplt(popAndExit);
+                v.goTo(afterIf);
+
+                // increment < 0
+                v.mark(negativeIncrement);
+                v.ificmpgt(popAndExit);
+                v.goTo(afterIf);
+            }
+
+            // Pop the new value of loop parameter from the stack and exit the loop
+            v.mark(popAndExit);
+            pop(v, asmElementType);
+            v.goTo(loopExit);
+
+            v.mark(afterIf);
+        }
     }
+
 
     @Override
     public StackValue visitBreakExpression(JetBreakExpression expression, StackValue receiver) {
@@ -3059,12 +3108,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                     switch (value.receiverSize()) {
                         case 0:
-                            if (type.getSize() == 2) {
-                                v.dup2();
-                            }
-                            else {
-                                v.dup();
-                            }
+                            dup(v, type);
                             break;
 
                         case 1:

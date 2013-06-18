@@ -20,6 +20,7 @@ class IntProgressionIterator extends IntIterator {
     private int next;
     private final int end;
     private final int increment;
+    private boolean overflowHappened = false;
 
     public IntProgressionIterator(int start, int end, int increment) {
         this.next = start;
@@ -29,13 +30,16 @@ class IntProgressionIterator extends IntIterator {
 
     @Override
     public boolean hasNext() {
-        return increment > 0 ? next <= end : next >= end;
+        return !overflowHappened && (increment > 0 ? next <= end : next >= end);
     }
 
     @Override
     public int nextInt() {
         int value = next;
         next += increment;
+        if ((increment > 0) != (next > value)) {
+            overflowHappened = true;
+        }
         return value;
     }
 }

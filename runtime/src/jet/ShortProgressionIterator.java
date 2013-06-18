@@ -17,7 +17,7 @@
 package jet;
 
 class ShortProgressionIterator extends ShortIterator {
-    private short next;
+    private int next;
     private final short end;
     private final int increment;
 
@@ -34,8 +34,8 @@ class ShortProgressionIterator extends ShortIterator {
 
     @Override
     public short nextShort() {
-        short value = next;
+        int value = next;
         next += increment;
-        return value;
+        return (short) value;
     }
 }

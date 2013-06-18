@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -211,15 +210,6 @@ public abstract class StackValue {
         }
     }
 
-    private static void pop(Type type, InstructionAdapter v) {
-        if (type.getSize() == 1) {
-            v.pop();
-        }
-        else {
-            v.pop2();
-        }
-    }
-
     protected void coerceTo(Type toType, InstructionAdapter v) {
         coerce(this.type, toType, v);
     }
@@ -232,7 +222,7 @@ public abstract class StackValue {
         if (toType.equals(fromType)) return;
 
         if (toType.getSort() == Type.VOID) {
-            pop(fromType, v);
+            pop(v, fromType);
         }
         else if (fromType.getSort() == Type.VOID) {
             if (toType.equals(JET_UNIT_TYPE) || toType.equals(OBJECT_TYPE)) {
@@ -246,7 +236,7 @@ public abstract class StackValue {
             }
         }
         else if (toType.equals(JET_UNIT_TYPE)) {
-            pop(fromType, v);
+            pop(v, fromType);
             putUnitInstance(v);
         }
         else if (toType.getSort() == Type.ARRAY) {
@@ -646,7 +636,7 @@ public abstract class StackValue {
                 method.invokeWithNotNullAssertion(v, state, resolvedSetCall);
                 Type returnType = asmMethod.getReturnType();
                 if (returnType != Type.VOID_TYPE) {
-                    pop(returnType, v);
+                    pop(v, returnType);
                 }
             }
             else {

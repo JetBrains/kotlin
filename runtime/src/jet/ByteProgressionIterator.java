@@ -17,7 +17,7 @@
 package jet;
 
 class ByteProgressionIterator extends ByteIterator {
-    private byte next;
+    private int next;
     private final byte end;
     private final int increment;
 
@@ -34,8 +34,8 @@ class ByteProgressionIterator extends ByteIterator {
 
     @Override
     public byte nextByte() {
-        byte value = next;
+        int value = next;
         next += increment;
-        return value;
+        return (byte) value;
     }
 }

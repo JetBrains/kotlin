@@ -47,9 +47,7 @@ import java.util.Set;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isKindOf;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 
 public class AsmUtil {
@@ -640,6 +638,24 @@ public class AsmUtil {
         if (left == Type.FLOAT_TYPE || right == Type.FLOAT_TYPE) return Type.FLOAT_TYPE;
         if (left == Type.LONG_TYPE || right == Type.LONG_TYPE) return Type.LONG_TYPE;
         return Type.INT_TYPE;
+    }
+
+    public static void pop(@NotNull InstructionAdapter v, @NotNull Type type) {
+        if (type.getSize() == 2) {
+            v.pop2();
+        }
+        else {
+            v.pop();
+        }
+    }
+
+    public static void dup(@NotNull InstructionAdapter v, @NotNull Type type) {
+        if (type.getSize() == 2) {
+            v.dup2();
+        }
+        else {
+            v.dup();
+        }
     }
 
 }

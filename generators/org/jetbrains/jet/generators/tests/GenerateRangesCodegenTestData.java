@@ -68,9 +68,13 @@ public class GenerateRangesCodegenTestData {
             .put("Float.NaN", "Float")
             .put("Double.NaN", "Double")
             .put("MaxB", "Byte")
+            .put("MinB", "Byte")
             .put("MaxS", "Short")
+            .put("MinS", "Short")
             .put("MaxL", "Long")
+            .put("MinL", "Long")
             .put("MaxC", "Char")
+            .put("MinC", "Char")
             .build();
 
     private static String detectElementType(String rangeExpression) {

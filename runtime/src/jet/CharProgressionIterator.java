@@ -17,7 +17,7 @@
 package jet;
 
 class CharProgressionIterator extends CharIterator {
-    private char next;
+    private int next;
     private final char end;
     private final int increment;
 
@@ -34,8 +34,8 @@ class CharProgressionIterator extends CharIterator {
 
     @Override
     public char nextChar() {
-        char value = next;
+        int value = next;
         next += increment;
-        return value;
+        return (char) value;
     }
 }

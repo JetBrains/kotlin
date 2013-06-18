@@ -20,6 +20,7 @@ class LongProgressionIterator extends LongIterator {
     private long next;
     private final long end;
     private final long increment;
+    private boolean overflowHappened = false;
 
     public LongProgressionIterator(long start, long end, long increment) {
         this.next = start;
@@ -29,13 +30,16 @@ class LongProgressionIterator extends LongIterator {
 
     @Override
     public boolean hasNext() {
-        return increment > 0 ? next <= end : next >= end;
+        return !overflowHappened && (increment > 0 ? next <= end : next >= end);
     }
 
     @Override
     public long nextLong() {
         long value = next;
         next += increment;
+        if ((increment > 0) != (next > value)) {
+            overflowHappened = true;
+        }
         return value;
     }
 }
