@@ -2,6 +2,7 @@
   <dictionary name="abreslav">
     <words>
       <w>accessor</w>
+      <w>deserialized</w>
       <w>dominator</w>
       <w>inferrer</w>
       <w>iterable</w>

@@ -75,75 +75,7 @@ public class TypeDeserializer {
 
     @NotNull
     public JetType type(@NotNull final ProtoBuf.Type proto) {
-        // Types are lazy
-        return new JetType() {
-            private TypeConstructor constructor;
-            private final List<TypeProjection> arguments = typeArguments(proto.getArgumentsList());
-            private JetScope memberScope;
-
-            @NotNull
-            @Override
-            public TypeConstructor getConstructor() {
-                if (constructor == null) {
-                    constructor = typeConstructor(proto);
-                }
-                return constructor;
-            }
-
-            @NotNull
-            @Override
-            public List<TypeProjection> getArguments() {
-                return arguments;
-            }
-
-            @Override
-            public boolean isNullable() {
-                return proto.getNullable();
-            }
-
-            @NotNull
-            @Override
-            public JetScope getMemberScope() {
-                if (memberScope == null) {
-                    TypeConstructor typeConstructor = getConstructor();
-                    if (ErrorUtils.isError(typeConstructor)) {
-                        memberScope = ErrorUtils.createErrorScope(typeConstructor.toString());
-                    }
-                    else {
-                        memberScope = getTypeMemberScope(typeConstructor, getArguments());
-                    }
-                }
-                return memberScope;
-            }
-
-            @Override
-            public List<AnnotationDescriptor> getAnnotations() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public String toString() {
-                return TypeUtils.toString(this);
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (!(o instanceof JetType)) return false;
-
-                JetType type = (JetType) o;
-
-                return isNullable() == type.isNullable() && JetTypeChecker.INSTANCE.equalTypes(this, type);
-            }
-
-            @Override
-            public int hashCode() {
-                int result = constructor != null ? constructor.hashCode() : 0;
-                result = 31 * result + arguments.hashCode();
-                result = 31 * result + (isNullable() ? 1 : 0);
-                return result;
-            }
-        };
+        return new DeserializedType(proto);
     }
 
     private TypeConstructor typeConstructor(ProtoBuf.Type proto) {
@@ -229,5 +161,80 @@ public class TypeDeserializer {
     @Override
     public String toString() {
         return debugName;
+    }
+
+    private class DeserializedType implements JetType {
+        private final ProtoBuf.Type typeProto;
+        private TypeConstructor constructor;
+        private final List<TypeProjection> arguments;
+        private JetScope memberScope;
+
+        public DeserializedType(@NotNull ProtoBuf.Type typeProto) {
+            this.typeProto = typeProto;
+            this.arguments = typeArguments(typeProto.getArgumentsList());
+        }
+
+        @NotNull
+        @Override
+        public TypeConstructor getConstructor() {
+            if (constructor == null) {
+                constructor = typeConstructor(typeProto);
+            }
+            return constructor;
+        }
+
+        @NotNull
+        @Override
+        public List<TypeProjection> getArguments() {
+            return arguments;
+        }
+
+        @Override
+        public boolean isNullable() {
+            return typeProto.getNullable();
+        }
+
+        @NotNull
+        @Override
+        public JetScope getMemberScope() {
+            if (memberScope == null) {
+                TypeConstructor typeConstructor = getConstructor();
+                if (ErrorUtils.isError(typeConstructor)) {
+                    memberScope = ErrorUtils.createErrorScope(typeConstructor.toString());
+                }
+                else {
+                    memberScope = getTypeMemberScope(typeConstructor, getArguments());
+                }
+            }
+            return memberScope;
+        }
+
+        @Override
+        public List<AnnotationDescriptor> getAnnotations() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public String toString() {
+            return TypeUtils.toString(this);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof JetType)) return false;
+
+            JetType type = (JetType) o;
+
+            return isNullable() == type.isNullable() && JetTypeChecker.INSTANCE.equalTypes(this, type);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = constructor != null ? constructor.hashCode() : 0;
+            result = 31 * result + arguments.hashCode();
+            result = 31 * result + (isNullable() ? 1 : 0);
+            return result;
+        }
     }
 }
