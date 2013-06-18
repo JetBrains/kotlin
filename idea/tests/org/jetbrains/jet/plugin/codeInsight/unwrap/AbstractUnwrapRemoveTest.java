@@ -1,0 +1,86 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet.plugin.codeInsight.unwrap;
+
+import com.intellij.codeInsight.unwrap.Unwrapper;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
+
+import java.io.File;
+import java.util.List;
+
+public abstract class AbstractUnwrapRemoveTest extends LightCodeInsightTestCase {
+    public void doTestThenUnwrapper(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinThenUnwrapper.class);
+    }
+
+    public void doTestElseUnwrapper(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinElseUnwrapper.class);
+    }
+
+    public void doTestElseRemover(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinElseRemover.class);
+    }
+
+    public void doTestLoopUnwrapper(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinLoopUnwrapper.class);
+    }
+
+    private void doTest(@NotNull String path, final Class<? extends Unwrapper> unwrapperClass) throws Exception {
+        configureByFile(path);
+
+        String fileText = FileUtil.loadFile(new File(path), true);
+
+        String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
+        boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
+
+        String option = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// OPTION: ");
+        Integer optionIndex = option != null ? Integer.parseInt(option) : 0;
+
+        List<Pair<PsiElement, Unwrapper>> unwrappersWithPsi =
+                new KotlinUnwrapDescriptor().collectUnwrappers(getProject(), getEditor(), getFile());
+
+        if (isApplicableExpected) {
+            Pair<PsiElement, Unwrapper> selectedUnwrapperWithPsi = unwrappersWithPsi.get(optionIndex);
+            assertEquals(unwrapperClass, selectedUnwrapperWithPsi.second.getClass());
+
+            selectedUnwrapperWithPsi.second.unwrap(getEditor(), selectedUnwrapperWithPsi.first);
+            checkResultByFile(path + ".after");
+        } else {
+            assertTrue(
+                    ContainerUtil.and(unwrappersWithPsi, new Condition<Pair<PsiElement, Unwrapper>>() {
+                        @Override
+                        public boolean value(Pair<PsiElement, Unwrapper> pair) {
+                            return pair.second.getClass() != unwrapperClass;
+                        }
+                    })
+            );
+        }
+    }
+
+    @NotNull
+    @Override
+    protected String getTestDataPath() {
+        return "";
+    }
+}

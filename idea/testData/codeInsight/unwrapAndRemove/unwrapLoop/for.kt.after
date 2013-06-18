@@ -1,0 +1,4 @@
+// OPTION: 1
+fun foo(n: Int) {
+    <caret>println(k)
+}

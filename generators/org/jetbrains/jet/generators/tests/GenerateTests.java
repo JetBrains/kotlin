@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
+import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
 import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
@@ -368,6 +369,16 @@ public class GenerateTests {
                 testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration"),
                 testModel("idea/testData/codeInsight/moveUpDown/closingBraces", "doTestExpression"),
                 testModel("idea/testData/codeInsight/moveUpDown/expressions", "doTestExpression")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "UnwrapRemoveTestGenerated",
+                AbstractUnwrapRemoveTest.class,
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapThen", "doTestThenUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapElse", "doTestElseUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeElse", "doTestElseRemover"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop", "doTestLoopUnwrapper")
         );
     }
 
