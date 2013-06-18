@@ -19,17 +19,18 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.types.Variance;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.*;
 
@@ -60,6 +61,8 @@ public class DescriptorDeserializer {
     private final NameResolver nameResolver;
     private final TypeDeserializer typeDeserializer;
     private final AnnotationDeserializer annotationDeserializer;
+
+    private final StorageManager storageManager = new LockBasedStorageManager();
 
     private DescriptorDeserializer(
             @NotNull TypeDeserializer typeDeserializer,
@@ -288,42 +291,30 @@ public class DescriptorDeserializer {
 
     @NotNull
     public List<TypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
-        List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>(protos.size());
+        List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
             TypeParameter proto = protos.get(i);
-            TypeParameterDescriptorImpl descriptor = typeParameter(proto, i);
+            DeserializedTypeParameterDescriptor descriptor = typeParameter(proto, i);
             result.add(descriptor);
         }
-        // Account for circular bounds:
-        for (int i = 0; i < protos.size(); i++) {
-            TypeParameter proto = protos.get(i);
-            TypeParameterDescriptorImpl descriptor = result.get(i);
-            addTypeParameterBounds(proto, descriptor);
-        }
-        //noinspection unchecked
-        return (List) result;
+        return result;
     }
 
-    private TypeParameterDescriptorImpl typeParameter(TypeParameter proto, int index) {
+    @NotNull
+    private DeserializedTypeParameterDescriptor typeParameter(TypeParameter proto, int index) {
         int id = proto.getId();
-        TypeParameterDescriptorImpl descriptor = TypeParameterDescriptorImpl.createForFurtherModification(
+        DeserializedTypeParameterDescriptor descriptor = new DeserializedTypeParameterDescriptor(
+                storageManager,
+                typeDeserializer,
+                proto,
                 containingDeclaration,
-                // TODO (type parameter annotations are not supported in Java 7)
-                Collections.<AnnotationDescriptor>emptyList(),
-                proto.getReified(),
-                variance(proto.getVariance()),
                 nameResolver.getName(proto.getName()),
-                index);
+                variance(proto.getVariance()),
+                proto.getReified(),
+                index
+        );
         typeDeserializer.registerTypeParameter(id, descriptor);
         return descriptor;
-    }
-
-    private void addTypeParameterBounds(TypeParameter proto, TypeParameterDescriptorImpl descriptor) {
-        for (Type upperBound : proto.getUpperBoundsList()) {
-            descriptor.addUpperBound(typeDeserializer.type(upperBound));
-        }
-        descriptor.addDefaultUpperBound();
-        descriptor.setInitialized();
     }
 
     private static Variance variance(TypeParameter.Variance proto) {
