@@ -252,7 +252,7 @@ public class OverrideResolver {
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink
     ) {
-        Collection<CallableMemberDescriptor> visibleOverridables = filterVisible(current, overridables);
+        Collection<CallableMemberDescriptor> visibleOverridables = filterVisibleFakeOverrides(current, overridables);
         Modality modality = getMinimalModality(visibleOverridables);
         boolean allInvisible = visibleOverridables.isEmpty();
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
@@ -277,14 +277,15 @@ public class OverrideResolver {
     }
 
     @NotNull
-    private static Collection<CallableMemberDescriptor> filterVisible(
+    private static Collection<CallableMemberDescriptor> filterVisibleFakeOverrides(
             @NotNull final ClassDescriptor current,
             @NotNull Collection<CallableMemberDescriptor> toFilter
     ) {
         return Collections2.filter(toFilter, new Predicate<CallableMemberDescriptor>() {
             @Override
             public boolean apply(@Nullable CallableMemberDescriptor descriptor) {
-                return Visibilities.isVisible(descriptor, current);
+                //nested class could capture private member, so check for private visibility added
+                return descriptor.getVisibility() != Visibilities.PRIVATE && Visibilities.isVisible(descriptor, current);
             }
         });
     }
