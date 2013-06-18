@@ -80,7 +80,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.deserializer = DescriptorDeserializer.create(typeDeserializer, this, nameResolver, annotationResolver);
 
         this.containingDeclaration = containingDeclaration;
-        this.typeConstructor = new DeserializedClassTypeConstructor();
+        this.typeConstructor = new DeserializedClassTypeConstructor(deserializer.typeParameters(classProto.getTypeParametersList()));
         this.memberScope = new DeserializedClassMemberScope(this);
         this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
         this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
@@ -276,7 +276,11 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
     private class DeserializedClassTypeConstructor implements TypeConstructor {
         private final Collection<JetType> supertypes = computeSuperTypes();
-        private final List<TypeParameterDescriptor> parameters = deserializer.typeParameters(classProto.getTypeParametersList());
+        private final List<TypeParameterDescriptor> parameters;
+
+        public DeserializedClassTypeConstructor(@NotNull List<TypeParameterDescriptor> typeParameters) {
+            parameters = typeParameters;
+        }
 
         @NotNull
         @Override
