@@ -498,7 +498,7 @@ public class AsmUtil {
             Type asmType = state.getTypeMapper().mapReturnType(type);
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
-                v.visitLdcInsn(descriptor.getName().asString());
+                v.visitLdcInsn(parameter.getName().asString());
                 v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
             }
         }
