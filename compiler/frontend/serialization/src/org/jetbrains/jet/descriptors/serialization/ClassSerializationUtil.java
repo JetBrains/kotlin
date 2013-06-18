@@ -40,7 +40,7 @@ public class ClassSerializationUtil {
         @NotNull
         @Override
         public DescriptorSerializer getSerializerFor(@NotNull ClassDescriptor classDescriptor) {
-            return new DescriptorSerializer(NameTable.Namer.DEFAULT);
+            return new DescriptorSerializer(DescriptorNamer.DEFAULT);
         }
     };
 
@@ -84,7 +84,7 @@ public class ClassSerializationUtil {
     }
 
     @NotNull
-    public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor, @NotNull NameTable.Namer namer) {
+    public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor, @NotNull DescriptorNamer namer) {
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
             NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
@@ -97,7 +97,7 @@ public class ClassSerializationUtil {
     }
 
     @NotNull
-    public static FqName getPackageFqName(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull NameTable.Namer namer) {
+    public static FqName getPackageFqName(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull DescriptorNamer namer) {
         if (DescriptorUtils.isRootNamespace(namespaceDescriptor)) return FqName.ROOT;
 
         NamespaceDescriptor parent = (NamespaceDescriptor) namespaceDescriptor.getContainingDeclaration();

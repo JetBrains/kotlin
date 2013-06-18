@@ -51,34 +51,12 @@ public class NameTable {
                 }
             };
 
-    public interface Namer {
-        Namer DEFAULT = new NameTable.Namer() {
-            @NotNull
-            @Override
-            public Name getClassName(@NotNull ClassDescriptor classDescriptor) {
-                return classDescriptor.getName();
-            }
-
-            @NotNull
-            @Override
-            public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                return namespaceDescriptor.getName();
-            }
-        };
-
-        @NotNull
-        Name getClassName(@NotNull ClassDescriptor classDescriptor);
-
-        @NotNull
-        Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor);
-    }
-
-    private final Namer namer;
+    private final DescriptorNamer namer;
 
     private final Interner<String> simpleNames = new Interner<String>();
     private final Interner<QualifiedName.Builder> qualifiedNames = new Interner<QualifiedName.Builder>(QUALIFIED_NAME_BUILDER_HASHING);
 
-    public NameTable(@NotNull Namer namer) {
+    public NameTable(@NotNull DescriptorNamer namer) {
         this.namer = namer;
     }
 

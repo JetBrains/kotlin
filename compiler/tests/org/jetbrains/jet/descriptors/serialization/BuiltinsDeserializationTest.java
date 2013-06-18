@@ -51,7 +51,7 @@ import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil
 public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
     private static final Name CLASS_OBJECT_NAME = Name.special("<class object>");
-    private static final NameTable.Namer NAMER = new NameTable.Namer() {
+    private static final DescriptorNamer NAMER = new DescriptorNamer() {
         @NotNull
         @Override
         public Name getClassName(@NotNull ClassDescriptor classDescriptor) {

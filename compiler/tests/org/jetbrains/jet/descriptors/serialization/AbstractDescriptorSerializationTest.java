@@ -61,7 +61,7 @@ import static org.jetbrains.jet.descriptors.serialization.descriptors.Annotation
 public abstract class AbstractDescriptorSerializationTest extends KotlinTestWithEnvironment {
 
     public static final Name TEST_PACKAGE_NAME = Name.identifier("test");
-    public static final NameTable.Namer JAVA_NAMER = new NameTable.Namer() {
+    public static final DescriptorNamer JAVA_NAMER = new DescriptorNamer() {
         @NotNull
         @Override
         public Name getClassName(@NotNull ClassDescriptor classDescriptor) {

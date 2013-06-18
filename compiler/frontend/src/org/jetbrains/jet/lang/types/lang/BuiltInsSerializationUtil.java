@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.types.lang;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil;
-import org.jetbrains.jet.descriptors.serialization.NameTable;
+import org.jetbrains.jet.descriptors.serialization.DescriptorNamer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -20,7 +20,7 @@ public class BuiltInsSerializationUtil {
     public static final String CLASS_NAMES_FILE_NAME = ".kotlin_class_names";
     public static final Name CLASS_OBJECT_NAME = Name.identifier("object");
 
-    public static final NameTable.Namer BUILTINS_NAMER = new NameTable.Namer() {
+    public static final DescriptorNamer BUILTINS_NAMER = new DescriptorNamer() {
         @NotNull
         @Override
         public Name getClassName(@NotNull ClassDescriptor classDescriptor) {

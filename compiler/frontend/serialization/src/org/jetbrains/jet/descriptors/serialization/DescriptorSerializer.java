@@ -46,11 +46,11 @@ public class DescriptorSerializer {
     private final Interner<TypeParameterDescriptor> typeParameters;
     private final Predicate<ClassDescriptor> isSpecial;
 
-    public DescriptorSerializer(@NotNull NameTable.Namer namer) {
+    public DescriptorSerializer(@NotNull DescriptorNamer namer) {
         this(namer, Predicates.<ClassDescriptor>alwaysFalse());
     }
 
-    public DescriptorSerializer(@NotNull NameTable.Namer namer, @NotNull Predicate<ClassDescriptor> isSpecial) {
+    public DescriptorSerializer(@NotNull DescriptorNamer namer, @NotNull Predicate<ClassDescriptor> isSpecial) {
         this(new NameTable(namer), new Interner<TypeParameterDescriptor>(), isSpecial);
     }
 
