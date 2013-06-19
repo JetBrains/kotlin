@@ -36,6 +36,8 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 
 import java.util.*;
 
+import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
+
 public class DeserializedClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
 
     private final ProtoBuf.Class classProto;
@@ -76,11 +78,15 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.classProto = classProto;
         this.name = nameResolver.getName(classProto.getName());
 
-        this.typeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver, classResolver, "Deserializer for class " + name);
-        this.deserializer = DescriptorDeserializer.create(typeDeserializer, this, nameResolver, annotationResolver);
+        TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver, classResolver,
+                                                                        "Deserializer for class " + name, NONE);
+        DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(notNullTypeDeserializer, this, nameResolver, annotationResolver);
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(classProto.getTypeParametersCount());
+        this.deserializer = outerDeserializer.createChildDeserializer(this, classProto.getTypeParametersList(), typeParameters);
+        this.typeDeserializer = deserializer.getTypeDeserializer();
 
         this.containingDeclaration = containingDeclaration;
-        this.typeConstructor = new DeserializedClassTypeConstructor(deserializer.typeParameters(classProto.getTypeParametersList()));
+        this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
         this.memberScope = new DeserializedClassMemberScope(this);
         this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
         this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();

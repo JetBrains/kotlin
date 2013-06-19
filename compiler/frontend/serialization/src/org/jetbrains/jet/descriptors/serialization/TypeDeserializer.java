@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -34,6 +35,20 @@ import java.util.Collections;
 import java.util.List;
 
 public class TypeDeserializer {
+
+    public interface TypeParameterResolver {
+        TypeParameterResolver NONE = new TypeParameterResolver() {
+            @NotNull
+            @Override
+            public List<DeserializedTypeParameterDescriptor> getTypeParameters(@NotNull TypeDeserializer typeDeserializer) {
+                return Collections.emptyList();
+            }
+        };
+
+        @NotNull
+        List<DeserializedTypeParameterDescriptor> getTypeParameters(@NotNull TypeDeserializer typeDeserializer);
+    }
+
     private final NameResolver nameResolver;
     private final ClassResolver classResolver;
     private final TypeDeserializer parent;
@@ -44,30 +59,32 @@ public class TypeDeserializer {
 
     public TypeDeserializer(
             @NotNull TypeDeserializer parent,
-            @NotNull String debugName
+            @NotNull String debugName,
+            @NotNull TypeParameterResolver typeParameterResolver
     ) {
-        this(parent, parent.nameResolver, parent.classResolver, debugName);
+        this(parent, parent.nameResolver, parent.classResolver, debugName, typeParameterResolver);
     }
 
     public TypeDeserializer(
             @Nullable TypeDeserializer parent,
             @NotNull NameResolver nameResolver,
             @NotNull ClassResolver classResolver,
-            @NotNull String debugName
+            @NotNull String debugName,
+            @NotNull TypeParameterResolver typeParameterResolver
     ) {
         this.parent = parent;
         this.nameResolver = nameResolver;
         this.classResolver = classResolver;
         this.debugName = debugName + (parent == null ? "" : ". Child of " + parent.debugName);
+
+        for (DeserializedTypeParameterDescriptor typeParameterDescriptor : typeParameterResolver.getTypeParameters(this)) {
+            typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor);
+        }
     }
 
     @NotNull
     public ClassResolver getClassResolver() {
         return classResolver;
-    }
-
-    public void registerTypeParameter(int id, TypeParameterDescriptor typeParameter) {
-        typeParameterDescriptors.put(id, typeParameter);
     }
 
     @Nullable
@@ -79,7 +96,7 @@ public class TypeDeserializer {
     }
 
     @NotNull
-    public JetType type(@NotNull final ProtoBuf.Type proto) {
+    public JetType type(@NotNull ProtoBuf.Type proto) {
         return new DeserializedType(proto);
     }
 

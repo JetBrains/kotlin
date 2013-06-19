@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.Modality;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.types.Variance;
 import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.*;
+import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
 
 public class DescriptorDeserializer {
 
@@ -43,8 +45,9 @@ public class DescriptorDeserializer {
             @NotNull ClassResolver classResolver,
             @NotNull AnnotationDeserializer annotationDeserializer
     ) {
-        return new DescriptorDeserializer(new TypeDeserializer(null, nameResolver, classResolver, "Deserializer for " + containingDeclaration),
-                                          containingDeclaration, nameResolver, annotationDeserializer);
+        return new DescriptorDeserializer(
+                new TypeDeserializer(null, nameResolver, classResolver, "Deserializer for " + containingDeclaration, NONE),
+                containingDeclaration, nameResolver, annotationDeserializer);
     }
 
     @NotNull
@@ -77,14 +80,41 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
+    public TypeDeserializer getTypeDeserializer() {
+        return typeDeserializer;
+    }
+
+    @NotNull
     public NameResolver getNameResolver() {
         return nameResolver;
     }
 
     @NotNull
-    private DescriptorDeserializer createChildDeserializer(@NotNull DeclarationDescriptor descriptor) {
-        return create(new TypeDeserializer(typeDeserializer, "Child deserializer for " + descriptor),
-                      descriptor, nameResolver, annotationDeserializer);
+    public DescriptorDeserializer createChildDeserializer(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull final List<TypeParameter> typeParameterProtos,
+            @NotNull final List<TypeParameterDescriptor> typeParameters
+    ) {
+        TypeDeserializer childTypeDeserializer = new TypeDeserializer(
+                typeDeserializer, "Child deserializer for " + descriptor,
+                new TypeDeserializer.TypeParameterResolver() {
+                    @NotNull
+                    @Override
+                    public List<DeserializedTypeParameterDescriptor> getTypeParameters(@NotNull TypeDeserializer typeDeserializer) {
+                        List<DeserializedTypeParameterDescriptor> descriptors = typeParameters(typeParameterProtos, typeDeserializer);
+                        typeParameters.addAll(descriptors);
+                        return descriptors;
+                    }
+                });
+        return create(childTypeDeserializer, descriptor, nameResolver, annotationDeserializer);
+    }
+
+    @NotNull
+    public ClassDescriptor loadClass(@NotNull ProtoBuf.Class proto, @NotNull NestedClassResolver nestedClassResolver) {
+        return new DeserializedClassDescriptor(
+                containingDeclaration, getNameResolver(), annotationDeserializer,
+                typeDeserializer.getClassResolver(), nestedClassResolver, proto, typeDeserializer
+        );
     }
 
     @NotNull
@@ -114,8 +144,8 @@ public class DescriptorDeserializer {
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.MEMBER_KIND.get(flags))
         );
-        DescriptorDeserializer local = createChildDeserializer(property);
-        List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParametersCount());
+        DescriptorDeserializer local = createChildDeserializer(property, proto.getTypeParametersList(), typeParameters);
         property.setType(
                 local.typeDeserializer.type(proto.getReturnType()),
                 typeParameters,
@@ -172,8 +202,8 @@ public class DescriptorDeserializer {
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.MEMBER_KIND.get(flags))
         );
-        DescriptorDeserializer local = createChildDeserializer(function);
-        List<TypeParameterDescriptor> typeParameters = local.typeParameters(proto.getTypeParametersList());
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParametersCount());
+        DescriptorDeserializer local = createChildDeserializer(function, proto.getTypeParametersList(), typeParameters);
         function.initialize(
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 getExpectedThisObject(),
@@ -202,7 +232,8 @@ public class DescriptorDeserializer {
                 getAnnotations(proto),
                 // TODO: primary
                 true);
-        DescriptorDeserializer local = createChildDeserializer(descriptor);
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParametersCount());
+        DescriptorDeserializer local = createChildDeserializer(descriptor, Collections.<TypeParameter>emptyList(), typeParameters);
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.valueParameters(proto.getValueParametersList()),
@@ -290,31 +321,26 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    public List<TypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
-        List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>(protos.size());
+    public List<DeserializedTypeParameterDescriptor> typeParameters(
+            @NotNull List<TypeParameter> protos,
+            @NotNull TypeDeserializer typeDeserializer
+    ) {
+        List<DeserializedTypeParameterDescriptor> result = new ArrayList<DeserializedTypeParameterDescriptor>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
             TypeParameter proto = protos.get(i);
-            DeserializedTypeParameterDescriptor descriptor = typeParameter(proto, i);
+            DeserializedTypeParameterDescriptor descriptor = new DeserializedTypeParameterDescriptor(
+                    storageManager,
+                    typeDeserializer,
+                    proto,
+                    containingDeclaration,
+                    nameResolver.getName(proto.getName()),
+                    variance(proto.getVariance()),
+                    proto.getReified(),
+                    i
+            );
             result.add(descriptor);
         }
         return result;
-    }
-
-    @NotNull
-    private DeserializedTypeParameterDescriptor typeParameter(TypeParameter proto, int index) {
-        int id = proto.getId();
-        DeserializedTypeParameterDescriptor descriptor = new DeserializedTypeParameterDescriptor(
-                storageManager,
-                typeDeserializer,
-                proto,
-                containingDeclaration,
-                nameResolver.getName(proto.getName()),
-                variance(proto.getVariance()),
-                proto.getReified(),
-                index
-        );
-        typeDeserializer.registerTypeParameter(id, descriptor);
-        return descriptor;
     }
 
     private static Variance variance(TypeParameter.Variance proto) {

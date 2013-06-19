@@ -62,4 +62,8 @@ public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParamet
         }
         return result;
     }
+
+    public int getProtoId() {
+        return proto.getId();
+    }
 }
