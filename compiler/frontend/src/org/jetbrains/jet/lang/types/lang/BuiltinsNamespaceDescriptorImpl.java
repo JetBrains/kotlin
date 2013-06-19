@@ -94,6 +94,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                 }
             };
             members = new DeserializedPackageMemberScope(
+                    storageManager,
                     this,
                     DescriptorDeserializer.create(this, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED),
                     loadCallables(), classResolver

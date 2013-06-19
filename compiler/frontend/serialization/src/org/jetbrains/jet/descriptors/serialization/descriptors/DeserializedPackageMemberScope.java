@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -25,12 +26,13 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
     private final FqName packageFqName;
 
     public DeserializedPackageMemberScope(
+            @NotNull StorageManager storageManager,
             @NotNull NamespaceDescriptor packageDescriptor,
             @NotNull DescriptorDeserializer deserializer,
             @NotNull List<ProtoBuf.Callable> membersList,
             ClassResolver classResolver
     ) {
-        super(packageDescriptor, deserializer, membersList);
+        super(storageManager, packageDescriptor, deserializer, membersList);
         this.classResolver = classResolver;
         this.packageFqName = DescriptorUtils.getFQName(packageDescriptor).toSafe();
     }

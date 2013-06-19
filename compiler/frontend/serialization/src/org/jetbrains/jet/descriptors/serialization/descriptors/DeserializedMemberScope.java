@@ -16,21 +16,22 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
+import com.intellij.openapi.util.Computable;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;
 import org.jetbrains.jet.descriptors.serialization.Flags;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNullImpl;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValueImpl;
+import org.jetbrains.jet.lang.resolve.lazy.storage.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public abstract class DeserializedMemberScope implements JetScope {
 
@@ -49,6 +50,8 @@ public abstract class DeserializedMemberScope implements JetScope {
 
     private final DeclarationDescriptor containingDeclaration;
     private final DescriptorDeserializer deserializer;
+
+    // Never modified after creation
     private final Map<Name, List<ProtoBuf.Callable>> membersProtos;
 
     private final MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> functions;
@@ -57,6 +60,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     private final NotNullLazyValue<Collection<ClassDescriptor>> objectDescriptors;
 
     public DeserializedMemberScope(
+            @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull DescriptorDeserializer deserializer,
             @NotNull List<ProtoBuf.Callable> membersList
@@ -65,34 +69,30 @@ public abstract class DeserializedMemberScope implements JetScope {
         this.deserializer = deserializer;
 
         this.membersProtos = groupByName(membersList);
-        this.functions = new MemoizedFunctionToNotNullImpl<Name, Collection<FunctionDescriptor>>() {
-            @NotNull
+        this.functions = storageManager.createMemoizedFunction(new Function<Name, Collection<FunctionDescriptor>>() {
             @Override
-            protected Collection<FunctionDescriptor> doCompute(Name name) {
+            public Collection<FunctionDescriptor> fun(Name name) {
                 return computeFunctions(name);
             }
-        };
-        this.properties = new MemoizedFunctionToNotNullImpl<Name, Collection<VariableDescriptor>>() {
-            @NotNull
+        }, STRONG);
+        this.properties = storageManager.createMemoizedFunction(new Function<Name, Collection<VariableDescriptor>>() {
             @Override
-            protected Collection<VariableDescriptor> doCompute(Name name) {
+            public Collection<VariableDescriptor> fun(Name name) {
                 return computeProperties(name);
             }
-        };
-        this.allDescriptors = new NotNullLazyValueImpl<Collection<DeclarationDescriptor>>() {
-            @NotNull
+        }, STRONG);
+        this.allDescriptors = storageManager.createLazyValue(new Computable<Collection<DeclarationDescriptor>>() {
             @Override
-            protected Collection<DeclarationDescriptor> doCompute() {
+            public Collection<DeclarationDescriptor> compute() {
                 return computeAllDescriptors();
             }
-        };
-        this.objectDescriptors = new NotNullLazyValueImpl<Collection<ClassDescriptor>>() {
-            @NotNull
+        });
+        this.objectDescriptors = storageManager.createLazyValue(new Computable<Collection<ClassDescriptor>>() {
             @Override
-            protected Collection<ClassDescriptor> doCompute() {
+            public Collection<ClassDescriptor> compute() {
                 return computeAllObjectDescriptors();
             }
-        };
+        });
     }
 
     @NotNull

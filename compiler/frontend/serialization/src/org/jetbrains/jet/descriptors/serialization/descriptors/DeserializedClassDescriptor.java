@@ -90,7 +90,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
         this.containingDeclaration = containingDeclaration;
         this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
-        this.memberScope = new DeserializedClassMemberScope(this);
+        this.memberScope = new DeserializedClassMemberScope(storageManager, this);
         this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
         this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
 
@@ -327,8 +327,8 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private static class DeserializedClassMemberScope extends DeserializedMemberScope {
         private final DeserializedClassDescriptor classDescriptor;
 
-        public DeserializedClassMemberScope(@NotNull DeserializedClassDescriptor classDescriptor) {
-            super(classDescriptor, classDescriptor.deserializer, classDescriptor.classProto.getMembersList());
+        public DeserializedClassMemberScope(@NotNull StorageManager storageManager, @NotNull DeserializedClassDescriptor classDescriptor) {
+            super(storageManager, classDescriptor, classDescriptor.deserializer, classDescriptor.classProto.getMembersList());
             this.classDescriptor = classDescriptor;
         }
 
