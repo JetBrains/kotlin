@@ -189,6 +189,21 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("AnnotationClass.kt")
+        public void testAnnotationClass() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/staticFields/AnnotationClass.kt");
+        }
+        
+        @TestMetadata("AnnotationTrait.kt")
+        public void testAnnotationTrait() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/staticFields/AnnotationTrait.kt");
+        }
+        
+        @TestMetadata("kt3698.kt")
+        public void testKt3698() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/staticFields/kt3698.kt");
+        }
+        
         @TestMetadata("staticClassProperty.kt")
         public void testStaticClassProperty() throws Exception {
             doTest("compiler/testData/compileJavaAgainstKotlin/staticFields/staticClassProperty.kt");

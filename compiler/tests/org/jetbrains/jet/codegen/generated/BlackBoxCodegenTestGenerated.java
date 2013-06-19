@@ -3105,6 +3105,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/namespace/namespaceQualifiedMethod.kt");
         }
         
+        @TestMetadata("nullablePrimitiveNoFieldInitializer.kt")
+        public void testNullablePrimitiveNoFieldInitializer() throws Exception {
+            doTest("compiler/testData/codegen/box/namespace/nullablePrimitiveNoFieldInitializer.kt");
+        }
+        
         @TestMetadata("privateTopLevelPropAndVarInInner.kt")
         public void testPrivateTopLevelPropAndVarInInner() throws Exception {
             doTest("compiler/testData/codegen/box/namespace/privateTopLevelPropAndVarInInner.kt");

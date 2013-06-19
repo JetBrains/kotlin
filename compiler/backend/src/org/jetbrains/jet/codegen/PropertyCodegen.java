@@ -25,7 +25,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
-import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
@@ -157,7 +156,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
             ImplementationBodyCodegen parentBodyCodegen = getParentBodyCodegen(classBodyCodegen);
-            parentBodyCodegen.addClassObjectPropertyToCopy(propertyDescriptor);
+            parentBodyCodegen.addClassObjectPropertyToCopy(propertyDescriptor, defaultValue);
         }
 
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
@@ -178,8 +177,9 @@ public class PropertyCodegen extends GenerationStateAware {
 
     private FieldVisitor generateBackingFieldAccess(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
         Object value = null;
-        if (p instanceof JetProperty && !ImplementationBodyCodegen.shouldInitializeProperty((JetProperty) p, typeMapper)) {
-            JetExpression initializer = ((JetProperty) p).getInitializer();
+
+        if (ImplementationBodyCodegen.shouldWriteFieldInitializer(propertyDescriptor, typeMapper)) {
+            JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
             if (initializer != null) {
                 CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
                 value = compileTimeValue != null ? compileTimeValue.getValue() : null;

@@ -84,7 +84,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private final FunctionCodegen functionCodegen;
     private final PropertyCodegen propertyCodegen;
 
-    private List<PropertyDescriptor> classObjectPropertiesToCopy;
+    private List<PropertyAndDefaultValue> classObjectPropertiesToCopy;
 
     public ImplementationBodyCodegen(
             @NotNull JetClassOrObject aClass,
@@ -952,11 +952,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateClassObjectBackingFieldCopies() {
         if (classObjectPropertiesToCopy != null) {
-            for (PropertyDescriptor propertyDescriptor : classObjectPropertiesToCopy) {
+            for (PropertyAndDefaultValue propertyInfo : classObjectPropertiesToCopy) {
+                PropertyDescriptor propertyDescriptor = propertyInfo.propertyDescriptor;
 
-                v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor), typeMapper.mapType(propertyDescriptor).getDescriptor(), null, null);
+                v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor),
+                           typeMapper.mapType(propertyDescriptor).getDescriptor(), null, propertyInfo.defaultValue);
 
-                if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+                //This field are always static and final so if it has constant initializer don't do anything in clinit,
+                //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
+                if (state.getClassBuilderMode() == ClassBuilderMode.FULL && propertyInfo.defaultValue == null) {
                     ExpressionCodegen codegen = createOrGetClInitCodegen();
                     int classObjectIndex = putClassObjectInLocalVar(codegen);
                     StackValue.local(classObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
@@ -1625,6 +1629,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         propValue.store(type, codegen.v);
     }
 
+    public static boolean shouldWriteFieldInitializer(PropertyDescriptor descriptor, JetTypeMapper mapper) {
+        //final field of primitive or String type
+        if (!descriptor.isVar()) {
+            Type type = mapper.mapType(descriptor.getType());
+            return AsmUtil.isPrimitive(type) || "java.lang.String".equals(type.getClassName());
+        }
+        return false;
+    }
+
     public static boolean shouldInitializeProperty(
             @NotNull JetProperty property,
             @NotNull JetTypeMapper typeMapper
@@ -1637,6 +1650,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) typeMapper.getBindingContext().get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null;
+
+        //TODO: OPTIMIZATION: don't initialize static final fields
 
         Object value = compileTimeValue.getValue();
         JetType jetType = getPropertyOrDelegateType(typeMapper.getBindingContext(), property, propertyDescriptor);
@@ -1655,7 +1670,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return descriptor.getType();
     }
 
-    private static boolean skipDefaultValue(PropertyDescriptor propertyDescriptor, Object value, Type type) {
+    private static boolean skipDefaultValue(@NotNull PropertyDescriptor propertyDescriptor, Object value, @NotNull Type type) {
         if (isPrimitive(type)) {
             if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
                 if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
@@ -1771,11 +1786,25 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return r;
     }
 
-    public void addClassObjectPropertyToCopy(PropertyDescriptor descriptor) {
+    public void addClassObjectPropertyToCopy(PropertyDescriptor descriptor, Object defaultValue) {
         if (classObjectPropertiesToCopy == null) {
-            classObjectPropertiesToCopy = new ArrayList<PropertyDescriptor>();
+            classObjectPropertiesToCopy = new ArrayList<PropertyAndDefaultValue>();
         }
-        classObjectPropertiesToCopy.add(descriptor);
+        classObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
+    }
+
+    static class PropertyAndDefaultValue {
+
+        PropertyAndDefaultValue(PropertyDescriptor propertyDescriptor, Object defaultValue) {
+            this.propertyDescriptor = propertyDescriptor;
+            this.defaultValue = defaultValue;
+        }
+
+        private PropertyDescriptor propertyDescriptor;
+
+        private Object defaultValue;
+
+
     }
 
 }
