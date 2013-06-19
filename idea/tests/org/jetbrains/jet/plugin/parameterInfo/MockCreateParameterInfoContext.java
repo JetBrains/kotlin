@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 public class MockCreateParameterInfoContext implements CreateParameterInfoContext {
     private Object[] myItemsToShow = ArrayUtil.EMPTY_OBJECT_ARRAY;
     private PsiElement myHighlightedElement = null;
-    private JavaCodeInsightTestFixture myFixture;
-    private PsiFile myFile;
+    private final JavaCodeInsightTestFixture myFixture;
+    private final PsiFile myFile;
 
     MockCreateParameterInfoContext(PsiFile file, JavaCodeInsightTestFixture fixture) {
         myFile = file;
