@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -98,7 +99,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
-        ClassResolver classResolver = new AbstractClassResolver(AnnotationDeserializer.UNSUPPORTED) {
+        ClassResolver classResolver = new AbstractClassResolver(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED) {
 
             @NotNull
             @Override

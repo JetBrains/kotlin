@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
+import com.intellij.openapi.util.Computable;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
@@ -67,6 +69,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final InnerClassesScopeWrapper innerClassesScope;
 
     public DeserializedClassDescriptor(
+            @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotationDeserializer annotationResolver,
@@ -98,35 +101,34 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.isInner = Flags.INNER.get(flags);
 
         this.annotationDeserializer = annotationResolver;
-        this.annotations = new NotNullLazyValueImpl<List<AnnotationDescriptor>>() {
-            @NotNull
+        this.annotations = storageManager.createLazyValue(new Computable<List<AnnotationDescriptor>>() {
             @Override
-            protected List<AnnotationDescriptor> doCompute() {
+            public List<AnnotationDescriptor> compute() {
                 return computeAnnotations();
             }
-        };
+        });
 
-        this.primaryConstructor = new NullableLazyValueImpl<ConstructorDescriptor>() {
+        this.primaryConstructor = storageManager.createNullableLazyValue(new Computable<ConstructorDescriptor>() {
             @Override
-            protected ConstructorDescriptor doCompute() {
+            public ConstructorDescriptor compute() {
                 return computePrimaryConstructor();
             }
-        };
+        });
 
         this.nestedClassResolver = _nestedClassResolver;
-        this.classObjectDescriptor = new NullableLazyValueImpl<ClassDescriptor>() {
+        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Computable<ClassDescriptor>() {
             @Override
-            protected ClassDescriptor doCompute() {
+            public ClassDescriptor compute() {
                 return computeClassObjectDecriptor();
             }
-        };
-        this.nestedClasses = new NestedClassDescriptors(stringSet(classProto.getNestedClassNamesList(), nameResolver)) {
+        });
+        this.nestedClasses = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedClassNamesList(), nameResolver)) {
             @Override
             protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
                 return nestedClassResolver.resolveNestedClass(DeserializedClassDescriptor.this, name);
             }
         };
-        this.nestedObjects = new NestedClassDescriptors(stringSet(classProto.getNestedObjectNamesList(), nameResolver)) {
+        this.nestedObjects = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedObjectNamesList(), nameResolver)) {
             @Override
             protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
                 return nestedClassResolver.resolveNestedClass(DeserializedClassDescriptor.this, name);
@@ -404,7 +406,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         @Nullable
         @Override
         protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedClasses.fun(name);
+            return classDescriptor.nestedClasses.findClass.fun(name);
         }
 
         @Override
@@ -415,7 +417,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         @Nullable
         @Override
         public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedObjects.fun(name);
+            return classDescriptor.nestedObjects.findClass.fun(name);
         }
 
         @NotNull
@@ -425,19 +427,21 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         }
     }
 
-    private abstract static class NestedClassDescriptors extends MemoizedFunctionToNullableImpl<Name, ClassDescriptor> {
+    private abstract static class NestedClassDescriptors {
         private final Set<String> declaredNames;
+        private final MemoizedFunctionToNullable<Name, ClassDescriptor> findClass;
 
-        public NestedClassDescriptors(@NotNull Set<String> declaredNames) {
+        public NestedClassDescriptors(@NotNull StorageManager storageManager, @NotNull Set<String> declaredNames) {
             this.declaredNames = declaredNames;
-        }
+            this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
+                @Override
+                public ClassDescriptor fun(Name name) {
+                    NestedClassDescriptors _this = NestedClassDescriptors.this;
+                    if (!_this.declaredNames.contains(name.asString())) return null;
 
-        @Nullable
-        @Override
-        protected final ClassDescriptor doCompute(@NotNull Name name) {
-            if (!declaredNames.contains(name.asString())) return null;
-
-            return resolveNestedClass(name);
+                    return resolveNestedClass(name);
+                }
+            }, StorageManager.ReferenceKind.STRONG);
         }
 
         protected abstract ClassDescriptor resolveNestedClass(@NotNull Name name);
@@ -446,7 +450,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         public Collection<ClassDescriptor> getAllDescriptors() {
             Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(declaredNames.size());
             for (String name : declaredNames) {
-                ClassDescriptor descriptor = fun(Name.identifier(name));
+                ClassDescriptor descriptor = findClass.fun(Name.identifier(name));
                 if (descriptor != null) {
                     result.add(descriptor);
                 }

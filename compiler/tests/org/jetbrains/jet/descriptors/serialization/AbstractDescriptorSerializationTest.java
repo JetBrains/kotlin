@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullableImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -398,7 +399,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             };
 
             NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames);
-            return new DeserializedClassDescriptor(containingDeclaration, nameResolver, DUMMY_ANNOTATION_DESERIALIZER,
+            return new DeserializedClassDescriptor(new LockBasedStorageManager(), containingDeclaration, nameResolver, DUMMY_ANNOTATION_DESERIALIZER,
                                                    this, nestedClassResolver, classMetadata.classProto, null);
         }
 

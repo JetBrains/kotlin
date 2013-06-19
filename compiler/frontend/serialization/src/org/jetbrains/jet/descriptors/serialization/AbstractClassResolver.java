@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullableImpl;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -33,7 +34,7 @@ public abstract class AbstractClassResolver implements ClassResolver {
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
     private final AnnotationDeserializer annotationDeserializer;
 
-    public AbstractClassResolver(@NotNull AnnotationDeserializer annotationDeserializer) {
+    public AbstractClassResolver(@NotNull final StorageManager storageManager, @NotNull AnnotationDeserializer annotationDeserializer) {
         this.annotationDeserializer = annotationDeserializer;
 
         this.nestedClassResolver = new NestedClassResolver() {
@@ -64,9 +65,10 @@ public abstract class AbstractClassResolver implements ClassResolver {
                         classId.isTopLevelClass() ? getPackage(classId.getPackageFqName()) : findClass(classId.getOuterClassId());
                 assert owner != null : "No owner found for " + classId;
 
-                AbstractClassResolver outer = AbstractClassResolver.this;
+                AbstractClassResolver _this = AbstractClassResolver.this;
                 ClassDescriptor classDescriptor = new DeserializedClassDescriptor(
-                        owner, classData.getNameResolver(), outer.annotationDeserializer, outer, nestedClassResolver, classProto, null
+                        storageManager,  owner, classData.getNameResolver(), _this.annotationDeserializer,
+                        _this, nestedClassResolver, classProto, null
                 );
                 classDescriptorCreated(classDescriptor);
                 return classDescriptor;

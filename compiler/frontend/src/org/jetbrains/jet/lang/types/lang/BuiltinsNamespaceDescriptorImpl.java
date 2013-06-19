@@ -11,8 +11,10 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValueImpl;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -34,12 +36,12 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
     public BuiltinsNamespaceDescriptorImpl(@NotNull NamespaceDescriptor containingDeclaration) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
 
-
+        StorageManager storageManager = new LockBasedStorageManager();
         try {
             nameResolver =
                     NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
 
-            ClassResolver classResolver = new AbstractClassResolver(AnnotationDeserializer.UNSUPPORTED) {
+            ClassResolver classResolver = new AbstractClassResolver(storageManager, AnnotationDeserializer.UNSUPPORTED) {
 
                 @Nullable
                 @Override

@@ -112,7 +112,7 @@ public class DescriptorDeserializer {
     @NotNull
     public ClassDescriptor loadClass(@NotNull ProtoBuf.Class proto, @NotNull NestedClassResolver nestedClassResolver) {
         return new DeserializedClassDescriptor(
-                containingDeclaration, getNameResolver(), annotationDeserializer,
+                storageManager, containingDeclaration, getNameResolver(), annotationDeserializer,
                 typeDeserializer.getClassResolver(), nestedClassResolver, proto, typeDeserializer
         );
     }
