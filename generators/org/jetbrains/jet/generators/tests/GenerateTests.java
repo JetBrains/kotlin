@@ -375,6 +375,7 @@ public class GenerateTests {
                 "idea/tests/",
                 "UnwrapRemoveTestGenerated",
                 AbstractUnwrapRemoveTest.class,
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeExpression", "doTestExpressionRemover"),
                 testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapThen", "doTestThenUnwrapper"),
                 testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapElse", "doTestElseUnwrapper"),
                 testModel("idea/testData/codeInsight/unwrapAndRemove/removeElse", "doTestElseRemover"),

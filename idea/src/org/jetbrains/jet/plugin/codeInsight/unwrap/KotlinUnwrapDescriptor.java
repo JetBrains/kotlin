@@ -23,6 +23,7 @@ public class KotlinUnwrapDescriptor extends UnwrapDescriptorBase {
     @Override
     protected Unwrapper[] createUnwrappers() {
         return new Unwrapper[] {
+                new KoitlinUnwrappers.KotlinExpressionRemover("remove.expression"),
                 new KoitlinUnwrappers.KotlinThenUnwrapper("unwrap.expression"),
                 new KoitlinUnwrappers.KotlinElseRemover("remove.else"),
                 new KoitlinUnwrappers.KotlinElseUnwrapper("unwrap.else"),

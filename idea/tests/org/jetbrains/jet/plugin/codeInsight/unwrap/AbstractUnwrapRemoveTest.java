@@ -30,6 +30,10 @@ import java.io.File;
 import java.util.List;
 
 public abstract class AbstractUnwrapRemoveTest extends LightCodeInsightTestCase {
+    public void doTestExpressionRemover(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinExpressionRemover.class);
+    }
+
     public void doTestThenUnwrapper(@NotNull String path) throws Exception {
         doTest(path, KoitlinUnwrappers.KotlinThenUnwrapper.class);
     }

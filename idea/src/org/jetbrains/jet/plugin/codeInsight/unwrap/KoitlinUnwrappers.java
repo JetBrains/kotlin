@@ -26,6 +26,17 @@ public class KoitlinUnwrappers {
     private KoitlinUnwrappers() {
     }
 
+    public static class KotlinExpressionRemover extends KotlinRemover {
+        public KotlinExpressionRemover(String key) {
+            super(key);
+        }
+
+        @Override
+        public boolean isApplicableTo(PsiElement e) {
+            return e instanceof JetExpression && e.getParent() instanceof JetBlockExpression;
+        }
+    }
+
     public static class KotlinElseUnwrapper extends KotlinComponentUnwrapper {
         public KotlinElseUnwrapper(String key) {
             super(key);
