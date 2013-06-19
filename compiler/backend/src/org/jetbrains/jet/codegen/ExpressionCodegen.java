@@ -466,12 +466,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         RangeCodegenUtil.BinaryCall binaryCall = RangeCodegenUtil.getRangeAsBinaryCall(forExpression);
         if (binaryCall != null) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(RESOLVED_CALL, binaryCall.op);
-            assert resolvedCall != null;
-
-            CallableDescriptor rangeTo = resolvedCall.getResultingDescriptor();
-            if (RangeCodegenUtil.isOptimizableRangeTo(rangeTo)) {
-                generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall));
-                return StackValue.none();
+            if (resolvedCall != null) {
+                if (RangeCodegenUtil.isOptimizableRangeTo(resolvedCall.getResultingDescriptor())) {
+                    generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall));
+                    return StackValue.none();
+                }
             }
         }
 
