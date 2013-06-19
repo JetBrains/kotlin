@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.types.lang;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.util.PathUtil;
@@ -35,7 +34,7 @@ import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -47,8 +46,6 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -183,7 +180,7 @@ public class KotlinBuiltIns {
 
         module.setRootNamespace(rootNamespace);
 
-        rootNamespace.getMemberScope().addNamespace(new BuiltinsNamespaceDescriptorImpl(rootNamespace));
+        rootNamespace.getMemberScope().addNamespace(new BuiltinsNamespaceDescriptorImpl(new LockBasedStorageManager(), rootNamespace));
         rootNamespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
     }
 

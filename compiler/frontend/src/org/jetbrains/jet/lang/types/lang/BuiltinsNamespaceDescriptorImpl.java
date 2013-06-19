@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types.lang;
 
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
@@ -11,9 +12,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValueImpl;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -33,10 +32,9 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
 
-    public BuiltinsNamespaceDescriptorImpl(@NotNull NamespaceDescriptor containingDeclaration) {
+    public BuiltinsNamespaceDescriptorImpl(@NotNull final StorageManager storageManager, @NotNull NamespaceDescriptor containingDeclaration) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
 
-        StorageManager storageManager = new LockBasedStorageManager();
         try {
             nameResolver =
                     NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
@@ -99,10 +97,9 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                     DescriptorDeserializer.create(storageManager, this, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED),
                     loadCallables(), classResolver
             ) {
-                private final NotNullLazyValue<Collection<Name>> classNames = new NotNullLazyValueImpl<Collection<Name>>() {
-                    @NotNull
+                private final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
                     @Override
-                    protected Collection<Name> doCompute() {
+                    public Collection<Name> compute() {
                         InputStream namesStream =
                                 getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
                         List<Name> result = new ArrayList<Name>();
@@ -120,7 +117,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                         }
                         return result;
                     }
-                };
+                });
 
                 @NotNull
                 @Override
