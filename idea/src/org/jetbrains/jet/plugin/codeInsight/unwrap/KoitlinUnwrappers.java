@@ -76,4 +76,77 @@ public class KoitlinUnwrappers {
             return target instanceof JetLoopExpression ? ((JetLoopExpression) target).getBody() : null;
         }
     }
+
+    public static class KotlinTryUnwrapper extends KotlinComponentUnwrapper {
+        public KotlinTryUnwrapper(String key) {
+            super(key);
+        }
+
+        @Override
+        @Nullable
+        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
+            return target instanceof JetTryExpression ? ((JetTryExpression) target).getTryBlock() : null;
+        }
+    }
+
+    public static class KotlinCatchUnwrapper extends KotlinComponentUnwrapper {
+        public KotlinCatchUnwrapper(String key) {
+            super(key);
+        }
+
+        @NotNull
+        @Override
+        protected JetElement getEnclosingElement(@NotNull JetElement element) {
+            return (JetElement)element.getParent();
+        }
+
+        @Override
+        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
+            return target instanceof JetCatchClause ? ((JetCatchClause) target).getCatchBody() : null;
+        }
+    }
+
+    public static class KotlinCatchRemover extends KotlinRemover {
+        public KotlinCatchRemover(String key) {
+            super(key);
+        }
+
+        @Override
+        public boolean isApplicableTo(PsiElement e) {
+            return e instanceof JetCatchClause;
+        }
+    }
+
+    public static class KotlinFinallyUnwrapper extends KotlinComponentUnwrapper {
+        public KotlinFinallyUnwrapper(String key) {
+            super(key);
+        }
+
+        @Override
+        public boolean isApplicableTo(PsiElement e) {
+            return super.isApplicableTo(e) && getEnclosingElement((JetElement)e).getParent() instanceof JetBlockExpression;
+        }
+
+        @NotNull
+        @Override
+        protected JetElement getEnclosingElement(@NotNull JetElement element) {
+            return (JetElement)element.getParent();
+        }
+
+        @Override
+        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
+            return target instanceof JetFinallySection ? ((JetFinallySection) target).getFinalExpression() : null;
+        }
+    }
+
+    public static class KotlinFinallyRemover extends KotlinRemover {
+        public KotlinFinallyRemover(String key) {
+            super(key);
+        }
+
+        @Override
+        public boolean isApplicableTo(PsiElement e) {
+            return e instanceof JetFinallySection;
+        }
+    }
 }

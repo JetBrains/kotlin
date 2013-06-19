@@ -46,6 +46,26 @@ public abstract class AbstractUnwrapRemoveTest extends LightCodeInsightTestCase 
         doTest(path, KoitlinUnwrappers.KotlinLoopUnwrapper.class);
     }
 
+    public void doTestTryUnwrapper(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinTryUnwrapper.class);
+    }
+
+    public void doTestCatchUnwrapper(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinCatchUnwrapper.class);
+    }
+
+    public void doTestCatchRemover(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinCatchRemover.class);
+    }
+
+    public void doTestFinallyUnwrapper(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinFinallyUnwrapper.class);
+    }
+
+    public void doTestFinallyRemover(@NotNull String path) throws Exception {
+        doTest(path, KoitlinUnwrappers.KotlinFinallyRemover.class);
+    }
+
     public void doTestLambdaUnwrapper(@NotNull String path) throws Exception {
         doTest(path, KotlinLambdaUnwrapper.class);
     }

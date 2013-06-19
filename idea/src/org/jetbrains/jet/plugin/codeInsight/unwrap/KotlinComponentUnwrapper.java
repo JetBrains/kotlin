@@ -31,21 +31,28 @@ public abstract class KotlinComponentUnwrapper extends KotlinUnwrapRemoveBase {
     @Nullable
     protected abstract JetExpression getExpressionToUnwrap(@NotNull JetElement target);
 
+    @NotNull
+    protected JetElement getEnclosingElement(@NotNull JetElement element) {
+        return element;
+    }
+
     @Override
     public boolean isApplicableTo(PsiElement e) {
         if (!(e instanceof JetElement)) return false;
 
         JetExpression expressionToUnwrap = getExpressionToUnwrap((JetElement) e);
-        return expressionToUnwrap != null && canExtractExpression(expressionToUnwrap, (JetElement) e.getParent());
+        return expressionToUnwrap != null && canExtractExpression(expressionToUnwrap,
+                                                                  (JetElement) getEnclosingElement((JetElement) e).getParent());
     }
 
     @Override
     protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-        JetExpression targetExpression = (JetExpression) element;
-        JetExpression expressionToUnwrap = getExpressionToUnwrap(targetExpression);
+        JetElement targetElement = (JetElement) element;
+        JetExpression expressionToUnwrap = getExpressionToUnwrap(targetElement);
         assert expressionToUnwrap != null;
 
-        context.extractFromExpression(expressionToUnwrap, targetExpression);
-        context.delete(targetExpression);
+        JetElement enclosingElement = getEnclosingElement(targetElement);
+        context.extractFromExpression(expressionToUnwrap, enclosingElement);
+        context.delete(enclosingElement);
     }
 }

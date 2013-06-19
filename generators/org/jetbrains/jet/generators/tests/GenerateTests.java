@@ -379,6 +379,11 @@ public class GenerateTests {
                 testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapElse", "doTestElseUnwrapper"),
                 testModel("idea/testData/codeInsight/unwrapAndRemove/removeElse", "doTestElseRemover"),
                 testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop", "doTestLoopUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapTry", "doTestTryUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch", "doTestCatchUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeCatch", "doTestCatchRemover"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally", "doTestFinallyUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeFinally", "doTestFinallyRemover"),
                 testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda", "doTestLambdaUnwrapper")
         );
     }
