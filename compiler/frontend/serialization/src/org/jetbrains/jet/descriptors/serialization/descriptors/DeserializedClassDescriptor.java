@@ -81,9 +81,10 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.classProto = classProto;
         this.name = nameResolver.getName(classProto.getName());
 
-        TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(outerTypeDeserializer, nameResolver, classResolver,
+        TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, outerTypeDeserializer, nameResolver, classResolver,
                                                                         "Deserializer for class " + name, NONE);
-        DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(notNullTypeDeserializer, this, nameResolver, annotationResolver);
+        DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(storageManager, notNullTypeDeserializer,
+                                                                                 this, nameResolver, annotationResolver);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(classProto.getTypeParametersCount());
         this.deserializer = outerDeserializer.createChildDeserializer(this, classProto.getTypeParametersList(), typeParameters);
         this.typeDeserializer = deserializer.getTypeDeserializer();

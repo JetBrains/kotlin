@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
@@ -23,10 +24,11 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullableImpl;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public abstract class AbstractClassResolver implements ClassResolver {
 
@@ -51,9 +53,9 @@ public abstract class AbstractClassResolver implements ClassResolver {
             }
         };
 
-        this.findClass = new MemoizedFunctionToNullableImpl<ClassId, ClassDescriptor>() {
+        this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<ClassId, ClassDescriptor>() {
             @Override
-            protected ClassDescriptor doCompute(ClassId classId) {
+            public ClassDescriptor fun(ClassId classId) {
                 ClassData classData = getClassData(classId);
                 if (classData == null) {
                     return null;
@@ -73,7 +75,7 @@ public abstract class AbstractClassResolver implements ClassResolver {
                 classDescriptorCreated(classDescriptor);
                 return classDescriptor;
             }
-        };
+        }, STRONG);
     }
 
     @Nullable

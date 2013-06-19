@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.intellij.util.Function;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +33,8 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public class TypeDeserializer {
 
@@ -60,14 +63,16 @@ public class TypeDeserializer {
     private final String debugName;
 
     public TypeDeserializer(
+            @NotNull StorageManager storageManager,
             @NotNull TypeDeserializer parent,
             @NotNull String debugName,
             @NotNull TypeParameterResolver typeParameterResolver
     ) {
-        this(parent, parent.nameResolver, parent.classResolver, debugName, typeParameterResolver);
+        this(storageManager, parent, parent.nameResolver, parent.classResolver, debugName, typeParameterResolver);
     }
 
     public TypeDeserializer(
+            @NotNull StorageManager storageManager,
             @Nullable TypeDeserializer parent,
             @NotNull NameResolver nameResolver,
             @NotNull ClassResolver classResolver,
@@ -83,12 +88,12 @@ public class TypeDeserializer {
             typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor);
         }
 
-        this.classDescriptors = new MemoizedFunctionToNullableImpl<Integer, ClassDescriptor>() {
+        this.classDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function<Integer, ClassDescriptor>() {
             @Override
-            protected ClassDescriptor doCompute(@NotNull Integer fqNameIndex) {
+            public ClassDescriptor fun(Integer fqNameIndex) {
                 return computeClassDescriptor(fqNameIndex);
             }
-        };
+        }, STRONG);
     }
 
     @NotNull

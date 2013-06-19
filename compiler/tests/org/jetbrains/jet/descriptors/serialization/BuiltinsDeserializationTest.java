@@ -198,7 +198,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     ) {
         DescriptorDeserializer descriptorDeserializer;
         descriptorDeserializer =
-                DescriptorDeserializer.create(actualNamespace, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED);
+                DescriptorDeserializer.create(new LockBasedStorageManager(), actualNamespace, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED);
         for (ProtoBuf.Callable callableProto : callableProtos) {
             CallableMemberDescriptor callableMemberDescriptor = descriptorDeserializer.loadCallable(callableProto);
             if (callableMemberDescriptor instanceof PropertyDescriptor) {

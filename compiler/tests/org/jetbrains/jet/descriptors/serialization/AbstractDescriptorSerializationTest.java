@@ -224,7 +224,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
 
         DescriptorDeserializer deserializer =
-                DescriptorDeserializer.create(namespace, new NameResolver(simpleNames, qualifiedNames), classResolver, UNSUPPORTED);
+                DescriptorDeserializer.create(new LockBasedStorageManager(), namespace, new NameResolver(simpleNames, qualifiedNames),
+                                              classResolver, UNSUPPORTED);
         for (ProtoBuf.Callable proto : callableProtos) {
             CallableMemberDescriptor descriptor = deserializer.loadCallable(proto);
             if (descriptor instanceof FunctionDescriptor) {

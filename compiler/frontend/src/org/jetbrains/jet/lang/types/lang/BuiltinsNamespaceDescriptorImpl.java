@@ -96,7 +96,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
             members = new DeserializedPackageMemberScope(
                     storageManager,
                     this,
-                    DescriptorDeserializer.create(this, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED),
+                    DescriptorDeserializer.create(storageManager, this, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED),
                     loadCallables(), classResolver
             ) {
                 private final NotNullLazyValue<Collection<Name>> classNames = new NotNullLazyValueImpl<Collection<Name>>() {

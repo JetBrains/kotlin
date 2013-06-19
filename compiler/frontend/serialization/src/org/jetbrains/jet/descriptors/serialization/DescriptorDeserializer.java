@@ -22,42 +22,44 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeseria
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.types.Variance;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.*;
+import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable;
+import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter;
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
 
 public class DescriptorDeserializer {
 
     @NotNull
     public static DescriptorDeserializer create(
+            @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
             @NotNull ClassResolver classResolver,
             @NotNull AnnotationDeserializer annotationDeserializer
     ) {
-        return new DescriptorDeserializer(
-                new TypeDeserializer(null, nameResolver, classResolver, "Deserializer for " + containingDeclaration, NONE),
+        return new DescriptorDeserializer(storageManager,
+                new TypeDeserializer(storageManager, null, nameResolver, classResolver, "Deserializer for " + containingDeclaration, NONE),
                 containingDeclaration, nameResolver, annotationDeserializer);
     }
 
     @NotNull
     public static DescriptorDeserializer create(
+            @NotNull StorageManager storageManager,
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotationDeserializer annotationDeserializer
     ) {
-        return new DescriptorDeserializer(typeDeserializer, containingDeclaration, nameResolver, annotationDeserializer);
+        return new DescriptorDeserializer(storageManager, typeDeserializer, containingDeclaration, nameResolver, annotationDeserializer);
     }
 
     private final DeclarationDescriptor containingDeclaration;
@@ -65,14 +67,16 @@ public class DescriptorDeserializer {
     private final TypeDeserializer typeDeserializer;
     private final AnnotationDeserializer annotationDeserializer;
 
-    private final StorageManager storageManager = new LockBasedStorageManager();
+    private final StorageManager storageManager;
 
     private DescriptorDeserializer(
+            @NotNull StorageManager storageManager,
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotationDeserializer annotationDeserializer
     ) {
+        this.storageManager = storageManager;
         this.typeDeserializer = typeDeserializer;
         this.containingDeclaration = containingDeclaration;
         this.nameResolver = nameResolver;
@@ -96,6 +100,7 @@ public class DescriptorDeserializer {
             @NotNull final List<TypeParameterDescriptor> typeParameters
     ) {
         TypeDeserializer childTypeDeserializer = new TypeDeserializer(
+                storageManager,
                 typeDeserializer, "Child deserializer for " + descriptor,
                 new TypeDeserializer.TypeParameterResolver() {
                     @NotNull
@@ -106,7 +111,7 @@ public class DescriptorDeserializer {
                         return descriptors;
                     }
                 });
-        return create(childTypeDeserializer, descriptor, nameResolver, annotationDeserializer);
+        return create(storageManager, childTypeDeserializer, descriptor, nameResolver, annotationDeserializer);
     }
 
     @NotNull
