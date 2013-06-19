@@ -27,6 +27,7 @@ public class KotlinUnwrapDescriptor extends UnwrapDescriptorBase {
                 new KoitlinUnwrappers.KotlinElseRemover("remove.else"),
                 new KoitlinUnwrappers.KotlinElseUnwrapper("unwrap.else"),
                 new KoitlinUnwrappers.KotlinLoopUnwrapper("unwrap.expression"),
+                new KotlinLambdaUnwrapper("unwrap.expression"),
         };
     }
 }

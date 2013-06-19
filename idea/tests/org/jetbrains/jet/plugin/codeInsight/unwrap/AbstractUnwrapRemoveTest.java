@@ -46,6 +46,10 @@ public abstract class AbstractUnwrapRemoveTest extends LightCodeInsightTestCase 
         doTest(path, KoitlinUnwrappers.KotlinLoopUnwrapper.class);
     }
 
+    public void doTestLambdaUnwrapper(@NotNull String path) throws Exception {
+        doTest(path, KotlinLambdaUnwrapper.class);
+    }
+
     private void doTest(@NotNull String path, final Class<? extends Unwrapper> unwrapperClass) throws Exception {
         configureByFile(path);
 
