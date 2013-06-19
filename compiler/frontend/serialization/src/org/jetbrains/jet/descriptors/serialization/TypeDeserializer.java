@@ -24,8 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValueImpl;
+import org.jetbrains.jet.lang.resolve.lazy.storage.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -52,8 +51,11 @@ public class TypeDeserializer {
     private final NameResolver nameResolver;
     private final ClassResolver classResolver;
     private final TypeDeserializer parent;
+
+    // never written to after constructor returns
     private final TIntObjectHashMap<TypeParameterDescriptor> typeParameterDescriptors = new TIntObjectHashMap<TypeParameterDescriptor>();
-    private final TIntObjectHashMap<ClassDescriptor> classDescriptors = new TIntObjectHashMap<ClassDescriptor>();
+
+    private final MemoizedFunctionToNullable<Integer, ClassDescriptor> classDescriptors;
 
     private final String debugName;
 
@@ -80,6 +82,13 @@ public class TypeDeserializer {
         for (DeserializedTypeParameterDescriptor typeParameterDescriptor : typeParameterResolver.getTypeParameters(this)) {
             typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor);
         }
+
+        this.classDescriptors = new MemoizedFunctionToNullableImpl<Integer, ClassDescriptor>() {
+            @Override
+            protected ClassDescriptor doCompute(@NotNull Integer fqNameIndex) {
+                return computeClassDescriptor(fqNameIndex);
+            }
+        };
     }
 
     @NotNull
@@ -117,7 +126,7 @@ public class TypeDeserializer {
     private TypeConstructor typeConstructor(@NotNull ProtoBuf.Type.Constructor proto) {
         switch (proto.getKind()) {
             case CLASS:
-                ClassDescriptor classDescriptor = getClassDescriptor(proto.getId());
+                ClassDescriptor classDescriptor = classDescriptors.fun(proto.getId());
                 if (classDescriptor == null) return null;
 
                 return classDescriptor.getTypeConstructor();
@@ -134,16 +143,9 @@ public class TypeDeserializer {
     }
 
     @Nullable
-    private ClassDescriptor getClassDescriptor(int fqNameIndex) {
-        ClassDescriptor classDescriptor = classDescriptors.get(fqNameIndex);
-        if (classDescriptor != null) {
-            return classDescriptor;
-        }
-
+    private ClassDescriptor computeClassDescriptor(int fqNameIndex) {
         ClassId classId = nameResolver.getClassId(fqNameIndex);
-        ClassDescriptor descriptor = classResolver.findClass(classId);
-        classDescriptors.put(fqNameIndex, descriptor);
-        return descriptor;
+        return classResolver.findClass(classId);
     }
 
     private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {
