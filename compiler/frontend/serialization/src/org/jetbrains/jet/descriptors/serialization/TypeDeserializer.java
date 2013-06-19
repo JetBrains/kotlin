@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.intellij.openapi.util.Computable;
 import com.intellij.util.Function;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +63,8 @@ public class TypeDeserializer {
 
     private final String debugName;
 
+    private final StorageManager storageManager;
+
     public TypeDeserializer(
             @NotNull StorageManager storageManager,
             @NotNull TypeDeserializer parent,
@@ -79,6 +82,7 @@ public class TypeDeserializer {
             @NotNull String debugName,
             @NotNull TypeParameterResolver typeParameterResolver
     ) {
+        this.storageManager = storageManager;
         this.parent = parent;
         this.nameResolver = nameResolver;
         this.classResolver = classResolver;
@@ -205,20 +209,18 @@ public class TypeDeserializer {
             this.typeProto = proto;
             this.arguments = typeArguments(proto.getArgumentsList());
 
-            this.constructor = new NotNullLazyValueImpl<TypeConstructor>() {
-                @NotNull
+            this.constructor = storageManager.createLazyValue(new Computable<TypeConstructor>() {
                 @Override
-                protected TypeConstructor doCompute() {
+                public TypeConstructor compute() {
                     return typeConstructor(typeProto);
                 }
-            };
-            this.memberScope = new NotNullLazyValueImpl<JetScope>() {
-                @NotNull
+            });
+            this.memberScope = storageManager.createLazyValue(new Computable<JetScope>() {
                 @Override
-                protected JetScope doCompute() {
+                public JetScope compute() {
                     return computeMemberScope();
                 }
-            };
+            });
         }
 
         @NotNull
