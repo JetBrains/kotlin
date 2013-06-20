@@ -16,29 +16,35 @@
 
 package jet;
 
+import jet.runtime.ProgressionUtil;
+
 class LongProgressionIterator extends LongIterator {
     private long next;
-    private final long end;
     private final long increment;
-    private boolean overflowHappened = false;
+    private final long finalElement;
+    private boolean hasNext;
 
     public LongProgressionIterator(long start, long end, long increment) {
         this.next = start;
-        this.end = end;
         this.increment = increment;
+
+        this.finalElement = ProgressionUtil.getProgressionFinalElement(start, end, increment);
+        this.hasNext = increment < 0 ? start > end : start < end;
     }
 
     @Override
     public boolean hasNext() {
-        return !overflowHappened && (increment > 0 ? next <= end : next >= end);
+        return hasNext;
     }
 
     @Override
     public long nextLong() {
         long value = next;
-        next += increment;
-        if ((increment > 0) != (next > value)) {
-            overflowHappened = true;
+        if (value == finalElement) {
+            hasNext = false;
+        }
+        else {
+            next += increment;
         }
         return value;
     }

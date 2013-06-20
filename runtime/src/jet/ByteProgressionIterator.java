@@ -16,26 +16,36 @@
 
 package jet;
 
+import jet.runtime.ProgressionUtil;
+
 class ByteProgressionIterator extends ByteIterator {
     private int next;
-    private final byte end;
     private final int increment;
+    private final byte finalElement;
+    private boolean hasNext;
 
     public ByteProgressionIterator(byte start, byte end, int increment) {
         this.next = start;
-        this.end = end;
         this.increment = increment;
+
+        this.finalElement = (byte) ProgressionUtil.getProgressionFinalElement(start, end, increment);
+        this.hasNext = increment < 0 ? start > end : start < end;
     }
 
     @Override
     public boolean hasNext() {
-        return increment > 0 ? next <= end : next >= end;
+        return hasNext;
     }
 
     @Override
     public byte nextByte() {
         int value = next;
-        next += increment;
+        if (value == finalElement) {
+            hasNext = false;
+        }
+        else {
+            next += increment;
+        }
         return (byte) value;
     }
 }
