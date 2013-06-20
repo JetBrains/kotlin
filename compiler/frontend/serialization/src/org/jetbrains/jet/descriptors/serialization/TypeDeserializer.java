@@ -279,8 +279,8 @@ public class TypeDeserializer {
 
         @Override
         public int hashCode() {
-            int result = constructor != null ? constructor.hashCode() : 0;
-            result = 31 * result + arguments.hashCode();
+            int result = getConstructor().hashCode();
+            result = 31 * result + getArguments().hashCode();
             result = 31 * result + (isNullable() ? 1 : 0);
             return result;
         }
