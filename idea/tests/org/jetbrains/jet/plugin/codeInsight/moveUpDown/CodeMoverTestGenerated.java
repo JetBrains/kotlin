@@ -153,6 +153,26 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
                 doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtProperty2.kt");
             }
             
+            @TestMetadata("classWithoutBody1.kt")
+            public void testClassWithoutBody1() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody1.kt");
+            }
+            
+            @TestMetadata("classWithoutBody2.kt")
+            public void testClassWithoutBody2() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody2.kt");
+            }
+            
+            @TestMetadata("classWithoutBody3.kt")
+            public void testClassWithoutBody3() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody3.kt");
+            }
+            
+            @TestMetadata("classWithoutBody4.kt")
+            public void testClassWithoutBody4() throws Exception {
+                doTestClassBodyDeclaration("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody4.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer")

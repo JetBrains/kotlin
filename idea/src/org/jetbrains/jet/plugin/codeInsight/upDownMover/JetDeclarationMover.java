@@ -106,16 +106,36 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         return element instanceof JetDeclaration;
     }
 
+    @Nullable
+    private static PsiElement skipInsignificantElements(@NotNull PsiElement element, boolean down) {
+        PsiElement result = element;
+
+        while (result instanceof PsiWhiteSpace || result.getTextLength() == 0) {
+            result = down ? result.getNextSibling() : result.getPrevSibling();
+            if (result == null) break;
+        }
+
+        return result;
+    }
+
     @Override
     protected LineRange getElementSourceLineRange(@NotNull PsiElement element, @NotNull Editor editor, @NotNull LineRange oldRange) {
         JetDeclaration declaration = (JetDeclaration) element;
 
-        Document doc = editor.getDocument();
-        TextRange textRange = declaration.getTextRange();
-        if (doc.getTextLength() < textRange.getEndOffset()) return null;
+        PsiElement first = skipInsignificantElements(declaration.getFirstChild(), true);
+        PsiElement last = skipInsignificantElements(declaration.getLastChild(), false);
 
-        int startLine = editor.offsetToLogicalPosition(textRange.getStartOffset()).line;
-        int endLine = editor.offsetToLogicalPosition(textRange.getEndOffset()).line + 1;
+        if (first == null || last == null) return null;
+
+        TextRange textRange1 = first.getTextRange();
+        TextRange textRange2 = last.getTextRange();
+
+        Document doc = editor.getDocument();
+
+        if (doc.getTextLength() < textRange2.getEndOffset()) return null;
+
+        int startLine = editor.offsetToLogicalPosition(textRange1.getStartOffset()).line;
+        int endLine = editor.offsetToLogicalPosition(textRange2.getEndOffset()).line + 1;
 
         if (startLine == oldRange.startLine || startLine == oldRange.endLine
             || endLine == oldRange.startLine || endLine == oldRange.endLine) {
@@ -187,6 +207,13 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         }
 
         if (target instanceof JetPropertyAccessor && !(sibling instanceof JetPropertyAccessor)) return null;
+
+        if (start != null && start.getFirstChild() != null) {
+            start = skipInsignificantElements(start.getFirstChild(), true);
+        }
+        if (end != null && end.getFirstChild() != null) {
+            end = skipInsignificantElements(end.getLastChild(), false);
+        }
 
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
     }
