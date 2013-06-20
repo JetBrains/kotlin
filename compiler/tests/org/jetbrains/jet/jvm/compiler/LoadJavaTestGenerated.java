@@ -1274,6 +1274,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/InheritedOverridden.java");
                 }
                 
+                @TestMetadata("InheritedOverriddenAdapter.java")
+                public void testInheritedOverriddenAdapter() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/InheritedOverriddenAdapter.java");
+                }
+                
                 @TestMetadata("InheritedSimple.java")
                 public void testInheritedSimple() throws Exception {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/InheritedSimple.java");
