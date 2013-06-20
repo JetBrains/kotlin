@@ -22,11 +22,13 @@ public class ProgressionUtil {
 
     // a mod b (in arithmetical sense)
     private static int mod(int a, int b) {
-        return a >= 0 ? a % b : a % b + b;
+        int mod = a % b;
+        return mod >= 0 ? mod : mod + b;
     }
 
     private static long mod(long a, long b) {
-        return a >= 0 ? a % b : a % b + b;
+        long mod = a % b;
+        return mod >= 0 ? mod : mod + b;
     }
 
     // (a - b) mod c
