@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.parameterInfo.*;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -33,13 +34,15 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.awt.*;
@@ -189,28 +192,37 @@ public class JetFunctionParameterInfoHandler implements
     }
 
     @Override
-    public void updateUI(Object descriptor, ParameterInfoUIContext context) {
+    public void updateUI(Object itemToShow, ParameterInfoUIContext context) {
         //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context == null || context.getParameterOwner() == null || !context.getParameterOwner().isValid()) {
+            context.setUIComponentEnabled(false);
             return;
         }
 
         PsiElement parameterOwner = context.getParameterOwner();
         if (!(parameterOwner instanceof JetValueArgumentList)) {
+            context.setUIComponentEnabled(false);
             return;
         }
 
         JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
 
-        if (!(descriptor instanceof FunctionDescriptor)) {
+        if (!(itemToShow instanceof Pair<?, ?>)) {
             context.setUIComponentEnabled(false);
             return;
         }
 
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+        Pair<?, ?> pair = (Pair<?, ?>) itemToShow;
+
+        if (!(pair.first instanceof FunctionDescriptor && pair.second instanceof ResolveSession)) {
+            context.setUIComponentEnabled(false);
+            return;
+        }
+
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) pair.first;
+        ResolveSession resolveSession = (ResolveSession) pair.second;
 
         JetFile file = (JetFile) argumentList.getContainingFile();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         List<JetValueArgument> valueArguments = argumentList.getArguments();
 
@@ -233,6 +245,9 @@ public class JetFunctionParameterInfoHandler implements
         if (valueParameters.size() == 0) {
             builder.append(CodeInsightBundle.message("parameter.info.no.parameters"));
         }
+
+        PsiElement owner = context.getParameterOwner();
+        BindingContext bindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, (JetElement) owner);
 
         for (int i = 0; i < valueParameters.size(); ++i) {
             if (i != 0) {
@@ -358,7 +373,6 @@ public class JetFunctionParameterInfoHandler implements
         return context.getDefaultParameterColor();
     }
 
-
     private static JetValueArgumentList findCall(CreateParameterInfoContext context) {
         //todo: calls to this constructors, when we will have auxiliary constructors
         PsiFile file = context.getFile();
@@ -381,7 +395,10 @@ public class JetFunctionParameterInfoHandler implements
             return null;
         }
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
+        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
+                (JetFile) callNameExpression.getContainingFile());
+        BindingContext bindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, callNameExpression);
+
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         DeclarationDescriptor placeDescriptor = null;
         if (scope != null) {
@@ -391,7 +408,7 @@ public class JetFunctionParameterInfoHandler implements
         Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(callNameExpression, bindingContext);
         Name refName = callNameExpression.getReferencedNameAsName();
 
-        Collection<DeclarationDescriptor> itemsToShow = new ArrayList<DeclarationDescriptor>();
+        Collection<Pair<? extends DeclarationDescriptor, ResolveSession>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSession>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
@@ -400,7 +417,7 @@ public class JetFunctionParameterInfoHandler implements
                     if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) {
                         continue;
                     }
-                    itemsToShow.add(functionDescriptor);
+                    itemsToShow.add(Pair.create(functionDescriptor, resolveSession));
                 }
             }
             else if (variant instanceof ClassDescriptor) {
@@ -411,7 +428,7 @@ public class JetFunctionParameterInfoHandler implements
                         if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, constructorDescriptor)) {
                             continue;
                         }
-                        itemsToShow.add(constructorDescriptor);
+                        itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
                     }
                 }
             }
