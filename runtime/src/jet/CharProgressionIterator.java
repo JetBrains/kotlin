@@ -29,7 +29,7 @@ class CharProgressionIterator extends CharIterator {
         this.increment = increment;
 
         this.finalElement = (char) ProgressionUtil.getProgressionFinalElement(start, end, increment);
-        this.hasNext = increment < 0 ? start > end : start < end;
+        this.hasNext = increment > 0 ? start <= end : start >= end;
     }
 
     @Override

@@ -29,7 +29,7 @@ class ShortProgressionIterator extends ShortIterator {
         this.increment = increment;
 
         this.finalElement = (short) ProgressionUtil.getProgressionFinalElement(start, end, increment);
-        this.hasNext = increment < 0 ? start > end : start < end;
+        this.hasNext = increment > 0 ? start <= end : start >= end;
     }
 
     @Override

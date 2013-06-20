@@ -29,7 +29,7 @@ class ByteProgressionIterator extends ByteIterator {
         this.increment = increment;
 
         this.finalElement = (byte) ProgressionUtil.getProgressionFinalElement(start, end, increment);
-        this.hasNext = increment < 0 ? start > end : start < end;
+        this.hasNext = increment > 0 ? start <= end : start >= end;
     }
 
     @Override

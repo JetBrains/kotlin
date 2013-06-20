@@ -29,7 +29,7 @@ class LongProgressionIterator extends LongIterator {
         this.increment = increment;
 
         this.finalElement = ProgressionUtil.getProgressionFinalElement(start, end, increment);
-        this.hasNext = increment < 0 ? start > end : start < end;
+        this.hasNext = increment > 0 ? start <= end : start >= end;
     }
 
     @Override
