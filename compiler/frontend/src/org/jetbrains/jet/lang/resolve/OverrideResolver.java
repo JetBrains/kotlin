@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -433,10 +434,10 @@ public class OverrideResolver {
 
         int implCount = countImplementations(relevantDirectlyOverridden);
         if (implCount == 0) {
-            collectDescriptorsByModality(allFilteredOverriddenDeclarations, abstractNoImpl, Modality.ABSTRACT);
+            collectNotSynthesizedDescriptorsByModality(allFilteredOverriddenDeclarations, abstractNoImpl, Modality.ABSTRACT);
         }
         else if (implCount > 1) {
-            collectDescriptorsByModality(allFilteredOverriddenDeclarations, manyImpl, Modality.OPEN, Modality.FINAL);
+            collectNotSynthesizedDescriptorsByModality(allFilteredOverriddenDeclarations, manyImpl, Modality.OPEN, Modality.FINAL);
         }
     }
 
@@ -450,7 +451,7 @@ public class OverrideResolver {
         return implCount;
     }
 
-    private static void collectDescriptorsByModality(
+    private static void collectNotSynthesizedDescriptorsByModality(
             @NotNull Set<CallableMemberDescriptor> allOverriddenDeclarations,
             @NotNull Set<CallableMemberDescriptor> result,
             Modality... modalities
@@ -458,7 +459,9 @@ public class OverrideResolver {
         Set<Modality> modalitySet = Sets.newHashSet(modalities);
         for (CallableMemberDescriptor overridden : allOverriddenDeclarations) {
             if (modalitySet.contains(overridden.getModality())) {
-                result.add(overridden);
+                if (!CallResolverUtil.isOrOverridesSynthesized(overridden)) {
+                    result.add(overridden);
+                }
             }
         }
     }

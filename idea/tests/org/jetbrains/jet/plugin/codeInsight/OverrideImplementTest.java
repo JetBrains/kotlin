@@ -154,6 +154,14 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doMultiOverrideFileTest();
     }
 
+    public void testImplementSamAdapters() {
+        doImplementDirectoryTest();
+    }
+
+    public void testOverrideSamAdapters() {
+        doOverrideDirectoryTest("foo");
+    }
+
     private void doImplementFileTest() {
         doFileTest(new ImplementMethodsHandler());
     }

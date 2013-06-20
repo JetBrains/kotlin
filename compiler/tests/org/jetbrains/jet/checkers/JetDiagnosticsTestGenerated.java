@@ -3229,6 +3229,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/j+k/ambiguousSamAdapters.kt");
             }
             
+            @TestMetadata("inheritAbstractSamAdapter.kt")
+            public void testInheritAbstractSamAdapter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/inheritAbstractSamAdapter.kt");
+            }
+            
             @TestMetadata("innerNestedClassFromJava.kt")
             public void testInnerNestedClassFromJava() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/innerNestedClassFromJava.kt");

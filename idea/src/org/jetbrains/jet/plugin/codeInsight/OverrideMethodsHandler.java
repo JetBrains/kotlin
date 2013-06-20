@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.codeInsight;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,9 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
         Set<CallableMemberDescriptor> result = new HashSet<CallableMemberDescriptor>();
         for (CallableMemberDescriptor superMethod : superMethods) {
             if (superMethod.getModality().isOverridable()) {
-                result.add(superMethod);
+                if (!CallResolverUtil.isOrOverridesSynthesized(superMethod)) {
+                    result.add(superMethod);
+                }
             }
         }
         return result;
