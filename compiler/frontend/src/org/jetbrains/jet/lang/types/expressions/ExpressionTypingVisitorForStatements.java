@@ -209,7 +209,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         //There is a temporary binding trace for an opportunity to resolve set method for array if needed (the initial trace should be used there)
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
                 contextWithExpectedType.trace, "trace to resolve array set method for binary expression", expression);
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceBindingTrace(temporaryBindingTrace);
+        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+                .replaceBindingTrace(temporaryBindingTrace).replaceResolutionResultsCache();
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
@@ -238,14 +239,14 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         Name name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
         TemporaryBindingTrace assignmentOperationTrace = TemporaryBindingTrace.create(context.trace, "trace to check assignment operation like '+=' for", expression);
         OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
-                scope, name, context.replaceBindingTrace(assignmentOperationTrace), expression, receiver);
+                scope, name, context.replaceBindingTrace(assignmentOperationTrace).replaceResolutionResultsCache(), expression, receiver);
         JetType assignmentOperationType = OverloadResolutionResultsUtil.getResultType(assignmentOperationDescriptors);
 
         // Check for '+'
         Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
         TemporaryBindingTrace binaryOperationTrace = TemporaryBindingTrace.create(context.trace, "trace to check binary operation like '+' for", expression);
         OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
-                scope, counterpartName, context.replaceBindingTrace(binaryOperationTrace), expression, receiver);
+                scope, counterpartName, context.replaceBindingTrace(binaryOperationTrace).replaceResolutionResultsCache(), expression, receiver);
         JetType binaryOperationType = OverloadResolutionResultsUtil.getResultType(binaryOperationDescriptors);
 
         JetType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;

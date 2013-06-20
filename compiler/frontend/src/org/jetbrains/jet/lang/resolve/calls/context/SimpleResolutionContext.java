@@ -12,9 +12,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull JetScope scope,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, resolveMode, resolutionResultsCache);
     }
 
     @Override
@@ -23,9 +25,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        return new SimpleResolutionContext(trace, scope, expectedType, dataFlowInfo, expressionPosition);
+        return new SimpleResolutionContext(trace, scope, expectedType, dataFlowInfo, expressionPosition, resolveMode, resolutionResultsCache);
     }
 
     @Override

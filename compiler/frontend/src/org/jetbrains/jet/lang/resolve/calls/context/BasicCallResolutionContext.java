@@ -40,10 +40,10 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     }
     @NotNull
     public static BasicCallResolutionContext create(
-            @NotNull ResolutionContext context, @NotNull Call call, @NotNull ResolveMode resolveMode,
-            @NotNull CheckValueArgumentsMode checkArguments, @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckValueArgumentsMode checkArguments
     ) {
-        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, resolveMode, checkArguments, context.expressionPosition, resolutionResultsCache);
+        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.resolveMode,
+                      checkArguments, context.expressionPosition, context.resolutionResultsCache);
     }
 
     private BasicCallResolutionContext(
@@ -60,9 +60,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache);
+        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition,
+                      resolutionResultsCache);
     }
 
     @Override

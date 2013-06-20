@@ -666,7 +666,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         TemporaryBindingTrace traceWithReceiver = TemporaryBindingTrace.create(context.trace,
                 "trace to resolve callable reference with receiver", reference);
         FunctionDescriptor descriptor =
-                resolveCallableNotCheckingArguments(reference, receiver, context.replaceBindingTrace(traceWithReceiver), result);
+                resolveCallableNotCheckingArguments(
+                        reference, receiver, context.replaceBindingTrace(traceWithReceiver).replaceResolutionResultsCache(), result);
         if (result[0]) {
             traceWithReceiver.commit();
             return descriptor;
@@ -676,7 +677,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         TemporaryBindingTrace traceForStatic = TemporaryBindingTrace.create(context.trace,
                 "trace to resolve callable reference in static scope", reference);
         FunctionDescriptor possibleStaticNestedClassConstructor = resolveCallableNotCheckingArguments(reference, NO_RECEIVER,
-                context.replaceBindingTrace(traceForStatic).replaceScope(staticScope), result);
+                context.replaceBindingTrace(traceForStatic).replaceScope(staticScope).replaceResolutionResultsCache(), result);
         if (result[0]) {
             traceForStatic.commit();
             return possibleStaticNestedClassConstructor;
@@ -698,8 +699,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         ExpressionTypingContext contextForResolve = context.replaceBindingTrace(trace).replaceExpectedType(NO_EXPECTED_TYPE);
         ResolvedCallWithTrace<FunctionDescriptor> function = contextForResolve.expressionTypingServices.getCallExpressionResolver()
-                .getResolvedCallForFunction(call, reference, contextForResolve, ResolveMode.TOP_LEVEL_CALL,
-                                            CheckValueArgumentsMode.DISABLED, ResolutionResultsCache.create(), result);
+                .getResolvedCallForFunction(call, reference, contextForResolve, CheckValueArgumentsMode.DISABLED, result);
         if (!result[0]) return null;
 
         if (function instanceof VariableAsFunctionResolvedCall) {
@@ -717,14 +717,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
         return callExpressionResolver
-                .getQualifiedExpressionTypeInfo(expression, context, ResolveMode.TOP_LEVEL_CALL, ResolutionResultsCache.create());
+                .getQualifiedExpressionTypeInfo(expression, context);
     }
 
     @Override
     public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
-        return callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context, ResolveMode.TOP_LEVEL_CALL,
-                                                                ResolutionResultsCache.create());
+        return callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
     }
 
     @Override

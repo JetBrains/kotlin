@@ -89,7 +89,9 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode,
@@ -99,13 +101,5 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     @Override
     protected CallCandidateResolutionContext<D> self() {
         return this;
-    }
-
-    @NotNull
-    public CallCandidateResolutionContext<D> replaceResolveMode(@NotNull ResolveMode newResolveMode) {
-        if (newResolveMode == resolveMode) return this;
-        return new CallCandidateResolutionContext<D>(
-                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, newResolveMode,
-                checkArguments, expressionPosition, resolutionResultsCache);
     }
 }

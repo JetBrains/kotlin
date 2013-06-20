@@ -25,9 +25,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     public final Call call;
-    public final ResolveMode resolveMode;
     public final CheckValueArgumentsMode checkArguments;
-    public final ResolutionResultsCache resolutionResultsCache;
 
     protected CallResolutionContext(
             @NotNull BindingTrace trace,
@@ -40,14 +38,12 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, resolveMode, resolutionResultsCache);
         this.call = call;
-        this.resolveMode = resolveMode;
         this.checkArguments = checkArguments;
-        this.resolutionResultsCache = resolutionResultsCache;
     }
 
     public BasicCallResolutionContext toBasic() {
-        return BasicCallResolutionContext.create(this, call, resolveMode, checkArguments, resolutionResultsCache);
+        return BasicCallResolutionContext.create(this, call, checkArguments);
     }
 }

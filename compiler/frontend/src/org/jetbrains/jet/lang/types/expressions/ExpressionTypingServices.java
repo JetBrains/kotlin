@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -130,6 +131,11 @@ public class ExpressionTypingServices {
                 this, trace, scope, dataFlowInfo, expectedType, ExpressionPosition.FREE
         );
         return expressionTypingFacade.getTypeInfo(expression, context);
+    }
+
+    @NotNull
+    public JetTypeInfo getTypeInfo(@NotNull JetExpression expression, @NotNull ResolutionContext resolutionContext) {
+        return expressionTypingFacade.getTypeInfo(expression, ExpressionTypingContext.newContext(this, resolutionContext));
     }
 
     @Nullable
@@ -324,8 +330,8 @@ public class ExpressionTypingServices {
     }
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
-        return ExpressionTypingContext.newContext(
-                this, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, oldContext.expressionPosition);
+        return ExpressionTypingContext.newContext(this, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType,
+                                                  oldContext.expressionPosition, oldContext.resolveMode, oldContext.resolutionResultsCache);
     }
 
     @Nullable

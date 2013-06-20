@@ -38,8 +38,20 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition) {
-        return newContext(expressionTypingServices, new LabelResolver(), trace, scope, dataFlowInfo, expectedType, expressionPosition);
+            @NotNull ExpressionPosition expressionPosition
+    ) {
+        return newContext(expressionTypingServices, new LabelResolver(), trace, scope, dataFlowInfo, expectedType, expressionPosition,
+                          ResolveMode.TOP_LEVEL_CALL, ResolutionResultsCache.create());
+    }
+
+    @NotNull
+    public static ExpressionTypingContext newContext(
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull ResolutionContext resolutionContext
+    ) {
+        return newContext(expressionTypingServices, new LabelResolver(), resolutionContext.trace, resolutionContext.scope,
+                          resolutionContext.dataFlowInfo, resolutionContext.expectedType, resolutionContext.expressionPosition,
+                          resolutionContext.resolveMode, resolutionContext.resolutionResultsCache);
     }
 
     @NotNull
@@ -50,9 +62,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition) {
-        return new ExpressionTypingContext(expressionTypingServices, 
-                                           labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition);
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
+    ) {
+        return new ExpressionTypingContext(
+                expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition, resolveMode, resolutionResultsCache);
     }
 
     public final ExpressionTypingServices expressionTypingServices;
@@ -68,8 +83,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
+    ) {
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, resolveMode, resolutionResultsCache);
         this.expressionTypingServices = expressionTypingServices;
         this.labelResolver = labelResolver;
     }
@@ -80,9 +98,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition);
+        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType,
+                                           expressionPosition, resolveMode, resolutionResultsCache);
     }
 
     @Override
@@ -104,8 +125,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
         return expressionTypingServices.getCallResolver().resolveCallWithGivenName(
-                BasicCallResolutionContext.create(this, call, ResolveMode.TOP_LEVEL_CALL,
-                                                  CheckValueArgumentsMode.ENABLED, ResolutionResultsCache.create()),
+                BasicCallResolutionContext.create(this, call, CheckValueArgumentsMode.ENABLED),
                 functionReference,
                 name
         );

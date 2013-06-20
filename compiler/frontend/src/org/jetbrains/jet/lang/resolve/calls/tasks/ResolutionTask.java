@@ -86,7 +86,9 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ResolveMode resolveMode,
+            @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(
                 candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments,
