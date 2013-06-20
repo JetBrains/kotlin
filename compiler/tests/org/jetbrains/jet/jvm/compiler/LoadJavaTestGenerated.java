@@ -1427,6 +1427,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestJavaAgainstKotlin("compiler/testData/loadJava/javaAgainstKotlin/samAdapters/InheritSamAdapterInKotlin.txt");
             }
             
+            @TestMetadata("OverrideSamAdapterInKotlin.txt")
+            public void testOverrideSamAdapterInKotlin() throws Exception {
+                doTestJavaAgainstKotlin("compiler/testData/loadJava/javaAgainstKotlin/samAdapters/OverrideSamAdapterInKotlin.txt");
+            }
+            
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("SamAdapters");
                 suite.addTestSuite(SamAdapters.class);
