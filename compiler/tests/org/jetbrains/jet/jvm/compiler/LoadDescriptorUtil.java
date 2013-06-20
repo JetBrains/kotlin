@@ -94,7 +94,6 @@ public final class LoadDescriptorUtil {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(),
                 javaRoot,
-                ForTestCompileRuntime.runtimeJarForTests(),
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
         JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);

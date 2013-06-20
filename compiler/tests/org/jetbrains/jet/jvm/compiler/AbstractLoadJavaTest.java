@@ -67,7 +67,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File txtFile = getTxtFile(javaFile.getPath());
         NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
-                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.ALL);
         checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
 
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
-                srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+                srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.ALL);
 
         checkJavaNamespace(getTxtFile(javaFileName), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration);
     }
