@@ -511,7 +511,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         generator.checkEmptyLoop(loopExit);
 
         v.mark(loopEntry);
-        generator.conditionAndJump(loopExit);
+        generator.checkPreCondition(loopExit);
 
         generator.beforeBody();
         blockStackElements.push(new LoopBlockStackElement(loopExit, continueLabel, targetLabel(generator.forExpression)));
@@ -585,7 +585,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         public abstract void checkEmptyLoop(@NotNull Label loopExit);
 
-        public abstract void conditionAndJump(@NotNull Label loopExit);
+        public abstract void checkPreCondition(@NotNull Label loopExit);
 
         public void beforeBody() {
             v.mark(bodyStart);
@@ -719,7 +719,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        public void conditionAndJump(@NotNull Label loopExit) {
+        public void checkPreCondition(@NotNull Label loopExit) {
             // tmp<iterator>.hasNext()
 
             JetExpression loopRange = forExpression.getLoopRange();
@@ -788,7 +788,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        public void conditionAndJump(@NotNull Label loopExit) {
+        public void checkPreCondition(@NotNull Label loopExit) {
             v.load(indexVar, Type.INT_TYPE);
             v.load(arrayVar, OBJECT_TYPE);
             v.arraylength();
@@ -854,7 +854,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             endVar = createLoopTempVariable(asmElementType);
         }
 
-        // The local variable holding the actual last value of the loop parameter.
+        // Index of the local variable holding the actual last value of the loop parameter.
         // For ranges it equals end, for progressions it's a function of start, end and increment
         protected abstract int getFinalVar();
 
@@ -895,7 +895,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        public void conditionAndJump(@NotNull Label loopExit) {
+        public void checkPreCondition(@NotNull Label loopExit) {
             if (isIntegerProgression) return;
 
             v.load(loopParameterVar, asmElementType);
@@ -1063,7 +1063,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        public void conditionAndJump(@NotNull Label loopExit) {
+        public void checkPreCondition(@NotNull Label loopExit) {
             if (isIntegerProgression) return;
 
             v.load(loopParameterVar, asmElementType);
