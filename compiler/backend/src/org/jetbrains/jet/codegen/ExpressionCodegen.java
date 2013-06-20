@@ -818,65 +818,28 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private abstract class AbstractForInRangeLoopGenerator extends AbstractForLoopGenerator {
+    private abstract class AbstractForInProgressionOrRangeLoopGenerator extends AbstractForLoopGenerator {
         protected int endVar;
 
-        // True iff instead of comparing loopParameterVar < endVar at the beginning of an iteration we check whether
-        // loopParameterVar == endVar at the end of the iteration (and also if there should be any iterations at all, before the loop)
-        private final boolean checkEqualityInsteadOfComparison;
+        // For integer progressions instead of comparing loopParameterVar with endVar at the beginning of an iteration we check whether
+        // loopParameterVar == finalVar at the end of the iteration (and also if there should be any iterations at all, before the loop)
+        protected final boolean isIntegerProgression;
 
-        private AbstractForInRangeLoopGenerator(@NotNull JetForExpression forExpression) {
+        private AbstractForInProgressionOrRangeLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
-            checkEqualityInsteadOfComparison = asmElementType.getSort() == Type.INT || asmElementType.getSort() == Type.LONG;
-        }
 
-        @Override
-        public void beforeLoop() {
-            super.beforeLoop();
-
-            endVar = createLoopTempVariable(asmElementType);
-            storeRangeStartAndEnd();
-        }
-
-        @Override
-        public void checkEmptyLoop(@NotNull Label loopExit) {
-            if (!checkEqualityInsteadOfComparison) return;
-
-            v.load(loopParameterVar, asmElementType);
-            v.load(endVar, asmElementType);
-            if (asmElementType.getSort() == Type.INT) {
-                v.ificmpgt(loopExit);
-            }
-            else if (asmElementType.getSort() == Type.LONG) {
-                v.lcmp();
-                v.ifgt(loopExit);
-            }
-            else {
-                throw new IllegalStateException("Unexpected type for empty loop checking: " + asmElementType);
-            }
-        }
-
-        protected abstract void storeRangeStartAndEnd();
-
-        @Override
-        public void conditionAndJump(@NotNull Label loopExit) {
-            if (checkEqualityInsteadOfComparison) return;
-
-            v.load(loopParameterVar, asmElementType);
-            v.load(endVar, asmElementType);
-
-            int sort = asmElementType.getSort();
-            switch (sort) {
-                case Type.CHAR:
+            switch (asmElementType.getSort()) {
+                case Type.INT:
                 case Type.BYTE:
                 case Type.SHORT:
-                    v.ificmpgt(loopExit);
+                case Type.CHAR:
+                case Type.LONG:
+                    isIntegerProgression = true;
                     break;
 
-                case Type.FLOAT:
                 case Type.DOUBLE:
-                    v.cmpg(asmElementType);
-                    v.ifgt(loopExit);
+                case Type.FLOAT:
+                    isIntegerProgression = false;
                     break;
 
                 default:
@@ -885,27 +848,85 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void assignToLoopParameter() {
+        public void beforeLoop() {
+            super.beforeLoop();
+
+            endVar = createLoopTempVariable(asmElementType);
         }
 
-        private void checkPostCondition(@NotNull Label loopExit) {
+        // The local variable holding the actual last value of the loop parameter.
+        // For ranges it equals end, for progressions it's a function of start, end and increment
+        protected abstract int getFinalVar();
+
+        protected void checkPostCondition(@NotNull Label loopExit) {
+            int finalVar = getFinalVar();
+            assert isIntegerProgression && finalVar != -1 :
+                    "Post-condition should be checked only in case of integer progressions, finalVar = " + finalVar;
+
             v.load(loopParameterVar, asmElementType);
-            v.load(endVar, asmElementType);
-            if (asmElementType.getSort() == Type.INT) {
-                v.ificmpeq(loopExit);
-            }
-            else if (asmElementType.getSort() == Type.LONG) {
+            v.load(finalVar, asmElementType);
+            if (asmElementType.getSort() == Type.LONG) {
                 v.lcmp();
                 v.ifeq(loopExit);
             }
             else {
-                throw new IllegalStateException("Unexpected type for equality: " + asmElementType);
+                v.ificmpeq(loopExit);
+            }
+        }
+    }
+
+    private abstract class AbstractForInRangeLoopGenerator extends AbstractForInProgressionOrRangeLoopGenerator {
+        private AbstractForInRangeLoopGenerator(@NotNull JetForExpression forExpression) {
+            super(forExpression);
+        }
+
+        @Override
+        public void beforeLoop() {
+            super.beforeLoop();
+
+            storeRangeStartAndEnd();
+        }
+
+        protected abstract void storeRangeStartAndEnd();
+
+        @Override
+        protected int getFinalVar() {
+            return endVar;
+        }
+
+        @Override
+        public void conditionAndJump(@NotNull Label loopExit) {
+            if (isIntegerProgression) return;
+
+            v.load(loopParameterVar, asmElementType);
+            v.load(endVar, asmElementType);
+
+            v.cmpg(asmElementType);
+            v.ifgt(loopExit);
+        }
+
+        @Override
+        public void checkEmptyLoop(@NotNull Label loopExit) {
+            if (!isIntegerProgression) return;
+
+            v.load(loopParameterVar, asmElementType);
+            v.load(endVar, asmElementType);
+            if (asmElementType.getSort() == Type.LONG) {
+                v.lcmp();
+                v.ifgt(loopExit);
+            }
+            else {
+                v.ificmpgt(loopExit);
             }
         }
 
         @Override
+        protected void assignToLoopParameter() {
+        }
+
+        @Override
         protected void increment(@NotNull Label loopExit) {
-            if (checkEqualityInsteadOfComparison) {
+            if (isIntegerProgression) {
                 checkPostCondition(loopExit);
             }
 
@@ -983,20 +1004,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private class ForInProgressionExpressionLoopGenerator extends AbstractForLoopGenerator {
-        private int endVar;
+    private class ForInProgressionExpressionLoopGenerator extends AbstractForInProgressionOrRangeLoopGenerator {
         private int incrementVar;
         private Type incrementType;
+
+        private int finalVar;
 
         private ForInProgressionExpressionLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
         }
 
         @Override
+        protected int getFinalVar() {
+            return finalVar;
+        }
+
+        @Override
         public void beforeLoop() {
             super.beforeLoop();
 
-            endVar = createLoopTempVariable(asmElementType);
             incrementVar = createLoopTempVariable(asmElementType);
 
             JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
@@ -1014,87 +1040,99 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             generateRangeOrProgressionProperty(asmLoopRangeType, "getStart", asmElementType, loopParameterVar);
             generateRangeOrProgressionProperty(asmLoopRangeType, "getEnd", asmElementType, endVar);
             generateRangeOrProgressionProperty(asmLoopRangeType, "getIncrement", incrementType, incrementVar);
+
+            storeFinalVar();
         }
 
-        @Override
-        public void checkEmptyLoop(@NotNull Label loopExit) {
+        private void storeFinalVar() {
+            if (!isIntegerProgression) {
+                finalVar = -1;
+                return;
+            }
+
+            v.load(loopParameterVar, asmElementType);
+            v.load(endVar, asmElementType);
+            v.load(incrementVar, incrementType);
+
+            Type methodParamType = asmElementType.getSort() == Type.LONG ? Type.LONG_TYPE : Type.INT_TYPE;
+            v.invokestatic("jet/runtime/ProgressionUtil", "getProgressionFinalElement",
+                           Type.getMethodDescriptor(methodParamType, methodParamType, methodParamType, methodParamType));
+
+            finalVar = createLoopTempVariable(asmElementType);
+            v.store(finalVar, asmElementType);
         }
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
+            if (isIntegerProgression) return;
+
             v.load(loopParameterVar, asmElementType);
             v.load(endVar, asmElementType);
-
             v.load(incrementVar, asmElementType);
 
             Label negativeIncrement = new Label();
             Label afterIf = new Label();
 
-            int sort = asmElementType.getSort();
-            switch (sort) {
-                case Type.INT:
-                case Type.CHAR:
-                case Type.BYTE:
-                case Type.SHORT:
-                    v.ifle(negativeIncrement); // if increment < 0, jump
-
-                    // increment > 0
-                    v.ificmpgt(loopExit);
-                    v.goTo(afterIf);
-
-                    // increment < 0
-                    v.visitLabel(negativeIncrement);
-                    v.ificmplt(loopExit);
-                    v.visitLabel(afterIf);
-
-                    break;
-
-                case Type.LONG:
-                    v.lconst(0L);
-                    v.lcmp();
-                    v.ifle(negativeIncrement); // if increment < 0, jump
-
-                    // increment > 0
-                    v.lcmp();
-                    v.ifgt(loopExit);
-                    v.goTo(afterIf);
-
-                    // increment < 0
-                    v.visitLabel(negativeIncrement);
-                    v.lcmp();
-                    v.iflt(loopExit);
-                    v.visitLabel(afterIf);
-
-                    break;
-
-                case Type.DOUBLE:
-                case Type.FLOAT:
-                    if (sort == Type.DOUBLE) {
-                        v.dconst(0.0);
-                    }
-                    else {
-                        v.fconst(0.0f);
-                    }
-                    v.cmpl(incrementType);
-                    v.ifle(negativeIncrement); // if increment < 0, jump
-
-                    // increment > 0
-                    v.cmpg(asmElementType); // if loop parameter is NaN, exit from loop, as well
-                    v.ifgt(loopExit);
-                    v.goTo(afterIf);
-
-                    // increment < 0
-                    v.visitLabel(negativeIncrement);
-                    v.cmpl(asmElementType); // if loop parameter is NaN, exit from loop, as well
-                    v.iflt(loopExit);
-                    v.visitLabel(afterIf);
-
-                    break;
-
-                default:
-                    throw new IllegalStateException("Unexpected range element type: " + asmElementType);
+            if (asmElementType.getSort() == Type.DOUBLE) {
+                v.dconst(0.0);
             }
+            else {
+                v.fconst(0.0f);
+            }
+            v.cmpl(incrementType);
+            v.ifle(negativeIncrement); // if increment < 0, jump
 
+            // increment > 0
+            v.cmpg(asmElementType); // if loop parameter is NaN, exit from loop, as well
+            v.ifgt(loopExit);
+            v.goTo(afterIf);
+
+            // increment < 0
+            v.mark(negativeIncrement);
+            v.cmpl(asmElementType); // if loop parameter is NaN, exit from loop, as well
+            v.iflt(loopExit);
+            v.mark(afterIf);
+        }
+
+        @Override
+        public void checkEmptyLoop(@NotNull Label loopExit) {
+            if (!isIntegerProgression) return;
+
+            v.load(loopParameterVar, asmElementType);
+            v.load(endVar, asmElementType);
+            v.load(incrementVar, asmElementType);
+
+            Label negativeIncrement = new Label();
+            Label afterIf = new Label();
+
+            if (asmElementType.getSort() == Type.LONG) {
+                v.lconst(0L);
+                v.lcmp();
+                v.ifle(negativeIncrement); // if increment < 0, jump
+
+                // increment > 0
+                v.lcmp();
+                v.ifgt(loopExit);
+                v.goTo(afterIf);
+
+                // increment < 0
+                v.mark(negativeIncrement);
+                v.lcmp();
+                v.iflt(loopExit);
+                v.mark(afterIf);
+            }
+            else {
+                v.ifle(negativeIncrement); // if increment < 0, jump
+
+                // increment > 0
+                v.ificmpgt(loopExit);
+                v.goTo(afterIf);
+
+                // increment < 0
+                v.mark(negativeIncrement);
+                v.ificmplt(loopExit);
+                v.mark(afterIf);
+            }
         }
 
         @Override
@@ -1103,65 +1141,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         protected void increment(@NotNull Label loopExit) {
+            if (isIntegerProgression) {
+                checkPostCondition(loopExit);
+            }
+
             v.load(loopParameterVar, asmElementType);
             v.load(incrementVar, asmElementType);
             v.add(asmElementType);
 
-            int sort = asmElementType.getSort();
-            if (sort == Type.INT || sort == Type.LONG) {
-                checkNewLoopParameterValue(loopExit);
-            }
-
             v.store(loopParameterVar, asmElementType);
-        }
-
-        // Checks that (increment > 0) == (new value of loop parameter > old value of loop parameter).
-        // Old value should be stored in loopParameterVar, new value should be on top of the stack
-        private void checkNewLoopParameterValue(@NotNull Label loopExit) {
-            Label negativeIncrement = new Label();
-            Label afterIf = new Label();
-            Label popAndExit = new Label();
-
-            dup(v, asmElementType);
-            v.load(loopParameterVar, asmElementType);
-
-            v.load(incrementVar, asmElementType);
-
-            if (asmElementType.getSort() == Type.LONG) {
-                v.lconst(0L);
-                v.lcmp();
-                v.ifle(negativeIncrement);
-
-                // increment > 0
-                v.lcmp();
-                v.iflt(popAndExit);
-                v.goTo(afterIf);
-
-                // increment < 0
-                v.mark(negativeIncrement);
-                v.lcmp();
-                v.ifgt(popAndExit);
-                v.goTo(afterIf);
-            }
-            else {
-                v.ifle(negativeIncrement);
-
-                // increment > 0
-                v.ificmplt(popAndExit);
-                v.goTo(afterIf);
-
-                // increment < 0
-                v.mark(negativeIncrement);
-                v.ificmpgt(popAndExit);
-                v.goTo(afterIf);
-            }
-
-            // Pop the new value of loop parameter from the stack and exit the loop
-            v.mark(popAndExit);
-            pop(v, asmElementType);
-            v.goTo(loopExit);
-
-            v.mark(afterIf);
         }
     }
 
