@@ -403,6 +403,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithStdlib/ranges"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("forByteProgressionWithIntIncrement.kt")
+        public void testForByteProgressionWithIntIncrement() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/forByteProgressionWithIntIncrement.kt");
+        }
+        
         @TestMetadata("multiAssignmentIterationOverIntRange.kt")
         public void testMultiAssignmentIterationOverIntRange() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/multiAssignmentIterationOverIntRange.kt");

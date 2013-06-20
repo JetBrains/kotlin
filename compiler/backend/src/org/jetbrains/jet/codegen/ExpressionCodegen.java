@@ -1068,12 +1068,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             v.load(loopParameterVar, asmElementType);
             v.load(endVar, asmElementType);
-            v.load(incrementVar, asmElementType);
+            v.load(incrementVar, incrementType);
 
             Label negativeIncrement = new Label();
             Label afterIf = new Label();
 
-            if (asmElementType.getSort() == Type.DOUBLE) {
+            if (incrementType.getSort() == Type.DOUBLE) {
                 v.dconst(0.0);
             }
             else {
@@ -1100,7 +1100,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             v.load(loopParameterVar, asmElementType);
             v.load(endVar, asmElementType);
-            v.load(incrementVar, asmElementType);
+            v.load(incrementVar, incrementType);
 
             Label negativeIncrement = new Label();
             Label afterIf = new Label();

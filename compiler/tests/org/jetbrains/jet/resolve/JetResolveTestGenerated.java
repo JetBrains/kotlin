@@ -162,7 +162,7 @@ public class JetResolveTestGenerated extends AbstractResolveTest {
         public void testAllFilesPresentInCandidatesPriority() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/resolve/candidatesPriority"), Pattern.compile("^(.+)\\.resolve$"), true);
         }
-
+        
         @TestMetadata("classObjectOuterResolve.resolve")
         public void testClassObjectOuterResolve() throws Exception {
             doTest("compiler/testData/resolve/candidatesPriority/classObjectOuterResolve.resolve");
