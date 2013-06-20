@@ -1238,6 +1238,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterfaceSubclassOfBuiltin.java");
             }
             
+            @TestMetadata("VarargParameter.java")
+            public void testVarargParameter() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/VarargParameter.java");
+            }
+            
             @TestMetadata("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter")
             public static class Adapter extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInAdapter() throws Exception {
