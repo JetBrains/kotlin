@@ -472,7 +472,13 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             this.map = {};
         },
         putAll: function (fromMap) {
-            throw Kotlin.$new(Kotlin.UnsupportedOperationException)();
+            var map = fromMap.map;
+            for (var key in map) {
+                if (map.hasOwnProperty(key)) {
+                    this.map[key] = map[key];
+                    this.$size++;
+                }
+            }
         },
         keySet: function () {
             var result = Kotlin.$new(Kotlin.PrimitiveHashSet)();
