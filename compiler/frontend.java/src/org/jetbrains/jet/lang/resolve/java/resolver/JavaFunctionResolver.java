@@ -267,7 +267,6 @@ public final class JavaFunctionResolver {
             @NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass,
             NamedMembers namedMembers, Name methodName, PsiDeclarationProvider scopeData
     ) {
-        final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
         Set<SimpleFunctionDescriptor> functionsFromSupertypes = null;
         if (owner instanceof ClassDescriptor) {
@@ -290,6 +289,8 @@ public final class JavaFunctionResolver {
             ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamConstructor((NamespaceDescriptor) owner, namedMembers));
         }
 
+
+        final Set<FunctionDescriptor> fakeOverrides = new HashSet<FunctionDescriptor>();
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
@@ -297,7 +298,7 @@ public final class JavaFunctionResolver {
                   new OverrideResolver.DescriptorSink() {
                       @Override
                       public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                          functions.add((FunctionDescriptor) fakeOverride);
+                          fakeOverrides.add((FunctionDescriptor) fakeOverride);
                       }
 
                       @Override
@@ -310,15 +311,18 @@ public final class JavaFunctionResolver {
                   });
         }
 
-        OverrideResolver.resolveUnknownVisibilities(functions, trace);
-        functions.addAll(functionsFromCurrent);
+        OverrideResolver.resolveUnknownVisibilities(fakeOverrides, trace);
 
+        Set<FunctionDescriptor> functions = Sets.newHashSet(fakeOverrides);
         if (isEnumClassObject(owner)) {
-            for (FunctionDescriptor functionDescriptor : Lists.newArrayList(functions)) {
-                if (isEnumValueOfMethod(functionDescriptor) || isEnumValuesMethod(functionDescriptor)) {
-                    functions.remove(functionDescriptor);
+            for (FunctionDescriptor functionDescriptor : functionsFromCurrent) {
+                if (!(isEnumValueOfMethod(functionDescriptor) || isEnumValuesMethod(functionDescriptor))) {
+                    functions.add(functionDescriptor);
                 }
             }
+        }
+        else {
+            functions.addAll(functionsFromCurrent);
         }
 
         return functions;
