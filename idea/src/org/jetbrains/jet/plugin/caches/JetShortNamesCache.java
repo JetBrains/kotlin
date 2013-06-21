@@ -86,7 +86,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         // .namespace classes can not be indexed, since they have no explicit declarations
         IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
-        Set<String> packageClassShortNames = lightClassGenerationSupport.getAllPackageClasses(GlobalSearchScope.allScope(project)).keySet();
+        Set<String> packageClassShortNames = lightClassGenerationSupport.getAllPossiblePackageClasses(GlobalSearchScope.allScope(project)).keySet();
         classNames.addAll(packageClassShortNames);
 
         return ArrayUtil.toStringArray(classNames);
@@ -101,7 +101,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
-        MultiMap<String, FqName> packageClasses = lightClassGenerationSupport.getAllPackageClasses(scope);
+        MultiMap<String, FqName> packageClasses = lightClassGenerationSupport.getAllPossiblePackageClasses(scope);
 
         // .namespace classes can not be indexed, since they have no explicit declarations
         Collection<FqName> fqNames = packageClasses.get(name);

@@ -37,7 +37,9 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
-import org.jetbrains.jet.plugin.stubindex.*;
+import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
+import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
+import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
@@ -131,18 +133,15 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @NotNull
-    public MultiMap<String, FqName> getAllPackageClasses(@NotNull GlobalSearchScope scope) {
+    public MultiMap<String, FqName> getAllPossiblePackageClasses(@NotNull GlobalSearchScope scope) {
         Collection<String> packageFqNames = JetAllPackagesIndex.getInstance().getAllKeys(project);
 
         MultiMap<String, FqName> result = new MultiMap<String, FqName>();
         for (String packageFqName : packageFqNames) {
-            Collection<JetFile> files = findFilesForPackage(new FqName(packageFqName), scope);
-            if (!files.isEmpty()) {
-                FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(new FqName(packageFqName));
-                result.putValue(packageClassFqName.shortName().asString(), packageClassFqName);
-            }
-
+            FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(new FqName(packageFqName));
+            result.putValue(packageClassFqName.shortName().asString(), packageClassFqName);
         }
+
         return result;
     }
 }
