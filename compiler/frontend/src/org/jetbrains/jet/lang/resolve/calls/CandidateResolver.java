@@ -29,10 +29,7 @@ import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
-import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -329,7 +326,6 @@ public class CandidateResolver {
                                        ? constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
                                        : effectiveExpectedType;
 
-                //todo inner calls should be analyzed, for parenthesized, labeled, if, when expressions as well
                 JetVisitor<JetExpression, Void> selectorExpressionFinder = new JetVisitor<JetExpression, Void>() {
                     @Override
                     public JetExpression visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
@@ -338,36 +334,26 @@ public class CandidateResolver {
                     }
 
                     @Override
-                    public JetExpression visitCallExpression(JetCallExpression expression, Void data) {
+                    public JetExpression visitExpression(JetExpression expression, Void data) {
                         return expression;
-                    }
-
-                    @Override
-                    public JetExpression visitSimpleNameExpression(JetSimpleNameExpression expression, Void data) {
-                        return expression;
-                    }
-
-                    @Override
-                    public JetExpression visitJetElement(JetElement element, Void data) {
-                        return null;
                     }
                 };
-                // selector expression is callExpression or simpleNameExpression (if it's inside qualified expression)
                 JetExpression selectorExpression = expression.accept(selectorExpressionFinder, null);
-                if (selectorExpression == null) continue;
 
-                if (selectorExpression instanceof JetSimpleNameExpression) {
-                    if (expression instanceof JetQualifiedExpression) {
-                        //todo get rid of this hack, 'checkType' once at the end of the analysis
-                        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, selectorExpression);
-                        DataFlowUtils.checkType(type, expression, context.replaceExpectedType(expectedType));
-                    }
-                    continue;
-                }
                 CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
                         context.resolutionResultsCache.getDeferredComputation(CallKey.create(Call.CallType.DEFAULT, selectorExpression));
                 //todo assert storedContextForArgument != null
-                if (storedContextForArgument == null) continue;
+                if (storedContextForArgument == null) {
+                    PsiElement parent = expression.getParent();
+                    if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
+                        || (expression instanceof JetFunctionLiteralExpression)) {
+                        continue;
+                    }
+                    JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+                    ResolutionContext<?> newContext = context.replaceExpectedType(expectedType);
+                    DataFlowUtils.checkType(type, expression, newContext);
+                    continue;
+                }
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
                         storedContextForArgument.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);

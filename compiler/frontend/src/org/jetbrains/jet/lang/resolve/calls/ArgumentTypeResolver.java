@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -179,25 +180,8 @@ public class ArgumentTypeResolver {
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
-        //todo deparenthesize
-        CallExpressionResolver callExpressionResolver = expressionTypingServices.getCallExpressionResolver();
-        if (!(expression instanceof JetCallExpression) && !(expression instanceof JetQualifiedExpression)) {
-            return expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace);
-        }
-
-        JetTypeInfo result;
-        if (expression instanceof JetCallExpression) {
-            result = callExpressionResolver.getCallExpressionTypeInfo(
-                    (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null,
-                    context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL, context.resolutionResultsCache);
-        }
-        else { // expression instanceof JetQualifiedExpression
-            result = callExpressionResolver.getQualifiedExpressionTypeInfo(
-                    (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE),
-                    ResolveMode.NESTED_CALL, context.resolutionResultsCache);
-        }
-
-        recordExpressionType(expression, context.trace, context.scope, result);
+        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceResolveMode(ResolveMode.NESTED_CALL);
+        JetTypeInfo result = expressionTypingServices.getTypeInfo(expression, newContext);
         if (traceToCommitForCall != null) {
             traceToCommitForCall.commit();
         }
