@@ -76,6 +76,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
+    private final Map<ValueArgument, DataFlowInfo> dataFlowInfoForArguments = Maps.newHashMap();
     private boolean someArgumentHasNoType = false;
     private final DelegatingBindingTrace trace;
     private final TracingStrategy tracing;
@@ -263,9 +264,18 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return dataFlowInfo;
     }
 
+    @Nullable
+    public DataFlowInfo getDataFlowInfoForValueArgument(@NotNull ValueArgument valueArgument) {
+        return dataFlowInfoForArguments.get(valueArgument);
+    }
+
     public void setInitialDataFlowInfo(@NotNull DataFlowInfo info) {
         assert dataFlowInfo == null;
         dataFlowInfo = info;
+    }
+
+    public void setDataFlowInfoForArgument(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo info) {
+        dataFlowInfoForArguments.put(valueArgument, info);
     }
 
     public void addDataFlowInfo(@NotNull DataFlowInfo info) {

@@ -5052,6 +5052,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/smartCasts/combineWithNoSelectorInfo.kt");
             }
             
+            @TestMetadata("dataFlowInfoForArguments.kt")
+            public void testDataFlowInfoForArguments() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/dataFlowInfoForArguments.kt");
+            }
+            
             @TestMetadata("kt1461.kt")
             public void testKt1461() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/smartCasts/kt1461.kt");

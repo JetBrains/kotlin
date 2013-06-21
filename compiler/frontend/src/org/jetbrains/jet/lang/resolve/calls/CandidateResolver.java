@@ -350,7 +350,11 @@ public class CandidateResolver {
                         continue;
                     }
                     JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+                    DataFlowInfo dataFlowInfoForValueArgument = resolvedCall.getDataFlowInfoForValueArgument(argument);
                     ResolutionContext<?> newContext = context.replaceExpectedType(expectedType);
+                    if (dataFlowInfoForValueArgument != null) {
+                        newContext = newContext.replaceDataFlowInfo(dataFlowInfoForValueArgument);
+                    }
                     DataFlowUtils.checkType(type, expression, newContext);
                     continue;
                 }
@@ -607,6 +611,7 @@ public class CandidateResolver {
                 if (TypeUtils.dependsOnTypeParameters(expectedType, candidateCall.getCandidateDescriptor().getTypeParameters())) {
                     expectedType = NO_EXPECTED_TYPE;
                 }
+                candidateCall.setDataFlowInfoForArgument(argument, candidateCall.getDataFlowInfo());
                 CallResolutionContext<?> newContext = context.replaceDataFlowInfo(candidateCall.getDataFlowInfo()).replaceBindingTrace(trace)
                         .replaceExpectedType(expectedType);
                 JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
