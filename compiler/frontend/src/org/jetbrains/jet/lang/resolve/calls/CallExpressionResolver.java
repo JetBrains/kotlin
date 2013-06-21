@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -193,11 +194,7 @@ public class CallExpressionResolver {
         if (!results.isNothing()) {
             checkSuper(call.getExplicitReceiver(), results, context.trace, callExpression);
             result[0] = true;
-            if (results.isSingleResult() && context.resolveMode == ResolveMode.TOP_LEVEL_CALL) {
-                if (!CallResolverUtil.hasInferredReturnType(results.getResultingCall())) return null;
-            }
-
-            return results.isSingleResult() ? results.getResultingCall() : null;
+            return OverloadResolutionResultsUtil.getResultingCall(results, context.resolveMode);
         }
         result[0] = false;
         return null;

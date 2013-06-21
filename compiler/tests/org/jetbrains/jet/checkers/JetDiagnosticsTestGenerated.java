@@ -2846,6 +2846,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/completeNestedForVariableAsFunctionCall.kt");
                 }
                 
+                @TestMetadata("inferenceForNestedBinaryCall.kt")
+                public void testInferenceForNestedBinaryCall() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/inferenceForNestedBinaryCall.kt");
+                }
+                
                 @TestMetadata("kt3395.kt")
                 public void testKt3395() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/kt3395.kt");

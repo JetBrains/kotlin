@@ -36,8 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCache;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -1055,7 +1053,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 CallMaker.makeCallWithExpressions(callElement, receiver, null, operationSign, Collections.singletonList(left)),
                 operationSign,
                 OperatorConventions.CONTAINS);
-        JetType containsType = OverloadResolutionResultsUtil.getResultType(resolutionResult);
+        JetType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.resolveMode);
         ensureBooleanResult(operationSign, OperatorConventions.CONTAINS, containsType, context);
 
         if (left != null) {
@@ -1165,7 +1163,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
         }
 
-        return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultType(resolutionResults), dataFlowInfo);
+        return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.resolveMode), dataFlowInfo);
     }
 
     @NotNull
