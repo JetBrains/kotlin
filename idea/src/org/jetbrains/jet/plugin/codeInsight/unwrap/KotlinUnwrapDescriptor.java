@@ -23,16 +23,16 @@ public class KotlinUnwrapDescriptor extends UnwrapDescriptorBase {
     @Override
     protected Unwrapper[] createUnwrappers() {
         return new Unwrapper[] {
-                new KoitlinUnwrappers.KotlinExpressionRemover("remove.expression"),
-                new KoitlinUnwrappers.KotlinThenUnwrapper("unwrap.expression"),
-                new KoitlinUnwrappers.KotlinElseRemover("remove.else"),
-                new KoitlinUnwrappers.KotlinElseUnwrapper("unwrap.else"),
-                new KoitlinUnwrappers.KotlinLoopUnwrapper("unwrap.expression"),
-                new KoitlinUnwrappers.KotlinTryUnwrapper("unwrap.expression"),
-                new KoitlinUnwrappers.KotlinCatchUnwrapper("unwrap.expression"),
-                new KoitlinUnwrappers.KotlinCatchRemover("remove.expression"),
-                new KoitlinUnwrappers.KotlinFinallyUnwrapper("unwrap.expression"),
-                new KoitlinUnwrappers.KotlinFinallyRemover("remove.expression"),
+                new KotlinUnwrappers.KotlinExpressionRemover("remove.expression"),
+                new KotlinUnwrappers.KotlinThenUnwrapper("unwrap.expression"),
+                new KotlinUnwrappers.KotlinElseRemover("remove.else"),
+                new KotlinUnwrappers.KotlinElseUnwrapper("unwrap.else"),
+                new KotlinUnwrappers.KotlinLoopUnwrapper("unwrap.expression"),
+                new KotlinUnwrappers.KotlinTryUnwrapper("unwrap.expression"),
+                new KotlinUnwrappers.KotlinCatchUnwrapper("unwrap.expression"),
+                new KotlinUnwrappers.KotlinCatchRemover("remove.expression"),
+                new KotlinUnwrappers.KotlinFinallyUnwrapper("unwrap.expression"),
+                new KotlinUnwrappers.KotlinFinallyRemover("remove.expression"),
                 new KotlinLambdaUnwrapper("unwrap.expression"),
         };
     }

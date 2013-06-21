@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
-public class KoitlinUnwrappers {
-    private KoitlinUnwrappers() {
+public class KotlinUnwrappers {
+    private KotlinUnwrappers() {
     }
 
     public static class KotlinExpressionRemover extends KotlinRemover {

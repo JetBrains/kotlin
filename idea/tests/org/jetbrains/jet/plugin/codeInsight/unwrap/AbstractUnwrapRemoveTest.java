@@ -31,43 +31,43 @@ import java.util.List;
 
 public abstract class AbstractUnwrapRemoveTest extends LightCodeInsightTestCase {
     public void doTestExpressionRemover(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinExpressionRemover.class);
+        doTest(path, KotlinUnwrappers.KotlinExpressionRemover.class);
     }
 
     public void doTestThenUnwrapper(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinThenUnwrapper.class);
+        doTest(path, KotlinUnwrappers.KotlinThenUnwrapper.class);
     }
 
     public void doTestElseUnwrapper(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinElseUnwrapper.class);
+        doTest(path, KotlinUnwrappers.KotlinElseUnwrapper.class);
     }
 
     public void doTestElseRemover(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinElseRemover.class);
+        doTest(path, KotlinUnwrappers.KotlinElseRemover.class);
     }
 
     public void doTestLoopUnwrapper(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinLoopUnwrapper.class);
+        doTest(path, KotlinUnwrappers.KotlinLoopUnwrapper.class);
     }
 
     public void doTestTryUnwrapper(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinTryUnwrapper.class);
+        doTest(path, KotlinUnwrappers.KotlinTryUnwrapper.class);
     }
 
     public void doTestCatchUnwrapper(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinCatchUnwrapper.class);
+        doTest(path, KotlinUnwrappers.KotlinCatchUnwrapper.class);
     }
 
     public void doTestCatchRemover(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinCatchRemover.class);
+        doTest(path, KotlinUnwrappers.KotlinCatchRemover.class);
     }
 
     public void doTestFinallyUnwrapper(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinFinallyUnwrapper.class);
+        doTest(path, KotlinUnwrappers.KotlinFinallyUnwrapper.class);
     }
 
     public void doTestFinallyRemover(@NotNull String path) throws Exception {
-        doTest(path, KoitlinUnwrappers.KotlinFinallyRemover.class);
+        doTest(path, KotlinUnwrappers.KotlinFinallyRemover.class);
     }
 
     public void doTestLambdaUnwrapper(@NotNull String path) throws Exception {
