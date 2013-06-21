@@ -243,7 +243,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 DeclarationDescriptor ownerDescriptor = resolveToDescriptor(ownerElement);
 
                 List<TypeParameterDescriptor> typeParameters;
-                Name name = parameter.getNameAsName();
                 if (ownerDescriptor instanceof CallableDescriptor) {
                     CallableDescriptor callableDescriptor = (CallableDescriptor) ownerDescriptor;
                     typeParameters = callableDescriptor.getTypeParameters();
@@ -256,6 +255,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                     throw new IllegalStateException("Unknown owner kind for a type parameter: " + ownerDescriptor);
                 }
 
+                Name name = ResolveSessionUtils.safeNameForLazyResolve(parameter.getNameAsName());
                 for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
                     if (typeParameterDescriptor.getName().equals(name)) {
                         return typeParameterDescriptor;
