@@ -118,7 +118,7 @@ public final class Translation {
         return convertToStatement(translateExpression(expression, context));
     }
 
-    @NotNull
+    @Nullable
     public static JsNode translateWhenExpression(@NotNull JetWhenExpression expression,
             @NotNull TranslationContext context) {
         return WhenTranslator.translate(expression, context);

@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,6 +75,7 @@ public final class TranslationUtils {
         JsBinaryOperator operator = isNegated ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
         return new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL);
     }
+    
     @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
             @NotNull List<? extends ValueArgument> jetArguments) {
@@ -167,5 +169,24 @@ public final class TranslationUtils {
         if (context.intrinsics().getFunctionIntrinsics().getIntrinsic(operationDescriptor).exists()) return true;
 
         return false;
+    }
+
+    public static boolean isCacheNeeded(@NotNull JsExpression expression) {
+        return !(expression instanceof JsLiteral) &&
+               (!(expression instanceof JsNameRef) || ((JsNameRef) expression).getQualifier() != null);
+    }
+
+    @NotNull
+    public static Pair<JsVars.JsVar, JsExpression> createTemporaryIfNeed(
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        // don't create temp variable for simple expression
+        if (isCacheNeeded(expression)) {
+            return context.dynamicContext().createTemporary(expression);
+        }
+        else {
+            return Pair.create(null, expression);
+        }
     }
 }
