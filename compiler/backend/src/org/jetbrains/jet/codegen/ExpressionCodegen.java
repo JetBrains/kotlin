@@ -50,10 +50,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -1880,7 +1877,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (funDescriptor instanceof SimpleFunctionDescriptor) {
             ClassDescriptor samInterface = bindingContext.get(
-                    BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
+                    JavaBindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
             if (samInterface != null) {
                 return invokeSamConstructor(expression, resolvedCall, (ClassDescriptorFromJvmBytecode) samInterface);
@@ -1897,7 +1894,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         FunctionDescriptor original = ((FunctionDescriptor) fun).getOriginal();
         if (original.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            return bindingContext.get(SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
+            return bindingContext.get(JavaBindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
         }
         if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             for (FunctionDescriptor overridden : original.getOverriddenDescriptors()) {

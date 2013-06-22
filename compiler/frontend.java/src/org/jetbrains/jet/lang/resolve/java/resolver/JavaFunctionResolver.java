@@ -201,7 +201,7 @@ public final class JavaFunctionResolver {
         }
 
         if (declarationOrigin == JAVA && record) {
-            trace.record(BindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
+            trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
         }
 
         if (containingClass != psiClass && !method.isStatic()) {
@@ -216,7 +216,7 @@ public final class JavaFunctionResolver {
             }
             else {
                 if (record) {
-                    trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
+                    trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
                 }
             }
         }
@@ -493,13 +493,13 @@ public final class JavaFunctionResolver {
     }
 
     private static SimpleFunctionDescriptor recordSamConstructor(ClassDescriptor klass, SimpleFunctionDescriptor constructorFunction, BindingTrace trace) {
-        trace.record(BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
+        trace.record(JavaBindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
         trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
         return constructorFunction;
     }
 
     static <F extends FunctionDescriptor> F recordSamAdapter(F original, F adapterFunction, BindingTrace trace) {
-        trace.record(BindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
+        trace.record(JavaBindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
         trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
         return adapterFunction;
     }

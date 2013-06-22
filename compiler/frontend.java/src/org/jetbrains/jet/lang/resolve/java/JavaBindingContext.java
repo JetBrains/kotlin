@@ -16,10 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+
+import java.util.List;
 
 /**
  * @see BindingContext
@@ -31,6 +34,14 @@ public class JavaBindingContext {
      */
     public static final WritableSlice<NamespaceDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND =
             Slices.createSimpleSlice();
+
+    public static final WritableSlice<DeclarationDescriptor, List<String>> LOAD_FROM_JAVA_SIGNATURE_ERRORS =
+            new BasicWritableSlice<DeclarationDescriptor, List<String>>(Slices.ONLY_REWRITE_TO_EQUAL, true);
+
+    public static final WritableSlice<CallableDescriptor, Boolean> IS_DECLARED_IN_JAVA = Slices.createSimpleSlice();
+
+    public static final WritableSlice<SimpleFunctionDescriptor, ClassDescriptor> SAM_CONSTRUCTOR_TO_INTERFACE = Slices.createSimpleSlice();
+    public static final WritableSlice<FunctionDescriptor, FunctionDescriptor> SAM_ADAPTER_FUNCTION_TO_ORIGINAL = Slices.createSimpleSlice();
 
     private JavaBindingContext() {
     }

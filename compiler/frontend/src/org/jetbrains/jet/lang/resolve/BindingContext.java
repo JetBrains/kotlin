@@ -260,12 +260,6 @@ public interface BindingContext {
 
     WritableSlice<ClassDescriptor, Boolean> INCOMPLETE_HIERARCHY = Slices.createCollectiveSetSlice();
 
-    WritableSlice<DeclarationDescriptor, List<String>> LOAD_FROM_JAVA_SIGNATURE_ERRORS =
-            new BasicWritableSlice<DeclarationDescriptor, List<String>>(Slices.ONLY_REWRITE_TO_EQUAL, true);
-
-    WritableSlice<CallableDescriptor, Boolean> IS_DECLARED_IN_JAVA = Slices.createSimpleSlice();
-    WritableSlice<SimpleFunctionDescriptor, ClassDescriptor> SAM_CONSTRUCTOR_TO_INTERFACE = Slices.createSimpleSlice();
-    WritableSlice<FunctionDescriptor, FunctionDescriptor> SAM_ADAPTER_FUNCTION_TO_ORIGINAL = Slices.createSimpleSlice();
     WritableSlice<CallableMemberDescriptor, DeclarationDescriptor> SOURCE_DESCRIPTOR_FOR_SYNTHESIZED = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")

@@ -241,7 +241,7 @@ public final class JavaPropertyResolver {
         recordObjectDeclarationClassIfNeeded(psiData, owner, propertyDescriptor, propertyType);
 
         if (scopeData.getDeclarationOrigin() == JAVA) {
-            trace.record(BindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
+            trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
         }
         return propertyDescriptor;
     }
@@ -264,7 +264,7 @@ public final class JavaPropertyResolver {
             }
         }
         else {
-            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, propertyDescriptor,
+            trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, propertyDescriptor,
                          Collections.singletonList(signatureData.getError()));
         }
         return propertyType;

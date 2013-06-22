@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
+import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
 import java.util.Collection;
@@ -119,14 +120,14 @@ public final class AnalyzerWithCompilerReport {
     private void reportAlternativeSignatureErrors() {
         assert analyzeExhaust != null;
         BindingContext bc = analyzeExhaust.getBindingContext();
-        Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
+        Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         if (!descriptorsWithErrors.isEmpty()) {
             StringBuilder message = new StringBuilder("The following Java entities have annotations with wrong Kotlin signatures:\n");
             for (DeclarationDescriptor descriptor : descriptorsWithErrors) {
                 PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, descriptor);
                 assert declaration instanceof PsiModifierListOwner;
 
-                List<String> errors = bc.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
+                List<String> errors = bc.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
                 assert errors != null && !errors.isEmpty();
 
                 String externalName = PsiFormatUtil.getExternalName((PsiModifierListOwner) declaration);

@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -551,7 +548,7 @@ public class AsmUtil {
     private static boolean isDeclaredInJava(@NotNull CallableDescriptor callableDescriptor, @NotNull BindingContext context) {
         CallableDescriptor descriptor = callableDescriptor;
         while (true) {
-            if (Boolean.TRUE.equals(context.get(BindingContext.IS_DECLARED_IN_JAVA, descriptor))) {
+            if (Boolean.TRUE.equals(context.get(JavaBindingContext.IS_DECLARED_IN_JAVA, descriptor))) {
                 return true;
             }
             CallableDescriptor original = descriptor.getOriginal();

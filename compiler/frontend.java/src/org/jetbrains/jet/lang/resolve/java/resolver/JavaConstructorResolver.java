@@ -213,7 +213,7 @@ public final class JavaConstructorResolver {
             valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
         }
         else if (alternativeMethodSignatureData.hasErrors()) {
-            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, constructorDescriptor,
+            trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, constructorDescriptor,
                          Collections.singletonList(alternativeMethodSignatureData.getError()));
         }
 
