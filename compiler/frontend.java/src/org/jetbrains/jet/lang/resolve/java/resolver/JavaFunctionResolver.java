@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
@@ -329,10 +330,10 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    private static ClassDescriptor findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
+    private static ClassDescriptorFromJvmBytecode findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
         ClassifierDescriptor classifier = memberScope.getClassifier(name);
-        if (classifier instanceof ClassDescriptor) {
-            return (ClassDescriptor) classifier;
+        if (classifier instanceof ClassDescriptorFromJvmBytecode) {
+            return (ClassDescriptorFromJvmBytecode) classifier;
         }
         return null;
     }
@@ -344,9 +345,9 @@ public final class JavaFunctionResolver {
     // +-- namespace Bar
     // We need to find class 'Baz' in namespace 'foo.Bar'.
     @Nullable
-    private static ClassDescriptor findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
+    private static ClassDescriptorFromJvmBytecode findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
         // First, try to find in namespace directly
-        ClassDescriptor found = findClassInScope(namespace.getMemberScope(), name);
+        ClassDescriptorFromJvmBytecode found = findClassInScope(namespace.getMemberScope(), name);
         if (found != null) {
             return found;
         }
@@ -373,7 +374,7 @@ public final class JavaFunctionResolver {
     ) {
         PsiClass samInterface = namedMembers.getSamInterface();
         if (samInterface != null) {
-            ClassDescriptor klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
+            ClassDescriptorFromJvmBytecode klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
             if (klass != null) {
                 return recordSamConstructor(klass, createSamConstructorFunction(ownerDescriptor, klass), trace);
             }
@@ -492,7 +493,7 @@ public final class JavaFunctionResolver {
         return false;
     }
 
-    private static SimpleFunctionDescriptor recordSamConstructor(ClassDescriptor klass, SimpleFunctionDescriptor constructorFunction, BindingTrace trace) {
+    private static SimpleFunctionDescriptor recordSamConstructor(ClassDescriptorFromJvmBytecode klass, SimpleFunctionDescriptor constructorFunction, BindingTrace trace) {
         trace.record(JavaBindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
         trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
         return constructorFunction;

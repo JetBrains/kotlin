@@ -1876,11 +1876,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (funDescriptor instanceof SimpleFunctionDescriptor) {
-            ClassDescriptor samInterface = bindingContext.get(
+            ClassDescriptorFromJvmBytecode samInterface = bindingContext.get(
                     JavaBindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
 
             if (samInterface != null) {
-                return invokeSamConstructor(expression, resolvedCall, (ClassDescriptorFromJvmBytecode) samInterface);
+                return invokeSamConstructor(expression, resolvedCall, samInterface);
             }
         }
 
