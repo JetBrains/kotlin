@@ -292,6 +292,7 @@ public class CodegenUtil {
     static int getPathHashCode(@NotNull PsiFile file) {
         // Conversion to system-dependent name seems to be unnecessary, but it's hard to check now:
         // it was introduced when fixing KT-2839, which appeared again (KT-3639).
+        // If you try to remove it, run tests on Windows.
         return FileUtil.toSystemDependentName(file.getVirtualFile().getPath()).hashCode();
     }
 }
