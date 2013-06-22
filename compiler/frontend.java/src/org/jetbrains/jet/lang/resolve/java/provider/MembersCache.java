@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
+import com.intellij.psi.util.MethodSignature;
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.util.ArrayUtil;
@@ -428,56 +429,13 @@ public final class MembersCache {
 
     @Nullable
     private static PsiMethod findOnlyAbstractMethod(@NotNull PsiClass psiClass) {
-        Ref<MethodSignatureBackedByPsiMethod> foundRef = Ref.create();
-        if (findOnlyAbstractMethod(JavaPsiFacade.getElementFactory(psiClass.getProject()).createType(psiClass), foundRef)) {
-            MethodSignatureBackedByPsiMethod found = foundRef.get();
-            return found == null ? null : found.getMethod();
+        PsiClassType classType = JavaPsiFacade.getElementFactory(psiClass.getProject()).createType(psiClass);
+
+        OnlyAbstractMethodFinder finder = new OnlyAbstractMethodFinder();
+        if (finder.find(classType)) {
+            return finder.getFoundMethod();
         }
         return null;
-    }
-
-    private static boolean findOnlyAbstractMethod(
-            @NotNull PsiClassType classType,
-            @NotNull Ref<MethodSignatureBackedByPsiMethod> foundRef
-    ) {
-        PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
-        PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
-        PsiClass psiClass = classResolveResult.getElement();
-        if (psiClass == null) {
-            return false; // can't resolve class -> not a SAM interface
-        }
-        if (CommonClassNames.JAVA_LANG_OBJECT.equals(psiClass.getQualifiedName())) {
-            return true;
-        }
-        for (PsiMethod method : psiClass.getMethods()) {
-            if (isObjectMethod(method)) { // e.g., ignore toString() declared in interface
-                continue;
-            }
-            if (method.hasTypeParameters()) {
-                return false; // if interface has generic methods, it is not a SAM interface
-            }
-
-            MethodSignatureBackedByPsiMethod found = foundRef.get();
-            if (found == null) {
-                foundRef.set((MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor));
-                continue;
-            }
-            if (!found.getName().equals(method.getName())) {
-                return false; // optimizing heuristic
-            }
-            MethodSignatureBackedByPsiMethod current = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
-            if (!areSignaturesErasureEqual(current, found) || isVarargMethod(method) != isVarargMethod(found.getMethod())) {
-                return false; // different signatures
-            }
-        }
-
-        for (PsiType t : classType.getSuperTypes()) {
-            if (!findOnlyAbstractMethod((PsiClassType) t, foundRef)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static boolean isVarargMethod(@NotNull PsiMethod method) {
@@ -496,5 +454,54 @@ public final class MembersCache {
         }
 
         protected abstract void doRun();
+    }
+
+    private static class OnlyAbstractMethodFinder {
+        private MethodSignatureBackedByPsiMethod found;
+
+        private boolean find(@NotNull PsiClassType classType) {
+            PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
+            PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
+            PsiClass psiClass = classResolveResult.getElement();
+            if (psiClass == null) {
+                return false; // can't resolve class -> not a SAM interface
+            }
+            if (CommonClassNames.JAVA_LANG_OBJECT.equals(psiClass.getQualifiedName())) {
+                return true;
+            }
+            for (PsiMethod method : psiClass.getMethods()) {
+                if (isObjectMethod(method)) { // e.g., ignore toString() declared in interface
+                    continue;
+                }
+                if (method.hasTypeParameters()) {
+                    return false; // if interface has generic methods, it is not a SAM interface
+                }
+
+                if (found == null) {
+                    found = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
+                    continue;
+                }
+                if (!found.getName().equals(method.getName())) {
+                    return false; // optimizing heuristic
+                }
+                MethodSignatureBackedByPsiMethod current = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
+                if (!areSignaturesErasureEqual(current, found) || isVarargMethod(method) != isVarargMethod(found.getMethod())) {
+                    return false; // different signatures
+                }
+            }
+
+            for (PsiType t : classType.getSuperTypes()) {
+                if (!find((PsiClassType) t)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        @Nullable
+        PsiMethod getFoundMethod() {
+            return found == null ? null : found.getMethod();
+        }
     }
 }
