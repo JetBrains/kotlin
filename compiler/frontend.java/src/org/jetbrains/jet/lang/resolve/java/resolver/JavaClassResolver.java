@@ -277,7 +277,7 @@ public final class JavaClassResolver {
 
         PsiMethod samInterfaceMethod = MembersCache.getSamInterfaceMethod(psiClass);
         if (samInterfaceMethod != null) {
-            SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(psiClass, samInterfaceMethod, classDescriptor);
+            SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod, classDescriptor);
             classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));
         }
 
@@ -286,14 +286,13 @@ public final class JavaClassResolver {
 
     @NotNull
     private SimpleFunctionDescriptor resolveFunctionOfSamInterface(
-            @NotNull PsiClass psiClass,
             @NotNull PsiMethod samInterfaceMethod,
             @NotNull ClassDescriptorFromJvmBytecode samInterface
     ) {
         PsiClass methodContainer = samInterfaceMethod.getContainingClass();
-        assert methodContainer != null : "method container is null for " + methodContainer;
+        assert methodContainer != null : "method container is null for " + samInterfaceMethod;
         String containerQualifiedName = methodContainer.getQualifiedName();
-        assert containerQualifiedName != null : "qualified name is null for " + psiClass;
+        assert containerQualifiedName != null : "qualified name is null for " + methodContainer;
 
         if (DescriptorUtils.getFQName(samInterface).asString().equals(containerQualifiedName)) {
             SimpleFunctionDescriptor abstractMethod =
