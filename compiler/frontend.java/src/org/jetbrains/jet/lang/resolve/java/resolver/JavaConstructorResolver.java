@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -41,6 +40,10 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver.recordSamAdapter;
+import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.createSamAdapterConstructor;
+import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.isSamAdapterNecessary;
 
 public final class JavaConstructorResolver {
     private BindingTrace trace;
@@ -224,13 +227,8 @@ public final class JavaConstructorResolver {
 
     @Nullable
     private ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
-        if (SingleAbstractMethodUtils.isSamAdapterNecessary(original)) {
-            ConstructorDescriptor adapterFunction = SingleAbstractMethodUtils.createSamAdapterConstructor(original);
-
-            trace.record(BindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
-            trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
-            return adapterFunction;
-        }
-        return null;
+        return isSamAdapterNecessary(original)
+               ? recordSamAdapter(original, createSamAdapterConstructor(original), trace)
+               : null;
     }
 }

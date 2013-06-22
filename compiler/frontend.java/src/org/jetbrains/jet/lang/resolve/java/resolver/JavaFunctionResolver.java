@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSign
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.provider.*;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -52,6 +51,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.*;
 
 public final class JavaFunctionResolver {
     private static final Logger LOG = Logger.getInstance(JavaFunctionResolver.class);
@@ -375,11 +375,7 @@ public final class JavaFunctionResolver {
         if (samInterface != null) {
             ClassDescriptor klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
             if (klass != null) {
-                SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createSamConstructorFunction(ownerDescriptor,
-                                                                                                                      klass);
-                trace.record(BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
-                trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
-                return constructorFunction;
+                return recordSamConstructor(klass, createSamConstructorFunction(ownerDescriptor, klass), trace);
             }
         }
         return null;
@@ -387,14 +383,9 @@ public final class JavaFunctionResolver {
 
     @Nullable
     private SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
-        if (SingleAbstractMethodUtils.isSamAdapterNecessary(original)) {
-            SimpleFunctionDescriptor adapterFunction = SingleAbstractMethodUtils.createSamAdapterFunction(original);
-
-            trace.record(BindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
-            trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
-            return adapterFunction;
-        }
-        return null;
+        return isSamAdapterNecessary(original)
+               ? recordSamAdapter(original, createSamAdapterFunction(original), trace)
+               : null;
     }
 
     @NotNull
@@ -499,5 +490,17 @@ public final class JavaFunctionResolver {
         }
 
         return false;
+    }
+
+    private static SimpleFunctionDescriptor recordSamConstructor(ClassDescriptor klass, SimpleFunctionDescriptor constructorFunction, BindingTrace trace) {
+        trace.record(BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
+        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
+        return constructorFunction;
+    }
+
+    static <F extends FunctionDescriptor> F recordSamAdapter(F original, F adapterFunction, BindingTrace trace) {
+        trace.record(BindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
+        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
+        return adapterFunction;
     }
 }
