@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -3373,60 +3374,33 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
         else {
-            CallableMethod accessor = typeMapper.mapToCallableMethod(
-                    operationDescriptor,
-                    false,
-                    isCallInsideSameClassAsDeclared(operationDescriptor, context),
-                    isCallInsideSameModuleAsDeclared(operationDescriptor, context),
-                    OwnerKind.IMPLEMENTATION);
-
-            boolean isGetter = accessor.getSignature().getAsmMethod().getName().equals("get");
-
             ResolvedCall<FunctionDescriptor> resolvedSetCall = bindingContext.get(BindingContext.INDEXED_LVALUE_SET, expression);
             ResolvedCall<FunctionDescriptor> resolvedGetCall = bindingContext.get(BindingContext.INDEXED_LVALUE_GET, expression);
 
-            FunctionDescriptor setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
-            FunctionDescriptor getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
+            boolean isGetter = "get".equals(operationDescriptor.getName().asString());
 
-            Type asmType;
-            Type[] argumentTypes = accessor.getSignature().getAsmMethod().getArgumentTypes();
-            int index = 0;
-            if (isGetter) {
-                assert getterDescriptor != null;
-                Callable callable = resolveToCallable(getterDescriptor, false);
-                if (callable instanceof CallableMethod) {
-                    genThisAndReceiverFromResolvedCall(receiver, resolvedGetCall, (CallableMethod) callable);
-                }
-                else {
-                    gen(array, asmType(((ClassDescriptor) getterDescriptor.getContainingDeclaration()).getDefaultType()));
-                }
+            ResolvedCall<FunctionDescriptor> resolvedCall = isGetter ? resolvedGetCall : resolvedSetCall;
+            assert resolvedCall != null : "couldn't find resolved call: " + expression.getText();
 
-                if (getterDescriptor.getReceiverParameter() != null) {
-                    index++;
-                }
-                asmType = accessor.getSignature().getAsmMethod().getReturnType();
+            Callable callable = resolveToCallable(operationDescriptor, false);
+            if (callable instanceof CallableMethod) {
+                genThisAndReceiverFromResolvedCall(receiver, resolvedCall, (CallableMethod) callable);
             }
             else {
-                assert resolvedSetCall != null;
-                Callable callable = resolveToCallable(resolvedSetCall.getResultingDescriptor(), false);
-                if (callable instanceof CallableMethod) {
-                    genThisAndReceiverFromResolvedCall(receiver, resolvedSetCall, (CallableMethod) callable);
-                }
-                else {
-                    gen(array, arrayType);
-                }
-
-                if (setterDescriptor.getReceiverParameter() != null) {
-                    index++;
-                }
-                asmType = argumentTypes[argumentTypes.length - 1];
+                gen(array, arrayType); // intrinsic method
             }
 
+            int index = operationDescriptor.getReceiverParameter() != null ? 1 : 0;
+
+            Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getSignature().getAsmMethod();
+            Type[] argumentTypes = asmMethod.getArgumentTypes();
             for (JetExpression jetExpression : expression.getIndexExpressions()) {
                 gen(jetExpression, argumentTypes[index]);
                 index++;
             }
-            return StackValue.collectionElement(asmType, resolvedGetCall, resolvedSetCall, this, state);
+
+            Type elementType = isGetter ? asmMethod.getReturnType() : ArrayUtil.getLastElement(argumentTypes);
+            return StackValue.collectionElement(elementType, resolvedGetCall, resolvedSetCall, this, state);
         }
     }
 
