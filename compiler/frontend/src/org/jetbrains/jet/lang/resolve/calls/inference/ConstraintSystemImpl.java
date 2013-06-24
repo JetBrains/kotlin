@@ -40,6 +40,7 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImp
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class ConstraintSystemImpl implements ConstraintSystem {
 
@@ -165,7 +166,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull JetType subjectType,
             @NotNull ConstraintPosition constraintPosition
     ) {
-        if (constrainingType == TypeUtils.NO_EXPECTED_TYPE) return;
+        if (constrainingType != null && noExpectedType(constrainingType)) return;
 
         if (constraintPosition == ConstraintPosition.EXPECTED_TYPE_POSITION) {
             systemWithoutExpectedTypeConstraint = copy();

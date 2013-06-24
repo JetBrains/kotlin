@@ -44,6 +44,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class TracingStrategyImpl implements TracingStrategy {
     private final JetReferenceExpression reference;
@@ -228,7 +229,7 @@ public class TracingStrategyImpl implements TracingStrategy {
             JetType substitutedReturnType = constraintSystem.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
             assert substitutedReturnType != null; //todo
 
-            assert data.expectedType != TypeUtils.NO_EXPECTED_TYPE : "Expected type doesn't exist, but there is an expected type mismatch error";
+            assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
             trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, substitutedReturnType, data.expectedType));
         }
         else if (constraintSystem.hasTypeConstructorMismatch()) {

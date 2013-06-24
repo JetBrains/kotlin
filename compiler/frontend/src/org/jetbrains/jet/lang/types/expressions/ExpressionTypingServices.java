@@ -47,6 +47,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.makeTraceInterceptingTypeMismatch;
 
 public class ExpressionTypingServices {
@@ -263,7 +264,7 @@ public class ExpressionTypingServices {
             JetExpression statementExpression = (JetExpression) statement;
             //TODO constructor assert context.expectedType != FORBIDDEN : ""
             if (!iterator.hasNext()) {
-                if (context.expectedType != NO_EXPECTED_TYPE) {
+                if (!noExpectedType(context.expectedType)) {
                     if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType)) {
                         // This implements coercion to Unit
                         TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace, "trace to resolve coercion to unit with expected type");

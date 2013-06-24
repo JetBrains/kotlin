@@ -67,6 +67,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
 @SuppressWarnings("SuspiciousMethodCalls")
@@ -191,7 +192,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.COLON) {
-            if (targetType != NO_EXPECTED_TYPE && !JetTypeChecker.INSTANCE.isSubtypeOf(actualType, targetType)) {
+            if (!noExpectedType(targetType) && !JetTypeChecker.INSTANCE.isSubtypeOf(actualType, targetType)) {
                 context.trace.report(TYPE_MISMATCH.on(expression.getLeft(), targetType, actualType));
                 return false;
             }
@@ -213,7 +214,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetType targetType,
             ExpressionTypingContext context
     ) {
-        if (actualType == null || targetType == NO_EXPECTED_TYPE) return;
+        if (actualType == null || noExpectedType(targetType)) return;
 
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
         if (!typeChecker.isSubtypeOf(targetType, actualType)) {
@@ -819,7 +820,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert operationSign.getReferencedNameElementType() == JetTokens.EXCLEXCL;
 
         JetType expectedType;
-        if (context.expectedType != NO_EXPECTED_TYPE) {
+        if (!noExpectedType(context.expectedType)) {
             expectedType = TypeUtils.makeNullable(context.expectedType);
         }
         else {

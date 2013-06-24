@@ -57,6 +57,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class ExpressionTypingUtils {
 
@@ -406,7 +407,7 @@ public class ExpressionTypingUtils {
             if (results.isSuccess()) {
                 context.trace.record(COMPONENT_RESOLVED_CALL, entry, results.getResultingCall());
                 componentType = results.getResultingDescriptor().getReturnType();
-                if (componentType != null && expectedType != TypeUtils.NO_EXPECTED_TYPE
+                if (componentType != null && !noExpectedType(expectedType)
                        && !JetTypeChecker.INSTANCE.isSubtypeOf(componentType, expectedType)) {
 
                     context.trace.report(

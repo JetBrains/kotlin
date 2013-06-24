@@ -54,6 +54,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
@@ -542,7 +543,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             facade.getTypeInfo(returnedExpression, context.replaceExpectedType(expectedType).replaceScope(context.scope));
         }
         else {
-            if (expectedType != TypeUtils.NO_EXPECTED_TYPE && expectedType != null && !KotlinBuiltIns.getInstance().isUnit(expectedType)) {
+            if (expectedType != null && !noExpectedType(expectedType) && !KotlinBuiltIns.getInstance().isUnit(expectedType)) {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }

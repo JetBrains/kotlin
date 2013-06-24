@@ -73,6 +73,10 @@ public class TypeUtils {
         }
     };
 
+    public static boolean noExpectedType(@NotNull JetType type) {
+        return type == NO_EXPECTED_TYPE;
+    }
+
     @NotNull
     public static JetType makeNullable(@NotNull JetType type) {
         return makeNullableAsSpecified(type, true);

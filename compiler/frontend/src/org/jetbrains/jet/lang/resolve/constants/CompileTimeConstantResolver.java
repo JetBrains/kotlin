@@ -309,7 +309,7 @@ public class CompileTimeConstantResolver {
     }
 
     private boolean noExpectedType(JetType expectedType) {
-        return expectedType == TypeUtils.NO_EXPECTED_TYPE || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
+        return TypeUtils.noExpectedType(expectedType) || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
     }
 
 }

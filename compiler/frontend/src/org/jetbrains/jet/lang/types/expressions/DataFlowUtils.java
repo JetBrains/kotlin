@@ -36,6 +36,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class DataFlowUtils {
     private DataFlowUtils() {
@@ -137,11 +138,11 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
-        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE) {
+        if (!noExpectedType(context.expectedType)) {
             context.trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, context.expectedType);
         }
 
-        if (expressionType == null || context.expectedType == null || context.expectedType == TypeUtils.NO_EXPECTED_TYPE ||
+        if (expressionType == null || noExpectedType(context.expectedType) ||
             JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, context.expectedType)) {
             return expressionType;
         }
@@ -169,7 +170,7 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ResolutionContext context) {
-        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !KotlinBuiltIns.getInstance().isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
+        if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.getInstance().isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
@@ -183,7 +184,7 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, boolean isStatement) {
-        if (expressionType != null && context.expectedType == TypeUtils.NO_EXPECTED_TYPE && !isStatement &&
+        if (expressionType != null && noExpectedType(context.expectedType) && !isStatement &&
             (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isAny(expressionType))) {
             context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
 

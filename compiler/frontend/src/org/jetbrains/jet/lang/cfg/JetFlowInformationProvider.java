@@ -50,6 +50,7 @@ import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseStat
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class JetFlowInformationProvider {
 
@@ -152,7 +153,7 @@ public class JetFlowInformationProvider {
 
                 @Override
                 public void visitExpression(JetExpression expression) {
-                    if (blockBody && expectedReturnType != NO_EXPECTED_TYPE && !KotlinBuiltIns.getInstance().isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
+                    if (blockBody && !noExpectedType(expectedReturnType) && !KotlinBuiltIns.getInstance().isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
                         noReturnError[0] = true;
                     }
                 }

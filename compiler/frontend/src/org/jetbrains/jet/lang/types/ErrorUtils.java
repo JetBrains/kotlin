@@ -32,6 +32,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+
 public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE;
@@ -392,7 +394,7 @@ public class ErrorUtils {
     }
 
     public static boolean isErrorType(@NotNull JetType type) {
-        return type != TypeUtils.NO_EXPECTED_TYPE && !(type instanceof NamespaceType) &&
+        return !noExpectedType(type) && !(type instanceof NamespaceType) &&
                (
                     (type instanceof DeferredType && (((DeferredType) type).getActualType() == null
                                                       || isErrorType(((DeferredType) type).getActualType()))) ||

@@ -47,6 +47,7 @@ import java.util.Collection;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE_REASSIGNMENT;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
@@ -74,7 +75,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             @NotNull JetBinaryExpression expression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (assignmentType != null && !KotlinBuiltIns.getInstance().isUnit(assignmentType) && context.expectedType != TypeUtils.NO_EXPECTED_TYPE &&
+        if (assignmentType != null && !KotlinBuiltIns.getInstance().isUnit(assignmentType) && !noExpectedType(context.expectedType) &&
             TypeUtils.equalTypes(context.expectedType, assignmentType)) {
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;

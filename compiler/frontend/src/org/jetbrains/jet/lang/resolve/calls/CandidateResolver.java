@@ -62,6 +62,7 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgum
 import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class CandidateResolver {
     @NotNull
@@ -625,7 +626,7 @@ public class CandidateResolver {
                 }
                 else {
                     JetType resultingType;
-                    if (expectedType == NO_EXPECTED_TYPE || ArgumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
+                    if (noExpectedType(expectedType) || ArgumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
                         resultingType = type;
                     }
                     else {

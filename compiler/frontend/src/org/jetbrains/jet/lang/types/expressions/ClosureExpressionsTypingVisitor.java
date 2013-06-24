@@ -44,6 +44,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 
@@ -106,7 +107,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         }
 
         JetType expectedType = context.expectedType;
-        boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
+        boolean functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
                 expectedType);
 
         AnonymousFunctionDescriptor functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
@@ -117,7 +118,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         List<JetType> valueParametersTypes = DescriptorUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
                 Collections.<AnnotationDescriptor>emptyList(), receiver, valueParametersTypes, safeReturnType);
-        if (expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)) {
+        if (!noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
         }
