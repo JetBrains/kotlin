@@ -61,6 +61,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/InnerClass.A.kt");
     }
     
+    @TestMetadata("InnerClassConstructor.A.kt")
+    public void testInnerClassConstructor() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerClassConstructor.A.kt");
+    }
+    
     @TestMetadata("InnerEnum.A.kt")
     public void testInnerEnum() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/InnerEnum.A.kt");

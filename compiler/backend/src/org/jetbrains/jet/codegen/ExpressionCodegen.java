@@ -3255,7 +3255,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
         MutableClosure closure = bindingContext.get(CLOSURE, constructorDescriptor.getContainingDeclaration());
 
-        if (receiver.type.getSort() != Type.VOID && (closure == null || closure.getCaptureThis() == null)) {
+        ClassDescriptor descriptor = getExpectedThisObjectForConstructorCall(constructorDescriptor, closure);
+        if (receiver.type.getSort() != Type.VOID && descriptor == null) {
             v.pop();
         }
 
