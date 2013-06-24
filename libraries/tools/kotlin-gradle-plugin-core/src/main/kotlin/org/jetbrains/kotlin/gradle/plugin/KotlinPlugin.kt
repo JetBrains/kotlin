@@ -31,7 +31,7 @@ open class KotlinPlugin: Plugin<Project> {
         val javaBasePlugin = project.getPlugins().apply(javaClass<JavaBasePlugin>())
         val javaPluginConvention = project.getConvention().getPlugin(javaClass<JavaPluginConvention>())
 
-        project.getPlugins().apply(javaClass<JavaPlugin>())
+        //project.getPlugins().apply(javaClass<JavaPlugin>())
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
         configureKDoc(project, javaPluginConvention)
@@ -82,12 +82,15 @@ open class KotlinPlugin: Plugin<Project> {
     }
 
     private fun configureKDoc(project: Project, javaPluginConvention: JavaPluginConvention) {
-        val mainSourceSet = javaPluginConvention.getSourceSets()?.getByName(SourceSet.MAIN_SOURCE_SET_NAME)!! as HasConvention
+        val mainSourceSet = javaPluginConvention.getSourceSets()?.findByName(SourceSet.MAIN_SOURCE_SET_NAME) as HasConvention?
 
-        val kdoc = project.getTasks()?.add(KDOC_TASK_NAME, javaClass<KDoc>())!!
-        kdoc.setDescription("Generates KDoc API documentation for the main source code.")
-        kdoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP)
-        kdoc.setSource(mainSourceSet.getConvention().getExtensionsAsDynamicObject().getProperty("kotlin"))
+        if (mainSourceSet != null) {
+            val kdoc = project.getTasks()?.add(KDOC_TASK_NAME, javaClass<KDoc>())!!
+
+            kdoc.setDescription("Generates KDoc API documentation for the main source code.")
+            kdoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP)
+            kdoc.setSource(mainSourceSet.getConvention().getExtensionsAsDynamicObject().getProperty("kotlin"))
+        }
 
         project.getTasks()?.withType(javaClass<KDoc>(), object : Action<KDoc> {
             override fun execute(param: KDoc?) {
