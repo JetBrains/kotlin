@@ -58,9 +58,10 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        if (!super.isAvailable(project, editor, file)) return false;
         BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
         JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, element);
-        return super.isAvailable(project, editor, file) && expressionType != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, expressionType);
+        return expressionType != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, expressionType);
     }
 
     @Override
