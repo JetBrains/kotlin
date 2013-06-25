@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +54,9 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
+    private static final TokenSet BINARY_OPERATIONS =
+            TokenSet.create(JetTokens.PLUS, JetTokens.MINUS, JetTokens.MUL, JetTokens.DIV, JetTokens.PERC, JetTokens.RANGE);
+
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
     private final Stack<ClassDescriptor> classStack = new Stack<ClassDescriptor>();
@@ -381,6 +385,34 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
             bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samInterface);
         }
+    }
+
+    @Override
+    public void visitBinaryExpression(JetBinaryExpression expression) {
+        super.visitBinaryExpression(expression);
+
+        FunctionDescriptor operationDescriptor =
+                (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
+        if (operationDescriptor == null) {
+            return;
+        }
+
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, operationDescriptor);
+        if (original == null) {
+            return;
+        }
+
+
+        ClassDescriptorFromJvmBytecode samInterfaceOfRight = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
+
+        if (samInterfaceOfRight == null) {
+            return;
+        }
+
+        if (BINARY_OPERATIONS.contains(expression.getOperationToken())) {
+            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getRight(), samInterfaceOfRight);
+        }
+
     }
 
     @Override

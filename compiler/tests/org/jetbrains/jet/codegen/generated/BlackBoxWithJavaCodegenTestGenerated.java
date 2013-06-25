@@ -232,6 +232,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/samAdapters/operators"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("binary.kt")
+            public void testBinary() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/binary.kt");
+            }
+            
             @TestMetadata("get.kt")
             public void testGet() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/get.kt");
