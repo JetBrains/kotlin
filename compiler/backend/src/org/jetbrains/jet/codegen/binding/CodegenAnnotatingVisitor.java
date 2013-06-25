@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -404,16 +405,19 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
 
 
-        ClassDescriptorFromJvmBytecode samInterfaceOfRight = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
+        ClassDescriptorFromJvmBytecode samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
 
-        if (samInterfaceOfRight == null) {
+        if (samInterfaceOfParameter == null) {
             return;
         }
 
-        if (BINARY_OPERATIONS.contains(expression.getOperationToken())) {
-            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getRight(), samInterfaceOfRight);
+        IElementType token = expression.getOperationToken();
+        if (BINARY_OPERATIONS.contains(token)) {
+            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getRight(), samInterfaceOfParameter);
         }
-
+        else if (token == JetTokens.IN_KEYWORD || token == JetTokens.NOT_IN) {
+            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getLeft(), samInterfaceOfParameter);
+        }
     }
 
     @Override
