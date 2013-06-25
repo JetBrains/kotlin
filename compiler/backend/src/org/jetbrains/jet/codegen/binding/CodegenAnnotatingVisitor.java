@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.binding;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -378,6 +380,43 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             assert argumentExpression != null : valueArgument.asElement().getText();
 
             bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samInterface);
+        }
+    }
+
+    @Override
+    public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+        super.visitArrayAccessExpression(expression);
+
+        FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
+        if (operationDescriptor == null) {
+            return;
+        }
+
+        boolean isSetter = operationDescriptor.getName().asString().equals("set");
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, operationDescriptor);
+        if (original == null) {
+            return;
+        }
+
+        List<JetExpression> indexExpressions = expression.getIndexExpressions();
+        List<ValueParameterDescriptor> parameters = original.getValueParameters();
+        for (ValueParameterDescriptor valueParameter : parameters) {
+            ClassDescriptorFromJvmBytecode samInterface = getInterfaceIfSamType(valueParameter.getType());
+            if (samInterface == null) {
+                continue;
+            }
+
+            if (isSetter && valueParameter.getIndex() == parameters.size() - 1) {
+                PsiElement parent = expression.getParent();
+                if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationToken() == JetTokens.EQ) {
+                    JetExpression right = ((JetBinaryExpression) parent).getRight();
+                    bindingTrace.record(CodegenBinding.SAM_VALUE, right, samInterface);
+                }
+            }
+            else {
+                JetExpression indexExpression = indexExpressions.get(valueParameter.getIndex());
+                bindingTrace.record(CodegenBinding.SAM_VALUE, indexExpression, samInterface);
+            }
         }
     }
 

@@ -2849,7 +2849,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue generateAssignmentExpression(JetBinaryExpression expression) {
         StackValue stackValue = gen(expression.getLeft());
-        gen(expression.getRight(), stackValue.type);
+        JetExpression right = expression.getRight();
+        assert right != null : expression.getText();
+        samAwareGen(right, stackValue.type);
         stackValue.store(stackValue.type, v);
         return StackValue.none();
     }
@@ -3374,7 +3376,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getSignature().getAsmMethod();
             Type[] argumentTypes = asmMethod.getArgumentTypes();
             for (JetExpression jetExpression : expression.getIndexExpressions()) {
-                gen(jetExpression, argumentTypes[index]);
+                samAwareGen(jetExpression, argumentTypes[index]);
                 index++;
             }
 

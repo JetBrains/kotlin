@@ -130,6 +130,7 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithJava/samAdapters")
+    @InnerTestClasses({SamAdapters.Operators.class})
     public static class SamAdapters extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInSamAdapters() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/samAdapters"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -225,6 +226,35 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/typeParameterOfOuterClass.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/boxWithJava/samAdapters/operators")
+        public static class Operators extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInOperators() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/samAdapters/operators"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("get.kt")
+            public void testGet() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/get.kt");
+            }
+            
+            @TestMetadata("multiGetSet.kt")
+            public void testMultiGetSet() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/multiGetSet.kt");
+            }
+            
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/set.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("SamAdapters");
+            suite.addTestSuite(SamAdapters.class);
+            suite.addTestSuite(Operators.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithJava/samWrappers")
@@ -401,7 +431,7 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         suite.addTestSuite(Enum.class);
         suite.addTestSuite(Functions.class);
         suite.addTestSuite(Property.class);
-        suite.addTestSuite(SamAdapters.class);
+        suite.addTest(SamAdapters.innerSuite());
         suite.addTestSuite(SamWrappers.class);
         suite.addTestSuite(StaticFun.class);
         suite.addTest(Visibility.innerSuite());
