@@ -262,6 +262,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/get.kt");
             }
             
+            @TestMetadata("infixCall.kt")
+            public void testInfixCall() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/infixCall.kt");
+            }
+
             @TestMetadata("invoke.kt")
             public void testInvoke() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/invoke.kt");

@@ -58,7 +58,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private static final TokenSet BINARY_OPERATIONS =
             TokenSet.orSet(JetTokens.AUGMENTED_ASSIGNMENTS,
                            TokenSet.create(JetTokens.PLUS, JetTokens.MINUS, JetTokens.MUL, JetTokens.DIV, JetTokens.PERC, JetTokens.RANGE,
-                                           JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ));
+                                           JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ,
+                                           JetTokens.IDENTIFIER));
 
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
