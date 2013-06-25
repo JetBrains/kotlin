@@ -55,7 +55,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private static final TokenSet BINARY_OPERATIONS =
-            TokenSet.create(JetTokens.PLUS, JetTokens.MINUS, JetTokens.MUL, JetTokens.DIV, JetTokens.PERC, JetTokens.RANGE);
+            TokenSet.orSet(JetTokens.AUGMENTED_ASSIGNMENTS,
+                           TokenSet.create(JetTokens.PLUS, JetTokens.MINUS, JetTokens.MUL, JetTokens.DIV, JetTokens.PERC, JetTokens.RANGE));
 
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
