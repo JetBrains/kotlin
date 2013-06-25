@@ -18,7 +18,7 @@
             <element id="module-output" name="ide-compiler-runner" />
             <element id="module-output" name="preloader" />
             <element id="directory" name="jet">
-              <element id="dir-copy" path="$PROJECT_DIR$/compiler/frontend/builtins/jet" />
+              <element id="dir-copy" path="$PROJECT_DIR$/idea/builtinsSrc/jet" />
             </element>
           </element>
           <element id="library" level="project" name="js-libs" />

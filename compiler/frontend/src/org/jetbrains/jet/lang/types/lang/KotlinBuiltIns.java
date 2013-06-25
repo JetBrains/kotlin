@@ -217,7 +217,7 @@ public class KotlinBuiltIns {
 
     @TestOnly
     private static File getInTestBuiltInPath(String path) {
-        return new File("compiler/frontend/builtins", path);
+        return new File("idea/builtinsSrc", path);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

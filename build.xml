@@ -107,7 +107,7 @@
             <classpath refid="classpath"/>
         </javac>
         <copy todir="${output}/classes/generators">
-            <fileset dir="compiler/frontend/builtins" includes="jet/*.kotlin_*"/>
+            <fileset dir="compiler/frontend/builtins" includes="jet/**"/>
         </copy>
     </target>
 

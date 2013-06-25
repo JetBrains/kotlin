@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -50,7 +49,7 @@ public class LightClassUtil {
 
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
-     * As of today, this is compiler/frontend/builtins/jet directory and files such as Any.jet, Nothing.jet etc.
+     * As of today, this is idea/builtinsSrc/jet directory and files such as Any.jet, Nothing.jet etc.
      *
      * Used to skip JetLightClass creation for built-ins, because built-in classes have no Java counterparts
      */
@@ -61,7 +60,6 @@ public class LightClassUtil {
             if (parent != null) {
                 try {
                     String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(KotlinBuiltIns.getBuiltInsDirUrl());
-
                     String fileDirVfsUrl = parent.getUrl();
                     if (jetVfsPathUrl.equals(fileDirVfsUrl)) {
                         return true;
@@ -78,19 +76,10 @@ public class LightClassUtil {
         return false;
     }
 
-    /*package*/ static void logErrorWithOSInfo(@Nullable Throwable cause, @NotNull FqName fqName, @Nullable VirtualFile virtualFile) {
-        String path = virtualFile == null ? "<null>" : virtualFile.getPath();
-        LOG.error(
-                "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
-                "built-ins dir URL is " + KotlinBuiltIns.getBuiltInsDirUrl() + "\n" +
-                "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
-                cause);
-    }
-
     @Nullable
     /*package*/ static PsiClass findClass(@NotNull FqName fqn, @NotNull StubElement<?> stub) {
         if (stub instanceof PsiClassStub && Comparing.equal(fqn.asString(), ((PsiClassStub) stub).getQualifiedName())) {
-            return (PsiClass)stub.getPsi();
+            return (PsiClass) stub.getPsi();
         }
 
         if (stub instanceof PsiClassStub || stub instanceof PsiFileStub) {
@@ -226,8 +215,8 @@ public class LightClassUtil {
 
     private static PropertyAccessorsPsiMethods extractPropertyAccessors(
             @NotNull JetDeclaration jetDeclaration,
-            @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter)
-    {
+            @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter
+    ) {
         PsiMethod getterWrapper = specialGetter;
         PsiMethod setterWrapper = specialSetter;
 
@@ -290,5 +279,6 @@ public class LightClassUtil {
         }
     }
 
-    private LightClassUtil() {}
+    private LightClassUtil() {
+    }
 }
