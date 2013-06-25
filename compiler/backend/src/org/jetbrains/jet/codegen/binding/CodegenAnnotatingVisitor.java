@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,13 +52,11 @@ import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getSuperTypeForClosure;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
-    private static final TokenSet BINARY_OPERATIONS =
-            TokenSet.orSet(JetTokens.AUGMENTED_ASSIGNMENTS,
-                           TokenSet.create(JetTokens.PLUS, JetTokens.MINUS, JetTokens.MUL, JetTokens.DIV, JetTokens.PERC, JetTokens.RANGE,
-                                           JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ,
-                                           JetTokens.IDENTIFIER));
+    private static final TokenSet BINARY_OPERATIONS = TokenSet.orSet(
+            AUGMENTED_ASSIGNMENTS, TokenSet.create(PLUS, MINUS, MUL, DIV, PERC, RANGE, LT, GT, LTEQ, GTEQ, IDENTIFIER));
 
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
@@ -417,7 +414,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (BINARY_OPERATIONS.contains(token)) {
             bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getRight(), samInterfaceOfParameter);
         }
-        else if (token == JetTokens.IN_KEYWORD || token == JetTokens.NOT_IN) {
+        else if (token == IN_KEYWORD || token == NOT_IN) {
             bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getLeft(), samInterfaceOfParameter);
         }
     }
@@ -447,7 +444,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
             if (isSetter && valueParameter.getIndex() == parameters.size() - 1) {
                 PsiElement parent = expression.getParent();
-                if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationToken() == JetTokens.EQ) {
+                if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationToken() == EQ) {
                     JetExpression right = ((JetBinaryExpression) parent).getRight();
                     bindingTrace.record(CodegenBinding.SAM_VALUE, right, samInterface);
                 }
