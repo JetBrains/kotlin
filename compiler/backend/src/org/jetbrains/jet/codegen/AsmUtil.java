@@ -433,25 +433,23 @@ public class AsmUtil {
         }
     }
 
-    public static Type genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
+    public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
         if (expectedType == Type.LONG_TYPE) {
-            //noinspection UnnecessaryBoxing
             v.lconst(myDelta);
         }
         else if (expectedType == Type.FLOAT_TYPE) {
-            //noinspection UnnecessaryBoxing
             v.fconst(myDelta);
         }
         else if (expectedType == Type.DOUBLE_TYPE) {
-            //noinspection UnnecessaryBoxing
             v.dconst(myDelta);
         }
         else {
             v.iconst(myDelta);
-            expectedType = Type.INT_TYPE;
+            v.add(Type.INT_TYPE);
+            StackValue.coerce(Type.INT_TYPE, expectedType, v);
+            return;
         }
         v.add(expectedType);
-        return expectedType;
     }
 
     public static Type genNegate(Type expectedType, InstructionAdapter v) {

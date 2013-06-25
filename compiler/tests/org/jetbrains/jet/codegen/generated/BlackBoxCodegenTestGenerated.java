@@ -3339,6 +3339,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");
         }
         
+        @TestMetadata("incrementByteCharShort.kt")
+        public void testIncrementByteCharShort() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/incrementByteCharShort.kt");
+        }
+        
         @TestMetadata("intLiteralIsNotNull.kt")
         public void testIntLiteralIsNotNull() throws Exception {
             doTest("compiler/testData/codegen/box/primitiveTypes/intLiteralIsNotNull.kt");
