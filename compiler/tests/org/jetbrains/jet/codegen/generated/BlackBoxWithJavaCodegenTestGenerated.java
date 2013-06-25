@@ -247,6 +247,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/binary.kt");
             }
             
+            @TestMetadata("compareTo.kt")
+            public void testCompareTo() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/compareTo.kt");
+            }
+            
             @TestMetadata("contains.kt")
             public void testContains() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/contains.kt");
