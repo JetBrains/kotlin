@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen.binding;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.SamCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
@@ -26,10 +27,14 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -37,6 +42,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
@@ -338,5 +344,51 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else {
             return null;
         }
+    }
+
+    @Override
+    public void visitCallExpression(JetCallExpression expression) {
+        super.visitCallExpression(expression);
+        ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        if (call == null) {
+            return;
+        }
+
+        CallableDescriptor descriptor = call.getResultingDescriptor();
+        if (!(descriptor instanceof FunctionDescriptor)) {
+            return;
+        }
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, descriptor);
+
+        if (original == null) {
+            return;
+        }
+        List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
+        for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
+            ClassDescriptorFromJvmBytecode samInterface = getInterfaceIfSamType(valueParameter.getType());
+            if (samInterface == null) {
+                continue;
+            }
+
+            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
+            assert resolvedValueArgument instanceof ExpressionValueArgument : resolvedValueArgument;
+            ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
+            assert valueArgument != null;
+            JetExpression argumentExpression = valueArgument.getArgumentExpression();
+            assert argumentExpression != null : valueArgument.asElement().getText();
+
+            bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samInterface);
+        }
+    }
+
+    @Nullable
+    private static ClassDescriptorFromJvmBytecode getInterfaceIfSamType(@NotNull JetType originalType) {
+        if (!SingleAbstractMethodUtils.isSamType(originalType)) {
+            return null;
+        }
+        ClassDescriptorFromJvmBytecode samInterface =
+                (ClassDescriptorFromJvmBytecode) originalType.getConstructor().getDeclarationDescriptor();
+        assert samInterface != null;
+        return samInterface;
     }
 }

@@ -53,7 +53,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -1888,24 +1887,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return invokeFunction(call, receiver, resolvedCall);
     }
 
-    @Nullable
-    private FunctionDescriptor getOriginalIfSamAdapter(@NotNull CallableDescriptor fun) {
-        if (!(fun instanceof FunctionDescriptor)) {
-            return null;
+    private void samAwareGen(@NotNull JetExpression expression, @NotNull Type defaultType) {
+        ClassDescriptorFromJvmBytecode samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
+        if (samInterface != null) {
+            genSamInterfaceValue(expression, samInterface);
         }
-        FunctionDescriptor original = ((FunctionDescriptor) fun).getOriginal();
-        if (original.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            return bindingContext.get(JavaBindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
+        else {
+            gen(expression, defaultType);
         }
-        if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            for (FunctionDescriptor overridden : original.getOverriddenDescriptors()) {
-                FunctionDescriptor originalIfSamAdapter = getOriginalIfSamAdapter(overridden);
-                if (originalIfSamAdapter != null) {
-                    return originalIfSamAdapter;
-                }
-            }
-        }
-        return null;
     }
 
     private StackValue invokeSamConstructor(
@@ -2064,7 +2053,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return typeMapper.mapToFunctionInvokeCallableMethod(createInvoke(fd));
         }
         else {
-            SimpleFunctionDescriptor originalOfSamAdapter = (SimpleFunctionDescriptor) getOriginalIfSamAdapter(fd);
+            SimpleFunctionDescriptor originalOfSamAdapter = (SimpleFunctionDescriptor) SamCodegenUtil
+                    .getOriginalIfSamAdapter(bindingContext, fd);
             return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall,
                                                   isCallInsideSameClassAsDeclared(fd, context),
                                                   isCallInsideSameModuleAsDeclared(fd, context),
@@ -2298,31 +2288,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         int mask = 0;
 
-        FunctionDescriptor originalOfSamAdapter = getOriginalIfSamAdapter(fd);
-
         for (ValueParameterDescriptor valueParameter : fd.getValueParameters()) {
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
+            Type parameterType = valueParameterTypes.get(valueParameter.getIndex());
             if (resolvedValueArgument instanceof ExpressionValueArgument) {
                 ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
                 assert valueArgument != null;
                 JetExpression argumentExpression = valueArgument.getArgumentExpression();
                 assert argumentExpression != null : valueArgument.asElement().getText();
 
-                if (originalOfSamAdapter != null) {
-                    JetType samAdapterType = originalOfSamAdapter.getValueParameters().get(valueParameter.getIndex()).getType();
-                    if (SingleAbstractMethodUtils.isSamType(samAdapterType)) {
-                        ClassDescriptorFromJvmBytecode samInterface = (ClassDescriptorFromJvmBytecode) samAdapterType.getConstructor().getDeclarationDescriptor();
-                        assert samInterface != null;
-
-                        genSamInterfaceValue(argumentExpression, samInterface);
-                        continue;
-                    }
-                }
-                gen(argumentExpression, valueParameterTypes.get(valueParameter.getIndex()));
+                samAwareGen(argumentExpression, parameterType);
             }
             else if (resolvedValueArgument instanceof DefaultValueArgument) {
-                Type type = valueParameterTypes.get(valueParameter.getIndex());
-                pushDefaultValueOnStack(type, v);
+                pushDefaultValueOnStack(parameterType, v);
                 mask |= (1 << valueParameter.getIndex());
             }
             else if (resolvedValueArgument instanceof VarargValueArgument) {
@@ -3274,7 +3252,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //See StackValue.receiver for more info
         pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists());
 
-        ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) getOriginalIfSamAdapter(constructorDescriptor);
+        ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil
+                .getOriginalIfSamAdapter(bindingContext, constructorDescriptor);
         CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructorDescriptor : originalOfSamAdapter);
         invokeMethodWithArguments(method, resolvedCall, null, StackValue.none());
 
