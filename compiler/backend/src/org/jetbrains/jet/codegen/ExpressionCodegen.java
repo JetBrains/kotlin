@@ -930,37 +930,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 checkPostCondition(loopExit);
             }
 
-            int sort = asmElementType.getSort();
-            switch (sort) {
-                case Type.INT:
-                case Type.CHAR:
-                case Type.BYTE:
-                case Type.SHORT:
-                    v.iinc(loopParameterVar, 1);
-                    break;
-
-                case Type.LONG:
-                    v.load(loopParameterVar, asmElementType);
-                    v.lconst(1);
-                    v.add(asmElementType);
-                    v.store(loopParameterVar, asmElementType);
-                    break;
-
-                case Type.FLOAT:
-                case Type.DOUBLE:
-                    v.load(loopParameterVar, asmElementType);
-                    if (sort == Type.DOUBLE) {
-                        v.dconst(1.0);
-                    }
-                    else {
-                        v.fconst(1.0f);
-                    }
-                    v.add(asmElementType);
-                    v.store(loopParameterVar, asmElementType);
-                    break;
-
-                default:
-                    throw new IllegalStateException("Unexpected range element type: " + asmElementType);
+            if (asmElementType == Type.INT_TYPE) {
+                v.iinc(loopParameterVar, 1);
+            }
+            else {
+                v.load(loopParameterVar, asmElementType);
+                genIncrement(asmElementType, 1, v);
+                v.store(loopParameterVar, asmElementType);
             }
         }
     }
@@ -1148,6 +1124,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.load(loopParameterVar, asmElementType);
             v.load(incrementVar, asmElementType);
             v.add(asmElementType);
+
+            if (asmElementType == Type.BYTE_TYPE || asmElementType == Type.SHORT_TYPE || asmElementType == Type.CHAR_TYPE) {
+                StackValue.coerce(Type.INT_TYPE, asmElementType, v);
+            }
 
             v.store(loopParameterVar, asmElementType);
         }
