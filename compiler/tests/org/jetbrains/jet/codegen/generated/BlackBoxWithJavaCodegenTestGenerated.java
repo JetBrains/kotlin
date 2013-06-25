@@ -257,9 +257,19 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/get.kt");
             }
             
+            @TestMetadata("invoke.kt")
+            public void testInvoke() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/invoke.kt");
+            }
+            
             @TestMetadata("multiGetSet.kt")
             public void testMultiGetSet() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/multiGetSet.kt");
+            }
+            
+            @TestMetadata("multiInvoke.kt")
+            public void testMultiInvoke() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/multiInvoke.kt");
             }
             
             @TestMetadata("set.kt")
