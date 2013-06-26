@@ -14,6 +14,7 @@ buildscript {
 }
 
 apply plugin: "kotlin"
+apply plugin: "java"
 
 sourceSets {
  deploy
