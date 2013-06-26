@@ -205,6 +205,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/simplest.kt");
         }
         
+        @TestMetadata("superconstructor.kt")
+        public void testSuperconstructor() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/superconstructor.kt");
+        }
+        
         @TestMetadata("typeParameterOfClass.kt")
         public void testTypeParameterOfClass() throws Exception {
             doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/typeParameterOfClass.kt");

@@ -183,8 +183,6 @@ public class CallResolver {
             if (calleeExpression instanceof JetConstructorCalleeExpression) {
                 assert !context.call.getExplicitReceiver().exists();
 
-                prioritizedTasks = Lists.newArrayList();
-
                 JetConstructorCalleeExpression expression = (JetConstructorCalleeExpression) calleeExpression;
                 functionReference = expression.getConstructorReferenceExpression();
                 if (functionReference == null) {
@@ -207,10 +205,8 @@ public class CallResolver {
                         return checkArgumentTypesAndFail(context);
                     }
                     Collection<ResolutionCandidate<CallableDescriptor>> candidates = TaskPrioritizer.<CallableDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverValue>singletonList(NO_RECEIVER), constructors);
-                    for (ResolutionCandidate<CallableDescriptor> candidate : candidates) {
-                        candidate.setSafeCall(JetPsiUtil.isSafeCall(context.call));
-                    }
-                    prioritizedTasks.add(new ResolutionTask<CallableDescriptor, FunctionDescriptor>(candidates, functionReference, context));  // !! DataFlowInfo.EMPTY
+                    prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
+                            context, functionReference, candidates);
                 }
                 else {
                     context.trace.report(NOT_A_CLASS.on(calleeExpression));

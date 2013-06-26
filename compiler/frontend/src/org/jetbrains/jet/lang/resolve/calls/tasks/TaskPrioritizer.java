@@ -87,32 +87,8 @@ public class TaskPrioritizer {
         else {
             scope = context.scope;
         }
-        ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> visibleStrategy = new ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>() {
-            @Override
-            public int getPriority(ResolutionCandidate<D> call) {
-                return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 0 : 1);
-            }
 
-            @Override
-            public int getMaxPriority() {
-                return 3;
-            }
-
-            private boolean isVisible(ResolutionCandidate<D> call) {
-                if (call == null) return false;
-                D candidateDescriptor = call.getDescriptor();
-                if (ErrorUtils.isError(candidateDescriptor)) return true;
-                return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
-            }
-
-            private boolean isSynthesized(ResolutionCandidate<D> call) {
-                D descriptor = call.getDescriptor();
-                return descriptor instanceof CallableMemberDescriptor &&
-                       isOrOverridesSynthesized((CallableMemberDescriptor) descriptor);
-            }
-        };
-
-        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, visibleStrategy);
+        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context));
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : callableDescriptorCollectors) {
             doComputeTasks(scope, explicitReceiver, name, result, context, callableDescriptorCollector);
         }
@@ -248,6 +224,48 @@ public class TaskPrioritizer {
         return false;
     }
 
+    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasksFromCandidates(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull JetReferenceExpression functionReference,
+            @NotNull Collection<ResolutionCandidate<D>> candidates
+    ) {
+        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context));
+        result.addCandidates(candidates);
+        return result.getTasks();
+    }
+
     private TaskPrioritizer() {
+    }
+
+    private static class MyPriorityProvider<D extends CallableDescriptor>
+            implements ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> {
+        private final BasicCallResolutionContext context;
+
+        public MyPriorityProvider(BasicCallResolutionContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public int getPriority(ResolutionCandidate<D> call) {
+            return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 0 : 1);
+        }
+
+        @Override
+        public int getMaxPriority() {
+            return 3;
+        }
+
+        private boolean isVisible(ResolutionCandidate<D> call) {
+            if (call == null) return false;
+            D candidateDescriptor = call.getDescriptor();
+            if (ErrorUtils.isError(candidateDescriptor)) return true;
+            return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
+        }
+
+        private boolean isSynthesized(ResolutionCandidate<D> call) {
+            D descriptor = call.getDescriptor();
+            return descriptor instanceof CallableMemberDescriptor &&
+                   isOrOverridesSynthesized((CallableMemberDescriptor) descriptor);
+        }
     }
 }
