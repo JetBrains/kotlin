@@ -41,6 +41,7 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
+import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -60,17 +61,20 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isKindOf;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
@@ -209,7 +213,29 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
 
+        writeKotlinInfoIfNeeded();
+
         writeClassSignatureIfNeeded(signature);
+    }
+
+    private void writeKotlinInfoIfNeeded() {
+        if (!(descriptor.getContainingDeclaration() instanceof ClassOrNamespaceDescriptor)) return;
+
+        final AnnotationVisitor av = v.getVisitor().visitAnnotation("Ljet/KotlinInfo;", true);
+        DescriptorSerializer serializer = new DescriptorSerializer(DescriptorNamer.DEFAULT);
+
+        ClassSerializationUtil.serializeClass(descriptor, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
+            @Override
+            public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
+                av.visit("data", classProto.toByteArray());
+            }
+        });
+
+        ByteArrayOutputStream nameTable = new ByteArrayOutputStream();
+        NameSerializationUtil.serializeNameTable(nameTable, serializer.getNameTable());
+        av.visit("nameTable", nameTable.toByteArray());
+
+        av.visitEnd();
     }
 
     private void writeEnclosingMethod() {

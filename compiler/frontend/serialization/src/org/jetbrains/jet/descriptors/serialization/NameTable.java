@@ -84,9 +84,12 @@ public class NameTable {
             NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
             builder.setParentQualifiedName(getFqNameIndex(namespaceDescriptor));
         }
-        else {
+        else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor outerClass = (ClassDescriptor) containingDeclaration;
             builder.setParentQualifiedName(getFqNameIndex(outerClass));
+        }
+        else {
+            throw new IllegalStateException("FQ names are only stored for top-level or inner classes: " + classDescriptor);
         }
 
         return qualifiedNames.intern(builder);

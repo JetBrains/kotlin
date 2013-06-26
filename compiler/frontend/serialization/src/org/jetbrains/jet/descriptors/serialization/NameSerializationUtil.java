@@ -17,25 +17,39 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class NameSerializationUtil {
-    @NotNull
-    public static NameResolver deserializeNameResolver(@NotNull InputStream in) throws IOException {
-        ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
-        ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
-        return new NameResolver(simpleNames, qualifiedNames);
+    private NameSerializationUtil() {
     }
 
-    public static void serializeNameTable(@NotNull OutputStream out, @NotNull NameTable nameTable) throws IOException {
-        ProtoBuf.SimpleNameTable simpleNamesProto = toSimpleNameTable(nameTable);
-        simpleNamesProto.writeDelimitedTo(out);
+    @NotNull
+    public static NameResolver deserializeNameResolver(@NotNull InputStream in) {
+        try {
+            ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
+            ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
+            return new NameResolver(simpleNames, qualifiedNames);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+    }
 
-        ProtoBuf.QualifiedNameTable qualifiedNameTable = toQualifiedNameTable(nameTable);
-        qualifiedNameTable.writeDelimitedTo(out);
+    public static void serializeNameTable(@NotNull OutputStream out, @NotNull NameTable nameTable) {
+        try {
+            ProtoBuf.SimpleNameTable simpleNamesProto = toSimpleNameTable(nameTable);
+            simpleNamesProto.writeDelimitedTo(out);
+
+            ProtoBuf.QualifiedNameTable qualifiedNameTable = toQualifiedNameTable(nameTable);
+            qualifiedNameTable.writeDelimitedTo(out);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
     @NotNull

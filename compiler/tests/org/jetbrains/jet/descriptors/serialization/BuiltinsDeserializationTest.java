@@ -21,31 +21,28 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
 
@@ -95,7 +92,8 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         List<ProtoBuf.Callable> callableProtos = serializeCallables(serializer, allDescriptors);
 
-        final NamespaceDescriptorImpl actualNamespace = createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.shortName().asString());
+        final NamespaceDescriptorImpl actualNamespace = JetTestUtils
+                .createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.shortName().asString());
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
@@ -214,17 +212,5 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
     private static ClassId getClassId(ClassDescriptor classDescriptor) {
         return ClassSerializationUtil.getClassId(classDescriptor, NAMER);
-    }
-
-    private static NamespaceDescriptorImpl createTestNamespace(String testPackageName) {
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<test module>"), JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
-                                                                   JavaToKotlinClassMap.getInstance());
-        NamespaceDescriptorImpl rootNamespace =
-                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
-        module.setRootNamespace(rootNamespace);
-        NamespaceDescriptorImpl test =
-                new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), Name.identifier(testPackageName));
-        test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));
-        return test;
     }
 }
