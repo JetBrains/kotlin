@@ -394,21 +394,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         FunctionDescriptor operationDescriptor =
                 (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
-        if (operationDescriptor == null) {
-            return;
-        }
+        if (operationDescriptor == null) return;
 
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, operationDescriptor);
-        if (original == null) {
-            return;
-        }
-
+        if (original == null) return;
 
         ClassDescriptorFromJvmBytecode samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
-
-        if (samInterfaceOfParameter == null) {
-            return;
-        }
+        if (samInterfaceOfParameter == null) return;
 
         IElementType token = expression.getOperationToken();
         if (BINARY_OPERATIONS.contains(token)) {
