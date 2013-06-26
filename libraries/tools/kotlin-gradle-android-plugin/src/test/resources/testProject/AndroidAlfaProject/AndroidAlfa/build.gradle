@@ -1,0 +1,28 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'file://' + pathToKotlinPlugin
+        }
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-android-plugin:0.1-SNAPSHOT'
+        classpath 'com.android.tools.build:gradle:0.4'
+    }
+}
+apply plugin: 'android'
+apply plugin: 'kotlin'
+
+dependencies {
+    compile files('libs/android-support-v4.jar')
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 16
+    }
+}
