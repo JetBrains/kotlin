@@ -232,6 +232,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/samAdapters/operators"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("augmentedAssignmentAndSquareBrackets.kt")
+            public void testAugmentedAssignmentAndSquareBrackets() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/augmentedAssignmentAndSquareBrackets.kt");
+            }
+            
             @TestMetadata("augmentedAssignmentPure.kt")
             public void testAugmentedAssignmentPure() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/augmentedAssignmentPure.kt");
@@ -266,7 +271,7 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             public void testInfixCall() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/infixCall.kt");
             }
-
+            
             @TestMetadata("invoke.kt")
             public void testInvoke() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/samAdapters/operators/invoke.kt");
