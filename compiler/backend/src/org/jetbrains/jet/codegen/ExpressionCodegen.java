@@ -227,14 +227,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (!(selector instanceof JetBlockExpression)) {
             markLineNumber(selector);
         }
-        if (selector instanceof JetExpression) {
-            JetExpression expression = (JetExpression) selector;
-            CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
-            if (constant != null) {
-                return StackValue.constant(constant.getValue(), expressionType(expression));
-            }
-        }
         try {
+            if (selector instanceof JetExpression) {
+                JetExpression expression = (JetExpression) selector;
+                CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
+                if (constant != null) {
+                    return StackValue.constant(constant.getValue(), expressionType(expression));
+                }
+                ClassDescriptorFromJvmBytecode samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
+                if (samInterface != null) {
+                    return genSamInterfaceValue(expression, samInterface, visitor);
+                }
+            }
+
             return selector.accept(visitor, receiver);
         }
         catch (ProcessCanceledException e) {
@@ -1887,16 +1892,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return invokeFunction(call, receiver, resolvedCall);
     }
 
-    private void samAwareGen(@NotNull JetExpression expression, @NotNull Type defaultType) {
-        ClassDescriptorFromJvmBytecode samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
-        if (samInterface != null) {
-            genSamInterfaceValue(expression, samInterface);
-        }
-        else {
-            gen(expression, defaultType);
-        }
-    }
-
     private StackValue invokeSamConstructor(
             JetCallExpression expression,
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
@@ -1912,12 +1907,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : "getArgumentExpression() is null for " + expression.getText();
 
-        return genSamInterfaceValue(argumentExpression, samInterface);
+        return genSamInterfaceValue(argumentExpression, samInterface, this);
     }
 
     private StackValue genSamInterfaceValue(
             @NotNull JetExpression argumentExpression,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface
+            @NotNull ClassDescriptorFromJvmBytecode samInterface,
+            @NotNull JetVisitor<StackValue, StackValue> visitor
     ) {
         if (argumentExpression instanceof JetFunctionLiteralExpression) {
             return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
@@ -1929,11 +1925,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.anew(className.getAsmType());
             v.dup();
 
-            JetType functionType = samInterface.getFunctionTypeForSamInterface();
-            gen(argumentExpression, typeMapper.mapType(functionType));
+            Type functionType = typeMapper.mapType(samInterface.getFunctionTypeForSamInterface());
+            argumentExpression.accept(visitor, StackValue.none()).put(functionType, v);
 
-            v.invokespecial(className.getInternalName(), "<init>",
-                            Type.getMethodDescriptor(Type.VOID_TYPE, typeMapper.mapType(functionType)));
+            v.invokespecial(className.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
             return StackValue.onStack(className.getAsmType());
         }
     }
@@ -2297,7 +2292,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 JetExpression argumentExpression = valueArgument.getArgumentExpression();
                 assert argumentExpression != null : valueArgument.asElement().getText();
 
-                samAwareGen(argumentExpression, parameterType);
+                gen(argumentExpression, parameterType);
             }
             else if (resolvedValueArgument instanceof DefaultValueArgument) {
                 pushDefaultValueOnStack(parameterType, v);
@@ -2851,7 +2846,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue stackValue = gen(expression.getLeft());
         JetExpression right = expression.getRight();
         assert right != null : expression.getText();
-        samAwareGen(right, stackValue.type);
+        gen(right, stackValue.type);
         stackValue.store(stackValue.type, v);
         return StackValue.none();
     }
@@ -3376,7 +3371,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getSignature().getAsmMethod();
             Type[] argumentTypes = asmMethod.getArgumentTypes();
             for (JetExpression jetExpression : expression.getIndexExpressions()) {
-                samAwareGen(jetExpression, argumentTypes[index]);
+                gen(jetExpression, argumentTypes[index]);
                 index++;
             }
 
