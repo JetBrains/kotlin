@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JetHighlighter extends SyntaxHighlighterBase {
-    private static final Map<IElementType, TextAttributesKey> keys;
+    private static final Map<IElementType, TextAttributesKey> keys1;
+    private static final Map<IElementType, TextAttributesKey> keys2;
 
     @NotNull
     public Lexer getHighlightingLexer() {
@@ -39,53 +40,55 @@ public class JetHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
     public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
-        return pack(keys.get(tokenType));
+        return pack(keys1.get(tokenType), keys2.get(tokenType));
     }
 
     static {
-        keys = new HashMap<IElementType, TextAttributesKey>();
+        keys1 = new HashMap<IElementType, TextAttributesKey>();
+        keys2 = new HashMap<IElementType, TextAttributesKey>();
 
-        fillMap(keys, JetTokens.KEYWORDS, JetHighlightingColors.KEYWORD);
+        fillMap(keys1, JetTokens.KEYWORDS, JetHighlightingColors.KEYWORD);
 
-        keys.put(JetTokens.AS_SAFE, JetHighlightingColors.KEYWORD);
-        keys.put(JetTokens.LABEL_IDENTIFIER, JetHighlightingColors.LABEL);
-        keys.put(JetTokens.ATAT, JetHighlightingColors.LABEL);
-        keys.put(JetTokens.INTEGER_LITERAL, JetHighlightingColors.NUMBER);
-        keys.put(JetTokens.FLOAT_LITERAL, JetHighlightingColors.NUMBER);
+        keys1.put(JetTokens.AS_SAFE, JetHighlightingColors.KEYWORD);
+        keys1.put(JetTokens.LABEL_IDENTIFIER, JetHighlightingColors.LABEL);
+        keys1.put(JetTokens.ATAT, JetHighlightingColors.LABEL);
+        keys1.put(JetTokens.INTEGER_LITERAL, JetHighlightingColors.NUMBER);
+        keys1.put(JetTokens.FLOAT_LITERAL, JetHighlightingColors.NUMBER);
 
-        fillMap(keys, JetTokens.OPERATIONS.minus(
+        fillMap(keys1, JetTokens.OPERATIONS.minus(
             TokenSet.create(JetTokens.IDENTIFIER, JetTokens.LABEL_IDENTIFIER)).minus(
             JetTokens.KEYWORDS), JetHighlightingColors.OPERATOR_SIGN);
-        keys.put(JetTokens.LPAR, JetHighlightingColors.PARENTHESIS);
-        keys.put(JetTokens.RPAR, JetHighlightingColors.PARENTHESIS);
-        keys.put(JetTokens.LBRACE, JetHighlightingColors.BRACES);
-        keys.put(JetTokens.RBRACE, JetHighlightingColors.BRACES);
-        keys.put(JetTokens.LBRACKET, JetHighlightingColors.BRACKETS);
-        keys.put(JetTokens.RBRACKET, JetHighlightingColors.BRACKETS);
-        keys.put(JetTokens.COMMA, JetHighlightingColors.COMMA);
-        keys.put(JetTokens.SEMICOLON, JetHighlightingColors.SEMICOLON);
-        keys.put(JetTokens.DOT, JetHighlightingColors.DOT);
-        keys.put(JetTokens.ARROW, JetHighlightingColors.ARROW);
+        keys1.put(JetTokens.LPAR, JetHighlightingColors.PARENTHESIS);
+        keys1.put(JetTokens.RPAR, JetHighlightingColors.PARENTHESIS);
+        keys1.put(JetTokens.LBRACE, JetHighlightingColors.BRACES);
+        keys1.put(JetTokens.RBRACE, JetHighlightingColors.BRACES);
+        keys1.put(JetTokens.LBRACKET, JetHighlightingColors.BRACKETS);
+        keys1.put(JetTokens.RBRACKET, JetHighlightingColors.BRACKETS);
+        keys1.put(JetTokens.COMMA, JetHighlightingColors.COMMA);
+        keys1.put(JetTokens.SEMICOLON, JetHighlightingColors.SEMICOLON);
+        keys1.put(JetTokens.DOT, JetHighlightingColors.DOT);
+        keys1.put(JetTokens.ARROW, JetHighlightingColors.ARROW);
 
-        keys.put(JetTokens.OPEN_QUOTE, JetHighlightingColors.STRING);
-        keys.put(JetTokens.CLOSING_QUOTE, JetHighlightingColors.STRING);
-        keys.put(JetTokens.REGULAR_STRING_PART, JetHighlightingColors.STRING);
-        keys.put(JetTokens.LONG_TEMPLATE_ENTRY_END, JetHighlightingColors.STRING_ESCAPE);
-        keys.put(JetTokens.LONG_TEMPLATE_ENTRY_START, JetHighlightingColors.STRING_ESCAPE);
-        keys.put(JetTokens.SHORT_TEMPLATE_ENTRY_START, JetHighlightingColors.STRING_ESCAPE);
+        keys1.put(JetTokens.OPEN_QUOTE, JetHighlightingColors.STRING);
+        keys1.put(JetTokens.CLOSING_QUOTE, JetHighlightingColors.STRING);
+        keys1.put(JetTokens.REGULAR_STRING_PART, JetHighlightingColors.STRING);
+        keys1.put(JetTokens.LONG_TEMPLATE_ENTRY_END, JetHighlightingColors.STRING_ESCAPE);
+        keys1.put(JetTokens.LONG_TEMPLATE_ENTRY_START, JetHighlightingColors.STRING_ESCAPE);
+        keys1.put(JetTokens.SHORT_TEMPLATE_ENTRY_START, JetHighlightingColors.STRING_ESCAPE);
 
-        keys.put(JetTokens.ESCAPE_SEQUENCE, JetHighlightingColors.STRING_ESCAPE);
+        keys1.put(JetTokens.ESCAPE_SEQUENCE, JetHighlightingColors.STRING_ESCAPE);
 
-        keys.put(JetTokens.CHARACTER_LITERAL, JetHighlightingColors.STRING);
+        keys1.put(JetTokens.CHARACTER_LITERAL, JetHighlightingColors.STRING);
 
-        keys.put(JetTokens.EOL_COMMENT, JetHighlightingColors.LINE_COMMENT);
-        keys.put(JetTokens.SHEBANG_COMMENT, JetHighlightingColors.LINE_COMMENT);
-        keys.put(JetTokens.BLOCK_COMMENT, JetHighlightingColors.BLOCK_COMMENT);
-        keys.put(JetTokens.DOC_COMMENT, JetHighlightingColors.DOC_COMMENT);
+        keys1.put(JetTokens.EOL_COMMENT, JetHighlightingColors.LINE_COMMENT);
+        keys1.put(JetTokens.SHEBANG_COMMENT, JetHighlightingColors.LINE_COMMENT);
+        keys1.put(JetTokens.BLOCK_COMMENT, JetHighlightingColors.BLOCK_COMMENT);
+        keys1.put(JetTokens.DOC_COMMENT, JetHighlightingColors.DOC_COMMENT);
 
-        fillMap(keys, KDocTokens.CONTENT_TOKENS, JetHighlightingColors.DOC_COMMENT);
-        keys.put(KDocTokens.TAG_NAME, JetHighlightingColors.KDOC_TAG);
+        fillMap(keys1, KDocTokens.CONTENT_TOKENS, JetHighlightingColors.DOC_COMMENT);
+        keys1.put(KDocTokens.TAG_NAME, JetHighlightingColors.KDOC_TAG);
+        keys2.put(KDocTokens.TAG_NAME, JetHighlightingColors.DOC_COMMENT);
 
-        keys.put(TokenType.BAD_CHARACTER, JetHighlightingColors.BAD_CHARACTER);
+        keys1.put(TokenType.BAD_CHARACTER, JetHighlightingColors.BAD_CHARACTER);
     }
 }
