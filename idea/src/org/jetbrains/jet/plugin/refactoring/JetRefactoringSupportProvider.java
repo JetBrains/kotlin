@@ -21,16 +21,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureHandler;
 import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetIntroduceVariableHandler;
+import org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor;
 
 /**
  * User: Alefas
  * Date: 25.01.12
  */
 public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
+    @Override
+    public boolean isSafeDeleteAvailable(PsiElement element) {
+        return KotlinSafeDeleteProcessor.checkElement(element);
+    }
+
     @Override
     public RefactoringActionHandler getIntroduceVariableHandler() {
         return new JetIntroduceVariableHandler();
