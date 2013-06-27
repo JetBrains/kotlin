@@ -84,7 +84,10 @@ public final class JavaAnnotationResolver {
         }
 
         // Don't process internal jet annotations and jetbrains NotNull annotations
-        if (qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString())) {
+        if (qname.startsWith("jet.runtime.typeinfo.")
+            || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString())
+            || qname.equals("jet.KotlinInfo")
+        ) {
             return null;
         }
 
