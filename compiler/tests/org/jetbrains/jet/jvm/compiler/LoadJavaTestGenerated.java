@@ -1018,7 +1018,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     }
     
     @TestMetadata("compiler/testData/loadJava/compiledJava")
-    @InnerTestClasses({CompiledJava.Annotations.class, CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.SignaturePropagation.class, CompiledJava.SingleAbstractMethod.class, CompiledJava.Static.class})
+    @InnerTestClasses({CompiledJava.Annotations.class, CompiledJava.ProtectedPackage.class, CompiledJava.ProtectedStatic.class, CompiledJava.Sam.class, CompiledJava.SignaturePropagation.class, CompiledJava.Static.class})
     public static class CompiledJava extends AbstractLoadJavaTest {
         public void testAllFilesPresentInCompiledJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1128,6 +1128,159 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             
         }
         
+        @TestMetadata("compiler/testData/loadJava/compiledJava/sam")
+        @InnerTestClasses({Sam.Adapters.class})
+        public static class Sam extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInSam() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/sam"), Pattern.compile("^(.+)\\.java$"), true);
+            }
+            
+            @TestMetadata("Comparator.java")
+            public void testComparator() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/Comparator.java");
+            }
+            
+            @TestMetadata("FilenameFilter.java")
+            public void testFilenameFilter() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/FilenameFilter.java");
+            }
+            
+            @TestMetadata("GenericInterfaceParameterWithSelfBound.java")
+            public void testGenericInterfaceParameterWithSelfBound() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/GenericInterfaceParameterWithSelfBound.java");
+            }
+            
+            @TestMetadata("GenericInterfaceParametersWithBounds.java")
+            public void testGenericInterfaceParametersWithBounds() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/GenericInterfaceParametersWithBounds.java");
+            }
+            
+            @TestMetadata("GenericMethodParameters.java")
+            public void testGenericMethodParameters() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/GenericMethodParameters.java");
+            }
+            
+            @TestMetadata("InterfaceWithObjectMethod.java")
+            public void testInterfaceWithObjectMethod() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/InterfaceWithObjectMethod.java");
+            }
+            
+            @TestMetadata("Nested.java")
+            public void testNested() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/Nested.java");
+            }
+            
+            @TestMetadata("Runnable.java")
+            public void testRunnable() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/Runnable.java");
+            }
+            
+            @TestMetadata("SamSubinterfaceOfTwo.java")
+            public void testSamSubinterfaceOfTwo() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/SamSubinterfaceOfTwo.java");
+            }
+            
+            @TestMetadata("SamSubinterfaceOverridding.java")
+            public void testSamSubinterfaceOverridding() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/SamSubinterfaceOverridding.java");
+            }
+            
+            @TestMetadata("SubstitutedSamInterface.java")
+            public void testSubstitutedSamInterface() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterface.java");
+            }
+            
+            @TestMetadata("SubstitutedSamInterfaceSubclassOfBuiltin.java")
+            public void testSubstitutedSamInterfaceSubclassOfBuiltin() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterfaceSubclassOfBuiltin.java");
+            }
+            
+            @TestMetadata("VarargParameter.java")
+            public void testVarargParameter() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/VarargParameter.java");
+            }
+            
+            @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters")
+            public static class Adapters extends AbstractLoadJavaTest {
+                public void testAllFilesPresentInAdapters() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), true);
+                }
+                
+                @TestMetadata("AmbiguousAdapters.java")
+                public void testAmbiguousAdapters() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/AmbiguousAdapters.java");
+                }
+                
+                @TestMetadata("Basic.java")
+                public void testBasic() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/Basic.java");
+                }
+                
+                @TestMetadata("Constructor.java")
+                public void testConstructor() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/Constructor.java");
+                }
+                
+                @TestMetadata("DeepSamLoop.java")
+                public void testDeepSamLoop() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/DeepSamLoop.java");
+                }
+                
+                @TestMetadata("InheritedOverridden.java")
+                public void testInheritedOverridden() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/InheritedOverridden.java");
+                }
+                
+                @TestMetadata("InheritedOverriddenAdapter.java")
+                public void testInheritedOverriddenAdapter() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/InheritedOverriddenAdapter.java");
+                }
+                
+                @TestMetadata("InheritedSimple.java")
+                public void testInheritedSimple() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/InheritedSimple.java");
+                }
+                
+                @TestMetadata("NonTrivialFunctionType.java")
+                public void testNonTrivialFunctionType() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/NonTrivialFunctionType.java");
+                }
+                
+                @TestMetadata("SelfAsParameter.java")
+                public void testSelfAsParameter() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/SelfAsParameter.java");
+                }
+                
+                @TestMetadata("SeveralSamParameters.java")
+                public void testSeveralSamParameters() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/SeveralSamParameters.java");
+                }
+                
+                @TestMetadata("TypeParameterOfClass.java")
+                public void testTypeParameterOfClass() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfClass.java");
+                }
+                
+                @TestMetadata("TypeParameterOfMethod.java")
+                public void testTypeParameterOfMethod() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfMethod.java");
+                }
+                
+                @TestMetadata("TypeParameterOfOuterClass.java")
+                public void testTypeParameterOfOuterClass() throws Exception {
+                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfOuterClass.java");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Sam");
+                suite.addTestSuite(Sam.class);
+                suite.addTestSuite(Adapters.class);
+                return suite;
+            }
+        }
+        
         @TestMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation")
         public static class SignaturePropagation extends AbstractLoadJavaTest {
             public void testAllFilesPresentInSignaturePropagation() throws Exception {
@@ -1169,159 +1322,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/signaturePropagation/TwoSuperclassesVarargAndNot.java");
             }
             
-        }
-        
-        @TestMetadata("compiler/testData/loadJava/compiledJava/singleAbstractMethod")
-        @InnerTestClasses({SingleAbstractMethod.Adapter.class})
-        public static class SingleAbstractMethod extends AbstractLoadJavaTest {
-            public void testAllFilesPresentInSingleAbstractMethod() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/singleAbstractMethod"), Pattern.compile("^(.+)\\.java$"), true);
-            }
-            
-            @TestMetadata("Comparator.java")
-            public void testComparator() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Comparator.java");
-            }
-            
-            @TestMetadata("FilenameFilter.java")
-            public void testFilenameFilter() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/FilenameFilter.java");
-            }
-            
-            @TestMetadata("GenericInterfaceParameterWithSelfBound.java")
-            public void testGenericInterfaceParameterWithSelfBound() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/GenericInterfaceParameterWithSelfBound.java");
-            }
-            
-            @TestMetadata("GenericInterfaceParametersWithBounds.java")
-            public void testGenericInterfaceParametersWithBounds() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/GenericInterfaceParametersWithBounds.java");
-            }
-            
-            @TestMetadata("GenericMethodParameters.java")
-            public void testGenericMethodParameters() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/GenericMethodParameters.java");
-            }
-            
-            @TestMetadata("InterfaceWithObjectMethod.java")
-            public void testInterfaceWithObjectMethod() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/InterfaceWithObjectMethod.java");
-            }
-            
-            @TestMetadata("Nested.java")
-            public void testNested() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Nested.java");
-            }
-            
-            @TestMetadata("Runnable.java")
-            public void testRunnable() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/Runnable.java");
-            }
-            
-            @TestMetadata("SamSubinterfaceOfTwo.java")
-            public void testSamSubinterfaceOfTwo() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SamSubinterfaceOfTwo.java");
-            }
-            
-            @TestMetadata("SamSubinterfaceOverridding.java")
-            public void testSamSubinterfaceOverridding() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SamSubinterfaceOverridding.java");
-            }
-            
-            @TestMetadata("SubstitutedSamInterface.java")
-            public void testSubstitutedSamInterface() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterface.java");
-            }
-            
-            @TestMetadata("SubstitutedSamInterfaceSubclassOfBuiltin.java")
-            public void testSubstitutedSamInterfaceSubclassOfBuiltin() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/SubstitutedSamInterfaceSubclassOfBuiltin.java");
-            }
-            
-            @TestMetadata("VarargParameter.java")
-            public void testVarargParameter() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/VarargParameter.java");
-            }
-            
-            @TestMetadata("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter")
-            public static class Adapter extends AbstractLoadJavaTest {
-                public void testAllFilesPresentInAdapter() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter"), Pattern.compile("^(.+)\\.java$"), true);
-                }
-                
-                @TestMetadata("AmbiguousAdapters.java")
-                public void testAmbiguousAdapters() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/AmbiguousAdapters.java");
-                }
-                
-                @TestMetadata("Basic.java")
-                public void testBasic() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/Basic.java");
-                }
-                
-                @TestMetadata("Constructor.java")
-                public void testConstructor() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/Constructor.java");
-                }
-                
-                @TestMetadata("DeepSamLoop.java")
-                public void testDeepSamLoop() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/DeepSamLoop.java");
-                }
-                
-                @TestMetadata("InheritedOverridden.java")
-                public void testInheritedOverridden() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/InheritedOverridden.java");
-                }
-                
-                @TestMetadata("InheritedOverriddenAdapter.java")
-                public void testInheritedOverriddenAdapter() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/InheritedOverriddenAdapter.java");
-                }
-                
-                @TestMetadata("InheritedSimple.java")
-                public void testInheritedSimple() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/InheritedSimple.java");
-                }
-                
-                @TestMetadata("NonTrivialFunctionType.java")
-                public void testNonTrivialFunctionType() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/NonTrivialFunctionType.java");
-                }
-                
-                @TestMetadata("SelfAsParameter.java")
-                public void testSelfAsParameter() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/SelfAsParameter.java");
-                }
-                
-                @TestMetadata("SeveralSamParameters.java")
-                public void testSeveralSamParameters() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/SeveralSamParameters.java");
-                }
-                
-                @TestMetadata("TypeParameterOfClass.java")
-                public void testTypeParameterOfClass() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/TypeParameterOfClass.java");
-                }
-                
-                @TestMetadata("TypeParameterOfMethod.java")
-                public void testTypeParameterOfMethod() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/TypeParameterOfMethod.java");
-                }
-                
-                @TestMetadata("TypeParameterOfOuterClass.java")
-                public void testTypeParameterOfOuterClass() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/singleAbstractMethod/adapter/TypeParameterOfOuterClass.java");
-                }
-                
-            }
-            
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("SingleAbstractMethod");
-                suite.addTestSuite(SingleAbstractMethod.class);
-                suite.addTestSuite(Adapter.class);
-                return suite;
-            }
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledJava/static")
@@ -1373,8 +1373,8 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             suite.addTestSuite(Annotations.class);
             suite.addTestSuite(ProtectedPackage.class);
             suite.addTestSuite(ProtectedStatic.class);
+            suite.addTest(Sam.innerSuite());
             suite.addTestSuite(SignaturePropagation.class);
-            suite.addTest(SingleAbstractMethod.innerSuite());
             suite.addTestSuite(Static.class);
             return suite;
         }
