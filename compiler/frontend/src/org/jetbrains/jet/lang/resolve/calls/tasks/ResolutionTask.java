@@ -109,4 +109,9 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public interface DescriptorCheckStrategy {
         <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing);
     }
+
+    @Override
+    public String toString() {
+        return candidates.toString();
+    }
 }
