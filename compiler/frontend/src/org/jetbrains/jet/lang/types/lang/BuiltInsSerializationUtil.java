@@ -34,6 +34,9 @@ public class BuiltInsSerializationUtil {
         }
     };
 
+    private BuiltInsSerializationUtil() {
+    }
+
     @NotNull
     public static String getClassMetadataPath(@NotNull ClassId classId) {
         return packageFqNameToPath(classId.getPackageFqName().toUnsafe())

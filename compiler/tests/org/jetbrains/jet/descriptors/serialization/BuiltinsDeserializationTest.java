@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -47,22 +48,6 @@ import java.util.Map;
 import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
 
 public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
-
-    private static final Name CLASS_OBJECT_NAME = Name.special("<class object>");
-    private static final DescriptorNamer NAMER = new DescriptorNamer() {
-        @NotNull
-        @Override
-        public Name getClassName(@NotNull ClassDescriptor classDescriptor) {
-            return classDescriptor.getKind() == ClassKind.CLASS_OBJECT ? CLASS_OBJECT_NAME : classDescriptor.getName();
-        }
-
-        @NotNull
-        @Override
-        public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
-            return namespaceDescriptor.getName();
-        }
-    };
-
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithJdk(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
@@ -86,7 +71,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     }
 
     private static NamespaceDescriptorImpl getDeserializedDescriptorsAsNamespace(Collection<DeclarationDescriptor> allDescriptors) {
-        DescriptorSerializer serializer = new DescriptorSerializer(NAMER);
+        DescriptorSerializer serializer = new DescriptorSerializer(BuiltInsSerializationUtil.BUILTINS_NAMER);
 
         final Map<ClassId, ProtoBuf.Class> classProtos = serializeClasses(serializer, allDescriptors);
 
@@ -115,7 +100,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             @NotNull
             @Override
             protected Name getClassObjectName(@NotNull ClassDescriptor outerClass) {
-                return CLASS_OBJECT_NAME;
+                return BuiltInsSerializationUtil.CLASS_OBJECT_NAME;
             }
 
             @Nullable
@@ -211,6 +196,6 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     }
 
     private static ClassId getClassId(ClassDescriptor classDescriptor) {
-        return ClassSerializationUtil.getClassId(classDescriptor, NAMER);
+        return ClassSerializationUtil.getClassId(classDescriptor, BuiltInsSerializationUtil.BUILTINS_NAMER);
     }
 }
