@@ -105,10 +105,10 @@ public final class ProtoBuf {
   public interface SimpleNameTableOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
     
-    // repeated string names = 1;
-    java.util.List<String> getNamesList();
-    int getNamesCount();
-    String getNames(int index);
+    // repeated string name = 1;
+    java.util.List<String> getNameList();
+    int getNameCount();
+    String getName(int index);
   }
   public static final class SimpleNameTable extends
       com.google.protobuf.GeneratedMessageLite
@@ -128,22 +128,22 @@ public final class ProtoBuf {
       return defaultInstance;
     }
     
-    // repeated string names = 1;
-    public static final int NAMES_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList names_;
+    // repeated string name = 1;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList name_;
     public java.util.List<String>
-        getNamesList() {
-      return names_;
+        getNameList() {
+      return name_;
     }
-    public int getNamesCount() {
-      return names_.size();
+    public int getNameCount() {
+      return name_.size();
     }
-    public String getNames(int index) {
-      return names_.get(index);
+    public String getName(int index) {
+      return name_.get(index);
     }
     
     private void initFields() {
-      names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -157,8 +157,8 @@ public final class ProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      for (int i = 0; i < names_.size(); i++) {
-        output.writeBytes(1, names_.getByteString(i));
+      for (int i = 0; i < name_.size(); i++) {
+        output.writeBytes(1, name_.getByteString(i));
       }
     }
     
@@ -170,12 +170,12 @@ public final class ProtoBuf {
       size = 0;
       {
         int dataSize = 0;
-        for (int i = 0; i < names_.size(); i++) {
+        for (int i = 0; i < name_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(names_.getByteString(i));
+            .computeBytesSizeNoTag(name_.getByteString(i));
         }
         size += dataSize;
-        size += 1 * getNamesList().size();
+        size += 1 * getNameList().size();
       }
       memoizedSerializedSize = size;
       return size;
@@ -279,7 +279,7 @@ public final class ProtoBuf {
       
       public Builder clear() {
         super.clear();
-        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -314,23 +314,23 @@ public final class ProtoBuf {
         org.jetbrains.jet.descriptors.serialization.ProtoBuf.SimpleNameTable result = new org.jetbrains.jet.descriptors.serialization.ProtoBuf.SimpleNameTable(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          names_ = new com.google.protobuf.UnmodifiableLazyStringList(
-              names_);
+          name_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              name_);
           bitField0_ = (bitField0_ & ~0x00000001);
         }
-        result.names_ = names_;
+        result.name_ = name_;
         return result;
       }
       
       public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.ProtoBuf.SimpleNameTable other) {
         if (other == org.jetbrains.jet.descriptors.serialization.ProtoBuf.SimpleNameTable.getDefaultInstance()) return this;
-        if (!other.names_.isEmpty()) {
-          if (names_.isEmpty()) {
-            names_ = other.names_;
+        if (!other.name_.isEmpty()) {
+          if (name_.isEmpty()) {
+            name_ = other.name_;
             bitField0_ = (bitField0_ & ~0x00000001);
           } else {
-            ensureNamesIsMutable();
-            names_.addAll(other.names_);
+            ensureNameIsMutable();
+            name_.addAll(other.name_);
           }
           
         }
@@ -359,8 +359,8 @@ public final class ProtoBuf {
               break;
             }
             case 10: {
-              ensureNamesIsMutable();
-              names_.add(input.readBytes());
+              ensureNameIsMutable();
+              name_.add(input.readBytes());
               break;
             }
           }
@@ -369,59 +369,59 @@ public final class ProtoBuf {
       
       private int bitField0_;
       
-      // repeated string names = 1;
-      private com.google.protobuf.LazyStringList names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureNamesIsMutable() {
+      // repeated string name = 1;
+      private com.google.protobuf.LazyStringList name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureNameIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          names_ = new com.google.protobuf.LazyStringArrayList(names_);
+          name_ = new com.google.protobuf.LazyStringArrayList(name_);
           bitField0_ |= 0x00000001;
          }
       }
       public java.util.List<String>
-          getNamesList() {
-        return java.util.Collections.unmodifiableList(names_);
+          getNameList() {
+        return java.util.Collections.unmodifiableList(name_);
       }
-      public int getNamesCount() {
-        return names_.size();
+      public int getNameCount() {
+        return name_.size();
       }
-      public String getNames(int index) {
-        return names_.get(index);
+      public String getName(int index) {
+        return name_.get(index);
       }
-      public Builder setNames(
+      public Builder setName(
           int index, String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureNamesIsMutable();
-        names_.set(index, value);
+  ensureNameIsMutable();
+        name_.set(index, value);
         
         return this;
       }
-      public Builder addNames(String value) {
+      public Builder addName(String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureNamesIsMutable();
-        names_.add(value);
+  ensureNameIsMutable();
+        name_.add(value);
         
         return this;
       }
-      public Builder addAllNames(
+      public Builder addAllName(
           java.lang.Iterable<String> values) {
-        ensureNamesIsMutable();
-        super.addAll(values, names_);
+        ensureNameIsMutable();
+        super.addAll(values, name_);
         
         return this;
       }
-      public Builder clearNames() {
-        names_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      public Builder clearName() {
+        name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         
         return this;
       }
-      void addNames(com.google.protobuf.ByteString value) {
-        ensureNamesIsMutable();
-        names_.add(value);
+      void addName(com.google.protobuf.ByteString value) {
+        ensureNameIsMutable();
+        name_.add(value);
         
       }
       
@@ -439,11 +439,11 @@ public final class ProtoBuf {
   public interface QualifiedNameTableOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.QualifiedNameTable.QualifiedName qualifiedNames = 1;
+    // repeated .org.jetbrains.jet.descriptors.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> 
-        getQualifiedNamesList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName getQualifiedNames(int index);
-    int getQualifiedNamesCount();
+        getQualifiedNameList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName getQualifiedName(int index);
+    int getQualifiedNameCount();
   }
   public static final class QualifiedNameTable extends
       com.google.protobuf.GeneratedMessageLite
@@ -466,11 +466,11 @@ public final class ProtoBuf {
     public interface QualifiedNameOrBuilder
         extends com.google.protobuf.MessageLiteOrBuilder {
       
-      // optional int32 parentQualifiedName = 1 [default = -1];
+      // optional int32 parent_qualified_name = 1 [default = -1];
       boolean hasParentQualifiedName();
       int getParentQualifiedName();
       
-      // required int32 shortName = 2;
+      // required int32 short_name = 2;
       boolean hasShortName();
       int getShortName();
       
@@ -538,8 +538,8 @@ public final class ProtoBuf {
       }
       
       private int bitField0_;
-      // optional int32 parentQualifiedName = 1 [default = -1];
-      public static final int PARENTQUALIFIEDNAME_FIELD_NUMBER = 1;
+      // optional int32 parent_qualified_name = 1 [default = -1];
+      public static final int PARENT_QUALIFIED_NAME_FIELD_NUMBER = 1;
       private int parentQualifiedName_;
       public boolean hasParentQualifiedName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
@@ -548,8 +548,8 @@ public final class ProtoBuf {
         return parentQualifiedName_;
       }
       
-      // required int32 shortName = 2;
-      public static final int SHORTNAME_FIELD_NUMBER = 2;
+      // required int32 short_name = 2;
+      public static final int SHORT_NAME_FIELD_NUMBER = 2;
       private int shortName_;
       public boolean hasShortName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
@@ -839,7 +839,7 @@ public final class ProtoBuf {
         
         private int bitField0_;
         
-        // optional int32 parentQualifiedName = 1 [default = -1];
+        // optional int32 parent_qualified_name = 1 [default = -1];
         private int parentQualifiedName_ = -1;
         public boolean hasParentQualifiedName() {
           return ((bitField0_ & 0x00000001) == 0x00000001);
@@ -860,7 +860,7 @@ public final class ProtoBuf {
           return this;
         }
         
-        // required int32 shortName = 2;
+        // required int32 short_name = 2;
         private int shortName_ ;
         public boolean hasShortName() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
@@ -916,37 +916,37 @@ public final class ProtoBuf {
       // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.QualifiedNameTable.QualifiedName)
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.QualifiedNameTable.QualifiedName qualifiedNames = 1;
-    public static final int QUALIFIEDNAMES_FIELD_NUMBER = 1;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> qualifiedNames_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> getQualifiedNamesList() {
-      return qualifiedNames_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;
+    public static final int QUALIFIED_NAME_FIELD_NUMBER = 1;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> qualifiedName_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> getQualifiedNameList() {
+      return qualifiedName_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder> 
-        getQualifiedNamesOrBuilderList() {
-      return qualifiedNames_;
+        getQualifiedNameOrBuilderList() {
+      return qualifiedName_;
     }
-    public int getQualifiedNamesCount() {
-      return qualifiedNames_.size();
+    public int getQualifiedNameCount() {
+      return qualifiedName_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName getQualifiedNames(int index) {
-      return qualifiedNames_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName getQualifiedName(int index) {
+      return qualifiedName_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder getQualifiedNamesOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedNameOrBuilder getQualifiedNameOrBuilder(
         int index) {
-      return qualifiedNames_.get(index);
+      return qualifiedName_.get(index);
     }
     
     private void initFields() {
-      qualifiedNames_ = java.util.Collections.emptyList();
+      qualifiedName_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
-      for (int i = 0; i < getQualifiedNamesCount(); i++) {
-        if (!getQualifiedNames(i).isInitialized()) {
+      for (int i = 0; i < getQualifiedNameCount(); i++) {
+        if (!getQualifiedName(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -958,8 +958,8 @@ public final class ProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      for (int i = 0; i < qualifiedNames_.size(); i++) {
-        output.writeMessage(1, qualifiedNames_.get(i));
+      for (int i = 0; i < qualifiedName_.size(); i++) {
+        output.writeMessage(1, qualifiedName_.get(i));
       }
     }
     
@@ -969,9 +969,9 @@ public final class ProtoBuf {
       if (size != -1) return size;
     
       size = 0;
-      for (int i = 0; i < qualifiedNames_.size(); i++) {
+      for (int i = 0; i < qualifiedName_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, qualifiedNames_.get(i));
+          .computeMessageSize(1, qualifiedName_.get(i));
       }
       memoizedSerializedSize = size;
       return size;
@@ -1075,7 +1075,7 @@ public final class ProtoBuf {
       
       public Builder clear() {
         super.clear();
-        qualifiedNames_ = java.util.Collections.emptyList();
+        qualifiedName_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -1110,22 +1110,22 @@ public final class ProtoBuf {
         org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable result = new org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          qualifiedNames_ = java.util.Collections.unmodifiableList(qualifiedNames_);
+          qualifiedName_ = java.util.Collections.unmodifiableList(qualifiedName_);
           bitField0_ = (bitField0_ & ~0x00000001);
         }
-        result.qualifiedNames_ = qualifiedNames_;
+        result.qualifiedName_ = qualifiedName_;
         return result;
       }
       
       public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable other) {
         if (other == org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.getDefaultInstance()) return this;
-        if (!other.qualifiedNames_.isEmpty()) {
-          if (qualifiedNames_.isEmpty()) {
-            qualifiedNames_ = other.qualifiedNames_;
+        if (!other.qualifiedName_.isEmpty()) {
+          if (qualifiedName_.isEmpty()) {
+            qualifiedName_ = other.qualifiedName_;
             bitField0_ = (bitField0_ & ~0x00000001);
           } else {
-            ensureQualifiedNamesIsMutable();
-            qualifiedNames_.addAll(other.qualifiedNames_);
+            ensureQualifiedNameIsMutable();
+            qualifiedName_.addAll(other.qualifiedName_);
           }
           
         }
@@ -1133,8 +1133,8 @@ public final class ProtoBuf {
       }
       
       public final boolean isInitialized() {
-        for (int i = 0; i < getQualifiedNamesCount(); i++) {
-          if (!getQualifiedNames(i).isInitialized()) {
+        for (int i = 0; i < getQualifiedNameCount(); i++) {
+          if (!getQualifiedName(i).isInitialized()) {
             
             return false;
           }
@@ -1162,7 +1162,7 @@ public final class ProtoBuf {
             case 10: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addQualifiedNames(subBuilder.buildPartial());
+              addQualifiedName(subBuilder.buildPartial());
               break;
             }
           }
@@ -1171,91 +1171,91 @@ public final class ProtoBuf {
       
       private int bitField0_;
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.QualifiedNameTable.QualifiedName qualifiedNames = 1;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> qualifiedNames_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.QualifiedNameTable.QualifiedName qualified_name = 1;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> qualifiedName_ =
         java.util.Collections.emptyList();
-      private void ensureQualifiedNamesIsMutable() {
+      private void ensureQualifiedNameIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          qualifiedNames_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName>(qualifiedNames_);
+          qualifiedName_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName>(qualifiedName_);
           bitField0_ |= 0x00000001;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> getQualifiedNamesList() {
-        return java.util.Collections.unmodifiableList(qualifiedNames_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> getQualifiedNameList() {
+        return java.util.Collections.unmodifiableList(qualifiedName_);
       }
-      public int getQualifiedNamesCount() {
-        return qualifiedNames_.size();
+      public int getQualifiedNameCount() {
+        return qualifiedName_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName getQualifiedNames(int index) {
-        return qualifiedNames_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName getQualifiedName(int index) {
+        return qualifiedName_.get(index);
       }
-      public Builder setQualifiedNames(
+      public Builder setQualifiedName(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureQualifiedNamesIsMutable();
-        qualifiedNames_.set(index, value);
+        ensureQualifiedNameIsMutable();
+        qualifiedName_.set(index, value);
         
         return this;
       }
-      public Builder setQualifiedNames(
+      public Builder setQualifiedName(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Builder builderForValue) {
-        ensureQualifiedNamesIsMutable();
-        qualifiedNames_.set(index, builderForValue.build());
+        ensureQualifiedNameIsMutable();
+        qualifiedName_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addQualifiedNames(org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName value) {
+      public Builder addQualifiedName(org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureQualifiedNamesIsMutable();
-        qualifiedNames_.add(value);
+        ensureQualifiedNameIsMutable();
+        qualifiedName_.add(value);
         
         return this;
       }
-      public Builder addQualifiedNames(
+      public Builder addQualifiedName(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureQualifiedNamesIsMutable();
-        qualifiedNames_.add(index, value);
+        ensureQualifiedNameIsMutable();
+        qualifiedName_.add(index, value);
         
         return this;
       }
-      public Builder addQualifiedNames(
+      public Builder addQualifiedName(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Builder builderForValue) {
-        ensureQualifiedNamesIsMutable();
-        qualifiedNames_.add(builderForValue.build());
+        ensureQualifiedNameIsMutable();
+        qualifiedName_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addQualifiedNames(
+      public Builder addQualifiedName(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName.Builder builderForValue) {
-        ensureQualifiedNamesIsMutable();
-        qualifiedNames_.add(index, builderForValue.build());
+        ensureQualifiedNameIsMutable();
+        qualifiedName_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllQualifiedNames(
+      public Builder addAllQualifiedName(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName> values) {
-        ensureQualifiedNamesIsMutable();
-        super.addAll(values, qualifiedNames_);
+        ensureQualifiedNameIsMutable();
+        super.addAll(values, qualifiedName_);
         
         return this;
       }
-      public Builder clearQualifiedNames() {
-        qualifiedNames_ = java.util.Collections.emptyList();
+      public Builder clearQualifiedName() {
+        qualifiedName_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
         
         return this;
       }
-      public Builder removeQualifiedNames(int index) {
-        ensureQualifiedNamesIsMutable();
-        qualifiedNames_.remove(index);
+      public Builder removeQualifiedName(int index) {
+        ensureQualifiedNameIsMutable();
+        qualifiedName_.remove(index);
         
         return this;
       }
@@ -1278,11 +1278,11 @@ public final class ProtoBuf {
     boolean hasConstructor();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Constructor getConstructor();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Type.Argument arguments = 2;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Type.Argument argument = 2;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> 
-        getArgumentsList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument getArguments(int index);
-    int getArgumentsCount();
+        getArgumentList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument getArgument(int index);
+    int getArgumentCount();
     
     // optional bool nullable = 3 [default = false];
     boolean hasNullable();
@@ -2146,25 +2146,25 @@ public final class ProtoBuf {
       return constructor_;
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Type.Argument arguments = 2;
-    public static final int ARGUMENTS_FIELD_NUMBER = 2;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> arguments_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> getArgumentsList() {
-      return arguments_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Type.Argument argument = 2;
+    public static final int ARGUMENT_FIELD_NUMBER = 2;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> argument_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> getArgumentList() {
+      return argument_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.ArgumentOrBuilder> 
-        getArgumentsOrBuilderList() {
-      return arguments_;
+        getArgumentOrBuilderList() {
+      return argument_;
     }
-    public int getArgumentsCount() {
-      return arguments_.size();
+    public int getArgumentCount() {
+      return argument_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument getArguments(int index) {
-      return arguments_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument getArgument(int index) {
+      return argument_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.ArgumentOrBuilder getArgumentsOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.ArgumentOrBuilder getArgumentOrBuilder(
         int index) {
-      return arguments_.get(index);
+      return argument_.get(index);
     }
     
     // optional bool nullable = 3 [default = false];
@@ -2179,7 +2179,7 @@ public final class ProtoBuf {
     
     private void initFields() {
       constructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Constructor.getDefaultInstance();
-      arguments_ = java.util.Collections.emptyList();
+      argument_ = java.util.Collections.emptyList();
       nullable_ = false;
     }
     private byte memoizedIsInitialized = -1;
@@ -2195,8 +2195,8 @@ public final class ProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      for (int i = 0; i < getArgumentsCount(); i++) {
-        if (!getArguments(i).isInitialized()) {
+      for (int i = 0; i < getArgumentCount(); i++) {
+        if (!getArgument(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -2211,8 +2211,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeMessage(1, constructor_);
       }
-      for (int i = 0; i < arguments_.size(); i++) {
-        output.writeMessage(2, arguments_.get(i));
+      for (int i = 0; i < argument_.size(); i++) {
+        output.writeMessage(2, argument_.get(i));
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBool(3, nullable_);
@@ -2229,9 +2229,9 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, constructor_);
       }
-      for (int i = 0; i < arguments_.size(); i++) {
+      for (int i = 0; i < argument_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, arguments_.get(i));
+          .computeMessageSize(2, argument_.get(i));
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
@@ -2341,7 +2341,7 @@ public final class ProtoBuf {
         super.clear();
         constructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Constructor.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        arguments_ = java.util.Collections.emptyList();
+        argument_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
         nullable_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -2383,10 +2383,10 @@ public final class ProtoBuf {
         }
         result.constructor_ = constructor_;
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          arguments_ = java.util.Collections.unmodifiableList(arguments_);
+          argument_ = java.util.Collections.unmodifiableList(argument_);
           bitField0_ = (bitField0_ & ~0x00000002);
         }
-        result.arguments_ = arguments_;
+        result.argument_ = argument_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000002;
         }
@@ -2400,13 +2400,13 @@ public final class ProtoBuf {
         if (other.hasConstructor()) {
           mergeConstructor(other.getConstructor());
         }
-        if (!other.arguments_.isEmpty()) {
-          if (arguments_.isEmpty()) {
-            arguments_ = other.arguments_;
+        if (!other.argument_.isEmpty()) {
+          if (argument_.isEmpty()) {
+            argument_ = other.argument_;
             bitField0_ = (bitField0_ & ~0x00000002);
           } else {
-            ensureArgumentsIsMutable();
-            arguments_.addAll(other.arguments_);
+            ensureArgumentIsMutable();
+            argument_.addAll(other.argument_);
           }
           
         }
@@ -2425,8 +2425,8 @@ public final class ProtoBuf {
           
           return false;
         }
-        for (int i = 0; i < getArgumentsCount(); i++) {
-          if (!getArguments(i).isInitialized()) {
+        for (int i = 0; i < getArgumentCount(); i++) {
+          if (!getArgument(i).isInitialized()) {
             
             return false;
           }
@@ -2463,7 +2463,7 @@ public final class ProtoBuf {
             case 18: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addArguments(subBuilder.buildPartial());
+              addArgument(subBuilder.buildPartial());
               break;
             }
             case 24: {
@@ -2520,91 +2520,91 @@ public final class ProtoBuf {
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.Type.Argument arguments = 2;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> arguments_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.Type.Argument argument = 2;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> argument_ =
         java.util.Collections.emptyList();
-      private void ensureArgumentsIsMutable() {
+      private void ensureArgumentIsMutable() {
         if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          arguments_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument>(arguments_);
+          argument_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument>(argument_);
           bitField0_ |= 0x00000002;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> getArgumentsList() {
-        return java.util.Collections.unmodifiableList(arguments_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> getArgumentList() {
+        return java.util.Collections.unmodifiableList(argument_);
       }
-      public int getArgumentsCount() {
-        return arguments_.size();
+      public int getArgumentCount() {
+        return argument_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument getArguments(int index) {
-        return arguments_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument getArgument(int index) {
+        return argument_.get(index);
       }
-      public Builder setArguments(
+      public Builder setArgument(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureArgumentsIsMutable();
-        arguments_.set(index, value);
+        ensureArgumentIsMutable();
+        argument_.set(index, value);
         
         return this;
       }
-      public Builder setArguments(
+      public Builder setArgument(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument.Builder builderForValue) {
-        ensureArgumentsIsMutable();
-        arguments_.set(index, builderForValue.build());
+        ensureArgumentIsMutable();
+        argument_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addArguments(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument value) {
+      public Builder addArgument(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureArgumentsIsMutable();
-        arguments_.add(value);
+        ensureArgumentIsMutable();
+        argument_.add(value);
         
         return this;
       }
-      public Builder addArguments(
+      public Builder addArgument(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureArgumentsIsMutable();
-        arguments_.add(index, value);
+        ensureArgumentIsMutable();
+        argument_.add(index, value);
         
         return this;
       }
-      public Builder addArguments(
+      public Builder addArgument(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument.Builder builderForValue) {
-        ensureArgumentsIsMutable();
-        arguments_.add(builderForValue.build());
+        ensureArgumentIsMutable();
+        argument_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addArguments(
+      public Builder addArgument(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument.Builder builderForValue) {
-        ensureArgumentsIsMutable();
-        arguments_.add(index, builderForValue.build());
+        ensureArgumentIsMutable();
+        argument_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllArguments(
+      public Builder addAllArgument(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Argument> values) {
-        ensureArgumentsIsMutable();
-        super.addAll(values, arguments_);
+        ensureArgumentIsMutable();
+        super.addAll(values, argument_);
         
         return this;
       }
-      public Builder clearArguments() {
-        arguments_ = java.util.Collections.emptyList();
+      public Builder clearArgument() {
+        argument_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
         
         return this;
       }
-      public Builder removeArguments(int index) {
-        ensureArgumentsIsMutable();
-        arguments_.remove(index);
+      public Builder removeArgument(int index) {
+        ensureArgumentIsMutable();
+        argument_.remove(index);
         
         return this;
       }
@@ -2660,11 +2660,11 @@ public final class ProtoBuf {
     boolean hasVariance();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Variance getVariance();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Type upperBounds = 5;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Type upper_bound = 5;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> 
-        getUpperBoundsList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getUpperBounds(int index);
-    int getUpperBoundsCount();
+        getUpperBoundList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getUpperBound(int index);
+    int getUpperBoundCount();
   }
   public static final class TypeParameter extends
       com.google.protobuf.GeneratedMessageLite
@@ -2769,25 +2769,25 @@ public final class ProtoBuf {
       return variance_;
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Type upperBounds = 5;
-    public static final int UPPERBOUNDS_FIELD_NUMBER = 5;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> upperBounds_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getUpperBoundsList() {
-      return upperBounds_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Type upper_bound = 5;
+    public static final int UPPER_BOUND_FIELD_NUMBER = 5;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> upperBound_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getUpperBoundList() {
+      return upperBound_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeOrBuilder> 
-        getUpperBoundsOrBuilderList() {
-      return upperBounds_;
+        getUpperBoundOrBuilderList() {
+      return upperBound_;
     }
-    public int getUpperBoundsCount() {
-      return upperBounds_.size();
+    public int getUpperBoundCount() {
+      return upperBound_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getUpperBounds(int index) {
-      return upperBounds_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getUpperBound(int index) {
+      return upperBound_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeOrBuilder getUpperBoundsOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeOrBuilder getUpperBoundOrBuilder(
         int index) {
-      return upperBounds_.get(index);
+      return upperBound_.get(index);
     }
     
     private void initFields() {
@@ -2795,7 +2795,7 @@ public final class ProtoBuf {
       name_ = 0;
       reified_ = false;
       variance_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Variance.INV;
-      upperBounds_ = java.util.Collections.emptyList();
+      upperBound_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2810,8 +2810,8 @@ public final class ProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      for (int i = 0; i < getUpperBoundsCount(); i++) {
-        if (!getUpperBounds(i).isInitialized()) {
+      for (int i = 0; i < getUpperBoundCount(); i++) {
+        if (!getUpperBound(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -2835,8 +2835,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeEnum(4, variance_.getNumber());
       }
-      for (int i = 0; i < upperBounds_.size(); i++) {
-        output.writeMessage(5, upperBounds_.get(i));
+      for (int i = 0; i < upperBound_.size(); i++) {
+        output.writeMessage(5, upperBound_.get(i));
       }
     }
     
@@ -2862,9 +2862,9 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(4, variance_.getNumber());
       }
-      for (int i = 0; i < upperBounds_.size(); i++) {
+      for (int i = 0; i < upperBound_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, upperBounds_.get(i));
+          .computeMessageSize(5, upperBound_.get(i));
       }
       memoizedSerializedSize = size;
       return size;
@@ -2976,7 +2976,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         variance_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Variance.INV;
         bitField0_ = (bitField0_ & ~0x00000008);
-        upperBounds_ = java.util.Collections.emptyList();
+        upperBound_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
@@ -3028,10 +3028,10 @@ public final class ProtoBuf {
         }
         result.variance_ = variance_;
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
-          upperBounds_ = java.util.Collections.unmodifiableList(upperBounds_);
+          upperBound_ = java.util.Collections.unmodifiableList(upperBound_);
           bitField0_ = (bitField0_ & ~0x00000010);
         }
-        result.upperBounds_ = upperBounds_;
+        result.upperBound_ = upperBound_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -3050,13 +3050,13 @@ public final class ProtoBuf {
         if (other.hasVariance()) {
           setVariance(other.getVariance());
         }
-        if (!other.upperBounds_.isEmpty()) {
-          if (upperBounds_.isEmpty()) {
-            upperBounds_ = other.upperBounds_;
+        if (!other.upperBound_.isEmpty()) {
+          if (upperBound_.isEmpty()) {
+            upperBound_ = other.upperBound_;
             bitField0_ = (bitField0_ & ~0x00000010);
           } else {
-            ensureUpperBoundsIsMutable();
-            upperBounds_.addAll(other.upperBounds_);
+            ensureUpperBoundIsMutable();
+            upperBound_.addAll(other.upperBound_);
           }
           
         }
@@ -3072,8 +3072,8 @@ public final class ProtoBuf {
           
           return false;
         }
-        for (int i = 0; i < getUpperBoundsCount(); i++) {
-          if (!getUpperBounds(i).isInitialized()) {
+        for (int i = 0; i < getUpperBoundCount(); i++) {
+          if (!getUpperBound(i).isInitialized()) {
             
             return false;
           }
@@ -3125,7 +3125,7 @@ public final class ProtoBuf {
             case 42: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addUpperBounds(subBuilder.buildPartial());
+              addUpperBound(subBuilder.buildPartial());
               break;
             }
           }
@@ -3221,91 +3221,91 @@ public final class ProtoBuf {
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.Type upperBounds = 5;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> upperBounds_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.Type upper_bound = 5;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> upperBound_ =
         java.util.Collections.emptyList();
-      private void ensureUpperBoundsIsMutable() {
+      private void ensureUpperBoundIsMutable() {
         if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-          upperBounds_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type>(upperBounds_);
+          upperBound_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type>(upperBound_);
           bitField0_ |= 0x00000010;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getUpperBoundsList() {
-        return java.util.Collections.unmodifiableList(upperBounds_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getUpperBoundList() {
+        return java.util.Collections.unmodifiableList(upperBound_);
       }
-      public int getUpperBoundsCount() {
-        return upperBounds_.size();
+      public int getUpperBoundCount() {
+        return upperBound_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getUpperBounds(int index) {
-        return upperBounds_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getUpperBound(int index) {
+        return upperBound_.get(index);
       }
-      public Builder setUpperBounds(
+      public Builder setUpperBound(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureUpperBoundsIsMutable();
-        upperBounds_.set(index, value);
+        ensureUpperBoundIsMutable();
+        upperBound_.set(index, value);
         
         return this;
       }
-      public Builder setUpperBounds(
+      public Builder setUpperBound(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
-        ensureUpperBoundsIsMutable();
-        upperBounds_.set(index, builderForValue.build());
+        ensureUpperBoundIsMutable();
+        upperBound_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addUpperBounds(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
+      public Builder addUpperBound(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureUpperBoundsIsMutable();
-        upperBounds_.add(value);
+        ensureUpperBoundIsMutable();
+        upperBound_.add(value);
         
         return this;
       }
-      public Builder addUpperBounds(
+      public Builder addUpperBound(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureUpperBoundsIsMutable();
-        upperBounds_.add(index, value);
+        ensureUpperBoundIsMutable();
+        upperBound_.add(index, value);
         
         return this;
       }
-      public Builder addUpperBounds(
+      public Builder addUpperBound(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
-        ensureUpperBoundsIsMutable();
-        upperBounds_.add(builderForValue.build());
+        ensureUpperBoundIsMutable();
+        upperBound_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addUpperBounds(
+      public Builder addUpperBound(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
-        ensureUpperBoundsIsMutable();
-        upperBounds_.add(index, builderForValue.build());
+        ensureUpperBoundIsMutable();
+        upperBound_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllUpperBounds(
+      public Builder addAllUpperBound(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> values) {
-        ensureUpperBoundsIsMutable();
-        super.addAll(values, upperBounds_);
+        ensureUpperBoundIsMutable();
+        super.addAll(values, upperBound_);
         
         return this;
       }
-      public Builder clearUpperBounds() {
-        upperBounds_ = java.util.Collections.emptyList();
+      public Builder clearUpperBound() {
+        upperBound_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         
         return this;
       }
-      public Builder removeUpperBounds(int index) {
-        ensureUpperBoundsIsMutable();
-        upperBounds_.remove(index);
+      public Builder removeUpperBound(int index) {
+        ensureUpperBoundIsMutable();
+        upperBound_.remove(index);
         
         return this;
       }
@@ -3336,41 +3336,41 @@ public final class ProtoBuf {
     boolean hasName();
     int getName();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 5;
+    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 5;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> 
-        getTypeParametersList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameters(int index);
-    int getTypeParametersCount();
+        getTypeParameterList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameter(int index);
+    int getTypeParameterCount();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Type supertypes = 6;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Type supertype = 6;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> 
-        getSupertypesList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getSupertypes(int index);
-    int getSupertypesCount();
+        getSupertypeList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getSupertype(int index);
+    int getSupertypeCount();
     
-    // repeated int32 nestedClassNames = 7;
-    java.util.List<java.lang.Integer> getNestedClassNamesList();
-    int getNestedClassNamesCount();
-    int getNestedClassNames(int index);
+    // repeated int32 nested_class_name = 7;
+    java.util.List<java.lang.Integer> getNestedClassNameList();
+    int getNestedClassNameCount();
+    int getNestedClassName(int index);
     
-    // repeated int32 nestedObjectNames = 8;
-    java.util.List<java.lang.Integer> getNestedObjectNamesList();
-    int getNestedObjectNamesCount();
-    int getNestedObjectNames(int index);
+    // repeated int32 nested_object_name = 8;
+    java.util.List<java.lang.Integer> getNestedObjectNameList();
+    int getNestedObjectNameCount();
+    int getNestedObjectName(int index);
     
-    // optional bool classObjectPresent = 9 [default = false];
+    // optional bool class_object_present = 9 [default = false];
     boolean hasClassObjectPresent();
     boolean getClassObjectPresent();
     
-    // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 10;
+    // optional .org.jetbrains.jet.descriptors.serialization.Callable primary_constructor = 10;
     boolean hasPrimaryConstructor();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getPrimaryConstructor();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 11;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 11;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> 
-        getMembersList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMembers(int index);
-    int getMembersCount();
+        getMemberList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index);
+    int getMemberCount();
   }
   public static final class Class extends
       com.google.protobuf.GeneratedMessageLite
@@ -3499,78 +3499,78 @@ public final class ProtoBuf {
       return name_;
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 5;
-    public static final int TYPEPARAMETERS_FIELD_NUMBER = 5;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameters_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParametersList() {
-      return typeParameters_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 5;
+    public static final int TYPE_PARAMETER_FIELD_NUMBER = 5;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameter_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParameterList() {
+      return typeParameter_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameterOrBuilder> 
-        getTypeParametersOrBuilderList() {
-      return typeParameters_;
+        getTypeParameterOrBuilderList() {
+      return typeParameter_;
     }
-    public int getTypeParametersCount() {
-      return typeParameters_.size();
+    public int getTypeParameterCount() {
+      return typeParameter_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameters(int index) {
-      return typeParameters_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameter(int index) {
+      return typeParameter_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameterOrBuilder getTypeParametersOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameterOrBuilder getTypeParameterOrBuilder(
         int index) {
-      return typeParameters_.get(index);
+      return typeParameter_.get(index);
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Type supertypes = 6;
-    public static final int SUPERTYPES_FIELD_NUMBER = 6;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> supertypes_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getSupertypesList() {
-      return supertypes_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Type supertype = 6;
+    public static final int SUPERTYPE_FIELD_NUMBER = 6;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> supertype_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getSupertypeList() {
+      return supertype_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeOrBuilder> 
-        getSupertypesOrBuilderList() {
-      return supertypes_;
+        getSupertypeOrBuilderList() {
+      return supertype_;
     }
-    public int getSupertypesCount() {
-      return supertypes_.size();
+    public int getSupertypeCount() {
+      return supertype_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getSupertypes(int index) {
-      return supertypes_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getSupertype(int index) {
+      return supertype_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeOrBuilder getSupertypesOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeOrBuilder getSupertypeOrBuilder(
         int index) {
-      return supertypes_.get(index);
+      return supertype_.get(index);
     }
     
-    // repeated int32 nestedClassNames = 7;
-    public static final int NESTEDCLASSNAMES_FIELD_NUMBER = 7;
-    private java.util.List<java.lang.Integer> nestedClassNames_;
+    // repeated int32 nested_class_name = 7;
+    public static final int NESTED_CLASS_NAME_FIELD_NUMBER = 7;
+    private java.util.List<java.lang.Integer> nestedClassName_;
     public java.util.List<java.lang.Integer>
-        getNestedClassNamesList() {
-      return nestedClassNames_;
+        getNestedClassNameList() {
+      return nestedClassName_;
     }
-    public int getNestedClassNamesCount() {
-      return nestedClassNames_.size();
+    public int getNestedClassNameCount() {
+      return nestedClassName_.size();
     }
-    public int getNestedClassNames(int index) {
-      return nestedClassNames_.get(index);
+    public int getNestedClassName(int index) {
+      return nestedClassName_.get(index);
     }
     
-    // repeated int32 nestedObjectNames = 8;
-    public static final int NESTEDOBJECTNAMES_FIELD_NUMBER = 8;
-    private java.util.List<java.lang.Integer> nestedObjectNames_;
+    // repeated int32 nested_object_name = 8;
+    public static final int NESTED_OBJECT_NAME_FIELD_NUMBER = 8;
+    private java.util.List<java.lang.Integer> nestedObjectName_;
     public java.util.List<java.lang.Integer>
-        getNestedObjectNamesList() {
-      return nestedObjectNames_;
+        getNestedObjectNameList() {
+      return nestedObjectName_;
     }
-    public int getNestedObjectNamesCount() {
-      return nestedObjectNames_.size();
+    public int getNestedObjectNameCount() {
+      return nestedObjectName_.size();
     }
-    public int getNestedObjectNames(int index) {
-      return nestedObjectNames_.get(index);
+    public int getNestedObjectName(int index) {
+      return nestedObjectName_.get(index);
     }
     
-    // optional bool classObjectPresent = 9 [default = false];
-    public static final int CLASSOBJECTPRESENT_FIELD_NUMBER = 9;
+    // optional bool class_object_present = 9 [default = false];
+    public static final int CLASS_OBJECT_PRESENT_FIELD_NUMBER = 9;
     private boolean classObjectPresent_;
     public boolean hasClassObjectPresent() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
@@ -3579,8 +3579,8 @@ public final class ProtoBuf {
       return classObjectPresent_;
     }
     
-    // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 10;
-    public static final int PRIMARYCONSTRUCTOR_FIELD_NUMBER = 10;
+    // optional .org.jetbrains.jet.descriptors.serialization.Callable primary_constructor = 10;
+    public static final int PRIMARY_CONSTRUCTOR_FIELD_NUMBER = 10;
     private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable primaryConstructor_;
     public boolean hasPrimaryConstructor() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
@@ -3589,38 +3589,38 @@ public final class ProtoBuf {
       return primaryConstructor_;
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 11;
-    public static final int MEMBERS_FIELD_NUMBER = 11;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> members_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> getMembersList() {
-      return members_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 11;
+    public static final int MEMBER_FIELD_NUMBER = 11;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> member_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> getMemberList() {
+      return member_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.CallableOrBuilder> 
-        getMembersOrBuilderList() {
-      return members_;
+        getMemberOrBuilderList() {
+      return member_;
     }
-    public int getMembersCount() {
-      return members_.size();
+    public int getMemberCount() {
+      return member_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMembers(int index) {
-      return members_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index) {
+      return member_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.CallableOrBuilder getMembersOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.CallableOrBuilder getMemberOrBuilder(
         int index) {
-      return members_.get(index);
+      return member_.get(index);
     }
     
     private void initFields() {
       flags_ = 0;
       extraVisibility_ = "";
       name_ = 0;
-      typeParameters_ = java.util.Collections.emptyList();
-      supertypes_ = java.util.Collections.emptyList();
-      nestedClassNames_ = java.util.Collections.emptyList();;
-      nestedObjectNames_ = java.util.Collections.emptyList();;
+      typeParameter_ = java.util.Collections.emptyList();
+      supertype_ = java.util.Collections.emptyList();
+      nestedClassName_ = java.util.Collections.emptyList();;
+      nestedObjectName_ = java.util.Collections.emptyList();;
       classObjectPresent_ = false;
       primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
-      members_ = java.util.Collections.emptyList();
+      member_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3631,14 +3631,14 @@ public final class ProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      for (int i = 0; i < getTypeParametersCount(); i++) {
-        if (!getTypeParameters(i).isInitialized()) {
+      for (int i = 0; i < getTypeParameterCount(); i++) {
+        if (!getTypeParameter(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
       }
-      for (int i = 0; i < getSupertypesCount(); i++) {
-        if (!getSupertypes(i).isInitialized()) {
+      for (int i = 0; i < getSupertypeCount(); i++) {
+        if (!getSupertype(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -3649,8 +3649,8 @@ public final class ProtoBuf {
           return false;
         }
       }
-      for (int i = 0; i < getMembersCount(); i++) {
-        if (!getMembers(i).isInitialized()) {
+      for (int i = 0; i < getMemberCount(); i++) {
+        if (!getMember(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -3671,17 +3671,17 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(4, name_);
       }
-      for (int i = 0; i < typeParameters_.size(); i++) {
-        output.writeMessage(5, typeParameters_.get(i));
+      for (int i = 0; i < typeParameter_.size(); i++) {
+        output.writeMessage(5, typeParameter_.get(i));
       }
-      for (int i = 0; i < supertypes_.size(); i++) {
-        output.writeMessage(6, supertypes_.get(i));
+      for (int i = 0; i < supertype_.size(); i++) {
+        output.writeMessage(6, supertype_.get(i));
       }
-      for (int i = 0; i < nestedClassNames_.size(); i++) {
-        output.writeInt32(7, nestedClassNames_.get(i));
+      for (int i = 0; i < nestedClassName_.size(); i++) {
+        output.writeInt32(7, nestedClassName_.get(i));
       }
-      for (int i = 0; i < nestedObjectNames_.size(); i++) {
-        output.writeInt32(8, nestedObjectNames_.get(i));
+      for (int i = 0; i < nestedObjectName_.size(); i++) {
+        output.writeInt32(8, nestedObjectName_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeBool(9, classObjectPresent_);
@@ -3689,8 +3689,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeMessage(10, primaryConstructor_);
       }
-      for (int i = 0; i < members_.size(); i++) {
-        output.writeMessage(11, members_.get(i));
+      for (int i = 0; i < member_.size(); i++) {
+        output.writeMessage(11, member_.get(i));
       }
     }
     
@@ -3712,31 +3712,31 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, name_);
       }
-      for (int i = 0; i < typeParameters_.size(); i++) {
+      for (int i = 0; i < typeParameter_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, typeParameters_.get(i));
+          .computeMessageSize(5, typeParameter_.get(i));
       }
-      for (int i = 0; i < supertypes_.size(); i++) {
+      for (int i = 0; i < supertype_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, supertypes_.get(i));
+          .computeMessageSize(6, supertype_.get(i));
       }
       {
         int dataSize = 0;
-        for (int i = 0; i < nestedClassNames_.size(); i++) {
+        for (int i = 0; i < nestedClassName_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(nestedClassNames_.get(i));
+            .computeInt32SizeNoTag(nestedClassName_.get(i));
         }
         size += dataSize;
-        size += 1 * getNestedClassNamesList().size();
+        size += 1 * getNestedClassNameList().size();
       }
       {
         int dataSize = 0;
-        for (int i = 0; i < nestedObjectNames_.size(); i++) {
+        for (int i = 0; i < nestedObjectName_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(nestedObjectNames_.get(i));
+            .computeInt32SizeNoTag(nestedObjectName_.get(i));
         }
         size += dataSize;
-        size += 1 * getNestedObjectNamesList().size();
+        size += 1 * getNestedObjectNameList().size();
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
@@ -3746,9 +3746,9 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(10, primaryConstructor_);
       }
-      for (int i = 0; i < members_.size(); i++) {
+      for (int i = 0; i < member_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(11, members_.get(i));
+          .computeMessageSize(11, member_.get(i));
       }
       memoizedSerializedSize = size;
       return size;
@@ -3858,19 +3858,19 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
-        typeParameters_ = java.util.Collections.emptyList();
+        typeParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
-        supertypes_ = java.util.Collections.emptyList();
+        supertype_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
-        nestedClassNames_ = java.util.Collections.emptyList();;
+        nestedClassName_ = java.util.Collections.emptyList();;
         bitField0_ = (bitField0_ & ~0x00000020);
-        nestedObjectNames_ = java.util.Collections.emptyList();;
+        nestedObjectName_ = java.util.Collections.emptyList();;
         bitField0_ = (bitField0_ & ~0x00000040);
         classObjectPresent_ = false;
         bitField0_ = (bitField0_ & ~0x00000080);
         primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000100);
-        members_ = java.util.Collections.emptyList();
+        member_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
@@ -3918,25 +3918,25 @@ public final class ProtoBuf {
         }
         result.name_ = name_;
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          typeParameters_ = java.util.Collections.unmodifiableList(typeParameters_);
+          typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
           bitField0_ = (bitField0_ & ~0x00000008);
         }
-        result.typeParameters_ = typeParameters_;
+        result.typeParameter_ = typeParameter_;
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
-          supertypes_ = java.util.Collections.unmodifiableList(supertypes_);
+          supertype_ = java.util.Collections.unmodifiableList(supertype_);
           bitField0_ = (bitField0_ & ~0x00000010);
         }
-        result.supertypes_ = supertypes_;
+        result.supertype_ = supertype_;
         if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          nestedClassNames_ = java.util.Collections.unmodifiableList(nestedClassNames_);
+          nestedClassName_ = java.util.Collections.unmodifiableList(nestedClassName_);
           bitField0_ = (bitField0_ & ~0x00000020);
         }
-        result.nestedClassNames_ = nestedClassNames_;
+        result.nestedClassName_ = nestedClassName_;
         if (((bitField0_ & 0x00000040) == 0x00000040)) {
-          nestedObjectNames_ = java.util.Collections.unmodifiableList(nestedObjectNames_);
+          nestedObjectName_ = java.util.Collections.unmodifiableList(nestedObjectName_);
           bitField0_ = (bitField0_ & ~0x00000040);
         }
-        result.nestedObjectNames_ = nestedObjectNames_;
+        result.nestedObjectName_ = nestedObjectName_;
         if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
           to_bitField0_ |= 0x00000008;
         }
@@ -3946,10 +3946,10 @@ public final class ProtoBuf {
         }
         result.primaryConstructor_ = primaryConstructor_;
         if (((bitField0_ & 0x00000200) == 0x00000200)) {
-          members_ = java.util.Collections.unmodifiableList(members_);
+          member_ = java.util.Collections.unmodifiableList(member_);
           bitField0_ = (bitField0_ & ~0x00000200);
         }
-        result.members_ = members_;
+        result.member_ = member_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -3965,43 +3965,43 @@ public final class ProtoBuf {
         if (other.hasName()) {
           setName(other.getName());
         }
-        if (!other.typeParameters_.isEmpty()) {
-          if (typeParameters_.isEmpty()) {
-            typeParameters_ = other.typeParameters_;
+        if (!other.typeParameter_.isEmpty()) {
+          if (typeParameter_.isEmpty()) {
+            typeParameter_ = other.typeParameter_;
             bitField0_ = (bitField0_ & ~0x00000008);
           } else {
-            ensureTypeParametersIsMutable();
-            typeParameters_.addAll(other.typeParameters_);
+            ensureTypeParameterIsMutable();
+            typeParameter_.addAll(other.typeParameter_);
           }
           
         }
-        if (!other.supertypes_.isEmpty()) {
-          if (supertypes_.isEmpty()) {
-            supertypes_ = other.supertypes_;
+        if (!other.supertype_.isEmpty()) {
+          if (supertype_.isEmpty()) {
+            supertype_ = other.supertype_;
             bitField0_ = (bitField0_ & ~0x00000010);
           } else {
-            ensureSupertypesIsMutable();
-            supertypes_.addAll(other.supertypes_);
+            ensureSupertypeIsMutable();
+            supertype_.addAll(other.supertype_);
           }
           
         }
-        if (!other.nestedClassNames_.isEmpty()) {
-          if (nestedClassNames_.isEmpty()) {
-            nestedClassNames_ = other.nestedClassNames_;
+        if (!other.nestedClassName_.isEmpty()) {
+          if (nestedClassName_.isEmpty()) {
+            nestedClassName_ = other.nestedClassName_;
             bitField0_ = (bitField0_ & ~0x00000020);
           } else {
-            ensureNestedClassNamesIsMutable();
-            nestedClassNames_.addAll(other.nestedClassNames_);
+            ensureNestedClassNameIsMutable();
+            nestedClassName_.addAll(other.nestedClassName_);
           }
           
         }
-        if (!other.nestedObjectNames_.isEmpty()) {
-          if (nestedObjectNames_.isEmpty()) {
-            nestedObjectNames_ = other.nestedObjectNames_;
+        if (!other.nestedObjectName_.isEmpty()) {
+          if (nestedObjectName_.isEmpty()) {
+            nestedObjectName_ = other.nestedObjectName_;
             bitField0_ = (bitField0_ & ~0x00000040);
           } else {
-            ensureNestedObjectNamesIsMutable();
-            nestedObjectNames_.addAll(other.nestedObjectNames_);
+            ensureNestedObjectNameIsMutable();
+            nestedObjectName_.addAll(other.nestedObjectName_);
           }
           
         }
@@ -4011,13 +4011,13 @@ public final class ProtoBuf {
         if (other.hasPrimaryConstructor()) {
           mergePrimaryConstructor(other.getPrimaryConstructor());
         }
-        if (!other.members_.isEmpty()) {
-          if (members_.isEmpty()) {
-            members_ = other.members_;
+        if (!other.member_.isEmpty()) {
+          if (member_.isEmpty()) {
+            member_ = other.member_;
             bitField0_ = (bitField0_ & ~0x00000200);
           } else {
-            ensureMembersIsMutable();
-            members_.addAll(other.members_);
+            ensureMemberIsMutable();
+            member_.addAll(other.member_);
           }
           
         }
@@ -4029,14 +4029,14 @@ public final class ProtoBuf {
           
           return false;
         }
-        for (int i = 0; i < getTypeParametersCount(); i++) {
-          if (!getTypeParameters(i).isInitialized()) {
+        for (int i = 0; i < getTypeParameterCount(); i++) {
+          if (!getTypeParameter(i).isInitialized()) {
             
             return false;
           }
         }
-        for (int i = 0; i < getSupertypesCount(); i++) {
-          if (!getSupertypes(i).isInitialized()) {
+        for (int i = 0; i < getSupertypeCount(); i++) {
+          if (!getSupertype(i).isInitialized()) {
             
             return false;
           }
@@ -4047,8 +4047,8 @@ public final class ProtoBuf {
             return false;
           }
         }
-        for (int i = 0; i < getMembersCount(); i++) {
-          if (!getMembers(i).isInitialized()) {
+        for (int i = 0; i < getMemberCount(); i++) {
+          if (!getMember(i).isInitialized()) {
             
             return false;
           }
@@ -4091,39 +4091,39 @@ public final class ProtoBuf {
             case 42: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addTypeParameters(subBuilder.buildPartial());
+              addTypeParameter(subBuilder.buildPartial());
               break;
             }
             case 50: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addSupertypes(subBuilder.buildPartial());
+              addSupertype(subBuilder.buildPartial());
               break;
             }
             case 56: {
-              ensureNestedClassNamesIsMutable();
-              nestedClassNames_.add(input.readInt32());
+              ensureNestedClassNameIsMutable();
+              nestedClassName_.add(input.readInt32());
               break;
             }
             case 58: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
               while (input.getBytesUntilLimit() > 0) {
-                addNestedClassNames(input.readInt32());
+                addNestedClassName(input.readInt32());
               }
               input.popLimit(limit);
               break;
             }
             case 64: {
-              ensureNestedObjectNamesIsMutable();
-              nestedObjectNames_.add(input.readInt32());
+              ensureNestedObjectNameIsMutable();
+              nestedObjectName_.add(input.readInt32());
               break;
             }
             case 66: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
               while (input.getBytesUntilLimit() > 0) {
-                addNestedObjectNames(input.readInt32());
+                addNestedObjectName(input.readInt32());
               }
               input.popLimit(limit);
               break;
@@ -4145,7 +4145,7 @@ public final class ProtoBuf {
             case 90: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addMembers(subBuilder.buildPartial());
+              addMember(subBuilder.buildPartial());
               break;
             }
           }
@@ -4232,275 +4232,275 @@ public final class ProtoBuf {
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 5;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameters_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 5;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameter_ =
         java.util.Collections.emptyList();
-      private void ensureTypeParametersIsMutable() {
+      private void ensureTypeParameterIsMutable() {
         if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-          typeParameters_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter>(typeParameters_);
+          typeParameter_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter>(typeParameter_);
           bitField0_ |= 0x00000008;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParametersList() {
-        return java.util.Collections.unmodifiableList(typeParameters_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParameterList() {
+        return java.util.Collections.unmodifiableList(typeParameter_);
       }
-      public int getTypeParametersCount() {
-        return typeParameters_.size();
+      public int getTypeParameterCount() {
+        return typeParameter_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameters(int index) {
-        return typeParameters_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameter(int index) {
+        return typeParameter_.get(index);
       }
-      public Builder setTypeParameters(
+      public Builder setTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureTypeParametersIsMutable();
-        typeParameters_.set(index, value);
+        ensureTypeParameterIsMutable();
+        typeParameter_.set(index, value);
         
         return this;
       }
-      public Builder setTypeParameters(
+      public Builder setTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder builderForValue) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.set(index, builderForValue.build());
+        ensureTypeParameterIsMutable();
+        typeParameter_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addTypeParameters(org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
+      public Builder addTypeParameter(org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(value);
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(value);
         
         return this;
       }
-      public Builder addTypeParameters(
+      public Builder addTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(index, value);
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(index, value);
         
         return this;
       }
-      public Builder addTypeParameters(
+      public Builder addTypeParameter(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder builderForValue) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(builderForValue.build());
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addTypeParameters(
+      public Builder addTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder builderForValue) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(index, builderForValue.build());
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllTypeParameters(
+      public Builder addAllTypeParameter(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> values) {
-        ensureTypeParametersIsMutable();
-        super.addAll(values, typeParameters_);
+        ensureTypeParameterIsMutable();
+        super.addAll(values, typeParameter_);
         
         return this;
       }
-      public Builder clearTypeParameters() {
-        typeParameters_ = java.util.Collections.emptyList();
+      public Builder clearTypeParameter() {
+        typeParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
         
         return this;
       }
-      public Builder removeTypeParameters(int index) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.remove(index);
+      public Builder removeTypeParameter(int index) {
+        ensureTypeParameterIsMutable();
+        typeParameter_.remove(index);
         
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.Type supertypes = 6;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> supertypes_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.Type supertype = 6;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> supertype_ =
         java.util.Collections.emptyList();
-      private void ensureSupertypesIsMutable() {
+      private void ensureSupertypeIsMutable() {
         if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-          supertypes_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type>(supertypes_);
+          supertype_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type>(supertype_);
           bitField0_ |= 0x00000010;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getSupertypesList() {
-        return java.util.Collections.unmodifiableList(supertypes_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> getSupertypeList() {
+        return java.util.Collections.unmodifiableList(supertype_);
       }
-      public int getSupertypesCount() {
-        return supertypes_.size();
+      public int getSupertypeCount() {
+        return supertype_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getSupertypes(int index) {
-        return supertypes_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getSupertype(int index) {
+        return supertype_.get(index);
       }
-      public Builder setSupertypes(
+      public Builder setSupertype(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureSupertypesIsMutable();
-        supertypes_.set(index, value);
+        ensureSupertypeIsMutable();
+        supertype_.set(index, value);
         
         return this;
       }
-      public Builder setSupertypes(
+      public Builder setSupertype(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
-        ensureSupertypesIsMutable();
-        supertypes_.set(index, builderForValue.build());
+        ensureSupertypeIsMutable();
+        supertype_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addSupertypes(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
+      public Builder addSupertype(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureSupertypesIsMutable();
-        supertypes_.add(value);
+        ensureSupertypeIsMutable();
+        supertype_.add(value);
         
         return this;
       }
-      public Builder addSupertypes(
+      public Builder addSupertype(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureSupertypesIsMutable();
-        supertypes_.add(index, value);
+        ensureSupertypeIsMutable();
+        supertype_.add(index, value);
         
         return this;
       }
-      public Builder addSupertypes(
+      public Builder addSupertype(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
-        ensureSupertypesIsMutable();
-        supertypes_.add(builderForValue.build());
+        ensureSupertypeIsMutable();
+        supertype_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addSupertypes(
+      public Builder addSupertype(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.Builder builderForValue) {
-        ensureSupertypesIsMutable();
-        supertypes_.add(index, builderForValue.build());
+        ensureSupertypeIsMutable();
+        supertype_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllSupertypes(
+      public Builder addAllSupertype(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type> values) {
-        ensureSupertypesIsMutable();
-        super.addAll(values, supertypes_);
+        ensureSupertypeIsMutable();
+        super.addAll(values, supertype_);
         
         return this;
       }
-      public Builder clearSupertypes() {
-        supertypes_ = java.util.Collections.emptyList();
+      public Builder clearSupertype() {
+        supertype_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         
         return this;
       }
-      public Builder removeSupertypes(int index) {
-        ensureSupertypesIsMutable();
-        supertypes_.remove(index);
+      public Builder removeSupertype(int index) {
+        ensureSupertypeIsMutable();
+        supertype_.remove(index);
         
         return this;
       }
       
-      // repeated int32 nestedClassNames = 7;
-      private java.util.List<java.lang.Integer> nestedClassNames_ = java.util.Collections.emptyList();;
-      private void ensureNestedClassNamesIsMutable() {
+      // repeated int32 nested_class_name = 7;
+      private java.util.List<java.lang.Integer> nestedClassName_ = java.util.Collections.emptyList();;
+      private void ensureNestedClassNameIsMutable() {
         if (!((bitField0_ & 0x00000020) == 0x00000020)) {
-          nestedClassNames_ = new java.util.ArrayList<java.lang.Integer>(nestedClassNames_);
+          nestedClassName_ = new java.util.ArrayList<java.lang.Integer>(nestedClassName_);
           bitField0_ |= 0x00000020;
          }
       }
       public java.util.List<java.lang.Integer>
-          getNestedClassNamesList() {
-        return java.util.Collections.unmodifiableList(nestedClassNames_);
+          getNestedClassNameList() {
+        return java.util.Collections.unmodifiableList(nestedClassName_);
       }
-      public int getNestedClassNamesCount() {
-        return nestedClassNames_.size();
+      public int getNestedClassNameCount() {
+        return nestedClassName_.size();
       }
-      public int getNestedClassNames(int index) {
-        return nestedClassNames_.get(index);
+      public int getNestedClassName(int index) {
+        return nestedClassName_.get(index);
       }
-      public Builder setNestedClassNames(
+      public Builder setNestedClassName(
           int index, int value) {
-        ensureNestedClassNamesIsMutable();
-        nestedClassNames_.set(index, value);
+        ensureNestedClassNameIsMutable();
+        nestedClassName_.set(index, value);
         
         return this;
       }
-      public Builder addNestedClassNames(int value) {
-        ensureNestedClassNamesIsMutable();
-        nestedClassNames_.add(value);
+      public Builder addNestedClassName(int value) {
+        ensureNestedClassNameIsMutable();
+        nestedClassName_.add(value);
         
         return this;
       }
-      public Builder addAllNestedClassNames(
+      public Builder addAllNestedClassName(
           java.lang.Iterable<? extends java.lang.Integer> values) {
-        ensureNestedClassNamesIsMutable();
-        super.addAll(values, nestedClassNames_);
+        ensureNestedClassNameIsMutable();
+        super.addAll(values, nestedClassName_);
         
         return this;
       }
-      public Builder clearNestedClassNames() {
-        nestedClassNames_ = java.util.Collections.emptyList();;
+      public Builder clearNestedClassName() {
+        nestedClassName_ = java.util.Collections.emptyList();;
         bitField0_ = (bitField0_ & ~0x00000020);
         
         return this;
       }
       
-      // repeated int32 nestedObjectNames = 8;
-      private java.util.List<java.lang.Integer> nestedObjectNames_ = java.util.Collections.emptyList();;
-      private void ensureNestedObjectNamesIsMutable() {
+      // repeated int32 nested_object_name = 8;
+      private java.util.List<java.lang.Integer> nestedObjectName_ = java.util.Collections.emptyList();;
+      private void ensureNestedObjectNameIsMutable() {
         if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-          nestedObjectNames_ = new java.util.ArrayList<java.lang.Integer>(nestedObjectNames_);
+          nestedObjectName_ = new java.util.ArrayList<java.lang.Integer>(nestedObjectName_);
           bitField0_ |= 0x00000040;
          }
       }
       public java.util.List<java.lang.Integer>
-          getNestedObjectNamesList() {
-        return java.util.Collections.unmodifiableList(nestedObjectNames_);
+          getNestedObjectNameList() {
+        return java.util.Collections.unmodifiableList(nestedObjectName_);
       }
-      public int getNestedObjectNamesCount() {
-        return nestedObjectNames_.size();
+      public int getNestedObjectNameCount() {
+        return nestedObjectName_.size();
       }
-      public int getNestedObjectNames(int index) {
-        return nestedObjectNames_.get(index);
+      public int getNestedObjectName(int index) {
+        return nestedObjectName_.get(index);
       }
-      public Builder setNestedObjectNames(
+      public Builder setNestedObjectName(
           int index, int value) {
-        ensureNestedObjectNamesIsMutable();
-        nestedObjectNames_.set(index, value);
+        ensureNestedObjectNameIsMutable();
+        nestedObjectName_.set(index, value);
         
         return this;
       }
-      public Builder addNestedObjectNames(int value) {
-        ensureNestedObjectNamesIsMutable();
-        nestedObjectNames_.add(value);
+      public Builder addNestedObjectName(int value) {
+        ensureNestedObjectNameIsMutable();
+        nestedObjectName_.add(value);
         
         return this;
       }
-      public Builder addAllNestedObjectNames(
+      public Builder addAllNestedObjectName(
           java.lang.Iterable<? extends java.lang.Integer> values) {
-        ensureNestedObjectNamesIsMutable();
-        super.addAll(values, nestedObjectNames_);
+        ensureNestedObjectNameIsMutable();
+        super.addAll(values, nestedObjectName_);
         
         return this;
       }
-      public Builder clearNestedObjectNames() {
-        nestedObjectNames_ = java.util.Collections.emptyList();;
+      public Builder clearNestedObjectName() {
+        nestedObjectName_ = java.util.Collections.emptyList();;
         bitField0_ = (bitField0_ & ~0x00000040);
         
         return this;
       }
       
-      // optional bool classObjectPresent = 9 [default = false];
+      // optional bool class_object_present = 9 [default = false];
       private boolean classObjectPresent_ ;
       public boolean hasClassObjectPresent() {
         return ((bitField0_ & 0x00000080) == 0x00000080);
@@ -4521,7 +4521,7 @@ public final class ProtoBuf {
         return this;
       }
       
-      // optional .org.jetbrains.jet.descriptors.serialization.Callable primaryConstructor = 10;
+      // optional .org.jetbrains.jet.descriptors.serialization.Callable primary_constructor = 10;
       private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
       public boolean hasPrimaryConstructor() {
         return ((bitField0_ & 0x00000100) == 0x00000100);
@@ -4564,91 +4564,91 @@ public final class ProtoBuf {
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.Callable members = 11;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> members_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 11;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> member_ =
         java.util.Collections.emptyList();
-      private void ensureMembersIsMutable() {
+      private void ensureMemberIsMutable() {
         if (!((bitField0_ & 0x00000200) == 0x00000200)) {
-          members_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable>(members_);
+          member_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable>(member_);
           bitField0_ |= 0x00000200;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> getMembersList() {
-        return java.util.Collections.unmodifiableList(members_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> getMemberList() {
+        return java.util.Collections.unmodifiableList(member_);
       }
-      public int getMembersCount() {
-        return members_.size();
+      public int getMemberCount() {
+        return member_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMembers(int index) {
-        return members_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index) {
+        return member_.get(index);
       }
-      public Builder setMembers(
+      public Builder setMember(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureMembersIsMutable();
-        members_.set(index, value);
+        ensureMemberIsMutable();
+        member_.set(index, value);
         
         return this;
       }
-      public Builder setMembers(
+      public Builder setMember(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder builderForValue) {
-        ensureMembersIsMutable();
-        members_.set(index, builderForValue.build());
+        ensureMemberIsMutable();
+        member_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addMembers(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
+      public Builder addMember(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureMembersIsMutable();
-        members_.add(value);
+        ensureMemberIsMutable();
+        member_.add(value);
         
         return this;
       }
-      public Builder addMembers(
+      public Builder addMember(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureMembersIsMutable();
-        members_.add(index, value);
+        ensureMemberIsMutable();
+        member_.add(index, value);
         
         return this;
       }
-      public Builder addMembers(
+      public Builder addMember(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder builderForValue) {
-        ensureMembersIsMutable();
-        members_.add(builderForValue.build());
+        ensureMemberIsMutable();
+        member_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addMembers(
+      public Builder addMember(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder builderForValue) {
-        ensureMembersIsMutable();
-        members_.add(index, builderForValue.build());
+        ensureMemberIsMutable();
+        member_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllMembers(
+      public Builder addAllMember(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> values) {
-        ensureMembersIsMutable();
-        super.addAll(values, members_);
+        ensureMemberIsMutable();
+        super.addAll(values, member_);
         
         return this;
       }
-      public Builder clearMembers() {
-        members_ = java.util.Collections.emptyList();
+      public Builder clearMember() {
+        member_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000200);
         
         return this;
       }
-      public Builder removeMembers(int index) {
-        ensureMembersIsMutable();
-        members_.remove(index);
+      public Builder removeMember(int index) {
+        ensureMemberIsMutable();
+        member_.remove(index);
         
         return this;
       }
@@ -4675,21 +4675,21 @@ public final class ProtoBuf {
     boolean hasExtraVisibility();
     String getExtraVisibility();
     
-    // optional int32 getterFlags = 9;
+    // optional int32 getter_flags = 9;
     boolean hasGetterFlags();
     int getGetterFlags();
     
-    // optional int32 setterFlags = 10;
+    // optional int32 setter_flags = 10;
     boolean hasSetterFlags();
     int getSetterFlags();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 4;
+    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 4;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> 
-        getTypeParametersList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameters(int index);
-    int getTypeParametersCount();
+        getTypeParameterList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameter(int index);
+    int getTypeParameterCount();
     
-    // optional .org.jetbrains.jet.descriptors.serialization.Type receiverType = 5;
+    // optional .org.jetbrains.jet.descriptors.serialization.Type receiver_type = 5;
     boolean hasReceiverType();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getReceiverType();
     
@@ -4697,13 +4697,13 @@ public final class ProtoBuf {
     boolean hasName();
     int getName();
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter valueParameters = 7;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter value_parameter = 7;
     java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> 
-        getValueParametersList();
-    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter getValueParameters(int index);
-    int getValueParametersCount();
+        getValueParameterList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter getValueParameter(int index);
+    int getValueParameterCount();
     
-    // required .org.jetbrains.jet.descriptors.serialization.Type returnType = 8;
+    // required .org.jetbrains.jet.descriptors.serialization.Type return_type = 8;
     boolean hasReturnType();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getReturnType();
   }
@@ -4834,7 +4834,7 @@ public final class ProtoBuf {
       boolean hasType();
       org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getType();
       
-      // optional .org.jetbrains.jet.descriptors.serialization.Type varargElementType = 4;
+      // optional .org.jetbrains.jet.descriptors.serialization.Type vararg_element_type = 4;
       boolean hasVarargElementType();
       org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getVarargElementType();
     }
@@ -4887,8 +4887,8 @@ public final class ProtoBuf {
         return type_;
       }
       
-      // optional .org.jetbrains.jet.descriptors.serialization.Type varargElementType = 4;
-      public static final int VARARGELEMENTTYPE_FIELD_NUMBER = 4;
+      // optional .org.jetbrains.jet.descriptors.serialization.Type vararg_element_type = 4;
+      public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 4;
       private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type varargElementType_;
       public boolean hasVarargElementType() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
@@ -5307,7 +5307,7 @@ public final class ProtoBuf {
           return this;
         }
         
-        // optional .org.jetbrains.jet.descriptors.serialization.Type varargElementType = 4;
+        // optional .org.jetbrains.jet.descriptors.serialization.Type vararg_element_type = 4;
         private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type varargElementType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
         public boolean hasVarargElementType() {
           return ((bitField0_ & 0x00000008) == 0x00000008);
@@ -5404,8 +5404,8 @@ public final class ProtoBuf {
       }
     }
     
-    // optional int32 getterFlags = 9;
-    public static final int GETTERFLAGS_FIELD_NUMBER = 9;
+    // optional int32 getter_flags = 9;
+    public static final int GETTER_FLAGS_FIELD_NUMBER = 9;
     private int getterFlags_;
     public boolean hasGetterFlags() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
@@ -5414,8 +5414,8 @@ public final class ProtoBuf {
       return getterFlags_;
     }
     
-    // optional int32 setterFlags = 10;
-    public static final int SETTERFLAGS_FIELD_NUMBER = 10;
+    // optional int32 setter_flags = 10;
+    public static final int SETTER_FLAGS_FIELD_NUMBER = 10;
     private int setterFlags_;
     public boolean hasSetterFlags() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
@@ -5424,29 +5424,29 @@ public final class ProtoBuf {
       return setterFlags_;
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 4;
-    public static final int TYPEPARAMETERS_FIELD_NUMBER = 4;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameters_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParametersList() {
-      return typeParameters_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 4;
+    public static final int TYPE_PARAMETER_FIELD_NUMBER = 4;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameter_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParameterList() {
+      return typeParameter_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameterOrBuilder> 
-        getTypeParametersOrBuilderList() {
-      return typeParameters_;
+        getTypeParameterOrBuilderList() {
+      return typeParameter_;
     }
-    public int getTypeParametersCount() {
-      return typeParameters_.size();
+    public int getTypeParameterCount() {
+      return typeParameter_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameters(int index) {
-      return typeParameters_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameter(int index) {
+      return typeParameter_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameterOrBuilder getTypeParametersOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameterOrBuilder getTypeParameterOrBuilder(
         int index) {
-      return typeParameters_.get(index);
+      return typeParameter_.get(index);
     }
     
-    // optional .org.jetbrains.jet.descriptors.serialization.Type receiverType = 5;
-    public static final int RECEIVERTYPE_FIELD_NUMBER = 5;
+    // optional .org.jetbrains.jet.descriptors.serialization.Type receiver_type = 5;
+    public static final int RECEIVER_TYPE_FIELD_NUMBER = 5;
     private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type receiverType_;
     public boolean hasReceiverType() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
@@ -5465,29 +5465,29 @@ public final class ProtoBuf {
       return name_;
     }
     
-    // repeated .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter valueParameters = 7;
-    public static final int VALUEPARAMETERS_FIELD_NUMBER = 7;
-    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> valueParameters_;
-    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> getValueParametersList() {
-      return valueParameters_;
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter value_parameter = 7;
+    public static final int VALUE_PARAMETER_FIELD_NUMBER = 7;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> valueParameter_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> getValueParameterList() {
+      return valueParameter_;
     }
     public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameterOrBuilder> 
-        getValueParametersOrBuilderList() {
-      return valueParameters_;
+        getValueParameterOrBuilderList() {
+      return valueParameter_;
     }
-    public int getValueParametersCount() {
-      return valueParameters_.size();
+    public int getValueParameterCount() {
+      return valueParameter_.size();
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter getValueParameters(int index) {
-      return valueParameters_.get(index);
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter getValueParameter(int index) {
+      return valueParameter_.get(index);
     }
-    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameterOrBuilder getValueParametersOrBuilder(
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameterOrBuilder getValueParameterOrBuilder(
         int index) {
-      return valueParameters_.get(index);
+      return valueParameter_.get(index);
     }
     
-    // required .org.jetbrains.jet.descriptors.serialization.Type returnType = 8;
-    public static final int RETURNTYPE_FIELD_NUMBER = 8;
+    // required .org.jetbrains.jet.descriptors.serialization.Type return_type = 8;
+    public static final int RETURN_TYPE_FIELD_NUMBER = 8;
     private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type returnType_;
     public boolean hasReturnType() {
       return ((bitField0_ & 0x00000040) == 0x00000040);
@@ -5501,10 +5501,10 @@ public final class ProtoBuf {
       extraVisibility_ = "";
       getterFlags_ = 0;
       setterFlags_ = 0;
-      typeParameters_ = java.util.Collections.emptyList();
+      typeParameter_ = java.util.Collections.emptyList();
       receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
       name_ = 0;
-      valueParameters_ = java.util.Collections.emptyList();
+      valueParameter_ = java.util.Collections.emptyList();
       returnType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -5520,8 +5520,8 @@ public final class ProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      for (int i = 0; i < getTypeParametersCount(); i++) {
-        if (!getTypeParameters(i).isInitialized()) {
+      for (int i = 0; i < getTypeParameterCount(); i++) {
+        if (!getTypeParameter(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -5532,8 +5532,8 @@ public final class ProtoBuf {
           return false;
         }
       }
-      for (int i = 0; i < getValueParametersCount(); i++) {
-        if (!getValueParameters(i).isInitialized()) {
+      for (int i = 0; i < getValueParameterCount(); i++) {
+        if (!getValueParameter(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -5555,8 +5555,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBytes(2, getExtraVisibilityBytes());
       }
-      for (int i = 0; i < typeParameters_.size(); i++) {
-        output.writeMessage(4, typeParameters_.get(i));
+      for (int i = 0; i < typeParameter_.size(); i++) {
+        output.writeMessage(4, typeParameter_.get(i));
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeMessage(5, receiverType_);
@@ -5564,8 +5564,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         output.writeInt32(6, name_);
       }
-      for (int i = 0; i < valueParameters_.size(); i++) {
-        output.writeMessage(7, valueParameters_.get(i));
+      for (int i = 0; i < valueParameter_.size(); i++) {
+        output.writeMessage(7, valueParameter_.get(i));
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeMessage(8, returnType_);
@@ -5592,9 +5592,9 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, getExtraVisibilityBytes());
       }
-      for (int i = 0; i < typeParameters_.size(); i++) {
+      for (int i = 0; i < typeParameter_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, typeParameters_.get(i));
+          .computeMessageSize(4, typeParameter_.get(i));
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += com.google.protobuf.CodedOutputStream
@@ -5604,9 +5604,9 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, name_);
       }
-      for (int i = 0; i < valueParameters_.size(); i++) {
+      for (int i = 0; i < valueParameter_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, valueParameters_.get(i));
+          .computeMessageSize(7, valueParameter_.get(i));
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
@@ -5730,13 +5730,13 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         setterFlags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000008);
-        typeParameters_ = java.util.Collections.emptyList();
+        typeParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000020);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
-        valueParameters_ = java.util.Collections.emptyList();
+        valueParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000080);
         returnType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000100);
@@ -5790,10 +5790,10 @@ public final class ProtoBuf {
         }
         result.setterFlags_ = setterFlags_;
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
-          typeParameters_ = java.util.Collections.unmodifiableList(typeParameters_);
+          typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
           bitField0_ = (bitField0_ & ~0x00000010);
         }
-        result.typeParameters_ = typeParameters_;
+        result.typeParameter_ = typeParameter_;
         if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
           to_bitField0_ |= 0x00000010;
         }
@@ -5803,10 +5803,10 @@ public final class ProtoBuf {
         }
         result.name_ = name_;
         if (((bitField0_ & 0x00000080) == 0x00000080)) {
-          valueParameters_ = java.util.Collections.unmodifiableList(valueParameters_);
+          valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
           bitField0_ = (bitField0_ & ~0x00000080);
         }
-        result.valueParameters_ = valueParameters_;
+        result.valueParameter_ = valueParameter_;
         if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
           to_bitField0_ |= 0x00000040;
         }
@@ -5829,13 +5829,13 @@ public final class ProtoBuf {
         if (other.hasSetterFlags()) {
           setSetterFlags(other.getSetterFlags());
         }
-        if (!other.typeParameters_.isEmpty()) {
-          if (typeParameters_.isEmpty()) {
-            typeParameters_ = other.typeParameters_;
+        if (!other.typeParameter_.isEmpty()) {
+          if (typeParameter_.isEmpty()) {
+            typeParameter_ = other.typeParameter_;
             bitField0_ = (bitField0_ & ~0x00000010);
           } else {
-            ensureTypeParametersIsMutable();
-            typeParameters_.addAll(other.typeParameters_);
+            ensureTypeParameterIsMutable();
+            typeParameter_.addAll(other.typeParameter_);
           }
           
         }
@@ -5845,13 +5845,13 @@ public final class ProtoBuf {
         if (other.hasName()) {
           setName(other.getName());
         }
-        if (!other.valueParameters_.isEmpty()) {
-          if (valueParameters_.isEmpty()) {
-            valueParameters_ = other.valueParameters_;
+        if (!other.valueParameter_.isEmpty()) {
+          if (valueParameter_.isEmpty()) {
+            valueParameter_ = other.valueParameter_;
             bitField0_ = (bitField0_ & ~0x00000080);
           } else {
-            ensureValueParametersIsMutable();
-            valueParameters_.addAll(other.valueParameters_);
+            ensureValueParameterIsMutable();
+            valueParameter_.addAll(other.valueParameter_);
           }
           
         }
@@ -5870,8 +5870,8 @@ public final class ProtoBuf {
           
           return false;
         }
-        for (int i = 0; i < getTypeParametersCount(); i++) {
-          if (!getTypeParameters(i).isInitialized()) {
+        for (int i = 0; i < getTypeParameterCount(); i++) {
+          if (!getTypeParameter(i).isInitialized()) {
             
             return false;
           }
@@ -5882,8 +5882,8 @@ public final class ProtoBuf {
             return false;
           }
         }
-        for (int i = 0; i < getValueParametersCount(); i++) {
-          if (!getValueParameters(i).isInitialized()) {
+        for (int i = 0; i < getValueParameterCount(); i++) {
+          if (!getValueParameter(i).isInitialized()) {
             
             return false;
           }
@@ -5925,7 +5925,7 @@ public final class ProtoBuf {
             case 34: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addTypeParameters(subBuilder.buildPartial());
+              addTypeParameter(subBuilder.buildPartial());
               break;
             }
             case 42: {
@@ -5945,7 +5945,7 @@ public final class ProtoBuf {
             case 58: {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
-              addValueParameters(subBuilder.buildPartial());
+              addValueParameter(subBuilder.buildPartial());
               break;
             }
             case 66: {
@@ -6030,7 +6030,7 @@ public final class ProtoBuf {
         
       }
       
-      // optional int32 getterFlags = 9;
+      // optional int32 getter_flags = 9;
       private int getterFlags_ ;
       public boolean hasGetterFlags() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
@@ -6051,7 +6051,7 @@ public final class ProtoBuf {
         return this;
       }
       
-      // optional int32 setterFlags = 10;
+      // optional int32 setter_flags = 10;
       private int setterFlags_ ;
       public boolean hasSetterFlags() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
@@ -6072,96 +6072,96 @@ public final class ProtoBuf {
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter typeParameters = 4;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameters_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 4;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> typeParameter_ =
         java.util.Collections.emptyList();
-      private void ensureTypeParametersIsMutable() {
+      private void ensureTypeParameterIsMutable() {
         if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-          typeParameters_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter>(typeParameters_);
+          typeParameter_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter>(typeParameter_);
           bitField0_ |= 0x00000010;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParametersList() {
-        return java.util.Collections.unmodifiableList(typeParameters_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> getTypeParameterList() {
+        return java.util.Collections.unmodifiableList(typeParameter_);
       }
-      public int getTypeParametersCount() {
-        return typeParameters_.size();
+      public int getTypeParameterCount() {
+        return typeParameter_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameters(int index) {
-        return typeParameters_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter getTypeParameter(int index) {
+        return typeParameter_.get(index);
       }
-      public Builder setTypeParameters(
+      public Builder setTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureTypeParametersIsMutable();
-        typeParameters_.set(index, value);
+        ensureTypeParameterIsMutable();
+        typeParameter_.set(index, value);
         
         return this;
       }
-      public Builder setTypeParameters(
+      public Builder setTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder builderForValue) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.set(index, builderForValue.build());
+        ensureTypeParameterIsMutable();
+        typeParameter_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addTypeParameters(org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
+      public Builder addTypeParameter(org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(value);
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(value);
         
         return this;
       }
-      public Builder addTypeParameters(
+      public Builder addTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(index, value);
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(index, value);
         
         return this;
       }
-      public Builder addTypeParameters(
+      public Builder addTypeParameter(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder builderForValue) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(builderForValue.build());
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addTypeParameters(
+      public Builder addTypeParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter.Builder builderForValue) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.add(index, builderForValue.build());
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllTypeParameters(
+      public Builder addAllTypeParameter(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter> values) {
-        ensureTypeParametersIsMutable();
-        super.addAll(values, typeParameters_);
+        ensureTypeParameterIsMutable();
+        super.addAll(values, typeParameter_);
         
         return this;
       }
-      public Builder clearTypeParameters() {
-        typeParameters_ = java.util.Collections.emptyList();
+      public Builder clearTypeParameter() {
+        typeParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         
         return this;
       }
-      public Builder removeTypeParameters(int index) {
-        ensureTypeParametersIsMutable();
-        typeParameters_.remove(index);
+      public Builder removeTypeParameter(int index) {
+        ensureTypeParameterIsMutable();
+        typeParameter_.remove(index);
         
         return this;
       }
       
-      // optional .org.jetbrains.jet.descriptors.serialization.Type receiverType = 5;
+      // optional .org.jetbrains.jet.descriptors.serialization.Type receiver_type = 5;
       private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type receiverType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
       public boolean hasReceiverType() {
         return ((bitField0_ & 0x00000020) == 0x00000020);
@@ -6225,96 +6225,96 @@ public final class ProtoBuf {
         return this;
       }
       
-      // repeated .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter valueParameters = 7;
-      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> valueParameters_ =
+      // repeated .org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter value_parameter = 7;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> valueParameter_ =
         java.util.Collections.emptyList();
-      private void ensureValueParametersIsMutable() {
+      private void ensureValueParameterIsMutable() {
         if (!((bitField0_ & 0x00000080) == 0x00000080)) {
-          valueParameters_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter>(valueParameters_);
+          valueParameter_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter>(valueParameter_);
           bitField0_ |= 0x00000080;
          }
       }
       
-      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> getValueParametersList() {
-        return java.util.Collections.unmodifiableList(valueParameters_);
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> getValueParameterList() {
+        return java.util.Collections.unmodifiableList(valueParameter_);
       }
-      public int getValueParametersCount() {
-        return valueParameters_.size();
+      public int getValueParameterCount() {
+        return valueParameter_.size();
       }
-      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter getValueParameters(int index) {
-        return valueParameters_.get(index);
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter getValueParameter(int index) {
+        return valueParameter_.get(index);
       }
-      public Builder setValueParameters(
+      public Builder setValueParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureValueParametersIsMutable();
-        valueParameters_.set(index, value);
+        ensureValueParameterIsMutable();
+        valueParameter_.set(index, value);
         
         return this;
       }
-      public Builder setValueParameters(
+      public Builder setValueParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.Builder builderForValue) {
-        ensureValueParametersIsMutable();
-        valueParameters_.set(index, builderForValue.build());
+        ensureValueParameterIsMutable();
+        valueParameter_.set(index, builderForValue.build());
         
         return this;
       }
-      public Builder addValueParameters(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter value) {
+      public Builder addValueParameter(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureValueParametersIsMutable();
-        valueParameters_.add(value);
+        ensureValueParameterIsMutable();
+        valueParameter_.add(value);
         
         return this;
       }
-      public Builder addValueParameters(
+      public Builder addValueParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureValueParametersIsMutable();
-        valueParameters_.add(index, value);
+        ensureValueParameterIsMutable();
+        valueParameter_.add(index, value);
         
         return this;
       }
-      public Builder addValueParameters(
+      public Builder addValueParameter(
           org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.Builder builderForValue) {
-        ensureValueParametersIsMutable();
-        valueParameters_.add(builderForValue.build());
+        ensureValueParameterIsMutable();
+        valueParameter_.add(builderForValue.build());
         
         return this;
       }
-      public Builder addValueParameters(
+      public Builder addValueParameter(
           int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.Builder builderForValue) {
-        ensureValueParametersIsMutable();
-        valueParameters_.add(index, builderForValue.build());
+        ensureValueParameterIsMutable();
+        valueParameter_.add(index, builderForValue.build());
         
         return this;
       }
-      public Builder addAllValueParameters(
+      public Builder addAllValueParameter(
           java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter> values) {
-        ensureValueParametersIsMutable();
-        super.addAll(values, valueParameters_);
+        ensureValueParameterIsMutable();
+        super.addAll(values, valueParameter_);
         
         return this;
       }
-      public Builder clearValueParameters() {
-        valueParameters_ = java.util.Collections.emptyList();
+      public Builder clearValueParameter() {
+        valueParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000080);
         
         return this;
       }
-      public Builder removeValueParameters(int index) {
-        ensureValueParametersIsMutable();
-        valueParameters_.remove(index);
+      public Builder removeValueParameter(int index) {
+        ensureValueParameterIsMutable();
+        valueParameter_.remove(index);
         
         return this;
       }
       
-      // required .org.jetbrains.jet.descriptors.serialization.Type returnType = 8;
+      // required .org.jetbrains.jet.descriptors.serialization.Type return_type = 8;
       private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type returnType_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type.getDefaultInstance();
       public boolean hasReturnType() {
         return ((bitField0_ & 0x00000100) == 0x00000100);

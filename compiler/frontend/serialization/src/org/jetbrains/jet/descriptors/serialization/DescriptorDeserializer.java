@@ -149,8 +149,8 @@ public class DescriptorDeserializer {
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.MEMBER_KIND.get(flags))
         );
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParametersCount());
-        DescriptorDeserializer local = createChildDeserializer(property, proto.getTypeParametersList(), typeParameters);
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
+        DescriptorDeserializer local = createChildDeserializer(property, proto.getTypeParameterList(), typeParameters);
         property.setType(
                 local.typeDeserializer.type(proto.getReturnType()),
                 typeParameters,
@@ -207,13 +207,13 @@ public class DescriptorDeserializer {
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.MEMBER_KIND.get(flags))
         );
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParametersCount());
-        DescriptorDeserializer local = createChildDeserializer(function, proto.getTypeParametersList(), typeParameters);
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
+        DescriptorDeserializer local = createChildDeserializer(function, proto.getTypeParameterList(), typeParameters);
         function.initialize(
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 getExpectedThisObject(),
                 typeParameters,
-                local.valueParameters(proto.getValueParametersList()),
+                local.valueParameters(proto.getValueParameterList()),
                 local.typeDeserializer.type(proto.getReturnType()),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
@@ -237,11 +237,11 @@ public class DescriptorDeserializer {
                 getAnnotations(proto),
                 // TODO: primary
                 true);
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParametersCount());
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
         DescriptorDeserializer local = createChildDeserializer(descriptor, Collections.<TypeParameter>emptyList(), typeParameters);
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
-                local.valueParameters(proto.getValueParametersList()),
+                local.valueParameters(proto.getValueParameterList()),
                 visibility(Flags.VISIBILITY.get(proto.getFlags())),
                 !classDescriptor.isInner()
         );

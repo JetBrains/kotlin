@@ -21,14 +21,14 @@ option optimize_for = LITE_RUNTIME; // Smaller runtime
 option java_generic_services = false; // Less code
 
 message SimpleNameTable {
-  repeated string names = 1;
+  repeated string name = 1;
 }
 
 message QualifiedNameTable {
 
   message QualifiedName {
-    optional int32 parentQualifiedName = 1 [default = -1];
-    required int32 shortName = 2;
+    optional int32 parent_qualified_name = 1 [default = -1];
+    required int32 short_name = 2;
     optional Kind kind = 3 [default = PACKAGE];
 
     enum Kind {
@@ -37,7 +37,7 @@ message QualifiedNameTable {
     }
   }
 
-  repeated QualifiedName qualifiedNames = 1;
+  repeated QualifiedName qualified_name = 1;
 }
 
 message Type {
@@ -65,7 +65,7 @@ message Type {
     required Type type = 2;
   }
 
-  repeated Argument arguments = 2;
+  repeated Argument argument = 2;
 
   optional bool nullable = 3 [default = false];
 }
@@ -83,7 +83,7 @@ message TypeParameter {
   }
   optional Variance variance = 4 [default = INV];
 
-  repeated Type upperBounds = 5;
+  repeated Type upper_bound = 5;
 }
 
 message Class {
@@ -110,20 +110,20 @@ message Class {
 
   required int32 name = 4;
 
-  repeated TypeParameter typeParameters = 5;
-  repeated Type supertypes = 6;
+  repeated TypeParameter type_parameter = 5;
+  repeated Type supertype = 6;
 
   // we store only names, because the actual information must reside in the corresponding .class files,
   // to be obtainable through reflection at runtime
-  repeated int32 nestedClassNames = 7;
-  repeated int32 nestedObjectNames = 8;
+  repeated int32 nested_class_name = 7;
+  repeated int32 nested_object_name = 8;
 
-  optional bool classObjectPresent = 9 [default = false];
+  optional bool class_object_present = 9 [default = false];
 
-  optional Callable primaryConstructor = 10;
+  optional Callable primary_constructor = 10;
   // todo: other constructors?
 
-  repeated Callable members = 11;
+  repeated Callable member = 11;
 }
 
 message Callable {
@@ -162,12 +162,12 @@ message Callable {
      Modality
      has_annotations
    */
-  optional int32 getterFlags = 9 /* absent => same as property */;
-  optional int32 setterFlags = 10 /* absent => same as property */;
+  optional int32 getter_flags = 9 /* absent => same as property */;
+  optional int32 setter_flags = 10 /* absent => same as property */;
 
-  repeated TypeParameter typeParameters = 4;
+  repeated TypeParameter type_parameter = 4;
 
-  optional Type receiverType = 5;
+  optional Type receiver_type = 5;
 
   required int32 name = 6;
 
@@ -179,13 +179,13 @@ message Callable {
     optional int32 flags = 1;
     required int32 name = 2;
     required Type type = 3;
-    optional Type varargElementType = 4;
+    optional Type vararg_element_type = 4;
 
   }
 
-  repeated ValueParameter valueParameters = 7;
+  repeated ValueParameter value_parameter = 7;
 
-  required Type returnType = 8;
+  required Type return_type = 8;
 }
 
 enum Modality {

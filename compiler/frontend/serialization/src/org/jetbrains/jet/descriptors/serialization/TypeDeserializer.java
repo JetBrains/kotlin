@@ -207,7 +207,7 @@ public class TypeDeserializer {
 
         public DeserializedType(@NotNull ProtoBuf.Type proto) {
             this.typeProto = proto;
-            this.arguments = typeArguments(proto.getArgumentsList());
+            this.arguments = typeArguments(proto.getArgumentList());
 
             this.constructor = storageManager.createLazyValue(new Computable<TypeConstructor>() {
                 @Override

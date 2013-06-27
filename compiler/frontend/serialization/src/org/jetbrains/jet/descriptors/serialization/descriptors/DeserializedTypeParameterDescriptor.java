@@ -53,8 +53,8 @@ public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParamet
     @NotNull
     @Override
     protected Set<JetType> resolveUpperBounds() {
-        Set<JetType> result = new LinkedHashSet<JetType>(proto.getUpperBoundsCount());
-        for (ProtoBuf.Type upperBound : proto.getUpperBoundsList()) {
+        Set<JetType> result = new LinkedHashSet<JetType>(proto.getUpperBoundCount());
+        for (ProtoBuf.Type upperBound : proto.getUpperBoundList()) {
             result.add(typeDeserializer.type(upperBound));
         }
         if (result.isEmpty()) {

@@ -38,13 +38,13 @@ public class NameResolver {
 
     @NotNull
     public Name getName(int index) {
-        String name = simpleNames.getNames(index);
+        String name = simpleNames.getName(index);
         return Name.guess(name);
     }
 
     @NotNull
     public ClassId getClassId(int index) {
-        QualifiedName fqNameProto = qualifiedNames.getQualifiedNames(index);
+        QualifiedName fqNameProto = qualifiedNames.getQualifiedName(index);
         assert fqNameProto.getKind() == ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS : "Not a class fqName: " + getClassId(index);
 
         StringBuilder relativeClassName = new StringBuilder();
@@ -73,7 +73,7 @@ public class NameResolver {
     ) {
         QualifiedName result = null;
         if (fqNameProto.hasParentQualifiedName()) {
-            QualifiedName parentProto = qualifiedNames.getQualifiedNames(fqNameProto.getParentQualifiedName());
+            QualifiedName parentProto = qualifiedNames.getQualifiedName(fqNameProto.getParentQualifiedName());
             if (kind == null || parentProto.getKind() == kind) {
                 result = renderFqName(sb, parentProto, kind);
                 sb.append(".");
@@ -82,7 +82,7 @@ public class NameResolver {
                 result = parentProto;
             }
         }
-        sb.append(simpleNames.getNames(fqNameProto.getShortName()));
+        sb.append(simpleNames.getName(fqNameProto.getShortName()));
         return result;
     }
 }

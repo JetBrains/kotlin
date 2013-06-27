@@ -56,7 +56,7 @@ public class NameSerializationUtil {
     public static ProtoBuf.SimpleNameTable toSimpleNameTable(@NotNull NameTable nameTable) {
         ProtoBuf.SimpleNameTable.Builder simpleNames = ProtoBuf.SimpleNameTable.newBuilder();
         for (String simpleName : nameTable.getSimpleNames()) {
-            simpleNames.addNames(simpleName);
+            simpleNames.addName(simpleName);
         }
         return simpleNames.build();
     }
@@ -65,7 +65,7 @@ public class NameSerializationUtil {
     public static ProtoBuf.QualifiedNameTable toQualifiedNameTable(@NotNull NameTable nameTable) {
         ProtoBuf.QualifiedNameTable.Builder qualifiedNames = ProtoBuf.QualifiedNameTable.newBuilder();
         for (ProtoBuf.QualifiedNameTable.QualifiedName.Builder qName : nameTable.getFqNames()) {
-            qualifiedNames.addQualifiedNames(qName);
+            qualifiedNames.addQualifiedName(qName);
         }
         return qualifiedNames.build();
     }

@@ -87,13 +87,13 @@ public class DescriptorSerializer {
         DescriptorSerializer local = createChildSerializer();
 
         for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
-            builder.addTypeParameters(local.typeParameter(typeParameterDescriptor));
+            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
         }
 
         if (!isSpecial.apply(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                builder.addSupertypes(local.type(supertype));
+                builder.addSupertype(local.type(supertype));
             }
         }
 
@@ -107,7 +107,7 @@ public class DescriptorSerializer {
             if (descriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
                 if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-                builder.addMembers(local.callableProto(member));
+                builder.addMember(local.callableProto(member));
             }
         }
 
@@ -115,12 +115,12 @@ public class DescriptorSerializer {
         for (DeclarationDescriptor descriptor : sort(nestedClasses)) {
             ClassDescriptor nestedClass = (ClassDescriptor) descriptor;
             int nameIndex = nameTable.getSimpleNameIndex(nestedClass.getName());
-            builder.addNestedClassNames(nameIndex);
+            builder.addNestedClassName(nameIndex);
         }
 
         for (ClassDescriptor descriptor : sort(classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors())) {
             int nameIndex = nameTable.getSimpleNameIndex(descriptor.getName());
-            builder.addNestedObjectNames(nameIndex);
+            builder.addNestedObjectName(nameIndex);
         }
 
         if (classDescriptor.getClassObjectDescriptor() != null) {
@@ -182,7 +182,7 @@ public class DescriptorSerializer {
         DescriptorSerializer local = createChildSerializer();
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            builder.addTypeParameters(local.typeParameter(typeParameterDescriptor));
+            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
         }
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
@@ -193,7 +193,7 @@ public class DescriptorSerializer {
         builder.setName(nameTable.getSimpleNameIndex(descriptor.getName()));
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            builder.addValueParameters(local.valueParameter(valueParameterDescriptor));
+            builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
         }
 
         builder.setReturnType(local.type(getSerializableReturnType(descriptor.getReturnType())));
@@ -287,7 +287,7 @@ public class DescriptorSerializer {
         }
 
         for (JetType upperBound : typeParameter.getUpperBounds()) {
-            builder.addUpperBounds(type(upperBound));
+            builder.addUpperBound(type(upperBound));
         }
 
         return builder;
@@ -314,7 +314,7 @@ public class DescriptorSerializer {
         builder.setConstructor(typeConstructor(type.getConstructor()));
 
         for (TypeProjection projection : type.getArguments()) {
-            builder.addArguments(typeArgument(projection));
+            builder.addArgument(typeArgument(projection));
         }
 
         // to avoid storing a default
