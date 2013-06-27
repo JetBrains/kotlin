@@ -1928,7 +1928,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type functionType = typeMapper.mapType(samInterface.getFunctionTypeForSamInterface());
             expression.accept(visitor, StackValue.none()).put(functionType, v);
 
+            Label ifNonNull = new Label();
+            Label afterAll = new Label();
+
+            v.dup();
+            v.ifnonnull(ifNonNull);
+
+            // if null: pop function value and wrapper objects, put null
+            v.pop();
+            v.pop2();
+            v.aconst(null);
+            v.goTo(afterAll);
+
+            v.mark(ifNonNull);
             v.invokespecial(className.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
+
+            v.mark(afterAll);
             return StackValue.onStack(className.getAsmType());
         }
     }
