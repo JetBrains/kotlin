@@ -43,7 +43,8 @@ public class BothSignatureWriter {
 
     public enum Mode {
         METHOD(CheckSignatureAdapter.METHOD_SIGNATURE),
-        CLASS(CheckSignatureAdapter.CLASS_SIGNATURE),;
+        CLASS(CheckSignatureAdapter.CLASS_SIGNATURE),
+        TYPE(CheckSignatureAdapter.TYPE_SIGNATURE);
 
         private final int asmType;
 
@@ -60,6 +61,9 @@ public class BothSignatureWriter {
         PARAMETER,
         RETURN_TYPE,
         METHOD_END,
+
+        FIELD,
+        FIELD_END,
 
         SUPERS,
         CLASS_END,
@@ -341,6 +345,16 @@ public class BothSignatureWriter {
         checkState(State.PARAMETERS);
     }
 
+    public void writeFieldTypeStart() {
+        transitionState(State.START, State.FIELD);
+        jetSignatureWriter = new JetSignatureWriter();
+    }
+
+    public void writeFieldTypeEnd() {
+        jetSignatureWriter = null;
+        transitionState(State.FIELD, State.FIELD_END);
+    }
+
     public void writeParameterType(JvmMethodParameterKind parameterKind) {
         transitionState(State.PARAMETERS, State.PARAMETER);
 
@@ -486,7 +500,7 @@ public class BothSignatureWriter {
 
     @Nullable
     public String makeJavaGenericSignature() {
-        if (state != State.METHOD_END && state != State.CLASS_END) {
+        if (state != State.METHOD_END && state != State.CLASS_END && state != State.FIELD_END) {
             throw new IllegalStateException();
         }
         checkTopLevel();

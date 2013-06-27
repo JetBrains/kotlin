@@ -636,6 +636,15 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureVisitor.makeJvmMethodSignature(methodName);
     }
 
+    @Nullable
+    public String mapFieldSignature(@NotNull JetType backingFieldType) {
+        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE, true);
+        signatureVisitor.writeFieldTypeStart();
+        mapType(backingFieldType, signatureVisitor, JetTypeMapperMode.VALUE);
+        signatureVisitor.writeFieldTypeEnd();
+        return signatureVisitor.makeJavaGenericSignature();
+    }
+
     private void writeThisIfNeeded(
             @NotNull CallableMemberDescriptor descriptor,
             @NotNull OwnerKind kind,

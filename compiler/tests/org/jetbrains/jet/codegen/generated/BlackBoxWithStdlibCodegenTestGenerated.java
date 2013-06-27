@@ -336,6 +336,16 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithStdlib/fullJdk"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("genericBackingFieldSignature.kt")
+        public void testGenericBackingFieldSignature() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/genericBackingFieldSignature.kt");
+        }
+        
+        @TestMetadata("genericMethodSignature.kt")
+        public void testGenericMethodSignature() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/genericMethodSignature.kt");
+        }
+        
         @TestMetadata("ifInWhile.kt")
         public void testIfInWhile() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/ifInWhile.kt");

@@ -162,7 +162,7 @@ public class PropertyCodegen extends GenerationStateAware {
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
 
         return builder.newField(element, modifiers, name, type.getDescriptor(),
-                                null, defaultValue);
+                                typeMapper.mapFieldSignature(jetType), defaultValue);
     }
 
     private FieldVisitor generatePropertyDelegateAccess(JetProperty p, PropertyDescriptor propertyDescriptor) {
