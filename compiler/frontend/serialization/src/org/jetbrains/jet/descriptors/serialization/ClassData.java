@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package jet;
+package org.jetbrains.jet.descriptors.serialization;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.jetbrains.annotations.NotNull;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface KotlinInfo {
-    byte[] data();
+public class ClassData {
+    private final NameResolver nameResolver;
+    private final ProtoBuf.Class classProto;
+
+    public ClassData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Class classProto) {
+        this.nameResolver = nameResolver;
+        this.classProto = classProto;
+    }
+
+    @NotNull
+    public NameResolver getNameResolver() {
+        return nameResolver;
+    }
+
+    @NotNull
+    public ProtoBuf.Class getClassProto() {
+        return classProto;
+    }
 }

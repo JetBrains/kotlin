@@ -23,7 +23,10 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Collection;
 
 public class ClassSerializationUtil {
@@ -80,6 +83,19 @@ public class ClassSerializationUtil {
                 ClassDescriptor nestedClass = (ClassDescriptor) descriptor;
                 serializeClass(nestedClass, serializerProvider, sink);
             }
+        }
+    }
+
+    @NotNull
+    public static ClassData readClassDataFrom(@NotNull byte[] bytes) {
+        try {
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);
+            ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(in);
+            return new ClassData(nameResolver, classProto);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
         }
     }
 

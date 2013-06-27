@@ -97,24 +97,4 @@ public abstract class AbstractClassResolver implements ClassResolver {
     protected abstract Name getClassObjectName(@NotNull ClassDescriptor outerClass);
 
     protected abstract void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor);
-
-    protected static class ClassData {
-        private final NameResolver nameResolver;
-        private final ProtoBuf.Class classProto;
-
-        public ClassData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Class classProto) {
-            this.nameResolver = nameResolver;
-            this.classProto = classProto;
-        }
-
-        @NotNull
-        public NameResolver getNameResolver() {
-            return nameResolver;
-        }
-
-        @NotNull
-        public ProtoBuf.Class getClassProto() {
-            return classProto;
-        }
-    }
 }

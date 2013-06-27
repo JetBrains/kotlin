@@ -61,8 +61,10 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -219,21 +221,35 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeKotlinInfo() {
-        final AnnotationVisitor av = v.getVisitor().visitAnnotation("Ljet/KotlinInfo;", true);
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
         DescriptorSerializer serializer = new DescriptorSerializer(DescriptorNamer.DEFAULT);
+
+        final ByteArrayOutputStream classStream = new ByteArrayOutputStream();
 
         ClassSerializationUtil.serializeClass(descriptor, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
                 if (classDescriptor == descriptor) {
-                    av.visit("data", classProto.toByteArray());
+                    try {
+                        classProto.writeTo(classStream);
+                    }
+                    catch (IOException e) {
+                        throw ExceptionUtils.rethrow(e);
+                    }
                 }
             }
         });
 
-        ByteArrayOutputStream nameTable = new ByteArrayOutputStream();
-        NameSerializationUtil.serializeNameTable(nameTable, serializer.getNameTable());
-        av.visit("nameTable", nameTable.toByteArray());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        NameSerializationUtil.serializeNameTable(out, serializer.getNameTable());
+        try {
+            out.write(classStream.toByteArray());
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+
+        av.visit("data", out.toByteArray());
 
         av.visitEnd();
     }

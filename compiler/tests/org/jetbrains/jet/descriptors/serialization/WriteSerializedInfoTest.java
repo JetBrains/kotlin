@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import jet.KotlinInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class WriteSerializedInfoTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
@@ -64,15 +63,13 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
     }
 
     private static class KotlinInfoBasedClassResolver extends AbstractClassResolver {
-        private final NameResolver nameResolver;
-        private final ProtoBuf.Class classProto;
+        private final ClassData classData;
         private final NamespaceDescriptorImpl namespace;
 
-        public KotlinInfoBasedClassResolver(@NotNull KotlinInfo kotlinInfo) throws InvalidProtocolBufferException {
+        public KotlinInfoBasedClassResolver(@NotNull KotlinInfo kotlinInfo) throws IOException {
             super(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED);
 
-            this.nameResolver = NameSerializationUtil.deserializeNameResolver(new ByteArrayInputStream(kotlinInfo.nameTable()));
-            this.classProto = ProtoBuf.Class.parseFrom(kotlinInfo.data());
+            this.classData = ClassSerializationUtil.readClassDataFrom(kotlinInfo.data());
             this.namespace = JetTestUtils.createTestNamespace(NAMESPACE_NAME.asString());
         }
 
@@ -81,7 +78,7 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
         protected ClassData getClassData(@NotNull ClassId classId) {
             assert classId.getPackageFqName().equals(NAMESPACE_NAME) &&
                    classId.getRelativeClassName().equals(CLASS_NAME) : "Unsupported classId: " + classId;
-            return new ClassData(nameResolver, classProto);
+            return classData;
         }
 
         @NotNull

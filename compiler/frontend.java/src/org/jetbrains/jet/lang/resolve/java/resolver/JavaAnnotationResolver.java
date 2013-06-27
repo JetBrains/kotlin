@@ -25,10 +25,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -86,7 +83,7 @@ public final class JavaAnnotationResolver {
         // Don't process internal jet annotations and jetbrains NotNull annotations
         if (qname.startsWith("jet.runtime.typeinfo.")
             || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString())
-            || qname.equals("jet.KotlinInfo")
+            || qname.equals(JvmStdlibNames.KOTLIN_INFO_CLASS.getFqName().asString())
         ) {
             return null;
         }
