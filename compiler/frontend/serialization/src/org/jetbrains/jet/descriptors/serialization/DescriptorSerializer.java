@@ -144,7 +144,7 @@ public class DescriptorSerializer {
                     hasAnnotations(propertyDescriptor),
                     propertyDescriptor.getVisibility(),
                     propertyDescriptor.getModality(),
-                    true
+                    false
             );
 
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
@@ -162,6 +162,12 @@ public class DescriptorSerializer {
                 int accessorFlags = getAccessorFlags(setter);
                 if (accessorFlags != propertyFlags) {
                     builder.setSetterFlags(accessorFlags);
+                }
+
+                if (!setter.isDefault()) {
+                    List<ValueParameterDescriptor> parameters = setter.getValueParameters();
+                    assert parameters.size() == 1 : "Unexpected number of setter parameters: " + setter;
+                    builder.setSetterParameterName(nameTable.getSimpleNameIndex(parameters.get(0).getName()));
                 }
             }
         }

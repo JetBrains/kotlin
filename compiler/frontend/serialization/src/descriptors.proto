@@ -164,6 +164,7 @@ message Callable {
    */
   optional int32 getter_flags = 9 /* absent => same as property */;
   optional int32 setter_flags = 10 /* absent => same as property */;
+  optional int32 setter_parameter_name = 11;
 
   repeated TypeParameter type_parameter = 4;
 

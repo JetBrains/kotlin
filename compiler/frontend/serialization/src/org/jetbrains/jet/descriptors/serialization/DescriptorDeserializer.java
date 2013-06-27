@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.ArrayList;
@@ -163,33 +164,36 @@ public class DescriptorDeserializer {
 
         if (Flags.HAS_GETTER.get(flags)) {
             int getterFlags = proto.getGetterFlags();
-            Boolean isNotDefault = proto.hasGetterFlags() || Flags.IS_NOT_DEFAULT.get(getterFlags);
-            if (!isNotDefault) {
-                getter = DescriptorResolver.createDefaultGetter(property);
-            }
-            else {
+            boolean isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags);
+            if (isNotDefault) {
                 getter = new PropertyGetterDescriptorImpl(
                         property, Collections.<AnnotationDescriptor>emptyList(),
                         modality(Flags.MODALITY.get(getterFlags)), visibility(Flags.VISIBILITY.get(getterFlags)),
                         isNotDefault, !isNotDefault, property.getKind()
                 );
             }
+            else {
+                getter = DescriptorResolver.createDefaultGetter(property);
+            }
             getter.initialize(property.getReturnType());
         }
 
         if (Flags.HAS_SETTER.get(flags)) {
             int setterFlags = proto.getSetterFlags();
-            Boolean isNotDefault = proto.hasSetterFlags() || Flags.IS_NOT_DEFAULT.get(setterFlags);
-            if (!isNotDefault) {
-                setter = DescriptorResolver.createDefaultSetter(property);
-            }
-            else {
+            boolean isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags);
+            if (isNotDefault) {
                 setter = new PropertySetterDescriptorImpl(
                         property, getSetterAnnotations(proto, setterFlags),
                         modality(Flags.MODALITY.get(setterFlags)), visibility(Flags.VISIBILITY.get(setterFlags)),
                         isNotDefault, !isNotDefault, property.getKind()
                 );
-                setter.initializeDefault();
+                setter.initialize(new ValueParameterDescriptorImpl(
+                        setter, 0, Collections.<AnnotationDescriptor>emptyList(),
+                        nameResolver.getName(proto.getSetterParameterName()),
+                        property.getReturnType(), false, null));
+            }
+            else {
+                setter = DescriptorResolver.createDefaultSetter(property);
             }
         }
 
