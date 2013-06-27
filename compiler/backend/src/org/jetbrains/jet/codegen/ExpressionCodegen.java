@@ -1911,22 +1911,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue genSamInterfaceValue(
-            @NotNull JetExpression argumentExpression,
+            @NotNull JetExpression expression,
             @NotNull ClassDescriptorFromJvmBytecode samInterface,
             @NotNull JetVisitor<StackValue, StackValue> visitor
     ) {
-        if (argumentExpression instanceof JetFunctionLiteralExpression) {
-            return genClosure(((JetFunctionLiteralExpression) argumentExpression).getFunctionLiteral(), samInterface);
+        if (expression instanceof JetFunctionLiteralExpression) {
+            return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samInterface);
         }
         else {
             JvmClassName className =
-                    state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) argumentExpression.getContainingFile());
+                    state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
 
             v.anew(className.getAsmType());
             v.dup();
 
             Type functionType = typeMapper.mapType(samInterface.getFunctionTypeForSamInterface());
-            argumentExpression.accept(visitor, StackValue.none()).put(functionType, v);
+            expression.accept(visitor, StackValue.none()).put(functionType, v);
 
             v.invokespecial(className.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
             return StackValue.onStack(className.getAsmType());
