@@ -196,7 +196,7 @@ public class BindingContextUtils {
     @NotNull
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable);
+            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable.getOriginal());
             return source != null ? descriptorToDeclarations(context, source) : Collections.<PsiElement>emptyList();
         }
 
