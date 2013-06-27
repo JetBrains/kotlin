@@ -61,10 +61,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -213,21 +211,23 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
 
-        writeKotlinInfoIfNeeded();
+        if (isTopLevelOrInnerClass(descriptor)) {
+            writeKotlinInfo();
+        }
 
         writeClassSignatureIfNeeded(signature);
     }
 
-    private void writeKotlinInfoIfNeeded() {
-        if (!(descriptor.getContainingDeclaration() instanceof ClassOrNamespaceDescriptor)) return;
-
+    private void writeKotlinInfo() {
         final AnnotationVisitor av = v.getVisitor().visitAnnotation("Ljet/KotlinInfo;", true);
         DescriptorSerializer serializer = new DescriptorSerializer(DescriptorNamer.DEFAULT);
 
         ClassSerializationUtil.serializeClass(descriptor, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
-                av.visit("data", classProto.toByteArray());
+                if (classDescriptor == descriptor) {
+                    av.visit("data", classProto.toByteArray());
+                }
             }
         });
 

@@ -22,9 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTopLevelOrInnerClass;
 
 public class DescriptorSerializer {
 
@@ -193,9 +196,38 @@ public class DescriptorSerializer {
             builder.addValueParameters(local.valueParameter(valueParameterDescriptor));
         }
 
-        builder.setReturnType(local.type(descriptor.getReturnType()));
+        builder.setReturnType(local.type(getSerializableReturnType(descriptor.getReturnType())));
 
         return builder;
+    }
+
+    @NotNull
+    private static JetType getSerializableReturnType(@NotNull JetType type) {
+        return isSerializableType(type) ? type : KotlinBuiltIns.getInstance().getAnyType();
+    }
+
+    /**
+     * @return true iff this type can be serialized. Types which correspond to type parameters, top-level classes, inner classes, and
+     * generic classes with serializable arguments are serializable. For other types (local classes, inner of local, etc.) it may be
+     * problematical to construct a FQ name for serialization
+     */
+    private static boolean isSerializableType(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor instanceof TypeParameterDescriptor) {
+            return true;
+        }
+        else if (descriptor instanceof ClassDescriptor) {
+            for (TypeProjection projection : type.getArguments()) {
+                if (!isSerializableType(projection.getType())) {
+                    return false;
+                }
+            }
+
+            return isTopLevelOrInnerClass((ClassDescriptor) descriptor);
+        }
+        else {
+            throw new IllegalStateException("Unknown type constructor: " + type);
+        }
     }
 
     private static int getAccessorFlags(@NotNull PropertyAccessorDescriptor accessor) {

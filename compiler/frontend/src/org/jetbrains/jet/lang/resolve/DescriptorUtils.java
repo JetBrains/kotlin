@@ -598,4 +598,13 @@ public class DescriptorUtils {
         assert descriptor != null;
         return descriptor;
     }
+
+    /**
+     * @return true iff {@code descriptor}'s first non-class container is a namespace
+     */
+    public static boolean isTopLevelOrInnerClass(@NotNull ClassDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        return isTopLevelDeclaration(descriptor) ||
+               containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
+    }
 }
