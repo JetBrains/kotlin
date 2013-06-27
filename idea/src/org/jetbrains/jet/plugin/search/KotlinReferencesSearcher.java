@@ -27,26 +27,33 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+    public static void processJetClassOrObject(
+            final @NotNull JetClassOrObject element, @NotNull ReferencesSearch.SearchParameters queryParameters
+    ) {
+        String className = element.getName();
+        if (className != null) {
+            PsiClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
+                @Override
+                public PsiClass compute() {
+                    return LightClassUtil.getPsiClass(element);
+                }
+            });
+            if (lightClass != null) {
+                queryParameters.getOptimizer().searchWord(className, queryParameters.getEffectiveSearchScope(), true, lightClass);
+            }
+        }
+    }
+
+
+
     @Override
     public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
-        final PsiElement element = queryParameters.getElementToSearch();
+        PsiElement element = queryParameters.getElementToSearch();
         if (element instanceof JetClass) {
-            String className = ((JetClass) element).getName();
-            if (className != null) {
-                PsiClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
-                    @Override
-                    public PsiClass compute() {
-                        return LightClassUtil.getPsiClass((JetClass) element);
-                    }
-                });
-                if (lightClass != null) {
-                    queryParameters.getOptimizer().searchWord(className, queryParameters.getEffectiveSearchScope(), true, lightClass);
-                }
-            }
+            processJetClassOrObject((JetClass) element, queryParameters);
         }
         else if (element instanceof JetNamedFunction) {
             final JetNamedFunction function = (JetNamedFunction) element;
@@ -58,10 +65,33 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                         return LightClassUtil.getLightClassMethod(function);
                     }
                 });
-                if (method != null) {
-                    queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, method);
-                }
+                searchMethod(queryParameters, method);
             }
+        }
+        else if (element instanceof JetProperty) {
+            final JetProperty property = (JetProperty) element;
+            LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
+                    ApplicationManager.getApplication().runReadAction(new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
+                        @Override
+                        public LightClassUtil.PropertyAccessorsPsiMethods compute() {
+                            return LightClassUtil.getLightClassPropertyMethods(property);
+                        }
+                    });
+
+            searchMethod(queryParameters, propertyMethods.getGetter());
+            searchMethod(queryParameters, propertyMethods.getSetter());
+        }
+        else if (element instanceof JetObjectDeclarationName) {
+            PsiElement parent = element.getParent();
+            if (parent instanceof JetObjectDeclaration) {
+                processJetClassOrObject((JetObjectDeclaration)parent, queryParameters);
+            }
+        }
+    }
+
+    private static void searchMethod(ReferencesSearch.SearchParameters queryParameters, PsiMethod method) {
+        if (method != null) {
+            queryParameters.getOptimizer().searchWord(method.getName(), queryParameters.getEffectiveSearchScope(), true, method);
         }
     }
 }
