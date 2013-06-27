@@ -158,7 +158,7 @@ public class DescriptorSerializer {
 
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
             if (setter != null) {
-                hasGetter = true;
+                hasSetter = true;
                 int accessorFlags = getAccessorFlags(setter);
                 if (accessorFlags != propertyFlags) {
                     builder.setSetterFlags(accessorFlags);
