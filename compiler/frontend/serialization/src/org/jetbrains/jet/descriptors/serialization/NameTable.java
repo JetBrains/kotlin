@@ -82,7 +82,12 @@ public class NameTable {
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
             NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-            builder.setParentQualifiedName(getFqNameIndex(namespaceDescriptor));
+            if (DescriptorUtils.isRootNamespace(namespaceDescriptor)) {
+                builder.clearParentQualifiedName();
+            }
+            else {
+                builder.setParentQualifiedName(getFqNameIndex(namespaceDescriptor));
+            }
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor outerClass = (ClassDescriptor) containingDeclaration;
@@ -113,5 +118,4 @@ public class NameTable {
 
         return qualifiedNames.intern(builder);
     }
-
 }
