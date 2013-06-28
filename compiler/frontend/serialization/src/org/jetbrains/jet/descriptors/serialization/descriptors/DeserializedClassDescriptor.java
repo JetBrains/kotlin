@@ -25,8 +25,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.TraceUtil;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.storage.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 public class DeserializedClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
 
@@ -120,7 +122,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.classObjectDescriptor = storageManager.createNullableLazyValue(new Computable<ClassDescriptor>() {
             @Override
             public ClassDescriptor compute() {
-                return computeClassObjectDecriptor();
+                return computeClassObjectDescriptor();
             }
         });
         this.nestedClasses = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedClassNameList(), nameResolver)) {
@@ -250,9 +252,30 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     }
 
     @Nullable
-    private ClassDescriptor computeClassObjectDecriptor() {
+    private ClassDescriptor computeClassObjectDescriptor() {
         if (!classProto.getClassObjectPresent()) {
             return null;
+        }
+
+        if (getKind() == ClassKind.ENUM_CLASS) {
+            MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
+                    this, getUnsubstitutedInnerClassesScope() /* TODO ?! */, ClassKind.CLASS_OBJECT, false, getClassObjectName(getName()));
+            classObjectDescriptor.setModality(Modality.FINAL);
+            classObjectDescriptor.setVisibility(getVisibility());
+            classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+            classObjectDescriptor.createTypeConstructor();
+
+            // TODO: do something if trace has errors?
+            BindingTrace trace = new BindingTraceContext();
+            ConstructorDescriptorImpl primaryConstructorForObject = DescriptorResolver.createPrimaryConstructorForObject(classObjectDescriptor);
+            primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
+            classObjectDescriptor.setPrimaryConstructor(primaryConstructorForObject, trace);
+
+            classObjectDescriptor.getBuilder().addFunctionDescriptor(
+                    DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
+            classObjectDescriptor.getBuilder().addFunctionDescriptor(
+                    DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+            return classObjectDescriptor;
         }
 
         return nestedClassResolver.resolveClassObject(this);

@@ -128,6 +128,16 @@ public class DescriptorSerializer {
             builder.setClassObjectPresent(true);
         }
 
+        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+            ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
+            assert classObject != null : "Enum class object shouldn't be null: " + classDescriptor;
+            for (ClassDescriptor descriptor : classObject.getDefaultType().getMemberScope().getObjectDescriptors()) {
+                if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
+                    builder.addEnumEntry(nameTable.getSimpleNameIndex(descriptor.getName()));
+                }
+            }
+        }
+
         return builder;
     }
 

@@ -45,7 +45,7 @@ public class NameResolver {
     @NotNull
     public ClassId getClassId(int index) {
         QualifiedName fqNameProto = qualifiedNames.getQualifiedName(index);
-        assert fqNameProto.getKind() == ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS : "Not a class fqName: " + getClassId(index);
+        assert fqNameProto.getKind() == ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS : "Not a class fqName: " + fqNameProto.getKind();
 
         StringBuilder relativeClassName = new StringBuilder();
         QualifiedName packageFqNameProto = renderFqName(relativeClassName, fqNameProto, QualifiedName.Kind.CLASS);

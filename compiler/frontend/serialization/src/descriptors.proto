@@ -124,6 +124,8 @@ message Class {
   // todo: other constructors?
 
   repeated Callable member = 11;
+
+  repeated int32 enum_entry = 12;
 }
 
 message Callable {

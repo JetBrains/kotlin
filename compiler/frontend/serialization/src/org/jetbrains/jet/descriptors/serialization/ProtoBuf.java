@@ -3371,6 +3371,11 @@ public final class ProtoBuf {
         getMemberList();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index);
     int getMemberCount();
+    
+    // repeated int32 enum_entry = 12;
+    java.util.List<java.lang.Integer> getEnumEntryList();
+    int getEnumEntryCount();
+    int getEnumEntry(int index);
   }
   public static final class Class extends
       com.google.protobuf.GeneratedMessageLite
@@ -3610,6 +3615,20 @@ public final class ProtoBuf {
       return member_.get(index);
     }
     
+    // repeated int32 enum_entry = 12;
+    public static final int ENUM_ENTRY_FIELD_NUMBER = 12;
+    private java.util.List<java.lang.Integer> enumEntry_;
+    public java.util.List<java.lang.Integer>
+        getEnumEntryList() {
+      return enumEntry_;
+    }
+    public int getEnumEntryCount() {
+      return enumEntry_.size();
+    }
+    public int getEnumEntry(int index) {
+      return enumEntry_.get(index);
+    }
+    
     private void initFields() {
       flags_ = 0;
       extraVisibility_ = "";
@@ -3621,6 +3640,7 @@ public final class ProtoBuf {
       classObjectPresent_ = false;
       primaryConstructor_ = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance();
       member_ = java.util.Collections.emptyList();
+      enumEntry_ = java.util.Collections.emptyList();;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3692,6 +3712,9 @@ public final class ProtoBuf {
       for (int i = 0; i < member_.size(); i++) {
         output.writeMessage(11, member_.get(i));
       }
+      for (int i = 0; i < enumEntry_.size(); i++) {
+        output.writeInt32(12, enumEntry_.get(i));
+      }
     }
     
     private int memoizedSerializedSize = -1;
@@ -3749,6 +3772,15 @@ public final class ProtoBuf {
       for (int i = 0; i < member_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(11, member_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < enumEntry_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(enumEntry_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getEnumEntryList().size();
       }
       memoizedSerializedSize = size;
       return size;
@@ -3872,6 +3904,8 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000100);
         member_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000200);
+        enumEntry_ = java.util.Collections.emptyList();;
+        bitField0_ = (bitField0_ & ~0x00000400);
         return this;
       }
       
@@ -3950,6 +3984,11 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000200);
         }
         result.member_ = member_;
+        if (((bitField0_ & 0x00000400) == 0x00000400)) {
+          enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
+          bitField0_ = (bitField0_ & ~0x00000400);
+        }
+        result.enumEntry_ = enumEntry_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -4018,6 +4057,16 @@ public final class ProtoBuf {
           } else {
             ensureMemberIsMutable();
             member_.addAll(other.member_);
+          }
+          
+        }
+        if (!other.enumEntry_.isEmpty()) {
+          if (enumEntry_.isEmpty()) {
+            enumEntry_ = other.enumEntry_;
+            bitField0_ = (bitField0_ & ~0x00000400);
+          } else {
+            ensureEnumEntryIsMutable();
+            enumEntry_.addAll(other.enumEntry_);
           }
           
         }
@@ -4146,6 +4195,20 @@ public final class ProtoBuf {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addMember(subBuilder.buildPartial());
+              break;
+            }
+            case 96: {
+              ensureEnumEntryIsMutable();
+              enumEntry_.add(input.readInt32());
+              break;
+            }
+            case 98: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              while (input.getBytesUntilLimit() > 0) {
+                addEnumEntry(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
           }
@@ -4649,6 +4712,51 @@ public final class ProtoBuf {
       public Builder removeMember(int index) {
         ensureMemberIsMutable();
         member_.remove(index);
+        
+        return this;
+      }
+      
+      // repeated int32 enum_entry = 12;
+      private java.util.List<java.lang.Integer> enumEntry_ = java.util.Collections.emptyList();;
+      private void ensureEnumEntryIsMutable() {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+          enumEntry_ = new java.util.ArrayList<java.lang.Integer>(enumEntry_);
+          bitField0_ |= 0x00000400;
+         }
+      }
+      public java.util.List<java.lang.Integer>
+          getEnumEntryList() {
+        return java.util.Collections.unmodifiableList(enumEntry_);
+      }
+      public int getEnumEntryCount() {
+        return enumEntry_.size();
+      }
+      public int getEnumEntry(int index) {
+        return enumEntry_.get(index);
+      }
+      public Builder setEnumEntry(
+          int index, int value) {
+        ensureEnumEntryIsMutable();
+        enumEntry_.set(index, value);
+        
+        return this;
+      }
+      public Builder addEnumEntry(int value) {
+        ensureEnumEntryIsMutable();
+        enumEntry_.add(value);
+        
+        return this;
+      }
+      public Builder addAllEnumEntry(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureEnumEntryIsMutable();
+        super.addAll(values, enumEntry_);
+        
+        return this;
+      }
+      public Builder clearEnumEntry() {
+        enumEntry_ = java.util.Collections.emptyList();;
+        bitField0_ = (bitField0_ & ~0x00000400);
         
         return this;
       }
