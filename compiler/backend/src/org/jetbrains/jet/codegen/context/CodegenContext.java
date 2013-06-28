@@ -187,7 +187,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public CodegenContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
+    public ScriptContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
         return new ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
     }
 

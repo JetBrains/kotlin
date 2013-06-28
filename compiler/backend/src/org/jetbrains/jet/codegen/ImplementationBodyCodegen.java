@@ -98,7 +98,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
-        this.functionCodegen = new FunctionCodegen(context, v, state);
+        this.functionCodegen = new FunctionCodegen(context, v, state, this);
         this.propertyCodegen = new PropertyCodegen(context, v, this.functionCodegen, this);
     }
 
@@ -819,13 +819,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         JvmMethodSignature signature = typeMapper.mapSignature(function);
 
-        FunctionCodegen fc = new FunctionCodegen(context, v, state);
-        fc.generateMethod(myClass, signature, function, new FunctionGenerationStrategy() {
+        functionCodegen.generateMethod(myClass, signature, function, new FunctionGenerationStrategy() {
             @Override
             public void generateBody(
                     @NotNull MethodVisitor mv,
                     @NotNull JvmMethodSignature signature,
-                    @NotNull MethodContext context
+                    @NotNull MethodContext context,
+                    @Nullable MemberCodegen parentCodegen
             ) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 if (!componentType.equals(Type.VOID_TYPE)) {
@@ -843,13 +843,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final Type thisDescriptorType = typeMapper.mapType(descriptor.getDefaultType());
 
-        FunctionCodegen fc = new FunctionCodegen(context, v, state);
-        fc.generateMethod(myClass, methodSignature, function, new FunctionGenerationStrategy() {
+        functionCodegen.generateMethod(myClass, methodSignature, function, new FunctionGenerationStrategy() {
             @Override
             public void generateBody(
                     @NotNull MethodVisitor mv,
                     @NotNull JvmMethodSignature signature,
-                    @NotNull MethodContext context
+                    @NotNull MethodContext context,
+                    @Nullable MemberCodegen parentCodegen
             ) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -884,7 +884,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         });
 
         MethodContext functionContext = context.intoFunction(function);
-        FunctionCodegen.generateDefaultIfNeeded(functionContext, state, v, methodSignature, function, OwnerKind.IMPLEMENTATION,
+
+        functionCodegen.generateDefaultIfNeeded(functionContext, methodSignature, function, OwnerKind.IMPLEMENTATION,
                                                 new DefaultParameterValueLoader() {
                                                     @Override
                                                     public void putValueOnStack(
@@ -904,7 +905,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                                 .put(propertyType, codegen.v);
                                                     }
                                                 });
-}
+
+    }
 
     private void generateEnumMethodsAndConstInitializers() {
         if (!myEnumConstants.isEmpty()) {
@@ -1171,7 +1173,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    }
         );
 
-        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorSignature, constructorDescriptor,
+        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorSignature, constructorDescriptor,
                                                 OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT);
 
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, closure);
@@ -1483,7 +1485,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             mv.visitCode();
             FrameMap frameMap = context.prepareFrame(typeMapper);
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context.intoFunction(inheritedFun), state);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context.intoFunction(inheritedFun), state, this);
             codegen.generateThisOrOuter(descriptor, false);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?
 
             Type[] argTypes = methodToGenerate.getArgumentTypes();

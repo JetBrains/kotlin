@@ -23,26 +23,16 @@ import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 
-public class MemberCodegen extends GenerationStateAware {
-
-    @Nullable
-    private MemberCodegen parentCodegen;
+public class MemberCodegen extends ParentCodegenAwareImpl {
 
     public MemberCodegen(@NotNull GenerationState state, @Nullable MemberCodegen parentCodegen) {
-        super(state);
-        this.parentCodegen = parentCodegen;
-    }
-
-    @Nullable
-    public MemberCodegen getParentCodegen() {
-        return parentCodegen;
+        super(state, parentCodegen);
     }
 
     public void genFunctionOrProperty(
@@ -50,7 +40,7 @@ public class MemberCodegen extends GenerationStateAware {
             @NotNull JetTypeParameterListOwner functionOrProperty,
             @NotNull ClassBuilder classBuilder
     ) {
-        FunctionCodegen functionCodegen = new FunctionCodegen(context, classBuilder, state);
+        FunctionCodegen functionCodegen = new FunctionCodegen(context, classBuilder, state, this);
         if (functionOrProperty instanceof JetNamedFunction) {
             try {
                 functionCodegen.gen((JetNamedFunction) functionOrProperty);
@@ -102,7 +92,7 @@ public class MemberCodegen extends GenerationStateAware {
 
         if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
             ClassBuilder traitBuilder = state.getFactory().forTraitImplementation(descriptor, state, aClass.getContainingFile());
-            new TraitImplBodyCodegen(aClass, parentContext.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state)
+            new TraitImplBodyCodegen(aClass, parentContext.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state, this)
                     .generate();
             traitBuilder.done();
         }

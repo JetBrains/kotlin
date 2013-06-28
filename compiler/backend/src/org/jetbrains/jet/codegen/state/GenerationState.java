@@ -18,10 +18,12 @@ package org.jetbrains.jet.codegen.state;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -48,9 +50,6 @@ public class GenerationState {
     private final ClassFileFactory classFileFactory;
 
     @NotNull
-    private final ScriptCodegen scriptCodegen;
-
-    @NotNull
     private final Project project;
 
     @NotNull
@@ -70,6 +69,9 @@ public class GenerationState {
     private final boolean generateNotNullParamAssertions;
 
     private final boolean generateDeclaredClasses;
+
+    @Nullable
+    private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, BindingContext bindingContext, List<JetFile> files) {
         this(project, builderFactory, Progress.DEAF, bindingContext, files, true, false, true);
@@ -97,7 +99,6 @@ public class GenerationState {
 
         InjectorForJvmCodegen injector = new InjectorForJvmCodegen(typeMapper, this, builderFactory, project);
 
-        this.scriptCodegen = injector.getScriptCodegen();
         this.intrinsics = injector.getIntrinsics();
         this.classFileFactory = injector.getClassFileFactory();
 
@@ -129,11 +130,6 @@ public class GenerationState {
     @NotNull
     public List<JetFile> getFiles() {
         return files;
-    }
-
-    @NotNull
-    public ScriptCodegen getScriptCodegen() {
-        return scriptCodegen;
     }
 
     @NotNull
@@ -188,5 +184,14 @@ public class GenerationState {
     }
 
     public void destroy() {
+    }
+
+    @Nullable
+    public List<ScriptDescriptor> getEarlierScriptsForReplInterpreter() {
+        return earlierScriptsForReplInterpreter;
+    }
+
+    public void setEarlierScriptsForReplInterpreter(@Nullable List<ScriptDescriptor> earlierScriptsForReplInterpreter) {
+        this.earlierScriptsForReplInterpreter = earlierScriptsForReplInterpreter;
     }
 }

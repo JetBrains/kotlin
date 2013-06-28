@@ -61,7 +61,7 @@ public class ScriptGenTest extends CodegenTestCase {
         try {
             Class<?> scriptClass = loader.loadClass(scriptClassName);
 
-            Constructor constructor = getConstructor(scriptClass, factory.getState().getScriptCodegen().getScriptConstructorMethod());
+            Constructor constructor = getConstructor(scriptClass);
             scriptInstance = constructor.newInstance(myFiles.getScriptParameterValues().toArray());
 
             assertFalse("expecting at least one expectation", myFiles.getExpectedValues().isEmpty());
@@ -92,43 +92,12 @@ public class ScriptGenTest extends CodegenTestCase {
         }
     }
 
-    protected Constructor getConstructor(@NotNull Class<?> clazz, org.jetbrains.asm4.commons.Method method) {
-        if (!method.getName().equals("<init>")) {
-            throw new IllegalArgumentException("not constructor: " + method);
+    protected Constructor getConstructor(@NotNull Class<?> clazz) {
+        Constructor [] constructors = clazz.getConstructors();
+        if (constructors == null || constructors.length != 1) {
+            throw new IllegalArgumentException("Script class should have one constructor: " + clazz);
         }
-        Class[] classes = new Class[method.getArgumentTypes().length];
-        for (int i = 0; i < classes.length; ++i) {
-            classes[i] = loadClassFromType(method.getArgumentTypes()[i]);
-        }
-        try {
-            return clazz.getConstructor(classes);
-        }
-        catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @NotNull
-    private Class<?> loadClassFromType(@NotNull Type type) {
-        try {
-            switch (type.getSort()) {
-                case Type.OBJECT:
-                    return Class.forName(type.getClassName());
-                case Type.INT:
-                    return int.class;
-                case Type.LONG:
-                    return long.class;
-                default:
-                    // AFAIK there is no way to create array class from class
-                    if (type.getDescriptor().equals("[Ljava/lang/String;")) {
-                        return String[].class;
-                    }
-                    throw new IllegalStateException("not implemented: " + type.getDescriptor());
-            }
-        }
-        catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
-        }
+        return constructors[0];
     }
 
     public void testHelloWorld() {

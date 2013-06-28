@@ -78,7 +78,7 @@ import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.TH
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
-public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
+public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup, ParentCodegenAware {
 
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
     private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
@@ -100,6 +100,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
     private final Collection<String> localVariableNames = new HashSet<String>();
+
+    @Nullable
+    private final MemberCodegen parentCodegen;
 
     /*
      * When we create a temporary variable to hold some value not to compute it many times
@@ -161,9 +164,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull FrameMap myMap,
             @NotNull Type returnType,
             @NotNull MethodContext context,
-            @NotNull GenerationState state
+            @NotNull GenerationState state,
+            @Nullable MemberCodegen parentCodegen
     ) {
         this.myFrameMap = myMap;
+        this.parentCodegen = parentCodegen;
         this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
         this.state = state;
@@ -217,6 +222,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     public Collection<String> getLocalVariableNamesForExpression() {
         return localVariableNames;
+    }
+
+    @Nullable
+    @Override
+    public MemberCodegen getParentCodegen() {
+        return parentCodegen;
     }
 
     public StackValue genQualified(StackValue receiver, JetElement selector) {
@@ -1311,7 +1322,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type closureSuperClass = samInterfaceClass == null ? getFunctionImplType(descriptor) : OBJECT_TYPE;
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, declaration, descriptor, samInterfaceClass, closureSuperClass, context,
-                this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration));
+                this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), parentCodegen);
 
         closureCodegen.gen();
 
@@ -2218,7 +2229,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
                 else {
                     Type classType = asmTypeForScriptDescriptor(bindingContext, receiver.getDeclarationDescriptor());
-                    String fieldName = state.getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
+                    String fieldName = getParentScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
                     result.put(currentScriptType, v);
                     StackValue.field(classType, currentScriptType, fieldName, false).put(classType, v);
                 }
@@ -2434,14 +2445,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     @Override
                     public ExpressionCodegen initializeExpressionCodegen(
                             JvmMethodSignature signature, MethodContext context, MethodVisitor mv,
-                            Type returnType
+                            Type returnType,
+                            MemberCodegen parentCodegen
                     ) {
                         FunctionDescriptor referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
                         JetType returnJetType = referencedFunction.getReturnType();
                         assert returnJetType != null : "Return type can't be null: " + referencedFunction;
 
                         return super.initializeExpressionCodegen(signature, context,
-                                                          mv, typeMapper.mapReturnType(returnJetType));
+                                                          mv, typeMapper.mapReturnType(returnJetType), parentCodegen);
                     }
 
                     @Override
@@ -2564,8 +2576,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                         return new ExpressionReceiver(receiverExpression, receiver.getType());
                     }
-                }
-        );
+                },
+                getParentCodegen());
 
         closureCodegen.gen();
 
@@ -3808,5 +3820,17 @@ The "returned" value of try expression with no finally is either the last expres
     @Override
     public String toString() {
         return context.getContextDescriptor().toString();
+    }
+
+    @NotNull
+    private ScriptCodegen getParentScriptCodegen() {
+        MemberCodegen codegen = parentCodegen;
+        while (codegen != null) {
+            if (codegen instanceof ScriptCodegen) {
+                return (ScriptCodegen) codegen;
+            }
+            codegen = codegen.getParentCodegen();
+        }
+        throw new IllegalStateException("Script codegen should be present in codegen tree");
     }
 }

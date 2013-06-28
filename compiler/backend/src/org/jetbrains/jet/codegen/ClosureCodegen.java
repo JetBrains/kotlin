@@ -51,7 +51,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.isConst;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
-public class ClosureCodegen extends GenerationStateAware {
+public class ClosureCodegen extends ParentCodegenAwareImpl {
     private final PsiElement fun;
     private final FunctionDescriptor funDescriptor;
     private final ClassDescriptor samInterface;
@@ -71,9 +71,10 @@ public class ClosureCodegen extends GenerationStateAware {
             @NotNull Type closureSuperClass,
             @NotNull CodegenContext context,
             @NotNull LocalLookup localLookup,
-            @NotNull FunctionGenerationStrategy strategy
+            @NotNull FunctionGenerationStrategy strategy,
+            @Nullable MemberCodegen parentCodegen
     ) {
-        super(state);
+        super(state, parentCodegen);
 
         this.fun = fun;
         this.funDescriptor = funDescriptor;
@@ -88,7 +89,6 @@ public class ClosureCodegen extends GenerationStateAware {
 
         this.asmType = asmTypeForAnonymousClass(bindingContext, funDescriptor);
     }
-
 
     public void gen() {
         ClassBuilder cv = state.getFactory().newVisitor(asmType, fun.getContainingFile());
@@ -120,7 +120,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor);
 
-        FunctionCodegen fc = new FunctionCodegen(context, cv, state);
+        FunctionCodegen fc = new FunctionCodegen(context, cv, state, getParentCodegen());
         fc.generateMethod(fun, jvmMethodSignature, funDescriptor, strategy);
 
         this.constructor = generateConstructor(cv);
@@ -131,9 +131,11 @@ public class ClosureCodegen extends GenerationStateAware {
 
         genClosureFields(closure, cv, typeMapper);
 
-        FunctionCodegen.generateDefaultIfNeeded(context.intoFunction(funDescriptor), state, cv,
-                                                typeMapper.mapSignature(Name.identifier("invoke"), funDescriptor), funDescriptor,
-                                                context.getContextKind(), DefaultParameterValueLoader.DEFAULT);
+        fc.generateDefaultIfNeeded(context.intoFunction(funDescriptor),
+                                   typeMapper.mapSignature(Name.identifier("invoke"), funDescriptor),
+                                   funDescriptor,
+                                   context.getContextKind(),
+                                   DefaultParameterValueLoader.DEFAULT);
 
         cv.done();
     }

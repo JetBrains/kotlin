@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,6 @@ public class InjectorForJvmCodegen {
     private final BindingTrace bindingTrace;
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
-    private final ScriptCodegen scriptCodegen;
     private final IntrinsicMethods intrinsics;
     private final ClassFileFactory classFileFactory;
     
@@ -56,11 +54,8 @@ public class InjectorForJvmCodegen {
         this.bindingTrace = jetTypeMapper.getBindingTrace();
         this.bindingContext = bindingTrace.getBindingContext();
         this.classBuilderMode = classBuilderFactory.getClassBuilderMode();
-        this.scriptCodegen = new ScriptCodegen(getGenerationState());
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory(getGenerationState());
-
-        this.scriptCodegen.setClassFileFactory(classFileFactory);
 
         this.classFileFactory.setBuilderFactory(classBuilderFactory);
 
@@ -82,10 +77,6 @@ public class InjectorForJvmCodegen {
     
     public Project getProject() {
         return this.project;
-    }
-    
-    public ScriptCodegen getScriptCodegen() {
-        return this.scriptCodegen;
     }
     
     public IntrinsicMethods getIntrinsics() {

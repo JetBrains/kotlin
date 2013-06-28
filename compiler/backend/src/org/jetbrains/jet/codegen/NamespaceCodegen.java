@@ -178,7 +178,7 @@ public class NamespaceCodegen extends MemberCodegen {
                 }
             }
             else if (declaration instanceof JetScript) {
-                state.getScriptCodegen().generate((JetScript) declaration);
+               ScriptCodegen.createScriptCodegen((JetScript) declaration, state, CodegenContext.STATIC.intoNamespace(descriptor)).generate();
             }
         }
 
@@ -280,7 +280,7 @@ public class NamespaceCodegen extends MemberCodegen {
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                               Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
 
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context.intoFunction(clInit), state);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context.intoFunction(clInit), state, this);
 
             for (JetDeclaration declaration : properties) {
                 ImplementationBodyCodegen.

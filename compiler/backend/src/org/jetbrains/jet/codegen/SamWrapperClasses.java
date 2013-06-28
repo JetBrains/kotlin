@@ -43,7 +43,7 @@ public class SamWrapperClasses {
                                          new Factory<Type>() {
                                              @Override
                                              public Type create() {
-                                                 return new SamWrapperCodegen(state, samInterface).genWrapper(file);
+                                                 return new SamWrapperCodegen(state, samInterface, null).genWrapper(file);
                                              }
                                          });
     }
