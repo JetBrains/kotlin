@@ -20,8 +20,12 @@ import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
@@ -58,6 +62,12 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
 
         NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
+
+        for (DeclarationDescriptor descriptor : namespaceFromClass.getMemberScope().getAllDescriptors()) {
+            if (descriptor instanceof ClassDescriptor) {
+                assert descriptor instanceof DeserializedClassDescriptor : DescriptorUtils.getFQName(descriptor);
+            }
+        }
 
         validateAndCompareNamespaces(namespaceFromSource, namespaceFromClass,
                                      NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
