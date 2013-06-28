@@ -69,7 +69,7 @@ public abstract class AbstractClassResolver implements ClassResolver {
 
                 AbstractClassResolver _this = AbstractClassResolver.this;
                 ClassDescriptor classDescriptor = new DeserializedClassDescriptor(
-                        storageManager,  owner, classData.getNameResolver(), _this.annotationDeserializer,
+                        storageManager, owner, classData.getNameResolver(), _this.annotationDeserializer,
                         _this, nestedClassResolver, classProto, null
                 );
                 classDescriptorCreated(classDescriptor);
@@ -81,6 +81,16 @@ public abstract class AbstractClassResolver implements ClassResolver {
     @Nullable
     @Override
     public ClassDescriptor findClass(@NotNull ClassId classId) {
+        ClassDescriptor externalClassDescriptor = resolveClassExternally(classId);
+        if (externalClassDescriptor != null) {
+            return externalClassDescriptor;
+        }
+        return findClassInternally(classId);
+    }
+
+    //do not call resolveClassExternally
+    @Nullable
+    public ClassDescriptor findClassInternally(@NotNull ClassId classId) {
         return findClass.fun(classId);
     }
 
@@ -92,6 +102,12 @@ public abstract class AbstractClassResolver implements ClassResolver {
 
     @NotNull
     protected abstract ClassId getClassId(@NotNull ClassDescriptor classDescriptor);
+
+    @Nullable
+    protected ClassDescriptor resolveClassExternally(@NotNull ClassId classId) {
+        //TODO: decide whether it is ok to provide default implementation
+        return null;
+    }
 
     @NotNull
     protected abstract Name getClassObjectName(@NotNull ClassDescriptor outerClass);

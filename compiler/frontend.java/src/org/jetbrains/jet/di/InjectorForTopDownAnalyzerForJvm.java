@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
@@ -110,6 +111,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final JavaFunctionResolver javaFunctionResolver;
     private final JavaValueParameterResolver javaValueParameterResolver;
     private final JavaSignatureResolver javaSignatureResolver;
+    private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final JavaNamespaceResolver javaNamespaceResolver;
     private final JavaConstructorResolver javaConstructorResolver;
     private final JavaInnerClassResolver javaInnerClassResolver;
@@ -163,6 +165,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaFunctionResolver = new JavaFunctionResolver();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
         this.javaSignatureResolver = new JavaSignatureResolver();
+        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaInnerClassResolver = new JavaInnerClassResolver();
@@ -293,6 +296,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
+        javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setPsiClassFinder(psiClassFinder);
         javaClassResolver.setSemanticServices(javaSemanticServices);
@@ -324,6 +328,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
         javaSignatureResolver.setJavaSemanticServices(javaSemanticServices);
+
+        deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
+        deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
 
         javaNamespaceResolver.setJavaSemanticServices(javaSemanticServices);
         javaNamespaceResolver.setPsiClassFinder(psiClassFinder);

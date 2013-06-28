@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -39,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
@@ -51,7 +51,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.*;
@@ -76,41 +75,6 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @Override
         public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
             return namespaceDescriptor.getName();
-        }
-    };
-
-    public static final AnnotationDeserializer DUMMY_ANNOTATION_DESERIALIZER = new AnnotationDeserializer() {
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadClassAnnotations(
-                @NotNull ProtoBuf.Class classProto
-        ) {
-            // This is a hack for tests: only data annotations are present in test data so far
-            AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
-            annotationDescriptor.setAnnotationType(KotlinBuiltIns.getInstance().getDataClassAnnotation().getDefaultType());
-            return Collections.singletonList(annotationDescriptor);
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadCallableAnnotations(
-                @NotNull ProtoBuf.Callable callableProto
-        ) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadSetterAnnotations(@NotNull ProtoBuf.Callable callableProto) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadValueParameterAnnotations(
-                @NotNull ProtoBuf.Callable.ValueParameter parameterProto
-        ) {
-            throw new UnsupportedOperationException(); // TODO
         }
     };
 
@@ -400,8 +364,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             };
 
             NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames);
-            return new DeserializedClassDescriptor(new LockBasedStorageManager(), containingDeclaration, nameResolver, DUMMY_ANNOTATION_DESERIALIZER,
-                                                   this, nestedClassResolver, classMetadata.classProto, null);
+            return new DeserializedClassDescriptor(new LockBasedStorageManager(), containingDeclaration, nameResolver,
+                    DeserializedDescriptorResolver.DUMMY_ANNOTATION_DESERIALIZER, this, nestedClassResolver, classMetadata.classProto, null);
         }
 
         @Nullable

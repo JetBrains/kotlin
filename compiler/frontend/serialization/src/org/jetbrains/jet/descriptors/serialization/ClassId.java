@@ -1,13 +1,43 @@
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.List;
+
 public final class ClassId {
     private final FqName packageFqName;
     private final FqNameUnsafe relativeClassName;
+
+    @NotNull
+    public static ClassId fromFqNameAndContainingDeclaration(
+            @NotNull FqName fqName,
+            @NotNull ClassOrNamespaceDescriptor containingDeclaration
+    ) {
+        NamespaceDescriptor containingNamespace = DescriptorUtils.getParentOfType(containingDeclaration, NamespaceDescriptor.class, false);
+        assert containingNamespace != null;
+        List<Name> fullNameSegments = fqName.pathSegments();
+        FqName namespaceFqName = DescriptorUtils.getFQName(containingNamespace).toSafe();
+        List<Name> namespaceNameSegments = namespaceFqName.pathSegments();
+        for (int i = 0; i < namespaceNameSegments.size(); ++i) {
+            assert fullNameSegments.get(i).equals(namespaceNameSegments.get(i));
+        }
+        List<Name> relativeNameSegments = fullNameSegments.subList(namespaceNameSegments.size(), fullNameSegments.size());
+        FqName relativeFqName = FqName.fromSegments(ContainerUtil.map2List(relativeNameSegments, new Function<Name, String>() {
+            @Override
+            public String fun(Name name) {
+                return name.asString();
+            }
+        }));
+        return new ClassId(namespaceFqName, relativeFqName.toUnsafe());
+    }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull FqNameUnsafe relativeClassName) {
         this.packageFqName = packageFqName;
