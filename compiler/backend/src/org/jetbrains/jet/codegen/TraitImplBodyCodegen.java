@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -24,8 +24,8 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import static org.jetbrains.asm4.Opcodes.*;
 
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
-    public TraitImplBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
-        super(aClass, context, v, state);
+    public TraitImplBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassBuilder v, GenerationState state) {
+        super(aClass, context, v, state, null);
     }
 
     @Override

@@ -1,0 +1,5 @@
+// MOVE: up
+fun foo() {
+    <caret>// test
+    val x = ""
+}

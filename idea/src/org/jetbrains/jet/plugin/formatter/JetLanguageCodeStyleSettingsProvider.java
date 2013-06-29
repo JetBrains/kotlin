@@ -57,7 +57,7 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "}";
             default:
                 return
-                        "class Some {\n" +
+                        "open class Some {\n" +
                         "  private val f = {(a: Int)->a*2}\n" +
                         "  fun foo() : Int {\n" +
                         "    val test : Int = 12\n" +
@@ -66,7 +66,8 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "  private fun <T>foo2():Int where T : List<T> {\n" +
                         "    return 0\n" +
                         "  }\n" +
-                        "}";
+                        "}\n\n" +
+                        "class AnotherClass<T:Any>: Some";
         }
     }
 
@@ -94,18 +95,20 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AROUND_RANGE", "Around range (..)",
                                           CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS);
 
-                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON", "Space after colon, before declarations' type",
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
+                                          "Space before colon, after declarations' name",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
-                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON", "Space before colon, after declarations' name",
-                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
-
-                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_EXTEND_COLON",
-                                          "Space after colon in new type definition",
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
+                                          "Space after colon, before declarations' type",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_EXTEND_COLON",
                                           "Space before colon in new type definition",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_EXTEND_COLON",
+                                          "Space after colon in new type definition",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD",

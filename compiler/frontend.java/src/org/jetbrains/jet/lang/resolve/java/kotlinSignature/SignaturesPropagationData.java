@@ -20,7 +20,10 @@ import com.google.common.collect.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiMethod;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -154,47 +157,52 @@ public class SignaturesPropagationData {
     private JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors parameters // descriptors built by parameters resolver
     ) {
-        // we are not processing receiver type specifically:
-        // if this function comes from Kotlin, then we don't need to do it, if it doesn't, then it can't have receiver
+        assert parameters.getReceiverType() == null : "Parameters before propagation have receiver type," +
+                                                      " but propagation should be disabled for functions compiled from Kotlin in class: " +
+                                                      DescriptorUtils.getFQName(containingClass);
 
+        JetType receiverType = null;
         List<ValueParameterDescriptor> resultParameters = Lists.newArrayList();
 
+        boolean shouldBeExtension = checkIfShouldBeExtension();
+
         for (ValueParameterDescriptor originalParam : parameters.getDescriptors()) {
-            final int index = originalParam.getIndex();
+            final int originalIndex = originalParam.getIndex();
             List<TypeAndVariance> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                     new Function<FunctionDescriptor, TypeAndVariance>() {
                         @Override
                         public TypeAndVariance fun(FunctionDescriptor superFunction) {
+                            ReceiverParameterDescriptor receiver = superFunction.getReceiverParameter();
+                            int index = receiver != null ? originalIndex - 1 : originalIndex;
+                            if (index == -1) {
+                                assert receiver != null : "can't happen: index is -1, while function is not extension";
+                                return new TypeAndVariance(receiver.getType(), INVARIANT);
+                            }
                             return new TypeAndVariance(superFunction.getValueParameters().get(index).getType(), INVARIANT);
                         }
                     });
 
-            VarargCheckResult varargCheckResult =
-                    checkVarargInSuperFunctions(originalParam);
+            VarargCheckResult varargCheckResult = checkVarargInSuperFunctions(originalParam);
 
             JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, MEMBER_SIGNATURE_CONTRAVARIANT);
 
-            resultParameters.add(new ValueParameterDescriptorImpl(
-                    originalParam.getContainingDeclaration(),
-                    index,
-                    originalParam.getAnnotations(),
-                    originalParam.getName(),
-                    altType,
-                    originalParam.declaresDefaultValue(),
-                    varargCheckResult.isVararg ? KotlinBuiltIns.getInstance().getArrayElementType(altType) : null
-            ));
+            if (shouldBeExtension && originalIndex == 0) {
+                receiverType = altType;
+            }
+            else {
+                resultParameters.add(new ValueParameterDescriptorImpl(
+                        originalParam.getContainingDeclaration(),
+                        shouldBeExtension ? originalIndex - 1 : originalIndex,
+                        originalParam.getAnnotations(),
+                        originalParam.getName(),
+                        altType,
+                        originalParam.declaresDefaultValue(),
+                        varargCheckResult.isVararg ? KotlinBuiltIns.getInstance().getArrayElementType(altType) : null
+                ));
+            }
         }
 
-        JetType originalReceiverType = parameters.getReceiverType();
-        if (originalReceiverType != null) {
-            JetType substituted = SignaturesUtil.createSubstitutorForTypeParameters(autoTypeParameterToModified)
-                    .substitute(originalReceiverType, INVARIANT);
-            assert substituted != null;
-            return new JavaDescriptorResolver.ValueParameterDescriptors(substituted, resultParameters);
-        }
-        else {
-            return new JavaDescriptorResolver.ValueParameterDescriptors(null, resultParameters);
-        }
+        return new JavaDescriptorResolver.ValueParameterDescriptors(receiverType, resultParameters);
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
@@ -234,9 +242,10 @@ public class SignaturesPropagationData {
                 continue;
             }
 
-            assert superFun instanceof FunctionDescriptor : superFun.getClass().getName();
-
-            superFunctions.add(substituteSuperFunction(superclassToSupertype, (FunctionDescriptor) superFun));
+            // TODO: Add propagation for other kotlin descriptors (KT-3621)
+            if (superFun instanceof FunctionDescriptor) {
+                superFunctions.add(substituteSuperFunction(superclassToSupertype, (FunctionDescriptor) superFun));
+            }
         }
 
         // sorting for diagnostic stability
@@ -245,7 +254,7 @@ public class SignaturesPropagationData {
             public int compare(FunctionDescriptor fun1, FunctionDescriptor fun2) {
                 FqNameUnsafe fqName1 = getFQName(fun1.getContainingDeclaration());
                 FqNameUnsafe fqName2 = getFQName(fun2.getContainingDeclaration());
-                return fqName1.getFqName().compareTo(fqName2.getFqName());
+                return fqName1.asString().compareTo(fqName2.asString());
             }
         });
         return superFunctions;
@@ -270,7 +279,7 @@ public class SignaturesPropagationData {
             for (FunctionDescriptor fun : klass.getDefaultType().getMemberScope().getFunctions(functionName)) {
                 CallableMemberDescriptor.Kind kind = fun.getKind();
                 if ((kind == CallableMemberDescriptor.Kind.DECLARATION || kind == CallableMemberDescriptor.Kind.DELEGATION) &&
-                    fun.getValueParameters().size() == parameterCount) {
+                    fun.getValueParameters().size() + (fun.getReceiverParameter() != null ? 1 : 0) == parameterCount) {
                     PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, fun);
                     if (declaration instanceof PsiMethod) {
                         result.put(fqName, Pair.create(fun, (PsiMethod) declaration));
@@ -295,12 +304,38 @@ public class SignaturesPropagationData {
         return null;
     }
 
+    private boolean checkIfShouldBeExtension() {
+        boolean someSupersExtension = false;
+        boolean someSupersNotExtension = false;
+
+        for (FunctionDescriptor superFunction : superFunctions) {
+            if (superFunction.getReceiverParameter() != null)  {
+                someSupersExtension = true;
+            }
+            else {
+                someSupersNotExtension = true;
+            }
+        }
+
+        if (someSupersExtension) {
+            if (someSupersNotExtension) {
+                reportError("Incompatible super methods: some are extension functions, some are not");
+            }
+            else {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @NotNull
     private VarargCheckResult checkVarargInSuperFunctions(@NotNull ValueParameterDescriptor originalParam) {
         boolean someSupersVararg = false;
         boolean someSupersNotVararg = false;
         for (FunctionDescriptor superFunction : superFunctions) {
-            if (superFunction.getValueParameters().get(originalParam.getIndex()).getVarargElementType() != null) {
+            int originalIndex = originalParam.getIndex();
+            int index = superFunction.getReceiverParameter() != null ? originalIndex - 1 : originalIndex;
+            if (index != -1 && superFunction.getValueParameters().get(index).getVarargElementType() != null) {
                 someSupersVararg = true;
             }
             else {

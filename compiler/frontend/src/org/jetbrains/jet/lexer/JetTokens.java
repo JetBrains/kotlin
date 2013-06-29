@@ -19,14 +19,17 @@ package org.jetbrains.jet.lexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 
 public interface JetTokens {
     JetToken EOF   = new JetToken("EOF");
 
-    JetToken BLOCK_COMMENT = new JetToken("BLOCK_COMMENT");
-    JetToken DOC_COMMENT   = new JetToken("DOC_COMMENT");
-    JetToken EOL_COMMENT   = new JetToken("EOL_COMMENT");
-    JetToken SHEBANG_COMMENT = new JetToken("SHEBANG_COMMENT");
+    JetToken BLOCK_COMMENT     = new JetToken("BLOCK_COMMENT");
+    JetToken EOL_COMMENT       = new JetToken("EOL_COMMENT");
+    JetToken SHEBANG_COMMENT   = new JetToken("SHEBANG_COMMENT");
+
+    //JetToken DOC_COMMENT   = new JetToken("DOC_COMMENT");
+    IElementType DOC_COMMENT   = KDocTokens.KDOC;
 
     IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
 
@@ -111,7 +114,7 @@ public interface JetTokens {
     JetToken SAFE_ACCESS = new JetToken("SAFE_ACCESS");
     JetToken ELVIS       = new JetToken("ELVIS");
     //    JetToken MAP         = new JetToken("MAP");
-//    JetToken FILTER      = new JetToken("FILTER");
+    //    JetToken FILTER      = new JetToken("FILTER");
     JetToken QUEST       = new JetToken("QUEST");
     JetToken COLONCOLON  = new JetToken("COLONCOLON");
     JetToken COLON       = new JetToken("COLON");
@@ -128,7 +131,7 @@ public interface JetTokens {
     JetToken HASH        = new JetToken("HASH");
     JetToken AT          = new JetToken("AT");
     JetToken ATAT          = new JetToken("ATAT");
-    
+
     JetToken IDE_TEMPLATE_START = new JetToken("IDE_TEMPLATE_START");
     JetToken IDE_TEMPLATE_END = new JetToken("IDE_TEMPLATE_END");
 
@@ -162,37 +165,45 @@ public interface JetTokens {
     JetKeywordToken FINAL_KEYWORD   = JetKeywordToken.softKeyword("final");
 
     TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
-            THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
-            NULL_KEYWORD,
-            TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
-            IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
-            ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
-            NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD, AS_SAFE
+                                        THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
+                                        NULL_KEYWORD,
+                                        TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
+                                        IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
+                                        ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
+                                        NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD, AS_SAFE
     );
 
     TokenSet SOFT_KEYWORDS = TokenSet.create(IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,
-            SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD,
-            OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
-            CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, INLINE_KEYWORD, REIFIED_KEYWORD
+                                             SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD,
+                                             OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
+                                             CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, INLINE_KEYWORD, REIFIED_KEYWORD
     );
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(ABSTRACT_KEYWORD, ENUM_KEYWORD,
-            OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD,
-            PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, INLINE_KEYWORD, REIFIED_KEYWORD
+                                                 OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD,
+                                                 PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, INLINE_KEYWORD, REIFIED_KEYWORD
     );
-    TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.create(WHITE_SPACE, BLOCK_COMMENT, EOL_COMMENT, DOC_COMMENT, SHEBANG_COMMENT);
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
+
+    /**
+     * Don't add KDocTokens to COMMENTS TokenSet, because it is used in JetParserDefinition.getCommentTokens(),
+     * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
+     *
+     * @see org.jetbrains.jet.lang.psi.JetPsiUtil.isInComment()
+     */
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT, SHEBANG_COMMENT);
+    TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.orSet(COMMENTS, TokenSet.create(WHITE_SPACE));
 
     TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART);
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, EXCLEXCL, MUL, PLUS,
-            MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
-            SAFE_ACCESS, ELVIS,
-//            MAP, FILTER,
-            COLON,
-            RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
-            NOT_IN, NOT_IS,
-            IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
+                                          MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
+                                          SAFE_ACCESS, ELVIS,
+            //            MAP, FILTER,
+                                          COLON,
+                                          RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
+                                          NOT_IN, NOT_IS,
+                                          IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
 
     TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
+    TokenSet ALL_ASSIGNMENTS = TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
 }

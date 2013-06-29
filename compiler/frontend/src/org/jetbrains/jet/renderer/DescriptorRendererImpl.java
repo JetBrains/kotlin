@@ -355,7 +355,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return !callable.getOverriddenDescriptors().isEmpty();
     }
 
-    private void renderOverrideAndMemberKind(@NotNull CallableMemberDescriptor callableMember, @NotNull StringBuilder builder) {
+    private void renderOverride(@NotNull CallableMemberDescriptor callableMember, @NotNull StringBuilder builder) {
         if (!modifiers) return;
         if (overridesSomething(callableMember)) {
             if (overrideRenderingPolicy != OverrideRenderingPolicy.RENDER_OPEN) {
@@ -365,6 +365,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 }
             }
         }
+    }
+
+    private void renderMemberKind(CallableMemberDescriptor callableMember, StringBuilder builder) {
+        if (!modifiers) return;
         if (verbose && callableMember.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             builder.append("/*").append(callableMember.getKind().name().toLowerCase()).append("*/ ");
         }
@@ -460,7 +464,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderAnnotations(function, builder);
             renderVisibility(function.getVisibility(), builder);
             renderModalityForCallable(function, builder);
-            renderOverrideAndMemberKind(function, builder);
+            renderOverride(function, builder);
+            renderMemberKind(function, builder);
 
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(function.getTypeParameters(), builder, true);
@@ -483,6 +488,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderConstructor(@NotNull ConstructorDescriptor constructor, @NotNull StringBuilder builder) {
         renderAnnotations(constructor, builder);
         renderVisibility(constructor.getVisibility(), builder);
+        renderMemberKind(constructor, builder);
 
         builder.append(renderKeyword("constructor")).append(" ");
 
@@ -582,7 +588,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderAnnotations(property, builder);
             renderVisibility(property.getVisibility(), builder);
             renderModalityForCallable(property, builder);
-            renderOverrideAndMemberKind(property, builder);
+            renderOverride(property, builder);
+            renderMemberKind(property, builder);
 
             renderValVarPrefix(property, builder);
         }

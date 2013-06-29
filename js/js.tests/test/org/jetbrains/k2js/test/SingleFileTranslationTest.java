@@ -68,6 +68,10 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         checkFooBoxIsTrue(getTestName(true) + ".kt", ecmaVersions);
     }
 
+    protected void checkFooBoxIsOk() throws Exception {
+        checkFooBoxIsOk(getTestName(true) + ".kt");
+    }
+
     protected void checkFooBoxIsOk(@NotNull String filename) throws Exception {
         checkFooBoxIsOk(DEFAULT_ECMA_VERSIONS, filename);
     }

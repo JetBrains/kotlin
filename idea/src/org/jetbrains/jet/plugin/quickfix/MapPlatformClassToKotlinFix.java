@@ -112,7 +112,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
         if (possibleClasses.size() > 1) {
             LinkedHashSet<String> possibleTypes = new LinkedHashSet<String>();
             for (ClassDescriptor klass : possibleClasses) {
-                possibleTypes.add(klass.getName().getName());
+                possibleTypes.add(klass.getName().asString());
             }
             buildAndShowTemplate(project, editor, file, replacedElements, possibleTypes);
         }
@@ -120,7 +120,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
 
     private List<PsiElement> replaceUsagesWithFirstClass(Project project, List<JetUserType> usages) {
         ClassDescriptor replacementClass = possibleClasses.iterator().next();
-        String replacementClassName = replacementClass.getName().getName();
+        String replacementClassName = replacementClass.getName().asString();
         List<PsiElement> replacedElements = new ArrayList<PsiElement>();
         for (JetUserType usage : usages) {
             JetTypeArgumentList typeArguments = usage.getTypeArgumentList();
@@ -183,8 +183,8 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
         return typeExpr;
     }
 
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

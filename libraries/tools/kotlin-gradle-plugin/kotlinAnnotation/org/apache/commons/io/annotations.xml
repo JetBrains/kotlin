@@ -1,5 +1,0 @@
-<root>
-    <item name='org.apache.commons.io.FilenameUtils java.lang.String getExtension(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

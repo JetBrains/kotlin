@@ -36,9 +36,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private final PriorityProvider<ResolutionCandidate<D>> priorityProvider;
     private final boolean isSafeCall;
 
-    private final Collection<Collection<ResolutionCandidate<D>>> localExtensions = Sets.newLinkedHashSet();
-    private final Collection<Collection<ResolutionCandidate<D>>> members = Sets.newLinkedHashSet();
-    private final Collection<Collection<ResolutionCandidate<D>>> nonLocalExtensions = Sets.newLinkedHashSet();
+    private final Collection<Collection<ResolutionCandidate<D>>> candidatesList = Lists.newArrayList();
 
     private List<ResolutionTask<D, F>> tasks = null;
 
@@ -59,44 +57,19 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
         return candidates;
     }
 
-    public void addLocalExtensions(@NotNull Collection<ResolutionCandidate<D>> candidates) {
+    public void addCandidates(@NotNull Collection<ResolutionCandidate<D>> candidates) {
         if (!candidates.isEmpty()) {
-            localExtensions.add(setIsSafeCall(candidates));
-        }
-    }
-
-    public void addMembers(@NotNull Collection<ResolutionCandidate<D>> candidates) {
-        if (!candidates.isEmpty()) {
-            members.add(setIsSafeCall(candidates));
-        }
-    }
-
-    public void addNonLocalExtensions(@NotNull Collection<ResolutionCandidate<D>> candidates) {
-        if (!candidates.isEmpty()) {
-            nonLocalExtensions.add(setIsSafeCall(candidates));
+            candidatesList.add(setIsSafeCall(candidates));
         }
     }
 
     public List<ResolutionTask<D, F>> getTasks() {
         if (tasks == null) {
             tasks = Lists.newArrayList();
-            List<Collection<ResolutionCandidate<D>>> candidateList = Lists.newArrayList();
-            // If the call is of the form super.foo(), it can actually be only a member
-            // But  if there's no appropriate member, we would like to report that super cannot be a receiver for an extension
-            // Thus, put members first
-            if (TaskPrioritizer.getReceiverSuper(basicCallResolutionContext.call.getExplicitReceiver()) != null) {
-                candidateList.addAll(members);
-                candidateList.addAll(localExtensions);
-            }
-            else {
-                candidateList.addAll(localExtensions);
-                candidateList.addAll(members);
-            }
-            candidateList.addAll(nonLocalExtensions);
 
             for (int priority = priorityProvider.getMaxPriority(); priority >= 0; priority--) {
                 final int finalPriority = priority;
-                for (Collection<ResolutionCandidate<D>> candidates : candidateList) {
+                for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
                     Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, new Predicate<ResolutionCandidate<D>>() {
                         @Override
                         public boolean apply(@Nullable ResolutionCandidate<D> input) {

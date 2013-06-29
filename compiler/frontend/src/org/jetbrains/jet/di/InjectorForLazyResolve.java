@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
+import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -46,6 +47,7 @@ public class InjectorForLazyResolve {
     private AnnotationResolver annotationResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private JetImportsFactory jetImportsFactory;
+    private NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
     private CallExpressionResolver callExpressionResolver;
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
@@ -66,6 +68,7 @@ public class InjectorForLazyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.jetImportsFactory = new JetImportsFactory();
+        this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -96,6 +99,7 @@ public class InjectorForLazyResolve {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
+        callResolver.setExtension(needSyntheticCallResolverExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);

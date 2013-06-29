@@ -1,0 +1,11 @@
+<root>
+    <item name='android.hardware.input.InputManager ACTION_QUERY_KEYBOARD_LAYOUTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager int[] getInputDeviceIds()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager META_DATA_KEYBOARD_LAYOUTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

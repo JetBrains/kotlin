@@ -27,9 +27,13 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -38,6 +42,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @see Block for good JavaDoc documentation
  */
 public class JetBlock extends AbstractBlock {
+    private static final int KDOC_COMMENT_INDENT = 1;
     private final ASTAlignmentStrategy myAlignmentStrategy;
     private final Indent myIndent;
     private final CodeStyleSettings mySettings;
@@ -208,6 +213,9 @@ public class JetBlock extends AbstractBlock {
             }
             return new ChildAttributes(Indent.getContinuationIndent(), null);
         }
+        else if (type == DOC_COMMENT) {
+            return new ChildAttributes(Indent.getSpaceIndent(KDOC_COMMENT_INDENT), null);
+        }
 
         if (isIncomplete()) {
             return super.getChildAttributes(newChildIndex);
@@ -321,6 +329,11 @@ public class JetBlock extends AbstractBlock {
                     .in(PROPERTY, FUN)
                     .notForType(BLOCK)
                     .set(Indent.getContinuationWithoutFirstIndent()),
+
+            ASTIndentStrategy.forNode("KDoc comment indent")
+                    .in(DOC_COMMENT)
+                    .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
+                    .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
     };
 
     @Nullable

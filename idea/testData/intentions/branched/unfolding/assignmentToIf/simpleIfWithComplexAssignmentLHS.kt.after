@@ -1,0 +1,7 @@
+fun test(n: Int): Array<String> {
+    var x: Array<String> = Array<String>(1, {""})
+
+    <caret>if (n > 5) x[0] = "A" else x[0] = "B"
+
+    return x
+}

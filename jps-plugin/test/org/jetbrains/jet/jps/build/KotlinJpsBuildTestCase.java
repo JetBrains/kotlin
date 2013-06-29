@@ -82,6 +82,10 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         doTestWithRuntime();
     }
 
+    public void testCircularDependenciesNoKotlinFiles() {
+        doTest();
+    }
+
     public void testTestDependencyLibrary() throws Throwable {
         initProject();
         addKotlinRuntimeDependency(JpsJavaDependencyScope.TEST);

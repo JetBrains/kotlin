@@ -16,9 +16,13 @@
 
 package org.jetbrains.jet.codegen.binding;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.SamCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
@@ -26,10 +30,14 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -37,14 +45,19 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getSuperTypeForClosure;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
+    private static final TokenSet BINARY_OPERATIONS = TokenSet.orSet(
+            AUGMENTED_ASSIGNMENTS, TokenSet.create(PLUS, MINUS, MUL, DIV, PERC, RANGE, LT, GT, LTEQ, GTEQ, IDENTIFIER));
+
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
     private final Stack<ClassDescriptor> classStack = new Stack<ClassDescriptor>();
@@ -55,30 +68,6 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     public CodegenAnnotatingVisitor(BindingTrace bindingTrace) {
         this.bindingTrace = bindingTrace;
         this.bindingContext = bindingTrace.getBindingContext();
-    }
-
-    @Override
-    public void visitCallExpression(JetCallExpression expression) {
-        super.visitCallExpression(expression);
-
-        JetExpression callee = expression.getCalleeExpression();
-        assert callee != null : "not found callee for " + expression.getText();
-
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callee);
-        if (resolvedCall == null) {
-            return;
-        }
-
-        DeclarationDescriptor funDescriptor = resolvedCall.getResultingDescriptor();
-
-        if (funDescriptor instanceof SimpleFunctionDescriptor) {
-            ClassDescriptor samTrait = bindingContext.get(
-                    BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, ((SimpleFunctionDescriptor) funDescriptor).getOriginal());
-            if (samTrait != null) {
-                String name = inventAnonymousClassName(expression);
-                bindingTrace.record(FQN_FOR_SAM_CONSTRUCTOR, expression, JvmClassName.byInternalName(name));
-            }
-        }
     }
 
     @NotNull
@@ -116,12 +105,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             if (declaration instanceof JetFunctionLiteralExpression ||
                 declaration instanceof JetNamedFunction ||
                 declaration instanceof JetObjectLiteralExpression ||
-                declaration instanceof JetCallExpression ||
                 declaration instanceof JetCallableReferenceExpression) {
             }
             else {
                 throw new IllegalStateException(
-                        "Class-less declaration which is not JetFunctionLiteralExpression|JetNamedFunction|JetObjectLiteralExpression|JetCallExpression|JetCallableReferenceExpression : " +
+                        "Class-less declaration which is not JetFunctionLiteralExpression|JetNamedFunction|JetObjectLiteralExpression|JetCallableReferenceExpression : " +
                         declaration.getClass().getName());
             }
         }
@@ -227,7 +215,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private String getName(ClassDescriptor classDescriptor) {
         String base = peekFromStack(nameStack);
         return DescriptorUtils.isTopLevelDeclaration(classDescriptor) ? base.isEmpty() ? classDescriptor.getName()
-                        .getName() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
+                        .asString() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
     }
 
     @Override
@@ -350,7 +338,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         String peek = peekFromStack(nameStack);
-        String name = descriptor.getName().getName();
+        String name = descriptor.getName().asString();
         if (containingDeclaration instanceof ClassDescriptor) {
             return peek + '$' + name;
         }
@@ -363,5 +351,111 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else {
             return null;
         }
+    }
+
+    @Override
+    public void visitCallExpression(JetCallExpression expression) {
+        super.visitCallExpression(expression);
+        ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        if (call == null) {
+            return;
+        }
+
+        CallableDescriptor descriptor = call.getResultingDescriptor();
+        if (!(descriptor instanceof FunctionDescriptor)) {
+            return;
+        }
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, descriptor);
+
+        if (original == null) {
+            return;
+        }
+        List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
+        for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
+            ClassDescriptorFromJvmBytecode samInterface = getInterfaceIfSamType(valueParameter.getType());
+            if (samInterface == null) {
+                continue;
+            }
+
+            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
+            assert resolvedValueArgument instanceof ExpressionValueArgument : resolvedValueArgument;
+            ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
+            assert valueArgument != null;
+            JetExpression argumentExpression = valueArgument.getArgumentExpression();
+            assert argumentExpression != null : valueArgument.asElement().getText();
+
+            bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samInterface);
+        }
+    }
+
+    @Override
+    public void visitBinaryExpression(JetBinaryExpression expression) {
+        super.visitBinaryExpression(expression);
+
+        FunctionDescriptor operationDescriptor =
+                (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
+        if (operationDescriptor == null) return;
+
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, operationDescriptor);
+        if (original == null) return;
+
+        ClassDescriptorFromJvmBytecode samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
+        if (samInterfaceOfParameter == null) return;
+
+        IElementType token = expression.getOperationToken();
+        if (BINARY_OPERATIONS.contains(token)) {
+            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getRight(), samInterfaceOfParameter);
+        }
+        else if (token == IN_KEYWORD || token == NOT_IN) {
+            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getLeft(), samInterfaceOfParameter);
+        }
+    }
+
+    @Override
+    public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+        super.visitArrayAccessExpression(expression);
+
+        FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
+        if (operationDescriptor == null) {
+            return;
+        }
+
+        boolean isSetter = operationDescriptor.getName().asString().equals("set");
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, operationDescriptor);
+        if (original == null) {
+            return;
+        }
+
+        List<JetExpression> indexExpressions = expression.getIndexExpressions();
+        List<ValueParameterDescriptor> parameters = original.getValueParameters();
+        for (ValueParameterDescriptor valueParameter : parameters) {
+            ClassDescriptorFromJvmBytecode samInterface = getInterfaceIfSamType(valueParameter.getType());
+            if (samInterface == null) {
+                continue;
+            }
+
+            if (isSetter && valueParameter.getIndex() == parameters.size() - 1) {
+                PsiElement parent = expression.getParent();
+                if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationToken() == EQ) {
+                    JetExpression right = ((JetBinaryExpression) parent).getRight();
+                    bindingTrace.record(CodegenBinding.SAM_VALUE, right, samInterface);
+                }
+            }
+            else {
+                JetExpression indexExpression = indexExpressions.get(valueParameter.getIndex());
+                bindingTrace.record(CodegenBinding.SAM_VALUE, indexExpression, samInterface);
+            }
+        }
+    }
+
+    @Nullable
+    private static ClassDescriptorFromJvmBytecode getInterfaceIfSamType(@NotNull JetType originalType) {
+        if (!SingleAbstractMethodUtils.isSamType(originalType)) {
+            return null;
+        }
+        ClassDescriptorFromJvmBytecode samInterface =
+                (ClassDescriptorFromJvmBytecode) originalType.getConstructor().getDeclarationDescriptor();
+        assert samInterface != null;
+        return samInterface;
     }
 }

@@ -218,11 +218,11 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         else if (descriptor instanceof VariableDescriptor) {
             JetType outType = ((VariableDescriptor) descriptor).getType();
 
-            textBuilder = new StringBuilder(descriptor.getName().getName());
+            textBuilder = new StringBuilder(descriptor.getName().asString());
             textBuilder.append(":").append(DescriptorRenderer.TEXT.renderType(outType));
         }
         else if (descriptor instanceof ClassDescriptor) {
-            textBuilder = new StringBuilder(descriptor.getName().getName());
+            textBuilder = new StringBuilder(descriptor.getName().asString());
             textBuilder
                     .append(" (")
                     .append(DescriptorUtils.getFQName(descriptor.getContainingDeclaration()))

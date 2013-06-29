@@ -115,7 +115,7 @@ public class ResolveSessionUtils {
 
     public static @NotNull BindingContext resolveToExpression(
             @NotNull ResolveSession resolveSession,
-            @NotNull JetExpression expression
+            @NotNull JetElement expression
     ) {
         DelegatingBindingTrace trace = new DelegatingBindingTrace(
                 resolveSession.getBindingContext(), "trace to resolve expression", expression);
@@ -146,11 +146,14 @@ public class ResolveSessionUtils {
             return trace.getBindingContext();
         }
 
-        // Setup resolution scope explicitly
-        if (trace.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, expression) == null) {
-            JetScope scope = getExpressionMemberScope(resolveSession, expression);
-            if (scope != null) {
-                trace.record(BindingContext.RESOLUTION_SCOPE, expression, scope);
+        if (expression instanceof JetExpression) {
+            JetExpression jetExpression = (JetExpression) expression;
+            // Setup resolution scope explicitly
+            if (trace.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, jetExpression) == null) {
+                JetScope scope = getExpressionMemberScope(resolveSession, jetExpression);
+                if (scope != null) {
+                    trace.record(BindingContext.RESOLUTION_SCOPE, jetExpression, scope);
+                }
             }
         }
 
@@ -189,9 +192,13 @@ public class ResolveSessionUtils {
         PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
 
         JetExpression propertyInitializer = jetProperty.getInitializer();
-
         if (propertyInitializer != null) {
             bodyResolver.resolvePropertyInitializer(jetProperty, descriptor, propertyInitializer, propertyResolutionScope);
+        }
+
+        JetExpression propertyDelegate = jetProperty.getDelegateExpression();
+        if (propertyDelegate != null) {
+            bodyResolver.resolvePropertyDelegate(jetProperty, descriptor, propertyDelegate, propertyResolutionScope, propertyResolutionScope);
         }
 
         bodyResolver.resolvePropertyAccessors(jetProperty, descriptor);

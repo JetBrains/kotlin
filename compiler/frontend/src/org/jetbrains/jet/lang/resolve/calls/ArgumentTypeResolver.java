@@ -56,8 +56,6 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgum
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
-    @NotNull
-    private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
 
     @NotNull
     private TypeResolver typeResolver;
@@ -74,14 +72,14 @@ public class ArgumentTypeResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
-    public boolean isSubtypeOfForArgumentType(@NotNull JetType subtype, @NotNull JetType supertype) {
+    public static boolean isSubtypeOfForArgumentType(@NotNull JetType subtype, @NotNull JetType supertype) {
         if (subtype == PLACEHOLDER_FUNCTION_TYPE) {
             return isFunctionOrErrorType(supertype) || KotlinBuiltIns.getInstance().isAny(supertype); //todo function type extends
         }
         if (supertype == PLACEHOLDER_FUNCTION_TYPE) {
             return isFunctionOrErrorType(subtype); //todo extends function type
         }
-        return typeChecker.isSubtypeOf(subtype, supertype);
+        return JetTypeChecker.INSTANCE.isSubtypeOf(subtype, supertype);
     }
 
     private static boolean isFunctionOrErrorType(@NotNull JetType supertype) {

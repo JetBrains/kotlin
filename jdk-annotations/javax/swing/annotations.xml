@@ -3264,12 +3264,6 @@
     <item name="javax.swing.UIDefaults UIDefaults(java.lang.Object[]) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
-    <item name="javax.swing.UIDefaults java.lang.Object put(java.lang.Object, java.lang.Object) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="javax.swing.UIDefaults java.lang.Object put(java.lang.Object, java.lang.Object) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="javax.swing.UIDefaults javax.swing.plaf.ComponentUI getUI(javax.swing.JComponent) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>

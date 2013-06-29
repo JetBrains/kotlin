@@ -20,7 +20,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,10 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class JavaBaseScope extends JetScopeImpl {
 
@@ -50,6 +49,8 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
     @Nullable
     private Collection<DeclarationDescriptor> allDescriptors = null;
+    @Nullable
+    private Set<ClassDescriptor> objectDescriptors = null;
     @NotNull
     protected final ClassOrNamespaceDescriptor descriptor;
 
@@ -130,8 +131,17 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
         result.addAll(computeFieldAndFunctionDescriptors());
-        result.addAll(getInnerClasses());
+        result.addAll(filterObjects(getInnerClasses(), false));
         return result;
+    }
+
+    @NotNull
+    @Override
+    public Set<ClassDescriptor> getObjectDescriptors() {
+        if (objectDescriptors == null) {
+            objectDescriptors = new HashSet<ClassDescriptor>(filterObjects(getInnerClasses(), true));
+        }
+        return objectDescriptors;
     }
 
     @NotNull
@@ -173,5 +183,14 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             innerClasses = computeInnerClasses();
         }
         return innerClasses;
+    }
+
+    private static <T extends ClassDescriptor> Collection<T> filterObjects(Collection<T> classes, final boolean objects) {
+        return ContainerUtil.filter(classes, new Condition<T>() {
+            @Override
+            public boolean value(T classDescriptor) {
+                return classDescriptor.getKind().isObject() == objects;
+            }
+        });
     }
 }

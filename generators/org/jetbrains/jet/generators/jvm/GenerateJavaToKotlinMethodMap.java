@@ -53,7 +53,7 @@ import static org.jetbrains.jet.lang.resolve.java.JavaToKotlinMethodMap.serializ
 
 public class GenerateJavaToKotlinMethodMap {
 
-    public static final String BUILTINS_FQNAME_PREFIX = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.getFqName() + ".";
+    public static final String BUILTINS_FQNAME_PREFIX = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".";
 
     public static void main(String[] args) throws IOException {
         CompilerConfiguration configuration = new CompilerConfiguration();
@@ -207,7 +207,7 @@ public class GenerateJavaToKotlinMethodMap {
 
         private void appendBeforeClass(@NotNull ClassDescriptor kotlinClass, @NotNull PsiClass psiClass) {
             String psiFqName = psiClass.getQualifiedName();
-            String kotlinFqName = DescriptorUtils.getFQName(kotlinClass).toSafe().getFqName();
+            String kotlinFqName = DescriptorUtils.getFQName(kotlinClass).toSafe().asString();
 
             assert kotlinFqName.startsWith(BUILTINS_FQNAME_PREFIX);
             String kotlinSubQualifiedName = kotlinFqName.substring(BUILTINS_FQNAME_PREFIX.length());

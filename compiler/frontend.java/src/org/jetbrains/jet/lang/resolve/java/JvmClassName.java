@@ -91,7 +91,7 @@ public class JvmClassName {
 
         List<String> innerClassNames = Lists.newArrayList();
         while (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-            innerClassNames.add(descriptor.getName().getName());
+            innerClassNames.add(descriptor.getName().asString());
             descriptor = descriptor.getContainingDeclaration();
             assert descriptor != null;
         }
@@ -101,7 +101,7 @@ public class JvmClassName {
 
     @NotNull
     private static String fqNameToInternalName(@NotNull FqName fqName) {
-        return fqName.getFqName().replace('.', '/');
+        return fqName.asString().replace('.', '/');
     }
 
     @NotNull

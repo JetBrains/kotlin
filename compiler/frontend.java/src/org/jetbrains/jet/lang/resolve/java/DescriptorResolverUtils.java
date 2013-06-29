@@ -140,7 +140,7 @@ public final class DescriptorResolverUtils {
     public static FqNameUnsafe getFqNameForClassObject(@NotNull PsiClass psiClass) {
         String psiClassQualifiedName = psiClass.getQualifiedName();
         assert psiClassQualifiedName != null : "Reading java class with no qualified name";
-        return new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
+        return new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).asString());
     }
 
     @NotNull

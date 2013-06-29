@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -38,6 +39,7 @@ public class InjectorForTests {
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
     private CallResolver callResolver;
+    private NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
     private KotlinBuiltIns kotlinBuiltIns;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
@@ -55,6 +57,7 @@ public class InjectorForTests {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.callResolver = new CallResolver();
+        this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
         this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
@@ -82,6 +85,7 @@ public class InjectorForTests {
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
         this.callResolver.setCandidateResolver(candidateResolver);
         this.callResolver.setExpressionTypingServices(expressionTypingServices);
+        this.callResolver.setExtension(needSyntheticCallResolverExtension);
         this.callResolver.setTypeResolver(typeResolver);
 
         annotationResolver.setCallResolver(callResolver);

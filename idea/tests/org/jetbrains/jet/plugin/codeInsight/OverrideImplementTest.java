@@ -154,6 +154,14 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doMultiOverrideFileTest();
     }
 
+    public void testImplementSamAdapters() {
+        doImplementDirectoryTest();
+    }
+
+    public void testOverrideSamAdapters() {
+        doOverrideDirectoryTest("foo");
+    }
+
     private void doImplementFileTest() {
         doFileTest(new ImplementMethodsHandler());
     }
@@ -224,7 +232,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         else {
             CallableMemberDescriptor candidateToOverride = null;
             for (CallableMemberDescriptor callable : descriptors) {
-                if (callable.getName().getName().equals(memberToOverride)) {
+                if (callable.getName().asString().equals(memberToOverride)) {
                     if (candidateToOverride != null) {
                         throw new IllegalStateException("more then one descriptor with name " + memberToOverride);
                     }

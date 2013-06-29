@@ -28,34 +28,95 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
 
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
-    public void processQuery(@NotNull final PsiElement queryParameters, @NotNull Processor<PsiElement> consumer) {
+    public void processQuery(@NotNull PsiElement queryParameters, @NotNull Processor<PsiElement> consumer) {
         if (queryParameters instanceof JetClass) {
-            PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
-                @Override
-                public PsiClass compute() {
-                    return LightClassUtil.getPsiClass((JetClass) queryParameters);
-                }
-            });
-            if (psiClass != null) {
-                ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer);
-            }
+            processClassImplementations((JetClass) queryParameters, consumer);
         }
 
         if (queryParameters instanceof JetNamedFunction) {
-            PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
-                @Override
-                public PsiMethod compute() {
-                    return LightClassUtil.getLightClassMethod((JetNamedFunction) queryParameters);
-                }
-            });
+            processFunctionImplementations((JetNamedFunction) queryParameters, consumer);
+        }
 
-            if (psiMethod != null) {
-                ContainerUtil.process(MethodImplementationsSearch.getMethodImplementations(psiMethod), consumer);
+        if (queryParameters instanceof JetProperty) {
+            processPropertyImplementations((JetProperty) queryParameters, consumer);
+        }
+
+        if (queryParameters instanceof JetParameter) {
+            JetParameter parameter = (JetParameter) queryParameters;
+            if (JetPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
+                processPropertyImplementations(parameter, consumer);
+            }
+        }
+    }
+
+    private static void processClassImplementations(final JetClass queryParameters, Processor<PsiElement> consumer) {
+        PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
+            @Override
+            public PsiClass compute() {
+                return LightClassUtil.getPsiClass(queryParameters);
+            }
+        });
+        if (psiClass != null) {
+            ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer);
+        }
+    }
+
+    private static void processFunctionImplementations(final JetNamedFunction queryParameters, Processor<PsiElement> consumer) {
+        PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
+            @Override
+            public PsiMethod compute() {
+                return LightClassUtil.getLightClassMethod(queryParameters);
+            }
+        });
+
+        if (psiMethod != null) {
+            ContainerUtil.process(MethodImplementationsSearch.getMethodImplementations(psiMethod), consumer);
+        }
+    }
+
+    private static void processPropertyImplementations(@NotNull final JetParameter parameter, @NotNull Processor<PsiElement> consumer) {
+        LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
+                new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
+                    @Override
+                    public LightClassUtil.PropertyAccessorsPsiMethods compute() {
+                        return LightClassUtil.getLightClassPropertyMethods(parameter);
+                    }
+                });
+
+        processPropertyImplementationsMethods(accessorsPsiMethods, consumer);
+    }
+
+    private static void processPropertyImplementations(@NotNull final JetProperty property, @NotNull Processor<PsiElement> consumer) {
+        LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
+                new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
+                    @Override
+                    public LightClassUtil.PropertyAccessorsPsiMethods compute() {
+                        return LightClassUtil.getLightClassPropertyMethods(property);
+                    }
+                });
+
+        processPropertyImplementationsMethods(accessorsPsiMethods, consumer);
+    }
+
+    public static void processPropertyImplementationsMethods(LightClassUtil.PropertyAccessorsPsiMethods accessors, @NotNull Processor<PsiElement> consumer) {
+        for (PsiMethod method : accessors) {
+            PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method);
+            for (PsiMethod implementation : implementations) {
+                PsiElement mirrorElement = implementation instanceof JetClsMethod ? ((JetClsMethod) implementation).getOrigin() : null;
+                if (mirrorElement instanceof JetProperty || mirrorElement instanceof JetParameter) {
+                    consumer.process(mirrorElement);
+                }
+                else if (mirrorElement instanceof JetPropertyAccessor && mirrorElement.getParent() instanceof JetProperty) {
+                    consumer.process(mirrorElement.getParent());
+                }
+                else {
+                    consumer.process(implementation);
+                }
             }
         }
     }

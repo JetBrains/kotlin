@@ -60,4 +60,14 @@ public class JetWhenExpression extends JetExpressionImpl {
         ASTNode openBraceNode = getNode().findChildByType(JetTokens.RBRACE);
         return openBraceNode != null ? openBraceNode.getPsi() : null;
     }
+
+    @Nullable
+    public JetExpression getElseExpression() {
+        for (JetWhenEntry entry : getEntries()) {
+            if (entry.isElse()) {
+                return entry.getExpression();
+            }
+        }
+        return null;
+    }
 }

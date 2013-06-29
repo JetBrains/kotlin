@@ -4,6 +4,9 @@ buildscript {
     maven {
         url 'file://' + pathToKotlinPlugin
     }
+    maven {
+        url 'file://' + pathToKotlinPluginWrapper
+    }
   }
   dependencies {
     classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'

@@ -69,7 +69,7 @@ public class JetMethodAnnotation extends PsiAnnotationWithFlags {
 
     public static JetMethodAnnotation get(PsiMethod psiMethod) {
         PsiAnnotation annotation =
-                JavaAnnotationResolver.findOwnAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().getFqName());
+                JavaAnnotationResolver.findOwnAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().asString());
         return annotation != null ? new JetMethodAnnotation(annotation) : NULL_ANNOTATION;
     }
 }

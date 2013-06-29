@@ -5,6 +5,7 @@ import kotlin.test.*
 import java.util.*
 import org.junit.Test as test
 
+// TODO: Write test generator for testing `Map` implementations.
 class MapJsTest {
     //TODO: replace `array(...).toList()` to `listOf(...)`
     val KEYS = array("zero", "one", "two", "three").toList()

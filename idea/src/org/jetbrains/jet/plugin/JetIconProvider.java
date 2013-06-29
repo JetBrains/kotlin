@@ -143,12 +143,10 @@ public class JetIconProvider extends IconProvider {
         }
         if (psiElement instanceof JetParameter) {
             JetParameter parameter = (JetParameter) psiElement;
-            if (parameter.getValOrVarNode() != null) {
-                JetParameterList parameterList = PsiTreeUtil.getParentOfType(psiElement, JetParameterList.class);
-                if (parameterList != null && parameterList.getParent() instanceof JetClass) {
-                    return parameter.isMutable() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
-                }
+            if (JetPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
+                return parameter.isMutable() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
             }
+
             return JetIcons.PARAMETER;
         }
         if (psiElement instanceof JetProperty) {

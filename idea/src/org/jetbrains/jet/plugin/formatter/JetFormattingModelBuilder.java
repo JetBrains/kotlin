@@ -34,8 +34,9 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
     @Override
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
+        PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(JetLanguage.INSTANCE);
         JetBlock block = new JetBlock(
-            element.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
+            containingFile.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
             createSpacingBuilder(settings));
 
         return FormattingModelProvider.createFormattingModelForPsiFile(
@@ -53,6 +54,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
                 .after(IMPORT_DIRECTIVE).blankLines(1)
 
+                .before(DOC_COMMENT).lineBreakInCode()
                 .before(FUN).lineBreakInCode()
                 .before(PROPERTY).lineBreakInCode()
                 .between(FUN, FUN).blankLines(1)

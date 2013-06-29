@@ -93,11 +93,11 @@ public class AnnotationResolver {
                     ConstructorDescriptor constructor = (ConstructorDescriptor)descriptor;
                     ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
                     if (classDescriptor.getKind() != ClassKind.ANNOTATION_CLASS) {
-                        trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor.getName().getName()));
+                        trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor.getName().asString()));
                     }
                 }
                 else {
-                    trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName().getName()));
+                    trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName().asString()));
                 }
             }
             JetType annotationType = results.getResultingDescriptor().getReturnType();

@@ -1,0 +1,593 @@
+<root>
+    <item name='android.text.SpannableStringBuilder android.text.Editable append(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection void selectAll(android.text.Spannable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Spannable.Factory android.text.Spannable.Factory getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence ellipsize(java.lang.CharSequence, android.text.TextPaint, float, android.text.TextUtils.TruncateAt, boolean, android.text.TextUtils.EllipsizeCallback) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout replaceOrMake(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout make(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils void copySpansFrom(android.text.Spanned, int, int, java.lang.Class, android.text.Spannable, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection void setSelection(android.text.Spannable, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout void getSelectionPath(int, int, android.graphics.Path) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder SpannableStringBuilder(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout float getDesiredWidth(java.lang.CharSequence, android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.DynamicLayout DynamicLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveDown(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout.Alignment ALIGN_OPPOSITE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder java.lang.Appendable append(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout make(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.AlteredCharSequence java.lang.CharSequence subSequence(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable replace(int, int, java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannedString SpannedString(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout replaceOrMake(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder insert(int, java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.StaticLayout StaticLayout(java.lang.CharSequence, int, int, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence concat(java.lang.CharSequence...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence commaEllipsize(java.lang.CharSequence, android.text.TextPaint, float, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable replace(int, int, java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable replace(int, int, java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.DynamicLayout DynamicLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence replace(java.lang.CharSequence, java.lang.String[], java.lang.CharSequence[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils boolean regionMatches(java.lang.CharSequence, int, java.lang.CharSequence, int, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence expandTemplate(java.lang.CharSequence, java.lang.CharSequence...) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.InputFilter java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, java.lang.CharSequence, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable append(java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout.Alignment ALIGN_NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveToLeftEdge(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection void setSelection(android.text.Spannable, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable insert(int, java.lang.CharSequence) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder append(java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpanWatcher void onSpanChanged(android.text.Spannable, java.lang.Object, int, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable append(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder replace(int, int, java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableString java.lang.Object[] getSpans(int, int, java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int getCapsMode(java.lang.CharSequence, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout void getCursorPath(int, android.graphics.Path, java.lang.CharSequence) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String htmlEncode(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.AutoText java.lang.String get(java.lang.CharSequence, int, int, android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.StaticLayout StaticLayout(java.lang.CharSequence, int, int, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean, android.text.TextUtils.TruncateAt, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder replace(int, int, java.lang.CharSequence) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable append(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannedString java.lang.CharSequence subSequence(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String[] split(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils.TruncateAt MARQUEE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder replace(int, int, java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder valueOf(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils.TruncateAt MIDDLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout make(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Html java.lang.String toHtml(android.text.Spanned) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils boolean regionMatches(java.lang.CharSequence, int, java.lang.CharSequence, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.StaticLayout StaticLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendDown(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout make(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.StaticLayout StaticLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, java.lang.CharSequence, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.InputFilter.AllCaps java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout.Metrics isBoring(java.lang.CharSequence, android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, java.lang.CharSequence) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.AutoText int getSize(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder append(char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder delete(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendUp(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable insert(int, java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable append(char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendDown(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils.SimpleStringSplitter java.util.Iterator&lt;java.lang.String&gt; iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.InputFilter.AllCaps java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.Layout.Directions getLineDirections(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout void draw(android.graphics.Canvas, android.graphics.Path, android.graphics.Paint, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable append(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection void extendSelection(android.text.Spannable, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, char, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveUp(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils boolean isGraphic(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendToRightEdge(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendUp(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout replaceOrMake(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.InputFilter java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils void dumpSpans(java.lang.CharSequence, android.util.Printer, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence ellipsize(java.lang.CharSequence, android.text.TextPaint, float, android.text.TextUtils.TruncateAt, boolean, android.text.TextUtils.EllipsizeCallback) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable insert(int, java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils void writeToParcel(java.lang.CharSequence, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder java.lang.Appendable append(java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils boolean isDigitsOnly(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence commaEllipsize(java.lang.CharSequence, android.text.TextPaint, float, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable append(char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder int getTextRunCursor(int, int, int, int, int, android.graphics.Paint) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveUp(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendToRightEdge(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveToRightEdge(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextPaint void set(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable.Factory android.text.Editable.Factory getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout android.text.Layout.Directions getLineDirections(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder append(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder SpannableStringBuilder(java.lang.CharSequence, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannedString android.text.SpannedString valueOf(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils.TruncateAt START'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannedString java.lang.Object[] getSpans(int, int, java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.DynamicLayout DynamicLayout(java.lang.CharSequence, java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Html java.lang.String escapeHtml(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection void removeSelection(android.text.Spannable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveToRightEdge(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder java.lang.Appendable append(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable replace(int, int, java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable insert(int, java.lang.CharSequence) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable replace(int, int, java.lang.CharSequence) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.LoginFilter java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout.Metrics isBoring(java.lang.CharSequence, android.text.TextPaint, android.text.BoringLayout.Metrics) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String htmlEncode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout replaceOrMake(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder append(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveRight(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String join(java.lang.CharSequence, java.lang.Object[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence getReverse(java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendRight(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout void draw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable delete(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.InputFilter.LengthFilter java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Annotation Annotation(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout BoringLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder insert(int, java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int getTrimmedLength(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable insert(int, java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable insert(int, java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, java.lang.CharSequence, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveRight(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Html java.lang.String escapeHtml(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder java.lang.Appendable append(char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.AlteredCharSequence android.text.AlteredCharSequence make(java.lang.CharSequence, char[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, char) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.DynamicLayout DynamicLayout(java.lang.CharSequence, java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean, android.text.TextUtils.TruncateAt, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout BoringLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout replaceOrMake(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, java.lang.CharSequence, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder insert(int, java.lang.CharSequence) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextWatcher void onTextChanged(java.lang.CharSequence, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence ellipsize(java.lang.CharSequence, android.text.TextPaint, float, android.text.TextUtils.TruncateAt) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils void copySpansFrom(android.text.Spanned, int, int, java.lang.Class, android.text.Spannable, int) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder android.text.Editable delete(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.LoginFilter java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout make(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendLeft(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int lastIndexOf(java.lang.CharSequence, char) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendRight(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int indexOf(java.lang.CharSequence, char, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.AutoText java.lang.String get(java.lang.CharSequence, int, int, android.view.View) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence ellipsize(java.lang.CharSequence, android.text.TextPaint, float, android.text.TextUtils.TruncateAt) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableString java.lang.CharSequence subSequence(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String join(java.lang.CharSequence, java.lang.Object[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Html java.lang.String toHtml(android.text.Spanned)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int lastIndexOf(java.lang.CharSequence, char, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence ellipsize(java.lang.CharSequence, android.text.TextPaint, float, android.text.TextUtils.TruncateAt)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Layout.Alignment ALIGN_CENTER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout make(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.DynamicLayout DynamicLayout(java.lang.CharSequence, java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean, android.text.TextUtils.TruncateAt, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendLeft(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableString SpannableString(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String join(java.lang.CharSequence, java.lang.Iterable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveLeft(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.AlteredCharSequence java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout BoringLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean, android.text.TextUtils.TruncateAt, int) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int lastIndexOf(java.lang.CharSequence, char, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveToLeftEdge(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable append(java.lang.CharSequence, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils.TruncateAt END'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int getOffsetAfter(java.lang.CharSequence, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout BoringLayout(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence expandTemplate(java.lang.CharSequence, java.lang.CharSequence...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendToLeftEdge(android.text.Spannable, android.text.Layout) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.DynamicLayout DynamicLayout(java.lang.CharSequence, java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableString android.text.SpannableString valueOf(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils void getChars(java.lang.CharSequence, int, int, char[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence replace(java.lang.CharSequence, java.lang.String[], java.lang.CharSequence[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String[] split(java.lang.String, java.util.regex.Pattern) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Editable android.text.Editable replace(int, int, java.lang.CharSequence) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.SpannableStringBuilder java.lang.CharSequence subSequence(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout android.text.BoringLayout replaceOrMake(java.lang.CharSequence, android.text.TextPaint, int, android.text.Layout.Alignment, float, float, android.text.BoringLayout.Metrics, boolean) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils int getOffsetBefore(java.lang.CharSequence, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveLeft(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.BoringLayout void draw(android.graphics.Canvas, android.graphics.Path, android.graphics.Paint, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean moveDown(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Selection boolean extendToLeftEdge(android.text.Spannable, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.InputFilter.LengthFilter java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String[] split(java.lang.String, java.util.regex.Pattern) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.CharSequence ellipsize(java.lang.CharSequence, android.text.TextPaint, float, android.text.TextUtils.TruncateAt, boolean, android.text.TextUtils.EllipsizeCallback)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.Annotation void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.TextUtils java.lang.String join(java.lang.CharSequence, java.lang.Iterable)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

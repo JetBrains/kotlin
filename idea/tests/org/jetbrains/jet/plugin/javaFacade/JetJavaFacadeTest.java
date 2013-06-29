@@ -20,17 +20,16 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
+public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
@@ -40,7 +39,11 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/javaFacade");
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return PluginTestCaseBase.getTestDataPathBase() + "/javaFacade";
     }
 
     public void testDoNotWrapFunFromLocalClass() {
@@ -49,6 +52,10 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
 
     public void testDoNotWrapFunInAnonymousObject() {
         doTestWrapMethod(false);
+    }
+
+    public void testWrapFunInClassWithoutBody() {
+        doTestWrapMethod(true);
     }
 
     public void testWrapFunInClassObject() {
@@ -87,8 +94,52 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         doTestWrapClass();
     }
 
+    public void testEa46019() {
+        doTestWrapClass();
+    }
+
+    public void testWrapTopLevelFunWithDefaultParams() {
+        doTestWrapMethod(true);
+    }
+
+    public void testWrapValTopLevelProperty() {
+        doTestWrapProperty(true, false);
+    }
+
+    public void testWrapVarPropertyInClass() {
+        doTestWrapProperty(true, true);
+    }
+
+    public void testWrapVarPropertyWithAccessorsInTrait() {
+        doTestWrapProperty(true, true);
+    }
+
+    public void testWrapVarTopLevelProperty() {
+        doTestWrapProperty(true, true);
+    }
+
+    public void testWrapVarPropertyInLocalClass() {
+        doTestWrapProperty(false, false);
+    }
+
+    public void testWrapVarTopLevelAccessor() {
+        doTestWrapPropertyAccessor(true);
+    }
+
+    public void testWrapConstructorField() {
+        doTestWrapParameter(true, true);
+    }
+
+    public void testWrapConstructorParameter() {
+        doTestWrapParameter(false, false);
+    }
+
+    public void testWrapFunctionParameter() {
+        doTestWrapParameter(false, false);
+    }
+
     public void testEa38770() {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         PsiReference reference = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
         assertNotNull(reference);
@@ -101,7 +152,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testInnerClass() throws Exception {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         JavaPsiFacade facade = myFixture.getJavaFacade();
         PsiClass mirrorClass = facade.findClass("foo.Outer.Inner", GlobalSearchScope.allScope(getProject()));
@@ -113,7 +164,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testClassObject() throws Exception {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         JavaPsiFacade facade = myFixture.getJavaFacade();
         PsiClass theClass = facade.findClass("foo.TheClass", GlobalSearchScope.allScope(getProject()));
@@ -141,7 +192,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testLightClassIsNotCreatedForBuiltins() throws Exception {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         PsiReference reference = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
         assert reference != null;
@@ -154,23 +205,68 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void doTestWrapMethod(boolean shouldBeWrapped) {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        JetNamedFunction jetFunction = getPreparedElement(JetNamedFunction.class);
+
+        // Should not fail!
+        PsiMethod psiMethod = LightClassUtil.getLightClassMethod(jetFunction);
+
+        checkDeclarationMethodWrapped(shouldBeWrapped, jetFunction, psiMethod);
+    }
+
+    private void doTestWrapParameter(boolean shouldWrapGetter, boolean shouldWrapSetter) {
+        JetParameter jetParameter = getPreparedElement(JetParameter.class);
+
+        // Should not fail!
+        LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.getLightClassPropertyMethods(jetParameter);
+
+        checkDeclarationMethodWrapped(shouldWrapGetter, jetParameter, propertyAccessors.getGetter());
+        checkDeclarationMethodWrapped(shouldWrapSetter, jetParameter, propertyAccessors.getSetter());
+    }
+
+    private void doTestWrapProperty(boolean shouldWrapGetter, boolean shouldWrapSetter) {
+        JetProperty jetProperty = getPreparedElement(JetProperty.class);
+
+        // Should not fail!
+        LightClassUtil.PropertyAccessorsPsiMethods propertyAccessors = LightClassUtil.getLightClassPropertyMethods(jetProperty);
+
+        JetPropertyAccessor getter = jetProperty.getGetter();
+        JetPropertyAccessor setter = jetProperty.getSetter();
+
+        checkDeclarationMethodWrapped(shouldWrapGetter, getter != null ? getter : jetProperty, propertyAccessors.getGetter());
+        checkDeclarationMethodWrapped(shouldWrapSetter, setter != null ? setter : jetProperty, propertyAccessors.getSetter());
+    }
+
+    private void doTestWrapPropertyAccessor(boolean shouldWrapAccessor) {
+        JetPropertyAccessor jetPropertyAccessor = getPreparedElement(JetPropertyAccessor.class);
+
+        // Should not fail!
+        PsiMethod propertyAccessors = LightClassUtil.getLightClassAccessorMethod(jetPropertyAccessor);
+        checkDeclarationMethodWrapped(shouldWrapAccessor, jetPropertyAccessor, propertyAccessors);
+    }
+
+    @NotNull
+    private <T extends JetElement> T getPreparedElement(Class<T> elementClass) {
+        myFixture.configureByFile(fileName());
 
         int offset = myFixture.getEditor().getCaretModel().getOffset();
         PsiElement elementAt = myFixture.getFile().findElementAt(offset);
 
         assertNotNull("Caret should be set for tested file", elementAt);
 
-        JetNamedFunction jetFunction = PsiTreeUtil.getParentOfType(elementAt, JetNamedFunction.class);
-        assertNotNull("Caret should be placed to function definition", jetFunction);
+        T caretElement = PsiTreeUtil.getParentOfType(elementAt, elementClass);
+        assertNotNull(
+                String.format("Caret should be placed to element of type: %s, but was at element '%s' of type %s",
+                              elementClass, elementAt, elementAt.getClass()),
+                caretElement);
 
-        // Should not fail!
-        PsiMethod psiMethod = LightClassUtil.getLightClassMethod(jetFunction);
+        return caretElement;
+    }
 
+    private static void checkDeclarationMethodWrapped(boolean shouldBeWrapped, JetDeclaration declaration, PsiMethod psiMethod) {
         if (shouldBeWrapped) {
-            assertNotNull(String.format("Failed to wrap jetFunction '%s' to method", jetFunction.getText()), psiMethod);
+            assertNotNull(String.format("Failed to wrap declaration '%s' to method", declaration.getText()), psiMethod);
             assertInstanceOf(psiMethod, PsiCompiledElement.class);
-            assertEquals("Invalid original element for generated method", ((PsiCompiledElement) psiMethod).getMirror(), jetFunction);
+            assertEquals("Invalid original element for generated method", ((PsiCompiledElement) psiMethod).getMirror(), declaration);
         }
         else {
             assertNull("There should be no wrapper for given method", psiMethod);
@@ -178,7 +274,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void doTestWrapClass() {
-        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(fileName());
 
         int offset = myFixture.getEditor().getCaretModel().getOffset();
         PsiElement elementAt = myFixture.getFile().findElementAt(offset);
@@ -196,5 +292,10 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         // This invokes codegen with ClassBuilderMode = SIGNATURES
         // No exception/error should happen here
         lightClass.getDelegate();
+    }
+
+    @Override
+    protected String fileName() {
+        return getTestName(true) + ".kt";
     }
 }

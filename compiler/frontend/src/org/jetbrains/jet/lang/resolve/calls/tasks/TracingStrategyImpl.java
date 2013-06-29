@@ -78,7 +78,7 @@ public class TracingStrategyImpl implements TracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallWithTrace<D>> candidates) {
+    public <D extends CallableDescriptor> void recordAmbiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates) {
         Collection<D> descriptors = Sets.newHashSet();
         for (ResolvedCallWithTrace<D> candidate : candidates) {
             descriptors.add(candidate.getCandidateDescriptor());
@@ -89,6 +89,11 @@ public class TracingStrategyImpl implements TracingStrategy {
     @Override
     public void unresolvedReference(@NotNull BindingTrace trace) {
         trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+    }
+
+    @Override
+    public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates) {
+        trace.report(UNRESOLVED_REFERENCE_WRONG_RECEIVER.on(reference, candidates));
     }
 
     @Override
@@ -178,7 +183,7 @@ public class TracingStrategyImpl implements TracingStrategy {
                 JetExpression left = binaryExpression.getLeft();
                 JetExpression right = binaryExpression.getRight();
                 if (left != null && right != null) {
-                    trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.getName(), right.getText()));
+                    trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.asString(), right.getText()));
                 }
             }
             else {

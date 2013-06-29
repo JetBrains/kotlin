@@ -100,7 +100,7 @@ public final class JavaClassObjectResolver {
         FqName fqName = new FqName(qualifiedName);
         ClassPsiDeclarationProvider classObjectData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(classObjectPsiClass);
         ClassDescriptorFromJvmBytecode classObjectDescriptor
-                = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false, false);
+                = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
         classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(classObjectDescriptor,
                                                                              new PsiClassWrapper(classObjectPsiClass),
                                                                              classObjectData,
@@ -129,9 +129,9 @@ public final class JavaClassObjectResolver {
     ) {
         FqNameUnsafe fqName = DescriptorResolverUtils.getFqNameForClassObject(psiClass);
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
-                new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false, false);
+                new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
         ClassPsiDeclarationProvider data = semanticServices.getPsiDeclarationProviderFactory().createSyntheticClassObjectClassData(psiClass);
-        setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().getName()));
+        setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().asString()));
         return classObjectDescriptor;
     }
 
@@ -149,7 +149,7 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.createTypeConstructor();
         JavaClassNonStaticMembersScope classMembersScope = new JavaClassNonStaticMembersScope(classObjectDescriptor, data, semanticServices);
         WritableScopeImpl writableScope =
-                new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
+                new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classObjectDescriptor.setScopeForMemberLookup(writableScope);
         classObjectDescriptor.setScopeForConstructorResolve(classMembersScope);

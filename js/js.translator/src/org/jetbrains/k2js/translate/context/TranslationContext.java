@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
@@ -52,6 +53,8 @@ public class TranslationContext {
         return new TranslationContext(staticContext,
                                       rootDynamicContext, rootAliasingContext);
     }
+
+    private final HashMap<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
 
     public boolean isEcma5() {
         return staticContext.isEcma5();
@@ -163,7 +166,7 @@ public class TranslationContext {
     //TODO: util
     @NotNull
     public JsStringLiteral nameToLiteral(@NotNull Named named) {
-        return program().getStringLiteral(named.getName().getName());
+        return program().getStringLiteral(named.getName().asString());
     }
 
     @Nullable
@@ -175,6 +178,27 @@ public class TranslationContext {
     @NotNull
     public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);
+    }
+
+    @NotNull
+    public TemporaryConstVariable getOrDeclareTemporaryConstVariable(@NotNull JsExpression expression) {
+        TemporaryConstVariable tempVar = expressionToTempConstVariableCache.get(expression);
+
+        if (tempVar == null) {
+            TemporaryVariable tmpVar = declareTemporary(expression);
+
+            tempVar = new TemporaryConstVariable(tmpVar.name(), tmpVar.assignmentExpression());
+
+            expressionToTempConstVariableCache.put(expression, tempVar);
+            expressionToTempConstVariableCache.put(tmpVar.assignmentExpression(), tempVar);
+        }
+
+        return tempVar;
+    }
+
+    public void associateExpressionToLazyValue(JsExpression expression, TemporaryConstVariable temporaryConstVariable) {
+        assert expression == temporaryConstVariable.assignmentExpression();
+        expressionToTempConstVariableCache.put(expression, temporaryConstVariable);
     }
 
     @NotNull

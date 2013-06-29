@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefixes;
@@ -39,7 +40,17 @@ import static org.jetbrains.jet.InTextDirectivesUtils.findStringWithPrefixes;
  *
  *  TESTED_OBJECT_KIND - maybe class, function or property
  *  TESTED_OBJECTS - className, [function/property name]
- *  FLAGS - only flags which must be true
+ *  FLAGS - only flags which must be true (could be skipped if ABSENT is TRUE)
+ *  ABSENT - true or false, optional (false by default)
+ *
+ * There is could be specified several tested objects separated by empty line, e.g:
+ * TESTED_OBJECT_KIND: property
+ * TESTED_OBJECTS: Test$object, prop
+ * ABSENT: TRUE
+ *
+ * TESTED_OBJECT_KIND: property
+ * TESTED_OBJECTS: Test, prop$delegate
+ * FLAGS: ACC_STATIC, ACC_FINAL, ACC_PRIVATE
  */
 public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
 
@@ -61,59 +72,78 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         File ktFile = new File(path);
         assertTrue("Cannot find a file " + ktFile.getAbsolutePath(), ktFile.exists());
 
-        String fileText = FileUtil.loadFile(ktFile);
+        String fileText = FileUtil.loadFile(ktFile, true);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
         assertTrue("Cannot create JetFile from text", psiFile != null);
 
         ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        TestedObject testedObject = parseExpectedTestedObject(fileText);
-
-        String className = null;
-        for (String filename : factory.files()) {
-            if (testedObject.isFullContainingClassName && filename.equals(testedObject.containingClass + ".class")) {
-                className = filename;
+        List<TestedObject> testedObjects = parseExpectedTestedObject(fileText);
+        for (TestedObject testedObject : testedObjects) {
+            String className = null;
+            for (String filename : factory.files()) {
+                if (testedObject.isFullContainingClassName && filename.equals(testedObject.containingClass + ".class")) {
+                    className = filename;
+                }
+                else if (!testedObject.isFullContainingClassName && filename.startsWith(testedObject.containingClass)) {
+                    className = filename;
+                }
             }
-            else if (!testedObject.isFullContainingClassName && filename.startsWith(testedObject.containingClass)) {
-                className = filename;
+
+            if (className == null) {
+                throw new AssertionError("Couldn't find a class file with name " + testedObject.containingClass);
+            }
+
+            ClassReader cr = new ClassReader(factory.asBytes(className));
+            TestClassVisitor classVisitor;
+            classVisitor = getClassVisitor(testedObject.kind, testedObject.name);
+            cr.accept(classVisitor, ClassReader.SKIP_CODE);
+
+            boolean isObjectExists = false == Boolean.valueOf(findStringWithPrefixes(testedObject.textData, "// ABSENT: "));
+            assertEquals( "Wrong object existence state: " + testedObject, isObjectExists, classVisitor.isExists());
+            int expectedAccess = getExpectedFlags(testedObject.textData);
+
+            if (isObjectExists) {
+                assertEquals("Wrong access flag for " + testedObject + " \n" + factory.asText(className), expectedAccess, classVisitor.getAccess());
             }
         }
-
-        if (className == null) {
-            throw new AssertionError("Couldn't find a class file with name " + testedObject.containingClass);
-        }
-
-        ClassReader cr = new ClassReader(factory.asBytes(className));
-        TestClassVisitor classVisitor;
-        classVisitor = getClassVisitor(testedObject.kind, testedObject.name);
-        cr.accept(classVisitor, ClassReader.SKIP_CODE);
-        int expectedAccess = getExpectedFlags(fileText);
-        assertEquals("Wrong access flag \n" + factory.asText(className), expectedAccess, classVisitor.getAccess());
     }
 
-    private static TestedObject parseExpectedTestedObject(String fileText) {
-        TestedObject result = new TestedObject();
-        List<String> testedObjects = findListWithPrefixes(fileText, "// TESTED_OBJECTS: ");
-        assertTrue("Cannot find TESTED_OBJECTS instruction", !testedObjects.isEmpty());
-        result.containingClass = testedObjects.get(0);
-        if (testedObjects.size() == 1) {
-            result.name = testedObjects.get(0);
-        }
-        else if (testedObjects.size() == 2) {
-            result.name = testedObjects.get(1);
-        }
-        else {
-            throw new IllegalArgumentException(
-                    "TESTED_OBJECTS instruction must contains one (for class) or two (for function and property) values");
-        }
+    private static List<TestedObject> parseExpectedTestedObject(String testDescription) {
+        testDescription = testDescription.substring(testDescription.indexOf("// TESTED_OBJECT_KIND"));
+        String [] testObjectData = testDescription.split("\n\n");
+        ArrayList<TestedObject> objects = new ArrayList<TestedObject>();
 
-        result.kind = findStringWithPrefixes(fileText, "// TESTED_OBJECT_KIND: ");
-        List<String> isFullName = findListWithPrefixes(fileText, "// IS_FULL_CONTAINING_CLASS_NAME: ");
-        if (isFullName.size() == 1) {
-            result.isFullContainingClassName = Boolean.parseBoolean(isFullName.get(0));
+        for (int i = 0; i < testObjectData.length; i++) {
+            String testData = testObjectData[i];
+            if (!testData.isEmpty()) {
+                TestedObject testObject = new TestedObject();
+                testObject.textData = testData;
+                List<String> testedObjects = findListWithPrefixes(testData, "// TESTED_OBJECTS: ");
+                assertTrue("Cannot find TESTED_OBJECTS instruction", !testedObjects.isEmpty());
+                testObject.containingClass = testedObjects.get(0);
+                if (testedObjects.size() == 1) {
+                    testObject.name = testedObjects.get(0);
+                }
+                else if (testedObjects.size() == 2) {
+                    testObject.name = testedObjects.get(1);
+                }
+                else {
+                    throw new IllegalArgumentException(
+                            "TESTED_OBJECTS instruction must contains one (for class) or two (for function and property) values");
+                }
+
+                testObject.kind = findStringWithPrefixes(testData, "// TESTED_OBJECT_KIND: ");
+                List<String> isFullName = findListWithPrefixes(testData, "// IS_FULL_CONTAINING_CLASS_NAME: ");
+                if (isFullName.size() == 1) {
+                    testObject.isFullContainingClassName = Boolean.parseBoolean(isFullName.get(0));
+                }
+                objects.add(testObject);
+            }
         }
-        return result;
+        assertTrue("Test description not present!", !objects.isEmpty());
+        return objects;
     }
 
     private static class TestedObject {
@@ -121,6 +151,12 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         public String containingClass = "";
         public boolean isFullContainingClassName = true;
         public String kind;
+        public String textData;
+
+        @Override
+        public String toString() {
+            return "Class = " + containingClass + ", name = " + name + ", kind = " + kind;
+        }
     }
 
     private static TestClassVisitor getClassVisitor(String visitorKind, String testedObjectName) {
@@ -136,15 +172,23 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         else if (visitorKind.equals("innerClass")) {
             return new InnerClassFlagsVisitor(testedObjectName);
         }
+
         throw new IllegalArgumentException("Value of TESTED_OBJECT_KIND is incorrect: " + visitorKind);
     }
 
     protected static abstract class TestClassVisitor extends ClassVisitor {
+
+        protected boolean isExists;
+
         public TestClassVisitor() {
             super(Opcodes.ASM4);
         }
 
         abstract public int getAccess();
+
+        public boolean isExists() {
+            return isExists;
+        }
     }
 
     private static int getExpectedFlags(String text) {
@@ -172,6 +216,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
             this.access = access;
+            isExists = true;
         }
 
         @Override
@@ -192,6 +237,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             if (name.equals(funName)) {
                 this.access = access;
+                isExists = true;
             }
             return null;
         }
@@ -214,6 +260,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
             if (name.equals(propertyName)) {
                 this.access = access;
+                isExists = true;
             }
             return null;
         }
@@ -236,6 +283,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         public void visitInnerClass(String innerClassInternalName, String outerClassInternalName, String name, int access) {
             if (name.equals(innerClassName)) {
                 this.access = access;
+                isExists = true;
             }
         }
 

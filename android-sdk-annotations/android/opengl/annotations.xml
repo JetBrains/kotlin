@@ -1,0 +1,8 @@
+<root>
+    <item name='android.opengl.GLSurfaceView void surfaceCreated(android.view.SurfaceHolder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.opengl.GLSurfaceView void surfaceChanged(android.view.SurfaceHolder, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -39,6 +40,10 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver.recordSamAdapter;
+import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.createSamAdapterConstructor;
+import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.isSamAdapterNecessary;
 
 public final class JavaConstructorResolver {
     private BindingTrace trace;
@@ -149,6 +154,7 @@ public final class JavaConstructorResolver {
                 ConstructorDescriptor constructor = resolveConstructor(psiClass, isStatic, psiConstructor, containingClass);
                 if (constructor != null) {
                     constructors.add(constructor);
+                    ContainerUtil.addIfNotNull(constructors, resolveSamAdapter(constructor));
                 }
             }
         }
@@ -207,7 +213,7 @@ public final class JavaConstructorResolver {
             valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
         }
         else if (alternativeMethodSignatureData.hasErrors()) {
-            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, constructorDescriptor,
+            trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, constructorDescriptor,
                          Collections.singletonList(alternativeMethodSignatureData.getError()));
         }
 
@@ -217,5 +223,12 @@ public final class JavaConstructorResolver {
                                          aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;
+    }
+
+    @Nullable
+    private ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
+        return isSamAdapterNecessary(original)
+               ? recordSamAdapter(original, createSamAdapterConstructor(original), trace)
+               : null;
     }
 }

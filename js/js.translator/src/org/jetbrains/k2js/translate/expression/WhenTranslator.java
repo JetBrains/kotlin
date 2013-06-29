@@ -16,115 +16,113 @@
 
 package org.jetbrains.k2js.translate.expression;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 import org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.negated;
 
 public final class WhenTranslator extends AbstractTranslator {
-
-    @NotNull
+    @Nullable
     public static JsNode translate(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         WhenTranslator translator = new WhenTranslator(expression, context);
-        return translator.translate();
+
+        if (BindingUtils.isStatement(context.bindingContext(), expression)) {
+            translator.translateAsStatement(context.dynamicContext().jsBlock().getStatements());
+            return null;
+        }
+
+        return translator.translateAsExpression();
     }
 
     @NotNull
     private final JetWhenExpression whenExpression;
-    @Nullable
-    private final TemporaryVariable expressionToMatch;
-    @NotNull
-    private final TemporaryVariable dummyCounter;
-    @NotNull
-    private final TemporaryVariable result;
 
-    private int currentEntryNumber = 0;
+    @Nullable
+    private final Pair<JsVars.JsVar, JsExpression> expressionToMatch;
+
+    @Nullable
+    private Pair<JsVars.JsVar, JsExpression> result;
 
     private WhenTranslator(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         super(context);
-        this.whenExpression = expression;
-        JsExpression expressionToMatch = translateExpressionToMatch(whenExpression);
-        this.expressionToMatch = expressionToMatch != null ? context.declareTemporary(expressionToMatch) : null;
-        this.dummyCounter = context.declareTemporary(program().getNumberLiteral(0));
-        this.result = context.declareTemporary(JsLiteral.NULL);
+
+        whenExpression = expression;
+
+        JetExpression subject = expression.getSubjectExpression();
+        if (subject != null) {
+            expressionToMatch = TranslationUtils.createTemporaryIfNeed(Translation.translateAsExpression(subject, context()), context);
+        }
+        else {
+            expressionToMatch = null;
+        }
     }
 
-    @NotNull
-    JsNode translate() {
-        JsFor resultingFor = generateDummyFor();
-        resultingFor.setBody(new JsBlock(translateEntries()));
-        context().addStatementToCurrentBlock(resultingFor);
-        return result.reference();
+    @Nullable
+    private JsNode translateAsExpression() {
+        result = context().dynamicContext().createTemporary(null);
+        translateAsStatement(context().dynamicContext().jsBlock().getStatements());
+        return result.second;
     }
 
-    @NotNull
-    private List<JsStatement> translateEntries() {
-        List<JsStatement> entries = new ArrayList<JsStatement>();
+    private void translateAsStatement(List<JsStatement> statements) {
+        addTempVarsStatement(statements);
+
+        JsIf prevIf = null;
         for (JetWhenEntry entry : whenExpression.getEntries()) {
-            entries.add(surroundWithDummyIf(translateEntry(entry)));
+            JsStatement statement = withReturnValueCaptured(translateEntryExpression(entry));
+            if (entry.isElse()) {
+                if (prevIf == null) {
+                    statements.add(statement);
+                }
+                else {
+                    prevIf.setElseStatement(statement);
+                }
+                break;
+            }
+
+            JsIf ifStatement = new JsIf(translateConditions(entry), statement);
+            if (prevIf == null) {
+                statements.add(ifStatement);
+            }
+            else {
+                prevIf.setElseStatement(ifStatement);
+            }
+            prevIf = ifStatement;
         }
-        return entries;
     }
 
-    @NotNull
-    private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
-        JsNumberLiteral jsEntryNumber = program().getNumberLiteral(this.currentEntryNumber);
-        JsExpression stepNumberEqualsCurrentEntryNumber = equality(dummyCounter.reference(), jsEntryNumber);
-        currentEntryNumber++;
-        return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
-    }
-
-    @NotNull
-    private JsFor generateDummyFor() {
-        return new JsFor(generateInitExpressions(), generateConditionStatement(), generateIncrementStatement());
-    }
-
-    @NotNull
-    private JsExpression generateInitExpressions() {
-        List<JsExpression> initExpressions = Lists.newArrayList(dummyCounter.assignmentExpression());
-        if (expressionToMatch != null) {
-            initExpressions.add(expressionToMatch.assignmentExpression());
+    private void addTempVarsStatement(List<JsStatement> statements) {
+        JsVars vars = new JsVars();
+        if (expressionToMatch != null && expressionToMatch.first != null) {
+            vars.add(expressionToMatch.first);
         }
-        return newSequence(initExpressions);
-    }
-
-    @NotNull
-    private JsBinaryOperation generateConditionStatement() {
-        JsNumberLiteral entriesNumber = program().getNumberLiteral(whenExpression.getEntries().size());
-        return new JsBinaryOperation(JsBinaryOperator.LT, dummyCounter.reference(), entriesNumber);
-    }
-
-    @NotNull
-    private JsPrefixOperation generateIncrementStatement() {
-        return new JsPrefixOperation(JsUnaryOperator.INC, dummyCounter.reference());
-    }
-
-    @NotNull
-    private JsStatement translateEntry(@NotNull JetWhenEntry entry) {
-        JsStatement statementToExecute = withReturnValueCaptured(translateEntryExpression(entry));
-        if (entry.isElse()) {
-            return statementToExecute;
+        if (result != null) {
+            vars.add(result.first);
         }
-        JsExpression condition = translateConditions(entry);
-        return new JsIf(condition, addDummyBreakIfNeed(statementToExecute), null);
+
+        if (!vars.isEmpty()) {
+            statements.add(vars);
+        }
     }
 
     @NotNull
-    JsStatement withReturnValueCaptured(@NotNull JsNode node) {
-        return convertToStatement(LastExpressionMutator.mutateLastExpression(node,
-                                                                             new AssignToExpressionMutator(result.reference())));
+    private JsStatement withReturnValueCaptured(@NotNull JsNode node) {
+        return result == null
+               ? convertToStatement(node)
+               : LastExpressionMutator.mutateLastExpression(node, new AssignToExpressionMutator(result.second));
     }
 
     @NotNull
@@ -136,32 +134,20 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateConditions(@NotNull JetWhenEntry entry) {
-        List<JsExpression> conditions = new ArrayList<JsExpression>();
-        for (JetWhenCondition condition : entry.getConditions()) {
-            conditions.add(translateCondition(condition));
-        }
-        return anyOfThemIsTrue(conditions);
-    }
+        JetWhenCondition[] conditions = entry.getConditions();
 
-    @NotNull
-    private static JsExpression anyOfThemIsTrue(List<JsExpression> conditions) {
-        assert !conditions.isEmpty() : "When entry (not else) should have at least one condition";
-        JsExpression current = null;
-        for (JsExpression condition : conditions) {
-            current = addCaseCondition(current, condition);
-        }
-        assert current != null;
-        return current;
-    }
+        assert conditions.length > 0 : "When entry (not else) should have at least one condition";
 
-    @NotNull
-    private static JsExpression addCaseCondition(@Nullable JsExpression current, @NotNull JsExpression condition) {
-        if (current == null) {
-            return condition;
+        if (conditions.length == 1) {
+            return translateCondition(conditions[0]);
         }
-        else {
-            return or(current, condition);
+
+        JsExpression result = translateCondition(conditions[0]);
+        for (int i = 1; i < conditions.length; i++) {
+            result = new JsBinaryOperation(JsBinaryOperator.OR, translateCondition(conditions[i]), result);
         }
+
+        return result;
     }
 
     @NotNull
@@ -170,11 +156,6 @@ public final class WhenTranslator extends AbstractTranslator {
             return translatePatternCondition(condition);
         }
         throw new AssertionError("Unsupported when condition " + condition.getClass());
-    }
-
-    @NotNull
-    private static JsStatement addDummyBreakIfNeed(@NotNull JsStatement statement) {
-        return statement instanceof JsReturn ? statement : new JsBlock(statement, new JsBreak());
     }
 
     @NotNull
@@ -224,7 +205,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @Nullable
     private JsExpression getExpressionToMatch() {
-        return expressionToMatch != null ? expressionToMatch.reference() : null;
+        return expressionToMatch != null ? expressionToMatch.second : null;
     }
 
     private static boolean isNegated(@NotNull JetWhenCondition condition) {
@@ -232,14 +213,5 @@ public final class WhenTranslator extends AbstractTranslator {
             return ((JetWhenConditionIsPattern)condition).isNegated();
         }
         return false;
-    }
-
-    @Nullable
-    private JsExpression translateExpressionToMatch(@NotNull JetWhenExpression expression) {
-        JetExpression subject = expression.getSubjectExpression();
-        if (subject == null) {
-            return null;
-        }
-        return Translation.translateAsExpression(subject, context());
     }
 }

@@ -24,6 +24,8 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.FieldOwnerContext;
+import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -52,7 +54,7 @@ public class ScriptCodegen extends MemberCodegen {
     private Method scriptConstructorMethod;
 
     public ScriptCodegen(@NotNull GenerationState state) {
-        super(state);
+        super(state, null);
     }
 
     @Inject
@@ -99,7 +101,7 @@ public class ScriptCodegen extends MemberCodegen {
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull ClassDescriptor classDescriptorForScript,
             @NotNull ClassBuilder classBuilder,
-            @NotNull CodegenContext context,
+            @NotNull MethodContext context,
             @NotNull List<ScriptDescriptor> importedScripts
     ) {
 
@@ -144,7 +146,6 @@ public class ScriptCodegen extends MemberCodegen {
 
         ImplementationBodyCodegen.generateInitializers(
                 new ExpressionCodegen(instructionAdapter, frameMap, Type.VOID_TYPE, context, state),
-                instructionAdapter,
                 scriptDeclaration.getDeclarations(),
                 bindingContext,
                 state);
@@ -196,7 +197,7 @@ public class ScriptCodegen extends MemberCodegen {
         }
     }
 
-    private void genMembers(@NotNull JetScript scriptDeclaration, @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder) {
+    private void genMembers(@NotNull JetScript scriptDeclaration, @NotNull FieldOwnerContext context, @NotNull ClassBuilder classBuilder) {
         for (JetDeclaration decl : scriptDeclaration.getDeclarations()) {
             genFunctionOrProperty(context, (JetTypeParameterListOwner) decl, classBuilder);
         }

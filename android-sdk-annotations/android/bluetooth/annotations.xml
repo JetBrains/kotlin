@@ -1,0 +1,155 @@
+<root>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_DISCOVERY_FINISHED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_SCAN_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_NAME_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createRfcommSocketToServiceRecord(java.util.UUID)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_CLASS_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset ACTION_VENDOR_SPECIFIC_HEADSET_EVENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_PREVIOUS_SCAN_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice EXTRA_DEVICE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_PREVIOUS_CONNECTION_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_PREVIOUS_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothSocket java.io.InputStream getInputStream()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_DISCOVERY_STARTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothSocket java.io.OutputStream getOutputStream()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothClass void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHealthAppConfiguration void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothDevice getRemoteDevice(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_REQUEST_ENABLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothDevice getRemoteDevice(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_ACL_DISCONNECT_REQUESTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_CONNECTION_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createInsecureRfcommSocketToServiceRecord(java.util.UUID)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice EXTRA_BOND_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice EXTRA_PREVIOUS_BOND_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice EXTRA_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_LOCAL_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice EXTRA_RSSI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothA2dp ACTION_CONNECTION_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_DISCOVERABLE_DURATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothProfile EXTRA_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset ACTION_CONNECTION_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_FOUND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset ACTION_AUDIO_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_ACL_CONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_SCAN_MODE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter EXTRA_CONNECTION_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_ACL_DISCONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_LOCAL_NAME_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice EXTRA_CLASS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_UUID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_ARGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter ACTION_REQUEST_DISCOVERABLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothA2dp ACTION_PLAYING_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset VENDOR_SPECIFIC_HEADSET_EVENT_COMPANY_ID_CATEGORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice EXTRA_UUID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice ACTION_BOND_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothProfile EXTRA_PREVIOUS_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

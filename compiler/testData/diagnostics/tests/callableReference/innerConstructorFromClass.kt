@@ -11,7 +11,7 @@ class A {
     
     class object {
         fun main() {
-            ::<!UNRESOLVED_REFERENCE!>Inner<!>
+            ::<!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>Inner<!>
             val y = A::Inner
 
             y : KMemberFunction0<A, A.Inner>

@@ -41,7 +41,7 @@ public class FieldInfo {
         Type ownerType = typeMapper.mapType(ownerDescriptor.getDefaultType());
 
         String fieldName = kind == ClassKind.ENUM_ENTRY
-                           ? fieldClassDescriptor.getName().getName()
+                           ? fieldClassDescriptor.getName().asString()
                            : fieldClassDescriptor.getKind() == ClassKind.CLASS_OBJECT ? JvmAbi.CLASS_OBJECT_FIELD : JvmAbi.INSTANCE_FIELD;
         return new FieldInfo(ownerType, fieldType, fieldName, true);
     }

@@ -18,5 +18,10 @@
             <username>tc-kotlin</username>
             <password>${tc-kotlin.password}</password>
         </server>
+        <server>
+            <id>jetbrains-kotlin-github</id>
+            <username>${GITHUB_LOGIN}</username>
+            <password>${GITHUB_PASSWORD}</password>
+        </server>
     </servers>
 </settings>

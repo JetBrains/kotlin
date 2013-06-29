@@ -60,8 +60,8 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
         element.delete();
     }
 
-    public static JetIntentionActionFactory createRemoveImportFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveImportFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<PsiElement> createAction(Diagnostic diagnostic) {
                 JetImportDirective directive = QuickFixUtil.getParentElementOfType(diagnostic, JetImportDirective.class);
@@ -79,8 +79,8 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
         };
     }
 
-    public static JetIntentionActionFactory createRemoveSpreadFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveSpreadFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<PsiElement> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
@@ -92,8 +92,8 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
         };
     }
 
-    public static JetIntentionActionFactory createRemoveTypeArgumentsFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveTypeArgumentsFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<PsiElement> createAction(Diagnostic diagnostic) {
                 JetTypeArgumentList element = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeArgumentList.class);
@@ -104,8 +104,8 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
         };
     }
 
-    public static JetIntentionActionFactory createRemoveVariableFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createRemoveVariableFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<PsiElement> createAction(Diagnostic diagnostic) {
                 final JetProperty expression = QuickFixUtil.getParentElementOfType(diagnostic, JetProperty.class);

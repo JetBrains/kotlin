@@ -50,7 +50,7 @@ public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotatio
     @Override
     public PsiJetAnnotationStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
         Name shortName = JetPsiUtil.getShortName(psi);
-        String resultName = shortName != null ? shortName.getName() : psi.getText();
+        String resultName = shortName != null ? shortName.asString() : psi.getText();
         return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, resultName);
     }
 

@@ -1,0 +1,131 @@
+<root>
+    <item name='android.gesture.GestureStroke java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView void draw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils float[] spatialSampling(android.gesture.Gesture, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureStore void removeGesture(java.lang.String, android.gesture.Gesture) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibraries android.gesture.GestureLibrary fromPrivateFile(android.content.Context, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils float[] temporalSampling(android.gesture.GestureStroke, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.Gesture java.util.ArrayList&lt;android.gesture.GestureStroke&gt; getStrokes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.Gesture java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureStroke GestureStroke(java.util.ArrayList&lt;android.gesture.GesturePoint&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils float[] spatialSampling(android.gesture.Gesture, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibraries android.gesture.GestureLibrary fromFile(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView GestureOverlayView(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureStroke android.gesture.OrientedBoundingBox computeOrientedBoundingBox()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView java.util.ArrayList&lt;android.gesture.GesturePoint&gt; getCurrentStroke()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils android.gesture.OrientedBoundingBox computeOrientedBoundingBox(java.util.ArrayList&lt;android.gesture.GesturePoint&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.Gesture void addStroke(android.gesture.GestureStroke) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibraries android.gesture.GestureLibrary fromFile(java.io.File)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureStore void addGesture(java.lang.String, android.gesture.Gesture) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils float[] spatialSampling(android.gesture.Gesture, int, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView boolean dispatchTouchEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView android.graphics.Path getGesturePath(android.graphics.Path) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureStore java.util.Set&lt;java.lang.String&gt; getGestureEntries()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils android.gesture.OrientedBoundingBox computeOrientedBoundingBox(java.util.ArrayList&lt;android.gesture.GesturePoint&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibrary mStore'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView android.graphics.Path getGesturePath(android.graphics.Path)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils float[] temporalSampling(android.gesture.GestureStroke, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibraries android.gesture.GestureLibrary fromRawResource(android.content.Context, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.Gesture void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.Gesture android.graphics.RectF getBoundingBox()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView GestureOverlayView(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView android.graphics.Path getGesturePath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureStore java.util.ArrayList&lt;android.gesture.Prediction&gt; recognize(android.gesture.Gesture) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibraries android.gesture.GestureLibrary fromPrivateFile(android.content.Context, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibrary java.util.ArrayList&lt;android.gesture.Prediction&gt; recognize(android.gesture.Gesture) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GesturePoint java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils android.gesture.OrientedBoundingBox computeOrientedBoundingBox(float[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibrary java.util.Set&lt;java.lang.String&gt; getGestureEntries()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibrary void removeGesture(java.lang.String, android.gesture.Gesture) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils float[] spatialSampling(android.gesture.Gesture, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureUtils android.gesture.OrientedBoundingBox computeOrientedBoundingBox(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView GestureOverlayView(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureLibrary void addGesture(java.lang.String, android.gesture.Gesture) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.gesture.GestureOverlayView GestureOverlayView(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

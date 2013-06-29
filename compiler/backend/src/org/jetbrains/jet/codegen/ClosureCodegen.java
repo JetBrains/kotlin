@@ -178,7 +178,7 @@ public class ClosureCodegen extends GenerationStateAware {
             return;
         }
 
-        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE, interfaceFunction.getName().getName(),
+        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE, interfaceFunction.getName().asString(),
                                         bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
@@ -203,7 +203,7 @@ public class ClosureCodegen extends GenerationStateAware {
                 count++;
             }
 
-            iv.invokevirtual(name.getInternalName(), interfaceFunction.getName().getName(), delegate.getDescriptor());
+            iv.invokevirtual(name.getInternalName(), interfaceFunction.getName().asString(), delegate.getDescriptor());
             StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), iv);
 
             iv.areturn(bridge.getReturnType());
@@ -268,11 +268,11 @@ public class ClosureCodegen extends GenerationStateAware {
                 Type type = sharedVarType != null
                                   ? sharedVarType
                                   : typeMapper.mapType((VariableDescriptor) descriptor);
-                args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().getName()));
+                args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().asString()));
             }
             else if (isLocalNamedFun(descriptor)) {
                 JvmClassName className = classNameForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
-                args.add(FieldInfo.createForHiddenField(ownerType, className.getAsmType(), "$" + descriptor.getName().getName()));
+                args.add(FieldInfo.createForHiddenField(ownerType, className.getAsmType(), "$" + descriptor.getName().asString()));
             }
             else if (descriptor instanceof FunctionDescriptor) {
                 assert captureReceiver != null;

@@ -24,14 +24,19 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 public class TemporaryVariable {
+
+    /*package*/ static TemporaryVariable create(@NotNull JsName temporaryName, @Nullable JsExpression initExpression) {
+        return new TemporaryVariable(temporaryName, initExpression == null ? null : JsAstUtils.assignment(temporaryName.makeRef(), initExpression));
+    }
+
     @Nullable
     private final JsExpression assignmentExpression;
     @NotNull
     private final JsName variableName;
 
-    /*package*/ TemporaryVariable(@NotNull JsName temporaryName, @Nullable JsExpression initExpression) {
+    protected TemporaryVariable(@NotNull JsName temporaryName, @Nullable JsExpression assignmentExpression) {
         this.variableName = temporaryName;
-        this.assignmentExpression = initExpression == null ? null : JsAstUtils.assignment(variableName.makeRef(), initExpression);
+        this.assignmentExpression = assignmentExpression;
     }
 
     @NotNull

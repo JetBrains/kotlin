@@ -99,14 +99,14 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
-        return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().getFqName(), type);
+        return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().asString(), type);
     }
 
     private JetType visitCommonType(@NotNull String qualifiedName, @NotNull JetTypeElement type) {
         TypeConstructor originalTypeConstructor = originalType.getConstructor();
         ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
+        String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().asString();
         ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(qualifiedName);
         if (!isSameName(qualifiedName, fqName) && classFromLibrary == null) {
             throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s", qualifiedName, fqName);
@@ -212,7 +212,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         Collection<ClassDescriptor> descriptors =
                 JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byType(javaAnalog).getFqName());
         for (ClassDescriptor descriptor : descriptors) {
-            String fqName = DescriptorUtils.getFQName(descriptor).getFqName();
+            String fqName = DescriptorUtils.getFQName(descriptor).asString();
             if (isSameName(qualifiedName, fqName)) {
                 return descriptor;
             }

@@ -1,17 +1,21 @@
 <project name="Update Dependencies" default="update">
+    <property name="jb.buildserver.build.id" value="1864599"/>
+    <property name="public.buildserver.build.id" value="82629"/>
+    <property name="idea.archive.name" value="ideaIC-129.SNAPSHOT.win.zip"/>
+
     <property name="idea.sdk.fetch.needed" value="true"/>
 
     <target name="update" depends="fetch-third-party">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/82257:id"
-            build.zip="ideaIC-129.SNAPSHOT.win.zip"
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
+            build.zip="${idea.archive.name}"
         />
     </target>
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/1854083:id"
-            build.zip="ideaIC-129.SNAPSHOT.win.zip"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
+            build.zip="${idea.archive.name}"
         />
     </target>
 
@@ -122,35 +126,19 @@
 
     <macrodef name="get-asm4-and-rename-packages">
         <sequential>
-            <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources -->
-            <get-maven-library prefix="org/ow2/asm" lib="asm-analysis" version="4.0" src="false"/>
-            <get-maven-library prefix="org/ow2/asm" lib="asm-util" version="4.0" src="false"/>
-            <get-maven-library prefix="org/ow2/asm" lib="asm-all" version="4.0" bin="false"/>
-
-            <!-- Rename packages in the jars -->
-            <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
-
-            <jarjar jarfile="dependencies/jetbrains-asm-util-4.0.jar">
-                <zipfileset src="dependencies/download/asm-util-4.0.jar"/>
-
-                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
-            </jarjar>
-
-            <jarjar jarfile="dependencies/jetbrains-asm-analysis-4.0.jar">
-                <zipfileset src="dependencies/download/asm-analysis-4.0.jar"/>
-
-                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
-            </jarjar>
+            <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources from idea13 build (with debug info and patched for java 8) -->
+            <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/83470:id/jps/asm4-all.jar" dest="dependencies/jetbrains-asm-debug-all-4.0.jar" usetimestamp="true"/>
+            <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="4.0" bin="false"/>
 
             <!-- Rename packages in the sources -->
             <delete dir="dependencies/download/asm-src" failonerror="false"/>
-            <unzip src="dependencies/download/asm-all-4.0-sources.jar" dest="dependencies/download/asm-src">
+            <unzip src="dependencies/download/asm-debug-all-4.0-sources.jar" dest="dependencies/download/asm-src">
                 <patternset>
                     <include name="**/*"/>
                 </patternset>
             </unzip>
 
-            <replaceregexp match="org.objectweb.asm" replace="org.jetbrains.asm4">
+            <replaceregexp match="org\.objectweb\.asm" replace="org.jetbrains.asm4" flags="g">
                 <fileset dir="dependencies/download/asm-src/">
                     <include name="**/*.java"/>
                 </fileset>
@@ -194,7 +182,7 @@
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
 
-                    <get src="@{base.url}/jps/asm4-all.jar" dest="${jps}/asm4-all.jar" usetimestamp="true"/>
+                    <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="${jps}"/>
                     <get src="@{base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/groovy-jps-plugin.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/groovy_rt.jar" dest="${jps}/groovy_rt.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/jdom.jar" dest="${jps}/jdom.jar" usetimestamp="true"/>
@@ -227,7 +215,8 @@
             <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xstream-1.4.3.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/asm4-all.jar" todir="${core}"/>
+            <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="${core}"/>
+            <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="ideaSDK/lib"/>
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
             <copy file="ideaSDK/lib/util.jar" todir="${core}"/>
@@ -238,6 +227,12 @@
                  many nice features of IDEA including diffs in the test console.
             -->
             <delete file="ideaSDK/lib/junit.jar"/>
+
+            <!--
+                The asm4-all.jar bundled with IDEA has no debug information in it, and we replace it
+                with jetbrains-asm-debug-all-4.0.jar
+            -->
+            <delete file="ideaSDK/lib/asm4-all.jar"/>
 
         </sequential>
     </macrodef>

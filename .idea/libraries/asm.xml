@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="asm">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/jetbrains-asm-debug-all-4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/jetbrains-asm-all-4.0-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -17,6 +17,8 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -24,15 +26,15 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 
 public final class TranslationUtils {
     private TranslationUtils() {
@@ -64,23 +66,24 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation notNullConditionalTestExpression(@NotNull TemporaryVariable cachedValue) {
-        return and(inequality(cachedValue.assignmentExpression(), JsLiteral.NULL),
-                   inequality(cachedValue.reference(), JsLiteral.UNDEFINED));
+    public static JsBinaryOperation isNotNullCheck(@NotNull JsExpression expressionToCheck) {
+        return nullCheck(expressionToCheck, true);
     }
 
     @NotNull
     public static JsBinaryOperation nullCheck(@NotNull JsExpression expressionToCheck, boolean isNegated) {
-        JsBinaryOperator operator = isNegated ? JsBinaryOperator.REF_NEQ : JsBinaryOperator.REF_EQ;
-        return new JsBinaryOperation(isNegated ? JsBinaryOperator.AND : JsBinaryOperator.OR,
-                                     new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL),
-                                     new JsBinaryOperation(operator, expressionToCheck, JsLiteral.UNDEFINED));
+        JsBinaryOperator operator = isNegated ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
+        return new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL);
     }
-
+    
     @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
             @NotNull List<? extends ValueArgument> jetArguments) {
-        List<JsExpression> jsArguments = new ArrayList<JsExpression>();
+        if (jetArguments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<JsExpression> jsArguments = new SmartList<JsExpression>();
         for (ValueArgument argument : jetArguments) {
             jsArguments.add(translateArgument(context, argument));
         }
@@ -121,17 +124,9 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
-            @NotNull DeclarationDescriptor descriptor) {
-        JsName name = context.getNameForDescriptor(descriptor);
-        JsNameRef reference = name.makeRef();
-        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
-        if (qualifier != null) {
-            setQualifier(reference, qualifier);
-        }
-        return reference;
+    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
+        return new JsNameRef(context.getNameForDescriptor(descriptor), context.getQualifierForDescriptor(descriptor));
     }
-
 
     @NotNull
     public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
@@ -174,5 +169,24 @@ public final class TranslationUtils {
         if (context.intrinsics().getFunctionIntrinsics().getIntrinsic(operationDescriptor).exists()) return true;
 
         return false;
+    }
+
+    public static boolean isCacheNeeded(@NotNull JsExpression expression) {
+        return !(expression instanceof JsLiteral) &&
+               (!(expression instanceof JsNameRef) || ((JsNameRef) expression).getQualifier() != null);
+    }
+
+    @NotNull
+    public static Pair<JsVars.JsVar, JsExpression> createTemporaryIfNeed(
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        // don't create temp variable for simple expression
+        if (isCacheNeeded(expression)) {
+            return context.dynamicContext().createTemporary(expression);
+        }
+        else {
+            return Pair.create(null, expression);
+        }
     }
 }

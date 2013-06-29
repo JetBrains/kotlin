@@ -22,7 +22,6 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -33,7 +32,6 @@ import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
@@ -98,7 +96,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
             assertEquals(expectedName, ((PsiClass) element).getQualifiedName());
         }
         else if (element instanceof JetClass) {
-            assertEquals(expectedName, JetPsiUtil.getFQName((JetClass) element).getFqName());
+            assertEquals(expectedName, JetPsiUtil.getFQName((JetClass) element).asString());
         }
         else {
             fail("Navigation element should be JetClass or PsiClass: " + element.getClass() + ", " + element.getText());

@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -55,8 +54,8 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
         }
     }
 
-    public static JetIntentionActionFactory createChangeCastToStaticAssertFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createChangeCastToStaticAssertFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
                 JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);

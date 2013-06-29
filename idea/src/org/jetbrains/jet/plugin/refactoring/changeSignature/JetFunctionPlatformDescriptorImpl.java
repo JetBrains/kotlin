@@ -47,7 +47,7 @@ public class JetFunctionPlatformDescriptorImpl implements JetFunctionPlatformDes
             @Override
             public JetParameterInfo fun(ValueParameterDescriptor param) {
                 JetParameter parameter = valueParameters.get(param.getIndex());
-                return new JetParameterInfo(param.getIndex(), param.getName().getName(), param.getType(), parameter.getDefaultValue(), parameter.getValOrVarNode());
+                return new JetParameterInfo(param.getIndex(), param.getName().asString(), param.getType(), parameter.getDefaultValue(), parameter.getValOrVarNode());
             }
         }));
     }
@@ -55,11 +55,11 @@ public class JetFunctionPlatformDescriptorImpl implements JetFunctionPlatformDes
     @Override
     public String getName() {
         if (funDescriptor instanceof ConstructorDescriptor)
-            return funDescriptor.getContainingDeclaration().getName().getName();
+            return funDescriptor.getContainingDeclaration().getName().asString();
         else if (funDescriptor instanceof AnonymousFunctionDescriptor)
             return "";
         else
-            return funDescriptor.getName().getName();
+            return funDescriptor.getName().asString();
     }
 
     @Override
@@ -73,6 +73,10 @@ public class JetFunctionPlatformDescriptorImpl implements JetFunctionPlatformDes
 
     public void removeParameter(int index) {
         parameters.remove(index);
+    }
+
+    public void clearParameters() {
+        parameters.clear();
     }
 
     @Override

@@ -175,7 +175,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
                 @NotNull
                 @Override
                 public String getPackageName() {
-                    return JetPsiUtil.getFQName((JetFile) classOrObject.getContainingFile()).getFqName();
+                    return JetPsiUtil.getFQName((JetFile) classOrObject.getContainingFile()).asString();
                 }
 
                 @NotNull
@@ -260,13 +260,13 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     @Nullable
     @Override
     public String getName() {
-        return classFqName.shortName().getName();
+        return classFqName.shortName().asString();
     }
 
     @Nullable
     @Override
     public String getQualifiedName() {
-        return classFqName.getFqName();
+        return classFqName.asString();
     }
 
     @NotNull
@@ -339,7 +339,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         }
 
         ClassDescriptor deprecatedAnnotation = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
-        String deprecatedName = deprecatedAnnotation.getName().getName();
+        String deprecatedName = deprecatedAnnotation.getName().asString();
         FqNameUnsafe deprecatedFqName = DescriptorUtils.getFQName(deprecatedAnnotation);
 
         for (JetAnnotationEntry annotationEntry : jetModifierList.getAnnotationEntries()) {
@@ -353,7 +353,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             if (fqName == null) continue;
 
             if (deprecatedFqName.equals(fqName.toUnsafe())) return true;
-            if (deprecatedName.equals(fqName.getFqName())) return true;
+            if (deprecatedName.equals(fqName.asString())) return true;
         }
         return false;
     }

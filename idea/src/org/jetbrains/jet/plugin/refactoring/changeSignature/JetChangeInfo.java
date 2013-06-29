@@ -23,6 +23,7 @@ import com.intellij.refactoring.changeSignature.ChangeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.psi.JetFunction;
@@ -31,7 +32,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JetChangeInfo implements ChangeInfo {
     private final JetFunctionPlatformDescriptor oldDescriptor;
@@ -43,6 +46,7 @@ public class JetChangeInfo implements ChangeInfo {
     private final PsiElement context;
     private final JetGeneratedInfo generatedInfo;
     private Boolean parameterNamesChanged;
+    private Map<String, Integer> oldNameToParameterIndex;
 
     public JetChangeInfo(
             JetFunctionPlatformDescriptor oldDescriptor,
@@ -119,6 +123,22 @@ public class JetChangeInfo implements ChangeInfo {
         return false;
     }
 
+    private Map<String, Integer> initOldNameToParameterIndex() {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        FunctionDescriptor descriptor = oldDescriptor.getDescriptor();
+
+        if (descriptor != null) {
+            List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
+
+            for (int i = 0; i < parameters.size(); i++) {
+                ValueParameterDescriptor oldParameter = parameters.get(i);
+                map.put(oldParameter.getName().asString(), i);
+            }
+        }
+
+        return map;
+    }
+
     @NotNull
     @Override
     public JetParameterInfo[] getNewParameters() {
@@ -139,6 +159,14 @@ public class JetChangeInfo implements ChangeInfo {
             parameterNamesChanged = innerParameterSetOrOrderChanged();
 
         return parameterNamesChanged;
+    }
+
+    @Nullable
+    public Integer getOldParameterIndex(String oldParameterName) {
+        if (oldNameToParameterIndex == null)
+            oldNameToParameterIndex = initOldNameToParameterIndex();
+
+        return oldNameToParameterIndex.get(oldParameterName);
     }
 
     @Override

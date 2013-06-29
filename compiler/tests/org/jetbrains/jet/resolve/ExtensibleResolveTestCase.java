@@ -23,6 +23,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 
+import java.io.File;
 import java.util.List;
 
 public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
@@ -48,7 +49,8 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     protected abstract ExpectedResolveData getExpectedResolveData();
 
     protected void doTest(@NonNls String filePath) throws Exception {
-        String text = loadFile(filePath);
+        File file = new File(filePath);
+        String text = JetTestUtils.doLoadFile(file);
         List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
             @Override
             public JetFile create(String fileName, String text) {

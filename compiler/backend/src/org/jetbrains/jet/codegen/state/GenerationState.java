@@ -57,6 +57,9 @@ public class GenerationState {
     private final IntrinsicMethods intrinsics;
 
     @NotNull
+    private final SamWrapperClasses samWrapperClasses = new SamWrapperClasses(this);
+
+    @NotNull
     private final BindingTrace bindingTrace;
 
     @NotNull
@@ -152,6 +155,11 @@ public class GenerationState {
     @NotNull
     public IntrinsicMethods getIntrinsics() {
         return intrinsics;
+    }
+
+    @NotNull
+    public SamWrapperClasses getSamWrapperClasses() {
+        return samWrapperClasses;
     }
 
     public boolean isGenerateNotNullAssertions() {

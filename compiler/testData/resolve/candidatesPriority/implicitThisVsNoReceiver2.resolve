@@ -1,0 +1,12 @@
+class A {
+}
+~extension~fun A.foo() = 1
+fun foo() = 2
+
+fun test(a: A) {
+    with (a) {
+        `extension`foo()
+    }
+}
+
+fun <T, R> with(receiver: T, f: T.() -> R) : R = receiver.f()

@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,19 +32,22 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     private final JetType type;
+    private final String renderedType;
 
     public CastExpressionFix(@NotNull JetExpression element, @NotNull JetType type) {
         super(element);
         this.type = type;
+        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("cast.expression.to.type", element.getText(), type.toString());
+        return JetBundle.message("cast.expression.to.type", element.getText(), renderedType);
     }
 
     @NotNull
@@ -56,17 +58,18 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        if (!super.isAvailable(project, editor, file)) return false;
         BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
         JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, element);
-        return super.isAvailable(project, editor, file) && expressionType != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, expressionType);
+        return expressionType != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, expressionType);
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetBinaryExpressionWithTypeRHS castedExpression =
-                (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, "(" + element.getText() + ") as " + type.toString());
+                (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, "(" + element.getText() + ") as " + renderedType);
         if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castedExpression.getLeft())) {
-            castedExpression = (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, element.getText() + " as " + type.toString());
+            castedExpression = (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, element.getText() + " as " + renderedType);
         }
 
         JetParenthesizedExpression castedExpressionInParentheses =
@@ -78,8 +81,8 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactoryForAutoCastImpossible() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactoryForAutoCastImpossible() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -88,34 +91,6 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
                 DiagnosticWithParameters2<JetExpression, JetType, String> diagnosticWithParameters =
                         (DiagnosticWithParameters2<JetExpression, JetType, String>) diagnostic;
                 return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
-            }
-        };
-    }
-
-    @NotNull
-    public static JetIntentionActionFactory createFactoryForTypeMismatch() {
-        return new JetIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.TYPE_MISMATCH;
-                @SuppressWarnings("unchecked")
-                DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters =
-                        (DiagnosticWithParameters2<JetExpression, JetType, JetType>) diagnostic;
-                JetExpression expression = diagnosticWithParameters.getPsiElement();
-
-                // we don't want to cast a cast:
-                if (expression instanceof JetBinaryExpressionWithTypeRHS) {
-                    return null;
-                }
-
-                // 'x: Int' - TYPE_MISMATCH might be reported on 'x', and we don't want this quickfix to be available:
-                JetBinaryExpressionWithTypeRHS parentExpressionWithTypeRHS =
-                        PsiTreeUtil.getParentOfType(expression, JetBinaryExpressionWithTypeRHS.class, true);
-                if (parentExpressionWithTypeRHS != null && parentExpressionWithTypeRHS.getLeft() == expression) {
-                    return null;
-                }
-                return new CastExpressionFix(expression, diagnosticWithParameters.getA());
             }
         };
     }

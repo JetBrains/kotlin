@@ -237,7 +237,7 @@ public class ExpressionTypingUtils {
             @NotNull JetScope scope,
             @NotNull ModuleDescriptor module
     ) {
-        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN.getFqName());
+        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN.asString());
 
         Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver()
                 .analyseImportReference(importDirective, scope, new BindingTraceContext(), module);
@@ -417,7 +417,7 @@ public class ExpressionTypingUtils {
                 context.trace.report(COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, componentName, results.getResultingCalls()));
             }
             else {
-                context.trace.report(COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName));
+                context.trace.report(COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName, receiver.getType()));
             }
             if (componentType == null) {
                 componentType = ErrorUtils.createErrorType(componentName + "() return type");
@@ -436,7 +436,7 @@ public class ExpressionTypingUtils {
         if (oldDescriptor != null && DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
             PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
             if (declaration != null) {
-                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().getName()));
+                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }
         }
     }

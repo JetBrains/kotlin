@@ -1,0 +1,10 @@
+class A {
+    fun ~member~foo() = 1
+
+    fun test() {
+        this.`member`foo()
+    }
+
+    fun A.foo() = 2
+}
+

@@ -1,0 +1,47 @@
+<root>
+    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_STATE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pConfig void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_WIFI_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_THIS_DEVICE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_DISCOVERY_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pGroup void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_DISCOVERY_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_NETWORK_INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_CONNECTION_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_WIFI_P2P_DEVICE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_WIFI_P2P_INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDevice void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_PEERS_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.utils.Profiler;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -58,7 +59,7 @@ public class ForTestCompileRuntime {
     }
 
     private static void compileStdlib(File destdir) throws IOException {
-        ExitCode exitCode = new K2JVMCompiler().exec(System.err,
+        ExitCode exitCode = new K2JVMCompiler().exec(System.out,
                 "-output", destdir.getPath(),
                 "-src", "./libraries/stdlib/src",
                 "-noStdlib",
@@ -120,7 +121,9 @@ public class ForTestCompileRuntime {
 
     // This method is very convenient when you have trouble compiling runtime in tests
     public static void main(String[] args) throws IOException {
+        Profiler stdlib = Profiler.create("compileStdlib").start();
         compileStdlib(JetTestUtils.tmpDir("runtime"));
+        stdlib.end();
     }
 
 }

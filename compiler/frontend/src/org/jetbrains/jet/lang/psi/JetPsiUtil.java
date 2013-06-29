@@ -17,18 +17,23 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.codeInsight.CommentUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.kdoc.psi.api.KDocElement;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -154,13 +159,14 @@ public class JetPsiUtil {
         }
     }
 
-    public static FqName getFQName(JetFile file) {
+    @NotNull
+    public static FqName getFQName(@NotNull JetFile file) {
         JetNamespaceHeader header = file.getNamespaceHeader();
         return header != null ? header.getFqName() : FqName.ROOT;
     }
 
     @Nullable
-    public static FqName getFQName(JetNamedDeclaration namedDeclaration) {
+    public static FqName getFQName(@NotNull JetNamedDeclaration namedDeclaration) {
         if (namedDeclaration instanceof JetObjectDeclarationName) {
             JetNamedDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(namedDeclaration, JetObjectDeclaration.class);
             if (objectDeclaration == null) {
@@ -192,11 +198,17 @@ public class JetPsiUtil {
         else if (parent instanceof JetNamedFunction || parent instanceof JetClass) {
             firstPart = getFQName((JetNamedDeclaration) parent);
         }
+        else if (namedDeclaration instanceof JetParameter) {
+            JetClass constructorClass = getClassIfParameterIsProperty((JetParameter) namedDeclaration);
+            if (constructorClass != null) {
+                firstPart = getFQName(constructorClass);
+            }
+        }
         else if (parent instanceof JetObjectDeclaration) {
             if (parent.getParent() instanceof JetClassObject) {
                 JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(parent, JetClassOrObject.class);
                 if (classOrObject != null) {
-                    firstPart = getFQName((JetNamedDeclaration) classOrObject);
+                    firstPart = getFQName(classOrObject);
                 }
             }
             else {
@@ -229,7 +241,7 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static Name getShortName(JetAnnotationEntry annotation) {
+    public static Name getShortName(@NotNull JetAnnotationEntry annotation) {
         JetTypeReference typeReference = annotation.getTypeReference();
         assert typeReference != null : "Annotation entry hasn't typeReference " + annotation.getText();
         JetTypeElement typeElement = typeReference.getTypeElement();
@@ -243,7 +255,7 @@ public class JetPsiUtil {
         return null;
     }
 
-    public static boolean isDeprecated(JetModifierListOwner owner) {
+    public static boolean isDeprecated(@NotNull JetModifierListOwner owner) {
         JetModifierList modifierList = owner.getModifierList();
         if (modifierList != null) {
             List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
@@ -259,7 +271,7 @@ public class JetPsiUtil {
 
     @Nullable
     @IfNotParsed
-    public static ImportPath getImportPath(JetImportDirective importDirective) {
+    public static ImportPath getImportPath(@NotNull JetImportDirective importDirective) {
         if (PsiTreeUtil.hasErrorElements(importDirective)) {
             return null;
         }
@@ -398,7 +410,7 @@ public class JetPsiUtil {
             return false;
         }
 
-        return KotlinBuiltIns.getInstance().getUnit().getName().getName().equals(typeReference.getText());
+        return KotlinBuiltIns.getInstance().getUnit().getName().asString().equals(typeReference.getText());
     }
 
     public static boolean isSafeCall(@NotNull Call call) {
@@ -406,7 +418,7 @@ public class JetPsiUtil {
         return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
     }
 
-    public static boolean isFunctionLiteralWithoutDeclaredParameterTypes(JetExpression expression) {
+    public static boolean isFunctionLiteralWithoutDeclaredParameterTypes(@Nullable JetExpression expression) {
         if (!(expression instanceof JetFunctionLiteralExpression)) return false;
         JetFunctionLiteralExpression functionLiteral = (JetFunctionLiteralExpression) expression;
         for (JetParameter parameter : functionLiteral.getValueParameters()) {
@@ -458,6 +470,7 @@ public class JetPsiUtil {
         return null;
     }
 
+    @Nullable
     public static PsiElement getTopmostParentOfTypes(@Nullable PsiElement element, @NotNull Class<? extends PsiElement>... parentTypes) {
         if (element == null) {
             return null;
@@ -540,6 +553,10 @@ public class JetPsiUtil {
         return getOutermostClassOrObject(classOrObject) == null;
     }
 
+    public static boolean isTrait(@NotNull JetClassOrObject classOrObject) {
+        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
+    }
+
     @Nullable
     public static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetClassOrObject current = classOrObject;
@@ -564,6 +581,19 @@ public class JetPsiUtil {
         }
     }
 
+    @Nullable
+    public static JetClass getClassIfParameterIsProperty(@NotNull JetParameter jetParameter) {
+        if (jetParameter.getValOrVarNode() != null) {
+            PsiElement parent = jetParameter.getParent();
+            if (parent instanceof JetParameterList && parent.getParent() instanceof JetClass) {
+                return (JetClass) parent.getParent();
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
     private static IElementType getOperation(@NotNull JetExpression expression) {
         if (expression instanceof JetQualifiedExpression) {
             return ((JetQualifiedExpression) expression).getOperationSign();
@@ -620,5 +650,208 @@ public class JetPsiUtil {
         int innerPrecedence = getPrecedenceOfOperation(innerExpression, innerOperation);
         int parentPrecedence = getPrecedenceOfOperation(parentExpression, parentOperation);
         return innerPrecedence < parentPrecedence;
+    }
+
+    public static boolean isAssignment(@NotNull PsiElement element) {
+        return element instanceof JetBinaryExpression &&
+               JetTokens.ALL_ASSIGNMENTS.contains(((JetBinaryExpression) element).getOperationToken());
+    }
+
+    public static boolean isOrdinaryAssignment(@NotNull PsiElement element) {
+        return element instanceof JetBinaryExpression &&
+               ((JetBinaryExpression) element).getOperationToken().equals(JetTokens.EQ);
+    }
+
+    @Nullable
+    public static JetElement getOutermostLastBlockElement(@Nullable JetElement element, @NotNull Predicate<JetElement> checkElement) {
+        if (element == null) return null;
+
+        if (!(element instanceof JetBlockExpression)) return checkElement.apply(element) ? element : null;
+
+        JetBlockExpression block = (JetBlockExpression)element;
+        int n = block.getStatements().size();
+
+        if (n == 0) return null;
+
+        JetElement lastElement = block.getStatements().get(n - 1);
+        return checkElement.apply(lastElement) ? lastElement : null;
+    }
+
+    @Nullable
+    public static PsiElement getParentByTypeAndPredicate(
+            @Nullable PsiElement element, @NotNull Class<? extends PsiElement> aClass, @NotNull Predicate<PsiElement> predicate, boolean strict) {
+        if (element == null) return null;
+        if (strict) {
+            element = element.getParent();
+        }
+
+        while (element != null) {
+            //noinspection unchecked
+            if (aClass.isInstance(element) && predicate.apply(element)) {
+                //noinspection unchecked
+                return element;
+            }
+            if (element instanceof PsiFile) return null;
+            element = element.getParent();
+        }
+
+        return null;
+    }
+
+    public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
+        for (JetElement element : block.getStatements()) {
+            if (element instanceof JetVariableDeclaration) {
+                if (((JetVariableDeclaration) element).getNameAsSafeName().asString().equals(varName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean checkWhenExpressionHasSingleElse(@NotNull JetWhenExpression whenExpression) {
+        int elseCount = 0;
+        for (JetWhenEntry entry : whenExpression.getEntries()) {
+            if (entry.isElse()) {
+                elseCount++;
+            }
+        }
+        return (elseCount == 1);
+    }
+
+    @Nullable
+    public static PsiElement skipTrailingWhitespacesAndComments(@Nullable PsiElement element)  {
+        return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace.class, PsiComment.class);
+    }
+
+    public static final Predicate<JetElement> ANY_JET_ELEMENT = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return true;
+        }
+    };
+
+    @NotNull
+    public static String getText(@Nullable PsiElement element) {
+        return element != null ? element.getText() : "";
+    }
+
+    @Nullable
+    public static String getNullableText(@Nullable PsiElement element) {
+        return element != null ? element.getText() : null;
+    }
+
+    /**
+     * CommentUtilCore.isComment fails if element <strong>inside</strong> comment.
+     *
+     * Also, we can not add KDocTokens to COMMENTS TokenSet, because it is used in JetParserDefinition.getCommentTokens(),
+     * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
+     *
+     * @param element
+     * @return
+     */
+    public static boolean isInComment(PsiElement element) {
+        return CommentUtilCore.isComment(element) || element instanceof KDocElement;
+    }
+
+    @Nullable
+    public static PsiElement getOutermostParent(@NotNull PsiElement element, @NotNull PsiElement upperBound, boolean strict) {
+        PsiElement parent = strict ? element.getParent() : element;
+        while (parent != null && parent.getParent() != upperBound) {
+            parent = parent.getParent();
+        }
+
+        return parent;
+    }
+
+    public static <T extends PsiElement> T getLastChildByType(@NotNull PsiElement root, @NotNull Class<? extends T>... elementTypes) {
+        PsiElement[] children = root.getChildren();
+
+        for (int i = children.length - 1; i >= 0; i--) {
+            if (PsiTreeUtil.instanceOf(children[i], elementTypes)) {
+                //noinspection unchecked
+                return (T) children[i];
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static <T extends JetElement> T getOutermostJetElement(
+            @Nullable PsiElement root,
+            boolean first,
+            @NotNull final Class<? extends T>... elementTypes
+    ) {
+        if (!(root instanceof JetElement)) return null;
+
+        final List<T> results = Lists.newArrayList();
+
+        ((JetElement) root).accept(
+                new JetVisitorVoid() {
+                    @Override
+                    public void visitJetElement(JetElement element) {
+                        if (PsiTreeUtil.instanceOf(element, elementTypes)) {
+                            //noinspection unchecked
+                            results.add((T) element);
+                        }
+                        else {
+                            element.acceptChildren(this);
+                        }
+                    }
+                }
+        );
+
+        if (results.isEmpty()) return null;
+
+        return first ? results.get(0) : results.get(results.size() - 1);
+    }
+
+    @Nullable
+    public static PsiElement findChildByType(@NotNull PsiElement element, @NotNull IElementType type) {
+        ASTNode node = element.getNode().findChildByType(type);
+        return node == null ? null : node.getPsi();
+    }
+
+    @Nullable
+    public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
+        if (expression instanceof JetCallElement) {
+            JetCallElement callExpression = (JetCallElement) expression;
+            return callExpression.getCalleeExpression();
+        }
+        if (expression instanceof JetQualifiedExpression) {
+            JetExpression selectorExpression = ((JetQualifiedExpression) expression).getSelectorExpression();
+            if (selectorExpression != null) {
+                return getCalleeExpressionIfAny(selectorExpression);
+            }
+        }
+        if (expression instanceof JetUnaryExpression) {
+            return ((JetUnaryExpression) expression).getOperationReference();
+        }
+        if (expression instanceof JetBinaryExpression) {
+            return ((JetBinaryExpression) expression).getOperationReference();
+        }
+        return null;
+    }
+
+    @Nullable
+    public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
+        if (element == null) return null;
+        for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
+            if (elementsToSkip.apply(e)) continue;
+            return e;
+        }
+        return null;
+    }
+
+    @Nullable
+    public static PsiElement skipSiblingsForwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
+        if (element == null) return null;
+        for (PsiElement e = element.getNextSibling(); e != null; e = e.getNextSibling()) {
+            if (elementsToSkip.apply(e)) continue;
+            return e;
+        }
+        return null;
     }
 }

@@ -81,7 +81,7 @@ public class ReferenceToClassesShortening {
                 }
 
                 private void compactReferenceToClass(JetUserType userType, ClassDescriptor targetClass) {
-                    String name = targetClass.getName().getName();
+                    String name = targetClass.getName().asString();
                     DeclarationDescriptor parent = targetClass.getContainingDeclaration();
                     while (parent instanceof ClassDescriptor) {
                         name = parent.getName() + "." + name;

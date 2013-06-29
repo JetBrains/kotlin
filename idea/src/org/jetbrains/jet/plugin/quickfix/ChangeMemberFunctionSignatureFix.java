@@ -31,13 +31,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.VisibilityUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetChangeFunctionSignatureAction;
@@ -75,7 +76,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @NotNull
-    private String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature, boolean shortTypeNames) {
+    private static String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature, boolean shortTypeNames) {
         return CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
                 functionSignature, shortTypeNames);
     }
@@ -87,7 +88,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, PsiFile file)
+    protected void invoke(@NotNull final Project project, @NotNull final Editor editor, JetFile file)
             throws IncorrectOperationException {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
@@ -106,7 +107,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
      * Computes all the signatures a 'functionElement' could be changed to in order to remove NOTHING_TO_OVERRIDE error.
      */
     @NotNull
-    private List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
+    private static List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
         BindingContext context = KotlinCacheManagerUtil.getDeclarationsFromProject(functionElement).getBindingContext();
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Lists.newArrayList();
@@ -186,7 +187,13 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                 @NotNull ValueParameterDescriptor parameter,
                 @NotNull ValueParameterDescriptor superParameter
         ) {
-            return JetTypeChecker.INSTANCE.equalTypes(parameter.getType(), superParameter.getType()) ? parameter : null;
+            // TODO: support for generic functions
+            if (JetTypeChecker.INSTANCE.equalTypes(parameter.getType(), superParameter.getType())) {
+                return superParameter.copy(parameter.getContainingDeclaration(), parameter.getName());
+            }
+            else {
+                return null;
+            }
         }
     };
 
@@ -234,8 +241,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
         Name name = functionDescriptor.getName();
-        for (ClassDescriptor superclass : DescriptorUtils.getSuperclassDescriptors(classDescriptor)) {
-            JetType type = superclass.getDefaultType();
+        for (JetType type : TypeUtils.getAllSupertypes(classDescriptor.getDefaultType())) {
             JetScope scope = type.getMemberScope();
             for (FunctionDescriptor function : scope.getFunctions(name)) {
                 if (!function.getKind().isReal()) continue;
@@ -247,8 +253,8 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

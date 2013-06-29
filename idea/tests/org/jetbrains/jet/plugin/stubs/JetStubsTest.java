@@ -129,6 +129,12 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 
+    public void testNotStorePropertyFromDelegate() {
+        doBuildTest("val a by kotlin.\n val b = 1",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  PROPERTY:PsiJetPropertyStubImpl[val top topFQName=a name=a typeText=null bodyText=null]\n");
+    }
+
     public void testNotStorePropertiesFrom() {
         doBuildTest("class Test() {\n" +
                     "    val test = 12;\n" +

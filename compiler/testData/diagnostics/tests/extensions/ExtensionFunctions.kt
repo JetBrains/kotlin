@@ -19,7 +19,7 @@ class A
 fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
 
   1.foo()
-  true.<!NONE_APPLICABLE!>foo<!>()
+  true.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
 
   <!UNUSED_EXPRESSION!>1<!>
 }

@@ -59,7 +59,7 @@ public class FqName extends FqNameBase {
 
 
     private void validateFqName() {
-        if (!isValidAfterUnsafeCheck(fqName.getFqName())) {
+        if (!isValidAfterUnsafeCheck(fqName.asString())) {
             throw new IllegalArgumentException("incorrect fq name: " + fqName);
         }
     }
@@ -71,8 +71,8 @@ public class FqName extends FqNameBase {
 
     @Override
     @NotNull
-    public String getFqName() {
-        return fqName.getFqName();
+    public String asString() {
+        return fqName.asString();
     }
 
     @NotNull

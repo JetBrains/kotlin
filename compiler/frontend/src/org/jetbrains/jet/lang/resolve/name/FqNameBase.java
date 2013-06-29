@@ -27,7 +27,7 @@ public abstract class FqNameBase {
     }
 
     @NotNull
-    protected abstract String getFqName();
+    protected abstract String asString();
 
     @NotNull
     private FqNameUnsafe toFqNameUnsafe() {
@@ -51,6 +51,6 @@ public abstract class FqNameBase {
     }
 
     public final boolean equalsTo(@NotNull String that) {
-        return getFqName().equals(that);
+        return asString().equals(that);
     }
 }

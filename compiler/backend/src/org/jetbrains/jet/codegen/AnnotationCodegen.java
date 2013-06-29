@@ -115,7 +115,7 @@ public abstract class AnnotationCodegen {
             }
 
             Name keyName = entry.getKey().getName();
-            genAnnotationValueArgument(annotationVisitor, valueArgument, keyName.getName());
+            genAnnotationValueArgument(annotationVisitor, valueArgument, keyName.asString());
         }
     }
 
@@ -152,7 +152,7 @@ public abstract class AnnotationCodegen {
             if (call != null) {
                 if (call.getResultingDescriptor() instanceof PropertyDescriptor) {
                     PropertyDescriptor descriptor = (PropertyDescriptor) call.getResultingDescriptor();
-                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor).getDescriptor(), descriptor.getName().getName());
+                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor).getDescriptor(), descriptor.getName().asString());
                     return;
                 }
             }
@@ -168,7 +168,7 @@ public abstract class AnnotationCodegen {
                     if (annotations != null) {
                         for (AnnotationDescriptor annotation : annotations) {
                             //noinspection ConstantConditions
-                            if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
+                            if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
                                 value = (String) annotation.getAllValueArguments().values().iterator().next().getValue();
                                 break;
                             }

@@ -22,24 +22,29 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -56,7 +61,7 @@ public class NamespaceCodegen extends MemberCodegen {
             GenerationState state,
             Collection<JetFile> namespaceFiles
     ) {
-        super(state);
+        super(state, null);
         checkAllFilesHaveSameNamespace(namespaceFiles);
 
         this.v = v;
@@ -146,22 +151,20 @@ public class NamespaceCodegen extends MemberCodegen {
             );
             builder.visitSource(file.getName(), null);
 
+            FieldOwnerContext nameSpaceContext =
+                    CodegenContext.STATIC.intoNamespace(descriptor);
+
+            FieldOwnerContext nameSpacePart =
+                    CodegenContext.STATIC.intoNamespacePart(className, descriptor);
+
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                    {
-                        CodegenContext context =
-                                CodegenContext.STATIC.intoNamespace(descriptor);
-                        genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, builder);
-                    }
-                    {
-                        CodegenContext context =
-                                CodegenContext.STATIC.intoNamespacePart(className, descriptor);
-                        genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
-                    }
+                    genFunctionOrProperty(nameSpaceContext, (JetTypeParameterListOwner) declaration, builder);
+                    genFunctionOrProperty(nameSpacePart, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                 }
             }
 
-            generateStaticInitializers(builder, file);
+            generateStaticInitializers(descriptor, builder, file, nameSpaceContext);
 
             builder.done();
         }
@@ -205,20 +208,33 @@ public class NamespaceCodegen extends MemberCodegen {
         }
     }
 
-    private void generateStaticInitializers(@NotNull ClassBuilder builder, @NotNull JetFile file) {
+    private void generateStaticInitializers(
+            NamespaceDescriptor descriptor,
+            @NotNull ClassBuilder builder,
+            @NotNull JetFile file,
+            @NotNull FieldOwnerContext context
+    ) {
         List<JetProperty> properties = collectPropertiesToInitialize(file);
         if (properties.isEmpty()) return;
 
-        MethodVisitor mv = builder.newMethod(file, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
+        MethodVisitor mv = builder.newMethod(file, ACC_STATIC, "<clinit>", "()V", null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
             FrameMap frameMap = new FrameMap();
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC, state);
+
+            SimpleFunctionDescriptorImpl clInit =
+                    new SimpleFunctionDescriptorImpl(descriptor, Collections.<AnnotationDescriptor>emptyList(),
+                                                     Name.special("<clinit>"),
+                                                     CallableMemberDescriptor.Kind.SYNTHESIZED);
+            clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
+
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context.intoFunction(clInit), state);
 
             for (JetDeclaration declaration : properties) {
                 ImplementationBodyCodegen.
-                        initializeProperty(codegen, state.getBindingContext(), new InstructionAdapter(mv), (JetProperty) declaration, true);
+                        initializeProperty(codegen, state.getBindingContext(), (JetProperty) declaration);
             }
 
             mv.visitInsn(RETURN);
@@ -255,20 +271,11 @@ public class NamespaceCodegen extends MemberCodegen {
 
     @NotNull
     private static String getMultiFileNamespaceInternalName(@NotNull String namespaceInternalName, @NotNull PsiFile file) {
-        String name = FileUtil.toSystemDependentName(file.getName());
+        String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
-        int substringFrom = name.lastIndexOf(File.separator) + 1;
-
-        int substringTo = name.lastIndexOf('.');
-        if (substringTo == -1) {
-            substringTo = name.length();
-        }
-
-        int pathHashCode = FileUtil.toSystemDependentName(file.getVirtualFile().getCanonicalPath()).hashCode();
-
-        // dollar sign in the end is to prevent synthetic class from having "Test" or other parseable suffix
         // path hashCode to prevent same name / different path collision
-        return namespaceInternalName + "$src$" + replaceSpecialSymbols(name.substring(substringFrom, substringTo)) + "$" + pathHashCode;
+        return namespaceInternalName + "$src$" + replaceSpecialSymbols(fileName) + "$" + Integer.toHexString(
+                CodegenUtil.getPathHashCode(file));
     }
 
     private static String replaceSpecialSymbols(@NotNull String str) {

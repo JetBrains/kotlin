@@ -17,6 +17,7 @@
 package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -34,6 +35,7 @@ import javax.annotation.PreDestroy;
 public class InjectorForMacros {
     
     private ExpressionTypingServices expressionTypingServices;
+    private NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
     private CallExpressionResolver callExpressionResolver;
@@ -50,6 +52,7 @@ public class InjectorForMacros {
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.expressionTypingServices = new ExpressionTypingServices();
+        this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
         this.callExpressionResolver = new CallExpressionResolver();
@@ -72,6 +75,7 @@ public class InjectorForMacros {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
+        callResolver.setExtension(needSyntheticCallResolverExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);

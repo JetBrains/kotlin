@@ -16,17 +16,15 @@
 
 package org.jetbrains.jet.plugin.refactoring;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.Collection;
@@ -35,41 +33,19 @@ import java.util.Collection;
  * User: Alefas
  * Date: 07.02.12
  */
-public class JetNameValidatorImpl implements JetNameValidator {
-    public static JetNameValidator getEmptyValidator(final Project project) {
-        return new JetNameValidator() {
-            @Override
-            public String validateName(String name) {
-                return name;
-            }
-
-            @Override
-            public Project getProject() {
-                return project;
-            }
-        };
-    }
-
+public class JetNameValidatorImpl extends JetNameValidator {
     private final PsiElement myContainer;
-    private PsiElement myAnchor;
-    BindingContext myBindingContext;
+    private final PsiElement myAnchor;
+    private BindingContext myBindingContext;
 
     public JetNameValidatorImpl(PsiElement container, PsiElement anchor) {
+        super(container.getProject());
         myContainer = container;
         myAnchor = anchor;
     }
 
-    @Nullable
-    public String validateName(String name) {
-        if (validateInner(name)) return name;
-        int i = 1;
-        while (true) {
-            if (validateInner(name + i)) return name + i;
-            ++i;
-        }
-    }
-
-    private boolean validateInner(String name) {
+    @Override
+    protected boolean validateInner(String name) {
         PsiElement sibling;
         if (myAnchor != null) {
             sibling = myAnchor;
@@ -108,7 +84,7 @@ public class JetNameValidatorImpl implements JetNameValidator {
                 Collection<DeclarationDescriptor> variants =
                         TipsManager.getVariantsNoReceiver(expression, myBindingContext);
                 for (DeclarationDescriptor variant : variants) {
-                    if (variant.getName().getName().equals(name) && variant instanceof VariableDescriptor) {
+                    if (variant.getName().asString().equals(name) && variant instanceof VariableDescriptor) {
                         result.set(false);
                         return;
                     }
@@ -118,9 +94,5 @@ public class JetNameValidatorImpl implements JetNameValidator {
         };
         sibling.accept(visitor);
         return result.get();
-    }
-
-    public Project getProject() {
-        return myContainer.getProject();
     }
 }

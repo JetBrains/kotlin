@@ -313,7 +313,7 @@ public class DeclarationResolver {
                         for (PsiElement declaration : getDeclarationsByDescriptor(declarationDescriptor)) {
                             assert declaration != null : "Null declaration for descriptor: " + declarationDescriptor + " " +
                                                          (declarationDescriptor != null ? DescriptorRenderer.TEXT.render(declarationDescriptor) : "");
-                            trace.report(REDECLARATION.on(declaration, declarationDescriptor.getName().getName()));
+                            trace.report(REDECLARATION.on(declaration, declarationDescriptor.getName().asString()));
                         }
                     }
                 }
@@ -402,7 +402,7 @@ public class DeclarationResolver {
             }
         }
         for (Pair<PsiElement, Name> redeclaration : redeclarations) {
-            trace.report(REDECLARATION.on(redeclaration.getFirst(), redeclaration.getSecond().getName()));
+            trace.report(REDECLARATION.on(redeclaration.getFirst(), redeclaration.getSecond().asString()));
         }
     }
 

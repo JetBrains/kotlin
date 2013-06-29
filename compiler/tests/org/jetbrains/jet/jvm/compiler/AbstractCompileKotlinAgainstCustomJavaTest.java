@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
+import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
 
 public abstract class AbstractCompileKotlinAgainstCustomJavaTest extends TestCaseWithTmpdir {
     protected void doTest(String ktFilePath) throws Exception {
@@ -70,7 +70,7 @@ public abstract class AbstractCompileKotlinAgainstCustomJavaTest extends TestCas
         NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceFqn);
         assertNotNull("Failed to find namespace: " + namespaceFqn, namespaceDescriptor);
 
-        compareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
+        validateAndCompareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
     }
 
     private JetCoreEnvironment getEnvironment(File ktFile) {

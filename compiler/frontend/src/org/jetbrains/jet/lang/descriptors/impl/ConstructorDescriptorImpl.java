@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,11 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     private static final Name NAME = Name.special("<init>");
 
     public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
-        super(containingDeclaration, annotations, NAME, Kind.DECLARATION);
+        this(containingDeclaration, annotations, isPrimary, Kind.DECLARATION);
+    }
+
+    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary, Kind kind) {
+        super(containingDeclaration, annotations, NAME, kind);
         this.isPrimary = isPrimary;
     }
 

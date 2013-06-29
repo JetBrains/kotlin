@@ -86,7 +86,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         // .namespace classes can not be indexed, since they have no explicit declarations
         IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
-        Set<String> packageClassShortNames = lightClassGenerationSupport.getAllPackageClasses(GlobalSearchScope.allScope(project)).keySet();
+        Set<String> packageClassShortNames = lightClassGenerationSupport.getAllPossiblePackageClasses(GlobalSearchScope.allScope(project)).keySet();
         classNames.addAll(packageClassShortNames);
 
         return ArrayUtil.toStringArray(classNames);
@@ -101,13 +101,13 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
-        MultiMap<String, FqName> packageClasses = lightClassGenerationSupport.getAllPackageClasses(scope);
+        MultiMap<String, FqName> packageClasses = lightClassGenerationSupport.getAllPossiblePackageClasses(scope);
 
         // .namespace classes can not be indexed, since they have no explicit declarations
         Collection<FqName> fqNames = packageClasses.get(name);
         if (!fqNames.isEmpty()) {
             for (FqName fqName : fqNames) {
-                PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName.getFqName(), scope);
+                PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope);
                 if (psiClass != null) {
                     result.add(psiClass);
                 }
@@ -123,10 +123,10 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         for (JetClassOrObject classOrObject : classOrObjects) {
             FqName fqName = JetPsiUtil.getFQName(classOrObject);
             if (fqName != null) {
-                assert fqName.shortName().getName().equals(name) : "A declaration obtained from index has non-matching name:\n" +
+                assert fqName.shortName().asString().equals(name) : "A declaration obtained from index has non-matching name:\n" +
                                                                    "in index: " + name + "\n" +
                                                                    "declared: " + fqName.shortName() + "(" + fqName + ")";
-                PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName.getFqName(), scope);
+                PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName.asString(), scope);
                 if (psiClass != null) {
                     result.add(psiClass);
                 }
@@ -230,7 +230,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         Set<FunctionDescriptor> result = Sets.newHashSet();
 
         Collection<PsiMethod> topLevelFunctionPrototypes = JetFromJavaDescriptorHelper.getTopLevelFunctionPrototypesByName(
-                referenceName.getName(), project, scope);
+                referenceName.asString(), project, scope);
         for (PsiMethod method : topLevelFunctionPrototypes) {
             FqName functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN(method);
             if (functionFQN != null) {
@@ -246,7 +246,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         Set<FqName> affectedPackages = Sets.newHashSet();
-        Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(referenceName.getName(), project, scope);
+        Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(referenceName.asString(), project, scope);
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
             PsiFile containingFile = jetNamedFunction.getContainingFile();
             if (containingFile instanceof JetFile) {
@@ -354,7 +354,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
             FqName classFQName = new FqName(fqName);
-            if (acceptedShortNameCondition.value(classFQName.shortName().getName())) {
+            if (acceptedShortNameCondition.value(classFQName.shortName().asString())) {
                 classDescriptors.addAll(getJetClassesDescriptorsByFQName(analyzer, classFQName));
             }
         }
@@ -364,7 +364,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     private Collection<ClassDescriptor> getJetClassesDescriptorsByFQName(@NotNull KotlinCodeAnalyzer analyzer, @NotNull FqName classFQName) {
         Collection<JetClassOrObject> jetClassOrObjects = JetFullClassNameIndex.getInstance().get(
-                classFQName.getFqName(), project, GlobalSearchScope.allScope(project));
+                classFQName.asString(), project, GlobalSearchScope.allScope(project));
 
         if (jetClassOrObjects.isEmpty()) {
             // This fqn is absent in caches, dead or not in scope

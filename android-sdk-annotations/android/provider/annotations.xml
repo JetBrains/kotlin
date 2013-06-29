@@ -1,0 +1,3611 @@
+<root>
+    <item name='android.provider.MediaStore ACTION_VIDEO_CAPTURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns DATE_TAKEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract DIRECTORY_PARAM_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns NOTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns LAST_YEAR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Relation CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SCREEN_BRIGHTNESS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser EXTRA_HEADERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People.Extensions CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods java.lang.String encodePredefinedImProtocol(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal NEIGHBORHOOD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PresenceColumns IM_HANDLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns END'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns SYNC_EVENTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns BUCKET_DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns EXRULE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Photo CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsEntity DATA_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure int getInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert FULL_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns FIRST_YEAR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System int getInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_INTERNAL_STORAGE_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure USE_GOOGLE_MAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.SettingsColumns _SYNC_ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers byte[] get(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns SORT_INDEX'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones PERSON_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents EXTRA_CREATE_DESCRIPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents SHOW_OR_CREATE_CONTACT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.RemindersColumns METHOD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System DEVICE_PROVISIONED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_APPLICATION_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Im java.lang.CharSequence getProtocolLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_MOBILE_DATA_TRANSITION_WAKELOCK_TIMEOUT_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Im CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns CUSTOM_APP_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.SyncColumns CAN_PARTIALLY_UPDATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns DATE_MODIFIED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns RRULE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts void markAsContacted(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PresenceColumns IM_ACCOUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_LOCATION_SOURCE_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TOUCH_EXPLORATION_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns ORIENTATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.OrganizationColumns LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.OpenableColumns SIZE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns PHOTO_VERSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Groups CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System NETWORK_PREFERENCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory ACCOUNT_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership GROUP_SYNC_ACCOUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns IS_PRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns DESCRIPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails HEIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.SettingsColumns _SYNC_ACCOUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI LIST_FREQUENT_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization SYMBOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_NETWORKS_AVAILABLE_REPEAT_DELAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupsColumns SHOULD_SYNC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System PARENTAL_CONTROL_LAST_UPDATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns RESOLUTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods java.lang.CharSequence getDisplayLabel(android.content.Context, int, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA10'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers byte[] get(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods CONTENT_POSTAL_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns BOOKMARK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.BookmarkColumns CREATED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns EVENT_TIMEZONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global DATA_ROAMING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean putString(android.content.ContentResolver, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global long getLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.SyncColumns ACCOUNT_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataUsageFeedback USAGE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SyncColumns ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres.Members DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System LOCATION_PROVIDERS_ALLOWED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status SETTINGS_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhonesColumns NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean putLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure PARENTAL_CONTROL_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns STATUS_TIMESTAMP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_MAX_DHCP_RETRY_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore ACTION_IMAGE_CAPTURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System LOCK_PATTERN_VISIBLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders INTENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract CALLER_IS_SYNCADAPTER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns IS_USER_PROFILE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_BLUETOOTH_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System TRANSITION_ANIMATION_SCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns IS_PRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_AP_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global float getFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhonesColumns NUMBER_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA9'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns EVENT_LOCATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People android.net.Uri addToGroup(android.content.ContentResolver, long, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings EXTRA_AUTHORITIES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System BLUETOOTH_DISCOVERABILITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global NETWORK_PREFERENCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor queryMiniThumbnails(android.content.ContentResolver, android.net.Uri, int, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System LOGGING_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VIBRATE_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global AIRPLANE_MODE_RADIOS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files android.net.Uri getContentUri(java.lang.String, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.BookmarkColumns DATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns MAX_REMINDERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns CHAT_CAPABILITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files.FileColumns MEDIA_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Email CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns STREAM_ITEM_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactNameColumns SORT_KEY_ALTERNATIVE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Event CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.BookmarkColumns TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global RADIO_CELL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor queryMiniThumbnails(android.content.ContentResolver, android.net.Uri, int, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_PING_TIMEOUT_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts.Entity CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_INPUT_METHOD_SUBTYPE_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract EXTRA_CUSTOM_APP_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Im java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor queryMiniThumbnail(android.content.ContentResolver, long, int, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods POSTAL_LOCATION_LONGITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Entity RAW_CONTACT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns UNGROUPED_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_DEFAULT_COUNTRY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SyncColumns ACCOUNT_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns DURATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI TITLE_EXTRA_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns HAS_EXTENDED_PROPERTIES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_BACKGROUND_CHECK_TIMEOUT_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName PHONETIC_MIDDLE_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhotosColumns SYNC_ERROR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns BUCKET_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global DEVICE_PROVISIONED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert PHONE_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders ICON_RESOURCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal FORMATTED_ADDRESS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global USB_MASS_STORAGE_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Identity IDENTITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership GROUP_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global boolean putString(android.content.ContentResolver, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VOLUME_MUSIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethodsColumns ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItems.StreamItemPhotos CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns IS_PRIVATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.BaseSyncColumns SYNC2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.QuickContact void showQuickContact(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns ALLOWED_AVAILABILITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global AUTO_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System END_BUTTON_BEHAVIOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_TEXT_OPEN_FROM_SEARCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.ExtendedPropertiesColumns NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SOUND_EFFECTS_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns DTEND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People android.net.Uri createPersonInMyContactsGroup(android.content.ContentResolver, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns ORIGINAL_ALL_DAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words SHORTCUT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails DURATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SyncColumns DIRTY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA_VERSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders ACTION_CREATE_LIVE_FOLDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItems CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_ADD_ACCOUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns IS_PRIVATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.SyncColumns DIRTY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.BaseSyncColumns SYNC1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.QuickContact void showQuickContact(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global RADIO_NFC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_SYNC_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Photo PHOTO_FILE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global STAY_ON_WHILE_PLUGGED_IN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.NameValueTable VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global AIRPLANE_MODE_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.net.Uri insert(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VOLUME_SYSTEM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactNameColumns DISPLAY_NAME_SOURCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_DEFAULT_PITCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert SECONDARY_PHONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SCREEN_OFF_TIMEOUT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA10'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails IMAGE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory PHOTO_SUPPORT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsColumns CONTACT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns RAW_CONTACT_SOURCE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls NEW'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns MINI_THUMB_MAGIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean putInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ACCESSIBILITY_SPEAK_PASSWORD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.BookmarkColumns VISITS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_BACKGROUND_CHECK_DELAY_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Albums DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_NETWORK_OPERATOR_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_MOBILE_DATA_TRANSITION_WAKELOCK_TIMEOUT_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactOptionsColumns SEND_TO_VOICEMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System ANIMATOR_DURATION_SCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert NOTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns ALLOWED_ATTENDEE_TYPES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns HAS_ATTENDEE_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns PHOTO_FILE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns LONGITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members AUDIO_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System float getFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SyncState CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Email CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Note CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns GUESTS_CAN_SEE_GUESTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People android.graphics.Bitmap loadContactPhoto(android.content.Context, android.net.Uri, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure PARENTAL_CONTROL_LAST_UPDATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert SECONDARY_EMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns ATTENDEE_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System ANDROID_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_PING_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.net.Uri insert(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Note NOTE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert NOTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns EVENT_END_TIMEZONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure INSTALL_NON_MARKET_APPS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls DATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents INVITE_CONTACT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newUpdateOperation(android.net.Uri, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VOLUME_NOTIFICATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA12'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns DATE_TAKEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People.Extensions PERSON_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global SYS_PROP_SETTING_VERSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure DEVICE_PROVISIONED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure int getInt(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People.ContactMethods CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.ExtendedPropertiesColumns EVENT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns PHOTO_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SCREEN_BRIGHTNESS_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global boolean putFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System USER_ROTATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns CAN_MODIFY_TIME_ZONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA11'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean putLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Photos DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls DURATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns NOTIFY_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns RES_ICON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns YEAR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns CREATION_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure LOCK_PATTERN_TACTILE_FEEDBACK_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert SECONDARY_PHONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_NUM_OPEN_NETWORKS_KEPT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Nickname CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_DEFAULT_LANG'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SYNC_DATA1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods CONTENT_EMAIL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure NETWORK_PREFERENCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert IM_HANDLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns SIZE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns LATITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataUsageFeedback USAGE_TYPE_CALL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.CommonColumns TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Groups GROUP_MY_CONTACTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactStatusColumns CONTACT_STATUS_LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns OWNER_ACCOUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres ENTRY_CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventDaysColumns ENDDAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory void notifyDirectoryChange(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA14'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns PHOTO_THUMBNAIL_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure LOCK_PATTERN_VISIBLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns CALENDAR_COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert POSTAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal POSTCODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert TERTIARY_EMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods java.lang.String encodeCustomImProtocol(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System PARENTAL_CONTROL_REDIRECT_URL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName SUFFIX'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA13'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media java.lang.String insertImage(android.content.ContentResolver, android.graphics.Bitmap, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns RDATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItems MAX_ITEMS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI FILTER_CONTACTS_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words _ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert PHONETIC_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract EXTRA_EVENT_BEGIN_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactOptionsColumns LAST_TIME_CONTACTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Calendars DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PhoneLookupColumns TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails WIDTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System AUTO_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactNameColumns DISPLAY_NAME_ALTERNATIVE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Albums CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Data CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_WIFI_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words void addWord(android.content.Context, java.lang.String, int, java.lang.String, java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert EMAIL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure DEVELOPMENT_SETTINGS_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns CAN_INVITE_OTHERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA15'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhotosColumns DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Entity DATA_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SHOW_PROCESSES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void clearSearches(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.OrganizationColumns COMPANY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.PlaylistsColumns NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns TAGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void deleteHistoryTimeFrame(android.content.ContentResolver, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers void update(android.content.ContentProviderClient, android.net.Uri, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_SCREEN_ORIENTATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_NFC_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People.ContactMethods DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System DATE_FORMAT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns MINUTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System TIME_12_24'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files.FileColumns PARENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.GroupMembership CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization DEPARTMENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract PARAM_KEY_SOURCE_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhotosColumns DOWNLOAD_REQUIRED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_APPLICATION_DETAILS_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances END'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert IM_HANDLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventDaysColumns STARTDAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean putConfiguration(android.content.ContentResolver, android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.SettingsColumns KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure LOGGING_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns IN_VISIBLE_GROUP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI LIST_CONTACTS_WITH_PHONES_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System USE_GOOGLE_MAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Identity NAMESPACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract PRIMARY_ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System MODE_RINGER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ExtensionsColumns NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactNameColumns PHONETIC_NAME_STYLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns GUESTS_CAN_INVITE_OTHERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.SyncColumns DELETED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global DEVELOPMENT_SETTINGS_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns BEGIN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Im CUSTOM_PROTOCOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns AVAILABILITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.AlarmClock EXTRA_SKIP_UI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns ARTIST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns LAST_TIME_CONTACTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, long, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System FONT_SCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.AggregationExceptions RAW_CONTACT_ID1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns ORIGINAL_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns SYNC4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.ArtistColumns NUMBER_OF_TRACKS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization PHONETIC_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_SLEEP_POLICY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization OFFICE_LOCATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_SLEEP_POLICY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhonesColumns TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarCache KEY_TIMEZONE_INSTANCES_PREVIOUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VOLUME_RING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns NUMBER_OF_SONGS_FOR_ARTIST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert SECONDARY_PHONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns ALBUM_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns STATUS_ICON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Extensions PERSON_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI FILTER_TEXT_EXTRA_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.AggregationExceptions RAW_CONTACT_ID2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PhoneLookupColumns LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns SYNC3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns CONTACT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhotosColumns EXISTS_ON_SERVER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_APN_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global long getLong(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.NameValueTable boolean putString(android.content.ContentResolver, android.net.Uri, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Media CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure BACKGROUND_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_VIDEO_QUALITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_QUICK_LAUNCH_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People.Phones DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_DEFAULT_SYNTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns LANGUAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns SYNC2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure SYS_PROP_SETTING_VERSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls LIMIT_PARAM_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns CALENDAR_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances END_DAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Calendars CALENDAR_LOCATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization JOB_DESCRIPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SYS_PROP_SETTING_VERSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.NameValueTable boolean putString(android.content.ContentResolver, android.net.Uri, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words WORD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media RECORD_SOUND_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_APPLICATION_DEVELOPMENT_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhonesColumns ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_MOBILE_DATA_TRANSITION_WAKELOCK_TIMEOUT_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns SYNC1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsColumns DATA_SET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System java.lang.String getString(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People.Phones CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global RADIO_BLUETOOTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_DEVICE_INFO_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert EMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns IS_ALARM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Constants CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Email DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns IS_PODCAST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Photo PHOTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SHOW_GTALK_SERVICE_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global ADB_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Groups CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.QuickContact void showQuickContact(android.content.Context, android.graphics.Rect, android.net.Uri, int, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns NUMBER_OF_SONGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Photos CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract ACTION_NEW_VOICEMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure INPUT_METHOD_SELECTOR_VISIBILITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert JOB_TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName MIDDLE_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns ACCOUNT_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Settings DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status VOICEMAIL_ACCESS_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails THUMB_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_FINISH_ON_COMPLETION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhotosColumns PERSON_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void deleteFromHistory(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean putConfiguration(android.content.ContentResolver, android.content.res.Configuration) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders EXTRA_LIVE_FOLDER_DISPLAY_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_INITIAL_IGNORED_PING_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns ALBUM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People PRIMARY_PHONE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns EVENT_COLOR_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Photo PHOTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert POSTAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean putFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarCache TIMEZONE_TYPE_AUTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory PACKAGE_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns DTSTART'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails WIDTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents SEARCH_SUGGESTION_DIAL_NUMBER_CLICKED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PresenceColumns IM_ACCOUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Media DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert TERTIARY_EMAIL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ALLOW_MOCK_LOCATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Organizations java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Groups android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres.Members GENRE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure SETTINGS_CLASSNAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails SOURCE_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Settings java.lang.String getSetting(android.content.ContentResolver, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert TERTIARY_PHONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean putFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert PHONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert PHONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName GIVEN_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.OrganizationColumns TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_MEDIA_SEARCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ANDROID_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_MEDIA_FOCUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns SYNC4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract CALLER_IS_SYNCADAPTER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarEntity android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusUpdates CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents EXTRA_CREATE_DESCRIPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns AUTO_ADD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsColumns AGGREGATION_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Settings CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.ArtistColumns ARTIST_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances BEGIN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_USER_DICTIONARY_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_WATCH_LIST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global SHOW_PROCESSES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns DATA_SET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract LIMIT_PARAM_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VOLUME_ALARM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI LIST_STREQUENT_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Settings CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert POSTAL_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns DELETED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents SEARCH_SUGGESTION_CREATE_CONTACT_CLICKED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName PHONETIC_GIVEN_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns DATA_SET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global TRANSITION_ANIMATION_SCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser EXTRA_APPLICATION_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global java.lang.String getString(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System APPEND_FOR_LAST_AUDIBLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Columns ACCOUNT_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns SYNC2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.StreamItems CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactNameColumns SORT_KEY_PRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns BOOKMARK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.AlarmClock EXTRA_MESSAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.SipAddress SIP_ADDRESS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_USE_STATIC_IP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System BLUETOOTH_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore UNKNOWN_STRING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.ColorsColumns COLOR_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.ExtendedPropertiesColumns VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns ALBUM_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System LOCK_PATTERN_TACTILE_FEEDBACK_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns TITLE_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_STATIC_NETMASK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_AP_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents EXTRA_FORCE_CREATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence, java.lang.CharSequence[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System RADIO_CELL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances android.database.Cursor query(android.content.ContentResolver, java.lang.String[], long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns EVENT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns ATTENDEE_RELATIONSHIP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods void addPostalLocation(android.content.Context, long, double, double) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_BACKGROUND_CHECK_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership GROUP_SYNC_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns TIMESTAMP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_STATIC_IP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns CALENDAR_COLOR_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PresenceColumns DATA_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.BaseColumns _ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People.Extensions DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global boolean putLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Im PROTOCOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_SIZE_LIMIT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal STREET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Columns DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns VISIBLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns HAS_ALARM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_AIRPLANE_MODE_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.AggregationExceptions CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.PlaylistsColumns DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns SYNC3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System ALWAYS_FINISH_ACTIVITIES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.RemindersColumns EVENT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_ACCESSIBILITY_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns ACCOUNT_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns SELF_ATTENDEE_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System AIRPLANE_MODE_RADIOS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails DATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Reminders android.database.Cursor query(android.content.ContentResolver, long, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SearchRecentSuggestions void truncateHistory(android.content.ContentResolver, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Columns ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore MEDIA_SCANNER_VOLUME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void clearHistory(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails SOURCE_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert PHONETIC_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Settings void setSetting(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls java.lang.String getLastOutgoingCall(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Settings CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns ATTENDEE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings EXTRA_INPUT_METHOD_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns SYNC1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI LIST_DEFAULT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract ACTION_HANDLE_CUSTOM_EVENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI LIST_GROUP_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns ARTIST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_FULL_SCREEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract EXTRA_SELF_CHANGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents SEARCH_SUGGESTION_CLICKED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders EXTRA_LIVE_FOLDER_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_WIFI_IP_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SETTINGS_CLASSNAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone SEARCH_PHONE_NUMBER_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactStatusColumns CONTACT_STATUS_RES_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert COMPANY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert TERTIARY_PHONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactOptionsColumns CUSTOM_RINGTONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_MEMORY_CARD_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_BACKGROUND_CHECK_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns ORGANIZER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_MAX_AP_CHECKS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.GroupMembership GROUP_ROW_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns ALL_DAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotos PHOTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactOptionsColumns TIMES_CONTACTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns COMPOSER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.CommonColumns DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Email ADDRESS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC9'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert SECONDARY_PHONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert COMPANY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarCache KEY_TIMEZONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert SECONDARY_EMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore MEDIA_IGNORE_FILENAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders ICON_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert EMAIL_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns DURATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns CALENDAR_DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert PHONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System float getFloat(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership PERSON_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser boolean canClearHistory(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert PHONE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People android.net.Uri addToGroup(android.content.ContentResolver, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.BookmarkColumns BOOKMARK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsColumns DELETED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Groups DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_PING_DELAY_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory DIRECTORY_AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns MIMETYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataUsageFeedback USAGE_TYPE_LONG_TEXT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns UNGROUPED_WITH_PHONES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Website URL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupsColumns SYSTEM_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Extensions CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure HTTP_PROXY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_ENABLED_PLUGINS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarCache KEY_TIMEZONE_INSTANCES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members PLAYLIST_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System AUTO_TIME_ZONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert POSTAL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status NOTIFICATION_CHANNEL_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract ACCOUNT_TYPE_LOCAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarCacheColumns VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns NOTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert SECONDARY_EMAIL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WAIT_FOR_DEBUGGER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.SettingsColumns VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.SipAddress java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert IM_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People android.database.Cursor queryGroups(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.NameValueTable NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System RADIO_NFC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System BLUETOOTH_DISCOVERABILITY_TIMEOUT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Settings SYNC_EVERYTHING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName PHONETIC_FAMILY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders ICON_BITMAP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure float getFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System int getInt(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns LAST_DATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System TEXT_AUTO_CAPS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global BLUETOOTH_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Photo PHOTO_FILE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts CONTENT_VCARD_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System DATA_ROAMING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns ANY_UNSYNCED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System INSTALL_NON_MARKET_APPS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactNameColumns PHONETIC_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members boolean moveItem(android.content.ContentResolver, long, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethodsColumns TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns SYNC2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser android.database.Cursor getAllVisitedUrls(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_SECURITY_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.BookmarkColumns URL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System PARENTAL_CONTROL_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert IM_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DisplayPhoto THUMBNAIL_MAX_DIM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global int getInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns GROUP_VISIBLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SyncColumns SOURCE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls CACHED_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System TEXT_AUTO_REPLACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances EVENT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns CUSTOM_RINGTONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns RAW_CONTACT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns SYNC1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Organizations DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.SearchColumns DATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents ATTACH_IMAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns DURATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.AlarmClock ACTION_SET_ALARM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ALLOWED_GEOLOCATION_ORIGINS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.ColorsColumns COLOR_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns IS_ORGANIZER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global DEBUG_APP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts.Data CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure PARENTAL_CONTROL_REDIRECT_URL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WINDOW_ANIMATION_SCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert SECONDARY_EMAIL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert TERTIARY_EMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactNameColumns DISPLAY_NAME_PRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words LOCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarCache TIMEZONE_TYPE_HOME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods CONTENT_EMAIL_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns STATUS_LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words APP_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns ORIGINAL_SYNC_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails IS_READ'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails HAS_CONTENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts.StreamItems CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure LOCK_PATTERN_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns ARTIST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_NETWORKS_AVAILABLE_REPEAT_DELAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global USE_GOOGLE_MAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactStatusColumns CONTACT_CHAT_CAPABILITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns BUCKET_DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SHOW_WEB_SUGGESTIONS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns ACCESS_LEVEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PresenceColumns PROTOCOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Calendars NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.SearchColumns URL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.ArtistColumns ARTIST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns PRESENCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns SUMMARY_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert IM_PROTOCOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA9'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.ColorsColumns COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns ATTENDEE_ID_NAMESPACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure USB_MASS_STORAGE_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser EXTRA_CREATE_NEW_TAB'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status CONFIGURATION_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global INSTALL_NON_MARKET_APPS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Photo DISPLAY_PHOTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global float getFloat(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert FULL_MODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_INITIAL_IGNORED_PING_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods CONTENT_IM_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItems.StreamItemPhotos CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore ACTION_IMAGE_CAPTURE_SECURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.GenresColumns NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal POBOX'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.AlarmClock EXTRA_HOUR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns ARTIST_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PresenceColumns CUSTOM_PROTOCOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People void markAsContacted(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_STATIC_GATEWAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns RES_LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void sendString(android.content.Context, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members _ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Groups CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts.DisplayPhoto CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers void set(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WINDOW_ANIMATION_SCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns EXDATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global MODE_RINGER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns UID_2445'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.OrganizationColumns TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns ARTIST_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ADB_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words void addWord(android.content.Context, java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files.FileColumns MIME_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System ADB_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns PHOTO_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media java.lang.String insertImage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns STARRED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_OUTPUT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files.FileColumns TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns IS_RINGTONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns ALBUM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_MAX_DHCP_RETRY_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails VIDEO_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails HEIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure java.lang.String getString(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WALLPAPER_ACTIVITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns GUESTS_CAN_MODIFY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure long getLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ENABLED_INPUT_METHODS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People PRIMARY_EMAIL_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Organizations CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI GROUP_NAME_EXTRA_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Data CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.AggregationExceptions CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns SHOULD_SYNC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethodsColumns KIND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_DISPLAY_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_DATE_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_PING_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.SearchColumns SEARCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns STATUS_RES_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns IS_MUSIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SyncColumns VERSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI LIST_STARRED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_ACCEPTABLE_PACKET_LOSS_PERCENTAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global HTTP_PROXY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_DEFAULT_RATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global boolean putInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People android.net.Uri addToMyContactsGroup(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal COUNTRY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName FAMILY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns SYNC4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_STATIC_DNS1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns ALLOWED_REMINDERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_BACKGROUND_CHECK_TIMEOUT_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.PlaylistsColumns DATE_MODIFIED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactStatusColumns CONTACT_STATUS_TIMESTAMP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Artists CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents ATTACH_IMAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods POSTAL_LOCATION_LATITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns SUMMARY_WITH_PHONES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People PRIMARY_ORGANIZATION_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Website CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns WIDTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_DATA_ROAMING_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns LAST_SYNCED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_NETWORKS_AVAILABLE_REPEAT_DELAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert EMAIL_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global ALWAYS_FINISH_ACTIVITIES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns SYNC3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert EMAIL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System RINGTONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void saveBookmark(android.content.Context, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns ALBUM_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns HAS_PHONE_NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns CONTACT_LOOKUP_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System STAY_ON_WHILE_PLUGGED_IN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns HEIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary.Words FREQUENCY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System HAPTIC_FEEDBACK_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_WIRELESS_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns DATA1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventDays android.database.Cursor query(android.content.ContentResolver, int, int, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_STATIC_DNS2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_MEDIA_ALBUM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Albums ENTRY_CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns LOOKUP_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsEntity android.content.EntityIterator newEntityIterator(android.database.Cursor, android.content.ContentResolver)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns DESCRIPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System RADIO_BLUETOOTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemPhotosColumns PHOTO_FILE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser android.database.Cursor getAllBookmarks(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns SEND_TO_VOICEMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances START_MINUTE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System TEXT_AUTO_PUNCTUATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System NOTIFICATION_SOUND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PresenceColumns IM_PROTOCOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsEntity android.content.EntityIterator newEntityIterator(android.database.Cursor, android.content.ContentProviderClient)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts android.net.Uri getLookupUri(android.content.ContentResolver, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns SHOULD_SYNC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails KIND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PresenceColumns PRESENCE_CUSTOM_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers void set(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns IS_READ_ONLY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_STILL_IMAGE_CAMERA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_PRIVACY_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media EXTRA_MAX_BYTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_MANAGE_APPLICATIONS_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void truncateHistory(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore java.lang.String getVersion(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert PHONE_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser INITIAL_ZOOM_LEVEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts android.net.Uri getLookupUri(android.content.ContentResolver, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns FAVORITES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System void getConfiguration(android.content.ContentResolver, android.content.res.Configuration) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory TYPE_RESOURCE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.CommonColumns LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders EXTRA_LIVE_FOLDER_BASE_INTENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.UserDictionary AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns IS_NOTIFICATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.BaseColumns _COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Photo CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns DESCRIPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_INPUT_METHOD_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_DEFAULT_VARIANT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal CITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns PICASA_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_PING_DELAY_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_MEDIA_TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System MODE_RINGER_STREAMS_AFFECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Email java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert EMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsEntity CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns BUCKET_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System void getConfiguration(android.content.ContentResolver, android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactStatusColumns CONTACT_PRESENCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUriForPath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Relation java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ExtensionsColumns VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert IM_PROTOCOL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods PERSON_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.People void setPhotoData(android.content.ContentResolver, android.net.Uri, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert JOB_TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser.BookmarkColumns FAVICON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.SyncColumns ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_VIDEO_PLAY_FROM_SEARCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethodsColumns AUX_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances END_MINUTE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System USB_MASS_STORAGE_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure float getFloat(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.ArtistColumns NUMBER_OF_ALBUMS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactOptionsColumns STARRED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactStatusColumns CONTACT_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, long, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactStatusColumns CONTACT_STATUS_ICON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhonesColumns LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract EXTRA_EVENT_ALL_DAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Data android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Event START_DATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders EXTRA_LIVE_FOLDER_ICON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists ENTRY_CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ContactsColumns PHOTO_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System long getLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns GROUP_IS_READ_ONLY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure BLUETOOTH_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_LOCALE_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System AIRPLANE_MODE_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System TEXT_SHOW_PASSWORD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns TIMES_CONTACTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PhoneLookupColumns NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global RADIO_WIFI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents SEARCH_SUGGESTION_CLICKED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract EXTRA_EVENT_END_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Artists ENTRY_CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System MUTE_STREAMS_AFFECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Data android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres.Members AUDIO_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns CUSTOM_APP_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns ALARM_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.PlaylistsColumns DATE_ADDED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns EVENT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure LOCATION_PROVIDERS_ALLOWED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_MAX_DHCP_RETRY_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods CONTENT_POSTAL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members PLAY_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns TRACK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns ORIGINAL_INSTANCE_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns UNGROUPED_VISIBLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone SEARCH_DISPLAY_NAME_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns DATE_ADDED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres.Members CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert TERTIARY_PHONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Relation NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.NameValueTable android.net.Uri getUriFor(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns CAN_ORGANIZER_RESPOND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System NEXT_ALARM_FORMATTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.graphics.Bitmap getBitmap(android.content.ContentResolver, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns CALENDAR_ACCESS_LEVEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status DATA_CHANNEL_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership GROUP_SYNC_ACCOUNT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DisplayPhoto DISPLAY_MAX_DIM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItems CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PhotosColumns LOCAL_VERSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns TEXT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.OrganizationColumns ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns RECEIVED_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredName PREFIX'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System HTTP_PROXY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.graphics.Bitmap getBitmap(android.content.ContentResolver, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AudioColumns ALBUM_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts.Entity DATA_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsColumns RAW_CONTACT_IS_READ_ONLY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.OrganizationColumns PERSON_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory SHORTCUT_SUPPORT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PresenceColumns PRIORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure long getLong(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns ATTENDEE_EMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns ATTENDEE_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarColumns CALENDAR_TIME_ZONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns RES_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.AttendeesColumns ATTENDEE_IDENTITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Groups CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VOLUME_BLUETOOTH_SCO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System DTMF_TONE_WHEN_DIALING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_MUSIC_PLAYER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_NUM_OPEN_NETWORKS_KEPT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.Entity CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert POSTAL_ISPRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.RemindersColumns MINUTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.GroupsColumns SYSTEM_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_DURATION_LIMIT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls IS_READ'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert TERTIARY_PHONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarSyncColumns CAL_SYNC10'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails DIR_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.SyncColumns _SYNC_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System ACCELEROMETER_ROTATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System ALARM_ALERT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PhoneLookupColumns NORMALIZED_NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders DESCRIPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItems.StreamItemPhotos CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns RAW_CONTACT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.OpenableColumns DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns LONGITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void addSearchUrl(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.BaseSyncColumns SYNC4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_SOUND_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns ALBUM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StreamItemsColumns COMMENTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization COMPANY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean getShowGTalkServiceStatus(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarAlertsColumns DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns CATEGORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents SEARCH_SUGGESTION_CREATE_CONTACT_CLICKED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.GroupMembership GROUP_SOURCE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.PresenceColumns IM_HANDLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status SOURCE_PACKAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.BaseSyncColumns SYNC3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUriForPath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure DATA_ROAMING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances android.database.Cursor query(android.content.ContentResolver, java.lang.String[], long, long, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_SHOW_ACTION_ICONS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract ACTION_EVENT_REMINDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.VideoColumns LATITUDE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure void setLocationProviderEnabled(android.content.ContentResolver, java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.AggregationExceptions TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status DIR_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusUpdates CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean putInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns EVENT_COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean isLocationProviderEnabled(android.content.ContentResolver, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newSetOperation(android.net.Uri, android.accounts.Account, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System LOCK_PATTERN_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.ProfileSyncState CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System long getLong(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethodsColumns DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns MIME_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContactsColumns RAW_CONTACT_IS_USER_PROFILE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ENABLED_ACCESSIBILITY_SERVICES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global AUTO_TIME_ZONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Identity CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns DISPLAY_COLOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.AlbumColumns ALBUM_ART'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newSetOperation(android.net.Uri, android.accounts.Account, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_SEARCH_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean isLocationProviderEnabled(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone NORMALIZED_NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Nickname NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System VOLUME_VOICE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore INTENT_ACTION_VIDEO_CAMERA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_BACKGROUND_CHECK_DELAY_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System DIM_SCREEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.ImageColumns MINI_THUMB_MAGIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupsColumns NOTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns PRESENCE_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.AlarmClock EXTRA_MINUTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsColumns STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Directory EXPORT_SUPPORT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore EXTRA_MEDIA_ARTIST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_WATCHDOG_PING_TIMEOUT_MS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal REGION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents SEARCH_SUGGESTION_DIAL_NUMBER_CLICKED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global WIFI_WATCHDOG_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PresenceColumns PRESENCE_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns TITLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.Insert TERTIARY_EMAIL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global int getInt(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents.Insert POSTAL_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System RADIO_WIFI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure DEFAULT_INPUT_METHOD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataUsageFeedback USAGE_TYPE_SHORT_TEXT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract ACTION_FETCH_VOICEMAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents.UI LIST_ALL_CONTACTS_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Intents SHOW_OR_CREATE_CONTACT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global ANIMATOR_DURATION_SCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Voicemails MIME_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethodsColumns LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupMembership DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.LiveFolders NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Artists DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System SETUP_WIZARD_HAS_RUN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.PeopleColumns PHONETIC_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails KIND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Extensions DEFAULT_SORT_ORDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.GroupsColumns NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_MAX_AP_CHECKS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure TTS_USE_DEFAULTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.DataColumns IS_SUPER_PRIMARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure WIFI_WATCHDOG_ACCEPTABLE_PACKET_LOSS_PERCENTAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions CONTENT_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System void setShowGTalkServiceStatus(android.content.ContentResolver, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void updateVisitedHistory(android.content.ContentResolver, java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls OFFSET_PARAM_KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts android.net.Uri lookupContact(android.content.ContentResolver, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.CalendarCacheColumns KEY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract PRIMARY_ACCOUNT_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls CACHED_NUMBER_LABEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean putString(android.content.ContentResolver, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System DEBUG_APP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure SELECTED_INPUT_METHOD_SUBTYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.SettingsColumns DATA_SET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts AUTHORITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CallLog.Calls CACHED_NUMBER_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure ACCESSIBILITY_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.MediaColumns DISPLAY_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.SipAddress CONTENT_ITEM_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings ACTION_NFCSHARING_SETTINGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Groups GROUP_ANDROID_STARRED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WIFI_NUM_OPEN_NETWORKS_KEPT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.StatusColumns PRESENCE_CUSTOM_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System WAIT_FOR_DEBUGGER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Instances START_DAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Extensions CONTENT_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Intents EXTRA_FORCE_CREATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.Attendees android.database.Cursor query(android.content.ContentResolver, long, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

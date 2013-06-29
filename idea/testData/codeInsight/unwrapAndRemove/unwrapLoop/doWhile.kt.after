@@ -1,0 +1,6 @@
+// OPTION: 1
+fun foo(n: Int) {
+    var m = n
+    <caret>m--
+    println(m)
+}

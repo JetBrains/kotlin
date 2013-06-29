@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 
 import java.util.List;
 
@@ -28,10 +28,10 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
 
-    public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor) {
+    public ConstructorFrameMap(@NotNull JvmMethodSignature signature) {
         enterTemp(OBJECT_TYPE); // this
 
-        List<JvmMethodParameterSignature> parameterTypes = callableMethod.getSignature().getKotlinParameterTypes();
+        List<JvmMethodParameterSignature> parameterTypes = signature.getKotlinParameterTypes();
         if (parameterTypes != null) {
             for (JvmMethodParameterSignature parameterType : parameterTypes) {
                 if (parameterType.getKind() == JvmMethodParameterKind.OUTER) {

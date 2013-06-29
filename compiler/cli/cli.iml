@@ -13,7 +13,6 @@
     <orderEntry type="module" module-name="runtime" />
     <orderEntry type="module" module-name="jet.as.java.psi" />
     <orderEntry type="library" name="intellij-core" level="project" />
-    <orderEntry type="library" name="asm-addons" level="project" />
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="library" name="jline" level="project" />
     <orderEntry type="module" module-name="cli-common" exported="" />

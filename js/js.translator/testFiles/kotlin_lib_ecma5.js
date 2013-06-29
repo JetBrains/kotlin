@@ -175,12 +175,9 @@ var Kotlin = Object.create(null);
                     initializer = value;
                 }
                 else if (name.indexOf("get_") === 0) {
-                    // our std lib contains collision: hasNext property vs hasNext as function, we prefer function (actually, it does work)
-                    var getterName = name.substring(4);
-                    if (!descriptors.hasOwnProperty(getterName)) {
-                        descriptors[getterName] = {get: value};
-                        descriptors[name] = {value: value};
-                    }
+                    descriptors[name.substring(4)] = {get: value};
+                    // std lib code can refers to
+                    descriptors[name] = {value: value};
                 }
                 else if (name.indexOf("set_") === 0) {
                     descriptors[name.substring(4)] = {set: value};

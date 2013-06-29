@@ -29,7 +29,8 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.AsmUtil.genIncrement;
+import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
 public class Increment implements IntrinsicMethod {
     private final int myDelta;
@@ -57,9 +58,9 @@ public class Increment implements IntrinsicMethod {
             while (operand instanceof JetParenthesizedExpression) {
                 operand = ((JetParenthesizedExpression) operand).getExpression();
             }
-            if (operand instanceof JetReferenceExpression) {
+            if (operand instanceof JetReferenceExpression && expectedType == Type.INT_TYPE) {
                 int index = codegen.indexOfLocal((JetReferenceExpression) operand);
-                if (index >= 0 && isIntPrimitive(expectedType)) {
+                if (index >= 0) {
                     return StackValue.preIncrement(index, myDelta);
                 }
             }
@@ -68,12 +69,13 @@ public class Increment implements IntrinsicMethod {
             value.dupReceiver(v);
 
             value.put(expectedType, v);
-            value.store(genIncrement(expectedType, myDelta, v), v);
+            genIncrement(expectedType, myDelta, v);
+            value.store(expectedType, v);
             value.put(expectedType, v);
         }
         else {
             receiver.put(expectedType, v);
-            StackValue.coerce(genIncrement(expectedType, myDelta, v), expectedType, v);
+            genIncrement(expectedType, myDelta, v);
         }
         return StackValue.onStack(expectedType);
     }

@@ -1,0 +1,7 @@
+// MOVE: down
+class A {
+    enum class B {
+        Y
+        <caret>X
+    }
+}

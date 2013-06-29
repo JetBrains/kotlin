@@ -51,7 +51,7 @@ public class StaticField implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        v.getstatic(JvmClassName.byFqNameWithoutInnerClasses(ownerClass).getInternalName(), propertyName.getName(), expectedType.getDescriptor());
+        v.getstatic(JvmClassName.byFqNameWithoutInnerClasses(ownerClass).getInternalName(), propertyName.asString(), expectedType.getDescriptor());
         return StackValue.onStack(expectedType);
     }
 }

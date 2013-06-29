@@ -21,7 +21,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.Function;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import jet.modules.AllModules;
 import jet.modules.Module;
@@ -69,22 +68,9 @@ public class CompileEnvironmentUtil {
     }
 
     @Nullable
-    public static File getUnpackedRuntimePath() {
-        URL url = KotlinToJVMBytecodeCompiler.class.getClassLoader().getResource("jet/JetObject.class");
-        if (url != null && url.getProtocol().equals("file")) {
-            return new File(url.getPath()).getParentFile().getParentFile();
-        }
-        return null;
-    }
-
-    @Nullable
-    public static File getRuntimeJarPath() {
-        URL url = KotlinToJVMBytecodeCompiler.class.getClassLoader().getResource("jet/JetObject.class");
-        if (url != null && url.getProtocol().equals("jar")) {
-            String path = url.getPath();
-            return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
-        }
-        return null;
+    private static File getRuntimeJarPath() {
+        File runtimePath = PathUtil.getKotlinPathsForCompiler().getRuntimePath();
+        return runtimePath.exists() ? runtimePath : null;
     }
 
     @NotNull
@@ -203,7 +189,7 @@ public class CompileEnvironmentUtil {
             mainAttributes.putValue("Manifest-Version", "1.0");
             mainAttributes.putValue("Created-By", "JetBrains Kotlin");
             if (mainClass != null) {
-                mainAttributes.putValue("Main-Class", mainClass.getFqName());
+                mainAttributes.putValue("Main-Class", mainClass.asString());
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
             for (String file : factory.files()) {
@@ -221,53 +207,27 @@ public class CompileEnvironmentUtil {
     }
 
     private static void writeRuntimeToJar(final JarOutputStream stream) throws IOException {
-        final File unpackedRuntimePath = getUnpackedRuntimePath();
-        if (unpackedRuntimePath != null) {
-            FileUtil.processFilesRecursively(unpackedRuntimePath, new Processor<File>() {
-                @Override
-                public boolean process(File file) {
-                    if (file.isDirectory()) return true;
-                    String relativePath = FileUtil.getRelativePath(unpackedRuntimePath, file);
-                    try {
-                        stream.putNextEntry(new JarEntry(FileUtil.toSystemIndependentName(relativePath)));
-                        FileInputStream fis = new FileInputStream(file);
-                        try {
-                            FileUtil.copy(fis, stream);
-                        }
-                        finally {
-                            fis.close();
-                        }
+        File runtimeJarPath = getRuntimeJarPath();
+        if (runtimeJarPath != null) {
+            JarInputStream jis = new JarInputStream(new FileInputStream(runtimeJarPath));
+            try {
+                while (true) {
+                    JarEntry e = jis.getNextJarEntry();
+                    if (e == null) {
+                        break;
                     }
-                    catch (IOException e) {
-                        throw new RuntimeException(e);
+                    if (FileUtilRt.extensionEquals(e.getName(), "class")) {
+                        stream.putNextEntry(e);
+                        FileUtil.copy(jis, stream);
                     }
-                    return true;
                 }
-            });
+            }
+            finally {
+                jis.close();
+            }
         }
         else {
-            File runtimeJarPath = getRuntimeJarPath();
-            if (runtimeJarPath != null) {
-                JarInputStream jis = new JarInputStream(new FileInputStream(runtimeJarPath));
-                try {
-                    while (true) {
-                        JarEntry e = jis.getNextJarEntry();
-                        if (e == null) {
-                            break;
-                        }
-                        if (FileUtil.getExtension(e.getName()).equals("class")) {
-                            stream.putNextEntry(e);
-                            FileUtil.copy(jis, stream);
-                        }
-                    }
-                }
-                finally {
-                    jis.close();
-                }
-            }
-            else {
-                throw new CompileEnvironmentException("Couldn't find runtime library");
-            }
+            throw new CompileEnvironmentException("Couldn't find runtime library");
         }
     }
 

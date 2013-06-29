@@ -1,0 +1,32 @@
+<root>
+    <item name='android.drm.DrmStore.ConstraintsColumns MAX_REPEAT_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmStore.ConstraintsColumns LICENSE_EXPIRY_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmInfoRequest SUBSCRIPTION_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmStore.ConstraintsColumns EXTENDED_METADATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmInfoRequest ACCOUNT_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmEvent DRM_INFO_OBJECT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmStore.ConstraintsColumns LICENSE_AVAILABLE_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmStore.ConstraintsColumns LICENSE_START_TIME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmStore.ConstraintsColumns REMAINING_REPEAT_COUNT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmEvent DRM_INFO_STATUS_OBJECT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

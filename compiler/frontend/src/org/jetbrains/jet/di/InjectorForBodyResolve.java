@@ -17,6 +17,7 @@
 package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.resolve.BodyResolver;
+import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -42,6 +43,7 @@ import javax.annotation.PreDestroy;
 public class InjectorForBodyResolve {
     
     private BodyResolver bodyResolver;
+    private NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
@@ -69,6 +71,7 @@ public class InjectorForBodyResolve {
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.bodyResolver = new BodyResolver();
+        this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
@@ -101,6 +104,7 @@ public class InjectorForBodyResolve {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
+        callResolver.setExtension(needSyntheticCallResolverExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);

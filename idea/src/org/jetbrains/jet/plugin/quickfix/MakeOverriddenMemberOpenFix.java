@@ -69,7 +69,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
                 if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember)) {
                     return false;
                 }
-                String containingDeclarationName = overriddenDescriptor.getContainingDeclaration().getName().getName();
+                String containingDeclarationName = overriddenDescriptor.getContainingDeclaration().getName().asString();
                 overriddenMembers.add(overriddenMember);
                 containingDeclarationsNames.add(containingDeclarationName);
             }
@@ -110,8 +110,8 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
     }
 
     @NotNull
-    public static JetIntentionActionFactory createFactory() {
-        return new JetIntentionActionFactory() {
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

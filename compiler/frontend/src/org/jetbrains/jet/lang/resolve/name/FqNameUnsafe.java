@@ -85,7 +85,7 @@ public class FqNameUnsafe extends FqNameBase {
 
 
     @NotNull
-    public String getFqName() {
+    public String asString() {
         return fqName;
     }
 
@@ -93,7 +93,7 @@ public class FqNameUnsafe extends FqNameBase {
         if (safe != null) {
             return true;
         }
-        return FqName.isValidAfterUnsafeCheck(getFqName());
+        return FqName.isValidAfterUnsafeCheck(asString());
     }
 
     @NotNull
@@ -128,10 +128,10 @@ public class FqNameUnsafe extends FqNameBase {
     public FqNameUnsafe child(@NotNull Name name) {
         String childFqName;
         if (isRoot()) {
-            childFqName = name.getName();
+            childFqName = name.asString();
         }
         else {
-            childFqName = fqName + "." + name.getName();
+            childFqName = fqName + "." + name.asString();
         }
         return new FqNameUnsafe(childFqName, this, name);
     }
@@ -210,7 +210,7 @@ public class FqNameUnsafe extends FqNameBase {
         }
 
         Name firstSegment = Name.guess(fqName.substring(0, pos));
-        FqNameUnsafe last = new FqNameUnsafe(firstSegment.getName(), FqName.ROOT.toUnsafe(), firstSegment);
+        FqNameUnsafe last = new FqNameUnsafe(firstSegment.asString(), FqName.ROOT.toUnsafe(), firstSegment);
         callback.segment(firstSegment, last);
 
         while (true) {
@@ -254,13 +254,13 @@ public class FqNameUnsafe extends FqNameBase {
 
     @NotNull
     public static FqNameUnsafe topLevel(@NotNull Name shortName) {
-        return new FqNameUnsafe(shortName.getName(), FqName.ROOT.toUnsafe(), shortName);
+        return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName);
     }
 
 
     @Override
     public String toString() {
-        return isRoot() ? ROOT_NAME.getName() : fqName;
+        return isRoot() ? ROOT_NAME.asString() : fqName;
     }
 
     @Override

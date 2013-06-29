@@ -106,4 +106,9 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         assert isSafeCall != null;
         return isSafeCall;
     }
+
+    @Override
+    public String toString() {
+        return candidateDescriptor.toString();
+    }
 }

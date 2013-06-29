@@ -29,7 +29,7 @@ public final class Name implements Comparable<Name> {
     }
 
     @NotNull
-    public String getName() {
+    public String asString() {
         return name;
     }
 
@@ -38,7 +38,7 @@ public final class Name implements Comparable<Name> {
         if (special) {
             throw new IllegalStateException("not identifier: " + this);
         }
-        return getName();
+        return asString();
     }
 
     public boolean isSpecial() {

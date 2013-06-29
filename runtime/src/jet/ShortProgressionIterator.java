@@ -16,26 +16,36 @@
 
 package jet;
 
+import jet.runtime.ProgressionUtil;
+
 class ShortProgressionIterator extends ShortIterator {
-    private short next;
-    private final short end;
+    private int next;
     private final int increment;
+    private final short finalElement;
+    private boolean hasNext;
 
     public ShortProgressionIterator(short start, short end, int increment) {
         this.next = start;
-        this.end = end;
         this.increment = increment;
+
+        this.finalElement = (short) ProgressionUtil.getProgressionFinalElement(start, end, increment);
+        this.hasNext = increment > 0 ? start <= end : start >= end;
     }
 
     @Override
     public boolean hasNext() {
-        return increment > 0 ? next <= end : next >= end;
+        return hasNext;
     }
 
     @Override
     public short nextShort() {
-        short value = next;
-        next += increment;
-        return value;
+        int value = next;
+        if (value == finalElement) {
+            hasNext = false;
+        }
+        else {
+            next += increment;
+        }
+        return (short) value;
     }
 }

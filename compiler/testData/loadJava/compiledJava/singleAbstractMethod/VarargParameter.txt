@@ -1,0 +1,7 @@
+package test
+
+public /*synthesized*/ fun VarargParameter(/*0*/ function: (jet.Array<jet.String?>) -> jet.Unit): test.VarargParameter
+
+public trait VarargParameter : java.lang.Object {
+    public abstract fun f(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Unit
+}

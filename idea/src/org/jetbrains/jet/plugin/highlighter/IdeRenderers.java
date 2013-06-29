@@ -166,7 +166,7 @@ public class IdeRenderers {
                         DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
                         if (containingDeclaration != null) {
                             FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
-                            stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : fqName.getFqName());
+                            stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : fqName.asString());
                         }
                         stringBuilder.append("</li>");
                     }

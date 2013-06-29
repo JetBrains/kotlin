@@ -1,0 +1,71 @@
+<root>
+    <item name='android.app.admin.DeviceAdminReceiver DEVICE_ADMIN_META_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo java.lang.CharSequence loadDescription(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DevicePolicyManager EXTRA_DEVICE_ADMIN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver android.app.admin.DevicePolicyManager getManager(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver EXTRA_DISABLE_WARNING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver ACTION_PASSWORD_EXPIRING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DevicePolicyManager ACTION_START_ENCRYPTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver ACTION_PASSWORD_FAILED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver void onReceive(android.content.Context, android.content.Intent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo DeviceAdminInfo(android.content.Context, android.content.pm.ResolveInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo void dump(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo DeviceAdminInfo(android.content.Context, android.content.pm.ResolveInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver ACTION_DEVICE_ADMIN_DISABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DevicePolicyManager ACTION_ADD_DEVICE_ADMIN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver void onReceive(android.content.Context, android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver ACTION_PASSWORD_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver ACTION_DEVICE_ADMIN_DISABLE_REQUESTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DevicePolicyManager EXTRA_ADD_EXPLANATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo android.content.ComponentName getComponent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver ACTION_DEVICE_ADMIN_ENABLED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DevicePolicyManager ACTION_SET_NEW_PASSWORD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver ACTION_PASSWORD_SUCCEEDED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

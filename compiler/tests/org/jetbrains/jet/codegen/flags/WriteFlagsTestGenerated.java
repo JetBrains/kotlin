@@ -277,10 +277,61 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     }
     
     @TestMetadata("compiler/testData/writeFlags/function")
-    @InnerTestClasses({Function.DeprecatedFlag.class})
+    @InnerTestClasses({Function.ClassObjectPrivate.class, Function.Constructors.class, Function.DeprecatedFlag.class})
     public static class Function extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("compiler/testData/writeFlags/function/classObjectPrivate")
+        public static class ClassObjectPrivate extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInClassObjectPrivate() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("privateFun.kt")
+            public void testPrivateFun() throws Exception {
+                doTest("compiler/testData/writeFlags/function/classObjectPrivate/privateFun.kt");
+            }
+            
+            @TestMetadata("privateVal.kt")
+            public void testPrivateVal() throws Exception {
+                doTest("compiler/testData/writeFlags/function/classObjectPrivate/privateVal.kt");
+            }
+            
+            @TestMetadata("privateVar.kt")
+            public void testPrivateVar() throws Exception {
+                doTest("compiler/testData/writeFlags/function/classObjectPrivate/privateVar.kt");
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/writeFlags/function/constructors")
+        public static class Constructors extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInConstructors() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("classObject.kt")
+            public void testClassObject() throws Exception {
+                doTest("compiler/testData/writeFlags/function/constructors/classObject.kt");
+            }
+            
+            @TestMetadata("objectInClass.kt")
+            public void testObjectInClass() throws Exception {
+                doTest("compiler/testData/writeFlags/function/constructors/objectInClass.kt");
+            }
+            
+            @TestMetadata("objectLiteral.kt")
+            public void testObjectLiteral() throws Exception {
+                doTest("compiler/testData/writeFlags/function/constructors/objectLiteral.kt");
+            }
+            
+            @TestMetadata("topLevelObject.kt")
+            public void testTopLevelObject() throws Exception {
+                doTest("compiler/testData/writeFlags/function/constructors/topLevelObject.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/writeFlags/function/deprecatedFlag")
@@ -354,6 +405,8 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Function");
             suite.addTestSuite(Function.class);
+            suite.addTestSuite(ClassObjectPrivate.class);
+            suite.addTestSuite(Constructors.class);
             suite.addTestSuite(DeprecatedFlag.class);
             return suite;
         }
@@ -413,10 +466,271 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     }
     
     @TestMetadata("compiler/testData/writeFlags/property")
-    @InnerTestClasses({Property.DeprecatedFlag.class, Property.Visibility.class})
+    @InnerTestClasses({Property.ClassObject.class, Property.DeprecatedFlag.class, Property.Visibility.class})
     public static class Property extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInProperty() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("compiler/testData/writeFlags/property/classObject")
+        @InnerTestClasses({ClassObject.Class.class, ClassObject.Rename.class, ClassObject.Trait.class})
+        public static class ClassObject extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInClassObject() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("compiler/testData/writeFlags/property/classObject/class")
+            public static class Class extends AbstractWriteFlagsTest {
+                public void testAllFilesPresentInClass() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("delegatedProtectedVar.kt")
+                public void testDelegatedProtectedVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/delegatedProtectedVar.kt");
+                }
+                
+                @TestMetadata("delegatedPublicVal.kt")
+                public void testDelegatedPublicVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/delegatedPublicVal.kt");
+                }
+                
+                @TestMetadata("extensionPublicVal.kt")
+                public void testExtensionPublicVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/extensionPublicVal.kt");
+                }
+                
+                @TestMetadata("extensionPublicVar.kt")
+                public void testExtensionPublicVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/extensionPublicVar.kt");
+                }
+                
+                @TestMetadata("internalVal.kt")
+                public void testInternalVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/internalVal.kt");
+                }
+                
+                @TestMetadata("internalVar.kt")
+                public void testInternalVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/internalVar.kt");
+                }
+                
+                @TestMetadata("internalVarPrivateSet.kt")
+                public void testInternalVarPrivateSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/internalVarPrivateSet.kt");
+                }
+                
+                @TestMetadata("noBackingField.kt")
+                public void testNoBackingField() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/noBackingField.kt");
+                }
+                
+                @TestMetadata("privateVal.kt")
+                public void testPrivateVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/privateVal.kt");
+                }
+                
+                @TestMetadata("privateVar.kt")
+                public void testPrivateVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/privateVar.kt");
+                }
+                
+                @TestMetadata("protectedVal.kt")
+                public void testProtectedVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/protectedVal.kt");
+                }
+                
+                @TestMetadata("protectedVarPrivateSet.kt")
+                public void testProtectedVarPrivateSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/protectedVarPrivateSet.kt");
+                }
+                
+                @TestMetadata("publicVal.kt")
+                public void testPublicVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/publicVal.kt");
+                }
+                
+                @TestMetadata("publicValNonDefault.kt")
+                public void testPublicValNonDefault() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/publicValNonDefault.kt");
+                }
+                
+                @TestMetadata("publicVar.kt")
+                public void testPublicVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/publicVar.kt");
+                }
+                
+                @TestMetadata("publicVarNonDefault.kt")
+                public void testPublicVarNonDefault() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/publicVarNonDefault.kt");
+                }
+                
+                @TestMetadata("publicVarPrivateSet.kt")
+                public void testPublicVarPrivateSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/publicVarPrivateSet.kt");
+                }
+                
+                @TestMetadata("publicVarProtectedSet.kt")
+                public void testPublicVarProtectedSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/publicVarProtectedSet.kt");
+                }
+                
+                @TestMetadata("publicVarPublicSet.kt")
+                public void testPublicVarPublicSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/class/publicVarPublicSet.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/writeFlags/property/classObject/rename")
+            public static class Rename extends AbstractWriteFlagsTest {
+                public void testAllFilesPresentInRename() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("constructorAndClassObject.kt")
+                public void testConstructorAndClassObject() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/constructorAndClassObject.kt");
+                }
+                
+                @TestMetadata("delegatedAndDelegated.kt")
+                public void testDelegatedAndDelegated() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/delegatedAndDelegated.kt");
+                }
+                
+                @TestMetadata("delegatedAndProperty.kt")
+                public void testDelegatedAndProperty() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/delegatedAndProperty.kt");
+                }
+                
+                @TestMetadata("extensionAndExtension.kt")
+                public void testExtensionAndExtension() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/extensionAndExtension.kt");
+                }
+                
+                @TestMetadata("extensionAndProperty.kt")
+                public void testExtensionAndProperty() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/extensionAndProperty.kt");
+                }
+                
+                @TestMetadata("propertyAndProperty.kt")
+                public void testPropertyAndProperty() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/rename/propertyAndProperty.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/writeFlags/property/classObject/trait")
+            public static class Trait extends AbstractWriteFlagsTest {
+                public void testAllFilesPresentInTrait() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("delegatedProtectedVar.kt")
+                public void testDelegatedProtectedVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/delegatedProtectedVar.kt");
+                }
+                
+                @TestMetadata("delegatedPublicVal.kt")
+                public void testDelegatedPublicVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/delegatedPublicVal.kt");
+                }
+                
+                @TestMetadata("extensionPublicVal.kt")
+                public void testExtensionPublicVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/extensionPublicVal.kt");
+                }
+                
+                @TestMetadata("extensionPublicVar.kt")
+                public void testExtensionPublicVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/extensionPublicVar.kt");
+                }
+                
+                @TestMetadata("internalVal.kt")
+                public void testInternalVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/internalVal.kt");
+                }
+                
+                @TestMetadata("internalVar.kt")
+                public void testInternalVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/internalVar.kt");
+                }
+                
+                @TestMetadata("internalVarPrivateSet.kt")
+                public void testInternalVarPrivateSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/internalVarPrivateSet.kt");
+                }
+                
+                @TestMetadata("noBackingField.kt")
+                public void testNoBackingField() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/noBackingField.kt");
+                }
+                
+                @TestMetadata("privateVal.kt")
+                public void testPrivateVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/privateVal.kt");
+                }
+                
+                @TestMetadata("privateVar.kt")
+                public void testPrivateVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/privateVar.kt");
+                }
+                
+                @TestMetadata("protectedVal.kt")
+                public void testProtectedVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/protectedVal.kt");
+                }
+                
+                @TestMetadata("protectedVarPrivateSet.kt")
+                public void testProtectedVarPrivateSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/protectedVarPrivateSet.kt");
+                }
+                
+                @TestMetadata("publicVal.kt")
+                public void testPublicVal() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/publicVal.kt");
+                }
+                
+                @TestMetadata("publicValNonDefault.kt")
+                public void testPublicValNonDefault() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/publicValNonDefault.kt");
+                }
+                
+                @TestMetadata("publicVar.kt")
+                public void testPublicVar() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/publicVar.kt");
+                }
+                
+                @TestMetadata("publicVarNonDefault.kt")
+                public void testPublicVarNonDefault() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/publicVarNonDefault.kt");
+                }
+                
+                @TestMetadata("publicVarPrivateSet.kt")
+                public void testPublicVarPrivateSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/publicVarPrivateSet.kt");
+                }
+                
+                @TestMetadata("publicVarProtectedSet.kt")
+                public void testPublicVarProtectedSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/publicVarProtectedSet.kt");
+                }
+                
+                @TestMetadata("publicVarPublicSet.kt")
+                public void testPublicVarPublicSet() throws Exception {
+                    doTest("compiler/testData/writeFlags/property/classObject/trait/publicVarPublicSet.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("ClassObject");
+                suite.addTestSuite(ClassObject.class);
+                suite.addTestSuite(Class.class);
+                suite.addTestSuite(Rename.class);
+                suite.addTestSuite(Trait.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/writeFlags/property/deprecatedFlag")
@@ -463,6 +777,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Property");
             suite.addTestSuite(Property.class);
+            suite.addTest(ClassObject.innerSuite());
             suite.addTestSuite(DeprecatedFlag.class);
             suite.addTestSuite(Visibility.class);
             return suite;

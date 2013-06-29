@@ -28,6 +28,7 @@ import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -217,13 +218,13 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public Type mapType(JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode kind) {
+    public Type mapType(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode kind) {
         return mapType(jetType, signatureVisitor, kind, Variance.INVARIANT);
     }
 
     @NotNull
     public Type mapType(
-            JetType jetType,
+            @NotNull JetType jetType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull JetTypeMapperMode kind,
             @NotNull Variance howThisTypeIsUsed
@@ -577,8 +578,8 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    private JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
-        String name = f.getName().getName();
+    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
+        String name = f.getName().asString();
         if (f instanceof PropertyAccessorDescriptor) {
             boolean isGetter = f instanceof PropertyGetterDescriptor;
             name = getPropertyAccessorName(((PropertyAccessorDescriptor) f).getCorrespondingProperty(), isGetter);
@@ -588,7 +589,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull Name functionName, @NotNull FunctionDescriptor f) {
-        return mapSignature(functionName.getName(), f, false, OwnerKind.IMPLEMENTATION);
+        return mapSignature(functionName.asString(), f, false, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull
@@ -635,6 +636,15 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureVisitor.makeJvmMethodSignature(methodName);
     }
 
+    @Nullable
+    public String mapFieldSignature(@NotNull JetType backingFieldType) {
+        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE, true);
+        signatureVisitor.writeFieldTypeStart();
+        mapType(backingFieldType, signatureVisitor, JetTypeMapperMode.VALUE);
+        signatureVisitor.writeFieldTypeEnd();
+        return signatureVisitor.makeJavaGenericSignature();
+    }
+
     private void writeThisIfNeeded(
             @NotNull CallableMemberDescriptor descriptor,
             @NotNull OwnerKind kind,
@@ -675,7 +685,7 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     private void writeFormalTypeParameter(TypeParameterDescriptor typeParameterDescriptor, BothSignatureWriter signatureVisitor) {
-        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName().getName(), typeParameterDescriptor.getVariance(),
+        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName().asString(), typeParameterDescriptor.getVariance(),
                                                   typeParameterDescriptor.isReified());
 
         classBound:
@@ -730,7 +740,7 @@ public class JetTypeMapper extends BindingTraceAware {
         DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
         boolean isAnnotation = parentDescriptor instanceof ClassDescriptor &&
                                ((ClassDescriptor) parentDescriptor).getKind() == ClassKind.ANNOTATION_CLASS;
-        return isAnnotation ? descriptor.getName().getName() :
+        return isAnnotation ? descriptor.getName().asString() :
                isGetter ? PropertyCodegen.getterName(descriptor.getName()) : PropertyCodegen.setterName(descriptor.getName());
     }
 
@@ -776,13 +786,19 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureWriter.makeJvmPropertyAccessorSignature(name, false);
     }
 
-    private void writeParameter(BothSignatureWriter signatureWriter, JetType outType) {
+    private void writeParameter(@NotNull BothSignatureWriter signatureWriter, @NotNull JetType outType) {
         signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
         mapType(outType, signatureWriter, JetTypeMapperMode.VALUE);
         signatureWriter.writeParameterTypeEnd();
     }
 
-    private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor, CalculatedClosure closure) {
+    @NotNull
+    public JvmMethodSignature mapConstructorSignature(@NotNull ConstructorDescriptor descriptor) {
+        return mapConstructorSignature(descriptor, bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration()));
+    }
+
+    @NotNull
+    public JvmMethodSignature mapConstructorSignature(@NotNull ConstructorDescriptor descriptor, @Nullable CalculatedClosure closure) {
 
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
 
@@ -848,9 +864,7 @@ public class JetTypeMapper extends BindingTraceAware {
                     ConstructorDescriptor superConstructor = (ConstructorDescriptor) superDescriptor;
 
                     if (isObjectLiteral(bindingContext, descriptor.getContainingDeclaration())) {
-                        //noinspection SuspiciousMethodCalls
-                        CallableMethod superCallable = mapToCallableMethod(superConstructor);
-                        List<JvmMethodParameterSignature> types = superCallable.getSignature().getKotlinParameterTypes();
+                        List<JvmMethodParameterSignature> types = mapConstructorSignature(superConstructor).getKotlinParameterTypes();
                         if (types != null) {
                             for (JvmMethodParameterSignature type : types) {
                                 signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
@@ -901,11 +915,13 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureWriter.makeJvmMethodSignature("<init>");
     }
 
-    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor) {
+    @NotNull
+    public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor) {
         return mapToCallableMethod(descriptor, bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration()));
     }
 
-    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, CalculatedClosure closure) {
+    @NotNull
+    public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor, @Nullable CalculatedClosure closure) {
         JvmMethodSignature method = mapConstructorSignature(descriptor, closure);
         JetType defaultType = descriptor.getContainingDeclaration().getDefaultType();
         Type mapped = mapType(defaultType, JetTypeMapperMode.IMPL);
@@ -954,5 +970,16 @@ public class JetTypeMapper extends BindingTraceAware {
             receiverParameterType = null;
         }
         return new CallableMethod(owner, null, null, descriptor, INVOKEINTERFACE, owner, receiverParameterType, owner.getAsmType());
+    }
+
+    @NotNull
+    public Type expressionType(JetExpression expr) {
+        JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
+        return asmTypeOrVoid(type);
+    }
+
+    @NotNull
+    private Type asmTypeOrVoid(@Nullable JetType type) {
+        return type == null ? Type.VOID_TYPE : mapType(type);
     }
 }
