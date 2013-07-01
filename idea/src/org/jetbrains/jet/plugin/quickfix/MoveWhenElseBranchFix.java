@@ -26,10 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.psi.JetWhenEntry;
-import org.jetbrains.jet.lang.psi.JetWhenExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
@@ -58,7 +55,7 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetWhenEntry elseEntry = null;
         JetWhenEntry lastEntry = null;
         for (JetWhenEntry entry : element.getEntries()) {

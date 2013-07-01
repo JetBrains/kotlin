@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -53,7 +52,7 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactory.createExpression(project, getPropertyName());
         element.replace(propertyName);
     }

@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -46,7 +45,7 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         for (JetTypeReference typeReference : element.getTypeArgumentsAsTypes()) {
             if (typeReference != null) {
                 typeReference.replace(JetPsiFactory.createStar(project));

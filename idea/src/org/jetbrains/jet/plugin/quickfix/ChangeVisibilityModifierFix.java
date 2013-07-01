@@ -64,9 +64,8 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        if (!(file instanceof JetFile)) return;
-        JetKeywordToken modifier = findVisibilityChangeTo((JetFile)file);
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+        JetKeywordToken modifier = findVisibilityChangeTo(file);
         element.replace(AddModifierFix.addModifier(element, modifier, VISIBILITY_TOKENS, project, true));
     }
 

@@ -53,7 +53,7 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         assert element.getTypeArguments().isEmpty();
 
         String typeString = TypeUtils.getTypeNameAndStarProjectionsString(element.getText(), argumentCount);

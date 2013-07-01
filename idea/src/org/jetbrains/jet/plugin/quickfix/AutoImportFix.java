@@ -268,7 +268,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     }
 
     @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, PsiFile file)
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, JetFile file)
             throws IncorrectOperationException {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override

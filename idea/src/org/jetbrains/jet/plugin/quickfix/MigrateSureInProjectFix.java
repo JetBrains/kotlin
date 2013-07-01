@@ -91,11 +91,10 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        JetFile initialFile = (JetFile) file;
-        Collection<JetFile> files = PluginJetFilesProvider.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(initialFile);
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+        Collection<JetFile> files = PluginJetFilesProvider.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(file);
 
-        AnalyzeExhaust analyzeExhaust = analyzeFiles(initialFile, files);
+        AnalyzeExhaust analyzeExhaust = analyzeFiles(file, files);
 
         for (JetFile jetFile : files) {
             replaceUnresolvedSure(jetFile, analyzeExhaust.getBindingContext());

@@ -27,10 +27,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
 import static org.jetbrains.jet.lexer.JetTokens.ANNOTATION_KEYWORD;
@@ -85,7 +82,7 @@ public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotat
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         annotationClass.replace(AddModifierFix.addModifier(annotationClass, ANNOTATION_KEYWORD, null, project, false));
     }
 

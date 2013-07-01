@@ -65,7 +65,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetBinaryExpressionWithTypeRHS castedExpression =
                 (JetBinaryExpressionWithTypeRHS) JetPsiFactory.createExpression(project, "(" + element.getText() + ") as " + renderedType);
         if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castedExpression.getLeft())) {

@@ -22,11 +22,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 public abstract class JetIntentionAction<T extends PsiElement> implements IntentionAction {
@@ -41,7 +38,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
         return element.isValid() && file.getManager().isInProject(file) && (file instanceof JetFile);
     }
 
-    //Don't override this method. Use the method below instead.
+    //Don't override this method. Use the method with JetFile instead.
     @Deprecated
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
