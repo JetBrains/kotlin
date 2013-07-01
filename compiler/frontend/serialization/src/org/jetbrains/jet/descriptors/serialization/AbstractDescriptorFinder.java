@@ -29,12 +29,12 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
-public abstract class AbstractClassResolver implements ClassResolver {
+public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
     private final AnnotationDeserializer annotationDeserializer;
 
-    public AbstractClassResolver(@NotNull final StorageManager storageManager, @NotNull AnnotationDeserializer annotationDeserializer) {
+    public AbstractDescriptorFinder(@NotNull final StorageManager storageManager, @NotNull AnnotationDeserializer annotationDeserializer) {
         this.annotationDeserializer = annotationDeserializer;
 
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<ClassId, ClassDescriptor>() {
@@ -51,7 +51,7 @@ public abstract class AbstractClassResolver implements ClassResolver {
                         classId.isTopLevelClass() ? getPackage(classId.getPackageFqName()) : findClass(classId.getOuterClassId());
                 assert owner != null : "No owner found for " + classId;
 
-                AbstractClassResolver _this = AbstractClassResolver.this;
+                AbstractDescriptorFinder _this = AbstractDescriptorFinder.this;
                 ClassDescriptor classDescriptor = new DeserializedClassDescriptor(
                         classId, storageManager, owner, classData.getNameResolver(),
                         _this.annotationDeserializer, _this, classProto, null);

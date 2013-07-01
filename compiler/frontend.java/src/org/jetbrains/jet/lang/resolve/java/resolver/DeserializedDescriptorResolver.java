@@ -153,9 +153,9 @@ public final class DeserializedDescriptorResolver {
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         ClassId classId = ClassId.fromFqNameAndContainingDeclaration(fqName, containingDeclaration);
-        AbstractClassResolver classResolver =
-                new DeserializedClassResolver(storageManager, DUMMY_ANNOTATION_DESERIALIZER, classId, classData);
-        ClassDescriptor classDescriptor = classResolver.findClassInternally(classId);
+        AbstractDescriptorFinder descriptorFinder =
+                new DeserializedDescriptorFinder(storageManager, DUMMY_ANNOTATION_DESERIALIZER, classId, classData);
+        ClassDescriptor classDescriptor = descriptorFinder.findClassInternally(classId);
         assert classDescriptor != null : "Could not correctly deserialize class " + fqName.asString();
         return classDescriptor;
     }
@@ -230,13 +230,13 @@ public final class DeserializedDescriptorResolver {
         return FqName.fromSegments(correctedSegments);
     }
 
-    public class DeserializedClassResolver extends AbstractClassResolver {
+    public class DeserializedDescriptorFinder extends AbstractDescriptorFinder {
         @NotNull
         private final ClassId classID;
         @NotNull
         private final ClassData classData;
 
-        public DeserializedClassResolver(
+        public DeserializedDescriptorFinder(
                 @NotNull StorageManager storageManager,
                 @NotNull AnnotationDeserializer annotationDeserializer,
                 @NotNull ClassId id,

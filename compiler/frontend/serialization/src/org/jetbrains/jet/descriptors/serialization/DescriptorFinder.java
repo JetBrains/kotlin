@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
-public interface ClassResolver {
+public interface DescriptorFinder {
 
-    ClassResolver EMPTY = new ClassResolver() {
+    DescriptorFinder EMPTY = new DescriptorFinder() {
         @Nullable
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {

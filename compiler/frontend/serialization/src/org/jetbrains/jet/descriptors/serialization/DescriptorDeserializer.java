@@ -42,11 +42,11 @@ public class DescriptorDeserializer {
             @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
-            @NotNull ClassResolver classResolver,
+            @NotNull DescriptorFinder descriptorFinder,
             @NotNull AnnotationDeserializer annotationDeserializer
     ) {
         return new DescriptorDeserializer(storageManager,
-                new TypeDeserializer(storageManager, null, nameResolver, classResolver, "Deserializer for " + containingDeclaration, NONE),
+                new TypeDeserializer(storageManager, null, nameResolver, descriptorFinder, "Deserializer for " + containingDeclaration, NONE),
                 containingDeclaration, nameResolver, annotationDeserializer);
     }
 

@@ -80,7 +80,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
-        ClassResolver classResolver = new AbstractClassResolver(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED) {
+        DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED) {
 
             @NotNull
             @Override
@@ -120,10 +120,10 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         // Make the lazy loader create classes
         for (ClassId classId : classProtos.keySet()) {
-            classResolver.findClass(classId);
+            descriptorFinder.findClass(classId);
         }
 
-        deserializeCallables(callableProtos, actualNamespace, nameResolver, classResolver);
+        deserializeCallables(callableProtos, actualNamespace, nameResolver, descriptorFinder);
 
         actualNamespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
         return actualNamespace;
@@ -163,11 +163,11 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             List<ProtoBuf.Callable> callableProtos,
             NamespaceDescriptorImpl actualNamespace,
             NameResolver nameResolver,
-            ClassResolver classResolver
+            DescriptorFinder descriptorFinder
     ) {
         DescriptorDeserializer descriptorDeserializer;
         descriptorDeserializer =
-                DescriptorDeserializer.create(new LockBasedStorageManager(), actualNamespace, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED);
+                DescriptorDeserializer.create(new LockBasedStorageManager(), actualNamespace, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED);
         for (ProtoBuf.Callable callableProto : callableProtos) {
             CallableMemberDescriptor callableMemberDescriptor = descriptorDeserializer.loadCallable(callableProto);
             if (callableMemberDescriptor instanceof PropertyDescriptor) {

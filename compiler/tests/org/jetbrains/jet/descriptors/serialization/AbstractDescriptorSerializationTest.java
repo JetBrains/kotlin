@@ -134,10 +134,10 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
 
         NamespaceDescriptorImpl namespace = createTestNamespace();
-        ClassResolver javaClassResolver = new JavaClassResolver(javaDescriptorResolver);
+        DescriptorFinder javaDescriptorFinder = new JavaDescriptorFinder(javaDescriptorResolver);
 
-        ClassResolverImpl classResolver = new ClassResolverImpl(
-                javaClassResolver, namespace,
+        DescriptorFinderImpl descriptorFinder = new DescriptorFinderImpl(
+                javaDescriptorFinder, namespace,
                 new NullableFunction<String, ClassMetadata>() {
                     @Nullable
                     @Override
@@ -150,7 +150,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         for (ClassDescriptor classDescriptor : classes) {
             ClassId classId = new ClassId(DescriptorUtils.getFQName(classDescriptor.getContainingDeclaration()).toSafe(),
                                           FqNameUnsafe.topLevel(classDescriptor.getName()));
-            ClassDescriptor descriptor = classResolver.findClass(classId);
+            ClassDescriptor descriptor = descriptorFinder.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
             if (descriptor.getKind().isObject()) {
                 namespace.getMemberScope().addObjectDescriptor(descriptor);
@@ -172,7 +172,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         DescriptorDeserializer deserializer =
                 DescriptorDeserializer.create(new LockBasedStorageManager(), namespace, new NameResolver(simpleNames, qualifiedNames),
-                                              classResolver, UNSUPPORTED);
+                                              descriptorFinder, UNSUPPORTED);
         for (ProtoBuf.Callable proto : callableProtos) {
             CallableMemberDescriptor descriptor = deserializer.loadCallable(proto);
             if (descriptor instanceof FunctionDescriptor) {
@@ -282,16 +282,16 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
     }
 
-    private static class ClassResolverImpl implements ClassResolver {
-        private final ClassResolver parentResolver;
+    private static class DescriptorFinderImpl implements DescriptorFinder {
+        private final DescriptorFinder parentResolver;
 
         private final DeclarationDescriptor parentForClasses;
         private final NullableFunction<String, ClassMetadata> classMetadata;
 
         private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> classes;
 
-        public ClassResolverImpl(
-                @NotNull ClassResolver parentResolver,
+        public DescriptorFinderImpl(
+                @NotNull DescriptorFinder parentResolver,
                 @NotNull DeclarationDescriptor parentForClasses,
                 @NotNull NullableFunction<String, ClassMetadata> classMetadata
         ) {
@@ -306,7 +306,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 @Override
                 protected ClassDescriptor doCompute(@NotNull ClassId classId) {
                     DeclarationDescriptor containingDeclaration =
-                            classId.isTopLevelClass() ? ClassResolverImpl.this.parentForClasses : findClass(classId.getOuterClassId());
+                            classId.isTopLevelClass() ? DescriptorFinderImpl.this.parentForClasses : findClass(classId.getOuterClassId());
                     assert containingDeclaration != null : "Containing declaration not found: " + classId.getOuterClassId();
                     return resolveClass(containingDeclaration, classId);
                 }
@@ -338,10 +338,10 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
     }
 
-    private static class JavaClassResolver implements ClassResolver {
+    private static class JavaDescriptorFinder implements DescriptorFinder {
         private final JavaDescriptorResolver javaDescriptorResolver;
 
-        public JavaClassResolver(JavaDescriptorResolver javaDescriptorResolver) {
+        public JavaDescriptorFinder(JavaDescriptorResolver javaDescriptorResolver) {
             this.javaDescriptorResolver = javaDescriptorResolver;
         }
 

@@ -3,7 +3,7 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.descriptors.serialization.ClassResolver;
+import org.jetbrains.jet.descriptors.serialization.DescriptorFinder;
 import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -22,7 +22,7 @@ import java.util.List;
 
 public abstract class DeserializedPackageMemberScope extends DeserializedMemberScope {
 
-    private final ClassResolver classResolver;
+    private final DescriptorFinder descriptorFinder;
     private final FqName packageFqName;
 
     public DeserializedPackageMemberScope(
@@ -30,10 +30,10 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
             @NotNull NamespaceDescriptor packageDescriptor,
             @NotNull DescriptorDeserializer deserializer,
             @NotNull List<ProtoBuf.Callable> membersList,
-            ClassResolver classResolver
+            @NotNull DescriptorFinder descriptorFinder
     ) {
         super(storageManager, packageDescriptor, deserializer, membersList);
-        this.classResolver = classResolver;
+        this.descriptorFinder = descriptorFinder;
         this.packageFqName = DescriptorUtils.getFQName(packageDescriptor).toSafe();
     }
 
@@ -51,7 +51,7 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
 
     @Nullable
     private ClassDescriptor findClassDescriptor(Name name, boolean object) {
-        ClassDescriptor classDescriptor = classResolver.findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
+        ClassDescriptor classDescriptor = descriptorFinder.findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
         if (classDescriptor == null) {
             return null;
         }

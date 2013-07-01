@@ -39,7 +39,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
             nameResolver =
                     NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
 
-            ClassResolver classResolver = new AbstractClassResolver(storageManager, AnnotationDeserializer.UNSUPPORTED) {
+            DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(storageManager, AnnotationDeserializer.UNSUPPORTED) {
 
                 @Nullable
                 @Override
@@ -82,8 +82,8 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
             members = new DeserializedPackageMemberScope(
                     storageManager,
                     this,
-                    DescriptorDeserializer.create(storageManager, this, nameResolver, classResolver, AnnotationDeserializer.UNSUPPORTED),
-                    loadCallables(), classResolver
+                    DescriptorDeserializer.create(storageManager, this, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED),
+                    loadCallables(), descriptorFinder
             ) {
                 private final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
                     @Override

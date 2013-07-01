@@ -54,18 +54,18 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
         assertTrue(aClass.isAnnotationPresent(KotlinInfo.class));
         KotlinInfo kotlinInfo = (KotlinInfo) aClass.getAnnotation(KotlinInfo.class);
 
-        AbstractClassResolver classResolver = new KotlinInfoBasedClassResolver(kotlinInfo);
+        AbstractDescriptorFinder descriptorFinder = new KotlinInfoBasedDescriptorFinder(kotlinInfo);
 
-        ClassDescriptor descriptor = classResolver.findClass(new ClassId(NAMESPACE_NAME, CLASS_NAME));
+        ClassDescriptor descriptor = descriptorFinder.findClass(new ClassId(NAMESPACE_NAME, CLASS_NAME));
         assertNotNull(descriptor);
         assertEquals(CLASS_NAME.asString(), descriptor.getName().asString());
     }
 
-    private static class KotlinInfoBasedClassResolver extends AbstractClassResolver {
+    private static class KotlinInfoBasedDescriptorFinder extends AbstractDescriptorFinder {
         private final ClassData classData;
         private final NamespaceDescriptorImpl namespace;
 
-        public KotlinInfoBasedClassResolver(@NotNull KotlinInfo kotlinInfo) throws IOException {
+        public KotlinInfoBasedDescriptorFinder(@NotNull KotlinInfo kotlinInfo) throws IOException {
             super(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED);
 
             this.classData = ClassSerializationUtil.readClassDataFrom(kotlinInfo.data());

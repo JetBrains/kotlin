@@ -53,7 +53,7 @@ public class TypeDeserializer {
     }
 
     private final NameResolver nameResolver;
-    private final ClassResolver classResolver;
+    private final DescriptorFinder descriptorFinder;
     private final TypeDeserializer parent;
 
     // never written to after constructor returns
@@ -71,21 +71,21 @@ public class TypeDeserializer {
             @NotNull String debugName,
             @NotNull TypeParameterResolver typeParameterResolver
     ) {
-        this(storageManager, parent, parent.nameResolver, parent.classResolver, debugName, typeParameterResolver);
+        this(storageManager, parent, parent.nameResolver, parent.descriptorFinder, debugName, typeParameterResolver);
     }
 
     public TypeDeserializer(
             @NotNull StorageManager storageManager,
             @Nullable TypeDeserializer parent,
             @NotNull NameResolver nameResolver,
-            @NotNull ClassResolver classResolver,
+            @NotNull DescriptorFinder descriptorFinder,
             @NotNull String debugName,
             @NotNull TypeParameterResolver typeParameterResolver
     ) {
         this.storageManager = storageManager;
         this.parent = parent;
         this.nameResolver = nameResolver;
-        this.classResolver = classResolver;
+        this.descriptorFinder = descriptorFinder;
         this.debugName = debugName + (parent == null ? "" : ". Child of " + parent.debugName);
 
         for (DeserializedTypeParameterDescriptor typeParameterDescriptor : typeParameterResolver.getTypeParameters(this)) {
@@ -101,8 +101,8 @@ public class TypeDeserializer {
     }
 
     @NotNull
-    public ClassResolver getClassResolver() {
-        return classResolver;
+    public DescriptorFinder getDescriptorFinder() {
+        return descriptorFinder;
     }
 
     @Nullable
@@ -154,7 +154,7 @@ public class TypeDeserializer {
     @Nullable
     private ClassDescriptor computeClassDescriptor(int fqNameIndex) {
         ClassId classId = nameResolver.getClassId(fqNameIndex);
-        return classResolver.findClass(classId);
+        return descriptorFinder.findClass(classId);
     }
 
     private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {
