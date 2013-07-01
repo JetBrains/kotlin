@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class BuiltInsSerializer {
-    private static final String BUILT_INS_SRC_DIR = "compiler/frontend/src";
+    private static final String BUILT_INS_SRC_DIR = "idea/builtinsSrc";
     private static final String DEST_DIR = "compiler/frontend/" + BuiltInsSerializationUtil.BUILT_INS_DIR;
 
     private static int totalSize = 0;
