@@ -83,9 +83,6 @@ public abstract class AbstractClassResolver implements ClassResolver {
     @NotNull
     protected abstract DeclarationDescriptor getPackage(@NotNull FqName fqName);
 
-    @NotNull
-    protected abstract ClassId getClassId(@NotNull ClassDescriptor classDescriptor);
-
     @Nullable
     protected ClassDescriptor resolveClassExternally(@NotNull ClassId classId) {
         //TODO: decide whether it is ok to provide default implementation

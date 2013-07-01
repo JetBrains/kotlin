@@ -2,8 +2,6 @@ package org.jetbrains.jet.lang.types.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -43,11 +41,6 @@ public class BuiltInsSerializationUtil {
         return packageFqNameToPath(classId.getPackageFqName().toUnsafe())
                + "/" + relativeClassNameToFilePath(classId.getRelativeClassName())
                + "." + CLASS_METADATA_FILE_EXTENSION;
-    }
-
-    @NotNull
-    public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-        return ClassSerializationUtil.getClassId(classDescriptor);
     }
 
     @NotNull

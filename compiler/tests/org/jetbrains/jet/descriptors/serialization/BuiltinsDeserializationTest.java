@@ -89,12 +89,6 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
                 return actualNamespace;
             }
 
-            @NotNull
-            @Override
-            protected ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-                return BuiltinsDeserializationTest.getClassId(classDescriptor);
-            }
-
             @Nullable
             @Override
             protected ClassData getClassData(@NotNull ClassId classId) {
@@ -145,7 +139,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             public void writeClass(
                     @NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto
             ) {
-                classProtos.put(getClassId(classDescriptor), classProto);
+                classProtos.put(ClassSerializationUtil.getClassId(classDescriptor), classProto);
             }
         });
         return classProtos;
@@ -185,9 +179,5 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
                 actualNamespace.getMemberScope().addFunctionDescriptor(functionDescriptor);
             }
         }
-    }
-
-    private static ClassId getClassId(ClassDescriptor classDescriptor) {
-        return ClassSerializationUtil.getClassId(classDescriptor);
     }
 }

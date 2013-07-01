@@ -87,12 +87,6 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
             return namespace;
         }
 
-        @NotNull
-        @Override
-        protected ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-            return ClassSerializationUtil.getClassId(classDescriptor);
-        }
-
         @Override
         protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
         }

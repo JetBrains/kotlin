@@ -74,12 +74,6 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                     return BuiltinsNamespaceDescriptorImpl.this;
                 }
 
-                @NotNull
-                @Override
-                protected ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-                    return BuiltInsSerializationUtil.getClassId(classDescriptor);
-                }
-
                 @Override
                 protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
                     // Do nothing

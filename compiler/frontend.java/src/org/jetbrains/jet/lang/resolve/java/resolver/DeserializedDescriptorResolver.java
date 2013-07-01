@@ -264,12 +264,6 @@ public final class DeserializedDescriptorResolver {
             return namespaceDescriptor;
         }
 
-        @NotNull
-        @Override
-        protected ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-            return ClassSerializationUtil.getClassId(classDescriptor);
-        }
-
         @Nullable
         @Override
         protected ClassDescriptor resolveClassExternally(@NotNull ClassId classId) {

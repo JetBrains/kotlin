@@ -9,10 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil;
-import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
-import org.jetbrains.jet.descriptors.serialization.NameSerializationUtil;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -123,6 +120,6 @@ public class BuiltInsSerializer {
     }
 
     private static String getFileName(ClassDescriptor classDescriptor) {
-        return BuiltInsSerializationUtil.getClassMetadataPath(BuiltInsSerializationUtil.getClassId(classDescriptor));
+        return BuiltInsSerializationUtil.getClassMetadataPath(ClassSerializationUtil.getClassId(classDescriptor));
     }
 }
