@@ -69,7 +69,7 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
             super(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED);
 
             this.classData = ClassSerializationUtil.readClassDataFrom(kotlinInfo.data());
-            this.namespace = JetTestUtils.createTestNamespace(NAMESPACE_NAME.asString());
+            this.namespace = JetTestUtils.createTestNamespace(NAMESPACE_NAME.shortName());
         }
 
         @Nullable

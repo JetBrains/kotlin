@@ -624,14 +624,13 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static NamespaceDescriptorImpl createTestNamespace(@NotNull String testPackageName) {
+    public static NamespaceDescriptorImpl createTestNamespace(@NotNull Name testPackageName) {
         ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<test module>"), JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
                                                                JavaToKotlinClassMap.getInstance());
         NamespaceDescriptorImpl rootNamespace =
                 new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
         module.setRootNamespace(rootNamespace);
-        NamespaceDescriptorImpl test =
-                new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), Name.identifier(testPackageName));
+        NamespaceDescriptorImpl test = new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), testPackageName);
         test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));
         return test;
     }

@@ -76,7 +76,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
         List<ProtoBuf.Callable> callableProtos = serializeCallables(serializer, allDescriptors);
 
         final NamespaceDescriptorImpl actualNamespace = JetTestUtils
-                .createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.shortName().asString());
+                .createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.shortName());
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 

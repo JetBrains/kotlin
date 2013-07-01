@@ -29,14 +29,10 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -47,9 +43,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.*;
@@ -133,7 +127,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             classMetadata.put(getNaiveFqName(classDescriptor), new ClassMetadata(simpleNames, qualifiedNames, proto));
         }
 
-        NamespaceDescriptorImpl namespace = createTestNamespace();
+        NamespaceDescriptorImpl namespace = JetTestUtils.createTestNamespace(TEST_PACKAGE_NAME);
         DescriptorFinder javaDescriptorFinder = new JavaDescriptorFinder(javaDescriptorResolver);
 
         DescriptorFinderImpl descriptorFinder = new DescriptorFinderImpl(
@@ -207,18 +201,6 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         builder.append(descriptor.getName().asString());
 
         return builder;
-    }
-
-    private static NamespaceDescriptorImpl createTestNamespace() {
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<name>"), JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
-                                                               JavaToKotlinClassMap.getInstance());
-        NamespaceDescriptorImpl rootNamespace =
-                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
-        module.setRootNamespace(rootNamespace);
-        NamespaceDescriptorImpl test =
-                new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), TEST_PACKAGE_NAME);
-        test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));
-        return test;
     }
 
     public static void serialize(
