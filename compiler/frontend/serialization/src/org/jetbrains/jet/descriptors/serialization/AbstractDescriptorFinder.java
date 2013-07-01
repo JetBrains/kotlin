@@ -34,7 +34,10 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
     private final AnnotationDeserializer annotationDeserializer;
 
-    public AbstractDescriptorFinder(@NotNull final StorageManager storageManager, @NotNull AnnotationDeserializer annotationDeserializer) {
+    public AbstractDescriptorFinder(
+            @NotNull final StorageManager storageManager,
+            @NotNull AnnotationDeserializer annotationDeserializer
+    ) {
         this.annotationDeserializer = annotationDeserializer;
 
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<ClassId, ClassDescriptor>() {
@@ -64,16 +67,6 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     @Nullable
     @Override
     public ClassDescriptor findClass(@NotNull ClassId classId) {
-        ClassDescriptor externalClassDescriptor = resolveClassExternally(classId);
-        if (externalClassDescriptor != null) {
-            return externalClassDescriptor;
-        }
-        return findClassInternally(classId);
-    }
-
-    //do not call resolveClassExternally
-    @Nullable
-    public ClassDescriptor findClassInternally(@NotNull ClassId classId) {
         return findClass.fun(classId);
     }
 
@@ -82,12 +75,6 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     @NotNull
     protected abstract DeclarationDescriptor getPackage(@NotNull FqName fqName);
-
-    @Nullable
-    protected ClassDescriptor resolveClassExternally(@NotNull ClassId classId) {
-        //TODO: decide whether it is ok to provide default implementation
-        return null;
-    }
 
     protected abstract void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor);
 }

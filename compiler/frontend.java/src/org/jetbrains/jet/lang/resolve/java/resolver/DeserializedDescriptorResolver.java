@@ -27,15 +27,14 @@ import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -91,6 +90,14 @@ public final class DeserializedDescriptorResolver {
     private JavaNamespaceResolver javaNamespaceResolver;
 
     private JavaClassResolver javaClassResolver;
+
+    private DescriptorFinder javaDescriptorFinder = new DescriptorFinder() {
+        @Nullable
+        @Override
+        public ClassDescriptor findClass(@NotNull ClassId classId) {
+            return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()));
+        }
+    };
 
     @Inject
     public void setJavaNamespaceResolver(JavaNamespaceResolver javaNamespaceResolver) {
@@ -153,11 +160,14 @@ public final class DeserializedDescriptorResolver {
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         ClassId classId = ClassId.fromFqNameAndContainingDeclaration(fqName, containingDeclaration);
-        AbstractDescriptorFinder descriptorFinder =
-                new DeserializedDescriptorFinder(storageManager, DUMMY_ANNOTATION_DESERIALIZER, classId, classData);
-        ClassDescriptor classDescriptor = descriptorFinder.findClassInternally(classId);
-        assert classDescriptor != null : "Could not correctly deserialize class " + fqName.asString();
-        return classDescriptor;
+
+        DeclarationDescriptor owner = classId.isTopLevelClass()
+                                  ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN)
+                                  : javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
+        assert owner != null : "No owner found for " + classId;
+
+        return new DeserializedClassDescriptor(classId, storageManager, owner, classData.getNameResolver(),
+                                               DUMMY_ANNOTATION_DESERIALIZER, javaDescriptorFinder, classData.getClassProto(), null);
     }
 
     @Nullable
@@ -228,51 +238,5 @@ public final class DeserializedDescriptorResolver {
             }
         }
         return FqName.fromSegments(correctedSegments);
-    }
-
-    public class DeserializedDescriptorFinder extends AbstractDescriptorFinder {
-        @NotNull
-        private final ClassId classID;
-        @NotNull
-        private final ClassData classData;
-
-        public DeserializedDescriptorFinder(
-                @NotNull StorageManager storageManager,
-                @NotNull AnnotationDeserializer annotationDeserializer,
-                @NotNull ClassId id,
-                @NotNull ClassData data
-        ) {
-            super(storageManager, annotationDeserializer);
-            this.classID = id;
-            this.classData = data;
-        }
-
-        @Nullable
-        @Override
-        protected ClassData getClassData(@NotNull ClassId classId) {
-            if (!classId.equals(classID)) {
-                return null;
-            }
-            return classData;
-        }
-
-        @NotNull
-        @Override
-        protected DeclarationDescriptor getPackage(@NotNull FqName fqName) {
-            NamespaceDescriptor namespaceDescriptor = javaNamespaceResolver.resolveNamespace(fqName, INCLUDE_KOTLIN);
-            assert namespaceDescriptor != null;
-            return namespaceDescriptor;
-        }
-
-        @Nullable
-        @Override
-        protected ClassDescriptor resolveClassExternally(@NotNull ClassId classId) {
-            return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()));
-        }
-
-        @Override
-        protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
-            //nothing to do here
-        }
     }
 }
