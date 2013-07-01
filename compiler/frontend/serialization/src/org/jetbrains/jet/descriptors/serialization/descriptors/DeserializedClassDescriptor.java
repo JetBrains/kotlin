@@ -23,12 +23,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.AbstractReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.*;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
+import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 public class DeserializedClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
@@ -258,27 +259,50 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         }
 
         if (getKind() == ClassKind.ENUM_CLASS) {
-            MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
-                    this, getUnsubstitutedInnerClassesScope() /* TODO ?! */, ClassKind.CLASS_OBJECT, false, getClassObjectName(getName()));
-            classObjectDescriptor.setModality(Modality.FINAL);
-            classObjectDescriptor.setVisibility(getVisibility());
-            classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
-            classObjectDescriptor.createTypeConstructor();
+            MutableClassDescriptor classObject = createEnumClassObject();
 
-            // TODO: do something if trace has errors?
-            BindingTrace trace = new BindingTraceContext();
-            ConstructorDescriptorImpl primaryConstructorForObject = DescriptorResolver.createPrimaryConstructorForObject(classObjectDescriptor);
-            primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
-            classObjectDescriptor.setPrimaryConstructor(primaryConstructorForObject, trace);
+            for (int enumEntry : classProto.getEnumEntryList()) {
+                createEnumEntry(classObject, deserializer.getNameResolver().getName(enumEntry));
+            }
 
-            classObjectDescriptor.getBuilder().addFunctionDescriptor(
-                    DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
-            classObjectDescriptor.getBuilder().addFunctionDescriptor(
-                    DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
-            return classObjectDescriptor;
+            return classObject;
         }
 
         return nestedClassResolver.resolveClassObject(this);
+    }
+
+    @NotNull
+    private MutableClassDescriptor createEnumClassObject() {
+        MutableClassDescriptor classObject = new MutableClassDescriptor(this, getScopeForMemberLookup(), ClassKind.CLASS_OBJECT,
+                                                                        false, getClassObjectName(getName()));
+        classObject.setModality(Modality.FINAL);
+        classObject.setVisibility(getVisibility());
+        classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classObject.createTypeConstructor();
+
+        // TODO: do something if trace has errors?
+        BindingTrace trace = new BindingTraceContext();
+        ConstructorDescriptorImpl primaryConstructor = DescriptorResolver.createPrimaryConstructorForObject(classObject);
+        primaryConstructor.setReturnType(classObject.getDefaultType());
+        classObject.setPrimaryConstructor(primaryConstructor, trace);
+
+        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, trace));
+        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, trace));
+
+        return classObject;
+    }
+
+    private void createEnumEntry(@NotNull MutableClassDescriptor enumClassObject, @NotNull Name name) {
+        PropertyDescriptorImpl property = new PropertyDescriptorImpl(enumClassObject, Collections.<AnnotationDescriptor>emptyList(),
+                 Modality.FINAL, Visibilities.PUBLIC, false, name, CallableMemberDescriptor.Kind.DECLARATION);
+        property.setType(getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
+                         enumClassObject.getThisAsReceiverParameter(), NO_RECEIVER_PARAMETER);
+
+        PropertyGetterDescriptorImpl getter = DescriptorResolver.createDefaultGetter(property);
+        getter.initialize(property.getReturnType());
+        property.initialize(getter, null);
+
+        enumClassObject.getBuilder().addPropertyDescriptor(property);
     }
 
     @Nullable
