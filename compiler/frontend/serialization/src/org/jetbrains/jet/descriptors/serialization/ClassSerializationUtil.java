@@ -43,7 +43,7 @@ public class ClassSerializationUtil {
         @NotNull
         @Override
         public DescriptorSerializer getSerializerFor(@NotNull ClassDescriptor classDescriptor) {
-            return new DescriptorSerializer(DescriptorNamer.DEFAULT);
+            return new DescriptorSerializer();
         }
     };
 
@@ -100,24 +100,23 @@ public class ClassSerializationUtil {
     }
 
     @NotNull
-    public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor, @NotNull DescriptorNamer namer) {
+    public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
             NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-            return new ClassId(getPackageFqName(namespaceDescriptor, namer), FqNameUnsafe.topLevel(namer.getClassName(classDescriptor)));
+            return new ClassId(getPackageFqName(namespaceDescriptor), FqNameUnsafe.topLevel(classDescriptor.getName()));
         }
         // it must be a nested class
         ClassDescriptor outer = (ClassDescriptor) containingDeclaration;
-        ClassId outerId = getClassId(outer, namer);
-        return outerId.createNestedClassId(namer.getClassName(classDescriptor));
+        ClassId outerId = getClassId(outer);
+        return outerId.createNestedClassId(classDescriptor.getName());
     }
 
     @NotNull
-    public static FqName getPackageFqName(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull DescriptorNamer namer) {
+    public static FqName getPackageFqName(@NotNull NamespaceDescriptor namespaceDescriptor) {
         if (DescriptorUtils.isRootNamespace(namespaceDescriptor)) return FqName.ROOT;
 
         NamespaceDescriptor parent = (NamespaceDescriptor) namespaceDescriptor.getContainingDeclaration();
-        return getPackageFqName(parent, namer)
-                .child(namer.getPackageName(namespaceDescriptor));
+        return getPackageFqName(parent).child(namespaceDescriptor.getName());
     }
 }

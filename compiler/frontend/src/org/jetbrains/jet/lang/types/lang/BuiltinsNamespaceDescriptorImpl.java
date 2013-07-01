@@ -80,12 +80,6 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                     return BuiltInsSerializationUtil.getClassId(classDescriptor);
                 }
 
-                @NotNull
-                @Override
-                protected Name getClassObjectName(@NotNull ClassDescriptor outerClass) {
-                    return BuiltInsSerializationUtil.CLASS_OBJECT_NAME;
-                }
-
                 @Override
                 protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
                     // Do nothing

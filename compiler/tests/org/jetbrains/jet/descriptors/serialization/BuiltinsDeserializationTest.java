@@ -32,9 +32,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -71,7 +69,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     }
 
     private static NamespaceDescriptorImpl getDeserializedDescriptorsAsNamespace(Collection<DeclarationDescriptor> allDescriptors) {
-        DescriptorSerializer serializer = new DescriptorSerializer(BuiltInsSerializationUtil.BUILTINS_NAMER);
+        DescriptorSerializer serializer = new DescriptorSerializer();
 
         final Map<ClassId, ProtoBuf.Class> classProtos = serializeClasses(serializer, allDescriptors);
 
@@ -95,12 +93,6 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             @Override
             protected ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
                 return BuiltinsDeserializationTest.getClassId(classDescriptor);
-            }
-
-            @NotNull
-            @Override
-            protected Name getClassObjectName(@NotNull ClassDescriptor outerClass) {
-                return BuiltInsSerializationUtil.CLASS_OBJECT_NAME;
             }
 
             @Nullable
@@ -196,6 +188,6 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     }
 
     private static ClassId getClassId(ClassDescriptor classDescriptor) {
-        return ClassSerializationUtil.getClassId(classDescriptor, BuiltInsSerializationUtil.BUILTINS_NAMER);
+        return ClassSerializationUtil.getClassId(classDescriptor);
     }
 }

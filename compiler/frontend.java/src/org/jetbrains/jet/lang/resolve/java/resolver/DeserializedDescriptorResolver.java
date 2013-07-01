@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
@@ -268,19 +267,13 @@ public final class DeserializedDescriptorResolver {
         @NotNull
         @Override
         protected ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-            return ClassSerializationUtil.getClassId(classDescriptor, DescriptorNamer.DEFAULT);
+            return ClassSerializationUtil.getClassId(classDescriptor);
         }
 
         @Nullable
         @Override
         protected ClassDescriptor resolveClassExternally(@NotNull ClassId classId) {
             return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()));
-        }
-
-        @NotNull
-        @Override
-        protected Name getClassObjectName(@NotNull ClassDescriptor outerClass) {
-            return DescriptorUtils.getClassObjectName(outerClass.getName());
         }
 
         @Override

@@ -45,12 +45,6 @@ public abstract class AbstractClassResolver implements ClassResolver {
             public ClassDescriptor resolveNestedClass(@NotNull ClassDescriptor outerClass, @NotNull Name name) {
                 return findClass(getClassId(outerClass).createNestedClassId(name));
             }
-
-            @Nullable
-            @Override
-            public ClassDescriptor resolveClassObject(@NotNull ClassDescriptor outerClass) {
-                return findClass(getClassId(outerClass).createNestedClassId(getClassObjectName(outerClass)));
-            }
         };
 
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<ClassId, ClassDescriptor>() {
@@ -108,9 +102,6 @@ public abstract class AbstractClassResolver implements ClassResolver {
         //TODO: decide whether it is ok to provide default implementation
         return null;
     }
-
-    @NotNull
-    protected abstract Name getClassObjectName(@NotNull ClassDescriptor outerClass);
 
     protected abstract void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor);
 }

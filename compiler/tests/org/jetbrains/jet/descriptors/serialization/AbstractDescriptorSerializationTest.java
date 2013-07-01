@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -61,22 +60,6 @@ import static org.jetbrains.jet.descriptors.serialization.descriptors.Annotation
 public abstract class AbstractDescriptorSerializationTest extends KotlinTestWithEnvironment {
 
     public static final Name TEST_PACKAGE_NAME = Name.identifier("test");
-    public static final DescriptorNamer JAVA_NAMER = new DescriptorNamer() {
-        @NotNull
-        @Override
-        public Name getClassName(@NotNull ClassDescriptor classDescriptor) {
-            if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
-                return Name.identifier(JvmAbi.CLASS_OBJECT_CLASS_NAME);
-            }
-            return classDescriptor.getName();
-        }
-
-        @NotNull
-        @Override
-        public Name getPackageName(@NotNull NamespaceDescriptor namespaceDescriptor) {
-            return namespaceDescriptor.getName();
-        }
-    };
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -221,17 +204,9 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             builder.append(".");
         }
 
-        builder.append(getNaiveName(descriptor));
+        builder.append(descriptor.getName().asString());
 
         return builder;
-    }
-
-    private static String getNaiveName(DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) return JvmAbi.CLASS_OBJECT_CLASS_NAME;
-        }
-        return descriptor.getName().asString();
     }
 
     private static NamespaceDescriptorImpl createTestNamespace() {
@@ -253,7 +228,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         serializeClasses(classes, serializedClasses);
 
-        DescriptorSerializer descriptorSerializer = new DescriptorSerializer(JAVA_NAMER);
+        DescriptorSerializer descriptorSerializer = new DescriptorSerializer();
         List<MessageLite> messages = Lists.newArrayList();
         for (CallableMemberDescriptor callable : callables) {
             messages.add(descriptorSerializer.callableProto(callable).build());
@@ -268,7 +243,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
     private static void serializeClasses(Collection<ClassDescriptor> classes, Map<ClassDescriptor, byte[]> serializedClasses) throws IOException {
         for (ClassDescriptor classDescriptor : classes) {
-            DescriptorSerializer descriptorSerializer = new DescriptorSerializer(JAVA_NAMER);
+            DescriptorSerializer descriptorSerializer = new DescriptorSerializer();
 
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             ProtoBuf.Class classProto = descriptorSerializer.classProto(classDescriptor).build();
@@ -354,12 +329,6 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 @Override
                 public ClassDescriptor resolveNestedClass(@NotNull ClassDescriptor outerClass, @NotNull Name name) {
                     return findClass(classId.createNestedClassId(name));
-                }
-
-                @Nullable
-                @Override
-                public ClassDescriptor resolveClassObject(@NotNull ClassDescriptor outerClass) {
-                    return findClass(classId.createNestedClassId(Name.identifier(JvmAbi.CLASS_OBJECT_CLASS_NAME)));
                 }
             };
 

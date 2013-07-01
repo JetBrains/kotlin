@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.IOException;
 
@@ -91,13 +90,7 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
         @NotNull
         @Override
         protected ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-            return ClassSerializationUtil.getClassId(classDescriptor, DescriptorNamer.DEFAULT);
-        }
-
-        @NotNull
-        @Override
-        protected Name getClassObjectName(@NotNull ClassDescriptor outerClass) {
-            return Name.special("<class object>");
+            return ClassSerializationUtil.getClassId(classDescriptor);
         }
 
         @Override

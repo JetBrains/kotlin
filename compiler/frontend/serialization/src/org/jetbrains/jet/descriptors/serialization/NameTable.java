@@ -51,13 +51,10 @@ public class NameTable {
                 }
             };
 
-    private final DescriptorNamer namer;
-
     private final Interner<String> simpleNames = new Interner<String>();
     private final Interner<QualifiedName.Builder> qualifiedNames = new Interner<QualifiedName.Builder>(QUALIFIED_NAME_BUILDER_HASHING);
 
-    public NameTable(@NotNull DescriptorNamer namer) {
-        this.namer = namer;
+    public NameTable() {
     }
 
     @NotNull
@@ -77,7 +74,7 @@ public class NameTable {
     public int getFqNameIndex(@NotNull ClassDescriptor classDescriptor) {
         QualifiedName.Builder builder = QualifiedName.newBuilder();
         builder.setKind(QualifiedName.Kind.CLASS);
-        builder.setShortName(getSimpleNameIndex(namer.getClassName(classDescriptor)));
+        builder.setShortName(getSimpleNameIndex(classDescriptor.getName()));
 
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
@@ -103,7 +100,7 @@ public class NameTable {
     public int getFqNameIndex(@NotNull NamespaceDescriptor namespaceDescriptor) {
         QualifiedName.Builder builder = QualifiedName.newBuilder();
         //default: builder.setKind(QualifiedNameTable.QualifiedName.Kind.PACKAGE);
-        builder.setShortName(getSimpleNameIndex(namer.getPackageName(namespaceDescriptor)));
+        builder.setShortName(getSimpleNameIndex(namespaceDescriptor.getName()));
 
         NamespaceDescriptorParent containingDeclaration = namespaceDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
