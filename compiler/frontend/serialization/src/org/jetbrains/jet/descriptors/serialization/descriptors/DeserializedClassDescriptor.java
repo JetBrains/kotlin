@@ -45,6 +45,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 public class DeserializedClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
 
+    private final ClassId classId;
     private final ProtoBuf.Class classProto;
     private final TypeDeserializer typeDeserializer;
     private final DescriptorDeserializer deserializer;
@@ -56,7 +57,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final AnnotationDeserializer annotationDeserializer;
     private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
 
-    private final NestedClassResolver nestedClassResolver;
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
     private final NestedClassDescriptors nestedClasses;
@@ -70,18 +70,21 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final ClassKind kind;
     private final boolean isInner;
     private final InnerClassesScopeWrapper innerClassesScope;
+    private final ClassResolver classResolver;
 
     public DeserializedClassDescriptor(
+            @NotNull ClassId classId,
             @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotationDeserializer annotationResolver,
-            @NotNull ClassResolver classResolver,
-            @NotNull NestedClassResolver _nestedClassResolver,
+            @NotNull final ClassResolver classResolver,
             @NotNull ProtoBuf.Class classProto,
             @Nullable TypeDeserializer outerTypeDeserializer
     ) {
+        this.classId = classId;
         this.classProto = classProto;
+        this.classResolver = classResolver;
         this.name = nameResolver.getName(classProto.getName());
 
         TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, outerTypeDeserializer, nameResolver, classResolver,
@@ -119,7 +122,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
             }
         });
 
-        this.nestedClassResolver = _nestedClassResolver;
         this.classObjectDescriptor = storageManager.createNullableLazyValue(new Computable<ClassDescriptor>() {
             @Override
             public ClassDescriptor compute() {
@@ -129,13 +131,13 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.nestedClasses = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedClassNameList(), nameResolver)) {
             @Override
             protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
-                return nestedClassResolver.resolveNestedClass(DeserializedClassDescriptor.this, name);
+                return classResolver.findClass(DeserializedClassDescriptor.this.classId.createNestedClassId(name));
             }
         };
         this.nestedObjects = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedObjectNameList(), nameResolver)) {
             @Override
             protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
-                return nestedClassResolver.resolveNestedClass(DeserializedClassDescriptor.this, name);
+                return classResolver.findClass(DeserializedClassDescriptor.this.classId.createNestedClassId(name));
             }
         };
     }
@@ -268,7 +270,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
             return classObject;
         }
 
-        return nestedClassResolver.resolveNestedClass(this, getClassObjectName(getName()));
+        return classResolver.findClass(classId.createNestedClassId(getClassObjectName(getName())));
     }
 
     @NotNull
@@ -294,7 +296,8 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
     private void createEnumEntry(@NotNull MutableClassDescriptor enumClassObject, @NotNull Name name) {
         PropertyDescriptorImpl property = new PropertyDescriptorImpl(enumClassObject, Collections.<AnnotationDescriptor>emptyList(),
-                 Modality.FINAL, Visibilities.PUBLIC, false, name, CallableMemberDescriptor.Kind.DECLARATION);
+                                                                     Modality.FINAL, Visibilities.PUBLIC, false, name,
+                                                                     CallableMemberDescriptor.Kind.DECLARATION);
         property.setType(getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
                          enumClassObject.getThisAsReceiverParameter(), NO_RECEIVER_PARAMETER);
 

@@ -19,14 +19,12 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.ArrayList;
@@ -113,14 +111,6 @@ public class DescriptorDeserializer {
                     }
                 });
         return create(storageManager, childTypeDeserializer, descriptor, nameResolver, annotationDeserializer);
-    }
-
-    @NotNull
-    public ClassDescriptor loadClass(@NotNull ProtoBuf.Class proto, @NotNull NestedClassResolver nestedClassResolver) {
-        return new DeserializedClassDescriptor(
-                storageManager, containingDeclaration, getNameResolver(), annotationDeserializer,
-                typeDeserializer.getClassResolver(), nestedClassResolver, proto, typeDeserializer
-        );
     }
 
     @NotNull

@@ -26,26 +26,16 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public abstract class AbstractClassResolver implements ClassResolver {
 
-    private final NestedClassResolver nestedClassResolver;
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
     private final AnnotationDeserializer annotationDeserializer;
 
     public AbstractClassResolver(@NotNull final StorageManager storageManager, @NotNull AnnotationDeserializer annotationDeserializer) {
         this.annotationDeserializer = annotationDeserializer;
-
-        this.nestedClassResolver = new NestedClassResolver() {
-            @Nullable
-            @Override
-            public ClassDescriptor resolveNestedClass(@NotNull ClassDescriptor outerClass, @NotNull Name name) {
-                return findClass(getClassId(outerClass).createNestedClassId(name));
-            }
-        };
 
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<ClassId, ClassDescriptor>() {
             @Override
@@ -63,9 +53,8 @@ public abstract class AbstractClassResolver implements ClassResolver {
 
                 AbstractClassResolver _this = AbstractClassResolver.this;
                 ClassDescriptor classDescriptor = new DeserializedClassDescriptor(
-                        storageManager, owner, classData.getNameResolver(), _this.annotationDeserializer,
-                        _this, nestedClassResolver, classProto, null
-                );
+                        classId, storageManager, owner, classData.getNameResolver(),
+                        _this.annotationDeserializer, _this, classProto, null);
                 classDescriptorCreated(classDescriptor);
                 return classDescriptor;
             }

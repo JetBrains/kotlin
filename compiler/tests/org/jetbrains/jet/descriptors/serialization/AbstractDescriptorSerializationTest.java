@@ -149,7 +149,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         for (ClassDescriptor classDescriptor : classes) {
             ClassId classId = new ClassId(DescriptorUtils.getFQName(classDescriptor.getContainingDeclaration()).toSafe(),
-                                     FqNameUnsafe.topLevel(classDescriptor.getName()));
+                                          FqNameUnsafe.topLevel(classDescriptor.getName()));
             ClassDescriptor descriptor = classResolver.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
             if (descriptor.getKind().isObject()) {
@@ -211,7 +211,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
     private static NamespaceDescriptorImpl createTestNamespace() {
         ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<name>"), JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
-                                                                   JavaToKotlinClassMap.getInstance());
+                                                               JavaToKotlinClassMap.getInstance());
         NamespaceDescriptorImpl rootNamespace =
                 new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
         module.setRootNamespace(rootNamespace);
@@ -241,7 +241,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
     }
 
-    private static void serializeClasses(Collection<ClassDescriptor> classes, Map<ClassDescriptor, byte[]> serializedClasses) throws IOException {
+    private static void serializeClasses(Collection<ClassDescriptor> classes, Map<ClassDescriptor, byte[]> serializedClasses)
+            throws IOException {
         for (ClassDescriptor classDescriptor : classes) {
             DescriptorSerializer descriptorSerializer = new DescriptorSerializer();
 
@@ -315,7 +316,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @Nullable
         private ClassDescriptor resolveClass(
                 @NotNull DeclarationDescriptor containingDeclaration,
-                @NotNull final ClassId classId
+                @NotNull ClassId classId
         ) {
             FqNameUnsafe fqName = classId.asSingleFqName();
 
@@ -324,17 +325,10 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 return parentResolver.findClass(classId);
             }
 
-            NestedClassResolver nestedClassResolver = new NestedClassResolver() {
-                @Nullable
-                @Override
-                public ClassDescriptor resolveNestedClass(@NotNull ClassDescriptor outerClass, @NotNull Name name) {
-                    return findClass(classId.createNestedClassId(name));
-                }
-            };
-
             NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames);
-            return new DeserializedClassDescriptor(new LockBasedStorageManager(), containingDeclaration, nameResolver,
-                    DeserializedDescriptorResolver.DUMMY_ANNOTATION_DESERIALIZER, this, nestedClassResolver, classMetadata.classProto, null);
+            return new DeserializedClassDescriptor(classId, new LockBasedStorageManager(), containingDeclaration, nameResolver,
+                                                   DeserializedDescriptorResolver.DUMMY_ANNOTATION_DESERIALIZER, this,
+                                                   classMetadata.classProto, null);
         }
 
         @Nullable
