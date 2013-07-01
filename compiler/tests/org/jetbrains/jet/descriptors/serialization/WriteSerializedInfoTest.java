@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -82,7 +82,7 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
 
         @NotNull
         @Override
-        protected DeclarationDescriptor getPackage(@NotNull FqName fqName) {
+        protected NamespaceDescriptor getPackage(@NotNull FqName fqName) {
             assert fqName.equals(NAMESPACE_NAME) : "Unsupported namespace: " + fqName;
             return namespace;
         }

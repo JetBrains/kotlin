@@ -7,7 +7,6 @@ import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -69,7 +68,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
                 @NotNull
                 @Override
-                protected DeclarationDescriptor getPackage(@NotNull FqName fqName) {
+                protected NamespaceDescriptor getPackage(@NotNull FqName fqName) {
                     assert fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) : "Wrong package: " + fqName;
                     return BuiltinsNamespaceDescriptorImpl.this;
                 }

@@ -23,6 +23,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeseria
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -74,7 +75,7 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     protected abstract ClassData getClassData(@NotNull ClassId classId);
 
     @NotNull
-    protected abstract DeclarationDescriptor getPackage(@NotNull FqName fqName);
+    protected abstract NamespaceDescriptor getPackage(@NotNull FqName fqName);
 
     protected abstract void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor);
 }

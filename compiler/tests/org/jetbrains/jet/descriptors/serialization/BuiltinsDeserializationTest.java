@@ -80,11 +80,12 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
-        DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED) {
+        DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(new LockBasedStorageManager(),
+                                                                                     AnnotationDeserializer.UNSUPPORTED) {
 
             @NotNull
             @Override
-            protected DeclarationDescriptor getPackage(@NotNull FqName fqName) {
+            protected NamespaceDescriptor getPackage(@NotNull FqName fqName) {
                 assert fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) : "Unsupported package: " + fqName;
                 return actualNamespace;
             }
