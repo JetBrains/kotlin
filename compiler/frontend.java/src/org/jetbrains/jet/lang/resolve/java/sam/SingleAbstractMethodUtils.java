@@ -54,7 +54,6 @@ public class SingleAbstractMethodUtils {
         return abstractMembers;
     }
 
-    // TODO maybe do this in substitutor?
     private static JetType fixProjections(@NotNull JetType functionType) {
         //removes redundant projection kinds and detects conflicts
 
