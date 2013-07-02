@@ -128,7 +128,7 @@ public class OverridingUtil {
         // TODO : Visibility
 
         if ((superDescriptor.getReceiverParameter() == null) != (subDescriptor.getReceiverParameter() == null)) {
-            return OverrideCompatibilityInfo.receiverPresenseMismatch();
+            return OverrideCompatibilityInfo.receiverPresenсeMismatch();
         }
 
         if (superDescriptor.getValueParameters().size() != subDescriptor.getValueParameters().size()) {
@@ -322,8 +322,8 @@ public class OverridingUtil {
         }
 
         @NotNull
-        public static OverrideCompatibilityInfo receiverPresenseMismatch() {
-            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "receiverPresenseMismatch"); // TODO
+        public static OverrideCompatibilityInfo receiverPresenсeMismatch() {
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "receiverPresenсeMismatch"); // TODO
         }
 
         @NotNull
