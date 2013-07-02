@@ -30,6 +30,9 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
+import org.jetbrains.jet.descriptors.serialization.NameSerializationUtil;
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -42,12 +45,17 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 
 public class NamespaceCodegen extends MemberCodegen {
     @NotNull
@@ -91,10 +99,13 @@ public class NamespaceCodegen extends MemberCodegen {
 
     public void generate(CompilationErrorHandler errorHandler) {
         if (shouldGenerateNSClass(files)) {
-            AnnotationVisitor packageClassAnnotation = v.getClassBuilder().newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
+            AnnotationVisitor packageClassAnnotation =
+                    v.getClassBuilder().newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
             packageClassAnnotation.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
             packageClassAnnotation.visitEnd();
         }
+
+        writeKotlinInfoIfNeeded();
 
         for (JetFile file : files) {
             VirtualFile vFile = file.getVirtualFile();
@@ -117,6 +128,53 @@ public class NamespaceCodegen extends MemberCodegen {
         assert v.isActivated() == shouldGenerateNSClass(files) : "Different algorithms for generating namespace class and for heuristics";
     }
 
+    private void writeKotlinInfoIfNeeded() {
+        DescriptorSerializer serializer = new DescriptorSerializer();
+        ProtoBuf.Package.Builder packageProto = ProtoBuf.Package.newBuilder();
+        boolean writeAnnotation = false;
+
+        for (JetFile file : files) {
+            for (JetDeclaration declaration : file.getDeclarations()) {
+                if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                    writeAnnotation = true;
+                    DeclarationDescriptor descriptor = getNotNull(state.getBindingContext(), DECLARATION_TO_DESCRIPTOR, declaration);
+                    ProtoBuf.Callable proto = serializer.callableProto((CallableMemberDescriptor) descriptor).build();
+                    packageProto.addMember(proto);
+                }
+                else if (declaration instanceof JetClassOrObject) {
+                    DeclarationDescriptor descriptor = getNotNull(state.getBindingContext(), DECLARATION_TO_DESCRIPTOR, declaration);
+                    if (declaration instanceof JetObjectDeclaration) {
+                        writeAnnotation = true;
+                        JetObjectDeclarationName nameAsDeclaration = ((JetObjectDeclaration) declaration).getNameAsDeclaration();
+                        assert nameAsDeclaration != null : "Should be a named object";
+                        PropertyDescriptor propertyForObject = getNotNull(state.getBindingContext(), BindingContext.OBJECT_DECLARATION,
+                                                                          nameAsDeclaration);
+                        ProtoBuf.Callable proto = serializer.callableProto((CallableMemberDescriptor) propertyForObject).build();
+                        packageProto.addMember(proto);
+                    }
+                    int name = serializer.getNameTable().getSimpleNameIndex(descriptor.getName());
+                    packageProto.addClassName(name);
+                }
+            }
+        }
+
+        if (!writeAnnotation) return;
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        NameSerializationUtil.serializeNameTable(stream, serializer.getNameTable());
+        try {
+            packageProto.build().writeTo(stream);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+
+        AnnotationVisitor kotlinInfo = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
+        kotlinInfo.visit("data", stream.toByteArray());
+        kotlinInfo.visitEnd();
+    }
+
     private void generate(JetFile file) {
         NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
         assert descriptor != null : "No namespace found for file " + file + " declared package: " + file.getPackageName();
@@ -137,7 +195,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (countOfDeclarationsInSrcClass > 0) {
             String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(
-                                                PackageClassUtils.getPackageClassFqName(name)).getInternalName();
+                    PackageClassUtils.getPackageClassFqName(name)).getInternalName();
             String className = getMultiFileNamespaceInternalName(namespaceInternalName, file);
             ClassBuilder builder = state.getFactory().forNamespacepart(className, file);
 
@@ -184,7 +242,9 @@ public class NamespaceCodegen extends MemberCodegen {
 
         for (JetFile file : namespaceFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                if (declaration instanceof JetProperty ||
+                    declaration instanceof JetNamedFunction ||
+                    declaration instanceof JetObjectDeclaration) {
                     return true;
                 }
             }
@@ -248,7 +308,7 @@ public class NamespaceCodegen extends MemberCodegen {
         List<JetProperty> result = Lists.newArrayList();
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty &&
-                    ImplementationBodyCodegen.shouldInitializeProperty((JetProperty) declaration, typeMapper)) {
+                ImplementationBodyCodegen.shouldInitializeProperty((JetProperty) declaration, typeMapper)) {
                 result.add((JetProperty) declaration);
             }
         }

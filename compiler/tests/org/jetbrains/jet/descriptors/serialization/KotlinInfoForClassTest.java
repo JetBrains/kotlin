@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
 import java.io.IOException;
 
-public class WriteSerializedInfoTest extends CodegenTestCase {
+public class KotlinInfoForClassTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
     public static final FqNameUnsafe CLASS_NAME = new FqNameUnsafe("A");
 
@@ -42,7 +42,7 @@ public class WriteSerializedInfoTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 
-    public void testKotlinInfo() throws Exception {
+    public void testClassKotlinInfo() throws Exception {
         loadText("package " + NAMESPACE_NAME + "\n" +
                  "\n" +
                  "class " + CLASS_NAME + " {\n" +

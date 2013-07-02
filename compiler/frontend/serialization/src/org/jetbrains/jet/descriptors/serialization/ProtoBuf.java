@@ -4772,6 +4772,496 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.Class)
   }
   
+  public interface PackageOrBuilder
+      extends com.google.protobuf.MessageLiteOrBuilder {
+    
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 1;
+    java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> 
+        getMemberList();
+    org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index);
+    int getMemberCount();
+    
+    // repeated int32 class_name = 2;
+    java.util.List<java.lang.Integer> getClassNameList();
+    int getClassNameCount();
+    int getClassName(int index);
+  }
+  public static final class Package extends
+      com.google.protobuf.GeneratedMessageLite
+      implements PackageOrBuilder {
+    // Use Package.newBuilder() to construct.
+    private Package(Builder builder) {
+      super(builder);
+    }
+    private Package(boolean noInit) {}
+    
+    private static final Package defaultInstance;
+    public static Package getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public Package getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 1;
+    public static final int MEMBER_FIELD_NUMBER = 1;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> member_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> getMemberList() {
+      return member_;
+    }
+    public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.CallableOrBuilder> 
+        getMemberOrBuilderList() {
+      return member_;
+    }
+    public int getMemberCount() {
+      return member_.size();
+    }
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index) {
+      return member_.get(index);
+    }
+    public org.jetbrains.jet.descriptors.serialization.ProtoBuf.CallableOrBuilder getMemberOrBuilder(
+        int index) {
+      return member_.get(index);
+    }
+    
+    // repeated int32 class_name = 2;
+    public static final int CLASS_NAME_FIELD_NUMBER = 2;
+    private java.util.List<java.lang.Integer> className_;
+    public java.util.List<java.lang.Integer>
+        getClassNameList() {
+      return className_;
+    }
+    public int getClassNameCount() {
+      return className_.size();
+    }
+    public int getClassName(int index) {
+      return className_.get(index);
+    }
+    
+    private void initFields() {
+      member_ = java.util.Collections.emptyList();
+      className_ = java.util.Collections.emptyList();;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      for (int i = 0; i < getMemberCount(); i++) {
+        if (!getMember(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < member_.size(); i++) {
+        output.writeMessage(1, member_.get(i));
+      }
+      for (int i = 0; i < className_.size(); i++) {
+        output.writeInt32(2, className_.get(i));
+      }
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      for (int i = 0; i < member_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, member_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < className_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(className_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getClassNameList().size();
+      }
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package, Builder>
+        implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.PackageOrBuilder {
+      // Construct using org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        member_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        className_ = java.util.Collections.emptyList();;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package getDefaultInstanceForType() {
+        return org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package.getDefaultInstance();
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package build() {
+        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package buildPartial() {
+        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package result = new org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          member_ = java.util.Collections.unmodifiableList(member_);
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.member_ = member_;
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          className_ = java.util.Collections.unmodifiableList(className_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.className_ = className_;
+        return result;
+      }
+      
+      public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package other) {
+        if (other == org.jetbrains.jet.descriptors.serialization.ProtoBuf.Package.getDefaultInstance()) return this;
+        if (!other.member_.isEmpty()) {
+          if (member_.isEmpty()) {
+            member_ = other.member_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureMemberIsMutable();
+            member_.addAll(other.member_);
+          }
+          
+        }
+        if (!other.className_.isEmpty()) {
+          if (className_.isEmpty()) {
+            className_ = other.className_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureClassNameIsMutable();
+            className_.addAll(other.className_);
+          }
+          
+        }
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        for (int i = 0; i < getMemberCount(); i++) {
+          if (!getMember(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              
+              return this;
+            default: {
+              if (!parseUnknownField(input, extensionRegistry, tag)) {
+                
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder();
+              input.readMessage(subBuilder, extensionRegistry);
+              addMember(subBuilder.buildPartial());
+              break;
+            }
+            case 16: {
+              ensureClassNameIsMutable();
+              className_.add(input.readInt32());
+              break;
+            }
+            case 18: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              while (input.getBytesUntilLimit() > 0) {
+                addClassName(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // repeated .org.jetbrains.jet.descriptors.serialization.Callable member = 1;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> member_ =
+        java.util.Collections.emptyList();
+      private void ensureMemberIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          member_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable>(member_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> getMemberList() {
+        return java.util.Collections.unmodifiableList(member_);
+      }
+      public int getMemberCount() {
+        return member_.size();
+      }
+      public org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index) {
+        return member_.get(index);
+      }
+      public Builder setMember(
+          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMemberIsMutable();
+        member_.set(index, value);
+        
+        return this;
+      }
+      public Builder setMember(
+          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder builderForValue) {
+        ensureMemberIsMutable();
+        member_.set(index, builderForValue.build());
+        
+        return this;
+      }
+      public Builder addMember(org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMemberIsMutable();
+        member_.add(value);
+        
+        return this;
+      }
+      public Builder addMember(
+          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMemberIsMutable();
+        member_.add(index, value);
+        
+        return this;
+      }
+      public Builder addMember(
+          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder builderForValue) {
+        ensureMemberIsMutable();
+        member_.add(builderForValue.build());
+        
+        return this;
+      }
+      public Builder addMember(
+          int index, org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder builderForValue) {
+        ensureMemberIsMutable();
+        member_.add(index, builderForValue.build());
+        
+        return this;
+      }
+      public Builder addAllMember(
+          java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable> values) {
+        ensureMemberIsMutable();
+        super.addAll(values, member_);
+        
+        return this;
+      }
+      public Builder clearMember() {
+        member_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        
+        return this;
+      }
+      public Builder removeMember(int index) {
+        ensureMemberIsMutable();
+        member_.remove(index);
+        
+        return this;
+      }
+      
+      // repeated int32 class_name = 2;
+      private java.util.List<java.lang.Integer> className_ = java.util.Collections.emptyList();;
+      private void ensureClassNameIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          className_ = new java.util.ArrayList<java.lang.Integer>(className_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+      public java.util.List<java.lang.Integer>
+          getClassNameList() {
+        return java.util.Collections.unmodifiableList(className_);
+      }
+      public int getClassNameCount() {
+        return className_.size();
+      }
+      public int getClassName(int index) {
+        return className_.get(index);
+      }
+      public Builder setClassName(
+          int index, int value) {
+        ensureClassNameIsMutable();
+        className_.set(index, value);
+        
+        return this;
+      }
+      public Builder addClassName(int value) {
+        ensureClassNameIsMutable();
+        className_.add(value);
+        
+        return this;
+      }
+      public Builder addAllClassName(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureClassNameIsMutable();
+        super.addAll(values, className_);
+        
+        return this;
+      }
+      public Builder clearClassName() {
+        className_ = java.util.Collections.emptyList();;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.Package)
+    }
+    
+    static {
+      defaultInstance = new Package(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.Package)
+  }
+  
   public interface CallableOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
     
