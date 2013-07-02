@@ -1,0 +1,8 @@
+annotation class data
+
+public class BinaryResponse(~data~val data: () -> String) {
+    fun writeResponse() {
+
+        `data`data()
+    }
+}

@@ -228,6 +228,11 @@ public class JetResolveTestGenerated extends AbstractResolveTest {
             doTest("compiler/testData/resolve/candidatesPriority/memberVsLocalExtension.resolve");
         }
         
+        @TestMetadata("memberWithInvokeVsNonLocal.resolve")
+        public void testMemberWithInvokeVsNonLocal() throws Exception {
+            doTest("compiler/testData/resolve/candidatesPriority/memberWithInvokeVsNonLocal.resolve");
+        }
+        
         @TestMetadata("receiverVsThisObject.resolve")
         public void testReceiverVsThisObject() throws Exception {
             doTest("compiler/testData/resolve/candidatesPriority/receiverVsThisObject.resolve");

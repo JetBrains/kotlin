@@ -63,6 +63,12 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
         }
     }
 
+    public void addCandidates(@NotNull List<Collection<ResolutionCandidate<D>>> candidatesList) {
+        for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
+            addCandidates(candidates);
+        }
+    }
+
     public List<ResolutionTask<D, F>> getTasks() {
         if (tasks == null) {
             tasks = Lists.newArrayList();
