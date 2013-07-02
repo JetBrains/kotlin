@@ -1201,6 +1201,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             }
             
             @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters")
+            @InnerTestClasses({Adapters.Inheritance.class})
             public static class Adapters extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInAdapters() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1224,21 +1225,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("DeepSamLoop.java")
                 public void testDeepSamLoop() throws Exception {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/DeepSamLoop.java");
-                }
-                
-                @TestMetadata("InheritedOverridden.java")
-                public void testInheritedOverridden() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/InheritedOverridden.java");
-                }
-                
-                @TestMetadata("InheritedOverriddenAdapter.java")
-                public void testInheritedOverriddenAdapter() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/InheritedOverriddenAdapter.java");
-                }
-                
-                @TestMetadata("InheritedSimple.java")
-                public void testInheritedSimple() throws Exception {
-                    doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/InheritedSimple.java");
                 }
                 
                 @TestMetadata("NonTrivialFunctionType.java")
@@ -1271,12 +1257,76 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfOuterClass.java");
                 }
                 
+                @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance")
+                public static class Inheritance extends AbstractLoadJavaTest {
+                    @TestMetadata("AdapterDoesntOverrideDeclaration.java")
+                    public void testAdapterDoesntOverrideDeclaration() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/AdapterDoesntOverrideDeclaration.java");
+                    }
+                    
+                    public void testAllFilesPresentInInheritance() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance"), Pattern.compile("^(.+)\\.java$"), true);
+                    }
+                    
+                    @TestMetadata("InheritedAdapterAndDeclaration.java")
+                    public void testInheritedAdapterAndDeclaration() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAdapterAndDeclaration.java");
+                    }
+                    
+                    @TestMetadata("InheritedAmbiguousAdapters.java")
+                    public void testInheritedAmbiguousAdapters() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAmbiguousAdapters.java");
+                    }
+                    
+                    @TestMetadata("InheritedAndOverriddenAmbiguousAdapters.java")
+                    public void testInheritedAndOverriddenAmbiguousAdapters() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAndOverriddenAmbiguousAdapters.java");
+                    }
+                    
+                    @TestMetadata("InheritedOverridden.java")
+                    public void testInheritedOverridden() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedOverridden.java");
+                    }
+                    
+                    @TestMetadata("InheritedOverriddenAdapter.java")
+                    public void testInheritedOverriddenAdapter() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedOverriddenAdapter.java");
+                    }
+                    
+                    @TestMetadata("InheritedSameAdapters.java")
+                    public void testInheritedSameAdapters() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSameAdapters.java");
+                    }
+                    
+                    @TestMetadata("InheritedSameAdaptersWithSubstitution.java")
+                    public void testInheritedSameAdaptersWithSubstitution() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSameAdaptersWithSubstitution.java");
+                    }
+                    
+                    @TestMetadata("InheritedSimple.java")
+                    public void testInheritedSimple() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSimple.java");
+                    }
+                    
+                    @TestMetadata("OverriddenAmbiguousAdapters.java")
+                    public void testOverriddenAmbiguousAdapters() throws Exception {
+                        doTestCompiledJava("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/OverriddenAmbiguousAdapters.java");
+                    }
+                    
+                }
+                
+                public static Test innerSuite() {
+                    TestSuite suite = new TestSuite("Adapters");
+                    suite.addTestSuite(Adapters.class);
+                    suite.addTestSuite(Inheritance.class);
+                    return suite;
+                }
             }
             
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Sam");
                 suite.addTestSuite(Sam.class);
-                suite.addTestSuite(Adapters.class);
+                suite.addTest(Adapters.innerSuite());
                 return suite;
             }
         }
@@ -1420,6 +1470,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         public static class SamAdapters extends AbstractLoadJavaTest {
             public void testAllFilesPresentInSamAdapters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/javaAgainstKotlin/samAdapters"), Pattern.compile("^(.+)\\.txt$"), true);
+            }
+            
+            @TestMetadata("InheritAmbguousSamAdaptersInKotlin.txt")
+            public void testInheritAmbguousSamAdaptersInKotlin() throws Exception {
+                doTestJavaAgainstKotlin("compiler/testData/loadJava/javaAgainstKotlin/samAdapters/InheritAmbguousSamAdaptersInKotlin.txt");
             }
             
             @TestMetadata("InheritSamAdapterInKotlin.txt")

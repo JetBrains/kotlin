@@ -190,7 +190,8 @@ public class SingleAbstractMethodUtils {
                 original.getContainingDeclaration(),
                 original.getAnnotations(),
                 original.getName(),
-                CallableMemberDescriptor.Kind.SYNTHESIZED
+                CallableMemberDescriptor.Kind.SYNTHESIZED,
+                original
         );
         FunctionInitializer initializer = new FunctionInitializer() {
             @Override
