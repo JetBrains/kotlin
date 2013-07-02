@@ -348,23 +348,25 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     public Collection<ClassDescriptor> getJetClassesDescriptors(
             @NotNull Condition<String> acceptedShortNameCondition,
-            @NotNull KotlinCodeAnalyzer analyzer
+            @NotNull KotlinCodeAnalyzer analyzer,
+            @NotNull GlobalSearchScope searchScope
     ) {
         Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
             FqName classFQName = new FqName(fqName);
             if (acceptedShortNameCondition.value(classFQName.shortName().asString())) {
-                classDescriptors.addAll(getJetClassesDescriptorsByFQName(analyzer, classFQName));
+                classDescriptors.addAll(getJetClassesDescriptorsByFQName(analyzer, classFQName, searchScope));
             }
         }
 
         return classDescriptors;
     }
 
-    private Collection<ClassDescriptor> getJetClassesDescriptorsByFQName(@NotNull KotlinCodeAnalyzer analyzer, @NotNull FqName classFQName) {
+    private Collection<ClassDescriptor> getJetClassesDescriptorsByFQName(
+            @NotNull KotlinCodeAnalyzer analyzer, @NotNull FqName classFQName, @NotNull GlobalSearchScope searchScope) {
         Collection<JetClassOrObject> jetClassOrObjects = JetFullClassNameIndex.getInstance().get(
-                classFQName.asString(), project, GlobalSearchScope.allScope(project));
+                classFQName.asString(), project, searchScope);
 
         if (jetClassOrObjects.isEmpty()) {
             // This fqn is absent in caches, dead or not in scope

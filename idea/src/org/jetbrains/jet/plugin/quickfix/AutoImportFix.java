@@ -213,7 +213,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             public boolean value(String s) {
                 return typeName.equals(s);
             }
-        }, resolveSession);
+        }, resolveSession, GlobalSearchScope.allScope(project));
 
         return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
             @Override
