@@ -1,20 +1,20 @@
 class A(~a~val a : Int) {
-    ~b~val b = `$a`a
-    ~f~fun f() = `$a`a
+    ~b~val b = `a`a
+    ~f~fun f() = `a`a
 }
 
 fun test() {
     ~va~val a = A()
-    `va`a.`$a`a`:kotlin::Int`
+    `va`a.`a`a`:kotlin::Int`
     a.`b`b`:kotlin::Int`
     a.`f`f()`:kotlin::Int`
 }
 
 class Foo(~bar~var bar : Int, ~barr~barr : Int, ~barrr~val barrr : Int) {
   {
-    `$bar`bar = 1
+    `bar`bar = 1
     `barr`barr = 1
-    `$barrr`barrr = 1
+    `barrr`barrr = 1
   }
 
 }
