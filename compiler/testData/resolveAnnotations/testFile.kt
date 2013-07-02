@@ -1,5 +1,7 @@
 package test
 
+import test.MyEnum.*
+
 ANNOTATION class MyClass [ANNOTATION]([ANNOTATION] param: Int, [ANNOTATION] val consProp: Int) {
     ANNOTATION class object {
     }
@@ -37,3 +39,8 @@ val funLiteral = {([ANNOTATION] a: Int) -> a }
 
 annotation class AnnString(a: String)
 annotation class AnnInt(a: Int)
+annotation class AnnEnum(a: MyEnum)
+
+enum class MyEnum {
+  A
+}

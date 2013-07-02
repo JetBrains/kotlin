@@ -63,6 +63,24 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         doTest(content, expectedAnnotation);
     }
 
+    public void testEnumAnnotation() throws IOException {
+        String content = getContent("AnnEnum(MyEnum.A)");
+        String expectedAnnotation = "AnnEnum[a = MyEnum.A]";
+        doTest(content, expectedAnnotation);
+    }
+
+    public void testQualifiedEnumAnnotation() throws IOException {
+        String content = getContent("AnnEnum(test.MyEnum.A)");
+        String expectedAnnotation = "AnnEnum[a = MyEnum.A]";
+        doTest(content, expectedAnnotation);
+    }
+
+    public void testUnqualifiedEnumAnnotation() throws IOException {
+        String content = getContent("AnnEnum(A)");
+        String expectedAnnotation = "AnnEnum[a = MyEnum.A]";
+        doTest(content, expectedAnnotation);
+    }
+
     private void doTest(@NotNull String content, @NotNull String expectedAnnotation) {
         NamespaceDescriptor test = getNamespaceDescriptor(content);
         ClassDescriptor myClass = getClassDescriptor(test, "MyClass");

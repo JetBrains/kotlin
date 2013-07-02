@@ -24,12 +24,14 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -228,6 +230,31 @@ public class AnnotationResolver {
             }
 
             @Override
+            public CompileTimeConstant<?> visitSimpleNameExpression(JetSimpleNameExpression expression, Void data) {
+                ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                        trace.getBindingContext().get(BindingContext.RESOLVED_CALL, expression);
+                if (resolvedCall != null) {
+                    CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
+                    if (callableDescriptor instanceof PropertyDescriptor) {
+                        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) callableDescriptor;
+                        if (isEnumProperty(propertyDescriptor)) {
+                            return new EnumValue(propertyDescriptor);
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public CompileTimeConstant<?> visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
+                JetExpression selectorExpression = expression.getSelectorExpression();
+                if (selectorExpression != null) {
+                    return selectorExpression.accept(this, null);
+                }
+                return super.visitQualifiedExpression(expression, data);
+            }
+
+            @Override
             public CompileTimeConstant<?> visitJetElement(JetElement element, Void nothing) {
                 // TODO:
                 //trace.report(ANNOTATION_PARAMETER_SHOULD_BE_CONSTANT.on(element));
@@ -235,6 +262,16 @@ public class AnnotationResolver {
             }
         };
         return expression.accept(visitor, null);
+    }
+
+    private static boolean isEnumProperty(@NotNull PropertyDescriptor descriptor) {
+        if (DescriptorUtils.isKindOf(descriptor.getType(), ClassKind.ENUM_CLASS)) {
+            DeclarationDescriptor enumClassObject = descriptor.getContainingDeclaration();
+            if (DescriptorUtils.isKindOf(enumClassObject, ClassKind.CLASS_OBJECT))  {
+                return DescriptorUtils.isKindOf(enumClassObject.getContainingDeclaration(), ClassKind.ENUM_CLASS);
+            }
+        }
+        return false;
     }
 
     @NotNull
