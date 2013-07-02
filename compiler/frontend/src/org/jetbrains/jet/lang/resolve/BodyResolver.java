@@ -373,6 +373,9 @@ public class BodyResolver {
             JetClass klass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+
+            annotationResolver.resolveAnnotationsArguments(classDescriptor.getScopeForSupertypeResolution(), klass.getPrimaryConstructorModifierList(), trace);
+
             if (unsubstitutedPrimaryConstructor != null) {
                 WritableScope parameterScope = new WritableScopeImpl(classDescriptor.getScopeForSupertypeResolution(), unsubstitutedPrimaryConstructor,
                                                                      RedeclarationHandler.DO_NOTHING, "Scope with value parameters of a constructor");

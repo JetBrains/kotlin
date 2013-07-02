@@ -101,6 +101,9 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         checkDescriptor(expectedAnnotation, topProp.getSetter());
 
         checkDescriptor(expectedAnnotation, getObjectDescriptor(test, "MyObject"));
+
+        checkDescriptor(expectedAnnotation, getConstructorParameterDescriptor(myClass, "consProp"));
+        checkDescriptor(expectedAnnotation, getConstructorParameterDescriptor(myClass, "param"));
     }
 
     @NotNull
@@ -233,6 +236,24 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
 
         fail("Failed to find anonymous fun");
         return null;
+    }
+
+    @NotNull
+    private static ValueParameterDescriptor getConstructorParameterDescriptor(
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull String name
+    ) {
+        ConstructorDescriptor constructorDescriptor = getConstructorDescriptor(classDescriptor);
+        ValueParameterDescriptor parameter = findValueParameter(constructorDescriptor.getValueParameters(), name);
+        assertNotNull("Cannot find constructor parameter with name " + name, parameter);
+        return parameter;
+    }
+
+    @NotNull
+    private static ConstructorDescriptor getConstructorDescriptor(@NotNull ClassDescriptor classDescriptor) {
+        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        assert constructors.size() == 1;
+        return constructors.iterator().next();
     }
 
     private static ValueParameterDescriptor findValueParameter(List<ValueParameterDescriptor> parameters, String name) {

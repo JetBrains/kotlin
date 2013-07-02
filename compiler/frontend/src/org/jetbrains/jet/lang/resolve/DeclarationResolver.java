@@ -89,6 +89,7 @@ public class DeclarationResolver {
 
 
     public void process(@NotNull JetScope rootScope) {
+        resolveAnnotationConstructors();
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
@@ -98,14 +99,23 @@ public class DeclarationResolver {
         checkRedeclarationsInInnerClassNames();
     }
 
+    private void resolveAnnotationConstructors() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            MutableClassDescriptor classDescriptor = entry.getValue();
 
+            if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
+                processPrimaryConstructor(classDescriptor, entry.getKey());
+            }
+        }
+    }
 
     private void resolveConstructorHeaders() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
-            processPrimaryConstructor(classDescriptor, jetClass);
+            if (!DescriptorUtils.isAnnotationClass(classDescriptor)) {
+                processPrimaryConstructor(classDescriptor, entry.getKey());
+            }
         }
     }
 

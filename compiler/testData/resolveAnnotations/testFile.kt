@@ -1,6 +1,6 @@
 package test
 
-ANNOTATION class MyClass {
+ANNOTATION class MyClass [ANNOTATION]([ANNOTATION] param: Int, [ANNOTATION] val consProp: Int) {
     ANNOTATION class object {
     }
 
