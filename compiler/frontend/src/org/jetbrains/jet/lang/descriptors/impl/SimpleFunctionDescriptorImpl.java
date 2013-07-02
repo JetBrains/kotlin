@@ -34,7 +34,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Name name,
-            Kind kind) {
+            @NotNull Kind kind) {
         super(containingDeclaration, annotations, name, kind);
     }
 
@@ -43,7 +43,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull SimpleFunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Name name,
-            Kind kind) {
+            @NotNull Kind kind) {
         super(containingDeclaration, original, annotations, name, kind);
     }
 
