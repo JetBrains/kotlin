@@ -142,8 +142,6 @@ public interface BindingContext {
 
     WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
 
-    WritableSlice<VariableDescriptor, ClassDescriptor> OBJECT_DECLARATION_CLASS = Slices.createSimpleSlice();
-
     WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>(DO_NOTHING) {
         @Override
         public Boolean computeValue(

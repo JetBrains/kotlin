@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -84,7 +83,7 @@ public class DecompiledDataFactory {
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
                     if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor
-                        || isNamedObjectProperty(member, bindingContext)) {
+                        || isNamedObjectProperty(member)) {
                         continue;
                     }
                     appendDescriptor(member, "");
@@ -159,7 +158,7 @@ public class DecompiledDataFactory {
                 if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
                     continue;
                 }
-                if (isNamedObjectProperty(member, bindingContext)) {
+                if (isNamedObjectProperty(member)) {
                     continue;
                 }
 
@@ -201,10 +200,10 @@ public class DecompiledDataFactory {
         }
     }
 
-    private static boolean isNamedObjectProperty(@NotNull DeclarationDescriptor descriptor, BindingContext bindingContext) {
-        if (descriptor instanceof PropertyDescriptor) {
-            ClassDescriptor objectDeclaration = bindingContext.get(BindingContext.OBJECT_DECLARATION_CLASS, (PropertyDescriptor) descriptor);
-            if (objectDeclaration != null && objectDeclaration.getKind() == ClassKind.OBJECT) {
+    private static boolean isNamedObjectProperty(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor && descriptor instanceof VariableDescriptorForObject) {
+            ClassDescriptor objectClass = ((VariableDescriptorForObject) descriptor).getObjectClass();
+            if (objectClass.getKind() == ClassKind.OBJECT) {
                 return true;
             }
         }

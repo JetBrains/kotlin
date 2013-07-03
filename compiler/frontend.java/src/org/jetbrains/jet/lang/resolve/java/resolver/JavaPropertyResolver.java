@@ -181,32 +181,7 @@ public final class JavaPropertyResolver {
             kind = DescriptorKindUtils.flagsToKind(methodAnnotation.kind());
         }
 
-        boolean isEnumEntry = psiData.getCharacteristicPsi() instanceof PsiEnumConstant;
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
-                owner,
-                annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
-                DescriptorResolverUtils.resolveModality(characteristicMember.getMember(),
-                                                        isFinal || isEnumEntry || psiData.isPropertyForNamedObject()),
-                visibility,
-                isVar,
-                propertyName,
-                kind);
-
-        //TODO: this is a hack to indicate that this enum entry is an object
-        // class descriptor for enum entries is not used by backends so for now this should be safe to use
-        // remove this when JavaDescriptorResolver gets rewritten
-        if (isEnumEntry) {
-            assert DescriptorUtils.isEnumClassObject(owner) : "Enum entries should be put into class object of enum only: " + owner;
-            ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
-                    new ClassDescriptorImpl(owner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
-            dummyClassDescriptorForEnumEntryObject.initialize(
-                    true,
-                    Collections.<TypeParameterDescriptor>emptyList(),
-                    Collections.<JetType>emptyList(), JetScope.EMPTY,
-                    Collections.<ConstructorDescriptor>emptySet(), null,
-                    false);
-            trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, dummyClassDescriptorForEnumEntryObject);
-        }
+        PropertyDescriptorImpl propertyDescriptor = createPropertyDescriptor(owner, propertyName, psiData, isFinal, isVar, visibility, kind);
 
         PropertyGetterDescriptorImpl getterDescriptor = resolveGetter(visibility, kind, getter, propertyDescriptor);
         PropertySetterDescriptorImpl setterDescriptor = resolveSetter(psiData, kind, propertyDescriptor);
@@ -221,7 +196,6 @@ public final class JavaPropertyResolver {
         JetType propertyType = getPropertyType(psiData, characteristicMember, typeVariableResolverForPropertyInternals);
         JetType receiverType = getReceiverType(characteristicMember, typeVariableResolverForPropertyInternals);
 
-
         propertyType = getAlternativeSignatureData(isVar, characteristicMember, propertyDescriptor, propertyType);
 
         propertyDescriptor.setType(
@@ -235,8 +209,6 @@ public final class JavaPropertyResolver {
         if (kind == CallableMemberDescriptor.Kind.DECLARATION) {
             trace.record(BindingContext.VARIABLE, psiData.getCharacteristicPsi(), propertyDescriptor);
         }
-
-        recordObjectDeclarationClassIfNeeded(psiData, owner, propertyDescriptor, propertyType);
 
         if (scopeData.getDeclarationOrigin() == JAVA) {
             trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
@@ -253,6 +225,62 @@ public final class JavaPropertyResolver {
             }
         }
         return propertyDescriptor;
+    }
+
+    @NotNull
+    private PropertyDescriptorImpl createPropertyDescriptor(
+            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull Name propertyName,
+            @NotNull PropertyPsiData psiData,
+            boolean isFinal,
+            boolean isVar,
+            @NotNull Visibility visibility,
+            @NotNull CallableMemberDescriptor.Kind kind
+    ) {
+        boolean isEnumEntry = psiData.getCharacteristicPsi() instanceof PsiEnumConstant;
+        if (isEnumEntry) {
+            assert !isVar && isFinal : "Enum entries should be final and immutable.";
+            assert DescriptorUtils.isEnumClassObject(owner) : "Enum entries should be put into class object of enum only: " + owner;
+            //TODO: this is a hack to indicate that this enum entry is an object
+            // class descriptor for enum entries is not used by backends so for now this should be safe to use
+            ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
+                    new ClassDescriptorImpl(owner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
+            dummyClassDescriptorForEnumEntryObject.initialize(
+                    true,
+                    Collections.<TypeParameterDescriptor>emptyList(),
+                    Collections.<JetType>emptyList(), JetScope.EMPTY,
+                    Collections.<ConstructorDescriptor>emptySet(), null,
+                    false);
+            return new PropertyDescriptorForObjectImpl(
+                    owner,
+                    annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
+                    visibility,
+                    propertyName,
+                    dummyClassDescriptorForEnumEntryObject);
+        }
+        else if (psiData.isPropertyForNamedObject() && owner instanceof NamespaceDescriptor) {
+            //TODO: support nested classes and objects
+            assert !isVar && isFinal : "Objects should be final and immutable.";
+            ClassDescriptor objectClass = ((NamespaceDescriptor) owner).getMemberScope().getObjectDescriptor(propertyName);
+            assert objectClass != null;
+            return new PropertyDescriptorForObjectImpl(
+                    owner,
+                    annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
+                    visibility,
+                    propertyName,
+                    objectClass);
+        }
+        else {
+            return new PropertyDescriptorImpl(
+                    owner,
+                    annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
+                    DescriptorResolverUtils.resolveModality(psiData.getCharacteristicMember().getMember(),
+                                                            isFinal || psiData.isPropertyForNamedObject()),
+                    visibility,
+                    isVar,
+                    propertyName,
+                    kind);
+        }
     }
 
     @NotNull
@@ -305,24 +333,6 @@ public final class JavaPropertyResolver {
                     false,
                     null));
         }
-    }
-
-    private void recordObjectDeclarationClassIfNeeded(
-            PropertyPsiData psiData,
-            DeclarationDescriptor realOwner,
-            PropertyDescriptor propertyDescriptor,
-            JetType propertyType
-    ) {
-        if (!psiData.isPropertyForNamedObject()) {
-            return;
-        }
-        ClassDescriptor objectDescriptor = (ClassDescriptor) propertyType.getConstructor().getDeclarationDescriptor();
-
-        assert objectDescriptor != null;
-        assert objectDescriptor.getKind() == ClassKind.OBJECT;
-        assert objectDescriptor.getContainingDeclaration() == realOwner;
-
-        trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, objectDescriptor);
     }
 
     @Nullable
@@ -418,9 +428,11 @@ public final class JavaPropertyResolver {
             return null;
         }
         if (!characteristicMember.getReceiverType().getTypeString().isEmpty()) {
-            return semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
+            return semanticServices.getTypeTransformer()
+                    .transformToType(characteristicMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
         }
-        return semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
+        return semanticServices.getTypeTransformer()
+                .transformToType(characteristicMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
     }
 
     private static int getNumberOfNonExtensionProperties(@NotNull Collection<PropertyPsiData> propertyPsiDataCollection) {

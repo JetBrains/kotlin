@@ -18,10 +18,7 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -90,11 +87,11 @@ public final class WhenChecker {
         if (reference == null) return false;
 
         DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
-        if (!(target instanceof VariableDescriptor)) {
+        if (!(target instanceof VariableDescriptorForObject)) {
             return false;
         }
 
-        ClassDescriptor classDescriptor = trace.get(BindingContext.OBJECT_DECLARATION_CLASS, (VariableDescriptor) target);
+        ClassDescriptor classDescriptor = ((VariableDescriptorForObject) target).getObjectClass();
         return classDescriptor == enumEntry;
     }
 

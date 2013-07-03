@@ -1639,12 +1639,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         assert descriptor != null;
 
-        if (descriptor instanceof VariableDescriptor) {
-            VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-            ClassDescriptor objectClassDescriptor = getBindingContext().get(BindingContext.OBJECT_DECLARATION_CLASS, variableDescriptor);
-            if (objectClassDescriptor != null) {
-                return genObjectClassInstance(variableDescriptor, objectClassDescriptor);
-            }
+        if (descriptor instanceof VariableDescriptorForObject) {
+            VariableDescriptorForObject variableDescriptor = (VariableDescriptorForObject) descriptor;
+            ClassDescriptor objectClassDescriptor = variableDescriptor.getObjectClass();
+            return genObjectClassInstance(variableDescriptor, objectClassDescriptor);
         }
 
         int index = lookupLocalIndex(descriptor);

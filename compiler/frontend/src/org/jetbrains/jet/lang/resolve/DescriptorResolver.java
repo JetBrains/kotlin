@@ -840,19 +840,16 @@ public class DescriptorResolver {
             @NotNull ClassDescriptor classDescriptor, BindingTrace trace
     ) {
         JetModifierList modifierList = objectDeclaration.getModifierList();
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorForObjectImpl(
                 containingDeclaration,
                 annotationResolver.getResolvedAnnotations(modifierList, trace),
-                Modality.FINAL,
                 resolveVisibilityFromModifiers(objectDeclaration, getDefaultVisibilityForObjectPropertyDescriptor(classDescriptor)),
-                false,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
-                CallableMemberDescriptor.Kind.DECLARATION
+                classDescriptor
         );
         propertyDescriptor.setType(getTypeForObjectDeclaration(classDescriptor), Collections.<TypeParameterDescriptor>emptyList(),
                                    getExpectedThisObjectIfNeeded(containingDeclaration), NO_RECEIVER_PARAMETER);
         propertyDescriptor.initialize(null, null);
-        trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, classDescriptor);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
         if (nameAsDeclaration != null) {
             trace.record(BindingContext.OBJECT_DECLARATION, nameAsDeclaration, propertyDescriptor);
@@ -878,13 +875,11 @@ public class DescriptorResolver {
             @NotNull JetClassOrObject objectDeclaration,
             @NotNull ClassDescriptor classDescriptor, BindingTrace trace
     ) {
-        VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
+        VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptorForObject(
                 containingDeclaration,
                 annotationResolver.getResolvedAnnotations(objectDeclaration.getModifierList(), trace),
                 JetPsiUtil.safeName(objectDeclaration.getName()),
-                classDescriptor.getDefaultType(),
-                /*isVar =*/ false);
-        trace.record(BindingContext.OBJECT_DECLARATION_CLASS, variableDescriptor, classDescriptor);
+                classDescriptor);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
         if (nameAsDeclaration != null) {
             trace.record(BindingContext.VARIABLE, nameAsDeclaration, variableDescriptor);

@@ -295,9 +295,9 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     }
 
     private void createEnumEntry(@NotNull MutableClassDescriptor enumClassObject, @NotNull Name name) {
-        PropertyDescriptorImpl property = new PropertyDescriptorImpl(enumClassObject, Collections.<AnnotationDescriptor>emptyList(),
-                                                                     Modality.FINAL, Visibilities.PUBLIC, false, name,
-                                                                     CallableMemberDescriptor.Kind.DECLARATION);
+        PropertyDescriptorImpl property = new PropertyDescriptorForObjectImpl(enumClassObject,
+                                                                              Collections.<AnnotationDescriptor>emptyList(),
+                                                                              Visibilities.PUBLIC, name, this);
         property.setType(getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
                          enumClassObject.getThisAsReceiverParameter(), NO_RECEIVER_PARAMETER);
 

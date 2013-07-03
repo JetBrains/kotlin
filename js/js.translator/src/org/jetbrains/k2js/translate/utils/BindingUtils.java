@@ -264,10 +264,7 @@ public final class BindingUtils {
         return bindingContext.get(BindingContext.FUNCTION, function);
     }
 
-    public static boolean isObjectDeclaration(
-            @NotNull BindingContext bindingContext,
-            @NotNull PropertyDescriptor propertyDescriptor
-    ) {
-        return bindingContext.get(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor) != null;
+    public static boolean isObjectDeclaration(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor instanceof VariableDescriptorForObject;
     }
 }
