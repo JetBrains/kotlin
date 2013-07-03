@@ -144,11 +144,12 @@ message Callable {
   }
 
   enum CallableKind {
-    // 2 bits
+    // 3 bits
     FUN = 0;
     VAL = 1;
     VAR = 2;
     CONSTRUCTOR = 3;
+    OBJECT_PROPERTY = 4;
   }
 
   /*

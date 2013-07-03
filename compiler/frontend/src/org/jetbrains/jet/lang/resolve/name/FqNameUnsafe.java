@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.name;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -248,6 +249,12 @@ public final class FqNameUnsafe extends FqNameBase {
             return false;
         }
         return shortName().equals(segment);
+    }
+
+    @NotNull
+    public static FqNameUnsafe fromSegments(@NotNull List<Name> names) {
+        String fqName = StringUtil.join(names, ".");
+        return new FqNameUnsafe(fqName);
     }
 
 

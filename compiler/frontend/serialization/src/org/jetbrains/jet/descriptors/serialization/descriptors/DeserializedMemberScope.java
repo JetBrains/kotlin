@@ -24,7 +24,9 @@ import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;
 import org.jetbrains.jet.descriptors.serialization.Flags;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.*;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -44,7 +46,9 @@ public abstract class DeserializedMemberScope implements JetScope {
     private static final Filter<ProtoBuf.Callable.CallableKind> PROPERTY = new Filter<ProtoBuf.Callable.CallableKind>() {
         @Override
         public boolean accept(ProtoBuf.Callable.CallableKind value) {
-            return value == ProtoBuf.Callable.CallableKind.VAL || value == ProtoBuf.Callable.CallableKind.VAR;
+            return value == ProtoBuf.Callable.CallableKind.VAL ||
+                   value == ProtoBuf.Callable.CallableKind.VAR ||
+                   value == ProtoBuf.Callable.CallableKind.OBJECT_PROPERTY;
         }
     };
 

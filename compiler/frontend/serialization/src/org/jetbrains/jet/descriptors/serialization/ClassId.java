@@ -1,7 +1,5 @@
 package org.jetbrains.jet.descriptors.serialization;
 
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -21,22 +19,22 @@ public final class ClassId {
             @NotNull FqName fqName,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
+        return fromFqNameAndContainingDeclaration(fqName.toUnsafe(), containingDeclaration);
+    }
+
+    @NotNull
+    public static ClassId fromFqNameAndContainingDeclaration(
+            @NotNull FqNameUnsafe fqName,
+            @NotNull ClassOrNamespaceDescriptor containingDeclaration
+    ) {
         NamespaceDescriptor containingNamespace = DescriptorUtils.getParentOfType(containingDeclaration, NamespaceDescriptor.class, false);
         assert containingNamespace != null;
         List<Name> fullNameSegments = fqName.pathSegments();
         FqName namespaceFqName = DescriptorUtils.getFQName(containingNamespace).toSafe();
         List<Name> namespaceNameSegments = namespaceFqName.pathSegments();
-        for (int i = 0; i < namespaceNameSegments.size(); ++i) {
-            assert fullNameSegments.get(i).equals(namespaceNameSegments.get(i));
-        }
+        assert fullNameSegments.subList(0, namespaceNameSegments.size()).equals(namespaceNameSegments);
         List<Name> relativeNameSegments = fullNameSegments.subList(namespaceNameSegments.size(), fullNameSegments.size());
-        FqName relativeFqName = FqName.fromSegments(ContainerUtil.map2List(relativeNameSegments, new Function<Name, String>() {
-            @Override
-            public String fun(Name name) {
-                return name.asString();
-            }
-        }));
-        return new ClassId(namespaceFqName, relativeFqName.toUnsafe());
+        return new ClassId(namespaceFqName, FqNameUnsafe.fromSegments(relativeNameSegments));
     }
 
     public ClassId(@NotNull FqName packageFqName, @NotNull FqNameUnsafe relativeClassName) {

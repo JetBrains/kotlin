@@ -199,10 +199,10 @@ public final class PropertyPsiData {
         if (getter != null) {
             return getter.getMember().isFinal();
         }
-
         if (setter != null) {
             return setter.getMember().isFinal();
         }
-        return false;
+        assert field != null : "Property with no getter and no setter should at least have a backing field";
+        return field.getMember().isFinal();
     }
 }

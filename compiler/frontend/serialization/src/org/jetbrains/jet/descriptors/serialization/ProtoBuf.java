@@ -5380,12 +5380,14 @@ public final class ProtoBuf {
       VAL(1, 1),
       VAR(2, 2),
       CONSTRUCTOR(3, 3),
+      OBJECT_PROPERTY(4, 4),
       ;
       
       public static final int FUN_VALUE = 0;
       public static final int VAL_VALUE = 1;
       public static final int VAR_VALUE = 2;
       public static final int CONSTRUCTOR_VALUE = 3;
+      public static final int OBJECT_PROPERTY_VALUE = 4;
       
       
       public final int getNumber() { return value; }
@@ -5396,6 +5398,7 @@ public final class ProtoBuf {
           case 1: return VAL;
           case 2: return VAR;
           case 3: return CONSTRUCTOR;
+          case 4: return OBJECT_PROPERTY;
           default: return null;
         }
       }

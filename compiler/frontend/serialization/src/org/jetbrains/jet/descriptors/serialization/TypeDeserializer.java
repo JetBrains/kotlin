@@ -100,6 +100,10 @@ public class TypeDeserializer {
         }, STRONG);
     }
 
+    /* package */ DescriptorFinder getDescriptorFinder() {
+        return descriptorFinder;
+    }
+
     @Nullable
     public JetType typeOrNull(@Nullable ProtoBuf.Type proto) {
         if (proto == null) {
