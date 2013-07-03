@@ -21,6 +21,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.android.tools.build</groupId>
+            <artifactId>gradle</artifactId>
+            <version>0.4.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>

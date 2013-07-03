@@ -24,6 +24,13 @@ import java.util.concurrent.Callable
 import org.gradle.api.Action
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.util.Arrays
+import org.gradle.api.logging.Logging
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.LibraryExtension
+import org.gradle.api.internal.DefaultDomainObjectSet
+import com.android.build.gradle.api.BaseVariant
+import org.gradle.api.tasks.compile.JavaCompile
 
 open class KotlinPlugin: Plugin<Project> {
 
@@ -106,6 +113,65 @@ open class KotlinPlugin: Plugin<Project> {
     public val KDOC_TASK_NAME: String = "kdoc"
 }
 
+
+open class KotlinAndroidPlugin: Plugin<Project> {
+
+    val log = Logging.getLogger(getClass())!!
+
+    public override fun apply(project: Project) {
+        project.afterEvaluate( { (project: Project?): Unit ->
+            if (project != null) {
+                val extension = project.getExtensions()!!.getByName("android") as BaseExtension
+
+                val testVariants = extension.getTestVariants()!!
+                processVariants(testVariants, project)
+                if (extension is AppExtension) {
+                    val appVariants = extension.getApplicationVariants()!!
+                    processVariants(appVariants, project)
+
+                }
+
+                if (extension is LibraryExtension) {
+                    val libVariants = extension.getLibraryVariants()!!;
+                    processVariants(libVariants, project)
+                }
+            }
+
+        })
+    }
+
+    private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project): Unit {
+        for (variant in variants) {
+            val javaTask = variant.getJavaCompile()!!
+            val destinationDir = javaTask.getDestinationDir()
+            val classPath = javaTask.getClasspath()
+
+
+            val variantName = variant.getName()
+            val kotlinTaskName = "compile${variantName}Kotlin"
+            val kotlinTask: KotlinCompile = project.getTasks()!!.add(kotlinTaskName, javaClass<KotlinCompile>())!!
+            // store kotlin classes in separate directory. They will serve as class-path to java compiler
+            val kotlinOutputDir = File(project.getBuildDir(), "kotlin-classes/${variantName}")
+            kotlinTask.kotlinDestinationDir = kotlinOutputDir;
+            kotlinTask.setDestinationDir(destinationDir)
+            kotlinTask.setDescription("Compiles the ${variantName} kotlin.")
+
+            kotlinTask.source("src/main/kotlin")
+            kotlinTask.source(javaTask.getSource()) // for cross compilation
+
+            kotlinTask.setClasspath(javaTask.getClasspath())
+            kotlinTask.setDependsOn(javaTask.getDependsOn())
+
+            javaTask.dependsOn(kotlinTaskName)
+            val javacClassPath = javaTask.getClasspath() + project.files(kotlinTask.kotlinDestinationDir);
+            javaTask.setClasspath(javacClassPath)
+        }
+    }
+
+    private fun configureKotlinCompileTask(javaCompile : JavaCompile) : Unit {
+
+    }
+}
 
 open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {
     public override fun isSatisfiedBy(p0: T?): Boolean {
