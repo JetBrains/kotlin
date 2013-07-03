@@ -1,5 +1,0 @@
-<root>
-    <item name='org.gradle.api.tasks.compile.AbstractCompile org.gradle.api.file.FileCollection getClasspath()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

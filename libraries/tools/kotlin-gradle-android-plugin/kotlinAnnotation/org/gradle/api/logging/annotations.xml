@@ -1,5 +1,0 @@
-<root>
-    <item name='org.gradle.api.logging.Logging org.gradle.api.logging.Logger getLogger(java.lang.Class)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

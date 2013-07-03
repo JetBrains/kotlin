@@ -1,5 +1,0 @@
-<root>
-    <item name='org.gradle.api.artifacts.Configuration org.gradle.api.artifacts.ResolvedConfiguration getResolvedConfiguration()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

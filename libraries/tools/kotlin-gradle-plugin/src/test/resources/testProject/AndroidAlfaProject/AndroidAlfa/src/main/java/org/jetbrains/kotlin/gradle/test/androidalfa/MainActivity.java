@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.gradle.test.androidalfa;
+package AndroidAlfaProject.AndroidAlfa.src.main.java.org.jetbrains.kotlin.gradle.test.androidalfa;
 
 import android.content.Intent;
 import android.os.Bundle;

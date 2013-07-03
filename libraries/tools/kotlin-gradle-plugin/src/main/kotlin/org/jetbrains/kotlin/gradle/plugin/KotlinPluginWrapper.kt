@@ -12,7 +12,7 @@ import org.gradle.api.logging.Logging
 import java.util.Properties
 import java.io.FileNotFoundException
 
-open class KotlinPluginWrapper: Plugin<Project> {
+open abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
     val log = Logging.getLogger(getClass())!!
 
@@ -45,7 +45,7 @@ open class KotlinPluginWrapper: Plugin<Project> {
         log.debug("Load plugin in parent-last URL classloader")
         val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, getClass().getClassLoader())
         log.debug("Class loader created")
-        val cls = Class.forName("org.jetbrains.kotlin.gradle.plugin.KotlinPlugin", true, kotlinPluginClassloader)
+        val cls = Class.forName(getPluginClassName(), true, kotlinPluginClassloader)
         log.debug("Plugin class loaded")
         val pluginInstance = cls.newInstance()
         log.debug("Plugin class instantiated")
@@ -54,6 +54,20 @@ open class KotlinPluginWrapper: Plugin<Project> {
         log.debug("'apply' method found, invoking...")
         applyMethod.invoke(pluginInstance, project);
         log.debug("'apply' method invoked successfully")
+    }
+
+    public abstract fun getPluginClassName():String
+}
+
+open class KotlinPluginWrapper: KotlinBasePluginWrapper() {
+    public override fun getPluginClassName():String {
+        return "org.jetbrains.kotlin.gradle.plugin.KotlinPlugin"
+    }
+}
+
+open class KotlinAndriodPluginWrapper: KotlinBasePluginWrapper() {
+    public override fun getPluginClassName():String {
+        return "org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin"
     }
 }
 

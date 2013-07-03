@@ -1,5 +1,0 @@
-<root>
-    <item name='org.gradle.api.internal.project.ProjectInternal org.gradle.api.internal.tasks.TaskContainerInternal getTasks()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>
