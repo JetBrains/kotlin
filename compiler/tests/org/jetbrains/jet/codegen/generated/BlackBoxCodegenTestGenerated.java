@@ -2092,7 +2092,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
     
     @TestMetadata("compiler/testData/codegen/box/functions")
-    @InnerTestClasses({Functions.LocalFunctions.class})
+    @InnerTestClasses({Functions.Invoke.class, Functions.LocalFunctions.class})
     public static class Functions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFunctions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2166,11 +2166,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("functionNtoString.kt")
         public void testFunctionNtoString() throws Exception {
             doTest("compiler/testData/codegen/box/functions/functionNtoString.kt");
-        }
-        
-        @TestMetadata("invoke.kt")
-        public void testInvoke() throws Exception {
-            doTest("compiler/testData/codegen/box/functions/invoke.kt");
         }
         
         @TestMetadata("kt1038.kt")
@@ -2268,6 +2263,34 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/box/functions/invoke")
+        public static class Invoke extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInInvoke() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("invoke.kt")
+            public void testInvoke() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/invoke.kt");
+            }
+            
+            @TestMetadata("kt3189.kt")
+            public void testKt3189() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3189.kt");
+            }
+            
+            @TestMetadata("kt3190.kt")
+            public void testKt3190() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3190.kt");
+            }
+            
+            @TestMetadata("kt3297.kt")
+            public void testKt3297() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3297.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
         public static class LocalFunctions extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInLocalFunctions() throws Exception {
@@ -2284,6 +2307,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Functions");
             suite.addTestSuite(Functions.class);
+            suite.addTestSuite(Invoke.class);
             suite.addTestSuite(LocalFunctions.class);
             return suite;
         }

@@ -4510,6 +4510,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/resolve")
+        @InnerTestClasses({Resolve.Invoke.class})
         public static class Resolve extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInResolve() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4545,6 +4546,40 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/resolve/resolveWithoutGenerics.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/resolve/invoke")
+            public static class Invoke extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInInvoke() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("invokeAsExtension.kt")
+                public void testInvokeAsExtension() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsExtension.kt");
+                }
+                
+                @TestMetadata("invokeAsMember.kt")
+                public void testInvokeAsMember() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsMember.kt");
+                }
+                
+                @TestMetadata("invokeAsMemberExtension.kt")
+                public void testInvokeAsMemberExtension() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsMemberExtension.kt");
+                }
+                
+                @TestMetadata("invokeAsMemberExtensionToExplicitReceiver.kt")
+                public void testInvokeAsMemberExtensionToExplicitReceiver() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsMemberExtensionToExplicitReceiver.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Resolve");
+                suite.addTestSuite(Resolve.class);
+                suite.addTestSuite(Invoke.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/scopes")
@@ -5087,7 +5122,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Recovery.class);
             suite.addTestSuite(Redeclarations.class);
             suite.addTestSuite(Regressions.class);
-            suite.addTestSuite(Resolve.class);
+            suite.addTest(Resolve.innerSuite());
             suite.addTestSuite(Scopes.class);
             suite.addTestSuite(SenselessComparison.class);
             suite.addTestSuite(Shadowing.class);
