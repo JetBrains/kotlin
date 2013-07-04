@@ -2,15 +2,10 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.descriptors.serialization.DescriptorFinder;
-import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -22,7 +17,40 @@ import java.util.List;
 
 public abstract class DeserializedPackageMemberScope extends DeserializedMemberScope {
 
+    @NotNull
+    public static DeserializedPackageMemberScope createScopeFromPackageData(
+            @NotNull NamespaceDescriptor packageDescriptor,
+            @NotNull final PackageData packageData,
+            @NotNull DescriptorFinder descriptorFinder,
+            @NotNull AnnotationDeserializer deserializer,
+            @NotNull LockBasedStorageManager storageManager
+    ) {
+        final NameResolver nameResolver = packageData.getNameResolver();
+        DescriptorDeserializer descriptorDeserializer = DescriptorDeserializer
+                .create(storageManager, packageDescriptor, nameResolver, descriptorFinder, deserializer);
+        List<ProtoBuf.Callable> memberList = packageData.getPackageProto().getMemberList();
+        return new DeserializedPackageMemberScope(storageManager, packageDescriptor, descriptorDeserializer, memberList, descriptorFinder) {
+            @Nullable
+            @Override
+            protected ReceiverParameterDescriptor getImplicitReceiver() {
+                return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
+            }
+
+            @NotNull
+            @Override
+            protected Collection<Name> getClassNames() {
+                Collection<Integer> nameIds = packageData.getPackageProto().getClassNameList();
+                List<Name> result = new ArrayList<Name>(nameIds.size());
+                for (Integer nameId : nameIds) {
+                  result.add(nameResolver.getName(nameId));
+                }
+                return result;
+            }
+        };
+    }
+
     private final DescriptorFinder descriptorFinder;
+
     private final FqName packageFqName;
 
     public DeserializedPackageMemberScope(
@@ -71,10 +99,10 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
 
     private <T extends Collection<? super ClassDescriptor>> T findClassifiers(T result, boolean object) {
         for (Name className : getClassNames()) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) getClassDescriptor(className);
-            assert classDescriptor != null : "Class not found: " + className;
+            ClassDescriptor classDescriptor = findClassDescriptor(className, object);
 
-            if (classDescriptor.getKind().isObject() == object) {
+            if (classDescriptor != null) {
+                assert classDescriptor.getKind().isObject() == object;
                 result.add(classDescriptor);
             }
         }

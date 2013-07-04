@@ -68,7 +68,7 @@ public class KotlinInfoForClassTest extends CodegenTestCase {
         public KotlinInfoBasedDescriptorFinder(@NotNull KotlinInfo kotlinInfo) throws IOException {
             super(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED);
 
-            this.classData = ClassSerializationUtil.readClassDataFrom(kotlinInfo.data());
+            this.classData = ClassData.read(kotlinInfo.data());
             this.namespace = JetTestUtils.createTestNamespace(NAMESPACE_NAME.shortName());
         }
 

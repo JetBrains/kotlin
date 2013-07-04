@@ -17,9 +17,27 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
-public class ClassData {
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+public final class ClassData {
+    @NotNull
+    public static ClassData read(@NotNull byte[] bytes) {
+        try {
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);
+            ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(in);
+            return new ClassData(nameResolver, classProto);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+    }
+
     private final NameResolver nameResolver;
+
     private final ProtoBuf.Class classProto;
 
     public ClassData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Class classProto) {

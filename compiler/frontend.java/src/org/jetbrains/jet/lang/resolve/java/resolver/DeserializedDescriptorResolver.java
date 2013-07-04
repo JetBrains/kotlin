@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +27,11 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -38,7 +39,9 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -52,7 +55,6 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_K
 
 public final class DeserializedDescriptorResolver {
 
-    private static final Logger LOG = Logger.getInstance(DeserializedDescriptorResolver.class);
     private static final String KOTLIN_INFO_TYPE = JvmStdlibNames.KOTLIN_INFO_CLASS.getAsmType().toString();
 
     public static final AnnotationDeserializer DUMMY_ANNOTATION_DESERIALIZER = new AnnotationDeserializer() {
@@ -91,7 +93,8 @@ public final class DeserializedDescriptorResolver {
 
     private JavaClassResolver javaClassResolver;
 
-    private DescriptorFinder javaDescriptorFinder = new DescriptorFinder() {
+    @NotNull
+    private final DescriptorFinder javaDescriptorFinder = new DescriptorFinder() {
         @Nullable
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
@@ -126,6 +129,24 @@ public final class DeserializedDescriptorResolver {
         return deserializeClass(classData, fqName, containingDeclaration);
     }
 
+    @NotNull
+    public JetScope createKotlinPackageScope(
+            @NotNull FqName fqName,
+            @NotNull PsiClass kotlinPackagePsiClass,
+            @NotNull NamespaceDescriptor packageDescriptor
+    ) {
+        VirtualFile virtualFile = kotlinPackagePsiClass.getContainingFile().getVirtualFile();
+        if (virtualFile == null) {
+            throw new IllegalStateException("Could not find virtual file for " + fqName.asString());
+        }
+        PackageData packageData = readPackageDataFromClassFile(virtualFile);
+        if (packageData == null) {
+            throw new IllegalStateException("No KotlinInfo annotation stored for " + fqName.asString());
+        }
+        return DeserializedPackageMemberScope.createScopeFromPackageData(packageDescriptor, packageData, javaDescriptorFinder,
+                                                                         DUMMY_ANNOTATION_DESERIALIZER, storageManager);
+    }
+
     @Nullable
     private static VirtualFile getVirtualFile(
             @NotNull PsiClass psiClass,
@@ -134,8 +155,7 @@ public final class DeserializedDescriptorResolver {
     ) {
         VirtualFile mostOuterClassVirtualFile = psiClass.getContainingFile().getVirtualFile();
         if (mostOuterClassVirtualFile == null) {
-            LOG.error("No virtual file for " + psiClass.getQualifiedName());
-            return null;
+            throw new IllegalStateException("Could not find virtual file for " + classFqName.asString());
         }
         String fileExtension = mostOuterClassVirtualFile.getExtension();
         if (fileExtension == null || !fileExtension.equals("class")) {
@@ -147,8 +167,7 @@ public final class DeserializedDescriptorResolver {
         String classNameWithBucks = relativeClassName.asString().replace(".", "$") + ".class";
         VirtualFile virtualFile = mostOuterClassVirtualFile.getParent().findChild(classNameWithBucks);
         if (virtualFile == null) {
-            LOG.error("No virtual file for " + psiClass.getQualifiedName());
-            return null;
+            throw new IllegalStateException("No virtual file for " + classFqName.asString());
         }
         return virtualFile;
     }
@@ -162,8 +181,9 @@ public final class DeserializedDescriptorResolver {
         ClassId classId = ClassId.fromFqNameAndContainingDeclaration(fqName, containingDeclaration);
 
         DeclarationDescriptor owner = classId.isTopLevelClass()
-                                  ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN)
-                                  : javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
+                                      ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN)
+                                      : javaClassResolver
+                                              .resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
         assert owner != null : "No owner found for " + classId;
 
         return new DeserializedClassDescriptor(classId, storageManager, owner, classData.getNameResolver(),
@@ -172,22 +192,48 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     private static ClassData readClassDataFromClassFile(@NotNull VirtualFile virtualFile) {
+        byte[] data = getKotlinInfoDataFromClassFile(virtualFile);
+        if (data == null) return null;
+        return ClassData.read(data);
+    }
+
+    @Nullable
+    private static PackageData readPackageDataFromClassFile(@NotNull VirtualFile virtualFile) {
+        byte[] data = getKotlinInfoDataFromClassFile(virtualFile);
+        if (data == null) return null;
+        return PackageData.read(data);
+    }
+
+    @Nullable
+    private static byte[] getKotlinInfoDataFromClassFile(@NotNull VirtualFile virtualFile) {
+        GetKotlinInfoDataVisitor visitor = visitClassFile(virtualFile);
+        if (visitor == null) {
+            return null;
+        }
+        byte[] data = visitor.getData();
+        if (data == null) {
+            return null;
+        }
+        return data;
+    }
+
+    @Nullable
+    private static GetKotlinInfoDataVisitor visitClassFile(@NotNull VirtualFile virtualFile) {
         try {
             InputStream inputStream = virtualFile.getInputStream();
             try {
                 ClassReader reader = new ClassReader(inputStream);
                 GetKotlinInfoDataVisitor visitor = new GetKotlinInfoDataVisitor();
                 reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-                return visitor.getClassData();
+                return visitor;
             }
             finally {
                 inputStream.close();
             }
         }
         catch (IOException e) {
-            LOG.error(e);
+            throw ExceptionUtils.rethrow(e);
         }
-        return null;
     }
 
     private static class GetKotlinInfoDataVisitor extends ClassVisitor {
@@ -210,18 +256,15 @@ public final class DeserializedDescriptorResolver {
                         data = (byte[]) value;
                     }
                     else {
-                        LOG.error("Unexpected property " + name + " for annotation " + KOTLIN_INFO_TYPE);
+                        throw new IllegalStateException("Unexpected property " + name + " for annotation " + KOTLIN_INFO_TYPE);
                     }
                 }
             };
         }
 
         @Nullable
-        private ClassData getClassData() {
-            if (data == null) {
-                return null;
-            }
-            return ClassSerializationUtil.readClassDataFrom(data);
+        public byte[] getData() {
+            return data;
         }
     }
 

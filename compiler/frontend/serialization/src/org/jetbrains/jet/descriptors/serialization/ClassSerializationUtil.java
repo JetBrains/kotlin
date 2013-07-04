@@ -87,19 +87,6 @@ public class ClassSerializationUtil {
     }
 
     @NotNull
-    public static ClassData readClassDataFrom(@NotNull byte[] bytes) {
-        try {
-            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-            NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);
-            ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(in);
-            return new ClassData(nameResolver, classProto);
-        }
-        catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
-        }
-    }
-
-    @NotNull
     public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {

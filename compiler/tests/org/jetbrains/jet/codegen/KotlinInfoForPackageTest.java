@@ -52,7 +52,7 @@ public class KotlinInfoForPackageTest extends CodegenTestCase {
         assertTrue(aClass.isAnnotationPresent(KotlinInfo.class));
         KotlinInfo kotlinInfo = (KotlinInfo) aClass.getAnnotation(KotlinInfo.class);
 
-        PackageData data = PackageData.readPackageDataFrom(kotlinInfo.data());
+        PackageData data = PackageData.read(kotlinInfo.data());
 
         Set<String> classNames = collectClassNames(data);
         assertSameElements(Arrays.asList("A", "B", "C"), classNames);

@@ -24,7 +24,7 @@ import java.io.IOException;
 
 public final class PackageData {
     @NotNull
-    public static PackageData readPackageDataFrom(@NotNull byte[] bytes) {
+    public static PackageData read(@NotNull byte[] bytes) {
         try {
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);

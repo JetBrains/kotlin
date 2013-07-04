@@ -28,19 +28,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaScopeForKotlinNamespace;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -64,6 +62,8 @@ public final class JavaNamespaceResolver {
     private BindingTrace trace;
     private JavaSemanticServices javaSemanticServices;
 
+    private DeserializedDescriptorResolver deserializedDescriptorResolver;
+
     public JavaNamespaceResolver() {
     }
 
@@ -80,6 +80,11 @@ public final class JavaNamespaceResolver {
     @Inject
     public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
         this.javaSemanticServices = javaSemanticServices;
+    }
+
+    @Inject
+    public void setDeserializedDescriptorResolver(DeserializedDescriptorResolver deserializedDescriptorResolver) {
+        this.deserializedDescriptorResolver = deserializedDescriptorResolver;
     }
 
     @Nullable
@@ -161,15 +166,12 @@ public final class JavaNamespaceResolver {
             if (psiClass == null) {
                 return new JavaPackageScopeWithoutMembers(
                         namespaceDescriptor,
-                        javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
+                        javaSemanticServices.getPsiDeclarationProviderFactory()
+                                .createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
                         fqName, javaSemanticServices);
             }
 
-            AbiVersionUtil.checkAbiVersion(psiClass, JetPackageClassAnnotation.get(psiClass), trace);
-            return new JavaScopeForKotlinNamespace(
-                    namespaceDescriptor,
-                    javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),
-                    fqName, javaSemanticServices);
+            return createScopeForKotlinPackageClass(fqName, namespaceDescriptor, psiClass);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -187,6 +189,16 @@ public final class JavaNamespaceResolver {
                 namespaceDescriptor,
                 javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
                 fqName, javaSemanticServices);
+    }
+
+    @NotNull
+    private JetScope createScopeForKotlinPackageClass(
+            @NotNull FqName fqName,
+            @NotNull NamespaceDescriptor namespaceDescriptor,
+            @NotNull PsiClass psiClass
+    ) {
+        //TODO: check abi version
+        return deserializedDescriptorResolver.createKotlinPackageScope(fqName, psiClass, namespaceDescriptor);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JetScope packageScope) {
@@ -217,7 +229,8 @@ public final class JavaNamespaceResolver {
 
     @Nullable
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        return psiClassFinder.findPsiClass(PackageClassUtils.getPackageClassFqName(packageFQN), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        return psiClassFinder
+                .findPsiClass(PackageClassUtils.getPackageClassFqName(packageFQN), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 
     private static boolean hasStaticMembers(@NotNull PsiClass psiClass) {
