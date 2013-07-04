@@ -8,4 +8,4 @@ fun firstFun() {
 // TIME: 1
 // EXIST: PropertyMetadata@PropertyMetadata~(jet)
 // EXIST: PropertyMetadataImpl@PropertyMetadataImpl~(jet)
-// NUMBER: 4
+// NUMBER: 2

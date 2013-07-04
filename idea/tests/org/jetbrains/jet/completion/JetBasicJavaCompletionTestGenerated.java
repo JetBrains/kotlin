@@ -129,6 +129,16 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJavaCompletionT
             doTest("idea/testData/completion/basic/common/ExtensionFunReceiver.kt");
         }
         
+        @TestMetadata("ExtensionFunReceiverForce.kt")
+        public void testExtensionFunReceiverForce() throws Exception {
+            doTest("idea/testData/completion/basic/common/ExtensionFunReceiverForce.kt");
+        }
+        
+        @TestMetadata("ExtensionInsideFunction.kt")
+        public void testExtensionInsideFunction() throws Exception {
+            doTest("idea/testData/completion/basic/common/ExtensionInsideFunction.kt");
+        }
+        
         @TestMetadata("ExtensionWithAdditionalTypeParameters.kt")
         public void testExtensionWithAdditionalTypeParameters() throws Exception {
             doTest("idea/testData/completion/basic/common/ExtensionWithAdditionalTypeParameters.kt");
@@ -252,6 +262,16 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJavaCompletionT
         @TestMetadata("InPackageBegin.kt")
         public void testInPackageBegin() throws Exception {
             doTest("idea/testData/completion/basic/common/InPackageBegin.kt");
+        }
+        
+        @TestMetadata("InParametersTypes.kt")
+        public void testInParametersTypes() throws Exception {
+            doTest("idea/testData/completion/basic/common/InParametersTypes.kt");
+        }
+        
+        @TestMetadata("InParametersTypesForce.kt")
+        public void testInParametersTypesForce() throws Exception {
+            doTest("idea/testData/completion/basic/common/InParametersTypesForce.kt");
         }
         
         @TestMetadata("InTypeAnnotation.kt")
@@ -424,6 +444,11 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJavaCompletionT
     public static class Java extends AbstractJavaCompletionTest {
         public void testAllFilesPresentInJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/completion/basic/java"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("AutoForceCompletion.kt")
+        public void testAutoForceCompletion() throws Exception {
+            doTest("idea/testData/completion/basic/java/AutoForceCompletion.kt");
         }
         
         @TestMetadata("ExtensionFromStandardLibrary.kt")

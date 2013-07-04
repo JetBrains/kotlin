@@ -36,31 +36,34 @@ public class JetCompletionContributor extends CompletionContributor {
                            ProcessingContext context,
                            @NotNull CompletionResultSet result
                    ) {
-
-                       PsiElement position = parameters.getPosition();
-                       if (!(position.getContainingFile() instanceof JetFile)) {
-                           return;
-                       }
-
-                       JetSimpleNameReference jetReference = getJetReference(parameters);
-                       if (jetReference != null) {
-                           result.restartCompletionWhenNothingMatches();
-                           CompletionSession session = new CompletionSession(parameters, result, jetReference, position);
-
-                           session.completeForReference();
-
-                           if (!session.getJetResult().isSomethingAdded() && session.getCustomInvocationCount() == 0) {
-                               // Rerun completion if nothing was found
-                               session = new CompletionSession(parameters, result, jetReference, position, 1);
-
-                               session.completeForReference();
-                           }
-                       }
-
-                       // Prevent from adding reference variants from standard reference contributor
-                       result.stopHere();
+                       doSimpleReferenceCompletion(parameters, result);
                    }
                });
+    }
+
+    public static void doSimpleReferenceCompletion(CompletionParameters parameters, CompletionResultSet result) {
+        PsiElement position = parameters.getPosition();
+
+        if (!(position.getContainingFile() instanceof JetFile)) {
+            return;
+        }
+
+        JetSimpleNameReference jetReference = getJetReference(parameters);
+        if (jetReference != null) {
+            result.restartCompletionWhenNothingMatches();
+
+            CompletionSession session = new CompletionSession(parameters, result, jetReference, position);
+            session.completeForReference();
+
+            if (!session.getJetResult().isSomethingAdded() && session.getParameters().getInvocationCount() < 2) {
+                // Rerun completion if nothing was found
+                session = new CompletionSession(parameters.withInvocationCount(2), result, jetReference, position);
+                session.completeForReference();
+            }
+
+            // Prevent from adding reference variants from standard reference contributor
+            result.stopHere();
+        }
     }
 
     @Nullable
@@ -80,5 +83,19 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         return null;
+    }
+
+    @Override
+    public void beforeCompletion(@NotNull CompletionInitializationContext context) {
+        if (context.getCompletionType() == CompletionType.BASIC && context.getFile() instanceof JetFile) {
+            PsiElement position = context.getFile().findElementAt(Math.max(0, context.getStartOffset() - 1));
+
+            if (JetPackagesContributor.ACTIVATION_PATTERN.accepts(position)) {
+                context.setDummyIdentifier(JetPackagesContributor.DUMMY_IDENTIFIER);
+            }
+            else if (JetExtensionReceiverTypeContributor.ACTIVATION_PATTERN.accepts(position)) {
+                context.setDummyIdentifier(JetExtensionReceiverTypeContributor.DUMMY_IDENTIFIER);
+            }
+        }
     }
 }

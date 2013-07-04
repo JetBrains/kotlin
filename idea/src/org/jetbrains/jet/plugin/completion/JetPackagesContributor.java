@@ -18,18 +18,18 @@ package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
+import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -39,10 +39,14 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
  */
 public class JetPackagesContributor extends CompletionContributor {
 
-    private static final String DUMMY_IDENTIFIER = "___package___";
+    static final String DUMMY_IDENTIFIER = "___package___";
+
+    static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
+            PlatformPatterns.psiElement().inside(JetNamespaceHeader.class);
+
 
     public JetPackagesContributor() {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(),
+        extend(CompletionType.BASIC, ACTIVATION_PATTERN,
                new CompletionProvider<CompletionParameters>() {
                    @Override
                    protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
@@ -50,11 +54,6 @@ public class JetPackagesContributor extends CompletionContributor {
 
                        PsiElement position = parameters.getPosition();
                        if (!(position.getContainingFile() instanceof JetFile)) {
-                           return;
-                       }
-
-                       JetNamespaceHeader namespaceHeader = PsiTreeUtil.getParentOfType(position, JetNamespaceHeader.class);
-                       if (namespaceHeader == null) {
                            return;
                        }
 
@@ -87,12 +86,5 @@ public class JetPackagesContributor extends CompletionContributor {
                        }
                    }
                });
-    }
-
-    @Override
-    public void beforeCompletion(@NotNull CompletionInitializationContext context) {
-        // Will need to filter this dummy identifier to avoid showing it in completion
-        context.setDummyIdentifier(DUMMY_IDENTIFIER);
-        // context.setDummyIdentifier(CompletionInitializationContext.DUMMY_IDENTIFIER);
     }
 }

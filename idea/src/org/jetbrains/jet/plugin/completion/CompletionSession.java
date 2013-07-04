@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.JavaCompletionContributor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
@@ -43,10 +44,9 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
 
-class CompletionSession {
+public class CompletionSession {
     @Nullable
     private final DeclarationDescriptor inDescriptor;
-    private final int customInvocationCount;
     private final CompletionParameters parameters;
     private final JetCompletionResultSet jetResult;
     private final JetSimpleNameReference jetReference;
@@ -57,20 +57,8 @@ class CompletionSession {
             @NotNull JetSimpleNameReference jetReference,
             @NotNull PsiElement position
     ) {
-
-        this(parameters, result, jetReference, position, parameters.getInvocationCount());
-    }
-
-    public CompletionSession(
-            @NotNull CompletionParameters parameters,
-            @NotNull CompletionResultSet result,
-            @NotNull JetSimpleNameReference jetReference,
-            @NotNull PsiElement position,
-            int customInvocationCount
-    ) {
         this.parameters = parameters;
         this.jetReference = jetReference;
-        this.customInvocationCount = customInvocationCount;
 
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
         BindingContext expressionBindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, jetReference.getExpression());
@@ -95,7 +83,7 @@ class CompletionSession {
         }
 
         if (shouldRunOnlyTypeCompletion()) {
-            if (customInvocationCount >= 1) {
+            if (parameters.getInvocationCount() >= 2) {
                 JetTypesCompletionHelper.addJetTypes(parameters, jetResult);
             }
             else {
@@ -105,6 +93,7 @@ class CompletionSession {
                         return isPartOfTypeDeclaration(descriptor);
                     }
                 });
+                JavaCompletionContributor.advertiseSecondCompletion(parameters.getPosition().getProject(), jetResult.getResult());
             }
 
             return;
@@ -116,7 +105,7 @@ class CompletionSession {
 
         // Try to avoid computing not-imported descriptors for empty prefix
         if (prefix.isEmpty()) {
-            if (customInvocationCount < 2) {
+            if (parameters.getInvocationCount() < 2) {
                 return;
             }
 
@@ -210,7 +199,7 @@ class CompletionSession {
     }
 
     private boolean shouldRunTopLevelCompletion() {
-        if (customInvocationCount == 0) {
+        if (parameters.getInvocationCount() < 2) {
             return false;
         }
 
@@ -238,7 +227,7 @@ class CompletionSession {
     }
 
     private boolean shouldRunExtensionsCompletion() {
-        return !(customInvocationCount == 0 && jetResult.getResult().getPrefixMatcher().getPrefix().length() < 3);
+        return !(parameters.getInvocationCount() <= 1 && jetResult.getResult().getPrefixMatcher().getPrefix().length() < 3);
     }
 
     private void addReferenceVariants(@NotNull final Condition<DeclarationDescriptor> filterCondition) {
@@ -256,7 +245,7 @@ class CompletionSession {
     }
 
     private boolean isVisibleDescriptor(DeclarationDescriptor descriptor) {
-        if (customInvocationCount >= 2) {
+        if (parameters.getInvocationCount() >= 2) {
             // Show everything if user insist on showing completion list
             return true;
         }
@@ -287,7 +276,7 @@ class CompletionSession {
         return jetResult;
     }
 
-    public int getCustomInvocationCount() {
-        return customInvocationCount;
+    public CompletionParameters getParameters() {
+        return parameters;
     }
 }

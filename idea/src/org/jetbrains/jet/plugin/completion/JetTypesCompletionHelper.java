@@ -42,6 +42,8 @@ public class JetTypesCompletionHelper {
             @NotNull CompletionParameters parameters,
             @NotNull JetCompletionResultSet jetCompletionResult
     ) {
+        assert parameters.getInvocationCount() >= 2: "Method should be used only for force completion. In other case complete classes from scope";
+
         jetCompletionResult.addAllElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses());
 
         Project project = parameters.getOriginalFile().getProject();
@@ -57,7 +59,7 @@ public class JetTypesCompletionHelper {
     /**
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
-    static void addAdaptedJavaCompletion(
+    private static void addAdaptedJavaCompletion(
             @NotNull CompletionParameters parameters,
             @NotNull final JetCompletionResultSet jetCompletionResult
     ) {

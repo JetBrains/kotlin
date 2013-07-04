@@ -2,10 +2,10 @@ class Test {
     val St<caret>
 }
 
-// TIME: 1
+// TIME: 2
 // EXIST: String~(jet)
 // EXIST: IllegalStateException
-// EXIST_JAVA_ONLY: StringBuilder
+// EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer
-// ABSENT: HTMLStyleElement
-// ABSENT: Statement@Statement~(java.sql)
+// EXIST_JS_ONLY: HTMLStyleElement
+// EXIST_JAVA_ONLY: Statement@Statement~(java.sql)
