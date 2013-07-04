@@ -23,12 +23,12 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -49,12 +49,12 @@ public class InjectorForBodyResolve {
     private final BindingTrace bindingTrace;
     private final BodiesResolveContext bodiesResolveContext;
     private final ModuleDescriptor moduleDescriptor;
+    private AnnotationResolver annotationResolver;
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
     private ExpressionTypingServices expressionTypingServices;
     private CallExpressionResolver callExpressionResolver;
     private DescriptorResolver descriptorResolver;
-    private AnnotationResolver annotationResolver;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private CandidateResolver candidateResolver;
@@ -77,12 +77,12 @@ public class InjectorForBodyResolve {
         this.bindingTrace = bindingTrace;
         this.bodiesResolveContext = bodiesResolveContext;
         this.moduleDescriptor = moduleDescriptor;
+        this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
-        this.annotationResolver = new AnnotationResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.candidateResolver = new CandidateResolver();
@@ -91,6 +91,7 @@ public class InjectorForBodyResolve {
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.topDownAnalysisContext = new TopDownAnalysisContext();
 
+        this.bodyResolver.setAnnotationResolver(annotationResolver);
         this.bodyResolver.setCallResolver(callResolver);
         this.bodyResolver.setContext(bodiesResolveContext);
         this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
@@ -100,6 +101,9 @@ public class InjectorForBodyResolve {
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(bindingTrace);
+
+        annotationResolver.setCallResolver(callResolver);
+        annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
@@ -121,9 +125,6 @@ public class InjectorForBodyResolve {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         descriptorResolver.setTypeResolver(typeResolver);
-
-        annotationResolver.setCallResolver(callResolver);
-        annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);

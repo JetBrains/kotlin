@@ -158,7 +158,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
         SimpleFunctionDescriptor functionDescriptor = context.expressionTypingServices.getDescriptorResolver().
-                resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function, context.trace);
+                resolveFunctionDescriptorWithAnnotationArguments(scope.getContainingDeclaration(), scope, function, context.trace);
 
         scope.addFunctionDescriptor(functionDescriptor);
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);

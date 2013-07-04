@@ -231,7 +231,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 type = CANT_INFER_LAMBDA_PARAM_TYPE;
             }
         }
-        return context.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptor(
+        return context.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptorWithAnnotationArguments(
                 context.scope, functionDescriptor, declaredParameter, index, type, context.trace);
     }
 

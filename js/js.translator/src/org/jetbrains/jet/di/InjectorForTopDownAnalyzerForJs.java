@@ -130,6 +130,7 @@ public class InjectorForTopDownAnalyzerForJs {
 
         this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
+        this.bodyResolver.setAnnotationResolver(annotationResolver);
         this.bodyResolver.setCallResolver(callResolver);
         this.bodyResolver.setContext(topDownAnalysisContext);
         this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);

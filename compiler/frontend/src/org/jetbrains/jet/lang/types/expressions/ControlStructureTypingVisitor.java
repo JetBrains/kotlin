@@ -331,7 +331,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (expectedParameterType == null) {
                 expectedParameterType = ErrorUtils.createErrorType("Error");
             }
-            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType, context.trace);
+            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType, context.trace, context.scope);
         }
 
         {

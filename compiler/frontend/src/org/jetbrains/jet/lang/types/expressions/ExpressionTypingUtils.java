@@ -423,7 +423,7 @@ public class ExpressionTypingUtils {
                 componentType = ErrorUtils.createErrorType(componentName + "() return type");
             }
             VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().
-                resolveLocalVariableDescriptorWithType(writableScope.getContainingDeclaration(), entry, componentType, context.trace);
+                resolveLocalVariableDescriptorWithType(writableScope, writableScope.getContainingDeclaration(), entry, componentType, context.trace);
 
             VariableDescriptor olderVariable = writableScope.getLocalVariable(variableDescriptor.getName());
             checkVariableShadowing(context, variableDescriptor, olderVariable);

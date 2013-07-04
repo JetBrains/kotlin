@@ -74,6 +74,8 @@ public class BodyResolver {
     private ControlFlowAnalyzer controlFlowAnalyzer;
     @NotNull
     private DeclarationsChecker declarationsChecker;
+    @NotNull
+    private AnnotationResolver annotationResolver;
 
     @Inject
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -118,6 +120,11 @@ public class BodyResolver {
     @Inject
     public void setContext(@NotNull BodiesResolveContext context) {
         this.context = context;
+    }
+
+    @Inject
+    public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
     }
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -320,6 +327,12 @@ public class BodyResolver {
     }
 
     private void resolveClassAnnotations() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            resolveAnnotationArguments(entry.getValue().getScopeForSupertypeResolution(), entry.getKey());
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
+            resolveAnnotationArguments(entry.getValue().getScopeForSupertypeResolution(), entry.getKey());
+        }
     }
 
     private void resolveAnonymousInitializers() {
@@ -367,7 +380,8 @@ public class BodyResolver {
                     parameterScope.addVariableDescriptor(valueParameterDescriptor);
                 }
                 parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
-                checkDefaultParameterValues(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(), parameterScope);
+                resolveValueParameter(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
+                                      parameterScope);
             }
         }
     }
@@ -402,6 +416,8 @@ public class BodyResolver {
                     resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberResolution(), propertyScope);
                 }
 
+                resolveAnnotationArguments(propertyScope, property);
+
                 resolvePropertyAccessors(property, propertyDescriptor);
                 processed.add(property);
             }
@@ -429,6 +445,8 @@ public class BodyResolver {
                 resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, propertyScope, propertyScope);
             }
 
+            resolveAnnotationArguments(propertyScope, property);
+
             resolvePropertyAccessors(property, propertyDescriptor);
         }
     }
@@ -446,6 +464,7 @@ public class BodyResolver {
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         if (getter != null && getterDescriptor != null) {
             JetScope accessorScope = makeScopeForPropertyAccessor(getter, propertyDescriptor);
+            resolveAnnotationArguments(accessorScope, getter);
             resolveFunctionBody(fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
         }
 
@@ -453,6 +472,7 @@ public class BodyResolver {
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
         if (setter != null && setterDescriptor != null) {
             JetScope accessorScope = makeScopeForPropertyAccessor(setter, propertyDescriptor);
+            resolveAnnotationArguments(accessorScope, setter);
             resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
         }
     }
@@ -621,6 +641,7 @@ public class BodyResolver {
             JetScope declaringScope = this.context.getDeclaringScopes().apply(declaration);
             assert declaringScope != null;
 
+            resolveAnnotationArguments(declaringScope, declaration);
             resolveFunctionBody(trace, declaration, descriptor, declaringScope);
 
             assert descriptor.getReturnType() != null;
@@ -643,22 +664,41 @@ public class BodyResolver {
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
-        checkDefaultParameterValues(valueParameters, valueParameterDescriptors, functionInnerScope);
+        resolveValueParameter(valueParameters, valueParameterDescriptors, functionInnerScope);
 
         assert functionDescriptor.getReturnType() != null;
     }
 
-    private void checkDefaultParameterValues(List<JetParameter> valueParameters, List<ValueParameterDescriptor> valueParameterDescriptors, JetScope declaringScope) {
+    private void resolveValueParameter(
+            @NotNull List<JetParameter> valueParameters,
+            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
+            @NotNull JetScope declaringScope
+    ) {
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
-            if (valueParameterDescriptor.hasDefaultValue()) {
-                JetParameter jetParameter = valueParameters.get(i);
-                JetExpression defaultValue = jetParameter.getDefaultValue();
-                if (defaultValue != null) {
-                    expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), DataFlowInfo.EMPTY, trace);
-                }
+            JetParameter jetParameter = valueParameters.get(i);
+
+            resolveAnnotationArguments(declaringScope, jetParameter);
+
+            resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter);
+        }
+    }
+
+    private void resolveDefaultValue(
+            @NotNull JetScope declaringScope,
+            @NotNull ValueParameterDescriptor valueParameterDescriptor,
+            @NotNull JetParameter jetParameter
+    ) {
+        if (valueParameterDescriptor.hasDefaultValue()) {
+            JetExpression defaultValue = jetParameter.getDefaultValue();
+            if (defaultValue != null) {
+                expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), DataFlowInfo.EMPTY, trace);
             }
         }
+    }
+
+    private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {
+        annotationResolver.resolveAnnotationsArguments(scope, owner.getModifierList(), trace);
     }
 
     private static void computeDeferredType(JetType type) {

@@ -1,0 +1,39 @@
+package test
+
+ANNOTATION class MyClass {
+    ANNOTATION class object {
+    }
+
+    ANNOTATION var prop: Int = 1
+        [ANNOTATION] get
+        [ANNOTATION] set
+    ANNOTATION fun foo([ANNOTATION] param: Int) {
+        [ANNOTATION] class LocalClass { }
+
+        [ANNOTATION] object LocalObject { }
+
+        [ANNOTATION] fun localFun() {}
+
+        [ANNOTATION] var localVar: Int = 1
+    }
+
+    ANNOTATION class InnerClass {
+    }
+
+}
+
+ANNOTATION object MyObject {
+}
+
+ANNOTATION var topProp: Int = 1
+    [ANNOTATION] get
+    [ANNOTATION] set
+
+ANNOTATION fun topFoo([ANNOTATION] param: Int) {
+}
+
+val funLiteral = {([ANNOTATION] a: Int) -> a }
+
+
+annotation class AnnString(a: String)
+annotation class AnnInt(a: Int)
