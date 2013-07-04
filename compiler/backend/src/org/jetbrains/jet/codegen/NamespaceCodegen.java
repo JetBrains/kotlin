@@ -149,7 +149,7 @@ public class NamespaceCodegen extends MemberCodegen {
                         assert nameAsDeclaration != null : "Should be a named object";
                         PropertyDescriptor propertyForObject = getNotNull(state.getBindingContext(), BindingContext.OBJECT_DECLARATION,
                                                                           nameAsDeclaration);
-                        ProtoBuf.Callable proto = serializer.callableProto((CallableMemberDescriptor) propertyForObject).build();
+                        ProtoBuf.Callable proto = serializer.callableProto(propertyForObject).build();
                         packageProto.addMember(proto);
                     }
                     int name = serializer.getNameTable().getSimpleNameIndex(descriptor.getName());
