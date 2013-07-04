@@ -1,138 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+  <parent>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-project</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>browser-example</artifactId>
+
+  <name>Kotlin Browser Examples</name>
+  <description>Kotlin Browser Examples</description>
+  <url>https://github.com/JetBrains/kotlin/tree/master/libraries</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:JetBrains/kotlin.git</connection>
+    <developerConnection>scm:git:git@github.com:JetBrains/kotlin.git</developerConnection>
+    <url>git@github.com:JetBrains/kotlin.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>JetBrains</id>
+      <name>Jet Brains - Dev</name>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>${selenium.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-htmlunit-driver</artifactId>
+      <version>${selenium.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <sourceDirectory>src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+
+    <plugins>
+      <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-project</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
-
-    <artifactId>browser-example</artifactId>
-
-    <dependencies>
-        <dependency>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <dependencies>
+          <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>kotlin-js-library</artifactId>
             <version>${project.version}</version>
-        </dependency>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>js</id>
+            <goals>
+              <goal>js</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-        <!-- testing -->
+  <profiles>
+    <!-- runs the JavaFX UI - Requires Java7 update 4 or later -->
+    <profile>
+      <id>javafx</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <dependencies>
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>${selenium.version}</version>
-            <scope>test</scope>
+          <groupId>io.kool</groupId>
+          <artifactId>kool-javafx</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-htmlunit-driver</artifactId>
-            <version>${selenium.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <defaultGoal>install</defaultGoal>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
-
+      </dependencies>
+      <build>
         <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-js-library</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>js</id>
-                        <goals>
-                            <goal>js</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <id>run</id>
+                <phase>test</phase>
+                <configuration>
+                  <target>
+                    <java fork="true" classpathref="maven.test.classpath" classname="io.kool.javafx.JavafxPackage">
+                      <arg value="file://sample-javafx.html"/>
+                    </java>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
-
-    <profiles>
-        <!-- runs the JavaFX UI - Requires Java7 update 4 or later -->
-        <profile>
-            <id>javafx</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>io.kool</groupId>
-                    <artifactId>kool-javafx</artifactId>
-                    <version>1.0-SNAPSHOT</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                          <execution>
-                            <id>run</id>
-                            <phase>test</phase>
-                            <configuration>
-                              <target>
-                                <java fork="true" classpathref="maven.test.classpath" classname="io.kool.javafx.JavafxPackage">
-                                    <arg value="file://sample-javafx.html"/>
-                                </java>
-                              </target>
-                            </configuration>
-                            <goals>
-                              <goal>run</goal>
-                            </goals>
-                          </execution>
-                        </executions>
-                      </plugin>
-                </plugins>
-            </build>
-            <repositories>
-                <repository>
-                  <id>snapshots.fusesource.org</id>
-                  <name>FuseSource Snapshots Repository</name>
-                  <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
-                  <snapshots>
-                    <enabled>false</enabled>
-                  </snapshots>
-                  <releases>
-                    <enabled>true</enabled>
-                  </releases>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
+      </build>
+      <repositories>
+        <repository>
+          <id>snapshots.fusesource.org</id>
+          <name>FuseSource Snapshots Repository</name>
+          <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 
 </project>

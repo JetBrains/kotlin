@@ -1,113 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+  <parent>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-project</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>kotlin-js-tests</artifactId>
+
+  <name>Kotlin JS Tests</name>
+  <description>Kotlin JS Tests</description>
+  <url>https://github.com/JetBrains/kotlin/tree/master/libraries</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:JetBrains/kotlin.git</connection>
+    <developerConnection>scm:git:git@github.com:JetBrains/kotlin.git</developerConnection>
+    <url>git@github.com:JetBrains/kotlin.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>JetBrains</id>
+      <name>Jet Brains - Dev</name>
+    </developer>
+  </developers>
+
+  <build>
+    <sourceDirectory>${basedir}/target/tests</sourceDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>copy-sources</id>
+            <phase>process-sources</phase>
+            <configuration>
+              <target>
+                <delete dir="${basedir}/target/tests" failonerror="false"/>
+                <mkdir dir="${basedir}/target/tests"/>
+                <copy todir="${basedir}/target/tests">
+                  <fileset dir="${basedir}/../../stdlib/test/js">
+                    <include name="**/*.kt"/>
+                    <exclude name="**/*JVM.kt"/>
+
+                    <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium? -->
+                    <exclude name="**/JsArrayTest.kt"/>
+                  </fileset>
+                  <fileset dir="${basedir}/../../stdlib/test/dom">
+                    <include name="**/*.kt"/>
+                    <!-- TODO needs toXmlString() or innerHTML / outerHTML to work on newly create Document instances -->
+                    <exclude name="**/DomTest.kt"/>
+                    <exclude name="**/DomBuilderTest.kt"/>
+                    <exclude name="**/NextSiblingTest.kt"/>
+                    <exclude name="**/*JVMTest.kt"/>
+                  </fileset>
+                  <fileset dir="${basedir}/../../stdlib/test">
+                    <include name="ArraysTest.kt"/>
+                    <include name="GetOrElseTest.kt"/>
+                    <include name="StringTest.kt"/>
+
+                    <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium?
+                    <include name="ListTest.kt"/>
+                    -->
+                    <!--
+                        TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2468
+                                                            <include name="SetTest.kt"/>
+                    -->
+                    <!--
+                        TODO: depends on this being fixed:
+                        http://youtrack.jetbrains.com/issue/KT-2470
+                        http://youtrack.jetbrains.com/issue/KT-2374
+                        http://youtrack.jetbrains.com/issue/KT-2468
+                                                            <include name="CollectionTest.kt"/>
+                    -->
+
+                    <!--
+                        TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2470
+                                                            <include name="iterators/*.kt"/>
+                    -->
+                    <!--
+                        TODO: needs a TreeMap see: http://youtrack.jetbrains.com/issue/KT-2377
+                                                            <include name="MapTest.kt"/>
+                    -->
+
+                    <exclude name="**/*JVMTest.kt"/>
+                  </fileset>
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-project</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
-
-    <artifactId>kotlin-js-tests</artifactId>
-    <packaging>jar</packaging>
-
-    <build>
-        <sourceDirectory>${basedir}/target/tests</sourceDirectory>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>copy-sources</id>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <target>
-                                <delete dir="${basedir}/target/tests" failonerror="false"/>
-                                <mkdir dir="${basedir}/target/tests"/>
-                                <copy todir="${basedir}/target/tests">
-                                    <fileset dir="${basedir}/../../stdlib/test/js">
-                                        <include name="**/*.kt"/>
-                                        <exclude name="**/*JVM.kt"/>
-
-                                        <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium? -->
-                                        <exclude name="**/JsArrayTest.kt"/>
-                                    </fileset>
-                                    <fileset dir="${basedir}/../../stdlib/test/dom">
-                                        <include name="**/*.kt"/>
-                                        <!-- TODO needs toXmlString() or innerHTML / outerHTML to work on newly create Document instances -->
-                                        <exclude name="**/DomTest.kt"/>
-                                        <exclude name="**/DomBuilderTest.kt"/>
-                                        <exclude name="**/NextSiblingTest.kt"/>
-                                        <exclude name="**/*JVMTest.kt"/>
-                                    </fileset>
-                                    <fileset dir="${basedir}/../../stdlib/test">
-                                        <include name="ArraysTest.kt"/>
-                                        <include name="GetOrElseTest.kt"/>
-                                        <include name="StringTest.kt"/>
-
-                                        <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium?
-                                        <include name="ListTest.kt"/>
-                                        -->
-<!--
-    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2468
-                                        <include name="SetTest.kt"/>
--->
-<!--
-    TODO: depends on this being fixed:
-    http://youtrack.jetbrains.com/issue/KT-2470
-    http://youtrack.jetbrains.com/issue/KT-2374
-    http://youtrack.jetbrains.com/issue/KT-2468
-                                        <include name="CollectionTest.kt"/>
--->
-
-<!--
-    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2470
-                                        <include name="iterators/*.kt"/>
--->
-<!--
-    TODO: needs a TreeMap see: http://youtrack.jetbrains.com/issue/KT-2377
-                                        <include name="MapTest.kt"/>
--->
-
-                                        <exclude name="**/*JVMTest.kt"/>
-                                    </fileset>
-                                </copy>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-js-library</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>js</id>
-                        <goals>
-                            <goal>js</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-js-library</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>js</id>
+            <goals>
+              <goal>js</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
