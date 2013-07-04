@@ -565,6 +565,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/Deprecated.kt");
             }
             
+            @TestMetadata("invalidTypesInAnnotationConstructor.kt")
+            public void testInvalidTypesInAnnotationConstructor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/invalidTypesInAnnotationConstructor.kt");
+            }
+            
             @TestMetadata("JavaAnnotationConstructors.kt")
             public void testJavaAnnotationConstructors() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/JavaAnnotationConstructors.kt");

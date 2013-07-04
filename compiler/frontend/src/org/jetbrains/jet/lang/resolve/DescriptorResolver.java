@@ -1264,7 +1264,7 @@ public class DescriptorResolver {
         WritableScopeImpl parameterScope = new WritableScopeImpl(
                 scope, constructorDescriptor, new TraceBasedRedeclarationHandler(trace), "Scope with value parameters of a constructor");
         parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        return constructorDescriptor.initialize(
+        ConstructorDescriptorImpl constructor = constructorDescriptor.initialize(
                 typeParameters,
                 resolveValueParameters(
                         constructorDescriptor,
@@ -1272,6 +1272,10 @@ public class DescriptorResolver {
                         valueParameters, trace),
                 resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
                 DescriptorUtils.isConstructorOfStaticNestedClass(constructorDescriptor));
+        if (isAnnotationClass(classDescriptor)) {
+            AnnotationUtils.checkConstructorParametersType(valueParameters, trace);
+        }
+        return constructor;
     }
 
     @Nullable

@@ -289,6 +289,10 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ENUM_CLASS);
     }
 
+    public static boolean isAnnotationClass(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.ANNOTATION_CLASS);
+    }
+
     public static boolean isClass(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.CLASS);
     }

@@ -1,5 +1,4 @@
 annotation class AString(val value: String)
-annotation class AStringNullable(val value: String?)
 annotation class AChar(val value: Char)
 annotation class AInt(val value: Int)
 annotation class AByte(val value: Byte)
@@ -11,7 +10,6 @@ class Test {
 
     class object {
         val vstring: String = "Test"
-        val vstringNullable: String? = "Test"
         val vchar: Char = 'c'
         val vint: Int = 10
         val vbyte: Byte = 11
