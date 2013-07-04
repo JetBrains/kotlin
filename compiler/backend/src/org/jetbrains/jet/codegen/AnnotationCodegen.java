@@ -17,25 +17,26 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetModifierList;
+import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
@@ -84,124 +85,136 @@ public abstract class AnnotationCodegen {
             AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
 
-            JetType type = annotationDescriptor.getType();
-            genAnnotation(resolvedCall, type);
+            genAnnotation(annotationDescriptor);
         }
     }
 
-    private void genAnnotation(
-            ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            JetType type
-    ) {
-        ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
+    private void genAnnotation(AnnotationDescriptor annotationDescriptor) {
+        ClassifierDescriptor classifierDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
         RetentionPolicy rp = getRetentionPolicy(classifierDescriptor, typeMapper);
         if (rp == RetentionPolicy.SOURCE) {
             return;
         }
 
-        String internalName = typeMapper.mapType(type).getDescriptor();
+        String internalName = typeMapper.mapType(annotationDescriptor.getType()).getDescriptor();
         AnnotationVisitor annotationVisitor = visitAnnotation(internalName, rp == RetentionPolicy.RUNTIME);
 
-        getAnnotation(resolvedCall, annotationVisitor);
-
+        genAnnotationArguments(annotationDescriptor, annotationVisitor);
         annotationVisitor.visitEnd();
     }
 
-    private void getAnnotation(ResolvedCall<? extends CallableDescriptor> resolvedCall, AnnotationVisitor annotationVisitor) {
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
-            ResolvedValueArgument valueArgument = entry.getValue();
-            if (valueArgument instanceof DefaultValueArgument) {
-                continue;
-            }
-
-            Name keyName = entry.getKey().getName();
-            genAnnotationValueArgument(annotationVisitor, valueArgument, keyName.asString());
+    private void genAnnotationArguments(AnnotationDescriptor annotationDescriptor, AnnotationVisitor annotationVisitor) {
+        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
+            ValueParameterDescriptor descriptor = entry.getKey();
+            String name = descriptor.getName().asString();
+            genAnnotationArgument(name, entry.getValue(), annotationVisitor);
         }
     }
 
-    private void genAnnotationValueArgument(AnnotationVisitor annotationVisitor, ResolvedValueArgument valueArgument, String keyName) {
-        List<ValueArgument> valueArguments = valueArgument.getArguments();
-        if (valueArgument instanceof VarargValueArgument) {
-            AnnotationVisitor visitor = annotationVisitor.visitArray(keyName);
-            for (ValueArgument argument : valueArguments) {
-                genAnnotationExpressionValue(visitor, null, argument.getArgumentExpression());
+    private void genAnnotationArgument(
+            @Nullable final String name,
+            @NotNull CompileTimeConstant<?> value,
+            @NotNull final AnnotationVisitor annotationVisitor
+    ) {
+        AnnotationArgumentVisitor argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
+            @Override
+            public Void visitLongValue(@NotNull LongValue value, Void data) {
+                return visitSimpleValue(value);
             }
-            visitor.visitEnd();
-        }
-        else {
-            assert valueArguments.size() == 1 : "Number of arguments on " + keyName + " = " + valueArguments.size(); // todo
-            JetExpression expression = valueArguments.get(0).getArgumentExpression();
-            genAnnotationExpressionValue(annotationVisitor, keyName, expression);
-        }
-    }
 
-    private void genAnnotationExpressionValue(AnnotationVisitor annotationVisitor, @Nullable String keyName, JetExpression expression) {
-        CompileTimeConstant<?> compileTimeConstant =
-                bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
+            @Override
+            public Void visitIntValue(IntValue value, Void data) {
+                return visitSimpleValue(value);
+            }
 
-        if (compileTimeConstant != null) {
-            Object value = compileTimeConstant.getValue();
-            annotationVisitor.visit(keyName, value);
-            return;
-        }
+            @Override
+            public Void visitShortValue(ShortValue value, Void data) {
+                return visitSimpleValue(value);
+            }
 
-        if (expression instanceof JetDotQualifiedExpression) {
-            JetDotQualifiedExpression qualifiedExpression = (JetDotQualifiedExpression) expression;
-            ResolvedCall<? extends CallableDescriptor> call =
-                    bindingContext.get(BindingContext.RESOLVED_CALL, qualifiedExpression.getSelectorExpression());
-            if (call != null) {
-                if (call.getResultingDescriptor() instanceof PropertyDescriptor) {
-                    PropertyDescriptor descriptor = (PropertyDescriptor) call.getResultingDescriptor();
-                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor).getDescriptor(), descriptor.getName().asString());
-                    return;
+            @Override
+            public Void visitByteValue(ByteValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitDoubleValue(DoubleValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitFloatValue(FloatValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitBooleanValue(BooleanValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitCharValue(CharValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitStringValue(StringValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitEnumValue(EnumValue value, Void data) {
+                String propertyName = value.getValue().getName().asString();
+                annotationVisitor.visitEnum(name, typeMapper.mapType(value.getType(KotlinBuiltIns.getInstance())).getDescriptor(), propertyName);
+                return null;
+            }
+
+            @Override
+            public Void visitArrayValue(ArrayValue value, Void data) {
+                AnnotationVisitor visitor = annotationVisitor.visitArray(name);
+                for (CompileTimeConstant<?> argument : value.getValue()) {
+                    genAnnotationArgument(null, argument, visitor);
                 }
+                visitor.visitEnd();
+                return null;
             }
-        }
-        else {
-            if (expression instanceof JetCallExpression) {
-                JetCallExpression callExpression = (JetCallExpression) expression;
-                ResolvedCall<? extends CallableDescriptor> call =
-                        bindingContext.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
-                if (call != null) {
-                    List<AnnotationDescriptor> annotations = call.getResultingDescriptor().getOriginal().getAnnotations();
-                    String value = null;
-                    if (annotations != null) {
-                        for (AnnotationDescriptor annotation : annotations) {
-                            //noinspection ConstantConditions
-                            if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
-                                value = (String) annotation.getAllValueArguments().values().iterator().next().getValue();
-                                break;
-                            }
-                        }
-                    }
-                    if (IntrinsicMethods.KOTLIN_JAVA_CLASS_FUNCTION.equals(value)) {
-                        //noinspection ConstantConditions
-                        annotationVisitor.visit(keyName, typeMapper
-                                .mapType(call.getResultingDescriptor().getReturnType().getArguments().get(0).getType()));
-                        return;
-                    }
-                    else if (IntrinsicMethods.KOTLIN_ARRAYS_ARRAY.equals(value)) {
-                        AnnotationVisitor visitor = annotationVisitor.visitArray(keyName);
-                        VarargValueArgument next = (VarargValueArgument) call.getValueArguments().values().iterator().next();
-                        for (ValueArgument argument : next.getArguments()) {
-                            genAnnotationExpressionValue(visitor, null, argument.getArgumentExpression());
-                        }
-                        visitor.visitEnd();
-                        return;
-                    }
-                    else if (call.getResultingDescriptor() instanceof ConstructorDescriptor) {
-                        ConstructorDescriptor descriptor = (ConstructorDescriptor) call.getResultingDescriptor();
-                        AnnotationVisitor visitor = annotationVisitor.visitAnnotation(keyName, typeMapper
-                                .mapType(descriptor.getContainingDeclaration()).getDescriptor());
-                        getAnnotation(call, visitor);
-                        visitor.visitEnd();
-                        return;
-                    }
-                }
-            }
-        }
 
-        throw new IllegalStateException("Don't know how to compile annotation value");
+            @Override
+            public Void visitAnnotationValue(AnnotationValue value, Void data) {
+                String internalAnnName = typeMapper.mapType(value.getValue().getType()).getDescriptor();
+                AnnotationVisitor visitor = annotationVisitor.visitAnnotation(name, internalAnnName);
+                genAnnotationArguments(value.getValue(), visitor);
+                visitor.visitEnd();
+                return null;
+            }
+
+            @Override
+            public Void visitJavaClassValue(JavaClassValue value, Void data) {
+                annotationVisitor.visit(name, typeMapper.mapType(value.getValue()));
+                return null;
+            }
+
+            private Void visitSimpleValue(CompileTimeConstant value) {
+                annotationVisitor.visit(name, value.getValue());
+                return null;
+            }
+
+            @Override
+            public Void visitErrorValue(ErrorValue value, Void data) {
+                return visitUnsupportedValue(value);
+            }
+
+            @Override
+            public Void visitNullValue(NullValue value, Void data) {
+                return visitUnsupportedValue(value);
+            }
+
+            private Void visitUnsupportedValue(CompileTimeConstant value) {
+                throw new IllegalStateException("Don't know how to compile annotation value " + value);
+            }
+        };
+
+        value.accept(argumentVisitor, null);
     }
 
     private static RetentionPolicy getRetentionPolicy(ClassifierDescriptor descriptor, JetTypeMapper typeMapper) {
