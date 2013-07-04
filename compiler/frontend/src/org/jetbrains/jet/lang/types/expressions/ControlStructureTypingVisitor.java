@@ -320,7 +320,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference typeReference = loopParameter.getTypeReference();
         VariableDescriptor variableDescriptor;
         if (typeReference != null) {
-            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter, context.trace);
+            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
             JetType actualParameterType = variableDescriptor.getType();
             if (expectedParameterType != null &&
                     !JetTypeChecker.INSTANCE.isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -331,7 +331,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (expectedParameterType == null) {
                 expectedParameterType = ErrorUtils.createErrorType("Error");
             }
-            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType, context.trace, context.scope);
+            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
         }
 
         {
@@ -433,7 +433,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 DescriptorResolver.checkParameterHasNoValOrVar(context.trace, catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
 
                 VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
-                        context.scope.getContainingDeclaration(), context.scope, catchParameter, context.trace);
+                        context.scope, catchParameter, context.trace);
                 JetType throwableType = KotlinBuiltIns.getInstance().getThrowable().getDefaultType();
                 DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
