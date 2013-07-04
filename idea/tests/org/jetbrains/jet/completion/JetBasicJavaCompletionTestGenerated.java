@@ -104,6 +104,11 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJavaCompletionT
             doTest("idea/testData/completion/basic/common/DoNotCompleteForErrorReceivers.kt");
         }
         
+        @TestMetadata("DoNotCompleteForErrorReceiversForce.kt")
+        public void testDoNotCompleteForErrorReceiversForce() throws Exception {
+            doTest("idea/testData/completion/basic/common/DoNotCompleteForErrorReceiversForce.kt");
+        }
+        
         @TestMetadata("ExtendClassName.kt")
         public void testExtendClassName() throws Exception {
             doTest("idea/testData/completion/basic/common/ExtendClassName.kt");
