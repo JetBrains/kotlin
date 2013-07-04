@@ -17,11 +17,6 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -31,10 +26,10 @@ import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,12 +86,14 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
         return psiFile;
     }
 
-    private void checkNavigationElement(@NotNull PsiElement element, @NotNull String expectedName) {
+    private static void checkNavigationElement(@NotNull PsiElement element, @NotNull String expectedName) {
         if (element instanceof PsiClass) {
             assertEquals(expectedName, ((PsiClass) element).getQualifiedName());
         }
         else if (element instanceof JetClass) {
-            assertEquals(expectedName, JetPsiUtil.getFQName((JetClass) element).asString());
+            FqName name = JetPsiUtil.getFQName((JetClass) element);
+            assert name != null;
+            assertEquals(expectedName, name.asString());
         }
         else {
             fail("Navigation element should be JetClass or PsiClass: " + element.getClass() + ", " + element.getText());
@@ -121,20 +118,5 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return ProjectDescriptorWithStdlibSources.INSTANCE;
-    }
-
-    private static class ProjectDescriptorWithStdlibSources extends JetWithJdkAndRuntimeLightProjectDescriptor {
-        public static final ProjectDescriptorWithStdlibSources INSTANCE = new ProjectDescriptorWithStdlibSources();
-
-        @Override
-        public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
-            super.configureModule(module, model, contentEntry);
-
-            Library library = model.getModuleLibraryTable().getLibraryByName("myLibrary");
-            assert library != null;
-            Library.ModifiableModel modifiableModel = library.getModifiableModel();
-            modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("libraries/stdlib/src")), OrderRootType.SOURCES);
-            modifiableModel.commit();
-        }
     }
 }
