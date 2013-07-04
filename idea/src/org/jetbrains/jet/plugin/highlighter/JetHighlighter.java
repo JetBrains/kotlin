@@ -85,7 +85,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.BLOCK_COMMENT, JetHighlightingColors.BLOCK_COMMENT);
         keys1.put(JetTokens.DOC_COMMENT, JetHighlightingColors.DOC_COMMENT);
 
-        fillMap(keys1, KDocTokens.CONTENT_TOKENS, JetHighlightingColors.DOC_COMMENT);
+        fillMap(keys1, KDocTokens.KDOC_HIGHLIGHT_TOKENS, JetHighlightingColors.DOC_COMMENT);
         keys1.put(KDocTokens.TAG_NAME, JetHighlightingColors.KDOC_TAG);
         keys2.put(KDocTokens.TAG_NAME, JetHighlightingColors.DOC_COMMENT);
 

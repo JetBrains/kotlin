@@ -16,18 +16,23 @@
 
 package org.jetbrains.jet.plugin;
 
+import com.google.common.base.Predicate;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.lang.java.JavaDocumentationProvider;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.kdoc.lexer.KDocTokens;
+import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
@@ -38,14 +43,18 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.Collection;
 
 public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
+    private static final Predicate<PsiElement> SKIP_WHITESPACE_AND_EMPTY_NAMESPACE = new Predicate<PsiElement>() {
+        @Override
+        public boolean apply(PsiElement input) {
+            // Skip empty namespace because there can be comments before it
+            // Skip whitespaces
+            return (input instanceof JetNamespaceHeader && input.getChildren().length == 0) || input instanceof PsiWhiteSpace;
+        }
+    };
+
     private static String getText(PsiElement element, PsiElement originalElement, boolean mergeKotlinAndJava) {
-        JetReferenceExpression ref;
-        if (originalElement instanceof JetReferenceExpression) {
-            ref = (JetReferenceExpression) originalElement;
-        }
-        else {
-            ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
-        }
+        JetReferenceExpression ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class, false);
+
         PsiElement declarationPsiElement = PsiTreeUtil.getParentOfType(originalElement, JetDeclaration.class);
         if (ref != null || declarationPsiElement != null) {
             BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
@@ -64,6 +73,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             if (declarationPsiElement != null) {
                 DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR,
                                                                                  declarationPsiElement);
+
                 if (declarationDescriptor != null) {
                     return render(declarationDescriptor, bindingContext, element, originalElement, mergeKotlinAndJava);
                 }
@@ -73,16 +83,22 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         return null;
     }
 
-    private static String render(@NotNull DeclarationDescriptor declarationDescriptor, @NotNull BindingContext bindingContext,
+    private static String render(
+            @NotNull DeclarationDescriptor declarationDescriptor, @NotNull BindingContext bindingContext,
             PsiElement element, PsiElement originalElement, boolean mergeKotlinAndJava) {
         String renderedDecl = DescriptorRenderer.HTML.render(declarationDescriptor);
         if (isKotlinDeclaration(declarationDescriptor, bindingContext, originalElement.getProject())) {
+            KDoc comment = findElementKDoc(element);
+            if (comment != null) {
+                renderedDecl = renderedDecl + "<br/>" + kDocToHtml(comment);
+            }
+
             return renderedDecl;
         }
         else if (mergeKotlinAndJava) {
             String originalInfo = new JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement);
             if (originalInfo != null) {
-                return renderedDecl + "\nJava declaration:\n" + originalInfo;
+                return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo;
             }
             return renderedDecl;
         }
@@ -112,5 +128,50 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
     @Override
     public String generateDoc(PsiElement element, PsiElement originalElement) {
         return getText(element, originalElement, false);
+    }
+
+    private static String getKDocContent(@NotNull KDoc kDoc) {
+        StringBuilder builder = new StringBuilder();
+
+        boolean contentStarted = false;
+        boolean afterAsterisk = false;
+
+        for (PsiElement element : kDoc.getChildren()) {
+            IElementType type = element.getNode().getElementType();
+
+            if (KDocTokens.CONTENT_TOKENS.contains(type)) {
+                contentStarted = true;
+                builder.append(afterAsterisk ? StringUtil.trimLeading(element.getText()) : element.getText());
+                afterAsterisk = false;
+            }
+
+            if (type == KDocTokens.LEADING_ASTERISK || type == KDocTokens.START) {
+                afterAsterisk = true;
+            }
+
+            if (contentStarted && element instanceof PsiWhiteSpace) {
+                builder.append(StringUtil.repeat("\n", StringUtil.countNewLines(element.getText())));
+            }
+        }
+
+        return builder.toString();
+    }
+
+    @Nullable
+    private static KDoc findElementKDoc(@NotNull PsiElement element) {
+        PsiElement navigateElement = (element instanceof JetElement) ? element : element.getNavigationElement();
+        PsiElement comment = JetPsiUtil.skipSiblingsBackwardByPredicate(navigateElement, SKIP_WHITESPACE_AND_EMPTY_NAMESPACE);
+
+        return comment instanceof KDoc ? (KDoc) comment : null;
+    }
+
+    private static String kDocToHtml(@NotNull KDoc comment) {
+        // TODO: Parse and show markdown comments as html
+        String content = getKDocContent(comment);
+        String htmlContent = StringUtil.replace(content, "\n", "<br/>")
+                .replaceAll("(@param)\\s+(\\w+)", "@param - <i>$2</i>")
+                .replaceAll("(@\\w+)", "<b>$1</b>");
+
+        return "<p>" + htmlContent + "</p>";
     }
 }
