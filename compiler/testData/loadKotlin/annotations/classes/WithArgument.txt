@@ -1,0 +1,53 @@
+package test
+
+internal final annotation class BooleanAnno : jet.Annotation {
+    /*primary*/ public constructor BooleanAnno(/*0*/ value: jet.Boolean)
+    internal final val value: jet.Boolean
+        internal final fun <get-value>(): jet.Boolean
+}
+
+internal final annotation class ByteAnno : jet.Annotation {
+    /*primary*/ public constructor ByteAnno(/*0*/ value: jet.Byte)
+    internal final val value: jet.Byte
+        internal final fun <get-value>(): jet.Byte
+}
+
+internal final annotation class CharAnno : jet.Annotation {
+    /*primary*/ public constructor CharAnno(/*0*/ value: jet.Char)
+    internal final val value: jet.Char
+        internal final fun <get-value>(): jet.Char
+}
+
+test.IntAnno(value = 42.toInt(): jet.Int) test.ShortAnno(value = 42.toShort(): jet.Short) test.ByteAnno(value = 42.toByte(): jet.Byte) test.LongAnno(value = 42.toLong(): jet.Long) test.CharAnno(value = #65(A): jet.Char) test.BooleanAnno(value = false: jet.Boolean) test.FloatAnno(value = 3.14.toFloat(): jet.Float) test.DoubleAnno(value = 3.14.toDouble(): jet.Double) internal final class Class {
+    /*primary*/ public constructor Class()
+}
+
+internal final annotation class DoubleAnno : jet.Annotation {
+    /*primary*/ public constructor DoubleAnno(/*0*/ value: jet.Double)
+    internal final val value: jet.Double
+        internal final fun <get-value>(): jet.Double
+}
+
+internal final annotation class FloatAnno : jet.Annotation {
+    /*primary*/ public constructor FloatAnno(/*0*/ value: jet.Float)
+    internal final val value: jet.Float
+        internal final fun <get-value>(): jet.Float
+}
+
+internal final annotation class IntAnno : jet.Annotation {
+    /*primary*/ public constructor IntAnno(/*0*/ value: jet.Int)
+    internal final val value: jet.Int
+        internal final fun <get-value>(): jet.Int
+}
+
+internal final annotation class LongAnno : jet.Annotation {
+    /*primary*/ public constructor LongAnno(/*0*/ value: jet.Long)
+    internal final val value: jet.Long
+        internal final fun <get-value>(): jet.Long
+}
+
+internal final annotation class ShortAnno : jet.Annotation {
+    /*primary*/ public constructor ShortAnno(/*0*/ value: jet.Short)
+    internal final val value: jet.Short
+        internal final fun <get-value>(): jet.Short
+}

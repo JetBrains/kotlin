@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiEnumConstant;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,8 +32,8 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -217,8 +220,8 @@ public final class JavaPropertyResolver {
         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor) && psiData.getCharacteristicPsi() instanceof PsiField) {
             PsiExpression initializer = ((PsiField) psiData.getCharacteristicPsi()).getInitializer();
             if (initializer instanceof PsiLiteralExpression) {
-                CompileTimeConstant<?> constant = JavaCompileTimeConstResolver.getCompileTimeConstFromLiteralExpressionWithExpectedType(
-                        (PsiLiteralExpression) initializer, propertyType);
+                CompileTimeConstant<?> constant = JavaCompileTimeConstResolver
+                        .resolveCompileTimeConstantValue(((PsiLiteralExpression) initializer).getValue(), propertyType);
                 if (constant != null) {
                     trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);
                 }

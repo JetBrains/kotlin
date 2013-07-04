@@ -26,14 +26,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
@@ -44,16 +45,47 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.*;
 import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.naiveKotlinFqName;
 
 public abstract class AbstractDescriptorSerializationTest extends KotlinTestWithEnvironment {
 
     public static final Name TEST_PACKAGE_NAME = Name.identifier("test");
+
+    public static final AnnotationDeserializer DUMMY_ANNOTATION_DESERIALIZER = new AnnotationDeserializer() {
+        @NotNull
+        @Override
+        public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
+            // This is a hack for tests: only data annotations are present in test data so far
+            AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
+            annotationDescriptor.setAnnotationType(KotlinBuiltIns.getInstance().getDataClassAnnotation().getDefaultType());
+            return Collections.singletonList(annotationDescriptor);
+        }
+
+        @NotNull
+        @Override
+        public List<AnnotationDescriptor> loadCallableAnnotations(@NotNull ProtoBuf.Callable callableProto) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public List<AnnotationDescriptor> loadSetterAnnotations(@NotNull ProtoBuf.Callable callableProto) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public List<AnnotationDescriptor> loadValueParameterAnnotations(@NotNull ProtoBuf.Callable.ValueParameter parameterProto) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+    };
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -124,7 +156,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
             ProtoBuf.Class proto = ProtoBuf.Class.parseFrom(in);
 
-            classMetadata.put(getNaiveFqName(classDescriptor), new ClassMetadata(simpleNames, qualifiedNames, proto));
+            classMetadata.put(naiveKotlinFqName(classDescriptor).asString(), new ClassMetadata(simpleNames, qualifiedNames, proto));
         }
 
         NamespaceDescriptorImpl namespace = JetTestUtils.createTestNamespace(TEST_PACKAGE_NAME);
@@ -182,25 +214,6 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         namespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
 
         return namespace;
-    }
-
-    private static String getNaiveFqName(ClassDescriptor classDescriptor) {
-        return getNaiveFqName(classDescriptor, new StringBuilder()).toString();
-    }
-
-    @NotNull
-    private static StringBuilder getNaiveFqName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof ClassDescriptor
-            || (containingDeclaration instanceof NamespaceDescriptor
-                && !DescriptorUtils.isRootNamespace((NamespaceDescriptor) containingDeclaration))) {
-            getNaiveFqName(containingDeclaration, builder);
-            builder.append(".");
-        }
-
-        builder.append(descriptor.getName().asString());
-
-        return builder;
     }
 
     public static void serialize(
@@ -309,7 +322,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
             NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames);
             return new DeserializedClassDescriptor(classId, new LockBasedStorageManager(), containingDeclaration, nameResolver,
-                                                   DeserializedDescriptorResolver.DUMMY_ANNOTATION_DESERIALIZER, this,
+                                                   DUMMY_ANNOTATION_DESERIALIZER, this,
                                                    classMetadata.classProto, null);
         }
 

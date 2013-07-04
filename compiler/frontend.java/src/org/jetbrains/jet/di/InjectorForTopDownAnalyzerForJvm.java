@@ -59,6 +59,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
@@ -112,6 +113,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final JavaValueParameterResolver javaValueParameterResolver;
     private final JavaSignatureResolver javaSignatureResolver;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
+    private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final JavaNamespaceResolver javaNamespaceResolver;
     private final JavaConstructorResolver javaConstructorResolver;
     private final JavaInnerClassResolver javaInnerClassResolver;
@@ -166,6 +168,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaValueParameterResolver = new JavaValueParameterResolver();
         this.javaSignatureResolver = new JavaSignatureResolver();
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaInnerClassResolver = new JavaInnerClassResolver();
@@ -329,8 +332,12 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaSignatureResolver.setJavaSemanticServices(javaSemanticServices);
 
+        deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
         deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
+
+        annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
+        annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
 
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaNamespaceResolver.setJavaSemanticServices(javaSemanticServices);

@@ -1,0 +1,17 @@
+package test
+
+jet.deprecated(value = "Class": jet.String) internal final class Class {
+    /*primary*/ public constructor Class()
+    
+    jet.deprecated(value = "class object": jet.String) internal class object <class-object-for-Class> {
+        /*primary*/ private constructor <class-object-for-Class>()
+    }
+    
+    jet.deprecated(value = "Inner": jet.String) internal final inner class Inner {
+        /*primary*/ public constructor Inner()
+    }
+    
+    jet.deprecated(value = "Nested": jet.String) internal final class Nested {
+        /*primary*/ public constructor Nested()
+    }
+}

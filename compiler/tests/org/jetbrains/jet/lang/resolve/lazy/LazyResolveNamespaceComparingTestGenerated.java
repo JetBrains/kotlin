@@ -33,10 +33,73 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparing
 @InnerTestClasses({LazyResolveNamespaceComparingTestGenerated.LoadKotlin.class, LazyResolveNamespaceComparingTestGenerated.CompiledJavaCompareWithKotlin.class, LazyResolveNamespaceComparingTestGenerated.NamespaceComparator.class})
 public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyResolveNamespaceComparingTest {
     @TestMetadata("compiler/testData/loadKotlin")
-    @InnerTestClasses({LoadKotlin.Class.class, LoadKotlin.ClassFun.class, LoadKotlin.ClassObject.class, LoadKotlin.Constructor.class, LoadKotlin.DataClass.class, LoadKotlin.Fun.class, LoadKotlin.Prop.class, LoadKotlin.Type.class, LoadKotlin.Visibility.class})
+    @InnerTestClasses({LoadKotlin.Annotations.class, LoadKotlin.Class.class, LoadKotlin.ClassFun.class, LoadKotlin.ClassObject.class, LoadKotlin.Constructor.class, LoadKotlin.DataClass.class, LoadKotlin.Fun.class, LoadKotlin.Prop.class, LoadKotlin.Type.class, LoadKotlin.Visibility.class})
     public static class LoadKotlin extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInLoadKotlin() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("compiler/testData/loadKotlin/annotations")
+        @InnerTestClasses({Annotations.Classes.class})
+        public static class Annotations extends AbstractLazyResolveNamespaceComparingTest {
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("compiler/testData/loadKotlin/annotations/classes")
+            public static class Classes extends AbstractLazyResolveNamespaceComparingTest {
+                public void testAllFilesPresentInClasses() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("ClassInClassObject.kt")
+                public void testClassInClassObject() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/ClassInClassObject.kt");
+                }
+                
+                @TestMetadata("ClassObject.kt")
+                public void testClassObject() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/ClassObject.kt");
+                }
+                
+                @TestMetadata("Deprecated.kt")
+                public void testDeprecated() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/Deprecated.kt");
+                }
+                
+                @TestMetadata("MultipleAnnotations.kt")
+                public void testMultipleAnnotations() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/MultipleAnnotations.kt");
+                }
+                
+                @TestMetadata("NestedClass.kt")
+                public void testNestedClass() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/NestedClass.kt");
+                }
+                
+                @TestMetadata("Simple.kt")
+                public void testSimple() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/Simple.kt");
+                }
+                
+                @TestMetadata("WithArgument.kt")
+                public void testWithArgument() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/WithArgument.kt");
+                }
+                
+                @TestMetadata("WithMultipleArguments.kt")
+                public void testWithMultipleArguments() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classes/WithMultipleArguments.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Annotations");
+                suite.addTestSuite(Annotations.class);
+                suite.addTestSuite(Classes.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/loadKotlin/class")
@@ -1131,6 +1194,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("LoadKotlin");
             suite.addTestSuite(LoadKotlin.class);
+            suite.addTest(Annotations.innerSuite());
             suite.addTestSuite(Class.class);
             suite.addTestSuite(ClassFun.class);
             suite.addTestSuite(ClassObject.class);

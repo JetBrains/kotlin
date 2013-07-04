@@ -24,69 +24,36 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.ClassData;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
+import org.jetbrains.jet.descriptors.serialization.DescriptorFinder;
+import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.getVirtualFile;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
 public final class DeserializedDescriptorResolver {
+    public static final String KOTLIN_INFO_TYPE = JvmStdlibNames.KOTLIN_INFO_CLASS.getAsmType().toString();
 
-    private static final String KOTLIN_INFO_TYPE = JvmStdlibNames.KOTLIN_INFO_CLASS.getAsmType().toString();
+    private AnnotationDescriptorDeserializer annotationDeserializer;
 
-    public static final AnnotationDeserializer DUMMY_ANNOTATION_DESERIALIZER = new AnnotationDeserializer() {
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ProtoBuf.Class classProto) {
-            // This is a hack for tests: only data annotations are present in test data so far
-            AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
-            annotationDescriptor.setAnnotationType(KotlinBuiltIns.getInstance().getDataClassAnnotation().getDefaultType());
-            return Collections.singletonList(annotationDescriptor);
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadCallableAnnotations(@NotNull ProtoBuf.Callable callableProto) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadSetterAnnotations(@NotNull ProtoBuf.Callable callableProto) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadValueParameterAnnotations(@NotNull ProtoBuf.Callable.ValueParameter parameterProto) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-    };
-
-    @NotNull
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
     private JavaNamespaceResolver javaNamespaceResolver;
@@ -101,6 +68,11 @@ public final class DeserializedDescriptorResolver {
             return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()));
         }
     };
+
+    @Inject
+    public void setAnnotationDeserializer(AnnotationDescriptorDeserializer annotationDeserializer) {
+        this.annotationDeserializer = annotationDeserializer;
+    }
 
     @Inject
     public void setJavaNamespaceResolver(JavaNamespaceResolver javaNamespaceResolver) {
@@ -144,32 +116,7 @@ public final class DeserializedDescriptorResolver {
             throw new IllegalStateException("No KotlinInfo annotation stored for " + fqName.asString());
         }
         return DeserializedPackageMemberScope.createScopeFromPackageData(packageDescriptor, packageData, javaDescriptorFinder,
-                                                                         DUMMY_ANNOTATION_DESERIALIZER, storageManager);
-    }
-
-    @Nullable
-    private static VirtualFile getVirtualFile(
-            @NotNull PsiClass psiClass,
-            @NotNull FqName classFqName,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration
-    ) {
-        VirtualFile mostOuterClassVirtualFile = psiClass.getContainingFile().getVirtualFile();
-        if (mostOuterClassVirtualFile == null) {
-            throw new IllegalStateException("Could not find virtual file for " + classFqName.asString());
-        }
-        String fileExtension = mostOuterClassVirtualFile.getExtension();
-        if (fileExtension == null || !fileExtension.equals("class")) {
-            return null;
-        }
-        ClassId id = ClassId.fromFqNameAndContainingDeclaration(classFqName, containingDeclaration);
-        FqNameUnsafe relativeClassName = id.getRelativeClassName();
-        assert relativeClassName.isSafe() : "Relative class name " + relativeClassName.asString() + " should be safe at this point";
-        String classNameWithBucks = relativeClassName.asString().replace(".", "$") + ".class";
-        VirtualFile virtualFile = mostOuterClassVirtualFile.getParent().findChild(classNameWithBucks);
-        if (virtualFile == null) {
-            throw new IllegalStateException("No virtual file for " + classFqName.asString());
-        }
-        return virtualFile;
+                                                                         annotationDeserializer, storageManager);
     }
 
     @Nullable
@@ -187,7 +134,7 @@ public final class DeserializedDescriptorResolver {
         assert owner != null : "No owner found for " + classId;
 
         return new DeserializedClassDescriptor(classId, storageManager, owner, classData.getNameResolver(),
-                                               DUMMY_ANNOTATION_DESERIALIZER, javaDescriptorFinder, classData.getClassProto(), null);
+                                               annotationDeserializer, javaDescriptorFinder, classData.getClassProto(), null);
     }
 
     @Nullable
@@ -266,20 +213,5 @@ public final class DeserializedDescriptorResolver {
         public byte[] getData() {
             return data;
         }
-    }
-
-    @NotNull
-    private static FqName kotlinFqNameToJavaFqName(@NotNull FqNameUnsafe kotlinFqName) {
-        List<String> correctedSegments = new ArrayList<String>();
-        for (Name segment : kotlinFqName.pathSegments()) {
-            if (segment.asString().startsWith("<class-object-for")) {
-                correctedSegments.add(JvmAbi.CLASS_OBJECT_CLASS_NAME);
-            }
-            else {
-                assert !segment.isSpecial();
-                correctedSegments.add(segment.asString());
-            }
-        }
-        return FqName.fromSegments(correctedSegments);
     }
 }

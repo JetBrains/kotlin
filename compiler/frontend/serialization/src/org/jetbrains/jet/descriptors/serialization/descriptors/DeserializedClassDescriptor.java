@@ -203,7 +203,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
             return Collections.emptyList();
         }
-        return annotationDeserializer.loadClassAnnotations(classProto);
+        return annotationDeserializer.loadClassAnnotations(this, classProto);
     }
 
     @Override
