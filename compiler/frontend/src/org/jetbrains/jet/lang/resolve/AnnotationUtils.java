@@ -102,6 +102,19 @@ public class AnnotationUtils {
         return false;
     }
 
+    public static boolean isJavaClassMethodCall(@NotNull ResolvedCall resolvedCall) {
+        List<AnnotationDescriptor> annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
+        if (annotations != null) {
+            for (AnnotationDescriptor annotation : annotations) {
+                //noinspection ConstantConditions
+                if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
+                    return "kotlin.javaClass.function".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean isJavaLangClass(ClassDescriptor descriptor) {
         return "java.lang.Class".equals(DescriptorUtils.getFQName(descriptor).asString());
     }

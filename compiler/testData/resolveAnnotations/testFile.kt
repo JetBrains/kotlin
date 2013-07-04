@@ -46,6 +46,7 @@ annotation class AnnStringVararg(vararg a: String)
 annotation class AnnStringArray(a: Array<String>)
 annotation class AnnArrayOfEnum(a: Array<MyEnum>)
 annotation class AnnAnn(a: AnnInt)
+annotation class AnnClass(a: Class<*>)
 
 enum class MyEnum {
   A

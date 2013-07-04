@@ -30,10 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.constants.AnnotationValue;
-import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.EnumValue;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -311,6 +308,10 @@ public class AnnotationResolver {
                             resolveAnnotationArgument(descriptor, call, trace);
                             return new AnnotationValue(descriptor);
                         }
+                    }
+
+                    if (AnnotationUtils.isJavaClassMethodCall(call)) {
+                        return new JavaClassValue(resultingDescriptor.getReturnType());
                     }
                 }
                 return null;
