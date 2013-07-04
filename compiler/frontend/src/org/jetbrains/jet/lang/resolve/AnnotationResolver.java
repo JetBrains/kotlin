@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.constants.AnnotationValue;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
@@ -173,27 +174,34 @@ public class AnnotationResolver {
     ) {
         OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(annotationEntry, scope, trace);
         if (results.isSuccess()) {
-            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
-                    results.getResultingCall().getValueArguments().entrySet()) {
-                AnnotationDescriptor annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
-                assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
+            AnnotationDescriptor annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
+            assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
+            resolveAnnotationArgument(annotationDescriptor, results.getResultingCall(), trace);
+        }
+    }
 
-                ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
+    private void resolveAnnotationArgument(
+            @NotNull AnnotationDescriptor annotationDescriptor,
+            @NotNull ResolvedCall<? extends CallableDescriptor> call,
+            @NotNull BindingTrace trace
+    ) {
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
+                call.getValueArguments().entrySet()) {
+            ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
 
-                JetType varargElementType = parameterDescriptor.getVarargElementType();
-                List<CompileTimeConstant<?>> constants = resolveValueArguments(descriptorToArgument.getValue(), parameterDescriptor.getType(), trace);
-                if (varargElementType == null) {
-                    for (CompileTimeConstant<?> constant : constants) {
-                        annotationDescriptor.setValueArgument(parameterDescriptor, constant);
-                    }
+            JetType varargElementType = parameterDescriptor.getVarargElementType();
+            List<CompileTimeConstant<?>> constants = resolveValueArguments(descriptorToArgument.getValue(), parameterDescriptor.getType(), trace);
+            if (varargElementType == null) {
+                for (CompileTimeConstant<?> constant : constants) {
+                    annotationDescriptor.setValueArgument(parameterDescriptor, constant);
                 }
-                else {
-                    JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
-                    if (arrayType == null) {
-                        arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
-                    }
-                    annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType));
+            }
+            else {
+                JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
+                if (arrayType == null) {
+                    arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
                 }
+                annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType));
             }
         }
     }
@@ -210,7 +218,7 @@ public class AnnotationResolver {
             if (argumentExpression != null) {
                 CompileTimeConstant<?> constant = resolveAnnotationArgument(argumentExpression, expectedType, trace);
                 if (constant != null) {
-                   constants.add(constant);
+                    constants.add(constant);
                 }
             }
         }
@@ -284,14 +292,25 @@ public class AnnotationResolver {
                 ResolvedCall<? extends CallableDescriptor> call =
                         trace.getBindingContext().get(BindingContext.RESOLVED_CALL, (expression).getCalleeExpression());
                 if (call != null) {
+                    CallableDescriptor resultingDescriptor = call.getResultingDescriptor();
                     if (AnnotationUtils.isArrayMethodCall(call)) {
-                        CallableDescriptor resultingDescriptor = call.getResultingDescriptor();
                         JetType type = resultingDescriptor.getValueParameters().iterator().next().getVarargElementType();
                         List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
                         for (ResolvedValueArgument descriptorToArgument : call.getValueArguments().values()) {
                             arguments.addAll(resolveValueArguments(descriptorToArgument, type, trace));
                         }
                         return new ArrayValue(arguments, resultingDescriptor.getReturnType());
+                    }
+
+                    if (resultingDescriptor instanceof ConstructorDescriptor) {
+                        JetType constructorReturnType = resultingDescriptor.getReturnType();
+                        assert constructorReturnType != null : "Constructor should have return type";
+                        if (DescriptorUtils.isAnnotationClass(constructorReturnType.getConstructor().getDeclarationDescriptor())) {
+                            AnnotationDescriptor descriptor = new AnnotationDescriptor();
+                            descriptor.setAnnotationType(constructorReturnType);
+                            resolveAnnotationArgument(descriptor, call, trace);
+                            return new AnnotationValue(descriptor);
+                        }
                     }
                 }
                 return null;

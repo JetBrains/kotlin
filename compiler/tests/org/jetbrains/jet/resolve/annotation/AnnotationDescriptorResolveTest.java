@@ -113,6 +113,12 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         doTest(content, expectedAnnotation);
     }
 
+    public void testAnnotationAnnotation() throws Exception {
+        String content = getContent("AnnAnn(AnnInt(1))");
+        String expectedAnnotation = "AnnAnn[a = AnnInt[a = 1.toInt()]: test.AnnInt]";
+        doTest(content, expectedAnnotation);
+    }
+
     private void doTest(@NotNull String content, @NotNull String expectedAnnotation) {
         NamespaceDescriptor test = getNamespaceDescriptor(content);
         ClassDescriptor myClass = getClassDescriptor(test, "MyClass");
