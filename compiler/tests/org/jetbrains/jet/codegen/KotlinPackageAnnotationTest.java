@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.KotlinInfo;
+import jet.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class KotlinInfoForPackageTest extends CodegenTestCase {
+public class KotlinPackageAnnotationTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
 
     @Override
@@ -50,10 +50,10 @@ public class KotlinInfoForPackageTest extends CodegenTestCase {
                  "object C\n");
         Class aClass = generateClass(PackageClassUtils.getPackageClassFqName(NAMESPACE_NAME).asString());
 
-        assertTrue(aClass.isAnnotationPresent(KotlinInfo.class));
-        KotlinInfo kotlinInfo = (KotlinInfo) aClass.getAnnotation(KotlinInfo.class);
+        assertTrue(aClass.isAnnotationPresent(KotlinPackage.class));
+        KotlinPackage kotlinPackage = (KotlinPackage) aClass.getAnnotation(KotlinPackage.class);
 
-        PackageData data = JavaProtoBufUtil.readPackageDataFrom(kotlinInfo.data());
+        PackageData data = JavaProtoBufUtil.readPackageDataFrom(kotlinPackage.data());
 
         Set<String> classNames = collectClassNames(data);
         assertSameElements(Arrays.asList("A", "B", "C"), classNames);

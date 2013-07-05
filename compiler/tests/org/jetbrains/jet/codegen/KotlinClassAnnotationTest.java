@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.descriptors.serialization;
+package org.jetbrains.jet.codegen;
 
-import jet.KotlinInfo;
+import jet.KotlinClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.codegen.CodegenTestCase;
+import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorFinder;
+import org.jetbrains.jet.descriptors.serialization.ClassData;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -32,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
 import java.io.IOException;
 
-public class KotlinInfoForClassTest extends CodegenTestCase {
+public class KotlinClassAnnotationTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
     public static final FqNameUnsafe CLASS_NAME = new FqNameUnsafe("A");
 
@@ -51,10 +54,10 @@ public class KotlinInfoForClassTest extends CodegenTestCase {
                  "}\n");
         Class aClass = generateClass(NAMESPACE_NAME + "." + CLASS_NAME);
 
-        assertTrue(aClass.isAnnotationPresent(KotlinInfo.class));
-        KotlinInfo kotlinInfo = (KotlinInfo) aClass.getAnnotation(KotlinInfo.class);
+        assertTrue(aClass.isAnnotationPresent(KotlinClass.class));
+        KotlinClass kotlinClass = (KotlinClass) aClass.getAnnotation(KotlinClass.class);
 
-        AbstractDescriptorFinder descriptorFinder = new KotlinInfoBasedDescriptorFinder(kotlinInfo);
+        AbstractDescriptorFinder descriptorFinder = new KotlinInfoBasedDescriptorFinder(kotlinClass);
 
         ClassDescriptor descriptor = descriptorFinder.findClass(new ClassId(NAMESPACE_NAME, CLASS_NAME));
         assertNotNull(descriptor);
@@ -65,10 +68,10 @@ public class KotlinInfoForClassTest extends CodegenTestCase {
         private final ClassData classData;
         private final NamespaceDescriptorImpl namespace;
 
-        public KotlinInfoBasedDescriptorFinder(@NotNull KotlinInfo kotlinInfo) throws IOException {
+        public KotlinInfoBasedDescriptorFinder(@NotNull KotlinClass kotlinClass) throws IOException {
             super(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED);
 
-            this.classData = JavaProtoBufUtil.readClassDataFrom(kotlinInfo.data());
+            this.classData = JavaProtoBufUtil.readClassDataFrom(kotlinClass.data());
             this.namespace = JetTestUtils.createTestNamespace(NAMESPACE_NAME.shortName());
         }
 

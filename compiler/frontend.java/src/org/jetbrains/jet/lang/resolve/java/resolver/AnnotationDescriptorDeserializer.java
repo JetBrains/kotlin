@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -133,7 +130,9 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     private static boolean ignoreAnnotation(@NotNull String desc) {
         // TODO: JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION ?
-        return desc.equals(DeserializedDescriptorResolver.KOTLIN_INFO_TYPE) || desc.startsWith("Ljet/runtime/typeinfo/");
+        return desc.equals(JvmStdlibNames.KOTLIN_CLASS.getDescriptor())
+               || desc.equals(JvmStdlibNames.KOTLIN_PACKAGE.getDescriptor())
+               || desc.startsWith("Ljet/runtime/typeinfo/");
     }
 
     @NotNull
@@ -223,7 +222,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     private Map<MemberSignature, List<AnnotationDescriptor>> loadMemberAnnotationsFromFile(@NotNull VirtualFile file) throws IOException {
-        final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations = new HashMap<MemberSignature, List<AnnotationDescriptor>>();
+        final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations =
+                new HashMap<MemberSignature, List<AnnotationDescriptor>>();
 
         new ClassReader(file.getInputStream()).accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
@@ -291,7 +291,9 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             else if (syntheticMethodName != null) {
                 return fromMethodNameAndDesc(syntheticMethodName, JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);
             }
-            else return null;
+            else {
+                return null;
+            }
         }
 
         @Nullable

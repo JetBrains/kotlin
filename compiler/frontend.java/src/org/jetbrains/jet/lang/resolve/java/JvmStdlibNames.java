@@ -16,7 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import jet.KotlinInfo;
+import jet.KotlinClass;
+import jet.KotlinPackage;
 import jet.runtime.typeinfo.JetConstructor;
 
 public class JvmStdlibNames {
@@ -69,7 +70,9 @@ public class JvmStdlibNames {
      */
     public static final String JET_CONSTRUCTOR_HIDDEN_FIELD = "hidden";
 
-    public static final JvmClassName KOTLIN_INFO_CLASS = JvmClassName.byFqNameWithoutInnerClasses(KotlinInfo.class.getCanonicalName());
+    public static final JvmClassName KOTLIN_CLASS = JvmClassName.byFqNameWithoutInnerClasses(KotlinClass.class.getCanonicalName());
+
+    public static final JvmClassName KOTLIN_PACKAGE = JvmClassName.byFqNameWithoutInnerClasses(KotlinPackage.class.getCanonicalName());
 
     public static final JvmClassName JET_CLASS = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetClass");
 

@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -46,9 +45,14 @@ public final class DescriptorResolverUtils {
     private DescriptorResolverUtils() {
     }
 
+    //TODO: check that method is used properly
     public static boolean isKotlinClass(@NotNull PsiClass psiClass) {
-        PsiClassWrapper wrapper = new PsiClassWrapper(psiClass);
-        return wrapper.getJetClass().isDefined() ||  wrapper.getJetPackageClass().isDefined();
+        PsiModifierList modifierList = psiClass.getModifierList();
+        if (modifierList == null) {
+            return false;
+        }
+        PsiAnnotation kotlinClassAnnotation = modifierList.findAnnotation(JvmStdlibNames.KOTLIN_CLASS.getFqName().asString());
+        return kotlinClassAnnotation != null;
     }
 
     @NotNull

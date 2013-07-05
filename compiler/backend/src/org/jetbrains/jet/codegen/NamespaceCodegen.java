@@ -129,12 +129,12 @@ public class NamespaceCodegen extends MemberCodegen {
             }
         }
 
-        writeKotlinInfoIfNeeded(MemberMap.union(namespaceMembers));
+        writeKotlinPackageAnnotationIfNeeded(MemberMap.union(namespaceMembers));
 
         assert v.isActivated() == shouldGenerateNSClass(files) : "Different algorithms for generating namespace class and for heuristics";
     }
 
-    private void writeKotlinInfoIfNeeded(@NotNull MemberMap members) {
+    private void writeKotlinPackageAnnotationIfNeeded(@NotNull MemberMap members) {
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(members));
         ProtoBuf.Package.Builder packageProto = ProtoBuf.Package.newBuilder();
         boolean writeAnnotation = false;
@@ -168,7 +168,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto.build());
 
-        AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
+        AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_PACKAGE.getDescriptor(), true);
         av.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmStdlibNames.KOTLIN_INFO_DATA_FIELD);
         for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {

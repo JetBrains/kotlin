@@ -51,7 +51,6 @@ import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverU
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
 public final class DeserializedDescriptorResolver {
-    public static final String KOTLIN_INFO_TYPE = JvmStdlibNames.KOTLIN_INFO_CLASS.getAsmType().toString();
 
     private AnnotationDescriptorDeserializer annotationDeserializer;
 
@@ -140,8 +139,7 @@ public final class DeserializedDescriptorResolver {
 
         DeclarationDescriptor owner = classId.isTopLevelClass()
                                       ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN)
-                                      : javaClassResolver
-                                              .resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
+                                      : javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
         assert owner != null : "No owner found for " + classId;
 
         return new DeserializedClassDescriptor(classId, storageManager, owner, classData.getNameResolver(),
@@ -204,8 +202,9 @@ public final class DeserializedDescriptorResolver {
         private String[] data = null;
 
         @Override
-        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-            if (!desc.equals(KOTLIN_INFO_TYPE)) {
+        public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
+            if (!desc.equals(JvmStdlibNames.KOTLIN_CLASS.getDescriptor()) &&
+                !desc.equals(JvmStdlibNames.KOTLIN_PACKAGE.getDescriptor())) {
                 return null;
             }
 
@@ -216,7 +215,7 @@ public final class DeserializedDescriptorResolver {
                         version = (Integer) value;
                     }
                     else if (isAbiVersionCompatible(version)) {
-                        throw new IllegalStateException("Unexpected argument " + name + " for annotation " + KOTLIN_INFO_TYPE);
+                        throw new IllegalStateException("Unexpected argument " + name + " for annotation " + desc);
                     }
                 }
 
@@ -226,7 +225,7 @@ public final class DeserializedDescriptorResolver {
                         return stringArrayVisitor();
                     }
                     else if (isAbiVersionCompatible(version)) {
-                        throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + KOTLIN_INFO_TYPE);
+                        throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + desc);
                     }
 
                     return super.visitArray(name);
