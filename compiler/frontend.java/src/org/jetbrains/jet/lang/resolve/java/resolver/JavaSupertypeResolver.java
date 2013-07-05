@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -60,7 +59,7 @@ public final class JavaSupertypeResolver {
 
     public Collection<JetType> getSupertypes(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull PsiClassWrapper psiClass,
+            @NotNull PsiClass psiClass,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
 
@@ -70,8 +69,8 @@ public final class JavaSupertypeResolver {
 
         TypeVariableResolver typeVariableResolverForSupertypes =
                 TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-        transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes);
-        transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes);
+        transformSupertypeList(result, psiClass.getExtendsListTypes(), typeVariableResolverForSupertypes);
+        transformSupertypeList(result, psiClass.getImplementsListTypes(), typeVariableResolverForSupertypes);
 
         reportIncompleteHierarchyForErrorTypes(classDescriptor, result);
 
@@ -82,7 +81,7 @@ public final class JavaSupertypeResolver {
     }
 
     private void addBaseClass(
-            @NotNull PsiClassWrapper psiClass,
+            @NotNull PsiClass psiClass,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull List<JetType> result
     ) {

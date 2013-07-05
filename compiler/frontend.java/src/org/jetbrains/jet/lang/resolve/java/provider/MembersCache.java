@@ -107,7 +107,7 @@ public final class MembersCache {
             boolean staticMembers
     ) {
         if (psiClass != null) {
-            membersCache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers).process();
+            membersCache.new ClassMemberProcessor(psiClass, staticMembers).process();
         }
 
         //TODO:
@@ -142,10 +142,10 @@ public final class MembersCache {
 
     private class ClassMemberProcessor {
         @NotNull
-        private final PsiClassWrapper psiClass;
+        private final PsiClass psiClass;
         private final boolean staticMembers;
 
-        private ClassMemberProcessor(@NotNull PsiClassWrapper psiClass, boolean staticMembers) {
+        private ClassMemberProcessor(@NotNull PsiClass psiClass, boolean staticMembers) {
             this.psiClass = psiClass;
             this.staticMembers = staticMembers;
         }
@@ -157,7 +157,7 @@ public final class MembersCache {
         }
 
         private void processFields() {
-            for (final PsiField field : psiClass.getPsiClass().getAllFields()) {
+            for (final PsiField field : psiClass.getAllFields()) {
                 addTask(field, new RunOnce() {
                     @Override
                     public void doRun() {
@@ -173,7 +173,7 @@ public final class MembersCache {
         }
 
         private void processOwnMethods() {
-            for (final PsiMethod method : psiClass.getPsiClass().getMethods()) {
+            for (final PsiMethod method : psiClass.getMethods()) {
                 RunOnce task = new RunOnce() {
                     @Override
                     public void doRun() {
@@ -190,7 +190,7 @@ public final class MembersCache {
         }
 
         private void parseAllMethodsAsProperties() {
-            for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
+            for (PsiMethod method : psiClass.getAllMethods()) {
                 createEmptyEntry(Name.identifier(method.getName()));
 
                 PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
@@ -204,7 +204,7 @@ public final class MembersCache {
             if (!staticMembers) {
                 return;
             }
-            for (final PsiClass nested : psiClass.getPsiClass().getInnerClasses()) {
+            for (final PsiClass nested : psiClass.getInnerClasses()) {
                 addTask(nested, new RunOnce() {
                     @Override
                     public void doRun() {
@@ -215,7 +215,7 @@ public final class MembersCache {
         }
 
         private boolean includeMember(PsiMemberWrapper member) {
-            if (psiClass.getPsiClass().isEnum() && staticMembers) {
+            if (psiClass.isEnum() && staticMembers) {
                 return member.isStatic();
             }
 
@@ -223,7 +223,7 @@ public final class MembersCache {
                 return false;
             }
 
-            if (member.getPsiMember().getContainingClass() != psiClass.getPsiClass()) {
+            if (member.getPsiMember().getContainingClass() != psiClass) {
                 return false;
             }
 
