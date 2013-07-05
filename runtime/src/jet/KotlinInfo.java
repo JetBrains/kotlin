@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KotlinInfo {
-    int version();
+    int abiVersion();
 
     String[] data();
 }

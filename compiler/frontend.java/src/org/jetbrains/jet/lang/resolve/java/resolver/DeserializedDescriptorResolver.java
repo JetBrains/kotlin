@@ -212,7 +212,7 @@ public final class DeserializedDescriptorResolver {
             return new AnnotationVisitor(Opcodes.ASM4) {
                 @Override
                 public void visit(String name, Object value) {
-                    if (name.equals("version")) {
+                    if (name.equals(JvmStdlibNames.ABI_VERSION_NAME)) {
                         version = (Integer) value;
                     }
                     else if (isAbiVersionCompatible(version)) {
@@ -222,7 +222,7 @@ public final class DeserializedDescriptorResolver {
 
                 @Override
                 public AnnotationVisitor visitArray(String name) {
-                    if (name.equals("data")) {
+                    if (name.equals(JvmStdlibNames.KOTLIN_INFO_DATA_FIELD)) {
                         return stringArrayVisitor();
                     }
                     else if (isAbiVersionCompatible(version)) {

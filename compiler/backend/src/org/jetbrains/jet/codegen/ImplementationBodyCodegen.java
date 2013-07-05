@@ -227,8 +227,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
-        av.visit("version", JvmAbi.VERSION);
-        AnnotationVisitor array = av.visitArray("data");
+        av.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
+        AnnotationVisitor array = av.visitArray(JvmStdlibNames.KOTLIN_INFO_DATA_FIELD);
         for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
             array.visit(null, string);
         }
