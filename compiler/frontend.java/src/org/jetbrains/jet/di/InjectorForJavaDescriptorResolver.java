@@ -170,7 +170,6 @@ public class InjectorForJavaDescriptorResolver {
         javaInnerClassResolver.setClassResolver(javaClassResolver);
 
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaPropertyResolver.setJavaSignatureResolver(javaSignatureResolver);
         javaPropertyResolver.setSemanticServices(javaSemanticServices);
         javaPropertyResolver.setTrace(bindingTrace);
 

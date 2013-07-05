@@ -27,10 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
-import org.jetbrains.jet.lang.resolve.java.TypeSource;
-import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
-import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
-import org.jetbrains.jet.lang.resolve.java.wrapper.*;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -168,35 +167,24 @@ public final class MembersCache {
         }
 
         private void processMethods() {
-            parseAllMethodsAsProperties();
+            createEntriesForAllMethods();
             processOwnMethods();
+        }
+
+        private void createEntriesForAllMethods() {
+            for (PsiMethod method : psiClass.getAllMethods()) {
+                getOrCreateEmpty(Name.identifier(method.getName()));
+            }
         }
 
         private void processOwnMethods() {
             for (final PsiMethod method : psiClass.getMethods()) {
-                RunOnce task = new RunOnce() {
+                addTask(method, new RunOnce() {
                     @Override
                     public void doRun() {
                         processOwnMethod(method);
                     }
-                };
-                addTask(method, task);
-
-                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-                if (propertyParseResult != null) {
-                    addTask(propertyParseResult.getPropertyName(), task);
-                }
-            }
-        }
-
-        private void parseAllMethodsAsProperties() {
-            for (PsiMethod method : psiClass.getAllMethods()) {
-                createEmptyEntry(Name.identifier(method.getName()));
-
-                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-                if (propertyParseResult != null) {
-                    createEmptyEntry(Name.identifier(propertyParseResult.getPropertyName()));
-                }
+                });
             }
         }
 
@@ -248,8 +236,7 @@ public final class MembersCache {
                 return;
             }
 
-            TypeSource type = new TypeSource("", fieldWrapper.getType(), field);
-            namedMembers.addPropertyAccessor(new PropertyPsiDataElement(fieldWrapper, type, null));
+            namedMembers.addField(fieldWrapper);
         }
 
         private void processOwnMethod(PsiMethod ownMethod) {
@@ -259,35 +246,8 @@ public final class MembersCache {
                 return;
             }
 
-            PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-
-            // TODO: remove getJavaClass
-            if (propertyParseResult != null && propertyParseResult.isGetter()) {
-                processGetter(ownMethod, method, propertyParseResult);
-            }
-            else if (propertyParseResult != null) {
-                processSetter(method, propertyParseResult);
-            }
-
             NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
             namedMembers.addMethod(method);
-        }
-
-        //TODO: manually!!!!
-        private void processSetter(PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
-            //TODO
-            String propertyName = propertyParseResult.getPropertyName();
-            getOrCreateEmpty(Name.identifier(propertyName));
-        }
-
-        private void processGetter(PsiMethod ownMethod, PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
-            //TODO:
-            String propertyName = propertyParseResult.getPropertyName();
-            getOrCreateEmpty(Name.identifier(propertyName));
-        }
-
-        private void createEmptyEntry(@NotNull Name identifier) {
-            getOrCreateEmpty(identifier);
         }
 
         private void processNestedClass(PsiClass nested) {
