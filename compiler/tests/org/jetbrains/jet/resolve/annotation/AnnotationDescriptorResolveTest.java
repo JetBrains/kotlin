@@ -81,6 +81,24 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         doTest(content, expectedAnnotation);
     }
 
+    public void testIntArrayAnnotation() throws IOException {
+        String content = getContent("AnnIntArray(intArray(1, 2))");
+        String expectedAnnotation = "AnnIntArray[a = [1.toInt(), 2.toInt()]]";
+        doTest(content, expectedAnnotation);
+    }
+
+    public void testStringArrayAnnotation() throws IOException {
+        String content = getContent("AnnStringArray(array(\"a\"))");
+        String expectedAnnotation = "AnnStringArray[a = [\"a\"]]";
+        doTest(content, expectedAnnotation);
+    }
+
+    public void testEnumArrayAnnotation() throws IOException {
+        String content = getContent("AnnArrayOfEnum(array(MyEnum.A))");
+        String expectedAnnotation = "AnnArrayOfEnum[a = [MyEnum.A]]";
+        doTest(content, expectedAnnotation);
+    }
+
     private void doTest(@NotNull String content, @NotNull String expectedAnnotation) {
         NamespaceDescriptor test = getNamespaceDescriptor(content);
         ClassDescriptor myClass = getClassDescriptor(test, "MyClass");

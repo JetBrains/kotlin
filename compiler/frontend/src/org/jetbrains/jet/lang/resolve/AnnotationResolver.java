@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -252,6 +253,30 @@ public class AnnotationResolver {
                     return selectorExpression.accept(this, null);
                 }
                 return super.visitQualifiedExpression(expression, data);
+            }
+
+            @Override
+            public CompileTimeConstant<?> visitCallExpression(JetCallExpression expression, Void data) {
+                ResolvedCall<? extends CallableDescriptor> call =
+                        trace.getBindingContext().get(BindingContext.RESOLVED_CALL, (expression).getCalleeExpression());
+                if (call != null) {
+                    if (AnnotationUtils.isArrayMethodCall(call)) {
+                        CallableDescriptor resultingDescriptor = call.getResultingDescriptor();
+                        JetType type = resultingDescriptor.getValueParameters().iterator().next().getVarargElementType();
+                        List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
+                        for (ResolvedValueArgument descriptorToArgument : call.getValueArguments().values()) {
+                            List<ValueArgument> valueArguments = descriptorToArgument.getArguments();
+                            for (ValueArgument argument : valueArguments) {
+                                JetExpression argumentExpression = argument.getArgumentExpression();
+                                if (argumentExpression != null) {
+                                    arguments.add(resolveAnnotationArgument(argumentExpression, type, trace));
+                                }
+                            }
+                        }
+                        return new ArrayValue(arguments, resultingDescriptor.getReturnType());
+                    }
+                }
+                return null;
             }
 
             @Override

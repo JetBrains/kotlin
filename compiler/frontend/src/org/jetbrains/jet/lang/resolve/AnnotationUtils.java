@@ -19,8 +19,10 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -81,6 +83,19 @@ public class AnnotationUtils {
                            isAnnotationClass(arrayTypeDescriptor) ||
                            isJavaLangClass(arrayTypeDescriptor) ||
                            builtIns.getStringType().equals(arrayType);
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isArrayMethodCall(@NotNull ResolvedCall resolvedCall) {
+        List<AnnotationDescriptor> annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
+        if (annotations != null) {
+            for (AnnotationDescriptor annotation : annotations) {
+                //noinspection ConstantConditions
+                if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
+                    return "kotlin.arrays.array".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
                 }
             }
         }

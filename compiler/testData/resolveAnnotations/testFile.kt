@@ -40,6 +40,9 @@ val funLiteral = {([ANNOTATION] a: Int) -> a }
 annotation class AnnString(a: String)
 annotation class AnnInt(a: Int)
 annotation class AnnEnum(a: MyEnum)
+annotation class AnnIntArray(a: IntArray)
+annotation class AnnStringArray(a: Array<String>)
+annotation class AnnArrayOfEnum(a: Array<MyEnum>)
 
 enum class MyEnum {
   A
