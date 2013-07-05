@@ -80,10 +80,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
         for (PsiReference reference : ReferencesSearch.search(functionPsi, functionPsi.getUseScope())) {
             PsiElement element = reference.getElement();
-            PsiElement parent = element.getParent();
 
-            if (parent instanceof JetReferenceExpression) {
-                parent = parent.getParent();
+            if (element instanceof JetReferenceExpression) {
+                PsiElement parent = element.getParent();
 
                 if (parent instanceof JetCallExpression)
                     result.add(new JetFunctionCallUsage((JetCallExpression) parent, functionPsi, isInherited));
@@ -114,9 +113,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     for (PsiReference reference : ReferencesSearch.search(oldParam, oldParam.getUseScope())) {
                         PsiElement element = reference.getElement();
 
-                        if (element.getParent() instanceof JetSimpleNameExpression &&
-                            !(element.getParent().getParent() instanceof JetValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
-                            result.add(new JetParameterUsage((JetSimpleNameExpression) element.getParent(), parameterInfo, functionPsi, isInherited));
+                        if (element instanceof JetSimpleNameExpression &&
+                            !(element.getParent() instanceof JetValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
+                            result.add(new JetParameterUsage((JetSimpleNameExpression) element, parameterInfo, functionPsi, isInherited));
                     }
                 }
             }

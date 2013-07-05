@@ -44,12 +44,6 @@ public class JetSimpleNameReference extends JetPsiReference {
     }
 
     @NotNull
-    @Override
-    public PsiElement getElement() {
-        return myExpression.getReferencedNameElement();
-    }
-
-    @NotNull
     public JetSimpleNameExpression getExpression() {
         return myExpression;
     }
