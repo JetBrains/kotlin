@@ -276,11 +276,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     @Override
-    public boolean isClassObjectAValue() {
-        return true;
-    }
-
-    @Override
     public ClassDescriptor getClassObjectDescriptor() {
         return classObjectDescriptor.compute();
     }
@@ -395,7 +390,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
         getUnsubstitutedPrimaryConstructor();
         getVisibility();
-        isClassObjectAValue();
     }
 
     private class LazyClassTypeConstructor implements LazyDescriptor, TypeConstructor {

@@ -245,11 +245,6 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
         return classObjectBoundsAsType;
     }
 
-    @Override
-    public boolean isClassObjectAValue() {
-        return true;
-    }
-
     public void addClassObjectBound(@NotNull JetType bound) {
         checkUninitialized();
         classObjectUpperBounds.add(bound); // TODO : Duplicates?

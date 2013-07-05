@@ -133,12 +133,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         return classObjectType;
     }
 
-    @Override
-    public boolean isClassObjectAValue() {
-        return true;
-    }
-
-
     @NotNull
     @Override
     public ClassKind getKind() {

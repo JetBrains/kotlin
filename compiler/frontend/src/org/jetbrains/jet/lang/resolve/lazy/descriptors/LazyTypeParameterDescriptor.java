@@ -256,11 +256,6 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
         return null;
     }
 
-    @Override
-    public boolean isClassObjectAValue() {
-        return false;
-    }
-
     @NotNull
     @Override
     public DeclarationDescriptor getOriginal() {

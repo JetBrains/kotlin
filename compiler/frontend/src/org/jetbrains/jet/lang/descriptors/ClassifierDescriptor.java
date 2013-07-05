@@ -30,6 +30,4 @@ public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
 
     @Nullable
     JetType getClassObjectType();
-
-    boolean isClassObjectAValue();
 }
