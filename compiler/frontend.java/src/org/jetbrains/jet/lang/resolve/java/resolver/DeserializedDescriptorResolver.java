@@ -53,6 +53,17 @@ import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverU
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
 public final class DeserializedDescriptorResolver {
+    @Nullable
+    public static ClassData readClassDataNoErrorReporting(@NotNull VirtualFile virtualFile) {
+        String[] data = visitClassFile(virtualFile).getData();
+        return data != null ? JavaProtoBufUtil.readClassDataFrom(data) : null;
+    }
+
+    @Nullable
+    public static PackageData readPackageDataNoErrorReporting(@NotNull VirtualFile virtualFile) {
+        String[] data = visitClassFile(virtualFile).getData();
+        return data != null ? JavaProtoBufUtil.readPackageDataFrom(data) : null;
+    }
 
     private AnnotationDescriptorDeserializer annotationDeserializer;
 
