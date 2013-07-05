@@ -47,6 +47,7 @@ import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
 import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
+import org.jetbrains.jet.plugin.refactoring.inline.AbstractInlineTest;
 import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest;
@@ -371,6 +372,13 @@ public class GenerateTests {
                 testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration"),
                 testModel("idea/testData/codeInsight/moveUpDown/closingBraces", "doTestExpression"),
                 testModel("idea/testData/codeInsight/moveUpDown/expressions", "doTestExpression")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "InlineTestGenerated",
+                AbstractInlineTest.class,
+                testModel("idea/testData/refactoring/inline", "doTest")
         );
 
         generateTest(
