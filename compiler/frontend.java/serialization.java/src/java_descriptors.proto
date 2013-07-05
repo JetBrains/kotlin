@@ -16,17 +16,11 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import "compiler/frontend/serialization/src/descriptors.proto";
 
-public abstract class SerializerExtension {
-    public static final SerializerExtension DEFAULT = new SerializerExtension() {};
+option java_outer_classname = "JavaProtoBuf";
+option optimize_for = LITE_RUNTIME;
 
-    public boolean hasSupertypes(@NotNull ClassDescriptor descriptor) {
-        return true;
-    }
-
-    public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
-    }
+extend Callable {
+  optional string java_signature = 100;
 }

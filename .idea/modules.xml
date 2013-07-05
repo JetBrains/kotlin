@@ -30,6 +30,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/runtime/runtime.iml" filepath="$PROJECT_DIR$/runtime/runtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/frontend/serialization/serialization.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/serialization.java/serialization.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/serialization.java/serialization.java.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
     </modules>
   </component>

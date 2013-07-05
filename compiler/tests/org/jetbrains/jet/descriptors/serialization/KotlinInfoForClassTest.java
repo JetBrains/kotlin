@@ -32,6 +32,8 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
 import java.io.IOException;
 
+import static com.google.protobuf.ExtensionRegistryLite.getEmptyRegistry;
+
 public class KotlinInfoForClassTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
     public static final FqNameUnsafe CLASS_NAME = new FqNameUnsafe("A");
@@ -68,7 +70,7 @@ public class KotlinInfoForClassTest extends CodegenTestCase {
         public KotlinInfoBasedDescriptorFinder(@NotNull KotlinInfo kotlinInfo) throws IOException {
             super(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED);
 
-            this.classData = ClassData.read(kotlinInfo.data());
+            this.classData = ClassData.read(kotlinInfo.data(), getEmptyRegistry());
             this.namespace = JetTestUtils.createTestNamespace(NAMESPACE_NAME.shortName());
         }
 

@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="runtime" />
     <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="module" module-name="serialization" />
+    <orderEntry type="module" module-name="serialization.java" />
   </component>
 </module>
 

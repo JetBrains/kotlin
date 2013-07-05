@@ -41,9 +41,7 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
-import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
-import org.jetbrains.jet.descriptors.serialization.NameSerializationUtil;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -223,7 +221,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void writeKotlinInfo() {
         AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
-        DescriptorSerializer serializer = new DescriptorSerializer();
+
+        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(typeMapper));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
@@ -1844,5 +1843,4 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
 
     }
-
 }

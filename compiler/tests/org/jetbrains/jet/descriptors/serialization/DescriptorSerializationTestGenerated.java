@@ -38,10 +38,23 @@ public class DescriptorSerializationTestGenerated extends AbstractDescriptorSeri
     }
     
     @TestMetadata("compiler/testData/loadKotlin/annotations")
-    @InnerTestClasses({Annotations.Classes.class})
+    @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class})
     public static class Annotations extends AbstractDescriptorSerializationTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("compiler/testData/loadKotlin/annotations/classMembers")
+        public static class ClassMembers extends AbstractDescriptorSerializationTest {
+            public void testAllFilesPresentInClassMembers() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("Function.kt")
+            public void testFunction() throws Exception {
+                doTest("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/loadKotlin/annotations/classes")
@@ -95,6 +108,7 @@ public class DescriptorSerializationTestGenerated extends AbstractDescriptorSeri
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Annotations");
             suite.addTestSuite(Annotations.class);
+            suite.addTestSuite(ClassMembers.class);
             suite.addTestSuite(Classes.class);
             return suite;
         }

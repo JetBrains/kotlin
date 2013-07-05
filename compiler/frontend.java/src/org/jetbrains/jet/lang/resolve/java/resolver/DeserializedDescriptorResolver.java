@@ -24,10 +24,7 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.descriptors.serialization.ClassData;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.descriptors.serialization.DescriptorFinder;
-import org.jetbrains.jet.descriptors.serialization.PackageData;
+import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -141,7 +138,7 @@ public final class DeserializedDescriptorResolver {
     private static ClassData readClassDataFromClassFile(@NotNull VirtualFile virtualFile) {
         byte[] data = getKotlinInfoDataFromClassFile(virtualFile);
         if (data == null) return null;
-        return ClassData.read(data);
+        return JavaProtoBufUtil.readJavaClassDataFrom(data);
     }
 
     @Nullable

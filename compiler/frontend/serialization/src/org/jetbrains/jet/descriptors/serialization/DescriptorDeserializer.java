@@ -169,7 +169,7 @@ public class DescriptorDeserializer {
             boolean isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags);
             if (isNotDefault) {
                 setter = new PropertySetterDescriptorImpl(
-                        property, getSetterAnnotations(proto, setterFlags),
+                        property, getAnnotations(proto, setterFlags),
                         modality(Flags.MODALITY.get(setterFlags)), visibility(Flags.VISIBILITY.get(setterFlags)),
                         isNotDefault, !isNotDefault, property.getKind()
                 );
@@ -192,13 +192,11 @@ public class DescriptorDeserializer {
     private PropertyDescriptorImpl createPropertyDescriptor(@NotNull Callable proto) {
         int flags = proto.getFlags();
         Name name = nameResolver.getName(proto.getName());
-        List<AnnotationDescriptor> annotations = getAnnotations(proto);
+        List<AnnotationDescriptor> annotations = getAnnotations(proto, proto.getFlags());
         Visibility visibility = visibility(Flags.VISIBILITY.get(flags));
         Callable.CallableKind callableKind = Flags.CALLABLE_KIND.get(flags);
 
         if (callableKind == Callable.CallableKind.OBJECT_PROPERTY) {
-            assert containingDeclaration instanceof ClassOrNamespaceDescriptor
-                    : "Properties for objects can only exist in class or namespace: " + name;
             FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration).child(name);
             ClassId objectId = ClassId.fromFqNameAndContainingDeclaration(fqName, (ClassOrNamespaceDescriptor) containingDeclaration);
             ClassDescriptor objectClass = typeDeserializer.getDescriptorFinder().findClass(objectId);
@@ -223,7 +221,7 @@ public class DescriptorDeserializer {
         int flags = proto.getFlags();
         SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
                 containingDeclaration,
-                getAnnotations(proto),
+                getAnnotations(proto, proto.getFlags()),
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.MEMBER_KIND.get(flags))
         );
@@ -254,7 +252,7 @@ public class DescriptorDeserializer {
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
         ConstructorDescriptorImpl descriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
-                getAnnotations(proto),
+                getAnnotations(proto, proto.getFlags()),
                 // TODO: primary
                 true);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
@@ -269,15 +267,13 @@ public class DescriptorDeserializer {
         return descriptor;
     }
 
-    private List<AnnotationDescriptor> getAnnotations(Callable proto) {
-        return Flags.HAS_ANNOTATIONS.get(proto.getFlags())
-               ? annotationDeserializer.loadCallableAnnotations(proto)
+    @NotNull
+    private List<AnnotationDescriptor> getAnnotations(@NotNull Callable proto, int flags) {
+        assert containingDeclaration instanceof ClassOrNamespaceDescriptor
+                : "Only members in classes or namespaces should be serialized: " + containingDeclaration;
+        return Flags.HAS_ANNOTATIONS.get(flags)
+               ? annotationDeserializer.loadCallableAnnotations((ClassOrNamespaceDescriptor) containingDeclaration, proto)
                : Collections.<AnnotationDescriptor>emptyList();
-    }
-
-    private List<AnnotationDescriptor> getSetterAnnotations(Callable proto, int setterFlags) {
-        return Flags.HAS_ANNOTATIONS.get(setterFlags) ? annotationDeserializer.loadSetterAnnotations(proto) : Collections
-                .<AnnotationDescriptor>emptyList();
     }
 
     private static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {

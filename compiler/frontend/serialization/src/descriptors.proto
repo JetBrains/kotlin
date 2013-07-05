@@ -196,6 +196,8 @@ message Callable {
   repeated ValueParameter value_parameter = 7;
 
   required Type return_type = 8;
+
+  extensions 100 to 199;
 }
 
 enum Modality {

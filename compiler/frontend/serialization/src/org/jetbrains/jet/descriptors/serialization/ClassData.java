@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.google.protobuf.ExtensionRegistryLite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
@@ -24,11 +25,11 @@ import java.io.IOException;
 
 public final class ClassData {
     @NotNull
-    public static ClassData read(@NotNull byte[] bytes) {
+    public static ClassData read(@NotNull byte[] bytes, @NotNull ExtensionRegistryLite registry) {
         try {
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             NameResolver nameResolver = NameSerializationUtil.deserializeNameResolver(in);
-            ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(in);
+            ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(in, registry);
             return new ClassData(nameResolver, classProto);
         }
         catch (IOException e) {

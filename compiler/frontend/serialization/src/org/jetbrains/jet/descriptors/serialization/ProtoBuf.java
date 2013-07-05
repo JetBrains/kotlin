@@ -5262,8 +5262,9 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.Package)
   }
   
-  public interface CallableOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+  public interface CallableOrBuilder extends 
+       com.google.protobuf.GeneratedMessageLite.
+            ExtendableMessageOrBuilder<Callable> {
     
     // optional int32 flags = 1;
     boolean hasFlags();
@@ -5310,8 +5311,8 @@ public final class ProtoBuf {
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Type getReturnType();
   }
   public static final class Callable extends
-      com.google.protobuf.GeneratedMessageLite
-      implements CallableOrBuilder {
+      com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
+        Callable> implements CallableOrBuilder {
     // Use Callable.newBuilder() to construct.
     private Callable(Builder builder) {
       super(builder);
@@ -6158,6 +6159,10 @@ public final class ProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -6165,6 +6170,9 @@ public final class ProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      com.google.protobuf.GeneratedMessageLite
+        .ExtendableMessage<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(1, flags_);
       }
@@ -6195,6 +6203,7 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeInt32(11, setterParameterName_);
       }
+      extensionWriter.writeUntil(200, output);
     }
     
     private int memoizedSerializedSize = -1;
@@ -6243,6 +6252,7 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(11, setterParameterName_);
       }
+      size += extensionsSerializedSize();
       memoizedSerializedSize = size;
       return size;
     }
@@ -6329,9 +6339,8 @@ public final class ProtoBuf {
     public Builder toBuilder() { return newBuilder(this); }
     
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable, Builder>
-        implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.CallableOrBuilder {
+        com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
+          org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable, Builder> implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.CallableOrBuilder {
       // Construct using org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -6490,6 +6499,7 @@ public final class ProtoBuf {
         if (other.hasReturnType()) {
           mergeReturnType(other.getReturnType());
         }
+        this.mergeExtensionFields(other);
         return this;
       }
       
@@ -6521,6 +6531,10 @@ public final class ProtoBuf {
           }
         }
         if (!getReturnType().isInitialized()) {
+          
+          return false;
+        }
+        if (!extensionsAreInitialized()) {
           
           return false;
         }

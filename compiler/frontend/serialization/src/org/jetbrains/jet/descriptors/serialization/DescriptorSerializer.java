@@ -212,6 +212,8 @@ public class DescriptorSerializer {
 
         builder.setReturnType(local.type(getSerializableReturnType(descriptor.getReturnType())));
 
+        extension.serializeCallable(descriptor, builder);
+
         return builder;
     }
 

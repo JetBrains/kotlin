@@ -19,10 +19,9 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.AnnotationVisitor;
-import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.*;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -38,8 +37,7 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN;
@@ -62,20 +60,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> loadClassAnnotations(
-            @NotNull ClassDescriptor descriptor,
-            @NotNull ProtoBuf.Class classProto
-    ) {
-        FqName fqName = kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor));
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE /* TODO: ?! */);
-        if (psiClass == null) {
-            throw new IllegalStateException("Psi class is not found for class: " + descriptor);
-        }
-        VirtualFile virtualFile = getVirtualFile(psiClass, fqName, (ClassOrNamespaceDescriptor) descriptor.getContainingDeclaration());
-        if (virtualFile == null) {
-            throw new IllegalStateException("Virtual file is not found for class: " + descriptor) ;
-        }
-
+    public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
+        VirtualFile virtualFile = findVirtualFileByDescriptor(descriptor);
         try {
             return loadClassAnnotationsFromFile(virtualFile);
         }
@@ -85,18 +71,27 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @NotNull
+    private VirtualFile findVirtualFileByDescriptor(@NotNull ClassDescriptor descriptor) {
+        FqName fqName = kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor));
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE /* TODO: ?! */);
+        if (psiClass == null) {
+            throw new IllegalStateException("Psi class is not found for class: " + descriptor);
+        }
+        VirtualFile virtualFile = getVirtualFile(psiClass, fqName, (ClassOrNamespaceDescriptor) descriptor.getContainingDeclaration());
+        if (virtualFile == null) {
+            throw new IllegalStateException("Virtual file is not found for class: " + descriptor) ;
+        }
+        return virtualFile;
+    }
+
+    @NotNull
     private List<AnnotationDescriptor> loadClassAnnotationsFromFile(@NotNull VirtualFile virtualFile) throws IOException {
         final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
 
         new ClassReader(virtualFile.getInputStream()).accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                if (ignoreAnnotation(desc)) return null;
-
-                FqName annotationFqName = convertJvmDescriptorToFqName(desc);
-                ClassDescriptor annotationClass = javaClassResolver.resolveClass(annotationFqName, ERROR_IF_FOUND_IN_KOTLIN);
-                assert annotationClass != null : "Annotation class is not found: " + desc;
-                return resolveAnnotation(annotationClass, result);
+                return resolveAnnotation(desc, result);
             }
         }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
 
@@ -115,11 +110,13 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         return new FqName(fqName);
     }
 
-    @NotNull
-    private static AnnotationVisitor resolveAnnotation(
-            @NotNull final ClassDescriptor annotationClass,
-            @NotNull final List<AnnotationDescriptor> result
-    ) {
+    @Nullable
+    private AnnotationVisitor resolveAnnotation(@NotNull String desc, @NotNull final List<AnnotationDescriptor> result) {
+        if (ignoreAnnotation(desc)) return null;
+
+        FqName annotationFqName = convertJvmDescriptorToFqName(desc);
+        final ClassDescriptor annotationClass = javaClassResolver.resolveClass(annotationFqName, ERROR_IF_FOUND_IN_KOTLIN);
+        assert annotationClass != null : "Annotation class is not found: " + desc;
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
@@ -146,19 +143,61 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> loadCallableAnnotations(@NotNull ProtoBuf.Callable callableProto) {
-        throw new UnsupportedOperationException(); // TODO
+    public List<AnnotationDescriptor> loadCallableAnnotations(
+            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ProtoBuf.Callable callableProto
+    ) {
+        if (!(container instanceof ClassDescriptor)) return Collections.emptyList(); // TODO: NamespaceDescriptor
+
+        VirtualFile file = findVirtualFileByDescriptor((ClassDescriptor) container);
+
+        try {
+            // TODO: calculate this only once for each container
+            Map<String, List<AnnotationDescriptor>> memberAnnotations = loadMemberAnnotationsFromFile(file);
+
+            String signature = JavaProtoBufUtil.loadJavaSignature(callableProto);
+            if (signature == null) return Collections.emptyList();
+
+            List<AnnotationDescriptor> annotations = memberAnnotations.get(signature);
+            return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+    }
+
+    @NotNull
+    private Map<String, List<AnnotationDescriptor>> loadMemberAnnotationsFromFile(@NotNull VirtualFile file) throws IOException {
+        final Map<String, List<AnnotationDescriptor>> memberAnnotations = new HashMap<String, List<AnnotationDescriptor>>();
+
+        new ClassReader(file.getInputStream()).accept(new ClassVisitor(Opcodes.ASM4) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+                final String methodSignature = name + desc;
+                final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
+
+                return new MethodVisitor(Opcodes.ASM4) {
+                    @Override
+                    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                        return resolveAnnotation(desc, result);
+                    }
+
+                    @Override
+                    public void visitEnd() {
+                        if (!result.isEmpty()) {
+                            memberAnnotations.put(methodSignature, result);
+                        }
+                    }
+                };
+            }
+        }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+
+        return memberAnnotations;
     }
 
     @NotNull
     @Override
     public List<AnnotationDescriptor> loadValueParameterAnnotations(@NotNull ProtoBuf.Callable.ValueParameter parameterProto) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @NotNull
-    @Override
-    public List<AnnotationDescriptor> loadSetterAnnotations(@NotNull ProtoBuf.Callable callableProto) {
         throw new UnsupportedOperationException(); // TODO
     }
 }

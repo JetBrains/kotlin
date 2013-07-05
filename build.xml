@@ -26,6 +26,7 @@
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend/serialization/src"/>
         <include name="compiler/frontend.java/src"/>
+        <include name="compiler/frontend.java/serialization.java/src"/>
         <include name="compiler/backend/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
