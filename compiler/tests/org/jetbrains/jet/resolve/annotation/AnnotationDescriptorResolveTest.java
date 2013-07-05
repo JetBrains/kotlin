@@ -28,10 +28,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,49 +55,49 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
 
     public void testIntAnnotation() throws IOException {
         String content = getContent("AnnInt(1)");
-        String expectedAnnotation = "AnnInt[a = 1.toInt()]";
+        String expectedAnnotation = "AnnInt[a = 1.toInt(): jet.Int]";
         doTest(content, expectedAnnotation);
     }
 
     public void testStringAnnotation() throws IOException {
         String content = getContent("AnnString(\"test\")");
-        String expectedAnnotation = "AnnString[a = \"test\"]";
+        String expectedAnnotation = "AnnString[a = \"test\": jet.String]";
         doTest(content, expectedAnnotation);
     }
 
     public void testEnumAnnotation() throws IOException {
         String content = getContent("AnnEnum(MyEnum.A)");
-        String expectedAnnotation = "AnnEnum[a = MyEnum.A]";
+        String expectedAnnotation = "AnnEnum[a = MyEnum.A: test.MyEnum]";
         doTest(content, expectedAnnotation);
     }
 
     public void testQualifiedEnumAnnotation() throws IOException {
         String content = getContent("AnnEnum(test.MyEnum.A)");
-        String expectedAnnotation = "AnnEnum[a = MyEnum.A]";
+        String expectedAnnotation = "AnnEnum[a = MyEnum.A: test.MyEnum]";
         doTest(content, expectedAnnotation);
     }
 
     public void testUnqualifiedEnumAnnotation() throws IOException {
         String content = getContent("AnnEnum(A)");
-        String expectedAnnotation = "AnnEnum[a = MyEnum.A]";
+        String expectedAnnotation = "AnnEnum[a = MyEnum.A: test.MyEnum]";
         doTest(content, expectedAnnotation);
     }
 
     public void testIntArrayAnnotation() throws IOException {
         String content = getContent("AnnIntArray(intArray(1, 2))");
-        String expectedAnnotation = "AnnIntArray[a = [1.toInt(), 2.toInt()]]";
+        String expectedAnnotation = "AnnIntArray[a = [1.toInt(), 2.toInt()]: jet.IntArray]";
         doTest(content, expectedAnnotation);
     }
 
     public void testStringArrayAnnotation() throws IOException {
         String content = getContent("AnnStringArray(array(\"a\"))");
-        String expectedAnnotation = "AnnStringArray[a = [\"a\"]]";
+        String expectedAnnotation = "AnnStringArray[a = [\"a\"]: jet.Array<jet.String>]";
         doTest(content, expectedAnnotation);
     }
 
     public void testEnumArrayAnnotation() throws IOException {
         String content = getContent("AnnArrayOfEnum(array(MyEnum.A))");
-        String expectedAnnotation = "AnnArrayOfEnum[a = [MyEnum.A]]";
+        String expectedAnnotation = "AnnArrayOfEnum[a = [MyEnum.A]: jet.Array<test.MyEnum>]";
         doTest(content, expectedAnnotation);
     }
 
@@ -331,7 +333,7 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         String actual = StringUtil.join(member.getAnnotations(), new Function<AnnotationDescriptor, String>() {
             @Override
             public String fun(AnnotationDescriptor annotationDescriptor) {
-                return annotationDescriptor.toString();
+                return annotationDescriptor.getType().toString() + DescriptorUtils.getSortedValueArguments(annotationDescriptor, DescriptorRenderer.TEXT);
             }
         }, " ");
         assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
