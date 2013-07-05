@@ -4867,6 +4867,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("classObjectMember.kt")
+            public void testClassObjectMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/classObjectMember.kt");
+            }
+            
             @TestMetadata("combineWithNoSelectorInfo.kt")
             public void testCombineWithNoSelectorInfo() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/smartCasts/combineWithNoSelectorInfo.kt");

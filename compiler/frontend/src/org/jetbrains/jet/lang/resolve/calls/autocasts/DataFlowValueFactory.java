@@ -202,10 +202,6 @@ public class DataFlowValueFactory {
         if (declarationDescriptor instanceof NamespaceDescriptor) {
             return createNamespaceInfo(declarationDescriptor);
         }
-        if (declarationDescriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-            return createInfo(classDescriptor, classDescriptor.getClassObjectDescriptor() != null);
-        }
         return NO_IDENTIFIER_INFO;
     }
 
