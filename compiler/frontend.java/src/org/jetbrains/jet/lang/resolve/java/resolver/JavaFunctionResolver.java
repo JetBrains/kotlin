@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
-import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.provider.*;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -115,11 +114,6 @@ public final class JavaFunctionResolver {
             return null;
         }
 
-        // TODO: ugly
-        if (method.getJetMethodAnnotation().hasPropertyFlag()) {
-            return null;
-        }
-
         PsiMethod psiMethod = method.getPsiMethod();
         PsiClass containingClass = psiMethod.getContainingClass();
         if (declarationOrigin == KOTLIN) {
@@ -139,7 +133,7 @@ public final class JavaFunctionResolver {
                 ownerDescriptor,
                 annotationResolver.resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
-                DescriptorKindUtils.flagsToKind(method.getJetMethodAnnotation().kind())
+                CallableMemberDescriptor.Kind.DECLARATION
         );
 
         String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
@@ -159,7 +153,7 @@ public final class JavaFunctionResolver {
         List<String> signatureErrors = Lists.newArrayList();
 
         List<FunctionDescriptor> superFunctions;
-        if (ownerDescriptor instanceof ClassDescriptor && !method.getJetMethodAnnotation().isDefined()) { // don't propagate for Kotlin functions
+        if (ownerDescriptor instanceof ClassDescriptor) {
             SignaturesPropagationData signaturesPropagationData = new SignaturesPropagationData(
                     (ClassDescriptor) ownerDescriptor, returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
             superFunctions = signaturesPropagationData.getSuperFunctions();
@@ -192,8 +186,8 @@ public final class JavaFunctionResolver {
                 methodTypeParameters,
                 valueParameterDescriptors.getDescriptors(),
                 returnType,
-                DescriptorResolverUtils.resolveModality(method, method.isFinal()),
-                DescriptorResolverUtils.resolveVisibility(psiMethod, method.getJetMethodAnnotation()),
+                Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
+                DescriptorResolverUtils.resolveVisibility(psiMethod),
                 /*isInline = */ false
         );
 
@@ -210,8 +204,8 @@ public final class JavaFunctionResolver {
         }
 
         if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod)
-                && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(psiMethod)
-                && !containsErrorType(superFunctions, functionDescriptorImpl)) {
+            && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(psiMethod)
+            && !containsErrorType(superFunctions, functionDescriptorImpl)) {
             if (signatureErrors.isEmpty()) {
                 checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
             }
@@ -276,13 +270,11 @@ public final class JavaFunctionResolver {
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.getMethods()) {
-            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData.getDeclarationOrigin(), owner, true);
+            SimpleFunctionDescriptor function =
+                    resolveMethodToFunctionDescriptor(psiClass, method, scopeData.getDeclarationOrigin(), owner, true);
             if (function != null) {
                 functionsFromCurrent.add(function);
-
-                if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
-                    ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
-                }
+                ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
             }
         }
 
@@ -296,20 +288,20 @@ public final class JavaFunctionResolver {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
             OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
-                  new OverrideResolver.DescriptorSink() {
-                      @Override
-                      public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                          fakeOverrides.add((FunctionDescriptor) fakeOverride);
-                      }
+                                                              new OverrideResolver.DescriptorSink() {
+                                                                  @Override
+                                                                  public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                                                                      fakeOverrides.add((FunctionDescriptor) fakeOverride);
+                                                                  }
 
-                      @Override
-                      public void conflict(
-                              @NotNull CallableMemberDescriptor fromSuper,
-                              @NotNull CallableMemberDescriptor fromCurrent
-                      ) {
-                          // nop
-                      }
-                  });
+                                                                  @Override
+                                                                  public void conflict(
+                                                                          @NotNull CallableMemberDescriptor fromSuper,
+                                                                          @NotNull CallableMemberDescriptor fromCurrent
+                                                                  ) {
+                                                                      // nop
+                                                                  }
+                                                              });
         }
 
         OverrideResolver.resolveUnknownVisibilities(fakeOverrides, trace);
@@ -426,18 +418,12 @@ public final class JavaFunctionResolver {
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
 
-        String returnTypeFromAnnotation = method.getJetMethodAnnotation().returnType();
+        TypeUsage typeUsage = JavaTypeTransformer
+                .adjustTypeUsageWithMutabilityAnnotations(method.getPsiMethod(), TypeUsage.MEMBER_SIGNATURE_COVARIANT);
+        JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
-        JetType transformedType;
-        if (returnTypeFromAnnotation.length() > 0) {
-            transformedType = typeTransformer.transformToType(returnTypeFromAnnotation, typeVariableResolver);
-        }
-        else {
-            TypeUsage typeUsage = JavaTypeTransformer.adjustTypeUsageWithMutabilityAnnotations(method.getPsiMethod(), TypeUsage.MEMBER_SIGNATURE_COVARIANT);
-            transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
-        }
-
-        if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
+        if (JavaAnnotationResolver
+                    .findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
             null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }
@@ -473,7 +459,11 @@ public final class JavaFunctionResolver {
         return false;
     }
 
-    private static SimpleFunctionDescriptor recordSamConstructor(ClassDescriptorFromJvmBytecode klass, SimpleFunctionDescriptor constructorFunction, BindingTrace trace) {
+    private static SimpleFunctionDescriptor recordSamConstructor(
+            ClassDescriptorFromJvmBytecode klass,
+            SimpleFunctionDescriptor constructorFunction,
+            BindingTrace trace
+    ) {
         trace.record(JavaBindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
         trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
         return constructorFunction;

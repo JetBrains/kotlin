@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -40,7 +39,8 @@ public class PackageClassUtils {
     }
 
     public static boolean isPackageClass(@NotNull PsiClass psiClass) {
-        return JetPackageClassAnnotation.get(psiClass).isDefined();
+        //TODO: read kotlin info
+        return psiClass.getName().endsWith("Package");
     }
 
     public static boolean isPackageClass(@NotNull FqName fqName) {

@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
-import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -102,7 +101,8 @@ public final class JavaConstructorResolver {
                             containingClass,
                             Collections.<AnnotationDescriptor>emptyList(),
                             true);
-                    constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), constructorVisibility, isStatic);
+                    constructorDescriptor
+                            .initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), constructorVisibility, isStatic);
                     constructors.add(constructorDescriptor);
                     trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
                 }
@@ -175,27 +175,14 @@ public final class JavaConstructorResolver {
     ) {
         PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 
-        JetConstructorAnnotation constructorAnnotation = constructor.getJetConstructorAnnotation();
-        //noinspection deprecation
-        if (constructorAnnotation.hidden()) {
-            return null;
-        }
-
-        // Do not resolve kotlin constructors without JetConstructorAnnotation
-        if (DescriptorResolverUtils.isKotlinClass(psiClass) && !constructorAnnotation.isDefined()) {
-            return null;
-        }
-
         if (trace.get(BindingContext.CONSTRUCTOR, psiConstructor) != null) {
             return trace.get(BindingContext.CONSTRUCTOR, psiConstructor);
         }
 
-        boolean primary = constructor.getJetConstructorAnnotation().isDefined();
-
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                primary);
+                false);
 
         String context = "constructor of class " + psiClass.getQualifiedName();
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
@@ -219,7 +206,7 @@ public final class JavaConstructorResolver {
 
         constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(),
                                          valueParameterDescriptors.getDescriptors(),
-                                         DescriptorResolverUtils.resolveVisibility(psiConstructor, constructorAnnotation),
+                                         DescriptorResolverUtils.resolveVisibility(psiConstructor),
                                          aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;

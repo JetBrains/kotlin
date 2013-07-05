@@ -21,12 +21,14 @@ import com.intellij.psi.*;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -72,7 +74,10 @@ public final class JavaSignatureResolver {
         @Nullable
         private final List<JetType> upperBoundsForKotlin;
 
-        private TypeParameterDescriptorInitialization(@NotNull TypeParameterDescriptorImpl descriptor, @NotNull PsiTypeParameter psiTypeParameter) {
+        private TypeParameterDescriptorInitialization(
+                @NotNull TypeParameterDescriptorImpl descriptor,
+                @NotNull PsiTypeParameter psiTypeParameter
+        ) {
             this.origin = TypeParameterDescriptorOrigin.JAVA;
             this.descriptor = descriptor;
             this.psiTypeParameter = psiTypeParameter;
@@ -96,7 +101,6 @@ public final class JavaSignatureResolver {
     }
 
 
-
     @NotNull
     private static PsiTypeParameter getPsiTypeParameterByName(PsiTypeParameterListOwner clazz, String name) {
         for (PsiTypeParameter typeParameter : clazz.getTypeParameters()) {
@@ -106,7 +110,6 @@ public final class JavaSignatureResolver {
         }
         throw new IllegalStateException("PsiTypeParameter '" + name + "' is not found");
     }
-
 
 
     private abstract class JetSignatureTypeParameterVisitor extends JetSignatureExceptionsAdapter {
@@ -124,8 +127,8 @@ public final class JavaSignatureResolver {
                 @NotNull PsiTypeParameterListOwner psiOwner,
                 @NotNull String name,
                 @NotNull TypeVariableResolver typeVariableResolver,
-                @NotNull TypeParameterDescriptorImpl typeParameterDescriptor)
-        {
+                @NotNull TypeParameterDescriptorImpl typeParameterDescriptor
+        ) {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
             }
@@ -164,7 +167,8 @@ public final class JavaSignatureResolver {
         @Override
         public void visitFormalTypeParameterEnd() {
             PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(psiOwner, name);
-            TypeParameterDescriptorInitialization typeParameterDescriptorInitialization = new TypeParameterDescriptorInitialization(typeParameterDescriptor, psiTypeParameter, upperBounds);
+            TypeParameterDescriptorInitialization typeParameterDescriptorInitialization =
+                    new TypeParameterDescriptorInitialization(typeParameterDescriptor, psiTypeParameter, upperBounds);
             done(typeParameterDescriptorInitialization);
         }
 
@@ -182,7 +186,11 @@ public final class JavaSignatureResolver {
         private final TypeVariableResolver typeVariableResolver;
 
 
-        private JetSignatureTypeParametersVisitor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameterListOwner psiOwner, @NotNull String context) {
+        private JetSignatureTypeParametersVisitor(
+                @NotNull DeclarationDescriptor containingDeclaration,
+                @NotNull PsiTypeParameterListOwner psiOwner,
+                @NotNull String context
+        ) {
             this.containingDeclaration = containingDeclaration;
             this.psiOwner = psiOwner;
 
@@ -219,37 +227,41 @@ public final class JavaSignatureResolver {
         }
     }
 
-        /**
+    /**
      * @see #resolveMethodTypeParametersFromJetSignature(String, PsiMethod, DeclarationDescriptor)
      */
-    private List<TypeParameterDescriptorInitialization> resolveClassTypeParametersFromJetSignature(String jetSignature,
-            final PsiClass clazz, final ClassDescriptor classDescriptor) {
+    private List<TypeParameterDescriptorInitialization> resolveClassTypeParametersFromJetSignature(
+            String jetSignature,
+            final PsiClass clazz, final ClassDescriptor classDescriptor
+    ) {
         String context = "class " + clazz.getQualifiedName();
-        JetSignatureTypeParametersVisitor jetSignatureTypeParametersVisitor = new JetSignatureTypeParametersVisitor(classDescriptor, clazz, context) {
-            @Override
-            public JetSignatureVisitor visitSuperclass() {
-                // TODO
-                return new JetSignatureAdapter();
-            }
+        JetSignatureTypeParametersVisitor jetSignatureTypeParametersVisitor =
+                new JetSignatureTypeParametersVisitor(classDescriptor, clazz, context) {
+                    @Override
+                    public JetSignatureVisitor visitSuperclass() {
+                        // TODO
+                        return new JetSignatureAdapter();
+                    }
 
-            @Override
-            public JetSignatureVisitor visitInterface() {
-                // TODO
-                return new JetSignatureAdapter();
-            }
-        };
+                    @Override
+                    public JetSignatureVisitor visitInterface() {
+                        // TODO
+                        return new JetSignatureAdapter();
+                    }
+                };
         new JetSignatureReader(jetSignature).accept(jetSignatureTypeParametersVisitor);
         return jetSignatureTypeParametersVisitor.r;
     }
 
 
-        private static List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(
-                @NotNull DeclarationDescriptor containingDeclaration,
-                @NotNull PsiTypeParameter[] typeParameters
-        ) {
+    private static List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull PsiTypeParameter[] typeParameters
+    ) {
         List<TypeParameterDescriptorInitialization> result = Lists.newArrayList();
         for (PsiTypeParameter typeParameter : typeParameters) {
-            TypeParameterDescriptorInitialization typeParameterDescriptor = makeUninitializedTypeParameter(containingDeclaration, typeParameter);
+            TypeParameterDescriptorInitialization typeParameterDescriptor =
+                    makeUninitializedTypeParameter(containingDeclaration, typeParameter);
             result.add(typeParameterDescriptor);
         }
         return result;
@@ -271,12 +283,15 @@ public final class JavaSignatureResolver {
         return new TypeParameterDescriptorInitialization(typeParameterDescriptor, psiTypeParameter);
     }
 
-    private void initializeTypeParameter(TypeParameterDescriptorInitialization typeParameter, TypeVariableResolver typeVariableByPsiResolver) {
+    private void initializeTypeParameter(
+            TypeParameterDescriptorInitialization typeParameter,
+            TypeVariableResolver typeVariableByPsiResolver
+    ) {
         TypeParameterDescriptorImpl typeParameterDescriptor = typeParameter.descriptor;
         if (typeParameter.origin == TypeParameterDescriptorOrigin.KOTLIN) {
             List<JetType> upperBoundsForKotlin = typeParameter.upperBoundsForKotlin;
             assert upperBoundsForKotlin != null;
-            if (upperBoundsForKotlin.size() == 0){
+            if (upperBoundsForKotlin.size() == 0) {
                 typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
             }
             else {
@@ -289,15 +304,19 @@ public final class JavaSignatureResolver {
         }
         else {
             PsiClassType[] referencedTypes = typeParameter.psiTypeParameter.getExtendsList().getReferencedTypes();
-            if (referencedTypes.length == 0){
+            if (referencedTypes.length == 0) {
                 typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
             }
             else if (referencedTypes.length == 1) {
-                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0], TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
+                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer()
+                                                              .transformToType(referencedTypes[0], TypeUsage.UPPER_BOUND,
+                                                                               typeVariableByPsiResolver));
             }
             else {
                 for (PsiClassType referencedType : referencedTypes) {
-                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
+                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer()
+                                                                  .transformToType(referencedType, TypeUsage.UPPER_BOUND,
+                                                                                   typeVariableByPsiResolver));
                 }
             }
         }
@@ -319,22 +338,22 @@ public final class JavaSignatureResolver {
         for (TypeParameterDescriptorInitialization psiTypeParameter : typeParametersInitialization) {
             prevTypeParameters.add(psiTypeParameter.descriptor);
             initializeTypeParameter(psiTypeParameter,
-                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, typeParametersOwner, context));
+                                    TypeVariableResolvers
+                                            .typeVariableResolverFromTypeParameters(typeParameters, typeParametersOwner, context));
         }
     }
 
 
-    public List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(
+    @NotNull
+    public static List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(
             PsiClass psiClass, ClassDescriptor classDescriptor
     ) {
-        JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
-
-        if (jetClassAnnotation.signature().length() > 0) {
-            return resolveClassTypeParametersFromJetSignature(
-                    jetClassAnnotation.signature(), psiClass, classDescriptor);
+        List<TypeParameterDescriptorInitialization> result = Lists.newArrayList();
+        for (PsiTypeParameter typeParameter : psiClass.getTypeParameters()) {
+            TypeParameterDescriptorInitialization typeParameterDescriptor = makeUninitializedTypeParameter(classDescriptor, typeParameter);
+            result.add(typeParameterDescriptor);
         }
-
-        return makeUninitializedTypeParameters(classDescriptor, psiClass.getTypeParameters());
+        return result;
     }
 
 
@@ -343,15 +362,9 @@ public final class JavaSignatureResolver {
             @NotNull DeclarationDescriptor functionDescriptor
     ) {
 
-        List<TypeParameterDescriptorInitialization> typeParametersIntialization;
         PsiMethod psiMethod = method.getPsiMethod();
-        if (method.getJetMethodAnnotation().typeParameters().length() > 0) {
-            typeParametersIntialization = resolveMethodTypeParametersFromJetSignature(
-                    method.getJetMethodAnnotation().typeParameters(), psiMethod, functionDescriptor);
-        }
-        else {
-            typeParametersIntialization = makeUninitializedTypeParameters(functionDescriptor, psiMethod.getTypeParameters());
-        }
+        List<TypeParameterDescriptorInitialization> typeParametersIntialization =
+                makeUninitializedTypeParameters(functionDescriptor, psiMethod.getTypeParameters());
 
         PsiClass psiMethodContainingClass = psiMethod.getContainingClass();
         assert psiMethodContainingClass != null;
@@ -370,15 +383,16 @@ public final class JavaSignatureResolver {
     /**
      * @see #resolveClassTypeParametersFromJetSignature(String, PsiClass, ClassDescriptor)
      */
-    private List<TypeParameterDescriptorInitialization> resolveMethodTypeParametersFromJetSignature(String jetSignature,
-            PsiMethod method, DeclarationDescriptor functionDescriptor)
-    {
+    private List<TypeParameterDescriptorInitialization> resolveMethodTypeParametersFromJetSignature(
+            String jetSignature,
+            PsiMethod method, DeclarationDescriptor functionDescriptor
+    ) {
         PsiClass methodContainingClass = method.getContainingClass();
         assert methodContainingClass != null;
         String context = "method " + method.getName() + " in class " + methodContainingClass.getQualifiedName();
-        JetSignatureTypeParametersVisitor jetSignatureTypeParametersVisitor = new JetSignatureTypeParametersVisitor(functionDescriptor, method, context);
+        JetSignatureTypeParametersVisitor jetSignatureTypeParametersVisitor =
+                new JetSignatureTypeParametersVisitor(functionDescriptor, method, context);
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(jetSignatureTypeParametersVisitor);
         return jetSignatureTypeParametersVisitor.r;
     }
-
 }

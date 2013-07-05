@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 
 public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     private static final JetValueParameterAnnotation NULL_ANNOTATION = new JetValueParameterAnnotation(null);
+
     static {
         NULL_ANNOTATION.checkInitialized();
     }
@@ -32,7 +33,6 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     private String name;
     private String type;
     private boolean receiver;
-    private boolean hasDefaultValue;
     private boolean vararg;
 
     private JetValueParameterAnnotation(@Nullable PsiAnnotation psiAnnotation) {
@@ -44,7 +44,6 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
         name = getStringAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "");
         type = getStringAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, "");
         receiver = getBooleanAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD, false);
-        hasDefaultValue = getBooleanAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, false);
         vararg = getBooleanAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_VARARG, false);
     }
 
@@ -63,11 +62,6 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     public boolean receiver() {
         checkInitialized();
         return receiver;
-    }
-    
-    public boolean hasDefaultValue() {
-        checkInitialized();
-        return hasDefaultValue;
     }
 
     public boolean vararg() {

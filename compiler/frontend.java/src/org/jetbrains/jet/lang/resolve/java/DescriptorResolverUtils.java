@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
-import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -63,36 +60,9 @@ public final class DescriptorResolverUtils {
         return Collections.emptyList();
     }
 
-    public static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
-        if (memberWrapper instanceof PsiMethodWrapper) {
-            PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
-            if (method.getJetMethodAnnotation().hasForceOpenFlag()) {
-                return Modality.OPEN;
-            }
-            if (method.getJetMethodAnnotation().hasForceFinalFlag()) {
-                return Modality.FINAL;
-            }
-        }
-
-        return Modality.convertFromFlags(memberWrapper.isAbstract(), !isFinal);
-    }
-
     public static Visibility resolveVisibility(
-            @NotNull PsiModifierListOwner modifierListOwner,
-            @Nullable PsiAnnotationWithFlags annotation
+            @NotNull PsiModifierListOwner modifierListOwner
     ) {
-        if (annotation != null) {
-            if (annotation.hasPrivateFlag()) {
-                return Visibilities.PRIVATE;
-            }
-            else if (annotation.hasInternalFlag()) {
-                return Visibilities.INTERNAL;
-            }
-            else if (annotation.hasProtectedFlag()) {
-                return Visibilities.PROTECTED;
-            }
-        }
-
         if (modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC)) {
             return Visibilities.PUBLIC;
         }
@@ -159,7 +129,7 @@ public final class DescriptorResolverUtils {
 
     /**
      * @return true if {@code member} is a static member of enum class, which is to be put into its class object (and not into the
-     * corresponding package). This applies to enum entries, values() and valueOf(String) methods
+     *         corresponding package). This applies to enum entries, values() and valueOf(String) methods
      */
     public static boolean shouldBeInEnumClassObject(@NotNull PsiMember member) {
         PsiClass psiClass = member.getContainingClass();
@@ -169,7 +139,7 @@ public final class DescriptorResolverUtils {
 
         if (!(member instanceof PsiMethod)) return false;
         String signature = PsiFormatUtil.formatMethod((PsiMethod) member,
-                PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+                                                      PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);

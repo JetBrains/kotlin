@@ -30,8 +30,6 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
-import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
-import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;
@@ -45,6 +43,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 
+//TODO: getters and setter are not working
 public final class JavaPropertyResolver {
 
     private JavaSemanticServices semanticServices;
@@ -174,17 +173,16 @@ public final class JavaPropertyResolver {
 
         PropertyPsiDataElement characteristicMember = psiData.getCharacteristicMember();
 
-        Visibility visibility = DescriptorResolverUtils.resolveVisibility(psiData.getCharacteristicPsi(), null);
+        Visibility visibility = DescriptorResolverUtils.resolveVisibility(psiData.getCharacteristicPsi());
         CallableMemberDescriptor.Kind kind = CallableMemberDescriptor.Kind.DECLARATION;
 
         PropertyPsiDataElement getter = psiData.getGetter();
         if (getter != null) {
-            JetMethodAnnotation methodAnnotation = ((PsiMethodWrapper) getter.getMember()).getJetMethodAnnotation();
-            visibility = DescriptorResolverUtils.resolveVisibility(psiData.getCharacteristicPsi(), methodAnnotation);
-            kind = DescriptorKindUtils.flagsToKind(methodAnnotation.kind());
+            visibility = DescriptorResolverUtils.resolveVisibility(psiData.getCharacteristicPsi());
         }
 
-        PropertyDescriptorImpl propertyDescriptor = createPropertyDescriptor(owner, propertyName, psiData, isFinal, isVar, visibility, kind);
+        PropertyDescriptorImpl propertyDescriptor =
+                createPropertyDescriptor(owner, propertyName, psiData, isFinal, isVar, visibility, kind);
 
         PropertyGetterDescriptorImpl getterDescriptor = resolveGetter(visibility, kind, getter, propertyDescriptor);
         PropertySetterDescriptorImpl setterDescriptor = resolveSetter(psiData, kind, propertyDescriptor);
@@ -209,9 +207,7 @@ public final class JavaPropertyResolver {
         );
         initializeSetterAndGetter(propertyDescriptor, getterDescriptor, setterDescriptor, propertyType, psiData);
 
-        if (kind == CallableMemberDescriptor.Kind.DECLARATION) {
-            trace.record(BindingContext.VARIABLE, psiData.getCharacteristicPsi(), propertyDescriptor);
-        }
+        trace.record(BindingContext.VARIABLE, psiData.getCharacteristicPsi(), propertyDescriptor);
 
         if (scopeData.getDeclarationOrigin() == JAVA) {
             trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
@@ -277,8 +273,8 @@ public final class JavaPropertyResolver {
             return new PropertyDescriptorImpl(
                     owner,
                     annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
-                    DescriptorResolverUtils.resolveModality(psiData.getCharacteristicMember().getMember(),
-                                                            isFinal || psiData.isPropertyForNamedObject()),
+                    Modality.convertFromFlags(psiData.getCharacteristicMember().getMember().isAbstract(),
+                                              !(isFinal || psiData.isPropertyForNamedObject())),
                     visibility,
                     isVar,
                     propertyName,
@@ -310,6 +306,7 @@ public final class JavaPropertyResolver {
         return propertyType;
     }
 
+    //TODO: doesn't work
     private static void initializeSetterAndGetter(
             @NotNull PropertyDescriptor propertyDescriptor,
             @Nullable PropertyGetterDescriptorImpl getterDescriptor,
@@ -325,13 +322,11 @@ public final class JavaPropertyResolver {
             assert setter != null;
             List<PsiParameterWrapper> parameters = ((PsiMethodWrapper) setter.getMember()).getParameters();
             assert parameters.size() != 0;
-            int valueIndex = parameters.size() - 1;
-            PsiParameterWrapper valueParameter = parameters.get(valueIndex);
             setterDescriptor.initialize(new ValueParameterDescriptorImpl(
                     setterDescriptor,
                     0,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    Name.identifierNoValidate(valueParameter.getJetValueParameter().name()),
+                    Name.identifierNoValidate(""),
                     propertyDescriptor.getType(),
                     false,
                     null));
@@ -368,12 +363,11 @@ public final class JavaPropertyResolver {
         if (setter == null) {
             return null;
         }
-        Visibility setterVisibility = DescriptorResolverUtils.resolveVisibility(setter.getMember().getPsiMember(), null);
+        Visibility setterVisibility = DescriptorResolverUtils.resolveVisibility(setter.getMember().getPsiMember());
         if (setter.getMember() instanceof PsiMethodWrapper) {
             setterVisibility = DescriptorResolverUtils.resolveVisibility(
-                    setter.getMember().getPsiMember(),
-                    ((PsiMethodWrapper) setter.getMember())
-                            .getJetMethodAnnotation());
+                    setter.getMember().getPsiMember()
+            );
         }
         return new PropertySetterDescriptorImpl(
                 propertyDescriptor,

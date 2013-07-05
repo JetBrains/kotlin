@@ -35,19 +35,6 @@ public final class PropertyPsiDataElement {
     private final TypeSource type;
     @Nullable
     private final TypeSource receiverType;
-    
-    
-    public PropertyPsiDataElement(
-            @NotNull PsiMethodWrapper method,
-            boolean getter,
-            @NotNull TypeSource type,
-            @Nullable TypeSource receiverType
-    ) {
-        this.member = method;
-        this.type = type;
-        this.receiverType = receiverType;
-        this.getter = getter;
-    }
 
     public PropertyPsiDataElement(@NotNull PsiFieldWrapper field, @NotNull TypeSource type, @Nullable TypeSource receiverType) {
         this.member = field;

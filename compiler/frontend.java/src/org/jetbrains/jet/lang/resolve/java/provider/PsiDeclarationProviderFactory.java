@@ -39,12 +39,6 @@ public final class PsiDeclarationProviderFactory {
     }
 
     @NotNull
-    public KotlinNamespacePsiDeclarationProvider createDeclarationForKotlinNamespace(
-            @NotNull PsiPackage psiPackage, @NotNull PsiClass psiClass) {
-        return new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass, psiClassFinder);
-    }
-
-    @NotNull
     public PackagePsiDeclarationProvider createDeclarationProviderForNamespaceWithoutMembers(@NotNull PsiPackage psiPackage) {
         return new PackagePsiDeclarationProviderImpl(psiPackage, psiClassFinder);
     }

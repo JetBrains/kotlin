@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
-import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -33,10 +32,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
-import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
-import org.jetbrains.jet.rt.signature.JetSignatureReader;
-import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -48,18 +43,12 @@ import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOT
 public final class JavaSupertypeResolver {
 
     private BindingTrace trace;
-    private JavaSemanticServices semanticServices;
     private JavaTypeTransformer typeTransformer;
     private JavaClassResolver classResolver;
 
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
-    }
-
-    @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
     }
 
     @Inject
@@ -83,15 +72,10 @@ public final class JavaSupertypeResolver {
 
         String context = "class " + psiClass.getQualifiedName();
 
-        if (psiClass.getJetClass().signature().length() > 0) {
-            readSuperTypes(psiClass, typeParameters, classDescriptor, result, context);
-        }
-        else {
-            TypeVariableResolver typeVariableResolverForSupertypes =
-                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes);
-            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes);
-        }
+        TypeVariableResolver typeVariableResolverForSupertypes =
+                TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
+        transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes);
+        transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes);
 
         reportIncompleteHierarchyForErrorTypes(classDescriptor, result);
 
@@ -99,43 +83,6 @@ public final class JavaSupertypeResolver {
             addBaseClass(psiClass, classData, classDescriptor, result);
         }
         return result;
-    }
-
-    private void readSuperTypes(
-            PsiClassWrapper psiClass,
-            List<TypeParameterDescriptor> typeParameters,
-            ClassDescriptor classDescriptor,
-            final List<JetType> result,
-            String context
-    ) {
-        final TypeVariableResolver typeVariableResolver =
-                TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-
-        new JetSignatureReader(psiClass.getJetClass().signature()).accept(new JetSignatureExceptionsAdapter() {
-            @Override
-            public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified) {
-                // TODO: collect
-                return new JetSignatureAdapter();
-            }
-
-            @Override
-            public JetSignatureVisitor visitSuperclass() {
-                return new JetTypeJetSignatureReader(semanticServices, KotlinBuiltIns.getInstance(),
-                                                     typeVariableResolver) {
-                    @Override
-                    protected void done(@NotNull JetType jetType) {
-                        if (!jetType.equals(KotlinBuiltIns.getInstance().getAnyType())) {
-                            result.add(jetType);
-                        }
-                    }
-                };
-            }
-
-            @Override
-            public JetSignatureVisitor visitInterface() {
-                return visitSuperclass();
-            }
-        });
     }
 
     private void addBaseClass(
@@ -158,7 +105,7 @@ public final class JavaSupertypeResolver {
             else {
                 //TODO: hack here
                 result.add(KotlinBuiltIns.getInstance().getAnyType());
-               // throw new IllegalStateException("Could not resolve java.lang.Object");
+                // throw new IllegalStateException("Could not resolve java.lang.Object");
             }
         }
     }

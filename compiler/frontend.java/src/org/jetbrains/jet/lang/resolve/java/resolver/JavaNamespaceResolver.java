@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -201,7 +200,7 @@ public final class JavaNamespaceResolver {
     }
 
     private static boolean isOldKotlinPackageClass(@NotNull PsiClass psiClass) {
-        return new PsiClassWrapper(psiClass).getJetPackageClass().isDefined();
+        return hasAnnotation(psiClass, JvmStdlibNames.JET_PACKAGE_CLASS.getFqName());
     }
 
     private static boolean hasKotlinPackageAnnotation(@NotNull PsiClass psiClass) {

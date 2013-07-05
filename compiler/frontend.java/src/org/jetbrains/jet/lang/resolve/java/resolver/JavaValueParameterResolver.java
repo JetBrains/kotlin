@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiParameterWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -49,34 +49,17 @@ public final class JavaValueParameterResolver {
             PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver
     ) {
 
-        if (parameter.getJetTypeParameter().isDefined()) {
-            return JvmMethodParameterMeaning.typeInfo();
-        }
-
         PsiType psiType = parameter.getPsiParameter().getType();
 
         // TODO: must be very slow, make it lazy?
         Name name = Name.identifier(getParameterName(i, parameter));
 
-        if (parameter.getJetValueParameter().name().length() > 0) {
-            name = Name.identifier(parameter.getJetValueParameter().name());
-        }
-
-        String typeFromAnnotation = parameter.getJetValueParameter().type();
-        boolean receiver = parameter.getJetValueParameter().receiver();
-        boolean hasDefaultValue = parameter.getJetValueParameter().hasDefaultValue();
-
-        JetType outType;
-        if (typeFromAnnotation.length() > 0) {
-            outType = getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
-        }
-        else {
-            TypeUsage typeUsage = JavaTypeTransformer.adjustTypeUsageWithMutabilityAnnotations(parameter.getPsiParameter(), TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
-            outType = getTypeTransformer().transformToType(psiType, typeUsage, typeVariableResolver);
-        }
+        TypeUsage typeUsage = JavaTypeTransformer
+                .adjustTypeUsageWithMutabilityAnnotations(parameter.getPsiParameter(), TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
+        JetType outType = getTypeTransformer().transformToType(psiType, typeUsage, typeVariableResolver);
 
         JetType varargElementType;
-        if (psiType instanceof PsiEllipsisType || parameter.getJetValueParameter().vararg()) {
+        if (psiType instanceof PsiEllipsisType) {
             varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(TypeUtils.makeNotNullable(outType));
             outType = TypeUtils.makeNotNullable(outType);
         }
@@ -84,29 +67,24 @@ public final class JavaValueParameterResolver {
             varargElementType = null;
         }
 
-        if (receiver) {
-            return JvmMethodParameterMeaning.receiver(outType);
+        JetType transformedType;
+        if (JavaAnnotationResolver
+                    .findAnnotationWithExternal(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
+            null) {
+            transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
         }
         else {
-
-            JetType transformedType;
-            if (JavaAnnotationResolver.findAnnotationWithExternal(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
-                null) {
-                transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
-            }
-            else {
-                transformedType = outType;
-            }
-            return JvmMethodParameterMeaning.regular(new ValueParameterDescriptorImpl(
-                    containingDeclaration,
-                    i,
-                    Collections.<AnnotationDescriptor>emptyList(), // TODO
-                    name,
-                    transformedType,
-                    hasDefaultValue,
-                    varargElementType
-            ));
+            transformedType = outType;
         }
+        return JvmMethodParameterMeaning.regular(new ValueParameterDescriptorImpl(
+                containingDeclaration,
+                i,
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                name,
+                transformedType,
+                false,
+                varargElementType
+        ));
     }
 
     @NotNull
@@ -181,10 +159,6 @@ public final class JavaValueParameterResolver {
 
         public static JvmMethodParameterMeaning regular(@NotNull ValueParameterDescriptor valueParameterDescriptor) {
             return new JvmMethodParameterMeaning(JvmMethodParameterKind.REGULAR, null, valueParameterDescriptor);
-        }
-
-        public static JvmMethodParameterMeaning typeInfo() {
-            return new JvmMethodParameterMeaning(JvmMethodParameterKind.TYPE_INFO, null, null);
         }
     }
 }

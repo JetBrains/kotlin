@@ -18,8 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.wrapper;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
-import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 
 public class PsiClassWrapper {
 
@@ -37,24 +35,5 @@ public class PsiClassWrapper {
     @NotNull
     public PsiClass getPsiClass() {
         return psiClass;
-    }
-    
-    private JetClassAnnotation jetClass;
-    private JetPackageClassAnnotation jetPackageClass;
-
-    @NotNull
-    public JetClassAnnotation getJetClass() {
-        if (jetClass == null) {
-            jetClass = JetClassAnnotation.get(psiClass);
-        }
-        return jetClass;
-    }
-
-    @NotNull
-    public JetPackageClassAnnotation getJetPackageClass() {
-        if (jetPackageClass == null) {
-            jetPackageClass = JetPackageClassAnnotation.get(psiClass);
-        }
-        return jetPackageClass;
     }
 }

@@ -22,8 +22,6 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
-import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +31,9 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
     public PsiMethodWrapper(@NotNull PsiMethod psiMethod) {
         super(psiMethod);
     }
-    
+
     private List<PsiParameterWrapper> parameters;
+
     @NotNull
     public List<PsiParameterWrapper> getParameters() {
         if (parameters == null) {
@@ -45,29 +44,6 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
             }
         }
         return parameters;
-    }
-
-    @NotNull
-    public PsiParameterWrapper getParameter(int i) {
-        return getParameters().get(i);
-    }
-
-    private JetMethodAnnotation jetMethodAnnotation;
-    @NotNull
-    public JetMethodAnnotation getJetMethodAnnotation() {
-        if (jetMethodAnnotation == null) {
-            jetMethodAnnotation = JetMethodAnnotation.get(getPsiMethod());
-        }
-        return jetMethodAnnotation;
-    }
-
-    private JetConstructorAnnotation jetConstructorAnnotation;
-    @NotNull
-    public JetConstructorAnnotation getJetConstructorAnnotation() {
-        if (jetConstructorAnnotation == null) {
-            jetConstructorAnnotation = JetConstructorAnnotation.get(getPsiMethod());
-        }
-        return jetConstructorAnnotation;
     }
 
     @Override

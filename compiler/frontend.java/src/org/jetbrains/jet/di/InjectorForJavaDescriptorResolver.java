@@ -28,8 +28,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassObjectResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
@@ -37,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolv
 import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
@@ -58,8 +57,6 @@ public class InjectorForJavaDescriptorResolver {
     private final JavaClassResolver javaClassResolver;
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaCompileTimeConstResolver javaCompileTimeConstResolver;
-    private final JavaClassObjectResolver javaClassObjectResolver;
-    private final JavaSupertypeResolver javaSupertypeResolver;
     private final JavaFunctionResolver javaFunctionResolver;
     private final JavaValueParameterResolver javaValueParameterResolver;
     private final JavaSignatureResolver javaSignatureResolver;
@@ -67,6 +64,7 @@ public class InjectorForJavaDescriptorResolver {
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final ErrorReporter errorReporter;
     private final JavaNamespaceResolver javaNamespaceResolver;
+    private final JavaSupertypeResolver javaSupertypeResolver;
     private final JavaConstructorResolver javaConstructorResolver;
     private final JavaInnerClassResolver javaInnerClassResolver;
     private final JavaPropertyResolver javaPropertyResolver;
@@ -88,8 +86,6 @@ public class InjectorForJavaDescriptorResolver {
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
-        this.javaClassObjectResolver = new JavaClassObjectResolver();
-        this.javaSupertypeResolver = new JavaSupertypeResolver();
         this.javaFunctionResolver = new JavaFunctionResolver();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
         this.javaSignatureResolver = new JavaSignatureResolver();
@@ -97,6 +93,7 @@ public class InjectorForJavaDescriptorResolver {
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
         this.errorReporter = new ErrorReporter();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
+        this.javaSupertypeResolver = new JavaSupertypeResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaInnerClassResolver = new JavaInnerClassResolver();
         this.javaPropertyResolver = new JavaPropertyResolver();
@@ -122,7 +119,6 @@ public class InjectorForJavaDescriptorResolver {
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
@@ -137,15 +133,6 @@ public class InjectorForJavaDescriptorResolver {
 
         javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
         javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
-
-        javaClassObjectResolver.setSemanticServices(javaSemanticServices);
-        javaClassObjectResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassObjectResolver.setTrace(bindingTrace);
-
-        javaSupertypeResolver.setClassResolver(javaClassResolver);
-        javaSupertypeResolver.setSemanticServices(javaSemanticServices);
-        javaSupertypeResolver.setTrace(bindingTrace);
-        javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setParameterResolver(javaValueParameterResolver);
@@ -171,6 +158,10 @@ public class InjectorForJavaDescriptorResolver {
         javaNamespaceResolver.setJavaSemanticServices(javaSemanticServices);
         javaNamespaceResolver.setPsiClassFinder(psiClassFinder);
         javaNamespaceResolver.setTrace(bindingTrace);
+
+        javaSupertypeResolver.setClassResolver(javaClassResolver);
+        javaSupertypeResolver.setTrace(bindingTrace);
+        javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaConstructorResolver.setTrace(bindingTrace);
         javaConstructorResolver.setTypeTransformer(javaTypeTransformer);

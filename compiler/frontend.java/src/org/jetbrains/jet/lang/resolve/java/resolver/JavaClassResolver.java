@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
@@ -44,16 +43,20 @@ import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 public final class JavaClassResolver {
 
@@ -85,7 +88,6 @@ public final class JavaClassResolver {
     private JavaAnnotationResolver annotationResolver;
     private PsiClassFinder psiClassFinder;
     private JavaNamespaceResolver namespaceResolver;
-    private JavaClassObjectResolver classObjectResolver;
     private JavaSupertypeResolver supertypesResolver;
     private JavaFunctionResolver functionResolver;
     private DeserializedDescriptorResolver kotlinDescriptorResolver;
@@ -106,11 +108,6 @@ public final class JavaClassResolver {
     @Inject
     public void setSignatureResolver(JavaSignatureResolver signatureResolver) {
         this.signatureResolver = signatureResolver;
-    }
-
-    @Inject
-    public void setClassObjectResolver(JavaClassObjectResolver classObjectResolver) {
-        this.classObjectResolver = classObjectResolver;
     }
 
     @Inject
@@ -258,6 +255,7 @@ public final class JavaClassResolver {
 
         return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);
     }
+
     @NotNull
     private ClassDescriptorFromJvmBytecode doCreateClassDescriptor(
             @NotNull FqName fqName,
@@ -265,12 +263,7 @@ public final class JavaClassResolver {
             @NotNull PostponedTasks taskList,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
-        JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
-        if (jetClassAnnotation.isDefined()) {
-            AbiVersionUtil.checkAbiVersion(psiClass, jetClassAnnotation.getAbiVersion(), trace);
-        }
-
-        ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
+        ClassKind kind = getClassKind(psiClass);
         ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(
                 containingDeclaration, kind, isInnerClass(psiClass));
@@ -279,12 +272,12 @@ public final class JavaClassResolver {
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
-                = signatureResolver.createUninitializedClassTypeParameters(psiClass, classDescriptor);
+                = JavaSignatureResolver.createUninitializedClassTypeParameters(psiClass, classDescriptor);
 
         classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
         List<JetType> supertypes = Lists.newArrayList();
         classDescriptor.setSupertypes(supertypes);
-        classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
+        classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
         JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, semanticServices);
@@ -298,9 +291,9 @@ public final class JavaClassResolver {
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
         supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classData, classTypeParameters));
 
-        ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
-        cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);
-        if (classObjectDescriptor != null) {
+        if (psiClass.isEnum()) {
+            ClassDescriptorFromJvmBytecode classObjectDescriptor = createClassObjectDescriptorForEnum(classDescriptor, psiClass);
+            cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
 
@@ -468,20 +461,65 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
+    private static ClassKind getClassKind(@NotNull PsiClass psiClass) {
         if (psiClass.isInterface()) {
             return (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT);
         }
         if (psiClass.isEnum()) {
             return ClassKind.ENUM_CLASS;
         }
-        else {
-            return jetClassAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT ? ClassKind.OBJECT : ClassKind.CLASS;
-        }
+        return ClassKind.CLASS;
     }
 
     @Nullable
     public ClassDescriptor resolveClass(FqName name) {
         return resolveClass(name, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+    }
+
+    @NotNull
+    private ClassDescriptorFromJvmBytecode createClassObjectDescriptorForEnum(
+            @NotNull ClassDescriptor containing,
+            @NotNull PsiClass psiClass
+    ) {
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = createSyntheticClassObject(containing, psiClass);
+
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+
+        return classObjectDescriptor;
+    }
+
+    @NotNull
+    private ClassDescriptorFromJvmBytecode createSyntheticClassObject(
+            @NotNull ClassDescriptor containing,
+            @NotNull PsiClass psiClass
+    ) {
+        ClassDescriptorFromJvmBytecode classObjectDescriptor =
+                new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
+        ClassPsiDeclarationProvider data =
+                semanticServices.getPsiDeclarationProviderFactory().createSyntheticClassObjectClassData(psiClass);
+        setUpClassObjectDescriptor(classObjectDescriptor, containing, data, getClassObjectName(containing.getName().asString()));
+        return classObjectDescriptor;
+    }
+
+    private void setUpClassObjectDescriptor(
+            @NotNull ClassDescriptorFromJvmBytecode classObjectDescriptor,
+            @NotNull ClassDescriptor containing,
+            @NotNull ClassPsiDeclarationProvider data,
+            @NotNull Name classObjectName
+    ) {
+        classObjectDescriptor.setName(classObjectName);
+        classObjectDescriptor.setModality(Modality.FINAL);
+        classObjectDescriptor.setVisibility(containing.getVisibility());
+        classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classObjectDescriptor.createTypeConstructor();
+        JavaClassNonStaticMembersScope classMembersScope =
+                new JavaClassNonStaticMembersScope(classObjectDescriptor, data, semanticServices);
+        WritableScopeImpl writableScope =
+                new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION,
+                                      "Member lookup scope");
+        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        classObjectDescriptor.setScopeForMemberLookup(writableScope);
+        classObjectDescriptor.setScopeForConstructorResolve(classMembersScope);
     }
 }

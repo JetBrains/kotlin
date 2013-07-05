@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
@@ -47,7 +46,8 @@ public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase 
     @Override
     @NotNull
     protected MembersCache buildMembersCache() {
-        return MembersCache.buildMembersByNameCache(new MembersCache(), psiClassFinder, psiClass, null, staticMembers, getDeclarationOrigin() == KOTLIN);
+        return MembersCache.buildMembersByNameCache(new MembersCache(), psiClassFinder, psiClass, null, staticMembers,
+                                                    getDeclarationOrigin() == KOTLIN);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase 
 
     @NotNull
     private static DeclarationOrigin determineOrigin(@Nullable PsiClass psiClass) {
-        return ((psiClass != null) && DescriptorResolverUtils.isKotlinClass(psiClass)) ? KOTLIN : JAVA;
+        return JAVA;
     }
 
     @Override

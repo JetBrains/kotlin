@@ -19,16 +19,15 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
-import com.intellij.psi.util.MethodSignature;
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
+import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
+import org.jetbrains.jet.lang.resolve.java.TypeSource;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;
@@ -129,23 +128,10 @@ public final class MembersCache {
         private void process() {
             for (PsiClass psiClass : psiClasses) {
                 if (!(psiClass instanceof JetJavaMirrorMarker)) { // to filter out JetLightClasses
-                    if (JetClassAnnotation.get(psiClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
-                        processObjectClass(psiClass);
-                    }
                     if (isSamInterface(psiClass)) {
                         processSamInterface(psiClass);
                     }
                 }
-            }
-        }
-
-        private void processObjectClass(@NotNull PsiClass psiClass) {
-            PsiField instanceField = psiClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
-            if (instanceField != null) {
-                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(psiClass.getName()));
-
-                TypeSource type = new TypeSource("", instanceField.getType(), instanceField);
-                namedMembers.addPropertyAccessor(new PropertyPsiDataElement(new PsiFieldWrapper(instanceField), type, null));
             }
         }
 
@@ -248,9 +234,7 @@ public final class MembersCache {
                 return false;
             }
 
-            //process private accessors
-            if (member.isPrivate()
-                && !(member instanceof PsiMethodWrapper && ((PsiMethodWrapper)member).getJetMethodAnnotation().hasPropertyFlag())) {
+            if (member.isPrivate()) {
                 return false;
             }
 
@@ -288,90 +272,25 @@ public final class MembersCache {
             if (propertyParseResult != null && propertyParseResult.isGetter()) {
                 processGetter(ownMethod, method, propertyParseResult);
             }
-            else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
+            else if (propertyParseResult != null) {
                 processSetter(method, propertyParseResult);
             }
 
-            if (!method.getJetMethodAnnotation().hasPropertyFlag()) {
-                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
-                namedMembers.addMethod(method);
-            }
+            NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
+            namedMembers.addMethod(method);
         }
 
+        //TODO: manually!!!!
         private void processSetter(PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
+            //TODO
             String propertyName = propertyParseResult.getPropertyName();
-            NamedMembers members = getOrCreateEmpty(Name.identifier(propertyName));
-
-            if (method.getJetMethodAnnotation().hasPropertyFlag()) {
-                if (method.getParameters().size() == 0) {
-                    // TODO: report error properly
-                    throw new IllegalStateException();
-                }
-
-                int i = 0;
-
-                TypeSource receiverType = null;
-                PsiParameterWrapper p1 = method.getParameter(0);
-                if (p1.getJetValueParameter().receiver()) {
-                    receiverType = new TypeSource(p1.getJetValueParameter().type(), p1.getPsiParameter().getType(), p1.getPsiParameter());
-                    ++i;
-                }
-
-                while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
-                    ++i;
-                }
-
-                if (i + 1 != method.getParameters().size()) {
-                    throw new IllegalStateException();
-                }
-
-                PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
-                TypeSource propertyType =
-                        new TypeSource(method.getJetMethodAnnotation().propertyType(), propertyTypeParameter.getPsiParameter().getType(),
-                                       propertyTypeParameter.getPsiParameter());
-
-                members.addPropertyAccessor(new PropertyPsiDataElement(method, false, propertyType, receiverType));
-            }
+            getOrCreateEmpty(Name.identifier(propertyName));
         }
 
         private void processGetter(PsiMethod ownMethod, PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
+            //TODO:
             String propertyName = propertyParseResult.getPropertyName();
-            NamedMembers members = getOrCreateEmpty(Name.identifier(propertyName));
-
-            // TODO: some java properties too
-            if (method.getJetMethodAnnotation().hasPropertyFlag()) {
-
-                int i = 0;
-
-                TypeSource receiverType;
-                if (i < method.getParameters().size() && method.getParameter(i).getJetValueParameter().receiver()) {
-                    PsiParameterWrapper receiverParameter = method.getParameter(i);
-                    receiverType =
-                            new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(),
-                                           receiverParameter.getPsiParameter());
-                    ++i;
-                }
-                else {
-                    receiverType = null;
-                }
-
-                while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
-                    // TODO: store is reified
-                    ++i;
-                }
-
-                if (i != method.getParameters().size()) {
-                    // TODO: report error properly
-                    throw new IllegalStateException("something is wrong with method " + ownMethod);
-                }
-
-                // TODO: what if returnType == null?
-                PsiType returnType = method.getReturnType();
-                assert returnType != null;
-                TypeSource propertyType = new TypeSource(method.getJetMethodAnnotation().propertyType(), returnType, method.getPsiMethod());
-
-                members.addPropertyAccessor(new PropertyPsiDataElement(method, true, propertyType, receiverType));
-            }
+            getOrCreateEmpty(Name.identifier(propertyName));
         }
 
         private void createEmptyEntry(@NotNull Name identifier) {
@@ -413,9 +332,6 @@ public final class MembersCache {
     // Returns null if not SAM interface
     @Nullable
     public static PsiMethod getSamInterfaceMethod(@NotNull PsiClass psiClass) {
-        if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
-            return null;
-        }
         String qualifiedName = psiClass.getQualifiedName();
         if (qualifiedName == null || qualifiedName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".")) {
             return null;
