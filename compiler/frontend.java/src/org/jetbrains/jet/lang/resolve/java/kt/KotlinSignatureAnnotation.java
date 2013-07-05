@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 
 public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
     private static final KotlinSignatureAnnotation NULL_ANNOTATION = new KotlinSignatureAnnotation(null);
+
     static {
         NULL_ANNOTATION.checkInitialized();
     }
@@ -50,7 +51,8 @@ public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
     @NotNull
     public static KotlinSignatureAnnotation get(PsiModifierListOwner psiModifierListOwner) {
         PsiAnnotation annotation =
-                JavaAnnotationResolver.findAnnotationWithExternal(psiModifierListOwner, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().asString());
+                JavaAnnotationResolver
+                        .findAnnotationWithExternal(psiModifierListOwner, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().asString());
         return annotation != null ? new KotlinSignatureAnnotation(annotation) : NULL_ANNOTATION;
     }
 }

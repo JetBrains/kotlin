@@ -31,10 +31,6 @@ public abstract class PsiAnnotationWrapper {
         this.psiAnnotation = psiAnnotation;
     }
 
-    public boolean isDefined() {
-        return psiAnnotation != null;
-    }
-
     protected abstract void initialize();
 
     protected void checkInitialized () {
@@ -47,13 +43,5 @@ public abstract class PsiAnnotationWrapper {
     @NotNull
     protected String getStringAttribute(String name, String defaultValue) {
         return PsiAnnotationUtils.getStringAttribute(psiAnnotation, name, defaultValue);
-    }
-
-    protected boolean getBooleanAttribute(String name, boolean defaultValue) {
-        return PsiAnnotationUtils.getBooleanAttribute(psiAnnotation, name, defaultValue);
-    }
-
-    protected int getIntAttribute(String name, int defaultValue) {
-        return PsiAnnotationUtils.getIntAttribute(psiAnnotation, name, defaultValue);
     }
 }
