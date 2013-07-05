@@ -32,7 +32,6 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
-import java.lang.Throwable;
 import java.util.Map;
 
 /**
@@ -43,7 +42,7 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
 
     public static final KotlinAbiVersionIndex INSTANCE = new KotlinAbiVersionIndex();
 
-    private static final int VERSION = 0;
+    private static final int VERSION = 1;
 
     private static final ID<Integer, Void> NAME = ID.create(KotlinAbiVersionIndex.class.getCanonicalName());
     private static final ExternalIntegerKeyDescriptor KEY_DESCRIPTOR = new ExternalIntegerKeyDescriptor();
@@ -67,7 +66,9 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
                     @Override
                     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                         if (!JvmStdlibNames.JET_CLASS.getDescriptor().equals(desc) &&
-                            !JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor().equals(desc)) {
+                            !JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor().equals(desc) &&
+                            !JvmStdlibNames.KOTLIN_CLASS.getDescriptor().equals(desc) &&
+                            !JvmStdlibNames.KOTLIN_PACKAGE.getDescriptor().equals(desc)) {
                             return null;
                         }
                         annotationPresent.set(true);
@@ -102,7 +103,8 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
         }
     };
 
-    private KotlinAbiVersionIndex() {}
+    private KotlinAbiVersionIndex() {
+    }
 
     @NotNull
     @Override
