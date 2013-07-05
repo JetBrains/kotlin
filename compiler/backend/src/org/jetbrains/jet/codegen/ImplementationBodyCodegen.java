@@ -41,7 +41,6 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
-import org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.NameSerializationUtil;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
@@ -74,7 +73,6 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
@@ -227,32 +225,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
         DescriptorSerializer serializer = new DescriptorSerializer();
 
-        final ByteArrayOutputStream classStream = new ByteArrayOutputStream();
+        ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        ClassSerializationUtil.serializeClass(descriptor, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
-            @Override
-            public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
-                if (classDescriptor == descriptor) {
-                    try {
-                        classProto.writeTo(classStream);
-                    }
-                    catch (IOException e) {
-                        throw ExceptionUtils.rethrow(e);
-                    }
-                }
-            }
-        });
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NameSerializationUtil.serializeNameTable(out, serializer.getNameTable());
         try {
+            ByteArrayOutputStream classStream = new ByteArrayOutputStream();
+            classProto.writeTo(classStream);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            NameSerializationUtil.serializeNameTable(out, serializer.getNameTable());
             out.write(classStream.toByteArray());
+
+            av.visit("data", out.toByteArray());
         }
         catch (IOException e) {
             throw ExceptionUtils.rethrow(e);
         }
-
-        av.visit("data", out.toByteArray());
 
         av.visitEnd();
     }
