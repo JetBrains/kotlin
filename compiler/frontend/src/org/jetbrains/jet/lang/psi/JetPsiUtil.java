@@ -779,22 +779,22 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static <T extends JetElement> T getOutermostJetElement(
+    public static JetElement getOutermostDescendantElement(
             @Nullable PsiElement root,
             boolean first,
-            @NotNull final Class<? extends T>... elementTypes
+            final @NotNull Predicate<JetElement> predicate
     ) {
         if (!(root instanceof JetElement)) return null;
 
-        final List<T> results = Lists.newArrayList();
+        final List<JetElement> results = Lists.newArrayList();
 
         ((JetElement) root).accept(
                 new JetVisitorVoid() {
                     @Override
                     public void visitJetElement(JetElement element) {
-                        if (PsiTreeUtil.instanceOf(element, elementTypes)) {
+                        if (predicate.apply(element)) {
                             //noinspection unchecked
-                            results.add((T) element);
+                            results.add(element);
                         }
                         else {
                             element.acceptChildren(this);

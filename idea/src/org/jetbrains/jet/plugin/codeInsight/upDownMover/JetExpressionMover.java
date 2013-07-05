@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.codeInsight.upDownMover;
 
+import com.google.common.base.Predicate;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -13,16 +14,33 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetExpressionMover extends AbstractJetUpDownMover {
+
     public JetExpressionMover() {
     }
 
-    private final static Class[] MOVABLE_ELEMENT_CLASSES = {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
+    private final static Class[] MOVABLE_ELEMENT_CLASSES =
+            {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
 
     private final static Class[] BLOCKLIKE_ELEMENT_CLASSES =
             {JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class, JetFile.class};
 
     private final static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
             {JetFunction.class, JetPropertyAccessor.class, JetClassInitializer.class};
+
+    private static final Predicate<JetElement> CHECK_BLOCK_LIKE_ELEMENT = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return (input instanceof JetBlockExpression || input instanceof JetClassBody)
+                   && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
+        }
+    };
+
+    private static final Predicate<JetElement> CHECK_BLOCK = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return input instanceof JetBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
+        }
+    };
 
     @Nullable
     private static PsiElement getStandaloneClosingBrace(@NotNull PsiFile file, @NotNull Editor editor) {
@@ -137,7 +155,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement parent = current.getParent();
             if (parent instanceof JetClassBody ||
                 parent instanceof JetClassInitializer ||
-                parent instanceof JetFunction ||
+                parent instanceof JetNamedFunction ||
                 parent instanceof JetProperty) {
                 return null;
             }
@@ -147,7 +165,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement sibling = down ? current.getNextSibling() : current.getPrevSibling();
             if (sibling != null) {
                 //noinspection unchecked
-                JetBlockExpression block = JetPsiUtil.getOutermostJetElement(sibling, down, JetBlockExpression.class);
+                JetBlockExpression block = (JetBlockExpression) JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK);
                 if (block != null) return block;
 
                 current = sibling;
@@ -195,21 +213,13 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         else {
             // moving into code block
             //noinspection unchecked
-            JetElement blockLikeElement = JetPsiUtil.getOutermostJetElement(sibling, down, JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class);
-            if (blockLikeElement != null &&
-                !(PsiTreeUtil.instanceOf(blockLikeElement.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES))) {
-                if (blockLikeElement instanceof JetWhenExpression) {
-                    //noinspection unchecked
-                    blockLikeElement = JetPsiUtil.getOutermostJetElement(blockLikeElement, down, JetBlockExpression.class);
+            JetElement blockLikeElement = JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK_LIKE_ELEMENT);
+            if (blockLikeElement != null) {
+                if (down) {
+                    end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
                 }
-
-                if (blockLikeElement != null) {
-                    if (down) {
-                        end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
-                    }
-                    else {
-                        start = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.RBRACE);
-                    }
+                else {
+                    start = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.RBRACE);
                 }
             }
         }
@@ -228,7 +238,12 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private LineRange getValueParamOrArgTargetRange(@NotNull Editor editor, @NotNull PsiElement elementToCheck, @NotNull PsiElement sibling, boolean down) {
+    private LineRange getValueParamOrArgTargetRange(
+            @NotNull Editor editor,
+            @NotNull PsiElement elementToCheck,
+            @NotNull PsiElement sibling,
+            boolean down
+    ) {
         PsiElement next = sibling;
 
         if (next.getNode().getElementType() == JetTokens.COMMA) {
@@ -236,8 +251,8 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         LineRange range = (next instanceof JetParameter || next instanceof JetValueArgument)
-               ? new LineRange(next, next, editor.getDocument())
-               : null;
+                          ? new LineRange(next, next, editor.getDocument())
+                          : null;
 
         if (range != null) {
             parametersOrArgsToMove = new Pair<PsiElement, PsiElement>(elementToCheck, next);
@@ -374,8 +389,10 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 info.toMove2 = null;
                 return true;
             }
-            case MOVABLE: return true;
-            default: break;
+            case MOVABLE:
+                return true;
+            default:
+                break;
         }
 
         LineRange oldRange = info.toMove;
@@ -394,7 +411,8 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             return true;
         }
 
-        if ((firstElement instanceof JetParameter || firstElement instanceof JetValueArgument) && PsiTreeUtil.isAncestor(lastElement, firstElement, false)) {
+        if ((firstElement instanceof JetParameter || firstElement instanceof JetValueArgument) &&
+            PsiTreeUtil.isAncestor(lastElement, firstElement, false)) {
             lastElement = firstElement;
         }
 

@@ -777,6 +777,46 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/moveUpDown/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("closureInDoWhile1.kt")
+        public void testClosureInDoWhile1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInDoWhile1.kt");
+        }
+        
+        @TestMetadata("closureInDoWhile2.kt")
+        public void testClosureInDoWhile2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInDoWhile2.kt");
+        }
+        
+        @TestMetadata("closureInFor1.kt")
+        public void testClosureInFor1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInFor1.kt");
+        }
+        
+        @TestMetadata("closureInFor2.kt")
+        public void testClosureInFor2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInFor2.kt");
+        }
+        
+        @TestMetadata("closureInIf1.kt")
+        public void testClosureInIf1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInIf1.kt");
+        }
+        
+        @TestMetadata("closureInIf2.kt")
+        public void testClosureInIf2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInIf2.kt");
+        }
+        
+        @TestMetadata("closureInWhile1.kt")
+        public void testClosureInWhile1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInWhile1.kt");
+        }
+        
+        @TestMetadata("closureInWhile2.kt")
+        public void testClosureInWhile2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInWhile2.kt");
+        }
+        
         @TestMetadata("declaration1.kt")
         public void testDeclaration1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/declaration1.kt");
