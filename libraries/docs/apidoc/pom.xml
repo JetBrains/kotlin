@@ -1,95 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+  <parent>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-project</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>apidoc</artifactId>
+
+  <name>Kotlin API Docs</name>
+  <description>Kotlin API Docs</description>
+  <url>https://github.com/JetBrains/kotlin/tree/master/libraries</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:JetBrains/kotlin.git</connection>
+    <developerConnection>scm:git:git@github.com:JetBrains/kotlin.git</developerConnection>
+    <url>git@github.com:JetBrains/kotlin.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>JetBrains</id>
+      <name>Jet Brains - Dev</name>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-runtime</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit-version}</version>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <project-root>${basedir}/../../../</project-root>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-project</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
+        <artifactId>kdoc-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <sources>
+            <source>${basedir}/../../stdlib/src</source>
+            <source>${basedir}/../../kunit/src/main/kotlin</source>
+            <source>${basedir}/../../kotlin-jdbc/src/main/kotlin</source>
+            <source>${basedir}/../../kotlin-swing/src/main/kotlin</source>
+          </sources>
+          <title>Kotlin API (${project.version})</title>
+          <ignorePackages>
+            <ignorePackage>com</ignorePackage>
+            <ignorePackage>sun</ignorePackage>
+            <ignorePackage>java</ignorePackage>
+            <ignorePackage>jet</ignorePackage>
+            <ignorePackage>js</ignorePackage>
+            <ignorePackage>junit</ignorePackage>
+            <ignorePackage>org</ignorePackage>
+            <ignorePackage>kotlin.support</ignorePackage>
+            <ignorePackage>kotlin.properties</ignorePackage>
+          </ignorePackages>
+          <sourceRootHref>https://github.com/JetBrains/kotlin/blob/master</sourceRootHref>
+          <projectRootDir>${project-root}</projectRootDir>
+          <packageDescriptionFiles>
+            <kotlin.swing>${project-root}/libraries/kotlin-swing/ReadMe.md</kotlin.swing>
+          </packageDescriptionFiles>
+          <packageSummaryText>
+            <kotlin>Core API</kotlin>
+            <kotlin.beans>Functions for working with Java Beans</kotlin.beans>
+            <kotlin.browser>API to access the web browser DOM and windows</kotlin.browser>
+            <kotlin.concurrent>Concurrent programing API</kotlin.concurrent>
+            <kotlin.dom>Functions for working with the W3C DOM</kotlin.dom>
+            <kotlin.io>IO API for working with files and streams</kotlin.io>
+            <kotlin.jdbc>Functions for working with SQL databases via JDBC (in kotlin-jdbc module)</kotlin.jdbc>
+            <kotlin.math>Mathematics API</kotlin.math>
+            <kotlin.modules>API for defining compilation units</kotlin.modules>
+            <kotlin.nullable>Functions for treating nullable types as composable collections of zero or one element</kotlin.nullable>
+            <kotlin.swing>Swing API (in kotlin-swing module)</kotlin.swing>
+            <kotlin.template>Text processing API</kotlin.template>
+            <kotlin.test>Functions for writing tests (in kunit module)</kotlin.test>
+            <kotlin.util>Utility functions</kotlin.util>
+          </packageSummaryText>
+        </configuration>
 
-    <artifactId>apidoc</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-runtime</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit-version}</version>
-        </dependency>
-    </dependencies>
-
-    <properties>
-        <project-root>${basedir}/../../../</project-root>
-    </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kdoc-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <sources>
-                        <source>${basedir}/../../stdlib/src</source>
-                        <source>${basedir}/../../kunit/src/main/kotlin</source>
-                        <source>${basedir}/../../kotlin-jdbc/src/main/kotlin</source>
-                        <source>${basedir}/../../kotlin-swing/src/main/kotlin</source>
-                    </sources>
-                    <title>Kotlin API (${project.version})</title>
-                    <ignorePackages>
-                        <ignorePackage>com</ignorePackage>
-                        <ignorePackage>sun</ignorePackage>
-                        <ignorePackage>java</ignorePackage>
-                        <ignorePackage>jet</ignorePackage>
-                        <ignorePackage>js</ignorePackage>
-                        <ignorePackage>junit</ignorePackage>
-                        <ignorePackage>org</ignorePackage>
-                        <ignorePackage>kotlin.support</ignorePackage>
-                        <ignorePackage>kotlin.properties</ignorePackage>
-                    </ignorePackages>
-                    <sourceRootHref>https://github.com/JetBrains/kotlin/blob/master</sourceRootHref>
-                    <projectRootDir>${project-root}</projectRootDir>
-                    <packageDescriptionFiles>
-                        <kotlin.swing>${project-root}/libraries/kotlin-swing/ReadMe.md</kotlin.swing>
-                    </packageDescriptionFiles>
-                    <packageSummaryText>
-                        <kotlin>Core API</kotlin>
-                        <kotlin.beans>Functions for working with Java Beans</kotlin.beans>
-                        <kotlin.browser>API to access the web browser DOM and windows</kotlin.browser>
-                        <kotlin.concurrent>Concurrent programing API</kotlin.concurrent>
-                        <kotlin.dom>Functions for working with the W3C DOM</kotlin.dom>
-                        <kotlin.io>IO API for working with files and streams</kotlin.io>
-                        <kotlin.jdbc>Functions for working with SQL databases via JDBC (in kotlin-jdbc module)</kotlin.jdbc>
-                        <kotlin.math>Mathematics API</kotlin.math>
-                        <kotlin.modules>API for defining compilation units</kotlin.modules>
-                        <kotlin.nullable>Functions for treating nullable types as composable collections of zero or one element</kotlin.nullable>
-                        <kotlin.swing>Swing API (in kotlin-swing module)</kotlin.swing>
-                        <kotlin.template>Text processing API</kotlin.template>
-                        <kotlin.test>Functions for writing tests (in kunit module)</kotlin.test>
-                        <kotlin.util>Utility functions</kotlin.util>
-                    </packageSummaryText>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>apidoc</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>apidoc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+        <executions>
+          <execution>
+            <id>apidoc</id>
+            <phase>package</phase>
+            <goals>
+              <goal>apidoc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

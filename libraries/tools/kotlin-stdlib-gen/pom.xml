@@ -12,10 +12,30 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <groupId>kotlin-stdlib-gen</groupId>
   <artifactId>kotlin-stdlib-gen</artifactId>
-  <version>0.1-SNAPSHOT</version>
 
+  <name>Kotlin Standard Library Generator</name>
+  <description>Kotlin Standard Library Generator</description>
+  <url>https://github.com/JetBrains/kotlin/tree/master/libraries</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:JetBrains/kotlin.git</connection>
+    <developerConnection>scm:git:git@github.com:JetBrains/kotlin.git</developerConnection>
+    <url>git@github.com:JetBrains/kotlin.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>JetBrains</id>
+      <name>Jet Brains - Dev</name>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
@@ -24,5 +44,32 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

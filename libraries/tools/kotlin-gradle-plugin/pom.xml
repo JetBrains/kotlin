@@ -1,124 +1,175 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-project</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>kotlin-gradle-plugin</artifactId>
+
+  <name>Kotlin Gradle Plugin</name>
+  <description>Kotlin Gradle Plugin</description>
+  <url>https://github.com/JetBrains/kotlin/tree/master/libraries</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:JetBrains/kotlin.git</connection>
+    <developerConnection>scm:git:git@github.com:JetBrains/kotlin.git</developerConnection>
+    <url>git@github.com:JetBrains/kotlin.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>JetBrains</id>
+      <name>Jet Brains - Dev</name>
+    </developer>
+  </developers>
+
+  <properties>
+    <maven.version>3.0.4</maven.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-jdk-annotations</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>gradle-api</artifactId>
+      <version>1.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-gradle-plugin-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 
 
-    <modelVersion>4.0.0</modelVersion>
-    <properties>
-        <maven.version>3.0.4</maven.version>
-    </properties>
+  <build>
+    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
-    <parent>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <artifactId>kotlin-maven-plugin</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-project</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
+        <version>${project.version}</version>
+        <configuration>
+          <annotationPaths>
+            <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
+          </annotationPaths>
+        </configuration>
 
-    <artifactId>kotlin-gradle-plugin</artifactId>
-    <packaging>jar</packaging>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
 
-    <dependencies>
-        <dependency>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-stdlib</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-jdk-annotations</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>gradle-api</artifactId>
-          <version>1.4</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-gradle-plugin-core</artifactId>
-          <version>${project.version}</version>
-          <scope>provided</scope>
-        </dependency>
-    </dependencies>
+          <execution>
+            <id>test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Invoker plugin maintains local maven repository in local-repo for gradle integration tests -->
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.8</version>
+        <configuration>
+          <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+          <localRepositoryPath>local-repo</localRepositoryPath>
+          <postBuildHookScript>verify</postBuildHookScript>
+          <!-- no extension required -->
+        </configuration>
+        <executions>
+          <execution>
+            <id>create_local</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-
-    <build>
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
-
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-              <filtering>true</filtering>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <version>${project.version}</version>
-                <configuration>
-                    <annotationPaths>
-                        <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
-                    </annotationPaths>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals> <goal>compile</goal> </goals>
-                    </execution>
-
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals> <goal>test-compile</goal> </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- Invoker plugin maintains local maven repository in local-repo for gradle integration tests -->
-                <artifactId>maven-invoker-plugin</artifactId>
-                <version>1.8</version>
-                <configuration>
-                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                    <localRepositoryPath>local-repo</localRepositoryPath>
-                    <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>create_local</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>install</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <repositories>
-        <repository>
-            <id>jetbrains-utils</id>
-            <url>http://repository.jetbrains.com/utils</url>
-        </repository>
-    </repositories>
+  <repositories>
+    <repository>
+      <id>jetbrains-utils</id>
+      <url>http://repository.jetbrains.com/utils</url>
+    </repository>
+  </repositories>
 </project>

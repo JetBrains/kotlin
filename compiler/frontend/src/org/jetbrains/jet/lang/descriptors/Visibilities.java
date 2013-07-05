@@ -112,6 +112,7 @@ public class Visibilities {
             @Nullable DeclarationDescriptorWithVisibility what,
             @NotNull DeclarationDescriptor from
     ) {
+
         DeclarationDescriptorWithVisibility parent = what;
         while (parent != null && parent.getVisibility() != LOCAL) {
             if (!parent.getVisibility().isVisible(parent, from)) {

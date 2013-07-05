@@ -8,15 +8,14 @@
   <parent>
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-project</artifactId>
-    <version>0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>${version}</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>kotlin-js-tools</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>kotlin-compiler</artifactId>
 
-  <name>Kotlin JS Standard Library</name>
-  <description>A project to make it easier to compile and test the JS standard library as a single, repeatable build</description>
+  <name>Kotlin Compiler</name>
+  <description>the Kotlin compiler</description>
   <url>https://github.com/JetBrains/kotlin/tree/master/libraries</url>
   <licenses>
     <license>
@@ -37,10 +36,4 @@
       <name>Jet Brains - Dev</name>
     </developer>
   </developers>
-
-  <modules>
-    <module>kotlin-js-library</module>
-    <module>kotlin-js-tests</module>
-    <module>kotlin-js-tests-junit</module>
-  </modules>
 </project>
