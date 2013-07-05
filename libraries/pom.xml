@@ -10,6 +10,29 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Kotlin Libraries</name>
+    <description>Kotlin Libraries</description>
+    <url>https://github.com/JetBrains/kotlin/tree/master/libraries</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git@github.com:JetBrains/kotlin.git</connection>
+        <developerConnection>scm:git:git@github.com:JetBrains/kotlin.git</developerConnection>
+        <url>git@github.com:JetBrains/kotlin.git</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>JetBrains</id>
+            <name>Jet Brains - Dev</name>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project-root>../../..</project-root>
@@ -64,6 +87,7 @@
         <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kdoc</module>
         <module>tools/kdoc-maven-plugin</module>
+        <module>tools/kotlin-stdlib-gen</module>
 
         <module>stdlib</module>
         <module>kunit</module>

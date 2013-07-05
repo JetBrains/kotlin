@@ -16,46 +16,54 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-compiler</artifactId>
+    <artifactId>kotlin-compiler-gen</artifactId>
     <packaging>pom</packaging>
 
-    <description>the Kotlin compiler</description>
+    <description>the Kotlin compiler Generator</description>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-artifacts</id>
+                        <id>copy-resources</id>
                         <phase>compile</phase>
                         <goals>
-                            <goal>attach-artifact</goal>
+                            <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${kotlin-sdk}/lib/kotlin-compiler.jar</file>
-                                    <type>jar</type>
-                                </artifact>
-                                <artifact>
-                                    <file>${kotlin-dist}/kotlin-compiler-sources.jar</file>
-                                    <type>jar</type>
-                                    <classifier>sources</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>${kotlin-dist}/kotlin-compiler-javadoc.jar</file>
-                                    <type>jar</type>
-                                    <classifier>javadoc</classifier>
-                                </artifact>
-                            </artifacts>
+                            <outputDirectory>${basedir}/target/extra-resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install-kotlin-compiler</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <pomFile>${basedir}/target/extra-resources/compiler-pom.xml</pomFile>
+                            <file>${kotlin-sdk}/lib/kotlin-compiler.jar</file>
+                            <javadoc>${kotlin-dist}/kotlin-compiler-javadoc.jar</javadoc>
+                            <sources>${kotlin-dist}/kotlin-compiler-sources.jar</sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
