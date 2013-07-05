@@ -89,6 +89,18 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         doTest(content, expectedAnnotation);
     }
 
+    public void testIntArrayVarargAnnotation() throws IOException {
+        String content = getContent("AnnIntVararg(1, 2)");
+        String expectedAnnotation = "AnnIntVararg[a = [1.toInt(), 2.toInt()]: jet.IntArray]";
+        doTest(content, expectedAnnotation);
+    }
+
+    public void testStringArrayVarargAnnotation() throws IOException {
+        String content = getContent("AnnStringVararg(\"a\", \"b\")");
+        String expectedAnnotation = "AnnStringVararg[a = [\"a\", \"b\"]: jet.Array<jet.String>]";
+        doTest(content, expectedAnnotation);
+    }
+
     public void testStringArrayAnnotation() throws IOException {
         String content = getContent("AnnStringArray(array(\"a\"))");
         String expectedAnnotation = "AnnStringArray[a = [\"a\"]: jet.Array<jet.String>]";

@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -174,23 +175,46 @@ public class AnnotationResolver {
         if (results.isSuccess()) {
             for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
                     results.getResultingCall().getValueArguments().entrySet()) {
-                // TODO: are varargs supported here?
-                List<ValueArgument> valueArguments = descriptorToArgument.getValue().getArguments();
+                AnnotationDescriptor annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
+                assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
+
                 ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
-                for (ValueArgument argument : valueArguments) {
-                    JetExpression argumentExpression = argument.getArgumentExpression();
-                    if (argumentExpression != null) {
-                        CompileTimeConstant<?> compileTimeConstant =
-                                resolveAnnotationArgument(argumentExpression, parameterDescriptor.getType(), trace);
-                        if (compileTimeConstant != null) {
-                            AnnotationDescriptor annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
-                            assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
-                            annotationDescriptor.setValueArgument(parameterDescriptor, compileTimeConstant);
-                        }
+
+                JetType varargElementType = parameterDescriptor.getVarargElementType();
+                List<CompileTimeConstant<?>> constants = resolveValueArguments(descriptorToArgument.getValue(), parameterDescriptor.getType(), trace);
+                if (varargElementType == null) {
+                    for (CompileTimeConstant<?> constant : constants) {
+                        annotationDescriptor.setValueArgument(parameterDescriptor, constant);
                     }
+                }
+                else {
+                    JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
+                    if (arrayType == null) {
+                        arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
+                    }
+                    annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType));
                 }
             }
         }
+    }
+
+    @NotNull
+    private List<CompileTimeConstant<?>> resolveValueArguments(
+            @NotNull ResolvedValueArgument resolvedValueArgument,
+            @NotNull JetType expectedType,
+            @NotNull BindingTrace trace
+    ) {
+        List<CompileTimeConstant<?>> constants = Lists.newArrayList();
+        for (ValueArgument argument : resolvedValueArgument.getArguments()) {
+            JetExpression argumentExpression = argument.getArgumentExpression();
+            if (argumentExpression != null) {
+                CompileTimeConstant<?> constant = resolveAnnotationArgument(argumentExpression, expectedType, trace);
+                if (constant != null) {
+                   constants.add(constant);
+                }
+            }
+        }
+        return constants;
     }
 
     @Nullable
@@ -265,13 +289,7 @@ public class AnnotationResolver {
                         JetType type = resultingDescriptor.getValueParameters().iterator().next().getVarargElementType();
                         List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
                         for (ResolvedValueArgument descriptorToArgument : call.getValueArguments().values()) {
-                            List<ValueArgument> valueArguments = descriptorToArgument.getArguments();
-                            for (ValueArgument argument : valueArguments) {
-                                JetExpression argumentExpression = argument.getArgumentExpression();
-                                if (argumentExpression != null) {
-                                    arguments.add(resolveAnnotationArgument(argumentExpression, type, trace));
-                                }
-                            }
+                            arguments.addAll(resolveValueArguments(descriptorToArgument, type, trace));
                         }
                         return new ArrayValue(arguments, resultingDescriptor.getReturnType());
                     }
