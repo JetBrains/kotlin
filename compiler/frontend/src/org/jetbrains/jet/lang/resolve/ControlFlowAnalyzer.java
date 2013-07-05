@@ -46,6 +46,7 @@ public class ControlFlowAnalyzer {
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
         for (JetFile file : bodiesResolveContext.getFiles()) {
+            if (!bodiesResolveContext.completeAnalysisNeeded(file)) continue;
             checkDeclarationContainer(file);
         }
         for (JetClass aClass : bodiesResolveContext.getClasses().keySet()) {
