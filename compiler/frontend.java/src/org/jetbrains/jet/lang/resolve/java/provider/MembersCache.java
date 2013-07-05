@@ -104,11 +104,10 @@ public final class MembersCache {
             @NotNull PsiClassFinder finder,
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
-            boolean staticMembers,
-            boolean isKotlin
+            boolean staticMembers
     ) {
         if (psiClass != null) {
-            membersCache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
+            membersCache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers).process();
         }
 
         //TODO:
@@ -145,12 +144,10 @@ public final class MembersCache {
         @NotNull
         private final PsiClassWrapper psiClass;
         private final boolean staticMembers;
-        private final boolean kotlin;
 
-        private ClassMemberProcessor(@NotNull PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
+        private ClassMemberProcessor(@NotNull PsiClassWrapper psiClass, boolean staticMembers) {
             this.psiClass = psiClass;
             this.staticMembers = staticMembers;
-            this.kotlin = kotlin;
         }
 
         public void process() {
@@ -160,10 +157,6 @@ public final class MembersCache {
         }
 
         private void processFields() {
-            // Hack to load static members for enum class loaded from class file
-            if (kotlin && !psiClass.getPsiClass().isEnum()) {
-                return;
-            }
             for (final PsiField field : psiClass.getPsiClass().getAllFields()) {
                 addTask(field, new RunOnce() {
                     @Override

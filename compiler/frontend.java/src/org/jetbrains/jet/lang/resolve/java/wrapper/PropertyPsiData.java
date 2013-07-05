@@ -69,15 +69,18 @@ public final class PropertyPsiData {
     }
 
     private static void checkDuplicatePropertyComponent(
-            @NotNull PropertyPsiDataElement checked,  @NotNull String componentTypeName, @Nullable PropertyPsiDataElement existent) {
+            @NotNull PropertyPsiDataElement checked, @NotNull String componentTypeName, @Nullable PropertyPsiDataElement existent
+    ) {
         if (existent != null) {
             PsiClass checkedElementClass = checked.getMember().getPsiMember().getContainingClass();
             PsiClass existentElementClass = existent.getMember().getPsiMember().getContainingClass();
 
             throw new IllegalStateException(
                     String.format("Psi element '%s' in class '%s' overwrites '%s' in class '%s' while generating %s component for property",
-                                  checked.getMember().getPsiMember(), checkedElementClass != null ? checkedElementClass.getQualifiedName() : "<no-class>",
-                                  existent.getMember().getPsiMember(), existentElementClass != null ? existentElementClass.getQualifiedName() : "<no-class>",
+                                  checked.getMember().getPsiMember(),
+                                  checkedElementClass != null ? checkedElementClass.getQualifiedName() : "<no-class>",
+                                  existent.getMember().getPsiMember(),
+                                  existentElementClass != null ? existentElementClass.getQualifiedName() : "<no-class>",
                                   componentTypeName));
         }
     }
@@ -193,16 +196,5 @@ public final class PropertyPsiData {
 
     public boolean isPropertyForNamedObject() {
         return field != null && JvmAbi.INSTANCE_FIELD.equals(field.getMember().getName());
-    }
-
-    public boolean isFinal() {
-        if (getter != null) {
-            return getter.getMember().isFinal();
-        }
-        if (setter != null) {
-            return setter.getMember().isFinal();
-        }
-        assert field != null : "Property with no getter and no setter should at least have a backing field";
-        return field.getMember().isFinal();
     }
 }

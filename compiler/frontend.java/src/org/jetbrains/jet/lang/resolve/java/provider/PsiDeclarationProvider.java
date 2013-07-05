@@ -22,7 +22,4 @@ public interface PsiDeclarationProvider {
 
     @NotNull
     MembersCache getMembersCache();
-
-    @NotNull
-    DeclarationOrigin getDeclarationOrigin();
 }

@@ -289,7 +289,7 @@ public final class JavaClassResolver {
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
-        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classData, classTypeParameters));
+        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classTypeParameters));
 
         if (psiClass.isEnum()) {
             ClassDescriptorFromJvmBytecode classObjectDescriptor = createClassObjectDescriptorForEnum(classDescriptor, psiClass);
