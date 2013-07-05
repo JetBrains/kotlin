@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -47,24 +45,24 @@ public class DescriptorSerializer {
     };
     private final NameTable nameTable;
     private final Interner<TypeParameterDescriptor> typeParameters;
-    private final Predicate<ClassDescriptor> isSpecial;
+    private final SerializerExtension extension;
 
     public DescriptorSerializer() {
-        this(Predicates.<ClassDescriptor>alwaysFalse());
+        this(SerializerExtension.DEFAULT);
     }
 
-    public DescriptorSerializer(@NotNull Predicate<ClassDescriptor> isSpecial) {
-        this(new NameTable(), new Interner<TypeParameterDescriptor>(), isSpecial);
+    public DescriptorSerializer(@NotNull SerializerExtension extension) {
+        this(new NameTable(), new Interner<TypeParameterDescriptor>(), extension);
     }
 
-    private DescriptorSerializer(NameTable nameTable, Interner<TypeParameterDescriptor> typeParameters, Predicate<ClassDescriptor> isSpecial) {
+    private DescriptorSerializer(NameTable nameTable, Interner<TypeParameterDescriptor> typeParameters, SerializerExtension extension) {
         this.nameTable = nameTable;
         this.typeParameters = typeParameters;
-        this.isSpecial = isSpecial;
+        this.extension = extension;
     }
 
     private DescriptorSerializer createChildSerializer() {
-        return new DescriptorSerializer(nameTable, new Interner<TypeParameterDescriptor>(typeParameters), Predicates.<ClassDescriptor>alwaysFalse());
+        return new DescriptorSerializer(nameTable, new Interner<TypeParameterDescriptor>(typeParameters), extension);
     }
 
     @NotNull
@@ -90,7 +88,7 @@ public class DescriptorSerializer {
             builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
         }
 
-        if (!isSpecial.apply(classDescriptor)) {
+        if (extension.hasSupertypes(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 builder.addSupertype(local.type(supertype));

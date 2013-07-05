@@ -1,6 +1,5 @@
 package org.jetbrains.jet.generators.builtins;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
@@ -59,12 +58,12 @@ public class BuiltInsSerializer {
             System.err.println("Could not make directories: " + destDir);
         }
 
-        final DescriptorSerializer serializer = new DescriptorSerializer(new Predicate<ClassDescriptor>() {
+        final DescriptorSerializer serializer = new DescriptorSerializer(new SerializerExtension() {
             private final ImmutableSet<String> set = ImmutableSet.of("Any", "Nothing");
 
             @Override
-            public boolean apply(ClassDescriptor classDescriptor) {
-                return set.contains(classDescriptor.getName().asString());
+            public boolean hasSupertypes(@NotNull ClassDescriptor classDescriptor) {
+                return !set.contains(classDescriptor.getName().asString());
             }
         });
         ByteArrayOutputStream classNames = new ByteArrayOutputStream();
