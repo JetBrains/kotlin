@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiEllipsisType;
+import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -25,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiParameterWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -48,16 +48,16 @@ public final class JavaValueParameterResolver {
     @NotNull
     private ValueParameterDescriptor resolveParameterDescriptor(
             DeclarationDescriptor containingDeclaration, int i,
-            PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver
+            PsiParameter parameter, TypeVariableResolver typeVariableResolver
     ) {
 
-        PsiType psiType = parameter.getPsiParameter().getType();
+        PsiType psiType = parameter.getType();
 
         // TODO: must be very slow, make it lazy?
         Name name = Name.identifier(getParameterName(i, parameter));
 
         TypeUsage typeUsage = JavaTypeTransformer
-                .adjustTypeUsageWithMutabilityAnnotations(parameter.getPsiParameter(), TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
+                .adjustTypeUsageWithMutabilityAnnotations(parameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
         JetType outType = getTypeTransformer().transformToType(psiType, typeUsage, typeVariableResolver);
 
         JetType varargElementType;
@@ -70,7 +70,7 @@ public final class JavaValueParameterResolver {
         }
 
         JetType transformedType;
-        PsiAnnotation notNullAnnotation = findAnnotationWithExternal(parameter.getPsiParameter(),
+        PsiAnnotation notNullAnnotation = findAnnotationWithExternal(parameter,
                                                                      JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString());
         if (notNullAnnotation != null) {
             transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
@@ -100,19 +100,19 @@ public final class JavaValueParameterResolver {
     }
 
     @NotNull
-    private static String getParameterName(int number, @NotNull PsiParameterWrapper parameter) {
-        String psiParameterName = parameter.getPsiParameter().getName();
+    private static String getParameterName(int number, @NotNull PsiParameter parameter) {
+        String psiParameterName = parameter.getName();
         return psiParameterName != null ? psiParameterName : "p" + number;
     }
 
     public JavaDescriptorResolver.ValueParameterDescriptors resolveParameterDescriptors(
             DeclarationDescriptor containingDeclaration,
-            List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver
+            List<PsiParameter> parameters, TypeVariableResolver typeVariableResolver
     ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         int indexDelta = 0;
         for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
-            PsiParameterWrapper parameter = parameters.get(i);
+            PsiParameter parameter = parameters.get(i);
             ValueParameterDescriptor parameterDescriptor =
                     resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
             result.add(parameterDescriptor);

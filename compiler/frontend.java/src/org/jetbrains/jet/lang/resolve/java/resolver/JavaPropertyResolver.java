@@ -17,10 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -32,7 +29,10 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.wrapper.*;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiData;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -312,7 +312,7 @@ public final class JavaPropertyResolver {
         if (setterDescriptor != null) {
             PropertyPsiDataElement setter = data.getSetter();
             assert setter != null;
-            List<PsiParameterWrapper> parameters = ((PsiMethodWrapper) setter.getMember()).getParameters();
+            List<PsiParameter> parameters = ((PsiMethodWrapper) setter.getMember()).getParameters();
             assert parameters.size() != 0;
             setterDescriptor.initialize(new ValueParameterDescriptorImpl(
                     setterDescriptor,
