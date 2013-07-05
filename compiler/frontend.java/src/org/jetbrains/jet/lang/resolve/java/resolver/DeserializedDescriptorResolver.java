@@ -138,14 +138,14 @@ public final class DeserializedDescriptorResolver {
     private static ClassData readClassDataFromClassFile(@NotNull VirtualFile virtualFile) {
         byte[] data = getKotlinInfoDataFromClassFile(virtualFile);
         if (data == null) return null;
-        return JavaProtoBufUtil.readJavaClassDataFrom(data);
+        return JavaProtoBufUtil.readClassDataFrom(data);
     }
 
     @Nullable
     private static PackageData readPackageDataFromClassFile(@NotNull VirtualFile virtualFile) {
         byte[] data = getKotlinInfoDataFromClassFile(virtualFile);
         if (data == null) return null;
-        return PackageData.read(data);
+        return JavaProtoBufUtil.readPackageDataFrom(data);
     }
 
     @Nullable

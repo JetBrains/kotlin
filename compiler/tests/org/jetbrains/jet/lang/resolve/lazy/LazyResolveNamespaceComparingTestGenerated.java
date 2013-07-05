@@ -40,7 +40,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         }
         
         @TestMetadata("compiler/testData/loadKotlin/annotations")
-        @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class})
+        @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class})
         public static class Annotations extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInAnnotations() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -107,11 +107,25 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 
             }
             
+            @TestMetadata("compiler/testData/loadKotlin/annotations/packageMembers")
+            public static class PackageMembers extends AbstractLazyResolveNamespaceComparingTest {
+                public void testAllFilesPresentInPackageMembers() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("Function.kt")
+                public void testFunction() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Function.kt");
+                }
+                
+            }
+            
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Annotations");
                 suite.addTestSuite(Annotations.class);
                 suite.addTestSuite(ClassMembers.class);
                 suite.addTestSuite(Classes.class);
+                suite.addTestSuite(PackageMembers.class);
                 return suite;
             }
         }

@@ -1,0 +1,7 @@
+package test
+
+test.Anno() internal fun function(): jet.Unit
+
+internal final annotation class Anno : jet.Annotation {
+    /*primary*/ public constructor Anno()
+}

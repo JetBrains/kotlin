@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.protobuf.ExtensionRegistryLite.getEmptyRegistry;
+
 public class KotlinInfoForPackageTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
 
@@ -52,7 +54,7 @@ public class KotlinInfoForPackageTest extends CodegenTestCase {
         assertTrue(aClass.isAnnotationPresent(KotlinInfo.class));
         KotlinInfo kotlinInfo = (KotlinInfo) aClass.getAnnotation(KotlinInfo.class);
 
-        PackageData data = PackageData.read(kotlinInfo.data());
+        PackageData data = PackageData.read(kotlinInfo.data(), getEmptyRegistry());
 
         Set<String> classNames = collectClassNames(data);
         assertSameElements(Arrays.asList("A", "B", "C"), classNames);

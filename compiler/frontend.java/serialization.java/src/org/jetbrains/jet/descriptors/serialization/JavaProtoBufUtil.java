@@ -36,9 +36,19 @@ public class JavaProtoBufUtil {
     }
 
     @NotNull
-    public static ClassData readJavaClassDataFrom(@NotNull byte[] data) {
+    private static ExtensionRegistryLite getExtensionRegistry() {
         ExtensionRegistryLite registry = ExtensionRegistryLite.newInstance();
         JavaProtoBuf.registerAllExtensions(registry);
-        return ClassData.read(data, registry);
+        return registry;
+    }
+
+    @NotNull
+    public static ClassData readClassDataFrom(@NotNull byte[] data) {
+        return ClassData.read(data, getExtensionRegistry());
+    }
+
+    @NotNull
+    public static PackageData readPackageDataFrom(@NotNull byte[] data) {
+        return PackageData.read(data, getExtensionRegistry());
     }
 }

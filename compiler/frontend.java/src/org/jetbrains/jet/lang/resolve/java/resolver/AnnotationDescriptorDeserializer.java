@@ -26,10 +26,13 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -61,7 +64,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @NotNull
     @Override
     public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
-        VirtualFile virtualFile = findVirtualFileByDescriptor(descriptor);
+        VirtualFile virtualFile = findVirtualFileByClass(descriptor);
         try {
             return loadClassAnnotationsFromFile(virtualFile);
         }
@@ -71,7 +74,20 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @NotNull
-    private VirtualFile findVirtualFileByDescriptor(@NotNull ClassDescriptor descriptor) {
+    private VirtualFile findVirtualFileByDescriptor(@NotNull ClassOrNamespaceDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            return findVirtualFileByClass((ClassDescriptor) descriptor);
+        }
+        else if (descriptor instanceof NamespaceDescriptor) {
+            return findVirtualFileByPackage((NamespaceDescriptor) descriptor);
+        }
+        else {
+            throw new IllegalStateException("Unrecognized descriptor: " + descriptor);
+        }
+    }
+
+    @NotNull
+    private VirtualFile findVirtualFileByClass(@NotNull ClassDescriptor descriptor) {
         FqName fqName = kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor));
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE /* TODO: ?! */);
         if (psiClass == null) {
@@ -79,7 +95,21 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         }
         VirtualFile virtualFile = getVirtualFile(psiClass, fqName, (ClassOrNamespaceDescriptor) descriptor.getContainingDeclaration());
         if (virtualFile == null) {
-            throw new IllegalStateException("Virtual file is not found for class: " + descriptor) ;
+            throw new IllegalStateException("Virtual file is not found for class: " + descriptor);
+        }
+        return virtualFile;
+    }
+
+    @NotNull
+    private VirtualFile findVirtualFileByPackage(@NotNull NamespaceDescriptor descriptor) {
+        FqName fqName = PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe());
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE /* TODO: ?! */);
+        if (psiClass == null) {
+            throw new IllegalStateException("Psi class is not found for package: " + descriptor);
+        }
+        VirtualFile virtualFile = psiClass.getContainingFile().getVirtualFile();
+        if (virtualFile == null) {
+            throw new IllegalStateException("Virtual file is not found for package: " + descriptor);
         }
         return virtualFile;
     }
@@ -147,9 +177,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @NotNull ClassOrNamespaceDescriptor container,
             @NotNull ProtoBuf.Callable callableProto
     ) {
-        if (!(container instanceof ClassDescriptor)) return Collections.emptyList(); // TODO: NamespaceDescriptor
-
-        VirtualFile file = findVirtualFileByDescriptor((ClassDescriptor) container);
+        VirtualFile file = findVirtualFileByDescriptor(container);
 
         try {
             // TODO: calculate this only once for each container

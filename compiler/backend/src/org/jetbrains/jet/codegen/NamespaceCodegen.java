@@ -129,7 +129,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private void writeKotlinInfoIfNeeded() {
-        DescriptorSerializer serializer = new DescriptorSerializer();
+        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(typeMapper));
         ProtoBuf.Package.Builder packageProto = ProtoBuf.Package.newBuilder();
         boolean writeAnnotation = false;
 
