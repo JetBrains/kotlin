@@ -49,6 +49,7 @@ public class SpecialFiles {
         filesCompiledWithoutStdLib.add("kt773.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt796_797.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt950.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
+        filesCompiledWithoutStdLib.add("kt3190.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt2395.kt"); // With MOCK_JDK
     }
 
