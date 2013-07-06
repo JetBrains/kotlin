@@ -25,7 +25,8 @@
 
     <scm>
         <url>https://github.com/JetBrains/kotlin</url>
-        <connection>https://github.com/JetBrains/kotlin.git</connection>
+        <connection>scm:git:https://github.com/JetBrains/kotlin.git</connection>
+        <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
     </scm>
 
     <developers>
