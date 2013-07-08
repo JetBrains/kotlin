@@ -56,10 +56,10 @@ class KotlinAndroidGradleIT {
             println(buildOutput)
 
             assertEquals(result, 0)
-            assertTrue(buildOutput.contains(":compileKotlin"), "Should contain ':compileKotlin'")
-            assertTrue(buildOutput.contains(":compileTestKotlin"), "Should contain ':compileTestKotlin'")
-            assertTrue(buildOutput.contains(":compileDeployKotlin"), "Should contain ':compileDeployKotlin'")
-            assertTrue(File(projectDir, "build/reports/tests/demo.TestSource.html").exists(), "Test report does not exist. Were tests executed?")
+            assertTrue(buildOutput.contains(":compileDebugKotlin"), "Should contain ':compileDebugKotlin'")
+            assertTrue(buildOutput.contains(":compileDebug"), "Should contain ':compileDebug'")
+            assertTrue(buildOutput.contains(":compileReleaseKotlin"), "Should contain ':compileReleaseKotlin'")
+            assertTrue(buildOutput.contains(":compileRelease"), "Should contain ':compileRelease'")
 
             // Run the build second time, assert everything is up-to-date
 
@@ -82,10 +82,10 @@ class KotlinAndroidGradleIT {
             println(up2dateBuildOutput)
 
             assertEquals(up2dateResult, 0)
-            assertTrue(up2dateBuildOutput.contains(":compileKotlin UP-TO-DATE"), "Should contain ':compileKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileTestKotlin UP-TO-DATE"), "Should contain ':compileTestKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileDeployKotlin UP-TO-DATE"), "Should contain ':compileDeployKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileJava UP-TO-DATE"), "Should contain ':compileJava UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileDebugKotlin UP-TO-DATE"), "Should contain ':compileDebugKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileDebug UP-TO-DATE"), "Should contain ':compileDebug UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileReleaseKotlin UP-TO-DATE"), "Should contain ':compileReleaseKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileRelease UP-TO-DATE"), "Should contain ':compileRelease UP-TO-DATE'")
         }
 
 
