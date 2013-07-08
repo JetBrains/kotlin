@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiEllipsisType;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver.findAnnotationWithExternal;
+
 public final class JavaValueParameterResolver {
 
     private JavaTypeTransformer typeTransformer;
@@ -44,7 +46,7 @@ public final class JavaValueParameterResolver {
     }
 
     @NotNull
-    private JvmMethodParameterMeaning resolveParameterDescriptor(
+    private ValueParameterDescriptor resolveParameterDescriptor(
             DeclarationDescriptor containingDeclaration, int i,
             PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver
     ) {
@@ -68,15 +70,15 @@ public final class JavaValueParameterResolver {
         }
 
         JetType transformedType;
-        if (JavaAnnotationResolver
-                    .findAnnotationWithExternal(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
-            null) {
+        PsiAnnotation notNullAnnotation = findAnnotationWithExternal(parameter.getPsiParameter(),
+                                                                     JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString());
+        if (notNullAnnotation != null) {
             transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
         }
         else {
             transformedType = outType;
         }
-        return JvmMethodParameterMeaning.regular(new ValueParameterDescriptorImpl(
+        return new ValueParameterDescriptorImpl(
                 containingDeclaration,
                 i,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
@@ -84,7 +86,7 @@ public final class JavaValueParameterResolver {
                 transformedType,
                 false,
                 varargElementType
-        ));
+        );
     }
 
     @NotNull
@@ -108,57 +110,13 @@ public final class JavaValueParameterResolver {
             List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver
     ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        JetType receiverType = null;
         int indexDelta = 0;
         for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
             PsiParameterWrapper parameter = parameters.get(i);
-            JvmMethodParameterMeaning meaning =
+            ValueParameterDescriptor parameterDescriptor =
                     resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
-            if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
-                // TODO
-                --indexDelta;
-            }
-            else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
-                result.add(meaning.valueParameterDescriptor);
-            }
-            else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
-                if (receiverType != null) {
-                    throw new IllegalStateException("more than one receiver");
-                }
-                --indexDelta;
-                receiverType = meaning.receiverType;
-            }
+            result.add(parameterDescriptor);
         }
-        return new JavaDescriptorResolver.ValueParameterDescriptors(receiverType, result);
-    }
-
-    public enum JvmMethodParameterKind {
-        REGULAR,
-        RECEIVER,
-        TYPE_INFO,
-    }
-
-    public static class JvmMethodParameterMeaning {
-        public final JvmMethodParameterKind kind;
-        private final JetType receiverType;
-        private final ValueParameterDescriptor valueParameterDescriptor;
-
-        private JvmMethodParameterMeaning(
-                JvmMethodParameterKind kind,
-                @Nullable JetType receiverType,
-                @Nullable ValueParameterDescriptor valueParameterDescriptor
-        ) {
-            this.kind = kind;
-            this.receiverType = receiverType;
-            this.valueParameterDescriptor = valueParameterDescriptor;
-        }
-
-        public static JvmMethodParameterMeaning receiver(@NotNull JetType receiverType) {
-            return new JvmMethodParameterMeaning(JvmMethodParameterKind.RECEIVER, receiverType, null);
-        }
-
-        public static JvmMethodParameterMeaning regular(@NotNull ValueParameterDescriptor valueParameterDescriptor) {
-            return new JvmMethodParameterMeaning(JvmMethodParameterKind.REGULAR, null, valueParameterDescriptor);
-        }
+        return new JavaDescriptorResolver.ValueParameterDescriptors(null, result);
     }
 }
