@@ -1,4 +1,4 @@
-package AndroidAlfaProject.AndroidAlfa.src.main.java.org.jetbrains.kotlin.gradle.test.androidalfa;
+package org.jetbrains.kotlin.gradle.test.androidalfa;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+
+import org.jetbrains.kotlin.gradle.test.androidalfa.R;
 
 public class MainActivity extends Activity {
 
