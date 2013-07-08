@@ -31,7 +31,7 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
-import org.jetbrains.jet.descriptors.serialization.NameSerializationUtil;
+import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -45,15 +45,13 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 
@@ -160,19 +158,11 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (!writeAnnotation) return;
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto.build());
 
-        NameSerializationUtil.serializeNameTable(stream, serializer.getNameTable());
-        try {
-            packageProto.build().writeTo(stream);
-        }
-        catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
-        }
-
-        AnnotationVisitor kotlinInfo = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
-        kotlinInfo.visit("data", stream.toByteArray());
-        kotlinInfo.visitEnd();
+        AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
+        av.visit("data", data.toBytes());
+        av.visitEnd();
     }
 
     private void generate(JetFile file) {

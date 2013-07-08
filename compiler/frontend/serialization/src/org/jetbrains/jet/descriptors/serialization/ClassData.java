@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public final class ClassData {
@@ -54,5 +55,18 @@ public final class ClassData {
     @NotNull
     public ProtoBuf.Class getClassProto() {
         return classProto;
+    }
+
+    @NotNull
+    public byte[] toBytes() {
+        try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            NameSerializationUtil.serializeNameResolver(result, nameResolver);
+            classProto.writeTo(result);
+            return result.toByteArray();
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 }

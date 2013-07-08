@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public final class PackageData {
@@ -41,16 +42,31 @@ public final class PackageData {
 
     private final ProtoBuf.Package packageProto;
 
-    public PackageData(@NotNull NameResolver resolver, @NotNull ProtoBuf.Package proto) {
-        nameResolver = resolver;
-        packageProto = proto;
+    public PackageData(@NotNull NameResolver nameResolver, @NotNull ProtoBuf.Package packageProto) {
+        this.nameResolver = nameResolver;
+        this.packageProto = packageProto;
     }
 
+    @NotNull
+    public NameResolver getNameResolver() {
+        return nameResolver;
+    }
+
+    @NotNull
     public ProtoBuf.Package getPackageProto() {
         return packageProto;
     }
 
-    public NameResolver getNameResolver() {
-        return nameResolver;
+    @NotNull
+    public byte[] toBytes() {
+        try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            NameSerializationUtil.serializeNameResolver(result, nameResolver);
+            packageProto.writeTo(result);
+            return result.toByteArray();
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 }

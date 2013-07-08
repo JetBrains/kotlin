@@ -41,7 +41,9 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
-import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.ClassData;
+import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -61,16 +63,14 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
@@ -220,26 +220,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeKotlinInfo() {
-        AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
-
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(typeMapper));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        try {
-            ByteArrayOutputStream classStream = new ByteArrayOutputStream();
-            classProto.writeTo(classStream);
+        ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            NameSerializationUtil.serializeNameTable(out, serializer.getNameTable());
-            out.write(classStream.toByteArray());
-
-            av.visit("data", out.toByteArray());
-        }
-        catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
-        }
-
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
+        av.visit("data", data.toBytes());
         av.visitEnd();
     }
 

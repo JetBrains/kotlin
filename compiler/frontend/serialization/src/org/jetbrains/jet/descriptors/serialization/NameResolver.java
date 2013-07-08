@@ -37,6 +37,16 @@ public class NameResolver {
     }
 
     @NotNull
+    public ProtoBuf.SimpleNameTable getSimpleNameTable() {
+        return simpleNames;
+    }
+
+    @NotNull
+    public ProtoBuf.QualifiedNameTable getQualifiedNameTable() {
+        return qualifiedNames;
+    }
+
+    @NotNull
     public Name getName(int index) {
         String name = simpleNames.getName(index);
         return Name.guess(name);

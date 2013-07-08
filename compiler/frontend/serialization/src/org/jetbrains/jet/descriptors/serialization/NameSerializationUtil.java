@@ -39,12 +39,21 @@ public class NameSerializationUtil {
         }
     }
 
-    public static void serializeNameTable(@NotNull OutputStream out, @NotNull NameTable nameTable) {
-        try {
-            ProtoBuf.SimpleNameTable simpleNamesProto = toSimpleNameTable(nameTable);
-            simpleNamesProto.writeDelimitedTo(out);
+    public static void serializeNameResolver(@NotNull OutputStream out, @NotNull NameResolver nameResolver) {
+        serializeNameTable(out, nameResolver.getSimpleNameTable(), nameResolver.getQualifiedNameTable());
+    }
 
-            ProtoBuf.QualifiedNameTable qualifiedNameTable = toQualifiedNameTable(nameTable);
+    public static void serializeNameTable(@NotNull OutputStream out, @NotNull NameTable nameTable) {
+        serializeNameTable(out, toSimpleNameTable(nameTable), toQualifiedNameTable(nameTable));
+    }
+
+    private static void serializeNameTable(
+            @NotNull OutputStream out,
+            @NotNull ProtoBuf.SimpleNameTable simpleNameTable,
+            @NotNull ProtoBuf.QualifiedNameTable qualifiedNameTable
+    ) {
+        try {
+            simpleNameTable.writeDelimitedTo(out);
             qualifiedNameTable.writeDelimitedTo(out);
         }
         catch (IOException e) {
@@ -72,8 +81,6 @@ public class NameSerializationUtil {
 
     @NotNull
     public static NameResolver createNameResolver(@NotNull NameTable table) {
-        return new NameResolver(
-                    toSimpleNameTable(table),
-                    toQualifiedNameTable(table));
+        return new NameResolver(toSimpleNameTable(table), toQualifiedNameTable(table));
     }
 }
