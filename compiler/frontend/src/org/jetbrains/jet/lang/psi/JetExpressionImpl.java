@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.TreeElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
 
@@ -40,5 +42,14 @@ abstract class JetExpressionImpl extends JetElementImpl implements JetExpression
         if (containerNode == null) return null;
 
         return containerNode.findChildByClass(JetExpression.class);
+    }
+
+    @Override
+    public void replaceChildInternal(PsiElement child, TreeElement newElement) {
+        PsiElement newPsi = newElement.getPsi();
+        if (newPsi instanceof JetExpression && JetPsiUtil.areParenthesesNecessary((JetExpression) newPsi, ((JetExpression) child), this)) {
+            newElement = (TreeElement) JetPsiFactory.createExpression(getProject(), "(" + newElement.getText() + ")").getNode();
+        }
+        super.replaceChildInternal(child, newElement);
     }
 }

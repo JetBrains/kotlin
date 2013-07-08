@@ -20,10 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.tree.IElementType;
@@ -604,10 +601,17 @@ public class JetPsiUtil {
         return null;
     }
 
-    private static int getPrecedenceOfOperation(@NotNull JetExpression expression, @NotNull IElementType operation) {
+    private static int getPrecedenceOfOperation(@NotNull JetExpression expression, @Nullable IElementType operation) {
         if (expression instanceof JetPostfixExpression) return 0;
         if (expression instanceof JetQualifiedExpression) return 0;
+        if (expression instanceof JetCallExpression) return 0;
+        if (expression instanceof JetArrayAccessExpression) return 0;
+
         if (expression instanceof JetPrefixExpression) return 1;
+
+        if (expression instanceof JetDeclaration) return 100;
+        if (expression instanceof JetStatementExpression) return 100;
+        if (expression instanceof JetIfExpression) return 100;
 
         for (JetExpressionParsing.Precedence precedence : JetExpressionParsing.Precedence.values()) {
             if (precedence != JetExpressionParsing.Precedence.PREFIX && precedence != JetExpressionParsing.Precedence.POSTFIX &&
@@ -615,41 +619,71 @@ public class JetPsiUtil {
                 return precedence.ordinal();
             }
         }
-        throw new IllegalStateException("Unknown operation");
+
+        return -1;
     }
 
     public static boolean areParenthesesUseless(@NotNull JetParenthesizedExpression expression) {
         JetExpression innerExpression = expression.getExpression();
-        JetExpression parentExpression = PsiTreeUtil.getParentOfType(expression, JetExpression.class, true);
-        if (innerExpression == null || parentExpression == null) return true;
+        if (innerExpression == null) return true;
+
+        PsiElement parent = expression.getParent();
+        if (!(parent instanceof JetExpression)) return true;
+
+        return !areParenthesesNecessary(innerExpression, expression, (JetExpression) parent);
+    }
+
+    public static boolean areParenthesesNecessary(@NotNull JetExpression innerExpression, @NotNull JetExpression currentInner, @NotNull JetExpression parentExpression) {
+        if (parentExpression instanceof JetParenthesizedExpression || innerExpression instanceof JetParenthesizedExpression) {
+            return false;
+        }
+
+        if (parentExpression instanceof JetWhenExpression || innerExpression instanceof JetWhenExpression) {
+            return false;
+        }
+
+        if (innerExpression instanceof JetIfExpression) {
+            PsiElement current = parentExpression;
+
+            while (!(current instanceof JetBlockExpression || current instanceof JetDeclaration || current instanceof JetStatementExpression)) {
+                if (current.getTextRange().getEndOffset() != currentInner.getTextRange().getEndOffset()) {
+                    return current.getText().charAt(current.getTextLength() - 1) != ')'; // if current expression is "guarded" by parenthesis, no extra parenthesis is necessary
+                }
+
+                current = current.getParent();
+            }
+        }
 
         IElementType innerOperation = getOperation(innerExpression);
         IElementType parentOperation = getOperation(parentExpression);
 
         // 'return (@label{...})' case
         if (parentExpression instanceof JetReturnExpression && innerOperation == JetTokens.LABEL_IDENTIFIER) {
-            return false;
+            return true;
         }
 
         // '(x: Int) < y' case
         if (innerExpression instanceof JetBinaryExpressionWithTypeRHS && parentOperation == JetTokens.LT) {
-            return false;
-        }
-
-        // associative operations
-        if (innerOperation == parentOperation && (innerOperation == JetTokens.OROR || innerOperation == JetTokens.ANDAND)) {
             return true;
         }
 
-        if (innerOperation == null) return true;
-        if (parentExpression instanceof JetArrayAccessExpression) {
-            return ((JetArrayAccessExpression) parentExpression).getArrayExpression() != expression;
-        }
-        if (parentOperation == null) return true;
-
         int innerPrecedence = getPrecedenceOfOperation(innerExpression, innerOperation);
         int parentPrecedence = getPrecedenceOfOperation(parentExpression, parentOperation);
-        return innerPrecedence < parentPrecedence;
+
+        if (innerPrecedence == parentPrecedence) {
+            if (parentExpression instanceof JetBinaryExpression) {
+                if (innerOperation == JetTokens.ANDAND || innerOperation == JetTokens.OROR) {
+                    return false;
+                }
+                return ((JetBinaryExpression) parentExpression).getRight() == currentInner;
+            }
+            if (parentExpression instanceof JetPrefixExpression || innerExpression instanceof JetPrefixExpression) {
+                return innerOperation == parentOperation && (innerOperation == JetTokens.PLUS || innerOperation == JetTokens.MINUS);
+            }
+            return false;
+        }
+
+        return innerPrecedence >= parentPrecedence;
     }
 
     public static boolean isAssignment(@NotNull PsiElement element) {
