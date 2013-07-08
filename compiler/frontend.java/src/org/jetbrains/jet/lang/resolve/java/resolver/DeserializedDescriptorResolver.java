@@ -40,6 +40,8 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN;
@@ -136,25 +138,25 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     private static ClassData readClassDataFromClassFile(@NotNull VirtualFile virtualFile) {
-        byte[] data = getKotlinInfoDataFromClassFile(virtualFile);
+        String[] data = getKotlinInfoDataFromClassFile(virtualFile);
         if (data == null) return null;
         return JavaProtoBufUtil.readClassDataFrom(data);
     }
 
     @Nullable
     private static PackageData readPackageDataFromClassFile(@NotNull VirtualFile virtualFile) {
-        byte[] data = getKotlinInfoDataFromClassFile(virtualFile);
+        String[] data = getKotlinInfoDataFromClassFile(virtualFile);
         if (data == null) return null;
         return JavaProtoBufUtil.readPackageDataFrom(data);
     }
 
     @Nullable
-    private static byte[] getKotlinInfoDataFromClassFile(@NotNull VirtualFile virtualFile) {
+    private static String[] getKotlinInfoDataFromClassFile(@NotNull VirtualFile virtualFile) {
         GetKotlinInfoDataVisitor visitor = visitClassFile(virtualFile);
         if (visitor == null) {
             return null;
         }
-        byte[] data = visitor.getData();
+        String[] data = visitor.getData();
         if (data == null) {
             return null;
         }
@@ -186,28 +188,43 @@ public final class DeserializedDescriptorResolver {
         }
 
         @Nullable
-        private byte[] data = null;
+        private String[] data = null;
 
         @Override
         public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
             if (!desc.equals(KOTLIN_INFO_TYPE)) {
                 return null;
             }
+
             return new AnnotationVisitor(Opcodes.ASM4) {
                 @Override
-                public void visit(String name, Object value) {
-                    if (name.equals("data")) {
-                        data = (byte[]) value;
+                public AnnotationVisitor visitArray(String name) {
+                    if (!name.equals("data")) {
+                        throw new IllegalStateException("Unexpected argument " + name + " for annotation " + KOTLIN_INFO_TYPE);
                     }
-                    else {
-                        throw new IllegalStateException("Unexpected property " + name + " for annotation " + KOTLIN_INFO_TYPE);
-                    }
+
+                    final List<String> strings = new ArrayList<String>(1);
+                    return new AnnotationVisitor(Opcodes.ASM4) {
+                        @Override
+                        public void visit(String name, Object value) {
+                            if (!(value instanceof String)) {
+                                throw new IllegalStateException("Unexpected argument value: " + value);
+                            }
+
+                            strings.add((String) value);
+                        }
+
+                        @Override
+                        public void visitEnd() {
+                            data = strings.toArray(new String[strings.size()]);
+                        }
+                    };
                 }
             };
         }
 
         @Nullable
-        public byte[] getData() {
+        public String[] getData() {
             return data;
         }
     }

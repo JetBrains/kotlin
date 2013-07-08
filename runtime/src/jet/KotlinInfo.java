@@ -21,5 +21,5 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KotlinInfo {
-    byte[] data();
+    String[] data();
 }

@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -161,7 +162,11 @@ public class NamespaceCodegen extends MemberCodegen {
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto.build());
 
         AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
-        av.visit("data", data.toBytes());
+        AnnotationVisitor array = av.visitArray("data");
+        for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
+            array.visit(null, string);
+        }
+        array.visitEnd();
         av.visitEnd();
     }
 

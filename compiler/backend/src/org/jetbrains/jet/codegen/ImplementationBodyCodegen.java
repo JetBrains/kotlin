@@ -43,6 +43,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
@@ -227,7 +228,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
-        av.visit("data", data.toBytes());
+        AnnotationVisitor array = av.visitArray("data");
+        for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
+            array.visit(null, string);
+        }
+        array.visitEnd();
         av.visitEnd();
     }
 
