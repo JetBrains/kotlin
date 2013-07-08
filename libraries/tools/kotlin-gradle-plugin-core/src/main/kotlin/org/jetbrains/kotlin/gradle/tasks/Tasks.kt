@@ -67,7 +67,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
 
     override fun compile() {
-        val args = kotlinOptions
+        val args = K2JVMCompilerArguments()
 
         val javaSrcRoots = HashSet<File>()
         val sources = ArrayList<File>()
