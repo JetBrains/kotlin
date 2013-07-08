@@ -32,6 +32,7 @@ import com.android.build.gradle.api.ApkVariant
 import com.android.builder.model.BuildType
 import com.android.builder.BuilderConstants
 import com.android.build.gradle.api.TestVariant
+import org.gradle.api.plugins.JavaPlugin
 
 open class KotlinPlugin: Plugin<Project> {
 
@@ -39,7 +40,7 @@ open class KotlinPlugin: Plugin<Project> {
         val javaBasePlugin = project.getPlugins().apply(javaClass<JavaBasePlugin>())
         val javaPluginConvention = project.getConvention().getPlugin(javaClass<JavaPluginConvention>())
 
-        //project.getPlugins().apply(javaClass<JavaPlugin>())
+        project.getPlugins().apply(javaClass<JavaPlugin>())
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
         configureKDoc(project, javaPluginConvention)
