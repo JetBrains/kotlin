@@ -162,16 +162,12 @@ open class KotlinAndroidPlugin: Plugin<Project> {
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
         val logger = project.getLogger()
-        logger.debug("Kotlin plugin processing variants")
-        val kotlinOptions = (androidExt as ExtensionAware).getExtensions().getByName("kotlinOptions") as K2JVMCompilerArguments
+        val kotlinOptions = getExtention<K2JVMCompilerArguments>(androidExt, "kotlinOptions")
         val sourceSets = androidExt.getSourceSets()
         val mainSourceSet = sourceSets.getByName(BuilderConstants.MAIN)
         val testSourceSet = sourceSets.getByName(BuilderConstants.INSTRUMENT_TEST)
-        logger.debug("Loaded ${BuilderConstants.MAIN} and ${BuilderConstants.INSTRUMENT_TEST} source sets")
 
         for (variant in variants) {
-            logger.debug("Processing variant [${variant}]")
-
             if (variant is LibraryVariant || variant is ApkVariant) {
                 val buildType: BuildType = if (variant is LibraryVariant) {
                     variant.getBuildType()
@@ -202,25 +198,23 @@ open class KotlinAndroidPlugin: Plugin<Project> {
                 val javaSourceList = ArrayList<Any?>()
 
                 if (variant is TestVariant) {
-                    javaSourceList.addAll(testSourceSet.getJava()!!.getSrcDirs()!!)
-                    val testKotlinSource = (testSourceSet as ExtensionAware).getExtensions().getByName("kotlin") as KotlinSourceSet
-                    logger.debug("Attaching ${testKotlinSource.getKotlin().getSrcDirs()} to variant ${variantName}")
+                    javaSourceList.addAll(testSourceSet.getJava().getSrcDirs())
+                    val testKotlinSource = getExtention<KotlinSourceSet>(testSourceSet, "kotlin")
                     kotlinTask.source(testKotlinSource.getKotlin())
                 } else {
-                    javaSourceList.addAll(mainSourceSet.getJava()!!.getSrcDirs()!!)
-                    val mainKotlinSource = (mainSourceSet as ExtensionAware).getExtensions().getByName("kotlin") as KotlinSourceSet
-                    logger.debug("Attaching ${mainKotlinSource.getKotlin().getSrcDirs()} to variant ${variantName}")
+                    javaSourceList.addAll(mainSourceSet.getJava().getSrcDirs())
+                    val mainKotlinSource = getExtention<KotlinSourceSet>(mainSourceSet, "kotlin")
                     kotlinTask.source(mainKotlinSource.getKotlin())
                 }
 
                 if (null != buildTypeSourceSet) {
-                    javaSourceList.add(buildTypeSourceSet.getJava()!!.getSrcDirs()!!)
-                    kotlinTask.source(((buildTypeSourceSet as ExtensionAware).getExtensions().getByName("kotlin") as KotlinSourceSet).getKotlin())
+                    javaSourceList.add(buildTypeSourceSet.getJava().getSrcDirs())
+                    kotlinTask.source(getExtention<KotlinSourceSet>(buildTypeSourceSet, "kotlin").getKotlin())
                 }
-                javaSourceList.add(callable<File>{ variant.getProcessResources()!!.getSourceOutputDir()!! })
-                javaSourceList.add(callable<File>{ variant.getGenerateBuildConfig()!!.getSourceOutputDir()!! })
-                javaSourceList.add(callable<File>{ variant.getAidlCompile()!!.getSourceOutputDir()!! })
-                javaSourceList.add(callable<File>{ variant.getRenderscriptCompile()!!.getSourceOutputDir()!! })
+                javaSourceList.add(callable<File?>{ variant.getProcessResources().getSourceOutputDir() })
+                javaSourceList.add(callable<File?>{ variant.getGenerateBuildConfig()?.getSourceOutputDir() })
+                javaSourceList.add(callable<File?>{ variant.getAidlCompile().getSourceOutputDir() })
+                javaSourceList.add(callable<File?>{ variant.getRenderscriptCompile().getSourceOutputDir() })
 
                 if (variant is ApkVariant) {
                     for (flavour in variant.getProductFlavors().iterator()) {
@@ -233,24 +227,16 @@ open class KotlinAndroidPlugin: Plugin<Project> {
                     }
                 }
 
-                logger.debug("Kotlin Source list for [${variantName}]")
-                kotlinTask.getSource().forEach { f -> logger.debug(f.getPath()) }
-                logger.debug("Kotlin Source list end")
-
-                val basePlugin : BasePlugin = project.getPlugins().getPlugin("android") as BasePlugin
-
                 kotlinTask.doFirst({ task  ->
+                    var plugin = project.getPlugins().getPlugin("android")
+                    if (null == plugin) {
+                        plugin = project.getPlugins().getPlugin("android-library")
+                    }
+                    val basePlugin : BasePlugin = plugin as BasePlugin
                     val javaSources = project.files(javaSourceList)
-                    logger.debug("Java Source list for [${variantName}]")
-                    javaSources?.forEach { f -> logger.debug(f.getPath()) }
-                    logger.debug("Java Source list end")
-
-                    val cp = javaTask.getClasspath() + javaSources
-                    val cpWithRt = project.files(basePlugin.getRuntimeJarList())!! + cp
-                    (task as AbstractCompile).setClasspath(cpWithRt)
-                    logger.debug("Final Classpath for variant [${variantName}]")
-                    cpWithRt?.forEach { f -> logger.debug(f.getPath()) }
-                    logger.debug("Final Classpath end")
+                    val androidRT = project.files(basePlugin.getRuntimeJarList())
+                    val fullClasspath = javaTask.getClasspath() + (javaSources + androidRT)
+                    (task as AbstractCompile).setClasspath(fullClasspath)
                 })
 
                 javaTask.dependsOn(kotlinTaskName)
@@ -259,6 +245,11 @@ open class KotlinAndroidPlugin: Plugin<Project> {
             }
         }
     }
+
+    fun <T> getExtention(obj: Any, extensionName: String): T {
+        return (obj as ExtensionAware).getExtensions().getByName(extensionName) as T
+    }
+
 }
 
 open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {

@@ -6,10 +6,22 @@
   <item name="com.android.build.gradle.api.AndroidSourceSet org.gradle.api.file.SourceDirectorySet getAllSource()">
     <annotation name="org.jetbrains.annotations.NotNull" />
   </item>
+  <item name="com.android.build.gradle.api.AndroidSourceSet org.gradle.api.file.SourceDirectorySet getJava()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
   <item name="com.android.build.gradle.api.ApkVariant com.android.builder.DefaultBuildType getBuildType()">
     <annotation name="org.jetbrains.annotations.NotNull" />
   </item>
   <item name="com.android.build.gradle.api.ApkVariant java.util.List&lt;com.android.builder.DefaultProductFlavor&gt; getProductFlavors()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="com.android.build.gradle.api.BaseVariant com.android.build.gradle.tasks.AidlCompile getAidlCompile()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="com.android.build.gradle.api.BaseVariant com.android.build.gradle.tasks.ProcessAndroidResources getProcessResources()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="com.android.build.gradle.api.BaseVariant com.android.build.gradle.tasks.RenderscriptCompile getRenderscriptCompile()">
     <annotation name="org.jetbrains.annotations.NotNull" />
   </item>
   <item name="com.android.build.gradle.api.LibraryVariant com.android.builder.DefaultBuildType getBuildType()">
