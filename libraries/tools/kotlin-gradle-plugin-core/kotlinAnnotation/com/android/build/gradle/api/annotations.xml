@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <item name="com.android.build.gradle.api.AndroidSourceSet org.gradle.api.file.SourceDirectorySet getAllJava()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="com.android.build.gradle.api.AndroidSourceSet org.gradle.api.file.SourceDirectorySet getAllSource()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="com.android.build.gradle.api.ApkVariant com.android.builder.DefaultBuildType getBuildType()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="com.android.build.gradle.api.ApkVariant java.util.List&lt;com.android.builder.DefaultProductFlavor&gt; getProductFlavors()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="com.android.build.gradle.api.LibraryVariant com.android.builder.DefaultBuildType getBuildType()">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+</root>
+
