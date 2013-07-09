@@ -162,6 +162,7 @@ public class NamespaceCodegen extends MemberCodegen {
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto.build());
 
         AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getDescriptor(), true);
+        av.visit("version", JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray("data");
         for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
             array.visit(null, string);

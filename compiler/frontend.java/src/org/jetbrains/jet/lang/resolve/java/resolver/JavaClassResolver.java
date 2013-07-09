@@ -237,7 +237,6 @@ public final class JavaClassResolver {
             @NotNull FqName fqName, @NotNull PsiClass psiClass,
             @NotNull PostponedTasks taskList
     ) {
-
         checkFqNamesAreConsistent(psiClass, fqName);
         DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
@@ -267,7 +266,9 @@ public final class JavaClassResolver {
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
-        AbiVersionUtil.checkAbiVersion(psiClass, jetClassAnnotation, trace);
+        if (jetClassAnnotation.isDefined()) {
+            AbiVersionUtil.checkAbiVersion(psiClass, jetClassAnnotation.getAbiVersion(), trace);
+        }
 
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);

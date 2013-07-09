@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -43,6 +45,8 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.INVALID_VERSION;
 
 public final class JavaNamespaceResolver {
 
@@ -160,12 +164,24 @@ public final class JavaNamespaceResolver {
         if (psiPackage != null) {
             PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
             trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
-            if (psiClass == null || !isCompiledKotlinClass(psiClass)) {
-                return new JavaPackageScopeWithoutMembers(namespaceDescriptor, javaSemanticServices.getPsiDeclarationProviderFactory()
-                        .createDeclarationProviderForNamespaceWithoutMembers(psiPackage), fqName, javaSemanticServices);
+
+            if (psiClass != null) {
+                boolean compiledKotlinClass = isCompiledKotlinClass(psiClass);
+                if (isOldKotlinPackageClass(psiClass) && !compiledKotlinClass) {
+                    // If psiClass has old annotations (@JetPackage) but doesn't have @KotlinInfo, report ABI version error
+                    AbiVersionUtil.checkAbiVersion(psiClass, INVALID_VERSION, trace);
+                }
+                if (compiledKotlinClass) {
+                    // If psiClass has @KotlinInfo (regardless of whether it has @JetPackage or not), deserialize it to Kotlin descriptor.
+                    // Note that @KotlinInfo may still have an old ABI version, in which case null is returned by createKotlinPackageScope
+                    JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(psiClass, namespaceDescriptor);
+                    if (kotlinPackageScope != null) return kotlinPackageScope;
+                }
             }
 
-            return createScopeForKotlinPackageClass(fqName, namespaceDescriptor, psiClass);
+            // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
+            return new JavaPackageScopeWithoutMembers(namespaceDescriptor, javaSemanticServices.getPsiDeclarationProviderFactory()
+                    .createDeclarationProviderForNamespaceWithoutMembers(psiPackage), fqName, javaSemanticServices);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -185,19 +201,21 @@ public final class JavaNamespaceResolver {
                 fqName, javaSemanticServices);
     }
 
-    private static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
-        PsiModifierList list = psiClass.getModifierList();
-        return list != null && list.findAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getFqName().asString()) != null;
+    private static boolean isOldKotlinPackageClass(@NotNull PsiClass psiClass) {
+        return new PsiClassWrapper(psiClass).getJetPackageClass().isDefined();
     }
 
-    @NotNull
-    private JetScope createScopeForKotlinPackageClass(
-            @NotNull FqName fqName,
-            @NotNull NamespaceDescriptor namespaceDescriptor,
-            @NotNull PsiClass psiClass
-    ) {
-        //TODO: check abi version
-        return deserializedDescriptorResolver.createKotlinPackageScope(fqName, psiClass, namespaceDescriptor);
+    private static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
+        // TODO: merge this method with DescriptorResolverUtils#isKotlinClass
+        // NOTE: we need to check against ClsClassImpl because it can be a Java source, pretending to be a Kotlin class.
+        // In that case we can't really read the annotation from psiClass's virtual file
+        if (psiClass instanceof ClsClassImpl) {
+            PsiModifierList list = psiClass.getModifierList();
+            if (list != null) {
+                return list.findAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getFqName().asString()) != null;
+            }
+        }
+        return false;
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JetScope packageScope) {

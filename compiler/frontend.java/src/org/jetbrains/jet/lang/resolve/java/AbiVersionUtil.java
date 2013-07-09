@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithAbiVersion;
 import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -29,19 +28,20 @@ public class AbiVersionUtil {
             new BasicWritableSlice<PsiClass, Integer>(Slices.ONLY_REWRITE_TO_EQUAL, true);
     public static final int INVALID_VERSION = -1;
 
+    private AbiVersionUtil() {
+    }
+
     public static boolean isAbiVersionCompatible(int abiVersion) {
         return abiVersion == JvmAbi.VERSION;
     }
 
-    public static void checkAbiVersion(
-            @NotNull PsiClass psiClass,
-            @NotNull PsiAnnotationWithAbiVersion versionAnnotation,
-            @NotNull BindingTrace trace) {
-        if (!versionAnnotation.isDefined()) return;
+    public static void checkAbiVersion(@NotNull PsiClass psiClass, int version, @NotNull BindingTrace trace) {
+        if (!isAbiVersionCompatible(version)) {
+            reportIncompatibleAbiVersion(psiClass, version, trace);
+        }
+    }
 
-        int abiVersion = versionAnnotation.getAbiVersion();
-        if (isAbiVersionCompatible(abiVersion)) return;
-
-        trace.record(ABI_VERSION_ERRORS, psiClass, abiVersion);
+    public static void reportIncompatibleAbiVersion(@NotNull PsiClass psiClass, int version, @NotNull BindingTrace trace) {
+        trace.record(ABI_VERSION_ERRORS, psiClass, version);
     }
 }

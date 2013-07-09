@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package jet;
+package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import com.intellij.psi.PsiClass;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface KotlinInfo {
-    int version();
+import javax.inject.Inject;
 
-    String[] data();
+public class ErrorReporter {
+    private BindingTrace trace;
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
+    }
+
+    public void reportIncompatibleAbiVersion(@NotNull PsiClass psiClass, int version) {
+        AbiVersionUtil.reportIncompatibleAbiVersion(psiClass, version, trace);
+    }
 }

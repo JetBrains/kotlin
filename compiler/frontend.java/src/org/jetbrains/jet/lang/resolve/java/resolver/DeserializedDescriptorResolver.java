@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.ClassReader.*;
+import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.getVirtualFile;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
@@ -58,6 +60,8 @@ public final class DeserializedDescriptorResolver {
     private JavaNamespaceResolver javaNamespaceResolver;
 
     private JavaClassResolver javaClassResolver;
+
+    private ErrorReporter errorReporter;
 
     @NotNull
     private final DescriptorFinder javaDescriptorFinder = new DescriptorFinder() {
@@ -89,6 +93,11 @@ public final class DeserializedDescriptorResolver {
         this.javaClassResolver = javaClassResolver;
     }
 
+    @Inject
+    public void setErrorReporter(ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
+    }
+
     @Nullable
     public ClassDescriptor resolveClass(
             @NotNull FqName fqName,
@@ -97,28 +106,25 @@ public final class DeserializedDescriptorResolver {
     ) {
         VirtualFile virtualFile = getVirtualFile(psiClass, fqName, containingDeclaration);
         if (virtualFile == null) {
+            // TODO: use ErrorReporter here
             return null;
         }
-        ClassData classData = readClassDataFromClassFile(virtualFile);
+        ClassData classData = readClassDataFromClassFile(virtualFile, psiClass);
         if (classData == null) {
             return null;
         }
         return deserializeClass(classData, fqName, containingDeclaration);
     }
 
-    @NotNull
-    public JetScope createKotlinPackageScope(
-            @NotNull FqName fqName,
-            @NotNull PsiClass kotlinPackagePsiClass,
-            @NotNull NamespaceDescriptor packageDescriptor
-    ) {
+    @Nullable
+    public JetScope createKotlinPackageScope(@NotNull PsiClass kotlinPackagePsiClass, @NotNull NamespaceDescriptor packageDescriptor) {
         VirtualFile virtualFile = kotlinPackagePsiClass.getContainingFile().getVirtualFile();
         if (virtualFile == null) {
-            throw new IllegalStateException("Could not find virtual file for " + fqName.asString());
+            return null;
         }
-        PackageData packageData = readPackageDataFromClassFile(virtualFile);
+        PackageData packageData = readPackageDataFromClassFile(virtualFile, kotlinPackagePsiClass);
         if (packageData == null) {
-            throw new IllegalStateException("No KotlinInfo annotation stored for " + fqName.asString());
+            return null;
         }
         return DeserializedPackageMemberScope.createScopeFromPackageData(packageDescriptor, packageData, javaDescriptorFinder,
                                                                          annotationDeserializer, storageManager);
@@ -143,33 +149,32 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    private static ClassData readClassDataFromClassFile(@NotNull VirtualFile virtualFile) {
-        String[] data = getKotlinInfoDataFromClassFile(virtualFile);
-        if (data == null) return null;
-        return JavaProtoBufUtil.readClassDataFrom(data);
+    private ClassData readClassDataFromClassFile(@NotNull VirtualFile virtualFile, @NotNull PsiClass psiClass) {
+        String[] data = readData(virtualFile, psiClass);
+        return data == null ? null : JavaProtoBufUtil.readClassDataFrom(data);
     }
 
     @Nullable
-    private static PackageData readPackageDataFromClassFile(@NotNull VirtualFile virtualFile) {
-        String[] data = getKotlinInfoDataFromClassFile(virtualFile);
-        if (data == null) return null;
-        return JavaProtoBufUtil.readPackageDataFrom(data);
+    private PackageData readPackageDataFromClassFile(@NotNull VirtualFile virtualFile, @NotNull PsiClass psiClass) {
+        String[] data = readData(virtualFile, psiClass);
+        return data == null ? null : JavaProtoBufUtil.readPackageDataFrom(data);
     }
 
     @Nullable
-    private static String[] getKotlinInfoDataFromClassFile(@NotNull VirtualFile virtualFile) {
+    private String[] readData(@NotNull VirtualFile virtualFile, @NotNull PsiClass psiClass) {
         GetKotlinInfoDataVisitor visitor = visitClassFile(virtualFile);
-        if (visitor == null) {
-            return null;
-        }
+        int version = visitor.getVersion();
         String[] data = visitor.getData();
-        if (data == null) {
-            return null;
+        if (isAbiVersionCompatible(version)) {
+            return data;
         }
-        return data;
+        if (data != null) {
+            errorReporter.reportIncompatibleAbiVersion(psiClass, version);
+        }
+        return null;
     }
 
-    @Nullable
+    @NotNull
     private static GetKotlinInfoDataVisitor visitClassFile(@NotNull VirtualFile virtualFile) {
         try {
             InputStream inputStream = virtualFile.getInputStream();
@@ -193,6 +198,8 @@ public final class DeserializedDescriptorResolver {
             super(Opcodes.ASM4);
         }
 
+        private int version = AbiVersionUtil.INVALID_VERSION;
+
         @Nullable
         private String[] data = null;
 
@@ -204,11 +211,29 @@ public final class DeserializedDescriptorResolver {
 
             return new AnnotationVisitor(Opcodes.ASM4) {
                 @Override
-                public AnnotationVisitor visitArray(String name) {
-                    if (!name.equals("data")) {
+                public void visit(String name, Object value) {
+                    if (name.equals("version")) {
+                        version = (Integer) value;
+                    }
+                    else if (isAbiVersionCompatible(version)) {
                         throw new IllegalStateException("Unexpected argument " + name + " for annotation " + KOTLIN_INFO_TYPE);
                     }
+                }
 
+                @Override
+                public AnnotationVisitor visitArray(String name) {
+                    if (name.equals("data")) {
+                        return stringArrayVisitor();
+                    }
+                    else if (isAbiVersionCompatible(version)) {
+                        throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + KOTLIN_INFO_TYPE);
+                    }
+
+                    return super.visitArray(name);
+                }
+
+                @NotNull
+                private AnnotationVisitor stringArrayVisitor() {
                     final List<String> strings = new ArrayList<String>(1);
                     return new AnnotationVisitor(Opcodes.ASM4) {
                         @Override
@@ -227,6 +252,10 @@ public final class DeserializedDescriptorResolver {
                     };
                 }
             };
+        }
+
+        public int getVersion() {
+            return version;
         }
 
         @Nullable
