@@ -13,7 +13,16 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.List;
+
 public class JetExpressionMover extends AbstractJetUpDownMover {
+
+    private static final Predicate<JetElement> IS_CALL_EXPRESSION = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return input instanceof JetCallExpression;
+        }
+    };
 
     public JetExpressionMover() {
     }
@@ -149,14 +158,14 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private static JetBlockExpression findClosestBlock(@NotNull PsiElement anchor, boolean down) {
-        PsiElement current = PsiTreeUtil.getParentOfType(anchor, JetBlockExpression.class);
+    private static JetBlockExpression findClosestBlock(@NotNull PsiElement anchor, boolean down, boolean strict) {
+        PsiElement current = PsiTreeUtil.getParentOfType(anchor, JetBlockExpression.class, strict);
         while (current != null) {
             PsiElement parent = current.getParent();
             if (parent instanceof JetClassBody ||
                 parent instanceof JetClassInitializer ||
                 parent instanceof JetNamedFunction ||
-                parent instanceof JetProperty) {
+                (parent instanceof JetProperty && !((JetProperty) parent).isLocal())) {
                 return null;
             }
 
@@ -179,6 +188,18 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
+    private static JetBlockExpression getDSLLambdaBlock(@NotNull PsiElement element, boolean down) {
+        JetCallExpression callExpression =
+                (JetCallExpression) JetPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
+        if (callExpression == null) return null;
+
+        List<JetExpression> functionLiterals = callExpression.getFunctionLiteralArguments();
+        if (functionLiterals.isEmpty()) return null;
+
+        return ((JetFunctionLiteralExpression) functionLiterals.get(0)).getBodyExpression();
+    }
+
+    @Nullable
     private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
         PsiElement start = sibling;
         PsiElement end = sibling;
@@ -188,7 +209,14 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement parent = sibling.getParent();
             if (!(parent instanceof JetBlockExpression || parent instanceof JetFunctionLiteral)) return null;
 
-            JetBlockExpression newBlock = findClosestBlock(sibling, down);
+            JetBlockExpression newBlock;
+            if (parent instanceof JetFunctionLiteral) {
+                //noinspection ConstantConditions
+                newBlock = findClosestBlock(((JetFunctionLiteral) parent).getBodyExpression(), down, false);
+            } else {
+                newBlock = findClosestBlock(sibling, down, true);
+            }
+
             if (newBlock == null) return null;
 
             if (PsiTreeUtil.isAncestor(newBlock, parent, true)) {
@@ -210,10 +238,19 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 }
             }
         }
+        // moving into code block
         else {
-            // moving into code block
-            //noinspection unchecked
-            JetElement blockLikeElement = JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK_LIKE_ELEMENT);
+            PsiElement blockLikeElement;
+
+            JetBlockExpression dslBlock = getDSLLambdaBlock(sibling, down);
+            if (dslBlock != null) {
+                // Use JetFunctionLiteral (since it contains braces)
+                blockLikeElement = dslBlock.getParent();
+            } else {
+                // JetBlockExpression and other block-like elements
+                blockLikeElement = JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK_LIKE_ELEMENT);
+            }
+
             if (blockLikeElement != null) {
                 if (down) {
                     end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
@@ -331,7 +368,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         return block.getLBrace() == null && block.getRBrace() == null;
     }
 
-    protected static PsiElement adjustWhiteSpaceSibling(
+    protected static PsiElement adjustSibling(
             @NotNull Editor editor,
             @NotNull LineRange sourceRange,
             @NotNull MoveInfo info,
@@ -371,6 +408,18 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         if (sibling == null) {
+            JetCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JetCallExpression.class);
+            if (callExpression != null) {
+                JetBlockExpression dslBlock = getDSLLambdaBlock(callExpression, down);
+                if (PsiTreeUtil.isAncestor(dslBlock, element, false)) {
+                    //noinspection ConstantConditions
+                    PsiElement blockParent = dslBlock.getParent();
+                    return down
+                           ? JetPsiUtil.findChildByType(blockParent, JetTokens.RBRACE)
+                           : JetPsiUtil.findChildByType(blockParent, JetTokens.LBRACE);
+                }
+            }
+
             info.toMove2 = null;
             return null;
         }
@@ -419,7 +468,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
         if (sourceRange == null) return false;
 
-        PsiElement sibling = adjustWhiteSpaceSibling(editor, sourceRange, info, down);
+        PsiElement sibling = adjustSibling(editor, sourceRange, info, down);
 
         // Either reached last sibling, or jumped over multi-line whitespace
         if (sibling == null) return true;
