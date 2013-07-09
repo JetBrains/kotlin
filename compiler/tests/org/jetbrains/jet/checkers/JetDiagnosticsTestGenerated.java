@@ -3314,6 +3314,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/j+k/packageVisibility.kt");
             }
             
+            @TestMetadata("recursiveRawUpperBound.kt")
+            public void testRecursiveRawUpperBound() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/recursiveRawUpperBound.kt");
+            }
+            
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/Simple.kt");
