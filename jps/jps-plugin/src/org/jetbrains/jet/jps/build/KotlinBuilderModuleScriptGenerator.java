@@ -134,7 +134,7 @@ public class KotlinBuilderModuleScriptGenerator {
         // is not available on TeamCity. When running on TeamCity, one has to provide extra path to JDK annotations
         String extraAnnotationsPaths = System.getProperty("jps.kotlin.extra.annotation.paths");
         if (extraAnnotationsPaths != null) {
-            String[] paths = extraAnnotationsPaths.split(File.pathSeparator);
+            String[] paths = extraAnnotationsPaths.split(";");
             for (String path : paths) {
                 annotationRootFiles.add(new File(path));
             }
