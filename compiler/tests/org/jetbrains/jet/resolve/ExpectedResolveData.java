@@ -27,10 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -239,9 +236,6 @@ public abstract class ExpectedResolveData {
             }
 
             PsiElement expected = nameToDeclaration.get(name);
-            if (expected == null && name.startsWith("$")) {
-                expected = nameToDeclaration.get(name.substring(1));
-            }
             if (expected == null) {
                 expected = nameToPsiElement.get(name);
             }
@@ -281,30 +275,9 @@ public abstract class ExpectedResolveData {
             }
             assertNotNull(element.getText(), reference);
 
-            if (expected instanceof JetParameter || actual instanceof JetParameter) {
-                DeclarationDescriptor expectedDescriptor;
-                if (name.startsWith("$")) {
-                    expectedDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, (JetParameter) expected);
-                }
-                else {
-                    expectedDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expected);
-                    if (expectedDescriptor == null) {
-                        expectedDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, (JetElement) expected);
-                    }
-                }
-
-
-                DeclarationDescriptor actualDescriptor = bindingContext.get(REFERENCE_TARGET, reference);
-
-                assertEquals(
-                        "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
-                        expectedDescriptor, actualDescriptor);
-            }
-            else {
-                assertEquals(
-                        "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
-                        expected, actual);
-            }
+            assertEquals(
+                    "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
+                    expected, actual);
         }
 
         for (Map.Entry<Position, String> entry : positionToType.entrySet()) {

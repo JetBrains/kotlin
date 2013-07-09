@@ -64,7 +64,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetPropertyAccessor newElement = (JetPropertyAccessor) element.copy();
         JetTypeReference newTypeReference = JetPsiFactory.createType(project, renderedType);
 

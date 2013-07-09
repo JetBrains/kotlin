@@ -16,10 +16,13 @@
 
 package org.jetbrains.jet.plugin.parameterInfo;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetValueArgumentList;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -113,7 +116,8 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
                 new MockParameterInfoUIContext(parameterOwner, updateContext.getCurrentParameter());
 
         for (Object item : mockCreateParameterInfoContext.getItemsToShow()) {
-            parameterInfoHandler.updateUI(item, parameterInfoUIContext);
+            //noinspection unchecked
+            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, ResolveSession>)item, parameterInfoUIContext);
         }
         assertEquals(expectedResultText, parameterInfoUIContext.getResultText());
     }

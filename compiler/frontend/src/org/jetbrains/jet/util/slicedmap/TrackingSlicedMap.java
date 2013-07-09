@@ -55,6 +55,7 @@ public class TrackingSlicedMap implements MutableSlicedMap {
         return delegate.getKeys(wrapSlice(slice));
     }
 
+    @NotNull
     @Override
     public Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator() {
         Map<SlicedMapKey<?, ?>, Object> map = Maps.newHashMap();

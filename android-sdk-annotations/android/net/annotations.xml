@@ -1,0 +1,320 @@
+<root>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder setSession(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState BLOCKED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.lang.String, int, java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addSearchDomain(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.State CONNECTING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.MailTo android.net.MailTo parse(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LocalSocketAddress.Namespace ABSTRACT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri android.net.Uri withAppendedPath(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder path(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager EXTRA_EXTRA_INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer java.util.List&lt;android.net.UrlQuerySanitizer.ParameterValuePair&gt; getParameterList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder query(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState VERIFYING_POOR_LINK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedPath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButNulAndAngleBracketsLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addDnsServer(java.net.InetAddress)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager EXTRA_REASON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState AUTHENTICATING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getUrlAndSpaceLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri void writeToParcel(android.os.Parcel, android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager CONNECTIVITY_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.MailTo MAILTO_SCHEME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri android.net.Uri parse(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService boolean protect(java.net.DatagramSocket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService android.content.Intent prepare(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LocalSocket android.net.LocalSocketAddress getRemoteSocketAddress()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButNulLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButWhitespaceLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addAddress(java.net.InetAddress, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Proxy PROXY_CHANGE_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Proxy int getPort(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState SUSPENDED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.State SUSPENDED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder opaquePart(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer void registerParameters(java.lang.String[], android.net.UrlQuerySanitizer.ValueSanitizer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory javax.net.ssl.SSLSocketFactory getInsecure(int, android.net.SSLSessionCache)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedQuery(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAmpLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager EXTRA_OTHER_NETWORK_INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder setConfigureIntent(android.app.PendingIntent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedAuthority(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLSessionCache SSLSessionCache(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAmpAndSpaceLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager ACTION_BACKGROUND_DATA_SETTING_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder authority(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer java.lang.String unescape(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder appendQueryParameter(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer java.lang.String unescape(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager EXTRA_NO_CONNECTIVITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedFragment(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer java.util.Set&lt;java.lang.String&gt; getParameterSet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.State DISCONNECTING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService SERVICE_INTERFACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer void parseEntry(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri int compareTo(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager EXTRA_IS_FAILOVER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder fragment(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addRoute(java.net.InetAddress, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.State CONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.State UNKNOWN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllIllegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer UrlQuerySanitizer(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addAddress(java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager EXTRA_NETWORK_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri android.net.Uri.Builder buildUpon()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ConnectivityManager EXTRA_NETWORK_INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LocalSocketAddress.Namespace FILESYSTEM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState CAPTIVE_PORTAL_CHECK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer void parseEntry(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LocalServerSocket android.net.LocalSocket accept()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder scheme(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory javax.net.ssl.SSLSocketFactory getDefault(int, android.net.SSLSessionCache)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState DISCONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri android.net.Uri fromFile(java.io.File)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder setMtu(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri int compareTo(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.DhcpInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState OBTAINING_IPADDR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getUrlLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory org.apache.http.conn.ssl.SSLSocketFactory getHttpSocketFactory(int, android.net.SSLSessionCache)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState DISCONNECTING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState CONNECTING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LocalSocketAddress.Namespace RESERVED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState FAILED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addRoute(java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder appendEncodedPath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer void parseUrl(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.Socket, java.lang.String, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Proxy java.lang.String getHost(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory javax.net.SocketFactory getDefault(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder appendPath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedOpaquePart(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.State DISCONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState SCANNING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState IDLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getSpaceLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder clearQuery()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri android.net.Uri fromParts(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService boolean protect(java.net.Socket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState CONNECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addDnsServer(java.net.InetAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

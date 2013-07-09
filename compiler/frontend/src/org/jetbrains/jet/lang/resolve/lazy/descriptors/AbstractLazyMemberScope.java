@@ -151,7 +151,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         Collection<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
         for (JetNamedFunction functionDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration);
-            result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptor(thisDescriptor, resolutionScope,
+            result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(thisDescriptor, resolutionScope,
                                                                                                       functionDeclaration,
                                                                                                       resolveSession.getTrace()));
         }
@@ -179,9 +179,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         Collection<JetProperty> declarations = declarationProvider.getPropertyDeclarations(name);
         for (JetProperty propertyDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration);
-            result.add(resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,
-                                                                                                      propertyDeclaration,
-                                                                                                      resolveSession.getTrace()));
+            PropertyDescriptor propertyDescriptor =
+                    resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,
+                                                                                                   propertyDeclaration,
+                                                                                                   resolveSession.getTrace());
+            result.add(propertyDescriptor);
+            resolveSession.getInjector().getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, resolveSession.getTrace(), resolutionScope);
         }
 
         // Objects are also properties

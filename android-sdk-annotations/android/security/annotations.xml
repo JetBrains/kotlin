@@ -1,0 +1,14 @@
+<root>
+    <item name='android.security.KeyChain EXTRA_PKCS12'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain EXTRA_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain EXTRA_CERTIFICATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain ACTION_STORAGE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

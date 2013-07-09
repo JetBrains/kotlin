@@ -51,14 +51,17 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
 
         PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
         if (element == null) return;
-        @SuppressWarnings("unchecked") JetNamedDeclaration funOrClass =
-                PsiTreeUtil.getParentOfType(element, JetNamedFunction.class, JetClass.class, JetProperty.class);
-        if (funOrClass == null) return;
+        @SuppressWarnings("unchecked") JetDeclaration declaration =
+                PsiTreeUtil.getParentOfType(element,
+                                            JetNamedFunction.class,
+                                            JetClass.class,
+                                            JetProperty.class,
+                                            JetObjectDeclaration.class);
+        if (declaration == null) return;
 
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) file).getBindingContext();
 
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, funOrClass);
-
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         Collection<? extends DeclarationDescriptor> superDescriptors;
         String message;

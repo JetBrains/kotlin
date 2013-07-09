@@ -72,9 +72,6 @@ public class CallExpressionResolver {
             if (classObjectType != null) {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
                 JetType result = getExtendedClassObjectType(classObjectType, referencedName, classifier, context);
-                if (result == null) {
-                    context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
-                }
                 return DataFlowUtils.checkType(result, expression, context);
             }
         }
@@ -120,7 +117,7 @@ public class CallExpressionResolver {
         return result[0];
     }
 
-    @Nullable
+    @NotNull
     private JetType getExtendedClassObjectType(
             @NotNull JetType classObjectType,
             @NotNull Name referencedName,
@@ -135,18 +132,14 @@ public class CallExpressionResolver {
 
             NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
             if (namespace != null) {
+                //for enums loaded from java binaries
                 scopes.add(namespace.getMemberScope());
             }
 
             JetScope scope = new ChainedScope(classifier, scopes.toArray(new JetScope[scopes.size()]));
             return new NamespaceType(referencedName, scope);
         }
-        else if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT || classifier.isClassObjectAValue()) {
-            return classObjectType;
-        }
-        else {
-            return null;
-        }
+        return classObjectType;
     }
 
     private boolean furtherNameLookup(

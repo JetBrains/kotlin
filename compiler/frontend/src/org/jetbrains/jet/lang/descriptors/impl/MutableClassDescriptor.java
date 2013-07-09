@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -224,7 +223,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
                 }
 
                 @Override
-                public ClassObjectStatus setClassObjectDescriptor(@NotNull final MutableClassDescriptorLite classObjectDescriptor) {
+                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                     ClassObjectStatus r = superBuilder.setClassObjectDescriptor(classObjectDescriptor);
                     if (r != ClassObjectStatus.OK) {
                         return r;
@@ -232,19 +231,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
 
                     // Members of the class object are accessible from the class
                     // The scope must be lazy, because classObjectDescriptor may not by fully built yet
-                    scopeForMemberResolution.importScope(new AbstractScopeAdapter() {
-                        @NotNull
-                        @Override
-                        protected JetScope getWorkerScope() {
-                            return classObjectDescriptor.getDefaultType().getMemberScope();
-                        }
-
-                        @NotNull
-                        @Override
-                        public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
-                            return Collections.singletonList(classObjectDescriptor.getThisAsReceiverParameter());
-                        }
-                    });
+                    scopeForMemberResolution.importScope(new ClassObjectMixinScope(classObjectDescriptor));
 
                     return ClassObjectStatus.OK;
                 }

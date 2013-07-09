@@ -20,10 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -152,5 +149,40 @@ public class CallResolverUtil {
         PsiElement callElement = context.call.getCallElement();
         if (!(callElement instanceof JetExpression)) return null;
         return CallKey.create(context.call.getCallType(), (JetExpression) callElement);
+    }
+
+    @NotNull
+    public static JetType getErasedReceiverType(
+            @NotNull ReceiverParameterDescriptor receiverParameterDescriptor,
+            @NotNull CallableDescriptor descriptor
+    ) {
+        JetType receiverType = receiverParameterDescriptor.getType();
+        for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
+            if (typeParameter.getTypeConstructor().equals(receiverType.getConstructor())) {
+                receiverType = typeParameter.getUpperBoundsAsType();
+            }
+        }
+        List<TypeProjection> fakeTypeArguments = Lists.newArrayList();
+        for (TypeProjection typeProjection : receiverType.getArguments()) {
+            fakeTypeArguments.add(new TypeProjection(typeProjection.getProjectionKind(), DONT_CARE));
+        }
+        return new JetTypeImpl(
+                receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isNullable(),
+                fakeTypeArguments, ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true));
+    }
+
+    public static boolean isOrOverridesSynthesized(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            return true;
+        }
+        if (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                if (!isOrOverridesSynthesized(overridden)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

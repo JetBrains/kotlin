@@ -246,15 +246,38 @@ public class DescriptorResolver {
     }
 
     @NotNull
+    public SimpleFunctionDescriptor resolveFunctionDescriptorWithAnnotationArguments(
+            @NotNull DeclarationDescriptor containingDescriptor,
+            @NotNull JetScope scope,
+            @NotNull JetNamedFunction function,
+            @NotNull BindingTrace trace
+    ) {
+        return resolveFunctionDescriptor(containingDescriptor, scope, function, trace,
+                                         annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace));
+    }
+
+    @NotNull
     public SimpleFunctionDescriptor resolveFunctionDescriptor(
+            @NotNull DeclarationDescriptor containingDescriptor,
+            @NotNull JetScope scope,
+            @NotNull JetNamedFunction function,
+            @NotNull BindingTrace trace
+    ) {
+       return resolveFunctionDescriptor(containingDescriptor, scope, function, trace,
+                                        annotationResolver.resolveAnnotations(scope, function.getModifierList(), trace));
+    }
+
+    @NotNull
+    private SimpleFunctionDescriptor resolveFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDescriptor,
             @NotNull final JetScope scope,
             @NotNull final JetNamedFunction function,
-            @NotNull final BindingTrace trace
+            @NotNull final BindingTrace trace,
+            @NotNull List<AnnotationDescriptor> annotations
     ) {
         final SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 containingDescriptor,
-                annotationResolver.resolveAnnotations(scope, function.getModifierList(), trace),
+                annotations,
                 JetPsiUtil.safeName(function.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
@@ -476,6 +499,26 @@ public class DescriptorResolver {
             JetScope scope, DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace
     ) {
+        return resolveValueParameterDescriptor(declarationDescriptor, valueParameter, index, type, trace,
+                                               annotationResolver.resolveAnnotations(scope, valueParameter.getModifierList(), trace));
+    }
+
+    @NotNull
+    public MutableValueParameterDescriptor resolveValueParameterDescriptorWithAnnotationArguments(
+            JetScope scope, DeclarationDescriptor declarationDescriptor,
+            JetParameter valueParameter, int index, JetType type, BindingTrace trace
+    ) {
+        return resolveValueParameterDescriptor(declarationDescriptor, valueParameter, index, type, trace,
+                                               annotationResolver.resolveAnnotationsWithArguments(scope, valueParameter.getModifierList(),
+                                                                                                  trace));
+    }
+
+    @NotNull
+    private MutableValueParameterDescriptor resolveValueParameterDescriptor(
+            DeclarationDescriptor declarationDescriptor,
+            JetParameter valueParameter, int index, JetType type, BindingTrace trace,
+            List<AnnotationDescriptor> annotations
+    ) {
         JetType varargElementType = null;
         JetType variableType = type;
         if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
@@ -485,7 +528,7 @@ public class DescriptorResolver {
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
                 index,
-                annotationResolver.resolveAnnotations(scope, valueParameter.getModifierList(), trace),
+                annotations,
                 JetPsiUtil.safeName(valueParameter.getName()),
                 variableType,
                 valueParameter.getDefaultValue() != null,
@@ -677,13 +720,12 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetScope scope,
             @NotNull JetParameter parameter,
             BindingTrace trace
     ) {
         JetType type = resolveParameterType(scope, parameter, trace);
-        return resolveLocalVariableDescriptor(containingDeclaration, parameter, type, trace);
+        return resolveLocalVariableDescriptor(parameter, type, trace, scope);
     }
 
     private JetType resolveParameterType(JetScope scope, JetParameter parameter, BindingTrace trace) {
@@ -703,14 +745,14 @@ public class DescriptorResolver {
     }
 
     public VariableDescriptor resolveLocalVariableDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetParameter parameter,
             @NotNull JetType type,
-            BindingTrace trace
+            BindingTrace trace,
+            @NotNull JetScope scope
     ) {
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
-                containingDeclaration,
-                annotationResolver.getResolvedAnnotations(parameter.getModifierList(), trace),
+                scope.getContainingDeclaration(),
+                annotationResolver.resolveAnnotationsWithArguments(scope, parameter.getModifierList(), trace),
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
                 false);
@@ -720,16 +762,16 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(
-            DeclarationDescriptor containingDeclaration,
             JetScope scope,
             JetVariableDeclaration variable,
             DataFlowInfo dataFlowInfo,
             BindingTrace trace
     ) {
+        DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
         if (JetPsiUtil.isScriptDeclaration(variable)) {
             PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                     containingDeclaration,
-                    annotationResolver.getResolvedAnnotations(variable.getModifierList(), trace),
+                    annotationResolver.resolveAnnotationsWithArguments(scope, variable.getModifierList(), trace),
                     Modality.FINAL,
                     Visibilities.INTERNAL,
                     variable.isVar(),
@@ -747,7 +789,7 @@ public class DescriptorResolver {
         }
         else {
             VariableDescriptorImpl variableDescriptor =
-                    resolveLocalVariableDescriptorWithType(containingDeclaration, variable, null, trace);
+                    resolveLocalVariableDescriptorWithType(scope, variable, null, trace);
 
             JetType type =
                     getVariableType(variableDescriptor, scope, variable, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
@@ -758,14 +800,14 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull JetScope scope,
             @NotNull JetVariableDeclaration variable,
             @Nullable JetType type,
             @NotNull BindingTrace trace
     ) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
-                containingDeclaration,
-                annotationResolver.getResolvedAnnotations(variable.getModifierList(), trace),
+                scope.getContainingDeclaration(),
+                annotationResolver.resolveAnnotationsWithArguments(scope, variable.getModifierList(), trace),
                 JetPsiUtil.safeName(variable.getName()),
                 type,
                 variable.isVar());
@@ -1264,7 +1306,7 @@ public class DescriptorResolver {
         WritableScopeImpl parameterScope = new WritableScopeImpl(
                 scope, constructorDescriptor, new TraceBasedRedeclarationHandler(trace), "Scope with value parameters of a constructor");
         parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        return constructorDescriptor.initialize(
+        ConstructorDescriptorImpl constructor = constructorDescriptor.initialize(
                 typeParameters,
                 resolveValueParameters(
                         constructorDescriptor,
@@ -1272,6 +1314,10 @@ public class DescriptorResolver {
                         valueParameters, trace),
                 resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
                 DescriptorUtils.isConstructorOfStaticNestedClass(constructorDescriptor));
+        if (isAnnotationClass(classDescriptor)) {
+            AnnotationUtils.checkConstructorParametersType(valueParameters, trace);
+        }
+        return constructor;
     }
 
     @Nullable
@@ -1471,13 +1517,30 @@ public class DescriptorResolver {
             @NotNull PsiElement reportErrorsOn,
             @NotNull ClassDescriptor target
     ) {
+        return checkHasOuterClassInstance(scope, trace, reportErrorsOn, target, true);
+    }
+
+    public static boolean checkHasOuterClassInstance(
+            @NotNull JetScope scope,
+            @NotNull BindingTrace trace,
+            @NotNull PsiElement reportErrorsOn,
+            @NotNull ClassDescriptor target,
+            boolean doSuperClassCheck
+    ) {
         DeclarationDescriptor descriptor = getContainingClass(scope);
+
         while (descriptor != null) {
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                if (isSubclass(classDescriptor, target)) {
+
+                if (classDescriptor == target) {
                     return true;
                 }
+
+                if (doSuperClassCheck && isSubclass(classDescriptor, target)) {
+                    return true;
+                }
+
                 if (isStaticNestedClass(classDescriptor)) {
                     trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, classDescriptor));
                     return false;

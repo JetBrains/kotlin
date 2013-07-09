@@ -1,0 +1,83 @@
+<root>
+    <item name='android.media.effect.EffectFactory EFFECT_NEGATIVE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_BLACKWHITE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_ROTATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_BACKDROPPER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_STRAIGHTEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_TEMPERATURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_FLIP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_CROSSPROCESS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_VIGNETTE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_SATURATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_GRAYSCALE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_GRAIN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_SHARPEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_AUTOFIX'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_SEPIA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_DOCUMENTARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_REDEYE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_BITMAPOVERLAY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_TINT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_BRIGHTNESS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_POSTERIZE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_DUOTONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_FISHEYE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_CONTRAST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_LOMOISH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_FILLLIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectFactory EFFECT_CROP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

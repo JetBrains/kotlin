@@ -1,0 +1,6 @@
+fun ~A.foo~A.foo() = 1
+fun foo() = 2
+
+class A {
+    fun test() = `A.foo`foo()
+}

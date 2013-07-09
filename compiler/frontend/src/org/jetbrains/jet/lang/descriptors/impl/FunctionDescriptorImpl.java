@@ -51,7 +51,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Name name,
-            Kind kind) {
+            @NotNull Kind kind) {
         super(containingDeclaration, annotations, name);
         this.original = this;
         this.kind = kind;
@@ -62,7 +62,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull FunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Name name,
-            Kind kind) {
+            @NotNull Kind kind) {
         super(containingDeclaration, annotations, name);
         this.original = original;
         this.kind = kind;

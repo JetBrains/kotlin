@@ -58,6 +58,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/class/ClassInnerClass.kt");
         }
         
+        @TestMetadata("ClassMemberConflict.kt")
+        public void testClassMemberConflict() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/ClassMemberConflict.kt");
+        }
+        
         @TestMetadata("ClassOutParam.kt")
         public void testClassOutParam() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/ClassOutParam.kt");
@@ -151,6 +156,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObject.kt");
+        }
+        
+        @TestMetadata("NamedObjectInClass.kt")
+        public void testNamedObjectInClass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/NamedObjectInClass.kt");
         }
         
         @TestMetadata("NamedObjectInClassObject.kt")
@@ -257,6 +267,26 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("ClassObjectExtendsTraitWithTP.kt")
         public void testClassObjectExtendsTraitWithTP() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
+        }
+        
+        @TestMetadata("classObjectInClassStaticFields.kt")
+        public void testClassObjectInClassStaticFields() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/classObjectInClassStaticFields.kt");
+        }
+        
+        @TestMetadata("classObjectInTraitStaticFields.kt")
+        public void testClassObjectInTraitStaticFields() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/classObjectInTraitStaticFields.kt");
+        }
+        
+        @TestMetadata("ClassObjectPropertyInClass.kt")
+        public void testClassObjectPropertyInClass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectPropertyInClass.kt");
+        }
+        
+        @TestMetadata("InnerClassInClassObject.kt")
+        public void testInnerClassInClassObject() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/InnerClassInClassObject.kt");
         }
         
         @TestMetadata("SimpleClassObject.kt")

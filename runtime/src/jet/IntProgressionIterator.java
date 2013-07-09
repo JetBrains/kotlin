@@ -16,26 +16,36 @@
 
 package jet;
 
+import jet.runtime.ProgressionUtil;
+
 class IntProgressionIterator extends IntIterator {
     private int next;
-    private final int end;
     private final int increment;
+    private final int finalElement;
+    private boolean hasNext;
 
     public IntProgressionIterator(int start, int end, int increment) {
         this.next = start;
-        this.end = end;
         this.increment = increment;
+
+        this.finalElement = ProgressionUtil.getProgressionFinalElement(start, end, increment);
+        this.hasNext = increment > 0 ? start <= end : start >= end;
     }
 
     @Override
     public boolean hasNext() {
-        return increment > 0 ? next <= end : next >= end;
+        return hasNext;
     }
 
     @Override
     public int nextInt() {
         int value = next;
-        next += increment;
+        if (value == finalElement) {
+            hasNext = false;
+        }
+        else {
+            next += increment;
+        }
         return value;
     }
 }

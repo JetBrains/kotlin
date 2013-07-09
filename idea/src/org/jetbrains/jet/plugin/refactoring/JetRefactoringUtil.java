@@ -189,8 +189,8 @@ public class JetRefactoringUtil {
         
     }
 
-    public static String getExpressionShortText(@NotNull JetExpression expression) { //todo: write appropriate implementation
-        String expressionText = expression.getText();
+    public static String getExpressionShortText(@NotNull JetElement element) { //todo: write appropriate implementation
+        String expressionText = element.getText();
         if (expressionText.length() > 20) {
             expressionText = expressionText.substring(0, 17) + "...";
         }

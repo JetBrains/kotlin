@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -126,7 +127,7 @@ public class JetPsiMatcher {
 
         @Override
         public Boolean visitSimpleNameExpression(JetSimpleNameExpression expression, JetElement data) {
-            return expression.getText().equals(data.getText());
+            return checkIdentifierMatch(expression.getText(), data.getText());
         }
 
         @Override
@@ -253,5 +254,17 @@ public class JetPsiMatcher {
         if (e1.getClass() != e2.getClass()) return false;
 
         return e1.accept(VISITOR, e2);
+    }
+
+    @NotNull
+    private static String unquote(@NotNull String s) {
+        return (s.startsWith("`") && s.endsWith("`")) ? s.substring(1, s.length() - 1) : s;
+    }
+
+    public static boolean checkIdentifierMatch(@Nullable String s1, @Nullable String s2) {
+        if (s1 == s2) return true;
+        if (s1 == null || s2 == null) return false;
+
+        return unquote(s1).equals(unquote(s2));
     }
 }

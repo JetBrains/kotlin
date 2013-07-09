@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class TaskPrioritizer {
@@ -74,8 +75,12 @@ public class TaskPrioritizer {
     }
 
     @NotNull
-    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(@NotNull final BasicCallResolutionContext context, @NotNull Name name,
-                                                           @NotNull JetReferenceExpression functionReference, @NotNull List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors) {
+    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull Name name,
+            @NotNull JetReferenceExpression functionReference,
+            @NotNull List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors
+    ) {
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
         JetScope scope;
         if (explicitReceiver.exists() && explicitReceiver.getType() instanceof NamespaceType) {
@@ -86,120 +91,178 @@ public class TaskPrioritizer {
         else {
             scope = context.scope;
         }
-        ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> visibleStrategy = new ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>() {
-            @Override
-            public int getPriority(ResolutionCandidate<D> call) {
-                return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 0 : 1);
-            }
 
-            @Override
-            public int getMaxPriority() {
-                return 3;
-            }
-
-            private boolean isVisible(ResolutionCandidate<D> call) {
-                if (call == null) return false;
-                D candidateDescriptor = call.getDescriptor();
-                if (ErrorUtils.isError(candidateDescriptor)) return true;
-                return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
-            }
-
-            private boolean isSynthesized(ResolutionCandidate<D> call) {
-                D descriptor = call.getDescriptor();
-                return descriptor instanceof CallableMemberDescriptor && isOrOverridesSynthesized((CallableMemberDescriptor) descriptor);
-            }
-
-            private boolean isOrOverridesSynthesized(CallableMemberDescriptor descriptor) {
-                if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-                    return true;
-                }
-                if (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                    for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
-                        if (!isOrOverridesSynthesized(overridden)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-                return false;
-            }
-        };
-
-        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, visibleStrategy);
-        for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : callableDescriptorCollectors) {
-            doComputeTasks(scope, explicitReceiver, name, result, context, callableDescriptorCollector);
-        }
+        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context));
+        TaskPrioritizerContext<D, F> c = new TaskPrioritizerContext<D, F>(name, result, context, scope, callableDescriptorCollectors);
+        doComputeTasks(explicitReceiver, c);
         return result.getTasks();
     }
 
-    private static <D extends CallableDescriptor, F extends D> void doComputeTasks(@NotNull JetScope scope, @NotNull ReceiverValue receiver,
-            @NotNull Name name, @NotNull ResolutionTaskHolder<D, F> result,
-            @NotNull BasicCallResolutionContext context, @NotNull CallableDescriptorCollector<? extends D> callableDescriptorCollector) {
-
+    private static <D extends CallableDescriptor, F extends D> void doComputeTasks(
+            @NotNull ReceiverValue receiver,
+            @NotNull TaskPrioritizerContext<D, F> c
+    ) {
         ProgressIndicatorProvider.checkCanceled();
 
-        AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.trace.getBindingContext());
-        List<ReceiverValue> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(scope);
-        boolean hasExplicitThisObject = context.call.getThisObject().exists();
-        if (hasExplicitThisObject) {
-            implicitReceivers.add(context.call.getThisObject());
+        boolean resolveInvoke = c.context.call.getThisObject().exists();
+        if (resolveInvoke) {
+            addCandidatesForInvoke(receiver, c);
+            return;
         }
+        List<ReceiverValue> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope);
         if (receiver.exists()) {
-            List<ReceiverValue> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiver);
+            addCandidatesForExplicitReceiver(receiver, implicitReceivers, c, /*resolveInvoke=*/false);
+            return;
+        }
+        addCandidatesForNoReceiver(implicitReceivers, c);
+    }
 
-            Collection<ResolutionCandidate<D>> extensionFunctions = convertWithImpliedThis(scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(scope, name));
-            List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
-            List<ResolutionCandidate<D>> locals = Lists.newArrayList();
-            //noinspection unchecked,RedundantTypeArguments
-            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(extensionFunctions, scope.getContainingDeclaration(), locals, nonlocals);
+    private static <D extends CallableDescriptor, F extends D> void addCandidatesForExplicitReceiver(
+            @NotNull ReceiverValue receiver,
+            @NotNull List<ReceiverValue> implicitReceivers,
+            @NotNull TaskPrioritizerContext<D, F> c,
+            boolean resolveInvoke
+    ) {
 
+        List<ReceiverValue> variantsForExplicitReceiver = c.autoCastService.getVariantsForReceiver(receiver);
+
+        //members
+        for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
             Collection<ResolutionCandidate<D>> members = Lists.newArrayList();
             for (ReceiverValue variant : variantsForExplicitReceiver) {
-                Collection<? extends D> membersForThisVariant = callableDescriptorCollector.getMembersByName(variant.getType(), name);
-                convertWithReceivers(membersForThisVariant, Collections.singletonList(variant), Collections.singletonList(NO_RECEIVER), members, hasExplicitThisObject);
+                Collection<? extends D> membersForThisVariant = callableDescriptorCollector.getMembersByName(variant.getType(), c.name);
+                convertWithReceivers(membersForThisVariant, Collections.singletonList(variant),
+                                     Collections.singletonList(NO_RECEIVER), members, resolveInvoke);
             }
-
-            result.addLocalExtensions(locals);
-            result.addMembers(members);
-
-            for (ReceiverValue implicitReceiver : implicitReceivers) {
-                Collection<? extends D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
-                        implicitReceiver.getType().getMemberScope(), name);
-                List<ReceiverValue> variantsForImplicitReceiver = autoCastService.getVariantsForReceiver(implicitReceiver);
-                result.addNonLocalExtensions(convertWithReceivers(memberExtensions, variantsForImplicitReceiver, variantsForExplicitReceiver, hasExplicitThisObject));
-            }
-
-            result.addNonLocalExtensions(nonlocals);
+            c.result.addCandidates(members);
         }
-        else {
-            Collection<ResolutionCandidate<D>> functions = convertWithImpliedThis(scope, Collections.singletonList(receiver), callableDescriptorCollector
-                    .getNonExtensionsByName(scope, name));
 
-            List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
-            List<ResolutionCandidate<D>> locals = Lists.newArrayList();
-            //noinspection unchecked,RedundantTypeArguments
-            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, scope.getContainingDeclaration(), locals, nonlocals);
-
-            result.addLocalExtensions(locals);
-            result.addNonLocalExtensions(nonlocals);
-
+        for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
+            //member extensions
             for (ReceiverValue implicitReceiver : implicitReceivers) {
-                doComputeTasks(scope, implicitReceiver, name, result, context, callableDescriptorCollector);
+                addMemberExtensionCandidates(implicitReceiver, variantsForExplicitReceiver,
+                                             callableDescriptorCollector, c, resolveInvoke);
             }
+            //extensions
+            Collection<ResolutionCandidate<D>> extensionFunctions = convertWithImpliedThis(
+                    c.scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(c.scope, c.name));
+            c.result.addCandidates(extensionFunctions);
         }
     }
 
-    private static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithReceivers(Collection<? extends D> descriptors, Iterable<ReceiverValue> thisObjects,
-            Iterable<ReceiverValue> receiverParameters, boolean hasExplicitThisObject) {
+    private static <D extends CallableDescriptor, F extends D> void addMemberExtensionCandidates(
+            @NotNull ReceiverValue implicitReceiver,
+            @NotNull List<ReceiverValue> variantsForExplicitReceiver,
+            @NotNull CallableDescriptorCollector<? extends D> callableDescriptorCollector, TaskPrioritizerContext<D, F> c,
+            boolean resolveInvoke
+    ) {
+        Collection<? extends D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
+                implicitReceiver.getType().getMemberScope(), c.name);
+        List<ReceiverValue> variantsForImplicitReceiver = c.autoCastService.getVariantsForReceiver(implicitReceiver);
+        c.result.addCandidates(convertWithReceivers(memberExtensions, variantsForImplicitReceiver,
+                                                  variantsForExplicitReceiver, resolveInvoke));
+    }
 
+    private static <D extends CallableDescriptor, F extends D> void addCandidatesForNoReceiver(
+            @NotNull List<ReceiverValue> implicitReceivers,
+            @NotNull TaskPrioritizerContext<D, F> c
+    ) {
+        List<Collection<ResolutionCandidate<D>>> localsList = Lists.newArrayList();
+        List<Collection<ResolutionCandidate<D>>> nonlocalsList = Lists.newArrayList();
+        for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
+
+            Collection<ResolutionCandidate<D>> functions =
+                    convertWithImpliedThis(c.scope, Collections.singletonList(NO_RECEIVER), callableDescriptorCollector
+                            .getNonExtensionsByName(c.scope, c.name));
+
+            List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
+            List<ResolutionCandidate<D>> locals = Lists.newArrayList();
+            //noinspection unchecked,RedundantTypeArguments
+            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, c.scope.getContainingDeclaration(), locals, nonlocals);
+
+            localsList.add(locals);
+            nonlocalsList.add(nonlocals);
+        }
+
+        //locals
+        c.result.addCandidates(localsList);
+
+        //try all implicit receivers as explicit
+        for (ReceiverValue implicitReceiver : implicitReceivers) {
+            addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, /*resolveInvoke=*/false);
+        }
+        
+        //nonlocals
+        c.result.addCandidates(nonlocalsList);
+    }
+
+    private static <D extends CallableDescriptor, F extends D> void addCandidatesForInvoke(
+            @NotNull ReceiverValue explicitReceiver,
+            @NotNull TaskPrioritizerContext<D, F> c
+    ) {
+        List<ReceiverValue> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope);
+
+        // For 'a.foo()' where foo has function type,
+        // a is explicitReceiver, foo is variableReceiver.
+        ReceiverValue variableReceiver = c.context.call.getThisObject();
+        assert variableReceiver.exists() : "'Invoke' call hasn't got variable receiver";
+
+        // For invocation a.foo() explicit receiver 'a'
+        // can be a receiver for 'foo' variable
+        // or for 'invoke' function.
+
+        // (1) a.foo + foo.invoke()
+        if (!explicitReceiver.exists()) {
+            addCandidatesForExplicitReceiver(variableReceiver, implicitReceivers, c, /*resolveInvoke=*/true);
+        }
+
+        // (2) foo + a.invoke()
+
+        // 'invoke' is member extension to explicit receiver while variable receiver is 'this object'
+        //trait A
+        //trait Foo { fun A.invoke() }
+
+        if (explicitReceiver.exists()) {
+            //a.foo()
+            addCandidatesWhenInvokeIsMemberExtensionToExplicitReceiver(variableReceiver, explicitReceiver, c);
+            return;
+        }
+        // with (a) { foo() }
+        for (ReceiverValue implicitReceiver : implicitReceivers) {
+            addCandidatesWhenInvokeIsMemberExtensionToExplicitReceiver(variableReceiver, implicitReceiver, c);
+        }
+    }
+
+    private static <D extends CallableDescriptor, F extends D> void addCandidatesWhenInvokeIsMemberExtensionToExplicitReceiver(
+            @NotNull ReceiverValue variableReceiver,
+            @NotNull ReceiverValue explicitReceiver,
+            @NotNull TaskPrioritizerContext<D, F> c
+    ) {
+        List<ReceiverValue> variantsForExplicitReceiver = c.autoCastService.getVariantsForReceiver(explicitReceiver);
+
+        for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
+            addMemberExtensionCandidates(variableReceiver, variantsForExplicitReceiver, callableDescriptorCollector, c, /*resolveInvoke=*/true);
+        }
+    }
+
+    private static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithReceivers(
+            @NotNull Collection<? extends D> descriptors,
+            @NotNull Iterable<ReceiverValue> thisObjects,
+            @NotNull Iterable<ReceiverValue> receiverParameters,
+            boolean hasExplicitThisObject
+    ) {
         Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
         convertWithReceivers(descriptors, thisObjects, receiverParameters, result, hasExplicitThisObject);
         return result;
     }
 
-    private static <D extends CallableDescriptor> void convertWithReceivers(Collection<? extends D> descriptors, Iterable<ReceiverValue> thisObjects, Iterable<ReceiverValue> receiverParameters,
-            Collection<ResolutionCandidate<D>> result, boolean hasExplicitThisObject) {
-
+    private static <D extends CallableDescriptor> void convertWithReceivers(
+            @NotNull Collection<? extends D> descriptors,
+            @NotNull Iterable<ReceiverValue> thisObjects,
+            @NotNull Iterable<ReceiverValue> receiverParameters,
+            @NotNull Collection<ResolutionCandidate<D>> result,
+            boolean hasExplicitThisObject
+    ) {
         for (ReceiverValue thisObject : thisObjects) {
             for (ReceiverValue receiverParameter : receiverParameters) {
                 for (D extension : descriptors) {
@@ -218,7 +281,11 @@ public class TaskPrioritizer {
         }
     }
 
-    public static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithImpliedThis(JetScope scope, Collection<ReceiverValue> receiverParameters, Collection<? extends D> descriptors) {
+    public static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithImpliedThis(
+            @NotNull JetScope scope,
+            @NotNull Collection<ReceiverValue> receiverParameters,
+            @NotNull Collection<? extends D> descriptors
+    ) {
         Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
         for (ReceiverValue receiverParameter : receiverParameters) {
             for (D descriptor : descriptors) {
@@ -250,7 +317,10 @@ public class TaskPrioritizer {
         return result;
     }
 
-    private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolutionCandidate<D> candidate) {
+    private static <D extends CallableDescriptor> boolean setImpliedThis(
+            @NotNull JetScope scope,
+            @NotNull ResolutionCandidate<D> candidate
+    ) {
         ReceiverParameterDescriptor expectedThisObject = candidate.getDescriptor().getExpectedThisObject();
         if (expectedThisObject == null) return true;
         List<ReceiverParameterDescriptor> receivers = scope.getImplicitReceiversHierarchy();
@@ -264,6 +334,69 @@ public class TaskPrioritizer {
         return false;
     }
 
-    private TaskPrioritizer() {
+    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasksFromCandidates(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull JetReferenceExpression functionReference,
+            @NotNull Collection<ResolutionCandidate<D>> candidates
+    ) {
+        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context));
+        result.addCandidates(candidates);
+        return result.getTasks();
+    }
+
+    private static class MyPriorityProvider<D extends CallableDescriptor>
+            implements ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>> {
+        private final BasicCallResolutionContext context;
+
+        public MyPriorityProvider(BasicCallResolutionContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public int getPriority(ResolutionCandidate<D> call) {
+            return (isVisible(call) ? 2 : 0) + (isSynthesized(call) ? 0 : 1);
+        }
+
+        @Override
+        public int getMaxPriority() {
+            return 3;
+        }
+
+        private boolean isVisible(ResolutionCandidate<D> call) {
+            if (call == null) return false;
+            D candidateDescriptor = call.getDescriptor();
+            if (ErrorUtils.isError(candidateDescriptor)) return true;
+            return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
+        }
+
+        private boolean isSynthesized(ResolutionCandidate<D> call) {
+            D descriptor = call.getDescriptor();
+            return descriptor instanceof CallableMemberDescriptor &&
+                   isOrOverridesSynthesized((CallableMemberDescriptor) descriptor);
+        }
+    }
+
+    private static class TaskPrioritizerContext<D extends CallableDescriptor, F extends D> {
+        @NotNull public final Name name;
+        @NotNull public final ResolutionTaskHolder<D, F> result;
+        @NotNull public final BasicCallResolutionContext context;
+        @NotNull public final JetScope scope;
+        @NotNull public final List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors;
+        @NotNull AutoCastServiceImpl autoCastService;
+
+        private TaskPrioritizerContext(
+                @NotNull Name name,
+                @NotNull ResolutionTaskHolder<D, F> result,
+                @NotNull BasicCallResolutionContext context,
+                @NotNull JetScope scope,
+                @NotNull List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors
+        ) {
+            this.name = name;
+            this.result = result;
+            this.context = context;
+            this.scope = scope;
+            this.callableDescriptorCollectors = callableDescriptorCollectors;
+            autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.trace.getBindingContext());
+        }
     }
 }

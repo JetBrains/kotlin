@@ -44,6 +44,7 @@ public class ResolutionResultsHandler {
         Set<ResolvedCallWithTrace<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failedCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> incompleteCandidates = Sets.newLinkedHashSet();
+        Set<ResolvedCallWithTrace<D>> candidatesWithWrongReceiver = Sets.newLinkedHashSet();
         for (ResolvedCallWithTrace<D> candidateCall : candidates) {
             ResolutionStatus status = candidateCall.getStatus();
             assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
@@ -53,94 +54,107 @@ public class ResolutionResultsHandler {
             else if (status == INCOMPLETE_TYPE_INFERENCE) {
                 incompleteCandidates.add(candidateCall);
             }
-            else if (candidateCall.getStatus() != STRONG_ERROR) {
+            else if (candidateCall.getStatus() == RECEIVER_TYPE_ERROR) {
+                candidatesWithWrongReceiver.add(candidateCall);
+            }
+            else if (candidateCall.getStatus() != RECEIVER_PRESENCE_ERROR) {
                 failedCandidates.add(candidateCall);
             }
         }
-        return computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, incompleteCandidates);
-    }
-
-    @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
-            @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing,
-            @NotNull Set<ResolvedCallWithTrace<D>> successfulCandidates,
-            @NotNull Set<ResolvedCallWithTrace<D>> failedCandidates,
-            @NotNull Set<ResolvedCallWithTrace<D>> incompleteCandidates
-    ) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (!successfulCandidates.isEmpty() || !incompleteCandidates.isEmpty()) {
-            Set<ResolvedCallWithTrace<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
-            successfulAndIncomplete.addAll(successfulCandidates);
-            successfulAndIncomplete.addAll(incompleteCandidates);
-            OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true);
-            if (results.isSingleResult()) {
-                ResolvedCallWithTrace<D> resultingCall = results.getResultingCall();
-                resultingCall.getTrace().moveAllMyDataTo(trace);
-                if (resultingCall.getStatus() == INCOMPLETE_TYPE_INFERENCE) {
-                    return OverloadResolutionResultsImpl.incompleteTypeInference(resultingCall);
-                }
-            }
-            if (results.isAmbiguity()) {
-                tracing.recordAmbiguity(trace, results.getResultingCalls());
-                if (allIncomplete(results.getResultingCalls())) {
-                    tracing.cannotCompleteResolve(trace, results.getResultingCalls());
-                    return OverloadResolutionResultsImpl.incompleteTypeInference(results.getResultingCalls());
-                }
-                // This check is needed for the following case:
-                //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
-                if (allClean(results.getResultingCalls())) {
-                    tracing.ambiguity(trace, results.getResultingCalls());
-                }
-            }
-            return results;
+            return computeSuccessfulResult(trace, tracing, successfulCandidates, incompleteCandidates);
         }
         else if (!failedCandidates.isEmpty()) {
-            if (failedCandidates.size() != 1) {
-                // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
-                // and some are not OK at all. In this case we'd like to say "unsafe call" rather than "none applicable"
-                // Used to be: weak errors. Generalized for future extensions
-                for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
-                    Set<ResolvedCallWithTrace<D>> thisLevel = Sets.newLinkedHashSet();
-                    for (ResolvedCallWithTrace<D> candidate : failedCandidates) {
-                        if (severityLevel.contains(candidate.getStatus())) {
-                            thisLevel.add(candidate);
-                        }
-                    }
-                    if (!thisLevel.isEmpty()) {
-                        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
-                        if (results.isSingleResult()) {
-                            results.getResultingCall().getTrace().moveAllMyDataTo(trace);
-                            return OverloadResolutionResultsImpl.singleFailedCandidate(results.getResultingCall());
-                        }
+            return computeFailedResult(trace, tracing, failedCandidates);
+        }
+        if (!candidatesWithWrongReceiver.isEmpty()) {
+            tracing.unresolvedReferenceWrongReceiver(trace, candidatesWithWrongReceiver);
+            return OverloadResolutionResultsImpl.candidatesWithWrongReceiver(candidatesWithWrongReceiver);
+        }
+        tracing.unresolvedReference(trace);
+        return OverloadResolutionResultsImpl.nameNotFound();
+    }
 
-                        tracing.noneApplicable(trace, results.getResultingCalls());
-                        tracing.recordAmbiguity(trace, results.getResultingCalls());
-                        return OverloadResolutionResultsImpl.manyFailedCandidates(results.getResultingCalls());
+    @NotNull
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeSuccessfulResult(
+            BindingTrace trace,
+            TracingStrategy tracing,
+            Set<ResolvedCallWithTrace<D>> successfulCandidates,
+            Set<ResolvedCallWithTrace<D>> incompleteCandidates
+    ) {
+        Set<ResolvedCallWithTrace<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
+        successfulAndIncomplete.addAll(successfulCandidates);
+        successfulAndIncomplete.addAll(incompleteCandidates);
+        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true);
+        if (results.isSingleResult()) {
+            ResolvedCallWithTrace<D> resultingCall = results.getResultingCall();
+            resultingCall.getTrace().moveAllMyDataTo(trace);
+            if (resultingCall.getStatus() == INCOMPLETE_TYPE_INFERENCE) {
+                return OverloadResolutionResultsImpl.incompleteTypeInference(resultingCall);
+            }
+        }
+        if (results.isAmbiguity()) {
+            tracing.recordAmbiguity(trace, results.getResultingCalls());
+            if (allIncomplete(results.getResultingCalls())) {
+                tracing.cannotCompleteResolve(trace, results.getResultingCalls());
+                return OverloadResolutionResultsImpl.incompleteTypeInference(results.getResultingCalls());
+            }
+            // This check is needed for the following case:
+            //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
+            if (allClean(results.getResultingCalls())) {
+                tracing.ambiguity(trace, results.getResultingCalls());
+            }
+        }
+        return results;
+    }
+
+    @NotNull
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeFailedResult(
+            BindingTrace trace,
+            TracingStrategy tracing,
+            Set<ResolvedCallWithTrace<D>> failedCandidates
+    ) {
+        if (failedCandidates.size() != 1) {
+            // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
+            // and some are not OK at all. In this case we'd like to say "unsafe call" rather than "none applicable"
+            // Used to be: weak errors. Generalized for future extensions
+            for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
+                Set<ResolvedCallWithTrace<D>> thisLevel = Sets.newLinkedHashSet();
+                for (ResolvedCallWithTrace<D> candidate : failedCandidates) {
+                    if (severityLevel.contains(candidate.getStatus())) {
+                        thisLevel.add(candidate);
                     }
                 }
+                if (!thisLevel.isEmpty()) {
+                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
+                    if (results.isSingleResult()) {
+                        results.getResultingCall().getTrace().moveAllMyDataTo(trace);
+                        return OverloadResolutionResultsImpl.singleFailedCandidate(results.getResultingCall());
+                    }
 
-                assert false : "Should not be reachable, cause every status must belong to some level";
-
-                Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
-                if (noOverrides.size() != 1) {
-                    tracing.noneApplicable(trace, noOverrides);
-                    tracing.recordAmbiguity(trace, noOverrides);
-                    return OverloadResolutionResultsImpl.manyFailedCandidates(noOverrides);
+                    tracing.noneApplicable(trace, results.getResultingCalls());
+                    tracing.recordAmbiguity(trace, results.getResultingCalls());
+                    return OverloadResolutionResultsImpl.manyFailedCandidates(results.getResultingCalls());
                 }
-
-                failedCandidates = noOverrides;
             }
 
-            ResolvedCallWithTrace<D> failed = failedCandidates.iterator().next();
-            failed.getTrace().moveAllMyDataTo(trace);
-            return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
+            assert false : "Should not be reachable, cause every status must belong to some level";
+
+            Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
+            if (noOverrides.size() != 1) {
+                tracing.noneApplicable(trace, noOverrides);
+                tracing.recordAmbiguity(trace, noOverrides);
+                return OverloadResolutionResultsImpl.manyFailedCandidates(noOverrides);
+            }
+
+            failedCandidates = noOverrides;
         }
-        else {
-            tracing.unresolvedReference(trace);
-            return OverloadResolutionResultsImpl.nameNotFound();
-        }
+
+        ResolvedCallWithTrace<D> failed = failedCandidates.iterator().next();
+        failed.getTrace().moveAllMyDataTo(trace);
+        return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
     }
 
     private static <D extends CallableDescriptor> boolean allClean(@NotNull Collection<ResolvedCallWithTrace<D>> results) {

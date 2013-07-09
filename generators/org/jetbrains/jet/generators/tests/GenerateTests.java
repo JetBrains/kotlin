@@ -31,20 +31,24 @@ import org.jetbrains.jet.completion.AbstractJavaCompletionTest;
 import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
+import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
 import org.jetbrains.jet.jvm.compiler.*;
-import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
-import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
-import org.jetbrains.jet.plugin.codeInsight.codeTransformations.AbstractCodeTransformationTest;
+import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
+import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
+import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
+import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
+import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
+import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
@@ -78,6 +82,13 @@ public class GenerateTests {
                 AbstractDiagnosticsTestWithEagerResolve.class,
                 testModel("compiler/testData/diagnostics/tests"),
                 testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "JetResolveTestGenerated",
+                AbstractResolveTest.class,
+                testModel("compiler/testData/resolve", true, "resolve", "doTest")
         );
 
         GenerateRangesCodegenTestData.main(args);
@@ -275,6 +286,12 @@ public class GenerateTests {
                 testModel("idea/testData/completion/basic/custom", false, "doTestWithJar"));
 
         generateTest(
+                "idea/tests",
+                "JetGotoSuperTestGenerated",
+                JetAbstractGotoSuperTest.class,
+                testModel("idea/testData/navigation/gotoSuper", false, "test", "doTest"));
+
+        generateTest(
                 "idea/tests/",
                 "QuickFixMultiFileTestGenerated",
                 AbstractQuickFixMultiFileTest.class,
@@ -292,7 +309,8 @@ public class GenerateTests {
                 "idea/tests/",
                 "KotlinFoldingTestGenerated",
                 AbstractKotlinFoldingTest.class,
-                testModel("idea/testData/folding")
+                testModel("idea/testData/folding/noCollapse", "doTest"),
+                testModel("idea/testData/folding/checkCollapse", "doSettingsFoldingTest")
         );
 
         generateTest(
@@ -315,20 +333,25 @@ public class GenerateTests {
                 "idea/tests/",
                 "CodeTransformationsTestGenerated",
                 AbstractCodeTransformationTest.class,
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToAssignment", "doTestFoldIfToAssignment"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturn", "doTestFoldIfToReturn"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/ifToReturnAsymmetrically", "doTestFoldIfToReturnAsymmetrically"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToAssignment", "doTestFoldWhenToAssignment"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/folding/whenToReturn", "doTestFoldWhenToReturn"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/ifWhen/whenToIf", "doTestWhenToIf"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/when/flatten", "doTestFlattenWhen"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
-                testModel("idea/testData/codeInsight/codeTransformations/branched/when/eliminateSubject", "doTestEliminateWhenSubject")
+                testModel("idea/testData/intentions/branched/folding/ifToAssignment", "doTestFoldIfToAssignment"),
+                testModel("idea/testData/intentions/branched/folding/ifToReturn", "doTestFoldIfToReturn"),
+                testModel("idea/testData/intentions/branched/folding/ifToReturnAsymmetrically", "doTestFoldIfToReturnAsymmetrically"),
+                testModel("idea/testData/intentions/branched/folding/whenToAssignment", "doTestFoldWhenToAssignment"),
+                testModel("idea/testData/intentions/branched/folding/whenToReturn", "doTestFoldWhenToReturn"),
+                testModel("idea/testData/intentions/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
+                testModel("idea/testData/intentions/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
+                testModel("idea/testData/intentions/branched/unfolding/propertyToIf", "doTestUnfoldPropertyToIf"),
+                testModel("idea/testData/intentions/branched/unfolding/propertyToWhen", "doTestUnfoldPropertyToWhen"),
+                testModel("idea/testData/intentions/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
+                testModel("idea/testData/intentions/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen"),
+                testModel("idea/testData/intentions/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
+                testModel("idea/testData/intentions/branched/ifWhen/whenToIf", "doTestWhenToIf"),
+                testModel("idea/testData/intentions/branched/when/flatten", "doTestFlattenWhen"),
+                testModel("idea/testData/intentions/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
+                testModel("idea/testData/intentions/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
+                testModel("idea/testData/intentions/declarations/split", "doTestSplitProperty"),
+                testModel("idea/testData/intentions/declarations/join", "doTestJoinProperty"),
+                testModel("idea/testData/intentions/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
         );
 
         generateTest(
@@ -347,6 +370,30 @@ public class GenerateTests {
                 testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration"),
                 testModel("idea/testData/codeInsight/moveUpDown/closingBraces", "doTestExpression"),
                 testModel("idea/testData/codeInsight/moveUpDown/expressions", "doTestExpression")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "UnwrapRemoveTestGenerated",
+                AbstractUnwrapRemoveTest.class,
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeExpression", "doTestExpressionRemover"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapThen", "doTestThenUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapElse", "doTestElseUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeElse", "doTestElseRemover"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop", "doTestLoopUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapTry", "doTestTryUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch", "doTestCatchUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeCatch", "doTestCatchRemover"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally", "doTestFinallyUnwrapper"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/removeFinally", "doTestFinallyRemover"),
+                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda", "doTestLambdaUnwrapper")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "JetQuickDocProviderTestGenerated",
+                AbstractJetQuickDocProviderTest.class,
+                testModel("idea/testData/editor/quickDoc", "doTest")
         );
     }
 

@@ -22,36 +22,16 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
  * Special contributor for getting completion of type for extensions receiver.
  */
 public class JetExtensionReceiverTypeContributor extends CompletionContributor {
-    private static class ReceiverTypeCompletionProvider extends CompletionProvider<CompletionParameters> {
-        @Override
-        protected void addCompletions(@NotNull CompletionParameters parameters,
-                                      ProcessingContext context,
-                                      @NotNull CompletionResultSet result
-        ) {
-            ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
-                    (JetFile) parameters.getPosition().getContainingFile());
 
-            JetCompletionResultSet jetCompletionResultSet = new JetCompletionResultSet(
-                    result, resolveSession, resolveSession.getBindingContext());
+    static final String DUMMY_IDENTIFIER = "KotlinExtensionDummy.fake() {}";
 
-            if (parameters.getInvocationCount() > 0) {
-                JetTypesCompletionHelper.addJetTypes(parameters, jetCompletionResultSet);
-            }
-
-            result.stopHere();
-        }
-    }
-
-    private static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
+    static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
             // TODO: Check for fun with generic type parameters
             PlatformPatterns.psiElement().afterLeaf(
                     JetTokens.FUN_KEYWORD.toString(),
@@ -59,7 +39,17 @@ public class JetExtensionReceiverTypeContributor extends CompletionContributor {
                     JetTokens.VAR_KEYWORD.toString());
 
     public JetExtensionReceiverTypeContributor() {
-        extend(CompletionType.BASIC, ACTIVATION_PATTERN, new ReceiverTypeCompletionProvider());
-        extend(CompletionType.CLASS_NAME, ACTIVATION_PATTERN, new ReceiverTypeCompletionProvider());
+        extend(CompletionType.BASIC, ACTIVATION_PATTERN, new CompletionProvider<CompletionParameters>() {
+            @Override
+            protected void addCompletions(
+                    @NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result
+            ) {
+                if (parameters.getInvocationCount() > 0) {
+                    JetCompletionContributor.doSimpleReferenceCompletion(parameters, result);
+                }
+
+                result.stopHere();
+            }
+        });
     }
 }

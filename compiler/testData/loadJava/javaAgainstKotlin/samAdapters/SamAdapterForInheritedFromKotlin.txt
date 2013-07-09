@@ -1,0 +1,11 @@
+package test
+
+public open class Sub : test.Super {
+    public constructor Sub()
+    internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ r: java.lang.Runnable): jet.Unit
+}
+
+public final class Super {
+    public constructor Super()
+    internal final fun foo(/*0*/ r: java.lang.Runnable): jet.Unit
+}

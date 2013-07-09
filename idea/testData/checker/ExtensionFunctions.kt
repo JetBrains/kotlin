@@ -16,7 +16,7 @@ class A
 fun A.plus(<warning>a</warning> : Any) {
 
   1.foo()
-  true.<error>foo</error>()
+  true.<error>foo</error>(<error><error>)</error></error>
 
   <warning>1</warning>
 }

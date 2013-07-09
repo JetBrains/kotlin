@@ -22,7 +22,13 @@ public enum ResolutionStatus {
     UNKNOWN_STATUS,
     UNSAFE_CALL_ERROR,
     OTHER_ERROR,
-    STRONG_ERROR,
+    // '1.foo()' shouldn't be resolved to 'fun String.foo()'
+    // candidates with such error are treated specially
+    // (are mentioned in 'unresolved' error, if there are no other options)
+    RECEIVER_TYPE_ERROR,
+    // 'a.foo()' shouldn't be resolved to package level non-extension 'fun foo()'
+    // candidates with such error are thrown away completely
+    RECEIVER_PRESENCE_ERROR,
     INCOMPLETE_TYPE_INFERENCE,
     SUCCESS(true);
 
@@ -30,7 +36,8 @@ public enum ResolutionStatus {
     public static final EnumSet<ResolutionStatus>[] SEVERITY_LEVELS = new EnumSet[] {
             EnumSet.of(UNSAFE_CALL_ERROR), // weakest
             EnumSet.of(OTHER_ERROR),
-            EnumSet.of(STRONG_ERROR), // most severe
+            EnumSet.of(RECEIVER_TYPE_ERROR),
+            EnumSet.of(RECEIVER_PRESENCE_ERROR), // most severe
     };
 
     private final boolean success;

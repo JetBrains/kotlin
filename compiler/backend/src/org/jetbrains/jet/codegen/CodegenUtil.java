@@ -17,6 +17,8 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +29,7 @@ import org.jetbrains.jet.codegen.context.NamespaceContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -263,14 +266,33 @@ public class CodegenUtil {
         return false;
     }
 
-    public static boolean couldUseDirectAccessToProperty(PropertyDescriptor propertyDescriptor, boolean forGetter, boolean isInsideClass, boolean isDelegated) {
+    public static boolean couldUseDirectAccessToProperty(@NotNull PropertyDescriptor propertyDescriptor, boolean forGetter, boolean isInsideClass, boolean isDelegated) {
         PropertyAccessorDescriptor accessorDescriptor = forGetter ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
+        boolean specialTypeProperty = isDelegated ||
+                                      isExtensionProperty ||
+                                      DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
+                                      JetTypeMapper.isAccessor(propertyDescriptor);
         return isInsideClass &&
-               !isDelegated &&
-               !isExtensionProperty &&
+               !specialTypeProperty &&
                (accessorDescriptor == null ||
                 accessorDescriptor.isDefault() &&
                 (!DescriptorUtils.isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
+    }
+
+    @NotNull
+    public static ImplementationBodyCodegen getParentBodyCodegen(@Nullable MemberCodegen classBodyCodegen) {
+        assert classBodyCodegen != null &&
+               classBodyCodegen
+                       .getParentCodegen() instanceof ImplementationBodyCodegen : "Class object should have appropriate parent BodyCodegen";
+
+        return ((ImplementationBodyCodegen) classBodyCodegen.getParentCodegen());
+    }
+
+    static int getPathHashCode(@NotNull PsiFile file) {
+        // Conversion to system-dependent name seems to be unnecessary, but it's hard to check now:
+        // it was introduced when fixing KT-2839, which appeared again (KT-3639).
+        // If you try to remove it, run tests on Windows.
+        return FileUtil.toSystemDependentName(file.getVirtualFile().getPath()).hashCode();
     }
 }

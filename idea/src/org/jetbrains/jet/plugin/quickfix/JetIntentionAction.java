@@ -38,7 +38,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
         return element.isValid() && file.getManager().isInProject(file) && (file instanceof JetFile);
     }
 
-    //Don't override this method. Use the method below instead.
+    //Don't override this method. Use the method with JetFile instead.
     @Deprecated
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {

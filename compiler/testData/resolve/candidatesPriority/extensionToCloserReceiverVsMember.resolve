@@ -1,0 +1,16 @@
+class A {
+    fun foo() = 1
+}
+class B {
+}
+~B.foo~fun B.foo() = 2
+
+fun test(a: A, b: B) {
+    with (a) {
+        with (b) {
+            `B.foo`foo()
+        }
+    }
+}
+
+fun <T, R> with(receiver: T, f: T.() -> R) : R = receiver.f()

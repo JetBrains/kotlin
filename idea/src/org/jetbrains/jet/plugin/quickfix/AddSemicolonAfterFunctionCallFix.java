@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +49,7 @@ public class AddSemicolonAfterFunctionCallFix extends JetIntentionAction<JetCall
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         PsiElement argumentList = element.getValueArgumentList();
         assert argumentList != null;
         PsiElement afterArgumentList = argumentList.getNextSibling();

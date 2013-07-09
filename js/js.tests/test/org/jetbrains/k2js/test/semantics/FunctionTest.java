@@ -85,7 +85,7 @@ public class FunctionTest extends AbstractExpressionTest {
 
 
     public void testVararg() throws Exception {
-        fooBoxTest();
+        checkFooBoxIsOk();
     }
 
     public void testKT921() throws Exception {

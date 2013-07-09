@@ -115,12 +115,6 @@
             <val name="value" val="&quot;fun put(key : K, value : V) : V?&quot;"/>
         </annotation>
     </item>
-    <item name="java.util.AbstractMap V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.AbstractMap V put(K, V) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.AbstractMap java.lang.Object clone()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -153,16 +147,10 @@
     <item name="java.util.AbstractMap.SimpleEntry SimpleEntry(java.util.Map.Entry&lt;? extends K,? extends V&gt;) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
-    <item name="java.util.AbstractMap.SimpleEntry V setValue(V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.AbstractMap.SimpleEntry java.lang.String toString()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.AbstractMap.SimpleImmutableEntry SimpleImmutableEntry(java.util.Map.Entry&lt;? extends K,? extends V&gt;) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.AbstractMap.SimpleImmutableEntry V setValue(V) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.AbstractMap.SimpleImmutableEntry java.lang.String toString()">
@@ -1976,12 +1964,6 @@
             <val name="value" val="&quot;fun put(key : K, value : V) : V?&quot;"/>
         </annotation>
     </item>
-    <item name="java.util.Dictionary V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.Dictionary V put(K, V) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.Dictionary java.util.Enumeration&lt;K&gt; keys()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -2000,16 +1982,7 @@
     <item name="java.util.EnumMap EnumMap(java.util.Map&lt;K,? extends V&gt;) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
-    <item name="java.util.EnumMap V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.EnumMap java.lang.Object clone()">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.EnumMap java.lang.Object put(java.lang.Object, java.lang.Object) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.EnumMap java.lang.Object put(java.lang.Object, java.lang.Object) 1">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.EnumMap java.util.Collection&lt;V&gt; values()">
@@ -2175,12 +2148,6 @@
             <val name="value" val="&quot;fun put(key : K, value : V) : V?&quot;"/>
         </annotation>
     </item>
-    <item name="java.util.HashMap V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.HashMap V put(K, V) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.HashMap java.lang.Object clone()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -2226,12 +2193,6 @@
     <item name="java.util.Hashtable Hashtable(java.util.Map&lt;? extends K,? extends V&gt;) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
-    <item name="java.util.Hashtable V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.Hashtable V put(K, V) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.Hashtable boolean contains(java.lang.Object) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -2257,12 +2218,6 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.IdentityHashMap IdentityHashMap(java.util.Map&lt;? extends K,? extends V&gt;) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.IdentityHashMap V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.IdentityHashMap V put(K, V) 1">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.IdentityHashMap java.lang.Object clone()">
@@ -2784,12 +2739,6 @@
             <val name="value" val="&quot;fun put(key : K, value : V) : V?&quot;"/>
         </annotation>
     </item>
-    <item name="java.util.Map V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.Map V put(K, V) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.Map java.util.Collection&lt;V&gt; values()">
         <annotation name="jet.runtime.typeinfo.KotlinSignature">
             <val name="value" val="&quot;fun values() : Collection&lt;V&gt;&quot;"/>
@@ -2827,9 +2776,6 @@
         <annotation name="jet.runtime.typeinfo.KotlinSignature">
             <val name="value" val="&quot;fun setValue(value : V) : V&quot;"/>
         </annotation>
-    </item>
-    <item name="java.util.Map.Entry V setValue(V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.MissingFormatArgumentException MissingFormatArgumentException(java.lang.String) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
@@ -3491,12 +3437,6 @@
     <item name="java.util.TreeMap TreeMap(java.util.SortedMap&lt;K,? extends V&gt;) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
-    <item name="java.util.TreeMap V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.TreeMap V put(K, V) 1">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
     <item name="java.util.TreeMap java.lang.Object clone()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -3651,12 +3591,6 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.Vector java.util.ListIterator&lt;E&gt; listIterator(int)">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.WeakHashMap V put(K, V) 0">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
-    </item>
-    <item name="java.util.WeakHashMap V put(K, V) 1">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.util.WeakHashMap WeakHashMap(java.util.Map&lt;? extends K,? extends V&gt;) 0">

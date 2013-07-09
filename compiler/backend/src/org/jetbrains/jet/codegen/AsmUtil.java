@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -47,7 +44,7 @@ import java.util.Set;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 
 public class AsmUtil {
@@ -239,15 +236,13 @@ public class AsmUtil {
             return null;
         }
         // the following code is only for PRIVATE visibility of member
-        if (isClassObject(containingDeclaration)) {
+        if (isEnumEntry(memberDescriptor)) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
         if (memberDescriptor instanceof ConstructorDescriptor) {
             ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
             if (kind == ClassKind.OBJECT) {
-                //TODO: should be NO_FLAG_PACKAGE_PRIVATE
-                // see http://youtrack.jetbrains.com/issue/KT-2700
-                return ACC_PUBLIC;
+                return NO_FLAG_PACKAGE_PRIVATE;
             }
             else if (kind == ClassKind.ENUM_ENTRY) {
                 return NO_FLAG_PACKAGE_PRIVATE;
@@ -435,25 +430,23 @@ public class AsmUtil {
         }
     }
 
-    public static Type genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
+    public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
         if (expectedType == Type.LONG_TYPE) {
-            //noinspection UnnecessaryBoxing
             v.lconst(myDelta);
         }
         else if (expectedType == Type.FLOAT_TYPE) {
-            //noinspection UnnecessaryBoxing
             v.fconst(myDelta);
         }
         else if (expectedType == Type.DOUBLE_TYPE) {
-            //noinspection UnnecessaryBoxing
             v.dconst(myDelta);
         }
         else {
             v.iconst(myDelta);
-            expectedType = Type.INT_TYPE;
+            v.add(Type.INT_TYPE);
+            StackValue.coerce(Type.INT_TYPE, expectedType, v);
+            return;
         }
         v.add(expectedType);
-        return expectedType;
     }
 
     public static Type genNegate(Type expectedType, InstructionAdapter v) {
@@ -505,7 +498,7 @@ public class AsmUtil {
             Type asmType = state.getTypeMapper().mapReturnType(type);
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
-                v.visitLdcInsn(descriptor.getName().asString());
+                v.visitLdcInsn(parameter.getName().asString());
                 v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
             }
         }
@@ -555,7 +548,7 @@ public class AsmUtil {
     private static boolean isDeclaredInJava(@NotNull CallableDescriptor callableDescriptor, @NotNull BindingContext context) {
         CallableDescriptor descriptor = callableDescriptor;
         while (true) {
-            if (Boolean.TRUE.equals(context.get(BindingContext.IS_DECLARED_IN_JAVA, descriptor))) {
+            if (Boolean.TRUE.equals(context.get(JavaBindingContext.IS_DECLARED_IN_JAVA, descriptor))) {
                 return true;
             }
             CallableDescriptor original = descriptor.getOriginal();
@@ -589,10 +582,75 @@ public class AsmUtil {
         }
     }
 
+    public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
+        return isPropertyWithSpecialBackingField(propertyDescriptor.getContainingDeclaration(), ClassKind.CLASS);
+    }
+
+    public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
+        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
+        if (isDelegate || isExtensionProperty) {
+            return ACC_PRIVATE;
+        } else {
+            return areBothAccessorDefault(propertyDescriptor) ?  getVisibilityAccessFlag(descriptorForVisibility(propertyDescriptor)) : ACC_PRIVATE;
+        }
+    }
+
+    private static MemberDescriptor descriptorForVisibility(@NotNull PropertyDescriptor propertyDescriptor) {
+        if (!propertyDescriptor.isVar() ) {
+            return propertyDescriptor;
+        } else {
+            return propertyDescriptor.getSetter() != null ? propertyDescriptor.getSetter() : propertyDescriptor;
+        }
+    }
+
+    public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
+        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
+        return !propertyDescriptor.isVar() && !isExtensionProperty
+               && isPropertyWithSpecialBackingField(propertyDescriptor.getContainingDeclaration(), ClassKind.TRAIT)
+               && areBothAccessorDefault(propertyDescriptor)
+               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
+    }
+
+    public static boolean isClassObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor classObject) {
+        return isPropertyWithSpecialBackingField(classObject, ClassKind.CLASS);
+    }
+
+    private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {
+        return isAccessorWithEmptyBody(propertyDescriptor.getGetter())
+               && (!propertyDescriptor.isVar() || isAccessorWithEmptyBody(propertyDescriptor.getSetter()));
+    }
+
+    private static boolean isAccessorWithEmptyBody(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
+        return accessorDescriptor == null || !accessorDescriptor.hasBody();
+    }
+
+    private static boolean isPropertyWithSpecialBackingField(@NotNull DeclarationDescriptor classObject, ClassKind kind) {
+        return isClassObject(classObject) && isKindOf(classObject.getContainingDeclaration(), kind);
+    }
+
     public static Type comparisonOperandType(Type left, Type right) {
         if (left == Type.DOUBLE_TYPE || right == Type.DOUBLE_TYPE) return Type.DOUBLE_TYPE;
         if (left == Type.FLOAT_TYPE || right == Type.FLOAT_TYPE) return Type.FLOAT_TYPE;
         if (left == Type.LONG_TYPE || right == Type.LONG_TYPE) return Type.LONG_TYPE;
         return Type.INT_TYPE;
     }
+
+    public static void pop(@NotNull InstructionAdapter v, @NotNull Type type) {
+        if (type.getSize() == 2) {
+            v.pop2();
+        }
+        else {
+            v.pop();
+        }
+    }
+
+    public static void dup(@NotNull InstructionAdapter v, @NotNull Type type) {
+        if (type.getSize() == 2) {
+            v.dup2();
+        }
+        else {
+            v.dup();
+        }
+    }
+
 }

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmpty
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -114,9 +115,9 @@ public class ExpectedLoadErrorsUtil {
     private static Map<DeclarationDescriptor, List<String>> getActualLoadErrors(@NotNull BindingContext bindingContext) {
         Map<DeclarationDescriptor, List<String>> result = new HashMap<DeclarationDescriptor, List<String>>();
 
-        Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
+        Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         for (DeclarationDescriptor descriptor : descriptors) {
-            List<String> errors = bindingContext.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
+            List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
             result.put(descriptor, errors);
         }
 

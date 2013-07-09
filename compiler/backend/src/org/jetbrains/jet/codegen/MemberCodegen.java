@@ -17,26 +17,35 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
-import java.util.Map;
-
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
 public class MemberCodegen extends GenerationStateAware {
-    public MemberCodegen(@NotNull GenerationState state) {
+
+    @Nullable
+    private MemberCodegen parentCodegen;
+
+    public MemberCodegen(@NotNull GenerationState state, @Nullable MemberCodegen parentCodegen) {
         super(state);
+        this.parentCodegen = parentCodegen;
+    }
+
+    @Nullable
+    public MemberCodegen getParentCodegen() {
+        return parentCodegen;
     }
 
     public void genFunctionOrProperty(
-            CodegenContext context,
+            @NotNull FieldOwnerContext context,
             @NotNull JetTypeParameterListOwner functionOrProperty,
             @NotNull ClassBuilder classBuilder
     ) {
@@ -54,7 +63,7 @@ public class MemberCodegen extends GenerationStateAware {
         }
         else if (functionOrProperty instanceof JetProperty) {
             try {
-                new PropertyCodegen(context, classBuilder, functionCodegen).gen((JetProperty) functionOrProperty);
+                new PropertyCodegen(context, classBuilder, functionCodegen, this).gen((JetProperty) functionOrProperty);
             }
             catch (CompilationException e) {
                 throw e;
@@ -80,8 +89,8 @@ public class MemberCodegen extends GenerationStateAware {
         }
 
         ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor, aClass.getContainingFile());
-        CodegenContext classContext = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
-        new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
+        ClassContext classContext = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
+        new ImplementationBodyCodegen(aClass, classContext, classBuilder, state, this).generate();
         classBuilder.done();
 
         if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {

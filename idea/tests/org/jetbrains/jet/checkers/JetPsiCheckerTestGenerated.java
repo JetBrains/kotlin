@@ -268,6 +268,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest("idea/testData/checker/When.kt");
         }
         
+        @TestMetadata("WhenInEnumInExtensionProperty.kt")
+        public void testWhenInEnumInExtensionProperty() throws Exception {
+            doTest("idea/testData/checker/WhenInEnumInExtensionProperty.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/checker/regression")

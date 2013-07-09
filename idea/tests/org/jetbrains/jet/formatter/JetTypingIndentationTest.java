@@ -20,7 +20,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.SettingsConfigurator;
 
 import java.io.File;
 
@@ -104,12 +106,13 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
 
     public void doFileSettingNewLineTest() throws Exception {
         String originalFileText = FileUtil.loadFile(new File(getTestDataPath(), getBeforeFileName()));
-        FormattingSettingsConfigurator configurator = new FormattingSettingsConfigurator(originalFileText);
 
-        configurator.configureSettings(getSettings());
+        SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText);
+
+        configurator.configureSettings();
         doNewlineTest(getBeforeFileName(), getAfterFileName());
 
-        configurator.configureInvertedSettings(getSettings());
+        configurator.configureInvertedSettings();
         doNewlineTest(getBeforeFileName(), getInvertedAfterFileName());
 
         getSettings().clearCodeStyleSettings();
@@ -125,9 +128,9 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
         return CodeStyleSettingsManager.getSettings(getProject());
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
-
         String testRelativeDir = "formatter/IndentationOnNewline";
         return new File(PluginTestCaseBase.getTestDataPathBase(), testRelativeDir).getPath() +
                File.separator;

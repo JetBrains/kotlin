@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.codeInsight.upDownMover;
 
+import com.google.common.base.Predicate;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -12,17 +13,43 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.List;
+
 public class JetExpressionMover extends AbstractJetUpDownMover {
+
+    private static final Predicate<JetElement> IS_CALL_EXPRESSION = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return input instanceof JetCallExpression;
+        }
+    };
+
     public JetExpressionMover() {
     }
 
-    private final static Class[] MOVABLE_ELEMENT_CLASSES = {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
+    private final static Class[] MOVABLE_ELEMENT_CLASSES =
+            {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
 
     private final static Class[] BLOCKLIKE_ELEMENT_CLASSES =
             {JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class, JetFile.class};
 
     private final static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
             {JetFunction.class, JetPropertyAccessor.class, JetClassInitializer.class};
+
+    private static final Predicate<JetElement> CHECK_BLOCK_LIKE_ELEMENT = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return (input instanceof JetBlockExpression || input instanceof JetClassBody)
+                   && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
+        }
+    };
+
+    private static final Predicate<JetElement> CHECK_BLOCK = new Predicate<JetElement>() {
+        @Override
+        public boolean apply(@Nullable JetElement input) {
+            return input instanceof JetBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
+        }
+    };
 
     @Nullable
     private static PsiElement getStandaloneClosingBrace(@NotNull PsiFile file, @NotNull Editor editor) {
@@ -131,14 +158,14 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private static JetBlockExpression findClosestBlock(@NotNull PsiElement anchor, boolean down) {
-        PsiElement current = PsiTreeUtil.getParentOfType(anchor, JetBlockExpression.class);
+    private static JetBlockExpression findClosestBlock(@NotNull PsiElement anchor, boolean down, boolean strict) {
+        PsiElement current = PsiTreeUtil.getParentOfType(anchor, JetBlockExpression.class, strict);
         while (current != null) {
             PsiElement parent = current.getParent();
             if (parent instanceof JetClassBody ||
                 parent instanceof JetClassInitializer ||
-                parent instanceof JetFunction ||
-                parent instanceof JetProperty) {
+                parent instanceof JetNamedFunction ||
+                (parent instanceof JetProperty && !((JetProperty) parent).isLocal())) {
                 return null;
             }
 
@@ -147,7 +174,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement sibling = down ? current.getNextSibling() : current.getPrevSibling();
             if (sibling != null) {
                 //noinspection unchecked
-                JetBlockExpression block = JetPsiUtil.getOutermostJetElement(sibling, down, JetBlockExpression.class);
+                JetBlockExpression block = (JetBlockExpression) JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK);
                 if (block != null) return block;
 
                 current = sibling;
@@ -161,6 +188,18 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
+    private static JetBlockExpression getDSLLambdaBlock(@NotNull PsiElement element, boolean down) {
+        JetCallExpression callExpression =
+                (JetCallExpression) JetPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
+        if (callExpression == null) return null;
+
+        List<JetExpression> functionLiterals = callExpression.getFunctionLiteralArguments();
+        if (functionLiterals.isEmpty()) return null;
+
+        return ((JetFunctionLiteralExpression) functionLiterals.get(0)).getBodyExpression();
+    }
+
+    @Nullable
     private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
         PsiElement start = sibling;
         PsiElement end = sibling;
@@ -170,7 +209,14 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement parent = sibling.getParent();
             if (!(parent instanceof JetBlockExpression || parent instanceof JetFunctionLiteral)) return null;
 
-            JetBlockExpression newBlock = findClosestBlock(sibling, down);
+            JetBlockExpression newBlock;
+            if (parent instanceof JetFunctionLiteral) {
+                //noinspection ConstantConditions
+                newBlock = findClosestBlock(((JetFunctionLiteral) parent).getBodyExpression(), down, false);
+            } else {
+                newBlock = findClosestBlock(sibling, down, true);
+            }
+
             if (newBlock == null) return null;
 
             if (PsiTreeUtil.isAncestor(newBlock, parent, true)) {
@@ -192,24 +238,25 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 }
             }
         }
+        // moving into code block
         else {
-            // moving into code block
-            //noinspection unchecked
-            JetElement blockLikeElement = JetPsiUtil.getOutermostJetElement(sibling, down, JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class);
-            if (blockLikeElement != null &&
-                !(PsiTreeUtil.instanceOf(blockLikeElement.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES))) {
-                if (blockLikeElement instanceof JetWhenExpression) {
-                    //noinspection unchecked
-                    blockLikeElement = JetPsiUtil.getOutermostJetElement(blockLikeElement, down, JetBlockExpression.class);
-                }
+            PsiElement blockLikeElement;
 
-                if (blockLikeElement != null) {
-                    if (down) {
-                        end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
-                    }
-                    else {
-                        start = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.RBRACE);
-                    }
+            JetBlockExpression dslBlock = getDSLLambdaBlock(sibling, down);
+            if (dslBlock != null) {
+                // Use JetFunctionLiteral (since it contains braces)
+                blockLikeElement = dslBlock.getParent();
+            } else {
+                // JetBlockExpression and other block-like elements
+                blockLikeElement = JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK_LIKE_ELEMENT);
+            }
+
+            if (blockLikeElement != null) {
+                if (down) {
+                    end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
+                }
+                else {
+                    start = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.RBRACE);
                 }
             }
         }
@@ -228,7 +275,12 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private LineRange getValueParamOrArgTargetRange(@NotNull Editor editor, @NotNull PsiElement elementToCheck, @NotNull PsiElement sibling, boolean down) {
+    private LineRange getValueParamOrArgTargetRange(
+            @NotNull Editor editor,
+            @NotNull PsiElement elementToCheck,
+            @NotNull PsiElement sibling,
+            boolean down
+    ) {
         PsiElement next = sibling;
 
         if (next.getNode().getElementType() == JetTokens.COMMA) {
@@ -236,8 +288,8 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         LineRange range = (next instanceof JetParameter || next instanceof JetValueArgument)
-               ? new LineRange(next, next, editor.getDocument())
-               : null;
+                          ? new LineRange(next, next, editor.getDocument())
+                          : null;
 
         if (range != null) {
             parametersOrArgsToMove = new Pair<PsiElement, PsiElement>(elementToCheck, next);
@@ -316,7 +368,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         return block.getLBrace() == null && block.getRBrace() == null;
     }
 
-    protected static PsiElement adjustWhiteSpaceSibling(
+    protected static PsiElement adjustSibling(
             @NotNull Editor editor,
             @NotNull LineRange sourceRange,
             @NotNull MoveInfo info,
@@ -356,6 +408,18 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         if (sibling == null) {
+            JetCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JetCallExpression.class);
+            if (callExpression != null) {
+                JetBlockExpression dslBlock = getDSLLambdaBlock(callExpression, down);
+                if (PsiTreeUtil.isAncestor(dslBlock, element, false)) {
+                    //noinspection ConstantConditions
+                    PsiElement blockParent = dslBlock.getParent();
+                    return down
+                           ? JetPsiUtil.findChildByType(blockParent, JetTokens.RBRACE)
+                           : JetPsiUtil.findChildByType(blockParent, JetTokens.LBRACE);
+                }
+            }
+
             info.toMove2 = null;
             return null;
         }
@@ -374,8 +438,10 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 info.toMove2 = null;
                 return true;
             }
-            case MOVABLE: return true;
-            default: break;
+            case MOVABLE:
+                return true;
+            default:
+                break;
         }
 
         LineRange oldRange = info.toMove;
@@ -394,14 +460,15 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             return true;
         }
 
-        if ((firstElement instanceof JetParameter || firstElement instanceof JetValueArgument) && PsiTreeUtil.isAncestor(lastElement, firstElement, false)) {
+        if ((firstElement instanceof JetParameter || firstElement instanceof JetValueArgument) &&
+            PsiTreeUtil.isAncestor(lastElement, firstElement, false)) {
             lastElement = firstElement;
         }
 
         LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
         if (sourceRange == null) return false;
 
-        PsiElement sibling = adjustWhiteSpaceSibling(editor, sourceRange, info, down);
+        PsiElement sibling = adjustSibling(editor, sourceRange, info, down);
 
         // Either reached last sibling, or jumped over multi-line whitespace
         if (sibling == null) return true;

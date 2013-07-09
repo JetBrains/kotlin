@@ -57,7 +57,11 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     @Override
     public UsageInfo[] findUsages(ChangeInfo info) {
         Set<UsageInfo> result = new HashSet<UsageInfo>();
-        findAllMethodUsages((JetChangeInfo)info, result);
+
+        if (info instanceof JetChangeInfo) {
+            findAllMethodUsages((JetChangeInfo)info, result);
+        }
+
         return result.toArray(new UsageInfo[result.size()]);
     }
 
@@ -122,6 +126,11 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     @Override
     public MultiMap<PsiElement, String> findConflicts(ChangeInfo info, Ref<UsageInfo[]> refUsages) {
         MultiMap<PsiElement, String> result = new MultiMap<PsiElement, String>();
+
+        if (!(info instanceof JetChangeInfo)) {
+            return result;
+        }
+
         Set<String> parameterNames = new HashSet<String>();
         JetChangeInfo changeInfo = (JetChangeInfo) info;
         PsiElement function = info.getMethod();

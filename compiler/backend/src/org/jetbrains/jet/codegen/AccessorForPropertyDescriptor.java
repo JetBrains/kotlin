@@ -34,8 +34,12 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
               pd.isVar(), Name.identifier(pd.getName() + "$b$" + index),
               Kind.DECLARATION);
 
-        JetType receiverType = DescriptorUtils.getReceiverParameterType(pd.getReceiverParameter());
-        setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), pd.getExpectedThisObject(), receiverType);
+        boolean isStaticProperty = AsmUtil.isPropertyWithBackingFieldInOuterClass(pd)
+                                   && !AsmUtil.isClassObjectWithBackingFieldsInOuter(containingDeclaration);
+        JetType receiverType = !isStaticProperty ? DescriptorUtils.getReceiverParameterType(pd.getReceiverParameter()) : null;
+
+        setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), isStaticProperty ? null : pd.getExpectedThisObject(),
+                receiverType);
         initialize(new Getter(this), new Setter(this));
     }
 

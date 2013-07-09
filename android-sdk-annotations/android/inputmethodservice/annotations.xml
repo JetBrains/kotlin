@@ -1,0 +1,173 @@
+<root>
+    <item name='android.inputmethodservice.ExtractEditText ExtractEditText(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard android.inputmethodservice.Keyboard.Row createRowFromXml(android.content.res.Resources, android.content.res.XmlResourceParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void onExtractingInputChanged(android.view.inputmethod.EditorInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView boolean onTouchEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void onConfigurationChanged(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService android.os.IBinder onBind(android.content.Intent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView boolean onHoverEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodSessionImpl onCreateInputMethodSessionInterface()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodImpl void revokeSession(android.view.inputmethod.InputMethodSession) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService.InputMethodImpl void changeInputMethodSubtype(android.view.inputmethod.InputMethodSubtype) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService android.view.KeyEvent.DispatcherState getKeyDispatcherState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard Keyboard(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void onComputeInsets(android.inputmethodservice.InputMethodService.Insets) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService boolean onKeyDown(int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView void onDraw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.ExtractEditText void setExtractedText(android.view.inputmethod.ExtractedText) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard.Key Key(android.content.res.Resources, android.inputmethodservice.Keyboard.Row, int, int, android.content.res.XmlResourceParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void onUpdateExtractingVisibility(android.view.inputmethod.EditorInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard Keyboard(android.content.Context, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView KeyboardView(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard.Key Key(android.inputmethodservice.Keyboard.Row) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService boolean onKeyUp(int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard Keyboard(android.content.Context, int, java.lang.CharSequence, int, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard android.inputmethodservice.Keyboard.Key createKeyFromXml(android.content.res.Resources, android.inputmethodservice.Keyboard.Row, int, int, android.content.res.XmlResourceParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView boolean onLongPress(android.inputmethodservice.Keyboard.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard.Key int[] getCurrentDrawableState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void setExtractView(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void onUpdateExtractingViews(android.view.inputmethod.EditorInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodSessionImpl void dispatchKeyEvent(int, android.view.KeyEvent, android.view.inputmethod.InputMethodSession.EventCallback) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodImpl onCreateInputMethodInterface()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard.Key Key(android.content.res.Resources, android.inputmethodservice.Keyboard.Row, int, int, android.content.res.XmlResourceParser) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodImpl onCreateInputMethodInterface()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodImpl void setSessionEnabled(android.view.inputmethod.InputMethodSession, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView KeyboardView(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.ExtractEditText ExtractEditText(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView KeyboardView(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard android.inputmethodservice.Keyboard.Key createKeyFromXml(android.content.res.Resources, android.inputmethodservice.Keyboard.Row, int, int, android.content.res.XmlResourceParser) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void setCandidatesView(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService android.os.IBinder onBind(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodSessionImpl onCreateInputMethodSessionInterface()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService.InputMethodImpl void bindInput(android.view.inputmethod.InputBinding) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView void onClick(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard.Row Row(android.content.res.Resources, android.inputmethodservice.Keyboard, android.content.res.XmlResourceParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.ExtractEditText ExtractEditText(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard android.inputmethodservice.Keyboard.Row createRowFromXml(android.content.res.Resources, android.content.res.XmlResourceParser)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.KeyboardView KeyboardView(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard.Row Row(android.content.res.Resources, android.inputmethodservice.Keyboard, android.content.res.XmlResourceParser) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void setInputView(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard Keyboard(android.content.Context, int, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodImpl void createSession(android.view.inputmethod.InputMethod.SessionCallback) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.Keyboard Keyboard(android.content.Context, int, java.lang.CharSequence, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.inputmethodservice.InputMethodService void onCurrentInputMethodSubtypeChanged(android.view.inputmethod.InputMethodSubtype) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

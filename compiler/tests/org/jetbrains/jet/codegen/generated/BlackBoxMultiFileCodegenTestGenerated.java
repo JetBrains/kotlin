@@ -71,6 +71,11 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile("compiler/testData/codegen/boxMultiFile/nestedPackages");
     }
     
+    @TestMetadata("samWrappersDifferentFiles")
+    public void testSamWrappersDifferentFiles() throws Exception {
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles");
+    }
+    
     @TestMetadata("sameFileName")
     public void testSameFileName() throws Exception {
         doTestMultiFile("compiler/testData/codegen/boxMultiFile/sameFileName");

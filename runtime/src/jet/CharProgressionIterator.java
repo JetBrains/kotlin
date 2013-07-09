@@ -16,26 +16,36 @@
 
 package jet;
 
+import jet.runtime.ProgressionUtil;
+
 class CharProgressionIterator extends CharIterator {
-    private char next;
-    private final char end;
+    private int next;
     private final int increment;
+    private final char finalElement;
+    private boolean hasNext;
 
     public CharProgressionIterator(char start, char end, int increment) {
         this.next = start;
-        this.end = end;
         this.increment = increment;
+
+        this.finalElement = (char) ProgressionUtil.getProgressionFinalElement(start, end, increment);
+        this.hasNext = increment > 0 ? start <= end : start >= end;
     }
 
     @Override
     public boolean hasNext() {
-        return increment > 0 ? next <= end : next >= end;
+        return hasNext;
     }
 
     @Override
     public char nextChar() {
-        char value = next;
-        next += increment;
-        return value;
+        int value = next;
+        if (value == finalElement) {
+            hasNext = false;
+        }
+        else {
+            next += increment;
+        }
+        return (char) value;
     }
 }

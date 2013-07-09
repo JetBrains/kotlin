@@ -1,0 +1,320 @@
+<root>
+    <item name='android.database.DatabaseUtils android.os.ParcelFileDescriptor blobFileDescriptorForQuery(android.database.sqlite.SQLiteStatement, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner.Result RIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorIntToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void dumpCurrentRow(android.database.Cursor, java.lang.StringBuilder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorRowToContentValues(android.database.Cursor, android.content.ContentValues) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorLongToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String stringForQuery(android.database.sqlite.SQLiteDatabase, java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void appendEscapedSQLString(java.lang.StringBuilder, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void readExceptionWithFileNotFoundExceptionFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner CursorJoiner(android.database.Cursor, java.lang.String[], android.database.Cursor, java.lang.String[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorIntToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.Cursor int getColumnIndexOrThrow(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorLongToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils.InsertHelper long insert(android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils long queryNumEntries(android.database.sqlite.SQLiteDatabase, java.lang.String, java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorLongToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void dumpCurrentRow(android.database.Cursor, java.lang.StringBuilder) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String stringForQuery(android.database.sqlite.SQLiteStatement, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorIntToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToInsertHelper(android.database.Cursor, java.lang.String, android.database.DatabaseUtils.InsertHelper, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.MatrixCursor MatrixCursor(java.lang.String[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorLongToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void dumpCurrentRow(android.database.Cursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner CursorJoiner(android.database.Cursor, java.lang.String[], android.database.Cursor, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorDoubleToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorWindow java.lang.String getString(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String[] appendSelectionArgs(java.lang.String[], java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner CursorJoiner(android.database.Cursor, java.lang.String[], android.database.Cursor, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils.InsertHelper long replace(android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorLongToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.MatrixCursor.RowBuilder android.database.MatrixCursor.RowBuilder add(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorShortToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.MatrixCursor MatrixCursor(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CrossProcessCursorWrapper void fillWindow(int, android.database.CursorWindow) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractWindowedCursor java.lang.String getString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorIntToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void createDbFromSqlStatements(android.content.Context, java.lang.String, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void appendEscapedSQLString(java.lang.StringBuilder, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractCursor void copyStringToBuffer(int, android.database.CharArrayBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void appendValueToSql(java.lang.StringBuilder, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.MatrixCursor void addRow(java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String getCollationKey(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils long longForQuery(android.database.sqlite.SQLiteStatement, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.Cursor void copyStringToBuffer(int, android.database.CharArrayBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner CursorJoiner(android.database.Cursor, java.lang.String[], android.database.Cursor, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils long queryNumEntries(android.database.sqlite.SQLiteDatabase, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DefaultDatabaseErrorHandler void onCorruption(android.database.sqlite.SQLiteDatabase) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String sqlEscapeString(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void writeExceptionToParcel(android.os.Parcel, java.lang.Exception) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorShortToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorDoubleToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.Cursor byte[] getBlob(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void createDbFromSqlStatements(android.content.Context, java.lang.String, int, java.lang.String) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorFloatToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void dumpCurrentRow(android.database.Cursor, java.io.PrintStream) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseErrorHandler void onCorruption(android.database.sqlite.SQLiteDatabase) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void dumpCursor(android.database.Cursor, java.lang.StringBuilder) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String dumpCurrentRowToString(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToInsertHelper(android.database.Cursor, java.lang.String, android.database.DatabaseUtils.InsertHelper, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils android.os.ParcelFileDescriptor blobFileDescriptorForQuery(android.database.sqlite.SQLiteDatabase, java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CrossProcessCursor void fillWindow(int, android.database.CursorWindow) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractWindowedCursor byte[] getBlob(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorDoubleToCursorValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractCursor int getColumnIndexOrThrow(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorDoubleToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void dumpCurrentRow(android.database.Cursor, java.io.PrintStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String getHexCollationKey(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void readExceptionFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractCursor void fillWindow(int, android.database.CursorWindow) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils long longForQuery(android.database.sqlite.SQLiteDatabase, java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String dumpCurrentRowToString(android.database.Cursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractCursor int getColumnIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorWrapper int getColumnIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner.Result LEFT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner java.util.Iterator&lt;android.database.CursorJoiner.Result&gt; iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.MatrixCursor java.lang.String[] getColumnNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void readExceptionWithOperationApplicationExceptionFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorDoubleToCursorValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorStringToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void bindObjectToProgram(android.database.sqlite.SQLiteProgram, int, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractCursor byte[] getBlob(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String dumpCursorToString(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String[] appendSelectionArgs(java.lang.String[], java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils java.lang.String sqlEscapeString(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.MatrixCursor android.database.MatrixCursor.RowBuilder newRow()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractCursor java.lang.String[] getColumnNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.Cursor int getColumnIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorWrapper void copyStringToBuffer(int, android.database.CharArrayBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorIntToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorLongToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.AbstractWindowedCursor void copyStringToBuffer(int, android.database.CharArrayBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorIntToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorDoubleToContentValues(android.database.Cursor, java.lang.String, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void cursorFloatToContentValuesIfPresent(android.database.Cursor, android.content.ContentValues, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils long queryNumEntries(android.database.sqlite.SQLiteDatabase, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorWrapper int getColumnIndexOrThrow(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.Cursor java.lang.String[] getColumnNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorWindow byte[] getBlob(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorWindow void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.DatabaseUtils void dumpCursor(android.database.Cursor, java.io.PrintStream) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.CursorJoiner.Result BOTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

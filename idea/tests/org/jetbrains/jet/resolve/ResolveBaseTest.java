@@ -54,6 +54,14 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
         doSingleResolveTest("(java.util).Comparator");
     }
 
+    public void testSamConstructorTypeArguments() throws Exception {
+        doSingleResolveTest("(java.util).Comparator");
+    }
+
+    public void testSamAdapter() throws Exception {
+        doSingleResolveTest("(in javax.swing.SwingUtilities).invokeLater(Runnable)");
+    }
+
     public void testSeveralOverrides() throws Exception {
         doMultiResolveTest();
     }

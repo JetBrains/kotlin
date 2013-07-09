@@ -119,7 +119,12 @@ public class DataFlowValueFactory {
         }
     }
 
-    private static final IdentifierInfo NO_IDENTIFIER_INFO = new IdentifierInfo(null, false, false);
+    private static final IdentifierInfo NO_IDENTIFIER_INFO = new IdentifierInfo(null, false, false) {
+        @Override
+        public String toString() {
+            return "NO_IDENTIFIER_INFO";
+        }
+    };
 
     @NotNull
     private static IdentifierInfo createInfo(Object id, boolean isStable) {
@@ -196,10 +201,6 @@ public class DataFlowValueFactory {
         }
         if (declarationDescriptor instanceof NamespaceDescriptor) {
             return createNamespaceInfo(declarationDescriptor);
-        }
-        if (declarationDescriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-            return createInfo(classDescriptor, classDescriptor.isClassObjectAValue());
         }
         return NO_IDENTIFIER_INFO;
     }

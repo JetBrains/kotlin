@@ -1,0 +1,25 @@
+package test
+
+internal trait Test {
+    
+    internal class object <class-object-for-Test> {
+        /*primary*/ private constructor <class-object-for-Test>()
+        public final val prop1: jet.Int
+            public final fun <get-prop1>(): jet.Int
+        public final var prop2: jet.Int
+            public final fun <get-prop2>(): jet.Int
+            protected final fun <set-prop2>(/*0*/ <set-?>: jet.Int): jet.Unit
+        public final val prop3: jet.Int
+            public final fun <get-prop3>(): jet.Int
+        internal final var prop4: jet.Int
+            internal final fun <get-prop4>(): jet.Int
+            internal final fun <set-prop4>(/*0*/ <set-?>: jet.Int): jet.Unit
+        public final var prop5: jet.Int
+            public final fun <get-prop5>(): jet.Int
+            public final fun <set-prop5>(/*0*/ <set-?>: jet.Int): jet.Unit
+        public final var prop7: jet.Int
+            public final fun <get-prop7>(): jet.Int
+            public final fun <set-prop7>(/*0*/ i: jet.Int): jet.Unit
+        internal final fun incProp4(): jet.Unit
+    }
+}

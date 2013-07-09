@@ -1,0 +1,53 @@
+<root>
+    <item name='android.test.InstrumentationTestCase T launchActivityWithIntent(java.lang.String, java.lang.Class&lt;T&gt;, android.content.Intent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase void sendKeys(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase T launchActivity(java.lang.String, java.lang.Class&lt;T&gt;, android.os.Bundle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase T launchActivityWithIntent(java.lang.String, java.lang.Class&lt;T&gt;, android.content.Intent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase void sendRepeatedKeys(int...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_VALUE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NUM_CURRENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase T launchActivity(java.lang.String, java.lang.Class&lt;T&gt;, android.os.Bundle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.IsolatedContext boolean bindService(android.content.Intent, android.content.ServiceConnection, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_STACK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase void sendKeys(int...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase T launchActivityWithIntent(java.lang.String, java.lang.Class&lt;T&gt;, android.content.Intent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NUM_TOTAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NAME_CLASS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NAME_TEST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase void runTestOnUiThread(java.lang.Runnable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.IsolatedContext java.lang.Object getSystemService(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

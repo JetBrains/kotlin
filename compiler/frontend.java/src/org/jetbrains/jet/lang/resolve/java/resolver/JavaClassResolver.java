@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -276,7 +277,7 @@ public final class JavaClassResolver {
 
         PsiMethod samInterfaceMethod = MembersCache.getSamInterfaceMethod(psiClass);
         if (samInterfaceMethod != null) {
-            SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(psiClass, samInterfaceMethod, classDescriptor);
+            SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod, classDescriptor);
             classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));
         }
 
@@ -285,14 +286,13 @@ public final class JavaClassResolver {
 
     @NotNull
     private SimpleFunctionDescriptor resolveFunctionOfSamInterface(
-            @NotNull PsiClass psiClass,
             @NotNull PsiMethod samInterfaceMethod,
             @NotNull ClassDescriptorFromJvmBytecode samInterface
     ) {
         PsiClass methodContainer = samInterfaceMethod.getContainingClass();
-        assert methodContainer != null : "method container is null for " + methodContainer;
+        assert methodContainer != null : "method container is null for " + samInterfaceMethod;
         String containerQualifiedName = methodContainer.getQualifiedName();
-        assert containerQualifiedName != null : "qualified name is null for " + psiClass;
+        assert containerQualifiedName != null : "qualified name is null for " + methodContainer;
 
         if (DescriptorUtils.getFQName(samInterface).asString().equals(containerQualifiedName)) {
             SimpleFunctionDescriptor abstractMethod =
@@ -301,15 +301,28 @@ public final class JavaClassResolver {
             return abstractMethod;
         }
         else {
-            Set<JetType> supertypes = TypeUtils.getAllSupertypes(samInterface.getDefaultType());
-            for (JetType supertype : supertypes) {
-                List<CallableMemberDescriptor> abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype);
-                if (!abstractMembers.isEmpty()) {
-                    return (SimpleFunctionDescriptor) abstractMembers.get(0);
-                }
+            return findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(samInterface.getDefaultType()));
+        }
+    }
+
+    private static SimpleFunctionDescriptor findFunctionWithMostSpecificReturnType(@NotNull Set<JetType> supertypes) {
+        List<SimpleFunctionDescriptor> candidates = Lists.newArrayList();
+        for (JetType supertype : supertypes) {
+            List<CallableMemberDescriptor> abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype);
+            if (!abstractMembers.isEmpty()) {
+                candidates.add((SimpleFunctionDescriptor) abstractMembers.get(0));
             }
+        }
+        if (candidates.isEmpty()) {
             throw new IllegalStateException("Couldn't find abstract method in supertypes " + supertypes);
         }
+        SimpleFunctionDescriptor currentMostSpecificType = candidates.get(0);
+        for (SimpleFunctionDescriptor candidate : candidates) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(candidate.getReturnType(), currentMostSpecificType.getReturnType())) {
+                currentMostSpecificType = candidate;
+            }
+        }
+        return currentMostSpecificType;
     }
 
     private void cache(@NotNull FqNameBase fqName, @Nullable ClassDescriptor classDescriptor) {

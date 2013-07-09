@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.TypeTransformingVisitor;
@@ -199,7 +200,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         }
 
         private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
-            List<String> errors = bindingContext.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
+            List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
             if (errors != null) {
                 this.errors.put(DescriptorRenderer.TEXT.render(descriptor), errors);
             }

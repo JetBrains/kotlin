@@ -1,0 +1,4 @@
+// OPTION: 2
+fun foo(n: Int): Int {
+    return n - 10<caret>
+}

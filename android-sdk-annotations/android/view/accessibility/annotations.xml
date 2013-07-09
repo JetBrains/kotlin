@@ -1,0 +1,71 @@
+<root>
+    <item name='android.view.accessibility.AccessibilityNodeInfo void getBoundsInScreen(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEvent void initFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo void getBoundsInParent(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo void setBoundsInParent(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEvent android.view.accessibility.AccessibilityEvent obtain(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityManager void sendAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo ACTION_ARGUMENT_HTML_ELEMENT_STRING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo android.view.accessibility.AccessibilityNodeInfo obtain(android.view.View)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityRecord java.util.List&lt;java.lang.CharSequence&gt; getText()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEventSource void sendAccessibilityEventUnchecked(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityRecord android.view.accessibility.AccessibilityRecord obtain(android.view.accessibility.AccessibilityRecord) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEvent android.view.accessibility.AccessibilityEvent obtain(android.view.accessibility.AccessibilityEvent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo android.view.accessibility.AccessibilityNodeInfo obtain()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEvent void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo android.view.accessibility.AccessibilityNodeInfo obtain(android.view.accessibility.AccessibilityNodeInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo void setBoundsInScreen(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEvent android.view.accessibility.AccessibilityEvent obtain(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo android.view.accessibility.AccessibilityNodeInfo obtain(android.view.View, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEvent java.lang.String eventTypeToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityEvent android.view.accessibility.AccessibilityEvent obtain()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.accessibility.AccessibilityNodeInfo android.view.accessibility.AccessibilityNodeInfo obtain(android.view.accessibility.AccessibilityNodeInfo)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

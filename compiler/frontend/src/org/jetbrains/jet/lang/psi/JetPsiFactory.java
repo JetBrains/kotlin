@@ -453,4 +453,14 @@ public class JetPsiFactory {
             return (JetWhenExpression) createExpression(project, sb.toString());
         }
     }
+
+    public static JetExpression createFunctionBody(Project project, @NotNull String bodyText) {
+        JetFunction func = createFunction(project, "fun foo() {\n" + bodyText + "\n}");
+        return func.getBodyExpression();
+    }
+
+    public static JetClassObject createEmptyClassObject(Project project) {
+        JetClass klass = createClass(project, "class foo { class object { } }");
+        return klass.getClassObject();
+    }
 }

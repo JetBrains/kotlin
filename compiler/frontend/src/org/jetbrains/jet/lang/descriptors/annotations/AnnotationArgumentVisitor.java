@@ -48,4 +48,6 @@ public interface AnnotationArgumentVisitor<R, D> {
     R visitArrayValue(ArrayValue value, D data);
 
     R visitAnnotationValue(AnnotationValue value, D data);
+
+    R visitJavaClassValue(JavaClassValue value, D data);
 }

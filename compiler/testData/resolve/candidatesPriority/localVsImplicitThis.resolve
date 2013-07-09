@@ -1,0 +1,8 @@
+class A {
+    fun foo() = 1
+
+    fun test() {
+        fun ~local~foo() = 2
+        `local`foo()
+    }
+}

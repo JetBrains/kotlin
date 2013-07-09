@@ -16,15 +16,19 @@
 
 package org.jetbrains.jet.plugin.parameterInfo;
 
+import com.google.common.collect.Iterables;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.parameterInfo.*;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.Gray;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,13 +37,15 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.awt.*;
@@ -50,9 +56,12 @@ import java.util.List;
  * User: Alefas
  * Date: 17.01.12
  */
-public class JetFunctionParameterInfoHandler implements
-        ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, Object, JetValueArgument> {
-    public final static Color GREEN_BACKGROUND = new Color(231, 254, 234);
+public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWithTabActionSupport<
+        JetValueArgumentList,
+        Pair<? extends FunctionDescriptor, ResolveSession>,
+        JetValueArgument>
+{
+    public final static Color GREEN_BACKGROUND = new JBColor(new Color(231, 254, 234), Gray._100);
 
     @NotNull
     @Override
@@ -101,8 +110,9 @@ public class JetFunctionParameterInfoHandler implements
         return ArrayUtil.EMPTY_OBJECT_ARRAY; //todo: ?
     }
 
+    @Nullable
     @Override
-    public Object[] getParametersForDocumentation(Object p, ParameterInfoContext context) {
+    public Object[] getParametersForDocumentation(Pair<? extends FunctionDescriptor, ResolveSession> p, ParameterInfoContext context) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY; //todo: ?
     }
 
@@ -143,15 +153,16 @@ public class JetFunctionParameterInfoHandler implements
     public boolean tracksParameterIndex() {
         return true;
     }
-    
+
     private static String renderParameter(ValueParameterDescriptor parameter, boolean named, BindingContext bindingContext) {
         StringBuilder builder = new StringBuilder();
         if (named) builder.append("[");
         if (parameter.getVarargElementType() != null) {
             builder.append("vararg ");
         }
-        builder.append(parameter.getName()).append(": ").
-                append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(parameter)));
+        builder.append(parameter.getName())
+                .append(": ")
+                .append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(parameter)));
         if (parameter.hasDefaultValue()) {
             PsiElement parameterDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, parameter);
             builder.append(" = ").append(getDefaultExpressionString(parameterDeclaration));
@@ -189,32 +200,27 @@ public class JetFunctionParameterInfoHandler implements
     }
 
     @Override
-    public void updateUI(Object descriptor, ParameterInfoUIContext context) {
+    public void updateUI(Pair<? extends FunctionDescriptor, ResolveSession> itemToShow, ParameterInfoUIContext context) {
         //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context == null || context.getParameterOwner() == null || !context.getParameterOwner().isValid()) {
+            context.setUIComponentEnabled(false);
             return;
         }
 
         PsiElement parameterOwner = context.getParameterOwner();
         if (!(parameterOwner instanceof JetValueArgumentList)) {
+            context.setUIComponentEnabled(false);
             return;
         }
 
         JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
 
-        if (!(descriptor instanceof FunctionDescriptor)) {
-            context.setUIComponentEnabled(false);
-            return;
-        }
+        FunctionDescriptor functionDescriptor = itemToShow.first;
+        ResolveSession resolveSession = itemToShow.second;
 
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-
-        JetFile file = (JetFile) argumentList.getContainingFile();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         List<JetValueArgument> valueArguments = argumentList.getArguments();
 
-        StringBuilder builder = new StringBuilder();
         int currentParameterIndex = context.getCurrentParameterIndex();
         int boldStartOffset = -1;
         int boldEndOffset = -1;
@@ -222,17 +228,18 @@ public class JetFunctionParameterInfoHandler implements
         boolean isDeprecated = false; //todo: add deprecation check
 
         boolean[] usedIndexes = new boolean[valueParameters.size()];
-        boolean namedMode = false;
         Arrays.fill(usedIndexes, false);
 
-        if ((currentParameterIndex >= valueParameters.size() && (valueParameters.size() > 0 || currentParameterIndex > 0)) &&
-            (valueParameters.size() == 0 || valueParameters.get(valueParameters.size() - 1).getVarargElementType() == null)) {
+        boolean namedMode = false;
+
+        if (!isIndexValid(valueParameters, currentParameterIndex)) {
             isGrey = true;
         }
 
-        if (valueParameters.size() == 0) {
-            builder.append(CodeInsightBundle.message("parameter.info.no.parameters"));
-        }
+        StringBuilder builder = new StringBuilder();
+
+        PsiElement owner = context.getParameterOwner();
+        BindingContext bindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, (JetElement) owner);
 
         for (int i = 0; i < valueParameters.size(); ++i) {
             if (i != 0) {
@@ -240,7 +247,7 @@ public class JetFunctionParameterInfoHandler implements
             }
 
             boolean highlightParameter = i == currentParameterIndex ||
-                    (!namedMode && i < currentParameterIndex && valueParameters.get(valueParameters.size() - 1).getVarargElementType() != null);
+                    (!namedMode && i < currentParameterIndex && Iterables.getLast(valueParameters).getVarargElementType() != null);
 
             if (highlightParameter) {
                 boldStartOffset = builder.length();
@@ -255,18 +262,8 @@ public class JetFunctionParameterInfoHandler implements
                     else {
                         ValueParameterDescriptor param = valueParameters.get(i);
                         builder.append(renderParameter(param, false, bindingContext));
-                        if (i < currentParameterIndex) {
-                            if (argument.getArgumentExpression() != null) {
-                                //check type
-                                JetType paramType = getActualParameterType(param);
-                                JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
-                                if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) {
-                                    isGrey = true;
-                                }
-                            }
-                            else {
-                                isGrey = true;
-                            }
+                        if (i <= currentParameterIndex && !isArgumentTypeValid(bindingContext, argument, param)) {
+                            isGrey = true;
                         }
                         usedIndexes[i] = true;
                     }
@@ -276,6 +273,7 @@ public class JetFunctionParameterInfoHandler implements
                     builder.append(renderParameter(param, false, bindingContext));
                 }
             }
+
             if (namedMode) {
                 boolean takeAnyArgument = true;
                 if (valueArguments.size() > i) {
@@ -284,21 +282,12 @@ public class JetFunctionParameterInfoHandler implements
                         for (int j = 0; j < valueParameters.size(); ++j) {
                             JetSimpleNameExpression referenceExpression = argument.getArgumentName().getReferenceExpression();
                             ValueParameterDescriptor param = valueParameters.get(j);
-                            if (referenceExpression != null && !usedIndexes[j] &&
-                                param.getName().equals(referenceExpression.getReferencedNameAsName())) {
+                            if (referenceExpression != null && !usedIndexes[j] && param.getName().equals(referenceExpression.getReferencedNameAsName())) {
                                 takeAnyArgument = false;
                                 usedIndexes[j] = true;
                                 builder.append(renderParameter(param, true, bindingContext));
-                                if (i < currentParameterIndex) {
-                                    if (argument.getArgumentExpression() != null) {
-                                        //check type
-                                        JetType paramType = getActualParameterType(param);
-                                        JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
-                                        if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) isGrey = true;
-                                    }
-                                    else {
-                                        isGrey = true;
-                                    }
+                                if (i < currentParameterIndex && !isArgumentTypeValid(bindingContext, argument, param)) {
+                                    isGrey = true;
                                 }
                                 break;
                             }
@@ -327,37 +316,49 @@ public class JetFunctionParameterInfoHandler implements
             }
         }
 
-        Color color = getBackgroundColor(context, argumentList, functionDescriptor, bindingContext);
+        if (valueParameters.size() == 0) {
+            builder.append(CodeInsightBundle.message("parameter.info.no.parameters"));
+        }
 
-        if (builder.toString().isEmpty()) {
-            context.setUIComponentEnabled(false);
-        }
-        else {
-            context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey,
-                                                 isDeprecated, false, color);
-        }
+        assert !builder.toString().isEmpty() : "A message about 'no parameters' or some parameters should be present: " + functionDescriptor;
+
+        Color color = isResolvedToDescriptor(argumentList, functionDescriptor, bindingContext) ? GREEN_BACKGROUND : context.getDefaultParameterColor();
+        context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey, isDeprecated, false, color);
     }
 
-    private static Color getBackgroundColor(
-            ParameterInfoUIContext context,
+    private static boolean isArgumentTypeValid(BindingContext bindingContext, JetValueArgument argument, ValueParameterDescriptor param) {
+        if (argument.getArgumentExpression() != null) {
+            JetType paramType = getActualParameterType(param);
+            JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
+            return exprType == null || JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType);
+        }
+
+        return false;
+    }
+
+    private static boolean isIndexValid(List<ValueParameterDescriptor> valueParameters, int index) {
+        // Index is within range of parameters or last parameter is vararg
+        return index < valueParameters.size() ||
+               (valueParameters.size() > 0 && Iterables.getLast(valueParameters).getVarargElementType() != null);
+    }
+
+    private static Boolean isResolvedToDescriptor(
             JetValueArgumentList argumentList,
             FunctionDescriptor functionDescriptor,
             BindingContext bindingContext
     ) {
         JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
         if (callNameExpression != null) {
-            // Mark with green background the variant with resolved call
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, callNameExpression);
             if (declarationDescriptor != null) {
                 if (declarationDescriptor == functionDescriptor) {
-                    return GREEN_BACKGROUND;
+                    return true;
                 }
             }
         }
 
-        return context.getDefaultParameterColor();
+        return false;
     }
-
 
     private static JetValueArgumentList findCall(CreateParameterInfoContext context) {
         //todo: calls to this constructors, when we will have auxiliary constructors
@@ -381,7 +382,10 @@ public class JetFunctionParameterInfoHandler implements
             return null;
         }
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
+        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
+                (JetFile) callNameExpression.getContainingFile());
+        BindingContext bindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, callNameExpression);
+
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         DeclarationDescriptor placeDescriptor = null;
         if (scope != null) {
@@ -389,9 +393,10 @@ public class JetFunctionParameterInfoHandler implements
         }
 
         Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(callNameExpression, bindingContext);
+
         Name refName = callNameExpression.getReferencedNameAsName();
 
-        Collection<DeclarationDescriptor> itemsToShow = new ArrayList<DeclarationDescriptor>();
+        Collection<Pair<? extends DeclarationDescriptor, ResolveSession>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSession>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
@@ -400,7 +405,7 @@ public class JetFunctionParameterInfoHandler implements
                     if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) {
                         continue;
                     }
-                    itemsToShow.add(functionDescriptor);
+                    itemsToShow.add(Pair.create(functionDescriptor, resolveSession));
                 }
             }
             else if (variant instanceof ClassDescriptor) {
@@ -411,7 +416,7 @@ public class JetFunctionParameterInfoHandler implements
                         if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, constructorDescriptor)) {
                             continue;
                         }
-                        itemsToShow.add(constructorDescriptor);
+                        itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
                     }
                 }
             }

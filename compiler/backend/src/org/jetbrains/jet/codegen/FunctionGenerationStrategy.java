@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -30,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class FunctionGenerationStrategy<T extends CallableDescriptor> {
+public abstract class FunctionGenerationStrategy {
 
     private final Collection<String> localVariableNames = new ArrayList<String>();
 
@@ -78,14 +77,14 @@ public abstract class FunctionGenerationStrategy<T extends CallableDescriptor> {
         }
 
         @Override
-        public void doGenerateBody(ExpressionCodegen codegen, JvmMethodSignature signature) {
+        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             codegen.returnExpression(declaration.getBodyExpression());
         }
     }
 
-    public abstract static class CodegenBased<T extends CallableDescriptor> extends FunctionGenerationStrategy<T> {
+    public abstract static class CodegenBased<T extends CallableDescriptor> extends FunctionGenerationStrategy {
 
-        private final GenerationState state;
+        protected final GenerationState state;
 
         protected final T callableDescriptor;
 

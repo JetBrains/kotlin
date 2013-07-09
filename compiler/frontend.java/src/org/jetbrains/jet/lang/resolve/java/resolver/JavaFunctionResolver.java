@@ -31,11 +31,11 @@ import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.provider.*;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -52,6 +52,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.*;
 
 public final class JavaFunctionResolver {
     private static final Logger LOG = Logger.getInstance(JavaFunctionResolver.class);
@@ -201,7 +202,7 @@ public final class JavaFunctionResolver {
         }
 
         if (declarationOrigin == JAVA && record) {
-            trace.record(BindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
+            trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
         }
 
         if (containingClass != psiClass && !method.isStatic()) {
@@ -216,7 +217,7 @@ public final class JavaFunctionResolver {
             }
             else {
                 if (record) {
-                    trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
+                    trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
                 }
             }
         }
@@ -267,7 +268,6 @@ public final class JavaFunctionResolver {
             @NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass,
             NamedMembers namedMembers, Name methodName, PsiDeclarationProvider scopeData
     ) {
-        final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
         Set<SimpleFunctionDescriptor> functionsFromSupertypes = null;
         if (owner instanceof ClassDescriptor) {
@@ -290,6 +290,8 @@ public final class JavaFunctionResolver {
             ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamConstructor((NamespaceDescriptor) owner, namedMembers));
         }
 
+
+        final Set<FunctionDescriptor> fakeOverrides = new HashSet<FunctionDescriptor>();
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
@@ -297,7 +299,7 @@ public final class JavaFunctionResolver {
                   new OverrideResolver.DescriptorSink() {
                       @Override
                       public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                          functions.add((FunctionDescriptor) fakeOverride);
+                          fakeOverrides.add((FunctionDescriptor) fakeOverride);
                       }
 
                       @Override
@@ -310,25 +312,28 @@ public final class JavaFunctionResolver {
                   });
         }
 
-        OverrideResolver.resolveUnknownVisibilities(functions, trace);
-        functions.addAll(functionsFromCurrent);
+        OverrideResolver.resolveUnknownVisibilities(fakeOverrides, trace);
 
+        Set<FunctionDescriptor> functions = Sets.newHashSet(fakeOverrides);
         if (isEnumClassObject(owner)) {
-            for (FunctionDescriptor functionDescriptor : Lists.newArrayList(functions)) {
-                if (isEnumValueOfMethod(functionDescriptor) || isEnumValuesMethod(functionDescriptor)) {
-                    functions.remove(functionDescriptor);
+            for (FunctionDescriptor functionDescriptor : functionsFromCurrent) {
+                if (!(isEnumValueOfMethod(functionDescriptor) || isEnumValuesMethod(functionDescriptor))) {
+                    functions.add(functionDescriptor);
                 }
             }
+        }
+        else {
+            functions.addAll(functionsFromCurrent);
         }
 
         return functions;
     }
 
     @Nullable
-    private static ClassDescriptor findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
+    private static ClassDescriptorFromJvmBytecode findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
         ClassifierDescriptor classifier = memberScope.getClassifier(name);
-        if (classifier instanceof ClassDescriptor) {
-            return (ClassDescriptor) classifier;
+        if (classifier instanceof ClassDescriptorFromJvmBytecode) {
+            return (ClassDescriptorFromJvmBytecode) classifier;
         }
         return null;
     }
@@ -340,9 +345,9 @@ public final class JavaFunctionResolver {
     // +-- namespace Bar
     // We need to find class 'Baz' in namespace 'foo.Bar'.
     @Nullable
-    private static ClassDescriptor findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
+    private static ClassDescriptorFromJvmBytecode findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
         // First, try to find in namespace directly
-        ClassDescriptor found = findClassInScope(namespace.getMemberScope(), name);
+        ClassDescriptorFromJvmBytecode found = findClassInScope(namespace.getMemberScope(), name);
         if (found != null) {
             return found;
         }
@@ -369,13 +374,9 @@ public final class JavaFunctionResolver {
     ) {
         PsiClass samInterface = namedMembers.getSamInterface();
         if (samInterface != null) {
-            ClassDescriptor klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
+            ClassDescriptorFromJvmBytecode klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
             if (klass != null) {
-                SimpleFunctionDescriptor constructorFunction = SingleAbstractMethodUtils.createSamConstructorFunction(ownerDescriptor,
-                                                                                                                      klass);
-                trace.record(BindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
-                trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
-                return constructorFunction;
+                return recordSamConstructor(klass, createSamConstructorFunction(ownerDescriptor, klass), trace);
             }
         }
         return null;
@@ -383,14 +384,9 @@ public final class JavaFunctionResolver {
 
     @Nullable
     private SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
-        if (SingleAbstractMethodUtils.isSamAdapterNecessary(original)) {
-            SimpleFunctionDescriptor adapterFunction = SingleAbstractMethodUtils.createSamAdapterFunction(original);
-
-            trace.record(BindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
-            trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
-            return adapterFunction;
-        }
-        return null;
+        return isSamAdapterNecessary(original)
+               ? recordSamAdapter(original, createSamAdapterFunction(original), trace)
+               : null;
     }
 
     @NotNull
@@ -495,5 +491,17 @@ public final class JavaFunctionResolver {
         }
 
         return false;
+    }
+
+    private static SimpleFunctionDescriptor recordSamConstructor(ClassDescriptorFromJvmBytecode klass, SimpleFunctionDescriptor constructorFunction, BindingTrace trace) {
+        trace.record(JavaBindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
+        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
+        return constructorFunction;
+    }
+
+    static <F extends FunctionDescriptor> F recordSamAdapter(F original, F adapterFunction, BindingTrace trace) {
+        trace.record(JavaBindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
+        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
+        return adapterFunction;
     }
 }

@@ -7,6 +7,7 @@ fun box(): String {
     val range1 = j.Double.NaN..5.0
     for (i in range1) {
         list1.add(i)
+        if (list1.size() > 23) break
     }
     if (list1 != listOf<Double>()) {
         return "Wrong elements for j.Double.NaN..5.0: $list1"
@@ -16,6 +17,7 @@ fun box(): String {
     val range2 = j.Float.NaN.toFloat()..5.0.toFloat()
     for (i in range2) {
         list2.add(i)
+        if (list2.size() > 23) break
     }
     if (list2 != listOf<Float>()) {
         return "Wrong elements for j.Float.NaN.toFloat()..5.0.toFloat(): $list2"
@@ -25,6 +27,7 @@ fun box(): String {
     val range3 = j.Double.NaN downTo 0.0
     for (i in range3) {
         list3.add(i)
+        if (list3.size() > 23) break
     }
     if (list3 != listOf<Double>()) {
         return "Wrong elements for j.Double.NaN downTo 0.0: $list3"
@@ -34,6 +37,7 @@ fun box(): String {
     val range4 = j.Float.NaN.toFloat() downTo 0.0.toFloat()
     for (i in range4) {
         list4.add(i)
+        if (list4.size() > 23) break
     }
     if (list4 != listOf<Float>()) {
         return "Wrong elements for j.Float.NaN.toFloat() downTo 0.0.toFloat(): $list4"
@@ -43,6 +47,7 @@ fun box(): String {
     val range5 = 0.0..j.Double.NaN
     for (i in range5) {
         list5.add(i)
+        if (list5.size() > 23) break
     }
     if (list5 != listOf<Double>()) {
         return "Wrong elements for 0.0..j.Double.NaN: $list5"
@@ -52,6 +57,7 @@ fun box(): String {
     val range6 = 0.0.toFloat()..j.Float.NaN
     for (i in range6) {
         list6.add(i)
+        if (list6.size() > 23) break
     }
     if (list6 != listOf<Float>()) {
         return "Wrong elements for 0.0.toFloat()..j.Float.NaN: $list6"
@@ -61,6 +67,7 @@ fun box(): String {
     val range7 = 5.0 downTo j.Double.NaN
     for (i in range7) {
         list7.add(i)
+        if (list7.size() > 23) break
     }
     if (list7 != listOf<Double>()) {
         return "Wrong elements for 5.0 downTo j.Double.NaN: $list7"
@@ -70,6 +77,7 @@ fun box(): String {
     val range8 = 5.0.toFloat() downTo j.Float.NaN
     for (i in range8) {
         list8.add(i)
+        if (list8.size() > 23) break
     }
     if (list8 != listOf<Float>()) {
         return "Wrong elements for 5.0.toFloat() downTo j.Float.NaN: $list8"
@@ -79,6 +87,7 @@ fun box(): String {
     val range9 = j.Double.NaN..j.Double.NaN
     for (i in range9) {
         list9.add(i)
+        if (list9.size() > 23) break
     }
     if (list9 != listOf<Double>()) {
         return "Wrong elements for j.Double.NaN..j.Double.NaN: $list9"
@@ -88,6 +97,7 @@ fun box(): String {
     val range10 = j.Float.NaN..j.Float.NaN
     for (i in range10) {
         list10.add(i)
+        if (list10.size() > 23) break
     }
     if (list10 != listOf<Float>()) {
         return "Wrong elements for j.Float.NaN..j.Float.NaN: $list10"
@@ -97,6 +107,7 @@ fun box(): String {
     val range11 = j.Double.NaN downTo j.Double.NaN
     for (i in range11) {
         list11.add(i)
+        if (list11.size() > 23) break
     }
     if (list11 != listOf<Double>()) {
         return "Wrong elements for j.Double.NaN downTo j.Double.NaN: $list11"
@@ -106,6 +117,7 @@ fun box(): String {
     val range12 = j.Float.NaN downTo j.Float.NaN
     for (i in range12) {
         list12.add(i)
+        if (list12.size() > 23) break
     }
     if (list12 != listOf<Float>()) {
         return "Wrong elements for j.Float.NaN downTo j.Float.NaN: $list12"

@@ -29,7 +29,7 @@ import java.io.File;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
-import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
+import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaces;
 
 /**
  * Compile Kotlin and then parse model from .class files.
@@ -55,12 +55,14 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().asString());
+
         NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
-        compareNamespaces(namespaceFromSource, namespaceFromClass,
-                          NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
-                                  .checkPrimaryConstructors(true)
-                                  .checkPropertyAccessors(includeAccessors),
-                          txtFile);
+
+        validateAndCompareNamespaces(namespaceFromSource, namespaceFromClass,
+                                     NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                                             .checkPrimaryConstructors(true)
+                                             .checkPropertyAccessors(includeAccessors),
+                                     txtFile);
     }
 }

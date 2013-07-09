@@ -1,0 +1,239 @@
+<root>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_CANDLELIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_BEACH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager float[] getOrientation(float[], float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FOCUS_MODE_INFINITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_NIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_STEADYPHOTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_THEATRE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera void getCameraInfo(int, android.hardware.Camera.CameraInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_SPORTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FOCUS_MODE_CONTINUOUS_PICTURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_WARM_FLUORESCENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void set(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_SOLARIZE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_FLUORESCENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_BLACKBOARD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters java.util.List&lt;java.lang.Integer&gt; getSupportedPreviewFormats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_AQUA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_CLOUDY_DAYLIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager void getRotationMatrixFromVector(float[], float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_POSTERIZE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_DAYLIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera ACTION_NEW_VIDEO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_PARTY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_TWILIGHT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_NIGHT_PORTRAIT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setFlashMode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_SNOW'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_AUTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FOCUS_MODE_CONTINUOUS_VIDEO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FOCUS_MODE_AUTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters ANTIBANDING_50HZ'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void set(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorEvent values'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setGpsProcessingMethod(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FLASH_MODE_TORCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_SUNSET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_PORTRAIT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_MONO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera void setParameters(android.hardware.Camera.Parameters) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FLASH_MODE_AUTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_HDR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager void getRotationMatrixFromVector(float[], float[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_SHADE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_LANDSCAPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager void getAngleChange(float[], float[], float[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FOCUS_MODE_FIXED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_NONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_SEPIA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager void getQuaternionFromVector(float[], float[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera ACTION_NEW_PICTURE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_BARCODE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FOCUS_MODE_MACRO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FLASH_MODE_OFF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager boolean remapCoordinateSystem(float[], int, int, float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters ANTIBANDING_AUTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters ANTIBANDING_OFF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_FIREWORKS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FLASH_MODE_RED_EYE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setColorEffect(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters java.util.List&lt;java.lang.Integer&gt; getSupportedPictureFormats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FOCUS_MODE_EDOF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera android.hardware.Camera.Parameters getParameters()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters android.hardware.Camera.Size getJpegThumbnailSize()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_WHITEBOARD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager float getInclination(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager void getAngleChange(float[], float[], float[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_AUTO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setAntibanding(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters WHITE_BALANCE_INCANDESCENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setSceneMode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setWhiteBalance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters SCENE_MODE_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters java.lang.String flatten()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters EFFECT_NEGATIVE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager boolean remapCoordinateSystem(float[], int, int, float[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera android.hardware.Camera open(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters FLASH_MODE_ON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setFocusMode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters ANTIBANDING_60HZ'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

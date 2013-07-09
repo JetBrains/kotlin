@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin;
 
+import com.intellij.codeInsight.folding.JavaCodeFoldingSettings;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilderEx;
 import com.intellij.lang.folding.FoldingDescriptor;
@@ -23,9 +24,11 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -61,8 +64,8 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     private static void appendDescriptors(ASTNode node, Document document, List<FoldingDescriptor> descriptors) {
         TextRange textRange = node.getTextRange();
         IElementType type = node.getElementType();
-        if ((type == JetNodeTypes.BLOCK || type == JetNodeTypes.CLASS_BODY) &&
-            !isOneLine(textRange, document)) {
+        if ((type == JetNodeTypes.BLOCK || type == JetNodeTypes.CLASS_BODY || type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) &&
+                !isOneLine(textRange, document)) {
             descriptors.add(new FoldingDescriptor(node, textRange));
         }
         else if (node.getElementType() == JetTokens.IDE_TEMPLATE_START) {
@@ -87,29 +90,54 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     }
 
     @Override
-    public String getPlaceholderText(@NotNull ASTNode astNode, @NotNull TextRange range) {
-        ASTNode prev = astNode.getTreePrev();
-        ASTNode next = astNode.getTreeNext();
+    public String getPlaceholderText(@NotNull ASTNode node) {
+        ASTNode prev = node.getTreePrev();
+        ASTNode next = node.getTreeNext();
         if (prev != null && next != null && prev.getElementType() == JetTokens.IDE_TEMPLATE_START
-                && next.getElementType() == JetTokens.IDE_TEMPLATE_END) {
-            return astNode.getText();
+            && next.getElementType() == JetTokens.IDE_TEMPLATE_END) {
+            return node.getText();
         }
-        if (astNode.getPsi() instanceof JetImportDirective) {
+        if (node.getElementType() == JetTokens.BLOCK_COMMENT) {
+            return "/.../";
+        }
+        if (node.getElementType() == KDocTokens.KDOC) {
+            return "/**...*/";
+        }
+        if (node.getPsi() instanceof JetImportDirective) {
             return "...";
         }
         return "{...}";
     }
 
     @Override
-    public String getPlaceholderText(@NotNull ASTNode node) {
-        return "{...}";
+    public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
+        JavaCodeFoldingSettings settings = JavaCodeFoldingSettings.getInstance();
+
+        if (astNode.getPsi() instanceof JetImportDirective) {
+            return settings.isCollapseImports();
+        }
+
+        IElementType type = astNode.getElementType();
+        if (type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) {
+            if (isFirstElementInFile(astNode.getPsi())) {
+                return settings.isCollapseFileHeader();
+            }
+        }
+
+        return false;
     }
 
-    @Override
-    public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
-        if (astNode.getPsi() instanceof JetImportDirective) {
-            return true;
+    private static boolean isFirstElementInFile(PsiElement element) {
+        PsiElement parent = element.getParent();
+        if (parent instanceof JetFile) {
+            PsiElement firstChild = parent.getFirstChild();
+            if (firstChild instanceof PsiWhiteSpace) {
+                firstChild = firstChild.getNextSibling();
+            }
+
+            return element == firstChild;
         }
+
         return false;
     }
 }

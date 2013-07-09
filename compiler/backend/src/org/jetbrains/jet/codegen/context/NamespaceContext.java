@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
-public class NamespaceContext extends CodegenContext {
+public class NamespaceContext extends FieldOwnerContext<NamespaceDescriptor> {
     public NamespaceContext(@NotNull NamespaceDescriptor contextDescriptor, @Nullable CodegenContext parent, @NotNull OwnerKind kind) {
         super(contextDescriptor, kind, parent, null, null, null);
     }

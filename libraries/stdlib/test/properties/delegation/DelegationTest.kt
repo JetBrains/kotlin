@@ -19,13 +19,21 @@ class DelegationTest(): DelegationTestBase() {
         doTest(TestNotNullVar("a", "b"))
     }
 
+    fun testObservablePropertyInChangeSupport() {
+        doTest(TestObservablePropertyInChangeSupport())
+    }
+
     fun testObservableProperty() {
         doTest(TestObservableProperty())
+    }
+
+    fun testVetoableProperty() {
+        doTest(TestVetoableProperty())
     }
 }
 
 public class TestNotNullVar<T>(val a1: String, val b1: T): WithBox {
-    var a: String by Delegates.notNull<String>()
+    var a: String by Delegates.notNull()
     var b by Delegates.notNull<T>()
 
     override fun box(): String {
@@ -37,7 +45,7 @@ public class TestNotNullVar<T>(val a1: String, val b1: T): WithBox {
     }
 }
 
-class TestObservableProperty: WithBox, ChangeSupport() {
+class TestObservablePropertyInChangeSupport: WithBox, ChangeSupport() {
 
     var b by property(init = 2)
     var c by property(3)
@@ -59,4 +67,35 @@ class TestObservableProperty: WithBox, ChangeSupport() {
         if (!result) return "fail: result should be true"
         return "OK"
     }
+}
+
+class TestObservableProperty: WithBox {
+    var result = false
+
+    var b by Delegates.observable(1, {(pd, o, n) -> result = true})
+
+    override fun box(): String {
+        b = 4
+        if (b != 4) return "fail: b != 4"
+        if (!result) return "fail: result should be true"
+        return "OK"
+    }
+}
+
+class TestVetoableProperty: WithBox {
+    var result = false
+    var b by Delegates.vetoable(A(true), {(pd, o, n) -> result = n.p == true; result})
+
+    override fun box(): String {
+        val firstValue = A(true)
+        b = firstValue
+        if (b != firstValue) return "fail1: b should be firstValue = A(true)"
+        if (!result) return "fail2: result should be true"
+        b = A(false)
+        if (b != firstValue) return "fail3: b should be firstValue = A(true)"
+        if (result) return "fail4: result should be false"
+        return "OK"
+    }
+    
+    class A(val p: Boolean)
 }

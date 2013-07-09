@@ -1,0 +1,6 @@
+// FILE: before.kt
+trait Some
+class <caret>SomeObject: Some
+// FILE: after.kt
+trait <caret>Some
+class SomeObject: Some

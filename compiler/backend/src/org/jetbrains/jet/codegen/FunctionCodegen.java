@@ -37,6 +37,7 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -132,6 +133,8 @@ public class FunctionCodegen extends GenerationStateAware {
         endVisit(mv, null, origin);
 
         generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
+
+        methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, typeMapper);
     }
 
     @Nullable
@@ -180,7 +183,9 @@ public class FunctionCodegen extends GenerationStateAware {
 
             labelsForSharedVars.putAll(createSharedVarsForParameters(mv, functionDescriptor, frameMap));
 
-            genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
+            if (!JetTypeMapper.isAccessor(functionDescriptor)) {
+                genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
+            }
 
             strategy.generateBody(mv, signature, context);
 
@@ -812,7 +817,8 @@ public class FunctionCodegen extends GenerationStateAware {
             StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
 
             iv.areturn(delegateMethod.getReturnType());
-            endVisit(mv, "delegate method", descriptorToDeclaration(bindingContext, functionDescriptor));
+            endVisit(mv, "Delegate method " + functionDescriptor + " to " + jvmOverriddenMethodSignature,
+                     descriptorToDeclaration(bindingContext, functionDescriptor.getContainingDeclaration()));
 
             generateBridgeIfNeeded(owner, state, v, jvmDelegateMethodSignature.getAsmMethod(), functionDescriptor);
         }

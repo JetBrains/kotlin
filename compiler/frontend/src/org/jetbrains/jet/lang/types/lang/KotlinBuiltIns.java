@@ -883,6 +883,10 @@ public class KotlinBuiltIns {
         return jetArrayTypeToPrimitiveJetType.containsKey(TypeUtils.makeNotNullable(type));
     }
 
+    public boolean isPrimitiveType(@NotNull JetType type) {
+        return primitiveJetTypeToJetArrayType.containsKey(type);
+    }
+
     // Functions
 
     @NotNull

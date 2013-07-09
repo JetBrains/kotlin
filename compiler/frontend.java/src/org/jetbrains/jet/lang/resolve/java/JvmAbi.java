@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -57,6 +58,20 @@ public class JvmAbi {
 
     public static String getPropertyDelegateName(@NotNull Name name) {
         return name.asString() + DELEGATED_PROPERTY_NAME_POSTFIX;
+    }
+
+
+    public static String getDefaultPropertyName(Name propertyName, boolean isDelegated, boolean isExtensionProperty) {
+        if (isDelegated) {
+            return getPropertyDelegateName(propertyName);
+        }
+
+        String name = propertyName.asString();
+        if (isExtensionProperty) {
+            name += "$ext";
+        }
+        return name;
+
     }
 
     private JvmAbi() {

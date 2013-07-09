@@ -75,7 +75,7 @@ public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDele
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetDelegatorToSuperClass delegator = (JetDelegatorToSuperClass) element.copy();
         JetClass aClass = JetPsiFactory.createClass(project, "class A : " + delegator.getText() + "()");
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();

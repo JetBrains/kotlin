@@ -49,6 +49,7 @@ public class SpecialFiles {
         filesCompiledWithoutStdLib.add("kt773.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt796_797.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt950.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
+        filesCompiledWithoutStdLib.add("kt3190.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt2395.kt"); // With MOCK_JDK
     }
 
@@ -72,6 +73,10 @@ public class SpecialFiles {
         excludedFiles.add("kt344.kt");  // Bug
 
         excludedFiles.add("comparisonWithNullCallsFun.kt"); // java.lang.NoClassDefFoundError: jet.Nothing
+        excludedFiles.add("kt3574.kt"); // java.lang.NoClassDefFoundError: jet.Nothing
+
+        excludedFiles.add("genericBackingFieldSignature.kt"); // Wrong signature after package renaming
+        excludedFiles.add("genericMethodSignature.kt"); // Wrong signature after package renaming
     }
 
     private SpecialFiles() {

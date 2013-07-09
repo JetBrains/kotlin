@@ -1,0 +1,16 @@
+package test
+
+public trait InheritedOverridden : java.lang.Object {
+    
+    public open class Sub : test.InheritedOverridden.Super {
+        public constructor Sub()
+        public open override /*1*/ /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public open override /*1*/ fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
+    }
+    
+    public open class Super : java.lang.Object {
+        public constructor Super()
+        public open /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public open fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
+    }
+}

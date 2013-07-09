@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClass;
@@ -41,12 +42,14 @@ public class JetTypesCompletionHelper {
             @NotNull CompletionParameters parameters,
             @NotNull JetCompletionResultSet jetCompletionResult
     ) {
+        assert parameters.getInvocationCount() >= 2: "Method should be used only for force completion. In other case complete classes from scope";
+
         jetCompletionResult.addAllElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses());
 
         Project project = parameters.getOriginalFile().getProject();
         JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
         jetCompletionResult.addAllElements(namesCache.getJetClassesDescriptors(
-                jetCompletionResult.getShortNameFilter(), jetCompletionResult.getResolveSession()));
+                jetCompletionResult.getShortNameFilter(), jetCompletionResult.getResolveSession(), GlobalSearchScope.allScope(project)));
 
         if (!KotlinFrameworkDetector.isJsKotlinModule((JetFile) parameters.getOriginalFile())) {
             addAdaptedJavaCompletion(parameters, jetCompletionResult);
@@ -56,7 +59,7 @@ public class JetTypesCompletionHelper {
     /**
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
-    static void addAdaptedJavaCompletion(
+    private static void addAdaptedJavaCompletion(
             @NotNull CompletionParameters parameters,
             @NotNull final JetCompletionResultSet jetCompletionResult
     ) {

@@ -1,0 +1,17 @@
+fun Int.foo() {}
+
+open class A {
+   ~A.foo~fun foo(i: Int) {}
+}
+open class B {}
+
+fun test(a: A, b: B) {
+    with (a) {
+        with (b) {
+            // at first we try b.foo, so 'Int.foo' should have less priority to be thrown away
+            `A.foo`foo(1.0)
+        }
+    }
+}
+
+fun <T, R> with(receiver: T, f: T.() -> R) : R = receiver.f()

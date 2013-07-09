@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -34,10 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -45,6 +44,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
 
 public class DescriptorUtils {
 
@@ -289,6 +289,14 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ENUM_CLASS);
     }
 
+    public static boolean isAnnotationClass(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.ANNOTATION_CLASS);
+    }
+
+    public static boolean isClass(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.CLASS);
+    }
+
     public static boolean isKindOf(@NotNull JetType jetType, @NotNull ClassKind classKind) {
         ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         return isKindOf(descriptor, classKind);
@@ -420,10 +428,24 @@ public class DescriptorUtils {
         return (ClassDescriptor) classifier;
     }
 
+    @NotNull
     public static ConstructorDescriptor getConstructorOfDataClass(ClassDescriptor classDescriptor) {
+        ConstructorDescriptor descriptor = getConstructorDescriptorIfOnlyOne(classDescriptor);
+        assert descriptor != null : "Data class must have only one constructor: " + classDescriptor.getConstructors();
+        return descriptor;
+    }
+
+    @NotNull
+    public static ConstructorDescriptor getConstructorOfSingletonObject(ClassDescriptor classDescriptor) {
+        ConstructorDescriptor descriptor = getConstructorDescriptorIfOnlyOne(classDescriptor);
+        assert descriptor != null : "Class of singleton object must have only one constructor: " + classDescriptor.getConstructors();
+        return descriptor;
+    }
+
+    @Nullable
+    private static ConstructorDescriptor getConstructorDescriptorIfOnlyOne(ClassDescriptor classDescriptor) {
         Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-        assert constructors.size() == 1 : "Data class must have only one constructor: " + constructors;
-        return constructors.iterator().next();
+        return constructors.size() != 1 ? null : constructors.iterator().next();
     }
 
     @Nullable
@@ -557,5 +579,23 @@ public class DescriptorUtils {
             allSuperclasses.add(superclass);
         }
         return allSuperclasses;
+    }
+
+    @NotNull
+    public static PropertyDescriptor getPropertyDescriptor(@NotNull JetProperty property, @NotNull BindingContext bindingContext) {
+        VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, property);
+        if (!(descriptor instanceof PropertyDescriptor)) {
+            throw new UnsupportedOperationException("expect a property to have a property descriptor");
+        }
+        return (PropertyDescriptor) descriptor;
+    }
+
+
+    @NotNull
+    public static PropertyDescriptor getPropertyDescriptor(@NotNull JetParameter constructorParameter, @NotNull BindingContext bindingContext) {
+        assert constructorParameter.getValOrVarNode() != null;
+        PropertyDescriptor descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, constructorParameter);
+        assert descriptor != null;
+        return descriptor;
     }
 }

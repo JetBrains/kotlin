@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.NamespaceComparator.*;
 
 /*
@@ -63,10 +64,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Assert.assertTrue("A java file expected: " + javaFileName, javaFileName.endsWith(".java"));
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
-        File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
+        File txtFile = getTxtFile(javaFile.getPath());
         NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
-                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.ALL);
         checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
     }
 
@@ -104,14 +105,14 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
 
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
-                srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+                srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.ALL);
 
-        checkJavaNamespace(new File(javaFileName.replaceFirst("\\.java$", ".txt")), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration);
+        checkJavaNamespace(getTxtFile(javaFileName), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration);
     }
 
     protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
         File originalJavaFile = new File(javaFileName);
-        File expectedFile = new File(javaFileName.replaceFirst("\\.java$", ".txt"));
+        File expectedFile = getTxtFile(javaFileName);
 
         File testPackageDir = new File(tmpdir, "test");
         assertTrue(testPackageDir.mkdir());
@@ -120,7 +121,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = loadTestNamespaceAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second, DONT_INCLUDE_METHODS_OF_OBJECT);
+        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
+                           DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -203,7 +205,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
             @Override
             public void run() {
-                compareNamespaces(kotlinNamespace, javaNamespace, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+                validateAndCompareNamespaces(kotlinNamespace, javaNamespace, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
             }
         });
     }
@@ -217,8 +219,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
             @Override
             public void run() {
-                compareNamespaceWithFile(javaNamespace, configuration, txtFile);
+                validateAndCompareNamespaceWithFile(javaNamespace, configuration, txtFile);
             }
         });
+    }
+
+    private static File getTxtFile(String javaFileName) {
+        return new File(javaFileName.replaceFirst("\\.java$", ".txt"));
     }
 }

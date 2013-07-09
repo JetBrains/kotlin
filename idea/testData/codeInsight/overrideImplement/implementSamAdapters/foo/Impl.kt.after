@@ -1,0 +1,8 @@
+package foo
+
+class Impl: B {
+
+    public override fun foo(r: Runnable?) {
+        throw UnsupportedOperationException()
+    }
+}

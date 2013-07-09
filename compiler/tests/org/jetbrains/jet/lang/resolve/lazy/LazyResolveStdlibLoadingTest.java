@@ -59,7 +59,7 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
         for (Name name : namespaceShortNames) {
             NamespaceDescriptor eager = module.getNamespace(FqName.topLevel(name));
             NamespaceDescriptor lazy = lazyModule.getNamespace(FqName.topLevel(name));
-            NamespaceComparator.compareNamespaces(eager, lazy, NamespaceComparator.RECURSIVE, null);
+            NamespaceComparator.validateAndCompareNamespaces(eager, lazy, NamespaceComparator.RECURSIVE, null);
         }
     }
 

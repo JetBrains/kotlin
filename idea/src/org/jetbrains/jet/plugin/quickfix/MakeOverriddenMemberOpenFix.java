@@ -103,7 +103,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         for (PsiElement overriddenMember : overriddenMembers) {
             overriddenMember.replace(AddModifierFix.addModifierWithDefaultReplacement(overriddenMember, OPEN_KEYWORD, project, false));
         }

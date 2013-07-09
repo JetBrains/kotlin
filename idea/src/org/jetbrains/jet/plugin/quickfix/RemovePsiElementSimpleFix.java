@@ -19,15 +19,11 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetTypeArgumentList;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -56,7 +52,7 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         element.delete();
     }
 
@@ -113,7 +109,7 @@ public class RemovePsiElementSimpleFix extends JetIntentionAction<PsiElement> {
                 return new RemovePsiElementSimpleFix(expression,
                                                      JetBundle.message("remove.variable.action", (expression.getName()))) {
                     @Override
-                    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+                    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
                         JetExpression initializer = expression.getInitializer();
                         if (initializer != null) {
                             expression.replace(initializer);

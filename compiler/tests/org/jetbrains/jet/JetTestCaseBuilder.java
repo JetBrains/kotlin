@@ -38,7 +38,7 @@ public abstract class JetTestCaseBuilder {
     public static FilenameFilter filterByExtension(@NotNull final String... extensions) {
         return new FilenameFilter() {
             @Override
-            public boolean accept(File dir, String name) {
+            public boolean accept(@NotNull File dir, @NotNull String name) {
                 for (String extension : extensions) {
                     if (name.endsWith("." + extension)) return true;
                 }
@@ -52,7 +52,10 @@ public abstract class JetTestCaseBuilder {
     }
 
     public static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(JetTestCaseBuilder.class, "/org/jetbrains/jet/JetTestCaseBuilder.class")).getParentFile().getParentFile().getParent();
+        String resourceRoot = PathManager.getResourceRoot(JetTestCaseBuilder.class, "/org/jetbrains/jet/JetTestCaseBuilder.class");
+        assert resourceRoot != null : "Failed to get root for class: " + JetTestCaseBuilder.class;
+
+        return new File(resourceRoot).getParentFile().getParentFile().getParent();
     }
     public interface NamedTestFactory {
         @NotNull Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file);
@@ -75,7 +78,7 @@ public abstract class JetTestCaseBuilder {
     public static FilenameFilter and(@NotNull final FilenameFilter a, @NotNull final FilenameFilter b) {
         return new FilenameFilter() {
             @Override
-            public boolean accept(File dir, String name) {
+            public boolean accept(@NotNull File dir, @NotNull String name) {
                 return a.accept(dir, name) && b.accept(dir, name);
             }
         };
@@ -85,7 +88,7 @@ public abstract class JetTestCaseBuilder {
         File dir = new File(baseDataDir + dataPath);
         FileFilter dirFilter = new FileFilter() {
             @Override
-            public boolean accept(File pathname) {
+            public boolean accept(@NotNull File pathname) {
                 return pathname.isDirectory();
             }
         };
@@ -104,7 +107,6 @@ public abstract class JetTestCaseBuilder {
         List<File> files = Arrays.asList(dir.listFiles(filter));
         Collections.sort(files);
         for (File file : files) {
-            String fileName = file.getName();
             String testName = FileUtil.getNameWithoutExtension(file);
             suite.addTest(factory.createTest(dataPath, testName, file));
         }

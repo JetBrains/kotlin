@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
@@ -400,6 +401,29 @@ public class JetTestUtils {
                                                              (expectedText.length() - 1);
         }
         return testFileFiles;
+    }
+
+    public static List<String> loadBeforeAfterText(String filePath) {
+        String content;
+
+        try {
+            content = StringUtil.convertLineSeparators(FileUtil.loadFile(new File(filePath)));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<String> files = createTestFiles("", content, new TestFileFactory<String>() {
+            @Override
+            public String create(String fileName, String text) {
+                int firstLineEnd = text.indexOf('\n');
+                return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
+            }
+        });
+
+        Assert.assertTrue("Exactly two files expected: ", files.size() == 2);
+
+        return files;
     }
 
     public static String getLastCommentedLines(@NotNull Document document) {
