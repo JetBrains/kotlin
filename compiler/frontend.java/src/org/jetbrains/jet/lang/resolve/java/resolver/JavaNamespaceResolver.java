@@ -18,10 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMember;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -163,12 +160,9 @@ public final class JavaNamespaceResolver {
         if (psiPackage != null) {
             PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
             trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
-            if (psiClass == null) {
-                return new JavaPackageScopeWithoutMembers(
-                        namespaceDescriptor,
-                        javaSemanticServices.getPsiDeclarationProviderFactory()
-                                .createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
-                        fqName, javaSemanticServices);
+            if (psiClass == null || !isCompiledKotlinClass(psiClass)) {
+                return new JavaPackageScopeWithoutMembers(namespaceDescriptor, javaSemanticServices.getPsiDeclarationProviderFactory()
+                        .createDeclarationProviderForNamespaceWithoutMembers(psiPackage), fqName, javaSemanticServices);
             }
 
             return createScopeForKotlinPackageClass(fqName, namespaceDescriptor, psiClass);
@@ -189,6 +183,11 @@ public final class JavaNamespaceResolver {
                 namespaceDescriptor,
                 javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
                 fqName, javaSemanticServices);
+    }
+
+    private static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
+        PsiModifierList list = psiClass.getModifierList();
+        return list != null && list.findAnnotation(JvmStdlibNames.KOTLIN_INFO_CLASS.getFqName().asString()) != null;
     }
 
     @NotNull
