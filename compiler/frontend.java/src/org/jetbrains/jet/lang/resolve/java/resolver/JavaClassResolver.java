@@ -43,9 +43,11 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -159,7 +161,7 @@ public final class JavaClassResolver {
             return null;
         }
 
-        ClassDescriptor builtinClassDescriptor = semanticServices.getKotlinBuiltinClassDescriptor(qualifiedName);
+        ClassDescriptor builtinClassDescriptor = getKotlinBuiltinClassDescriptor(qualifiedName);
         if (builtinClassDescriptor != null) {
             return builtinClassDescriptor;
         }
@@ -182,6 +184,24 @@ public final class JavaClassResolver {
         }
 
         return doResolveClass(qualifiedName, tasks);
+    }
+
+    @Nullable
+    private static ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
+        if (!qualifiedName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null;
+
+        List<Name> segments = qualifiedName.pathSegments();
+        if (segments.size() < 2) return null;
+
+        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsScope();
+        for (int i = 1, size = segments.size(); i < size; i++) {
+            ClassifierDescriptor classifier = scope.getClassifier(segments.get(i));
+            if (classifier == null) return null;
+            assert classifier instanceof ClassDescriptor : "Unexpected classifier in built-ins: " + classifier;
+            scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
+        }
+
+        return (ClassDescriptor) scope.getContainingDeclaration();
     }
 
     private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {

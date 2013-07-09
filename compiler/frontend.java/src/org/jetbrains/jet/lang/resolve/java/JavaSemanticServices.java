@@ -24,8 +24,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 
@@ -89,16 +87,6 @@ public class JavaSemanticServices {
     @NotNull
     public PsiDeclarationProviderFactory getPsiDeclarationProviderFactory() {
         return psiDeclarationProviderFactory;
-    }
-
-    @Nullable
-    public ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
-        if (qualifiedName.firstSegmentIs(Name.identifier("jet")) && qualifiedName.pathSegments().size() == 2) {
-            return (ClassDescriptor) KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(qualifiedName.pathSegments().get(1));
-        }
-        else {
-            return null;
-        }
     }
 
     @Nullable
