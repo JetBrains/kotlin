@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -48,9 +47,15 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
+import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
+import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.getClassId;
+import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.*;
 import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.naiveKotlinFqName;
 
@@ -62,7 +67,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @NotNull
         @Override
         public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
-            // This is a hack for tests: only data annotations are present in test data so far
+            // TODO: not only data annotations are present in tests
             AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
             annotationDescriptor.setAnnotationType(KotlinBuiltIns.getInstance().getDataClassAnnotation().getDefaultType());
             return Collections.singletonList(annotationDescriptor);
@@ -88,7 +93,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 
-    protected void doTest(String path) throws IOException {
+    protected void doTest(@NotNull String path) throws IOException {
         File ktFile = new File(path);
         ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolveEagerly(Collections.singletonList(
                 JetTestUtils.createFile(ktFile.getName(), FileUtil.loadFile(ktFile), getProject())
@@ -109,20 +114,19 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         NamespaceComparator.validateAndCompareNamespaces(testNamespace, deserialized, NamespaceComparator.RECURSIVE, null);
     }
 
+    @NotNull
     private static NamespaceDescriptor serializeAndDeserialize(
-            JavaDescriptorResolver javaDescriptorResolver,
-            Collection<DeclarationDescriptor> initial
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull Collection<DeclarationDescriptor> initial
     ) throws IOException {
         List<ClassDescriptor> classes = Lists.newArrayList();
         List<CallableMemberDescriptor> callables = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : initial) {
             if (descriptor instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                classes.add(classDescriptor);
+                classes.add((ClassDescriptor) descriptor);
             }
             else if (descriptor instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
-                callables.add(memberDescriptor);
+                callables.add((CallableMemberDescriptor) descriptor);
             }
             else {
                 fail("Unsupported descriptor type: " + descriptor);
@@ -131,28 +135,21 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         return getDeserializedDescriptors(javaDescriptorResolver, classes, callables);
     }
 
+    @NotNull
     private static NamespaceDescriptor getDeserializedDescriptors(
-            JavaDescriptorResolver javaDescriptorResolver,
-            List<ClassDescriptor> classes,
-            List<CallableMemberDescriptor> callables
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull List<ClassDescriptor> classes,
+            @NotNull List<CallableMemberDescriptor> callables
     ) throws IOException {
-        ByteArrayOutputStream serializedCallables = new ByteArrayOutputStream();
-        Map<ClassDescriptor, byte[]> serializedClasses = Maps.newHashMap();
-        serialize(classes, callables, serializedClasses, serializedCallables);
+        Map<ClassDescriptor, byte[]> serializedClasses = serializeClasses(classes);
+        byte[] serializedCallables = serializeCallables(callables);
 
-        final Map<String, ClassMetadata> classMetadata = Maps.newHashMap();
+        final Map<String, ClassData> classDataMap = Maps.newHashMap();
 
         for (Map.Entry<ClassDescriptor, byte[]> entry : serializedClasses.entrySet()) {
-            ClassDescriptor classDescriptor = entry.getKey();
-            byte[] bytes = entry.getValue();
-
-            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-
-            ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
-            ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
-            ProtoBuf.Class proto = ProtoBuf.Class.parseFrom(in);
-
-            classMetadata.put(naiveKotlinFqName(classDescriptor).asString(), new ClassMetadata(simpleNames, qualifiedNames, proto));
+            String key = naiveKotlinFqName(entry.getKey()).asString();
+            ClassData value = ClassData.read(entry.getValue(), JavaProtoBufUtil.getExtensionRegistry());
+            classDataMap.put(key, value);
         }
 
         NamespaceDescriptorImpl namespace = JetTestUtils.createTestNamespace(TEST_PACKAGE_NAME);
@@ -160,18 +157,17 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         DescriptorFinderImpl descriptorFinder = new DescriptorFinderImpl(
                 javaDescriptorFinder, namespace,
-                new NullableFunction<String, ClassMetadata>() {
+                new NullableFunction<String, ClassData>() {
                     @Nullable
                     @Override
-                    public ClassMetadata fun(String fqName) {
-                        return classMetadata.get(fqName);
+                    public ClassData fun(String fqName) {
+                        return classDataMap.get(fqName);
                     }
                 }
         );
 
         for (ClassDescriptor classDescriptor : classes) {
-            ClassId classId = new ClassId(DescriptorUtils.getFQName(classDescriptor.getContainingDeclaration()).toSafe(),
-                                          FqNameUnsafe.topLevel(classDescriptor.getName()));
+            ClassId classId = getClassId(classDescriptor);
             ClassDescriptor descriptor = descriptorFinder.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
             if (descriptor.getKind().isObject()) {
@@ -182,9 +178,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             }
         }
 
-        ByteArrayInputStream in = new ByteArrayInputStream(serializedCallables.toByteArray());
-        ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
-        ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
+        ByteArrayInputStream in = new ByteArrayInputStream(serializedCallables);
+        NameResolver nameResolver = deserializeNameResolver(in);
 
         List<ProtoBuf.Callable> callableProtos = Lists.newArrayList();
         for (int i = 0; i < callables.size(); i++) {
@@ -193,8 +188,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
 
         DescriptorDeserializer deserializer =
-                DescriptorDeserializer.create(new LockBasedStorageManager(), namespace, new NameResolver(simpleNames, qualifiedNames),
-                                              descriptorFinder, UNSUPPORTED);
+                DescriptorDeserializer.create(new LockBasedStorageManager(), namespace, nameResolver, descriptorFinder, UNSUPPORTED);
         for (ProtoBuf.Callable proto : callableProtos) {
             CallableMemberDescriptor descriptor = deserializer.loadCallable(proto);
             if (descriptor instanceof FunctionDescriptor) {
@@ -212,85 +206,57 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         return namespace;
     }
 
-    public static void serialize(
-            List<ClassDescriptor> classes, List<CallableMemberDescriptor> callables,
-            Map<ClassDescriptor, byte[]> serializedClasses, OutputStream serializedCallables
-    ) throws IOException {
-
-        serializeClasses(classes, serializedClasses);
-
-        DescriptorSerializer descriptorSerializer = new DescriptorSerializer();
+    @NotNull
+    private static byte[] serializeCallables(@NotNull List<CallableMemberDescriptor> callables) throws IOException {
+        DescriptorSerializer serializer = new DescriptorSerializer();
         List<MessageLite> messages = Lists.newArrayList();
         for (CallableMemberDescriptor callable : callables) {
-            messages.add(descriptorSerializer.callableProto(callable).build());
+            messages.add(serializer.callableProto(callable).build());
         }
 
-        NameSerializationUtil.serializeNameTable(serializedCallables, descriptorSerializer.getNameTable());
+        ByteArrayOutputStream serializedCallables = new ByteArrayOutputStream();
+        serializeNameTable(serializedCallables, serializer.getNameTable());
 
         for (MessageLite message : messages) {
             message.writeDelimitedTo(serializedCallables);
         }
+
+        return serializedCallables.toByteArray();
     }
 
-    private static void serializeClasses(Collection<ClassDescriptor> classes, Map<ClassDescriptor, byte[]> serializedClasses)
-            throws IOException {
-        for (ClassDescriptor classDescriptor : classes) {
-            DescriptorSerializer descriptorSerializer = new DescriptorSerializer();
+    @NotNull
+    private static Map<ClassDescriptor, byte[]> serializeClasses(@NotNull Collection<ClassDescriptor> classes) {
+        final Map<ClassDescriptor, byte[]> serializedClasses = Maps.newHashMap();
+        final DescriptorSerializer serializer = new DescriptorSerializer();
 
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            ProtoBuf.Class classProto = descriptorSerializer.classProto(classDescriptor).build();
-
-            NameSerializationUtil.serializeNameTable(bytes, descriptorSerializer.getNameTable());
-            classProto.writeTo(bytes);
-
-            serializedClasses.put(classDescriptor, bytes.toByteArray());
-
-            //noinspection unchecked
-            serializeClasses((Collection) classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(), serializedClasses);
-            //noinspection unchecked
-            serializeClasses((Collection) classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors(), serializedClasses);
-
-            ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-            if (classObjectDescriptor != null) {
-                serializeClasses(Collections.singletonList(classObjectDescriptor), serializedClasses);
+        ClassSerializationUtil.serializeClasses(classes, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
+            @Override
+            public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
+                serializedClasses.put(classDescriptor, new ClassData(createNameResolver(serializer.getNameTable()), classProto).toBytes());
             }
-        }
-    }
+        });
 
-    private static class ClassMetadata {
-        private final ProtoBuf.SimpleNameTable simpleNames;
-        private final ProtoBuf.QualifiedNameTable qualifiedNames;
-        private final ProtoBuf.Class classProto;
-
-        private ClassMetadata(
-                ProtoBuf.SimpleNameTable simpleNames,
-                ProtoBuf.QualifiedNameTable qualifiedNames,
-                ProtoBuf.Class classProto
-        ) {
-            this.simpleNames = simpleNames;
-            this.qualifiedNames = qualifiedNames;
-            this.classProto = classProto;
-        }
+        return serializedClasses;
     }
 
     private static class DescriptorFinderImpl implements DescriptorFinder {
         private final DescriptorFinder parentResolver;
 
         private final DeclarationDescriptor parentForClasses;
-        private final NullableFunction<String, ClassMetadata> classMetadata;
+        private final NullableFunction<String, ClassData> classData;
 
         private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> classes;
 
         public DescriptorFinderImpl(
                 @NotNull DescriptorFinder parentResolver,
                 @NotNull DeclarationDescriptor parentForClasses,
-                @NotNull NullableFunction<String, ClassMetadata> classMetadata
+                @NotNull NullableFunction<String, ClassData> classData
         ) {
             this.parentResolver = parentResolver;
 
             this.parentForClasses = parentForClasses;
 
-            this.classMetadata = classMetadata;
+            this.classData = classData;
 
             this.classes = new MemoizedFunctionToNullableImpl<ClassId, ClassDescriptor>() {
                 @Nullable
@@ -305,21 +271,14 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
 
         @Nullable
-        private ClassDescriptor resolveClass(
-                @NotNull DeclarationDescriptor containingDeclaration,
-                @NotNull ClassId classId
-        ) {
-            FqNameUnsafe fqName = classId.asSingleFqName();
-
-            ClassMetadata classMetadata = this.classMetadata.fun(fqName.asString());
-            if (classMetadata == null) {
+        private ClassDescriptor resolveClass(@NotNull DeclarationDescriptor containingDeclaration, @NotNull ClassId classId) {
+            ClassData classData = this.classData.fun(classId.asSingleFqName().asString());
+            if (classData == null) {
                 return parentResolver.findClass(classId);
             }
 
-            NameResolver nameResolver = new NameResolver(classMetadata.simpleNames, classMetadata.qualifiedNames);
-            return new DeserializedClassDescriptor(classId, new LockBasedStorageManager(), containingDeclaration, nameResolver,
-                                                   DUMMY_ANNOTATION_DESERIALIZER, this,
-                                                   classMetadata.classProto, null);
+            return new DeserializedClassDescriptor(classId, new LockBasedStorageManager(), containingDeclaration,
+                    classData.getNameResolver(), DUMMY_ANNOTATION_DESERIALIZER, this, classData.getClassProto(), null);
         }
 
         @Nullable

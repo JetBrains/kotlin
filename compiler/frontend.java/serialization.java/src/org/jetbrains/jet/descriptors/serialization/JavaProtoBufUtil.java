@@ -36,7 +36,7 @@ public class JavaProtoBufUtil {
     }
 
     @NotNull
-    private static ExtensionRegistryLite getExtensionRegistry() {
+    public static ExtensionRegistryLite getExtensionRegistry() {
         ExtensionRegistryLite registry = ExtensionRegistryLite.newInstance();
         JavaProtoBuf.registerAllExtensions(registry);
         return registry;
