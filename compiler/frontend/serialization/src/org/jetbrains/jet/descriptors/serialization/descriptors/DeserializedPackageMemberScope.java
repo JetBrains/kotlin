@@ -116,4 +116,10 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
     protected void addNonDeclaredDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
         // Do nothing
     }
+
+    @Nullable
+    @Override
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
+        return descriptorFinder.findPackage(packageFqName.child(name));
+    }
 }

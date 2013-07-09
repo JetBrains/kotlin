@@ -35,8 +35,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
 
         try {
-            nameResolver =
-                    NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
+            nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
 
             DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(storageManager, AnnotationDeserializer.UNSUPPORTED) {
 
@@ -66,11 +65,10 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                     }
                 }
 
-                @NotNull
+                @Nullable
                 @Override
-                protected NamespaceDescriptor getPackage(@NotNull FqName fqName) {
-                    assert fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) : "Wrong package: " + fqName;
-                    return BuiltinsNamespaceDescriptorImpl.this;
+                public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
+                    return fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? BuiltinsNamespaceDescriptorImpl.this : null;
                 }
 
                 @Override

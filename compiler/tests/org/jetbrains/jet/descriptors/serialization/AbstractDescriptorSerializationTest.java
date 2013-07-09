@@ -327,6 +327,12 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         public ClassDescriptor findClass(@NotNull ClassId classId) {
             return classes.fun(classId);
         }
+
+        @Nullable
+        @Override
+        public NamespaceDescriptor findPackage(@NotNull FqName name) {
+            return null;
+        }
     }
 
     private static class JavaDescriptorFinder implements DescriptorFinder {
@@ -345,7 +351,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             if (javaClassDescriptor != null) {
                 return javaClassDescriptor;
             }
-            NamespaceDescriptor packageDescriptor = getNamespace(classId.getPackageFqName());
+            NamespaceDescriptor packageDescriptor = findPackage(classId.getPackageFqName());
             if (packageDescriptor == null) {
                 throw new IllegalStateException("Java package not found: " + classId.getPackageFqName() + " for " + classId);
             }
@@ -368,8 +374,9 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         }
 
         @Nullable
-        private NamespaceDescriptor getNamespace(@NotNull FqName fqName) {
-            return javaDescriptorResolver.resolveNamespace(fqName);
+        @Override
+        public NamespaceDescriptor findPackage(@NotNull FqName name) {
+            return javaDescriptorResolver.resolveNamespace(name);
         }
     }
 }

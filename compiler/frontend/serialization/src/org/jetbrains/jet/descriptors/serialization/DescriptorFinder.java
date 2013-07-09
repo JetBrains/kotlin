@@ -19,17 +19,27 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface DescriptorFinder {
-
     DescriptorFinder EMPTY = new DescriptorFinder() {
         @Nullable
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
             return null;
         }
+
+        @Nullable
+        @Override
+        public NamespaceDescriptor findPackage(@NotNull FqName name) {
+            return null;
+        }
     };
 
     @Nullable
     ClassDescriptor findClass(@NotNull ClassId classId);
+
+    @Nullable
+    NamespaceDescriptor findPackage(@NotNull FqName name);
 }

@@ -66,6 +66,12 @@ public final class DeserializedDescriptorResolver {
         public ClassDescriptor findClass(@NotNull ClassId classId) {
             return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()));
         }
+
+        @Nullable
+        @Override
+        public NamespaceDescriptor findPackage(@NotNull FqName name) {
+            return javaNamespaceResolver.resolveNamespace(name);
+        }
     };
 
     @Inject

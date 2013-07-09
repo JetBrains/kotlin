@@ -80,12 +80,10 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
-        DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(new LockBasedStorageManager(),
-                                                                                     AnnotationDeserializer.UNSUPPORTED) {
-
+        DescriptorFinder finder = new AbstractDescriptorFinder(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED) {
             @NotNull
             @Override
-            protected NamespaceDescriptor getPackage(@NotNull FqName fqName) {
+            public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
                 assert fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) : "Unsupported package: " + fqName;
                 return actualNamespace;
             }
@@ -121,10 +119,10 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         // Make the lazy loader create classes
         for (ClassId classId : classProtos.keySet()) {
-            descriptorFinder.findClass(classId);
+            finder.findClass(classId);
         }
 
-        deserializeCallables(callableProtos, actualNamespace, nameResolver, descriptorFinder);
+        deserializeCallables(callableProtos, actualNamespace, nameResolver, finder);
 
         actualNamespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
         return actualNamespace;
@@ -166,8 +164,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             NameResolver nameResolver,
             DescriptorFinder descriptorFinder
     ) {
-        DescriptorDeserializer descriptorDeserializer;
-        descriptorDeserializer =
+        DescriptorDeserializer descriptorDeserializer =
                 DescriptorDeserializer.create(new LockBasedStorageManager(), actualNamespace, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED);
         for (ProtoBuf.Callable callableProto : callableProtos) {
             CallableMemberDescriptor callableMemberDescriptor = descriptorDeserializer.loadCallable(callableProto);

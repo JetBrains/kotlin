@@ -82,7 +82,7 @@ public class KotlinInfoForClassTest extends CodegenTestCase {
 
         @NotNull
         @Override
-        protected NamespaceDescriptor getPackage(@NotNull FqName fqName) {
+        public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
             assert fqName.equals(NAMESPACE_NAME) : "Unsupported namespace: " + fqName;
             return namespace;
         }
