@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.refactoring.inline;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.lang.Language;
 import com.intellij.lang.refactoring.InlineActionHandler;
@@ -18,11 +19,14 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.RefactoringBundle;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.RefactoringMessageDialog;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class KotlinInlineLocalHandler extends InlineActionHandler {
     @Override
@@ -36,7 +40,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
             return false;
         }
         JetProperty property = (JetProperty) element;
-        return property.getInitializer() != null && !property.isVar();
+        return !property.isVar();
     }
 
     @Override
@@ -44,10 +48,40 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
         final JetProperty val = (JetProperty) element;
         String name = val.getName();
 
-        final JetExpression initializer = val.getInitializer();
-        assert initializer != null : element.getText();
+        JetExpression initializerInDeclaration = val.getInitializer();
 
         final Collection<PsiReference> references = ReferencesSearch.search(val, GlobalSearchScope.allScope(project), false).findAll();
+
+        final Set<PsiElement> assignments = Sets.newHashSet();
+        for (PsiReference ref : references) {
+            PsiElement refElement = ref.getElement();
+            PsiElement parent = refElement.getParent();
+            if (parent instanceof JetBinaryExpression &&
+                ((JetBinaryExpression) parent).getOperationToken() == JetTokens.EQ &&
+                ((JetBinaryExpression) parent).getLeft() == refElement) {
+                assignments.add(parent);
+            }
+        }
+
+        final JetExpression initializer;
+        if (initializerInDeclaration != null) {
+            initializer = initializerInDeclaration;
+        }
+        else {
+            if (assignments.size() == 1) {
+                initializer = ((JetBinaryExpression) assignments.iterator().next()).getRight();
+            }
+            else {
+                initializer = null;
+            }
+            if (initializer == null) {
+                String key = assignments.isEmpty() ? "variable.has.no.initializer" : "variable.has.no.dominating.definition";
+                String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name));
+                CommonRefactoringUtil.showErrorHint(project, editor, message, RefactoringBundle.message("inline.variable.title"), HelpID.INLINE_VARIABLE);
+                return;
+            }
+        }
+
         PsiReference[] referencesArray = references.toArray(references.toArray(new PsiReference[references.size()]));
 
         if (editor != null && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -80,6 +114,10 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                     public void run() {
                         for (PsiReference reference : references) {
                             PsiElement referenceElement = reference.getElement();
+                            if (assignments.contains(referenceElement.getParent())) {
+                                continue;
+                            }
+
                             if (referenceElement.getParent() instanceof JetSimpleNameStringTemplateEntry &&
                                 !(initializer instanceof JetSimpleNameExpression)) {
                                 referenceElement.getParent().replace(JetPsiFactory.createBlockStringTemplateEntry(project, initializer));
@@ -87,6 +125,10 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                             else {
                                 referenceElement.replace(initializer.copy());
                             }
+                        }
+
+                        for (PsiElement assignment : assignments) {
+                            assignment.delete();
                         }
 
                         val.delete();

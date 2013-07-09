@@ -57,6 +57,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest("idea/testData/refactoring/inline/MethodReference.kt");
     }
     
+    @TestMetadata("MultipleInitializers.kt")
+    public void testMultipleInitializers() throws Exception {
+        doTest("idea/testData/refactoring/inline/MultipleInitializers.kt");
+    }
+    
     @TestMetadata("MultipleUsages.kt")
     public void testMultipleUsages() throws Exception {
         doTest("idea/testData/refactoring/inline/MultipleUsages.kt");
@@ -65,6 +70,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @TestMetadata("Parameter.kt")
     public void testParameter() throws Exception {
         doTest("idea/testData/refactoring/inline/Parameter.kt");
+    }
+    
+    @TestMetadata("SeparateInitializer.kt")
+    public void testSeparateInitializer() throws Exception {
+        doTest("idea/testData/refactoring/inline/SeparateInitializer.kt");
+    }
+    
+    @TestMetadata("SeparateInitializerInTry.kt")
+    public void testSeparateInitializerInTry() throws Exception {
+        doTest("idea/testData/refactoring/inline/SeparateInitializerInTry.kt");
+    }
+    
+    @TestMetadata("UsedInAssignment.kt")
+    public void testUsedInAssignment() throws Exception {
+        doTest("idea/testData/refactoring/inline/UsedInAssignment.kt");
     }
     
     @TestMetadata("ValWithoutInitializer.kt")
