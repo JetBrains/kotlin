@@ -19,10 +19,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.RefactoringMessageDialog;
-import com.intellij.util.Processor;
-import com.intellij.util.Query;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.Collection;
@@ -43,7 +40,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
     }
 
     @Override
-    public void inlineElement(Project project, Editor editor, PsiElement element) {
+    public void inlineElement(final Project project, Editor editor, PsiElement element) {
         final JetProperty val = (JetProperty) element;
         String name = val.getName();
 
@@ -82,7 +79,14 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                     @Override
                     public void run() {
                         for (PsiReference reference : references) {
-                            reference.getElement().replace(initializer.copy());
+                            PsiElement referenceElement = reference.getElement();
+                            if (referenceElement.getParent() instanceof JetSimpleNameStringTemplateEntry &&
+                                !(initializer instanceof JetSimpleNameExpression)) {
+                                referenceElement.getParent().replace(JetPsiFactory.createBlockStringTemplateEntry(project, initializer));
+                            }
+                            else {
+                                referenceElement.replace(initializer.copy());
+                            }
                         }
 
                         val.delete();

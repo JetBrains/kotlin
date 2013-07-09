@@ -219,6 +219,12 @@ public class JetPsiFactory {
         return whenEntry;
     }
 
+    public static JetStringTemplateEntryWithExpression createBlockStringTemplateEntry(@NotNull Project project, @NotNull JetExpression expression) {
+        JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression) createExpression(project,
+                                                                                                 "\"${" + expression.getText() + "}\"");
+        return (JetStringTemplateEntryWithExpression) stringTemplateExpression.getEntries()[0];
+    }
+
     @NotNull
     public static JetImportDirective createImportDirective(Project project, @NotNull String path) {
         return createImportDirective(project, new ImportPath(path));

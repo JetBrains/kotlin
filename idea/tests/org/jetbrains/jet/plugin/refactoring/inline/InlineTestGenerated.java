@@ -218,6 +218,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest("idea/testData/refactoring/inline/addParenthesis/UnaryIntoBinary.kt");
         }
         
+        @TestMetadata("StringTemplate.kt")
+        public void testStringTemplate() throws Exception {
+            doTest("idea/testData/refactoring/inline/addParenthesis/StringTemplate.kt");
+        }
+        
+        @TestMetadata("StringTemplateAlreadyInBraces.kt")
+        public void testStringTemplateAlreadyInBraces() throws Exception {
+            doTest("idea/testData/refactoring/inline/addParenthesis/StringTemplateAlreadyInBraces.kt");
+        }
+        
+        @TestMetadata("StringTemplateDontAdd.kt")
+        public void testStringTemplateDontAdd() throws Exception {
+            doTest("idea/testData/refactoring/inline/addParenthesis/StringTemplateDontAdd.kt");
+        }
+        
     }
     
     public static Test suite() {
