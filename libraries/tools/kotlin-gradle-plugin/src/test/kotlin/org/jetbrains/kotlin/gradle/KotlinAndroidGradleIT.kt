@@ -33,7 +33,7 @@ class KotlinAndroidGradleIT {
 
             val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
             val cmd = if (SystemInfo.isWindows)
-                listOf("cmd", "/C", "gradlew.bat", "build", pathToKotlinPlugin, "--no-daemon", "--stacktrace")
+                listOf("cmd", "/C", "gradlew.bat", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
             else
                 listOf("/bin/bash", "./gradlew", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
 
