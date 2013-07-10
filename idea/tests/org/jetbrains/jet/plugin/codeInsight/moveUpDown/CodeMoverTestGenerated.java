@@ -817,6 +817,16 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInWhile2.kt");
         }
         
+        @TestMetadata("closureWthoutSpaces1.kt")
+        public void testClosureWthoutSpaces1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces1.kt");
+        }
+        
+        @TestMetadata("closureWthoutSpaces2.kt")
+        public void testClosureWthoutSpaces2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces2.kt");
+        }
+        
         @TestMetadata("declaration1.kt")
         public void testDeclaration1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/declaration1.kt");

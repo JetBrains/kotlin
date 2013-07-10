@@ -47,9 +47,15 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         LineRange lineRange2 = getElementSourceLineRange(combinedRange.second, editor, oldRange);
         if (lineRange2 == null) return null;
 
+        LineRange parentLineRange = getElementSourceLineRange(parent, editor, oldRange);
+
         LineRange sourceRange = new LineRange(lineRange1.startLine, lineRange2.endLine);
-        sourceRange.firstElement = combinedRange.first;
-        sourceRange.lastElement = combinedRange.second;
+        if (parentLineRange != null && sourceRange.contains(parentLineRange)) {
+            sourceRange.firstElement = sourceRange.lastElement = parent;
+        } else {
+            sourceRange.firstElement = combinedRange.first;
+            sourceRange.lastElement = combinedRange.second;
+        }
 
         return sourceRange;
     }
