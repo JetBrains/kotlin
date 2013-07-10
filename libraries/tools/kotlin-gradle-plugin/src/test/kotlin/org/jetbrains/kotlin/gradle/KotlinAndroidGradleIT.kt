@@ -33,7 +33,7 @@ class KotlinAndroidGradleIT {
 
             val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
             val cmd = if (SystemInfo.isWindows)
-                listOf("cmd", "/C", "gradlew.bat", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
+                listOf("cmd", "/C", "gradlew.bat", "build", pathToKotlinPlugin, "--no-daemon", "--stacktrace")
             else
                 listOf("/bin/bash", "./gradlew", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
 
@@ -56,10 +56,18 @@ class KotlinAndroidGradleIT {
             println(buildOutput)
 
             assertEquals(result, 0)
-            assertTrue(buildOutput.contains(":compileDebugKotlin"), "Should contain ':compileDebugKotlin'")
-            assertTrue(buildOutput.contains(":compileDebug"), "Should contain ':compileDebug'")
-            assertTrue(buildOutput.contains(":compileReleaseKotlin"), "Should contain ':compileReleaseKotlin'")
-            assertTrue(buildOutput.contains(":compileRelease"), "Should contain ':compileRelease'")
+            assertTrue(buildOutput.contains(":compileFlavor1DebugKotlin"), "Should contain ':compileFlavor1DebugKotlin'")
+            assertTrue(buildOutput.contains(":compileFlavor2DebugKotlin"), "Should contain ':compileFlavor2DebugKotlin'")
+            assertTrue(buildOutput.contains(":compileFlavor1JnidebugKotlin"), "Should contain ':compileFlavor1JnidebugKotlin'")
+            assertTrue(buildOutput.contains(":compileFlavor1ReleaseKotlin"), "Should contain ':compileFlavor1ReleaseKotlin'")
+            assertTrue(buildOutput.contains(":compileFlavor2JnidebugKotlin"), "Should contain ':compileFlavor2JnidebugKotlin'")
+            assertTrue(buildOutput.contains(":compileFlavor2ReleaseKotlin"), "Should contain ':compileFlavor2ReleaseKotlin'")
+            assertTrue(buildOutput.contains(":compileFlavor1Debug"), "Should contain ':compileFlavor1Debug'")
+            assertTrue(buildOutput.contains(":compileFlavor2Debug"), "Should contain ':compileFlavor2Debug'")
+            assertTrue(buildOutput.contains(":compileFlavor1Jnidebug"), "Should contain ':compileFlavor1Jnidebug'")
+            assertTrue(buildOutput.contains(":compileFlavor2Jnidebug"), "Should contain ':compileFlavor2Jnidebug'")
+            assertTrue(buildOutput.contains(":compileFlavor1Release"), "Should contain ':compileFlavor1Release'")
+            assertTrue(buildOutput.contains(":compileFlavor2Release"), "Should contain ':compileFlavor2Release'")
 
             // Run the build second time, assert everything is up-to-date
 
@@ -82,10 +90,18 @@ class KotlinAndroidGradleIT {
             println(up2dateBuildOutput)
 
             assertEquals(up2dateResult, 0)
-            assertTrue(up2dateBuildOutput.contains(":compileDebugKotlin UP-TO-DATE"), "Should contain ':compileDebugKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileDebug UP-TO-DATE"), "Should contain ':compileDebug UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileReleaseKotlin UP-TO-DATE"), "Should contain ':compileReleaseKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileRelease UP-TO-DATE"), "Should contain ':compileRelease UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor1DebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor1DebugKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor2DebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor2DebugKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor1JnidebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor1JnidebugKotlin' UP-TO-DATE")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor1ReleaseKotlin UP-TO-DATE"), "Should contain ':compileFlavor1ReleaseKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor2JnidebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor2JnidebugKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor2ReleaseKotlin UP-TO-DATE"), "Should contain ':compileFlavor2ReleaseKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor1Debug UP-TO-DATE"), "Should contain ':compileFlavor1Debug UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor2Debug UP-TO-DATE"), "Should contain ':compileFlavor2Debug UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor1Jnidebug UP-TO-DATE"), "Should contain ':compileFlavor1Jnidebug UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor2Jnidebug UP-TO-DATE"), "Should contain ':compileFlavor2Jnidebug UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor1Release UP-TO-DATE"), "Should contain ':compileFlavor1Release UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":compileFlavor2Release UP-TO-DATE"), "Should contain ':compileFlavor2Release UP-TO-DATE'")
         }
 
 

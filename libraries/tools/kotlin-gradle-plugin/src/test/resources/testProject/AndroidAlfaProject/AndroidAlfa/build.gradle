@@ -25,4 +25,24 @@ android {
         minSdkVersion 7
         targetSdkVersion 16
     }
+
+    buildTypes {
+        jnidebug.initWith(buildTypes.debug)
+        jnidebug {
+            packageNameSuffix ".jnidebug"
+            jniDebugBuild true
+        }
+    }
+
+    productFlavors {
+        flavor1 {
+            packageName "com.example.flavor1"
+            versionCode 20
+        }
+
+        flavor2 {
+            packageName "com.example.flavor2"
+            minSdkVersion 14
+        }
+    }
 }
