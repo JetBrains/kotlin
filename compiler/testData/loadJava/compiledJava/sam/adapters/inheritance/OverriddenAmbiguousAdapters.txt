@@ -9,8 +9,8 @@ public trait OverriddenAmbiguousAdapters : java.lang.Object {
     }
     
     public trait Super : java.lang.Object {
-        public abstract /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
-        public abstract /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
         public abstract fun foo(/*0*/ p0: java.io.Closeable?): jet.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
     }

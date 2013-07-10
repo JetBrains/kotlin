@@ -3,12 +3,12 @@ package test
 public trait InheritedSimple : java.lang.Object {
     
     public trait Sub : test.InheritedSimple.Super {
-        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
     }
     
     public trait Super : java.lang.Object {
-        public abstract /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
     }
 }

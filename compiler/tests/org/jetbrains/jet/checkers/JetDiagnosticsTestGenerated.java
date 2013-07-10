@@ -3234,6 +3234,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/j+k/ambiguousSamAdapters.kt");
             }
             
+            @TestMetadata("cantDeclareIfSamAdapterIsInherited.kt")
+            public void testCantDeclareIfSamAdapterIsInherited() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/cantDeclareIfSamAdapterIsInherited.kt");
+            }
+            
             @TestMetadata("inheritAbstractSamAdapter.kt")
             public void testInheritAbstractSamAdapter() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/inheritAbstractSamAdapter.kt");

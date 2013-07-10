@@ -2,8 +2,8 @@ package test
 
 public open class AmbiguousAdapters : java.lang.Object {
     public constructor AmbiguousAdapters()
-    public open /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
-    public open /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+    public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+    public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
     public open fun foo(/*0*/ p0: java.io.Closeable?): jet.Unit
     public open fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
 }

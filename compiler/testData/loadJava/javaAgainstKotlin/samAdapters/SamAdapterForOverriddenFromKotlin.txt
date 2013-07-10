@@ -2,7 +2,7 @@ package test
 
 public open class Sub : test.Super {
     public constructor Sub()
-    public open /*synthesized*/ fun foo(/*0*/ r: () -> jet.Unit): jet.Unit
+    public final /*synthesized*/ fun foo(/*0*/ r: () -> jet.Unit): jet.Unit
     public open override /*1*/ fun foo(/*0*/ r: java.lang.Runnable): jet.Unit
 }
 

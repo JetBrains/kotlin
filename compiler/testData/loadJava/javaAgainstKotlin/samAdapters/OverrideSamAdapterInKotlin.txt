@@ -8,6 +8,6 @@ public final class Sub : test.Super {
 
 public open class Super : java.lang.Object {
     public constructor Super()
-    public/*package*/ open /*synthesized*/ fun foo(/*0*/ r: (() -> jet.Unit)?): jet.Unit
+    public/*package*/ final /*synthesized*/ fun foo(/*0*/ r: (() -> jet.Unit)?): jet.Unit
     public/*package*/ open fun foo(/*0*/ r: java.lang.Runnable?): jet.Unit
 }

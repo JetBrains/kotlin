@@ -3,17 +3,17 @@ package test
 public trait InheritedSameAdapters : java.lang.Object {
     
     public trait Sub : test.InheritedSameAdapters.Super1, test.InheritedSameAdapters.Super2 {
-        public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public final override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
         public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
     }
     
     public trait Super1 : java.lang.Object {
-        public abstract /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
     }
     
     public trait Super2 : java.lang.Object {
-        public abstract /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
     }
 }
