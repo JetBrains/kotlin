@@ -41,6 +41,6 @@ public final class WholeProjectAnalyzerFacade {
 
     public static BindingContext getContextForExpression(@NotNull JetExpression jetExpression) {
         ResolveSession resolveSession = getLazyResolveSessionForFile((JetFile) jetExpression.getContainingFile());
-        return ResolveSessionUtils.resolveToExpression(resolveSession, jetExpression);
+        return ResolveSessionUtils.resolveToElement(resolveSession, jetExpression);
     }
 }

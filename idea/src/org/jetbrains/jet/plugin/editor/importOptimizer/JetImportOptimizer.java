@@ -179,7 +179,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             @Override
             public void visitForExpression(JetForExpression expression) {
                 ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
-                BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
+                BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange());
                 addResolvedCallFqName(resolvedCall);
 
@@ -189,7 +189,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             @Override
             public void visitMultiDeclaration(JetMultiDeclaration declaration) {
                 ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) declaration.getContainingFile());
-                BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, declaration);
+                BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, declaration);
                 List<JetMultiDeclarationEntry> entries = declaration.getEntries();
                 for (JetMultiDeclarationEntry entry : entries) {
                     ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);

@@ -61,7 +61,7 @@ public class CompletionSession {
         this.jetReference = jetReference;
 
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
-        BindingContext expressionBindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, jetReference.getExpression());
+        BindingContext expressionBindingContext = ResolveSessionUtils.resolveToElement(resolveSession, jetReference.getExpression());
         JetScope scope = expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
 
         inDescriptor = scope != null ? scope.getContainingDeclaration() : null;

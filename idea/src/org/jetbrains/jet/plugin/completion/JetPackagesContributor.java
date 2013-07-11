@@ -72,7 +72,7 @@ public class JetPackagesContributor extends CompletionContributor {
 
                            ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
                                    (JetFile) simpleNameReference.getExpression().getContainingFile());
-                           BindingContext bindingContext = ResolveSessionUtils.resolveToExpression(
+                           BindingContext bindingContext = ResolveSessionUtils.resolveToElement(
                                    resolveSession, simpleNameReference.getExpression());
 
                            for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(

@@ -212,7 +212,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         }
 
         ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession((JetFile) initializer.getContainingFile());
-        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, initializer);
+        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, initializer);
         SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
         if (fun == null || ErrorUtils.containsErrorType(fun)) {
             return null;
@@ -284,7 +284,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             @NotNull ResolveSession resolveSession
     ) {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, functionLiteralExpression);
+        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             AbstractDiagnosticFactory factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
@@ -328,7 +328,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
         JetExpression callee = callExpression.getCalleeExpression();
         ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession((JetFile) initializer.getContainingFile());
-        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, initializer);
+        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, initializer);
         ResolvedCall<? extends CallableDescriptor> call = context.get(BindingContext.RESOLVED_CALL, callee);
         if (call == null) {
             return null;
@@ -353,7 +353,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             @NotNull ResolveSession resolveSession
     ) {
         JetExpression callee = callExpression.getCalleeExpression();
-        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, callExpression);
+        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, callExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             if (diagnostic.getFactory() == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER && diagnostic.getPsiElement() == callee) {
                 return true;

@@ -58,7 +58,7 @@ public class JetSimpleNameReference extends JetPsiReference {
     @Override
     public Object[] getVariants() {
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) getExpression().getContainingFile());
-        BindingContext bindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, getExpression());
+        BindingContext bindingContext = ResolveSessionUtils.resolveToElement(resolveSession, getExpression());
 
         return DescriptorLookupConverter.collectLookupElements(
                 resolveSession, bindingContext, TipsManager.getReferenceVariants(myExpression, bindingContext));

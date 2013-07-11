@@ -113,16 +113,16 @@ public class ResolveSessionUtils {
         }
     }
 
-    public static @NotNull BindingContext resolveToExpression(
+    public static @NotNull BindingContext resolveToElement(
             @NotNull ResolveSession resolveSession,
-            @NotNull JetElement expression
+            @NotNull JetElement jetElement
     ) {
         DelegatingBindingTrace trace = new DelegatingBindingTrace(
-                resolveSession.getBindingContext(), "trace to resolve expression", expression);
-        JetFile file = (JetFile) expression.getContainingFile();
+                resolveSession.getBindingContext(), "trace to resolve jetElement", jetElement);
+        JetFile file = (JetFile) jetElement.getContainingFile();
 
         @SuppressWarnings("unchecked")
-        PsiElement topmostCandidateForAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(expression,
+        PsiElement topmostCandidateForAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(jetElement,
                 JetNamedFunction.class, JetClassInitializer.class,
                 JetProperty.class, JetDelegationSpecifierList.class,
                 JetImportDirective.class);
@@ -155,8 +155,8 @@ public class ResolveSessionUtils {
             return trace.getBindingContext();
         }
 
-        if (expression instanceof JetExpression) {
-            JetExpression jetExpression = (JetExpression) expression;
+        if (jetElement instanceof JetExpression) {
+            JetExpression jetExpression = (JetExpression) jetElement;
             // Setup resolution scope explicitly
             if (trace.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, jetExpression) == null) {
                 JetScope scope = getExpressionMemberScope(resolveSession, jetExpression);

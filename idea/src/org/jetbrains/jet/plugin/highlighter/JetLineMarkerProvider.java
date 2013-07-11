@@ -243,7 +243,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if ((element instanceof JetNamedFunction && ((JetNamedFunction) element).isLocal()) ||
                 element instanceof JetProperty && ((JetProperty) element).isLocal()) {
-            bindingContext = ResolveSessionUtils.resolveToExpression(sessionForFile, (JetElement) element);
+            bindingContext = ResolveSessionUtils.resolveToElement(sessionForFile, (JetElement) element);
         }
         else {
             try {
