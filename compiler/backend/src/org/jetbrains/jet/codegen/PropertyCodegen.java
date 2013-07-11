@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -117,8 +118,7 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateBackingField(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
-        //noinspection ConstantConditions
-        boolean hasBackingField = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
+        boolean hasBackingField = Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
         boolean isDelegated = p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null;
         if (hasBackingField || isDelegated) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
@@ -132,7 +132,20 @@ public class PropertyCodegen extends GenerationStateAware {
 
             AnnotationCodegen.forField(fieldVisitor, typeMapper).genAnnotations(propertyDescriptor);
         }
-
+        else if (!propertyDescriptor.getAnnotations().isEmpty()) {
+            // Annotations on properties without backing fields are stored in bytecode on an empty synthetic method. This way they're still
+            // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
+            MethodVisitor mv = v.newMethod(null,
+                                           ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC,
+                                           JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyDescriptor.getName()),
+                                           JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE,
+                                           null,
+                                           null);
+            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(propertyDescriptor);
+            mv.visitCode();
+            mv.visitInsn(Opcodes.RETURN);
+            mv.visitEnd();
+        }
     }
 
     private FieldVisitor generateBackingField(JetNamedDeclaration element, PropertyDescriptor propertyDescriptor, boolean isDelegate, JetType jetType, Object defaultValue) {
