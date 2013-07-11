@@ -115,7 +115,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <pluginManagement>
             <plugins>
@@ -225,4 +224,32 @@
 
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>sign-artifacts</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <configuration>
+                            <passphrase>${kotlin.key.passphrase}</passphrase>
+                            <keyname>${kotlin.key.name}</keyname>
+                            <homedir>${highest-basedir}/.gnupg</homedir>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
