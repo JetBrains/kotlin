@@ -37,6 +37,7 @@ import java.util.List;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter;
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
+import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.AnnotatedCallableKind;
 
 public class DescriptorDeserializer {
 
@@ -153,7 +154,7 @@ public class DescriptorDeserializer {
             boolean isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags);
             if (isNotDefault) {
                 getter = new PropertyGetterDescriptorImpl(
-                        property, Collections.<AnnotationDescriptor>emptyList(),
+                        property, getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
                         modality(Flags.MODALITY.get(getterFlags)), visibility(Flags.VISIBILITY.get(getterFlags)),
                         isNotDefault, !isNotDefault, property.getKind()
                 );
@@ -169,7 +170,7 @@ public class DescriptorDeserializer {
             boolean isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags);
             if (isNotDefault) {
                 setter = new PropertySetterDescriptorImpl(
-                        property, getAnnotations(proto, setterFlags),
+                        property, getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
                         modality(Flags.MODALITY.get(setterFlags)), visibility(Flags.VISIBILITY.get(setterFlags)),
                         isNotDefault, !isNotDefault, property.getKind()
                 );
@@ -192,7 +193,7 @@ public class DescriptorDeserializer {
     private PropertyDescriptorImpl createPropertyDescriptor(@NotNull Callable proto) {
         int flags = proto.getFlags();
         Name name = nameResolver.getName(proto.getName());
-        List<AnnotationDescriptor> annotations = getAnnotations(proto, proto.getFlags());
+        List<AnnotationDescriptor> annotations = Collections.emptyList(); // TODO: getAnnotations(proto, flags, PROPERTY);
         Visibility visibility = visibility(Flags.VISIBILITY.get(flags));
         Callable.CallableKind callableKind = Flags.CALLABLE_KIND.get(flags);
 
@@ -221,7 +222,7 @@ public class DescriptorDeserializer {
         int flags = proto.getFlags();
         SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
                 containingDeclaration,
-                getAnnotations(proto, proto.getFlags()),
+                getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
                 nameResolver.getName(proto.getName()),
                 memberKind(Flags.MEMBER_KIND.get(flags))
         );
@@ -252,7 +253,7 @@ public class DescriptorDeserializer {
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
         ConstructorDescriptorImpl descriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
-                getAnnotations(proto, proto.getFlags()),
+                getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
                 // TODO: primary
                 true);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
@@ -268,11 +269,12 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<AnnotationDescriptor> getAnnotations(@NotNull Callable proto, int flags) {
+    private List<AnnotationDescriptor> getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
         assert containingDeclaration instanceof ClassOrNamespaceDescriptor
                 : "Only members in classes or namespaces should be serialized: " + containingDeclaration;
         return Flags.HAS_ANNOTATIONS.get(flags)
-               ? annotationDeserializer.loadCallableAnnotations((ClassOrNamespaceDescriptor) containingDeclaration, proto)
+               ? annotationDeserializer
+                       .loadCallableAnnotations((ClassOrNamespaceDescriptor) containingDeclaration, proto, nameResolver, kind)
                : Collections.<AnnotationDescriptor>emptyList();
     }
 

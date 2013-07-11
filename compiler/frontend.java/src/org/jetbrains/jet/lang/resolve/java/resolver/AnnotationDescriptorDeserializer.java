@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -175,22 +176,39 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @Override
     public List<AnnotationDescriptor> loadCallableAnnotations(
             @NotNull ClassOrNamespaceDescriptor container,
-            @NotNull ProtoBuf.Callable callableProto
+            @NotNull ProtoBuf.Callable proto,
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind
     ) {
+        String signature = getCallableSignature(proto, nameResolver, kind);
+        if (signature == null) return Collections.emptyList();
+
         VirtualFile file = findVirtualFileByDescriptor(container);
 
         try {
             // TODO: calculate this only once for each container
             Map<String, List<AnnotationDescriptor>> memberAnnotations = loadMemberAnnotationsFromFile(file);
 
-            String signature = JavaProtoBufUtil.loadJavaSignature(callableProto);
-            if (signature == null) return Collections.emptyList();
-
             List<AnnotationDescriptor> annotations = memberAnnotations.get(signature);
             return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
         }
         catch (IOException e) {
             throw ExceptionUtils.rethrow(e);
+        }
+    }
+
+    @Nullable
+    private static String getCallableSignature(
+            @NotNull ProtoBuf.Callable proto,
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind
+    ) {
+        switch (kind) {
+            case FUNCTION:
+                return JavaProtoBufUtil.loadMethodSignature(proto, nameResolver);
+            // TODO: getters, setters
+            default:
+                return null;
         }
     }
 

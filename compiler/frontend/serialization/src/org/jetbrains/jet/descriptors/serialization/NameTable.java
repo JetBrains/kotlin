@@ -19,10 +19,11 @@ package org.jetbrains.jet.descriptors.serialization;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
@@ -42,9 +43,7 @@ public class NameTable {
                 }
 
                 @Override
-                public boolean equals(
-                        QualifiedName.Builder o1, QualifiedName.Builder o2
-                ) {
+                public boolean equals(QualifiedName.Builder o1, QualifiedName.Builder o2) {
                     return o1.getParentQualifiedName() == o2.getParentQualifiedName()
                            && o1.getShortName() == o2.getShortName()
                            && o1.getKind() == o2.getKind();
@@ -71,18 +70,17 @@ public class NameTable {
         return simpleNames.intern(name.asString());
     }
 
-    public int getFqNameIndex(@NotNull ClassDescriptor classDescriptor) {
+    public int getFqNameIndex(@NotNull ClassOrNamespaceDescriptor descriptor) {
         QualifiedName.Builder builder = QualifiedName.newBuilder();
-        builder.setKind(QualifiedName.Kind.CLASS);
-        builder.setShortName(getSimpleNameIndex(classDescriptor.getName()));
+        if (descriptor instanceof ClassDescriptor) {
+            builder.setKind(QualifiedName.Kind.CLASS);
+        }
+        builder.setShortName(getSimpleNameIndex(descriptor.getName()));
 
-        DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
             NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-            if (DescriptorUtils.isRootNamespace(namespaceDescriptor)) {
-                builder.clearParentQualifiedName();
-            }
-            else {
+            if (!DescriptorUtils.isRootNamespace(namespaceDescriptor)) {
                 builder.setParentQualifiedName(getFqNameIndex(namespaceDescriptor));
             }
         }
@@ -91,28 +89,22 @@ public class NameTable {
             builder.setParentQualifiedName(getFqNameIndex(outerClass));
         }
         else {
-            throw new IllegalStateException("FQ names are only stored for top-level or inner classes: " + classDescriptor);
+            throw new IllegalStateException("FQ names are only stored for top-level or inner classes: " + descriptor);
         }
 
         return qualifiedNames.intern(builder);
     }
 
-    public int getFqNameIndex(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        QualifiedName.Builder builder = QualifiedName.newBuilder();
-        //default: builder.setKind(QualifiedNameTable.QualifiedName.Kind.PACKAGE);
-        builder.setShortName(getSimpleNameIndex(namespaceDescriptor.getName()));
-
-        NamespaceDescriptorParent containingDeclaration = namespaceDescriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
-            NamespaceDescriptor parentNamespace = (NamespaceDescriptor) containingDeclaration;
-            if (!DescriptorUtils.isRootNamespace(parentNamespace)) {
-                builder.setParentQualifiedName(getFqNameIndex(parentNamespace));
+    public int getFqNameIndex(@NotNull FqName fqName) {
+        int result = -1;
+        for (Name segment : fqName.pathSegments()) {
+            QualifiedName.Builder builder = QualifiedName.newBuilder();
+            builder.setShortName(getSimpleNameIndex(segment));
+            if (result != -1) {
+                builder.setParentQualifiedName(result);
             }
+            result = qualifiedNames.intern(builder);
         }
-        else {
-            builder.clearParentQualifiedName();
-        }
-
-        return qualifiedNames.intern(builder);
+        return result;
     }
 }

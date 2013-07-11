@@ -17,14 +17,15 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.descriptors.serialization.NameTable;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 
 public class JavaSerializerExtension extends SerializerExtension {
     private final JetTypeMapper typeMapper;
@@ -33,20 +34,20 @@ public class JavaSerializerExtension extends SerializerExtension {
         this.typeMapper = typeMapper;
     }
 
+    // TODO: mapSignature should be done upon generation of the member instead, because we don't know enough at this point to map correctly
     @Override
-    public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
-        JvmMethodSignature signature = mapSignature(callable);
-        if (signature != null) {
-            JavaProtoBufUtil.saveJavaSignature(proto, signature.getAsmMethod().toString());
+    public void serializeCallable(
+            @NotNull CallableMemberDescriptor callable,
+            @NotNull ProtoBuf.Callable.Builder proto,
+            @NotNull NameTable nameTable
+    ) {
+        if (callable instanceof FunctionDescriptor) {
+            Method method = typeMapper.mapSignature((FunctionDescriptor) callable).getAsmMethod();
+            JavaProtoBufUtil.saveMethodSignature(proto, method, nameTable);
         }
-    }
-
-    // TODO: this should be done upon generation of the member instead, because we don't know enough at this point to map correctly
-    @Nullable
-    private JvmMethodSignature mapSignature(@NotNull CallableMemberDescriptor descriptor) {
-        if (descriptor instanceof FunctionDescriptor) {
-            return typeMapper.mapSignature((FunctionDescriptor) descriptor);
+        else if (callable instanceof PropertyDescriptor) {
+            PropertyDescriptor property = (PropertyDescriptor) callable;
+            // TODO
         }
-        return null;
     }
 }

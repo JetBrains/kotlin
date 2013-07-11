@@ -1,6 +1,7 @@
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
@@ -19,7 +20,10 @@ public interface AnnotationDeserializer {
         @NotNull
         @Override
         public List<AnnotationDescriptor> loadCallableAnnotations(
-                @NotNull ClassOrNamespaceDescriptor container, @NotNull ProtoBuf.Callable callableProto
+                @NotNull ClassOrNamespaceDescriptor container,
+                @NotNull ProtoBuf.Callable proto,
+                @NotNull NameResolver nameResolver,
+                @NotNull AnnotatedCallableKind kind
         ) {
             return notSupported();
         }
@@ -30,10 +34,17 @@ public interface AnnotationDeserializer {
             return notSupported();
         }
 
+        @NotNull
         private List<AnnotationDescriptor> notSupported() {
             throw new UnsupportedOperationException("Annotations are not supported");
         }
     };
+
+    enum AnnotatedCallableKind {
+        FUNCTION,
+        PROPERTY_GETTER,
+        PROPERTY_SETTER
+    }
 
     @NotNull
     List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto);
@@ -41,7 +52,9 @@ public interface AnnotationDeserializer {
     @NotNull
     List<AnnotationDescriptor> loadCallableAnnotations(
             @NotNull ClassOrNamespaceDescriptor container,
-            @NotNull ProtoBuf.Callable callableProto
+            @NotNull ProtoBuf.Callable proto,
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind
     );
 
     @NotNull

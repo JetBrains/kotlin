@@ -76,11 +76,7 @@ public class NameResolver {
     }
 
     @Nullable
-    private QualifiedName renderFqName(
-            StringBuilder sb,
-            QualifiedName fqNameProto,
-            QualifiedName.Kind kind
-    ) {
+    private QualifiedName renderFqName(StringBuilder sb, QualifiedName fqNameProto, QualifiedName.Kind kind) {
         QualifiedName result = null;
         if (fqNameProto.hasParentQualifiedName()) {
             QualifiedName parentProto = qualifiedNames.getQualifiedName(fqNameProto.getParentQualifiedName());
@@ -94,5 +90,15 @@ public class NameResolver {
         }
         sb.append(simpleNames.getName(fqNameProto.getShortName()));
         return result;
+    }
+
+    @NotNull
+    public FqName getFqName(int index) {
+        QualifiedName qualifiedName = qualifiedNames.getQualifiedName(index);
+        Name shortName = getName(qualifiedName.getShortName());
+        if (!qualifiedName.hasParentQualifiedName()) {
+            return FqName.topLevel(shortName);
+        }
+        return getFqName(qualifiedName.getParentQualifiedName()).child(shortName);
     }
 }

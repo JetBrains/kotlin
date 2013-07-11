@@ -7,20 +7,1592 @@ public final class JavaProtoBuf {
   private JavaProtoBuf() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
-    registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.javaSignature);
+    registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.methodSignature);
+    registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.propertySignature);
   }
-  public static final int JAVA_SIGNATURE_FIELD_NUMBER = 100;
+  public interface JavaTypeOrBuilder
+      extends com.google.protobuf.MessageLiteOrBuilder {
+    
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaType.PrimitiveType primitive_type = 1;
+    boolean hasPrimitiveType();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType getPrimitiveType();
+    
+    // optional int32 class_fq_name = 2;
+    boolean hasClassFqName();
+    int getClassFqName();
+    
+    // optional int32 array_dimension = 3 [default = 0];
+    boolean hasArrayDimension();
+    int getArrayDimension();
+  }
+  public static final class JavaType extends
+      com.google.protobuf.GeneratedMessageLite
+      implements JavaTypeOrBuilder {
+    // Use JavaType.newBuilder() to construct.
+    private JavaType(Builder builder) {
+      super(builder);
+    }
+    private JavaType(boolean noInit) {}
+    
+    private static final JavaType defaultInstance;
+    public static JavaType getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public JavaType getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public enum PrimitiveType
+        implements com.google.protobuf.Internal.EnumLite {
+      VOID(0, 0),
+      BOOLEAN(1, 1),
+      CHAR(2, 2),
+      BYTE(3, 3),
+      SHORT(4, 4),
+      INT(5, 5),
+      FLOAT(6, 6),
+      LONG(7, 7),
+      DOUBLE(8, 8),
+      ;
+      
+      public static final int VOID_VALUE = 0;
+      public static final int BOOLEAN_VALUE = 1;
+      public static final int CHAR_VALUE = 2;
+      public static final int BYTE_VALUE = 3;
+      public static final int SHORT_VALUE = 4;
+      public static final int INT_VALUE = 5;
+      public static final int FLOAT_VALUE = 6;
+      public static final int LONG_VALUE = 7;
+      public static final int DOUBLE_VALUE = 8;
+      
+      
+      public final int getNumber() { return value; }
+      
+      public static PrimitiveType valueOf(int value) {
+        switch (value) {
+          case 0: return VOID;
+          case 1: return BOOLEAN;
+          case 2: return CHAR;
+          case 3: return BYTE;
+          case 4: return SHORT;
+          case 5: return INT;
+          case 6: return FLOAT;
+          case 7: return LONG;
+          case 8: return DOUBLE;
+          default: return null;
+        }
+      }
+      
+      public static com.google.protobuf.Internal.EnumLiteMap<PrimitiveType>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<PrimitiveType>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<PrimitiveType>() {
+              public PrimitiveType findValueByNumber(int number) {
+                return PrimitiveType.valueOf(number);
+              }
+            };
+      
+      private final int value;
+      
+      private PrimitiveType(int index, int value) {
+        this.value = value;
+      }
+      
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.jet.descriptors.serialization.JavaType.PrimitiveType)
+    }
+    
+    private int bitField0_;
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaType.PrimitiveType primitive_type = 1;
+    public static final int PRIMITIVE_TYPE_FIELD_NUMBER = 1;
+    private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType primitiveType_;
+    public boolean hasPrimitiveType() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType getPrimitiveType() {
+      return primitiveType_;
+    }
+    
+    // optional int32 class_fq_name = 2;
+    public static final int CLASS_FQ_NAME_FIELD_NUMBER = 2;
+    private int classFqName_;
+    public boolean hasClassFqName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public int getClassFqName() {
+      return classFqName_;
+    }
+    
+    // optional int32 array_dimension = 3 [default = 0];
+    public static final int ARRAY_DIMENSION_FIELD_NUMBER = 3;
+    private int arrayDimension_;
+    public boolean hasArrayDimension() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public int getArrayDimension() {
+      return arrayDimension_;
+    }
+    
+    private void initFields() {
+      primitiveType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType.VOID;
+      classFqName_ = 0;
+      arrayDimension_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeEnum(1, primitiveType_.getNumber());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, classFqName_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, arrayDimension_);
+      }
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1, primitiveType_.getNumber());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, classFqName_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, arrayDimension_);
+      }
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType, Builder>
+        implements org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaTypeOrBuilder {
+      // Construct using org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        primitiveType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType.VOID;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        classFqName_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        arrayDimension_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getDefaultInstanceForType() {
+        return org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType build() {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType buildPartial() {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType result = new org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.primitiveType_ = primitiveType_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.classFqName_ = classFqName_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.arrayDimension_ = arrayDimension_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+      
+      public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType other) {
+        if (other == org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance()) return this;
+        if (other.hasPrimitiveType()) {
+          setPrimitiveType(other.getPrimitiveType());
+        }
+        if (other.hasClassFqName()) {
+          setClassFqName(other.getClassFqName());
+        }
+        if (other.hasArrayDimension()) {
+          setArrayDimension(other.getArrayDimension());
+        }
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              
+              return this;
+            default: {
+              if (!parseUnknownField(input, extensionRegistry, tag)) {
+                
+                return this;
+              }
+              break;
+            }
+            case 8: {
+              int rawValue = input.readEnum();
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType value = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType.valueOf(rawValue);
+              if (value != null) {
+                bitField0_ |= 0x00000001;
+                primitiveType_ = value;
+              }
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              classFqName_ = input.readInt32();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              arrayDimension_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // optional .org.jetbrains.jet.descriptors.serialization.JavaType.PrimitiveType primitive_type = 1;
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType primitiveType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType.VOID;
+      public boolean hasPrimitiveType() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType getPrimitiveType() {
+        return primitiveType_;
+      }
+      public Builder setPrimitiveType(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000001;
+        primitiveType_ = value;
+        
+        return this;
+      }
+      public Builder clearPrimitiveType() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        primitiveType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.PrimitiveType.VOID;
+        
+        return this;
+      }
+      
+      // optional int32 class_fq_name = 2;
+      private int classFqName_ ;
+      public boolean hasClassFqName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public int getClassFqName() {
+        return classFqName_;
+      }
+      public Builder setClassFqName(int value) {
+        bitField0_ |= 0x00000002;
+        classFqName_ = value;
+        
+        return this;
+      }
+      public Builder clearClassFqName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        classFqName_ = 0;
+        
+        return this;
+      }
+      
+      // optional int32 array_dimension = 3 [default = 0];
+      private int arrayDimension_ ;
+      public boolean hasArrayDimension() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public int getArrayDimension() {
+        return arrayDimension_;
+      }
+      public Builder setArrayDimension(int value) {
+        bitField0_ |= 0x00000004;
+        arrayDimension_ = value;
+        
+        return this;
+      }
+      public Builder clearArrayDimension() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        arrayDimension_ = 0;
+        
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.JavaType)
+    }
+    
+    static {
+      defaultInstance = new JavaType(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.JavaType)
+  }
+  
+  public interface JavaMethodSignatureOrBuilder
+      extends com.google.protobuf.MessageLiteOrBuilder {
+    
+    // required int32 name = 1;
+    boolean hasName();
+    int getName();
+    
+    // required .org.jetbrains.jet.descriptors.serialization.JavaType return_type = 2;
+    boolean hasReturnType();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getReturnType();
+    
+    // repeated .org.jetbrains.jet.descriptors.serialization.JavaType parameter_type = 3;
+    java.util.List<org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType> 
+        getParameterTypeList();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getParameterType(int index);
+    int getParameterTypeCount();
+  }
+  public static final class JavaMethodSignature extends
+      com.google.protobuf.GeneratedMessageLite
+      implements JavaMethodSignatureOrBuilder {
+    // Use JavaMethodSignature.newBuilder() to construct.
+    private JavaMethodSignature(Builder builder) {
+      super(builder);
+    }
+    private JavaMethodSignature(boolean noInit) {}
+    
+    private static final JavaMethodSignature defaultInstance;
+    public static JavaMethodSignature getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public JavaMethodSignature getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    private int bitField0_;
+    // required int32 name = 1;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private int name_;
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public int getName() {
+      return name_;
+    }
+    
+    // required .org.jetbrains.jet.descriptors.serialization.JavaType return_type = 2;
+    public static final int RETURN_TYPE_FIELD_NUMBER = 2;
+    private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType returnType_;
+    public boolean hasReturnType() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getReturnType() {
+      return returnType_;
+    }
+    
+    // repeated .org.jetbrains.jet.descriptors.serialization.JavaType parameter_type = 3;
+    public static final int PARAMETER_TYPE_FIELD_NUMBER = 3;
+    private java.util.List<org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType> parameterType_;
+    public java.util.List<org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType> getParameterTypeList() {
+      return parameterType_;
+    }
+    public java.util.List<? extends org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaTypeOrBuilder> 
+        getParameterTypeOrBuilderList() {
+      return parameterType_;
+    }
+    public int getParameterTypeCount() {
+      return parameterType_.size();
+    }
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getParameterType(int index) {
+      return parameterType_.get(index);
+    }
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaTypeOrBuilder getParameterTypeOrBuilder(
+        int index) {
+      return parameterType_.get(index);
+    }
+    
+    private void initFields() {
+      name_ = 0;
+      returnType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+      parameterType_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasReturnType()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, name_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, returnType_);
+      }
+      for (int i = 0; i < parameterType_.size(); i++) {
+        output.writeMessage(3, parameterType_.get(i));
+      }
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, name_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, returnType_);
+      }
+      for (int i = 0; i < parameterType_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, parameterType_.get(i));
+      }
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature, Builder>
+        implements org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignatureOrBuilder {
+      // Construct using org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        name_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        returnType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        parameterType_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getDefaultInstanceForType() {
+        return org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature build() {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature buildPartial() {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature result = new org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.name_ = name_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.returnType_ = returnType_;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          parameterType_ = java.util.Collections.unmodifiableList(parameterType_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.parameterType_ = parameterType_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+      
+      public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature other) {
+        if (other == org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance()) return this;
+        if (other.hasName()) {
+          setName(other.getName());
+        }
+        if (other.hasReturnType()) {
+          mergeReturnType(other.getReturnType());
+        }
+        if (!other.parameterType_.isEmpty()) {
+          if (parameterType_.isEmpty()) {
+            parameterType_ = other.parameterType_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureParameterTypeIsMutable();
+            parameterType_.addAll(other.parameterType_);
+          }
+          
+        }
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasName()) {
+          
+          return false;
+        }
+        if (!hasReturnType()) {
+          
+          return false;
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              
+              return this;
+            default: {
+              if (!parseUnknownField(input, extensionRegistry, tag)) {
+                
+                return this;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              name_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.newBuilder();
+              if (hasReturnType()) {
+                subBuilder.mergeFrom(getReturnType());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setReturnType(subBuilder.buildPartial());
+              break;
+            }
+            case 26: {
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.newBuilder();
+              input.readMessage(subBuilder, extensionRegistry);
+              addParameterType(subBuilder.buildPartial());
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required int32 name = 1;
+      private int name_ ;
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public int getName() {
+        return name_;
+      }
+      public Builder setName(int value) {
+        bitField0_ |= 0x00000001;
+        name_ = value;
+        
+        return this;
+      }
+      public Builder clearName() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        name_ = 0;
+        
+        return this;
+      }
+      
+      // required .org.jetbrains.jet.descriptors.serialization.JavaType return_type = 2;
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType returnType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+      public boolean hasReturnType() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getReturnType() {
+        return returnType_;
+      }
+      public Builder setReturnType(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        returnType_ = value;
+        
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder setReturnType(
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder builderForValue) {
+        returnType_ = builderForValue.build();
+        
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder mergeReturnType(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            returnType_ != org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance()) {
+          returnType_ =
+            org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.newBuilder(returnType_).mergeFrom(value).buildPartial();
+        } else {
+          returnType_ = value;
+        }
+        
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder clearReturnType() {
+        returnType_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+        
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      
+      // repeated .org.jetbrains.jet.descriptors.serialization.JavaType parameter_type = 3;
+      private java.util.List<org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType> parameterType_ =
+        java.util.Collections.emptyList();
+      private void ensureParameterTypeIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          parameterType_ = new java.util.ArrayList<org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType>(parameterType_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      
+      public java.util.List<org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType> getParameterTypeList() {
+        return java.util.Collections.unmodifiableList(parameterType_);
+      }
+      public int getParameterTypeCount() {
+        return parameterType_.size();
+      }
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getParameterType(int index) {
+        return parameterType_.get(index);
+      }
+      public Builder setParameterType(
+          int index, org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureParameterTypeIsMutable();
+        parameterType_.set(index, value);
+        
+        return this;
+      }
+      public Builder setParameterType(
+          int index, org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder builderForValue) {
+        ensureParameterTypeIsMutable();
+        parameterType_.set(index, builderForValue.build());
+        
+        return this;
+      }
+      public Builder addParameterType(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureParameterTypeIsMutable();
+        parameterType_.add(value);
+        
+        return this;
+      }
+      public Builder addParameterType(
+          int index, org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureParameterTypeIsMutable();
+        parameterType_.add(index, value);
+        
+        return this;
+      }
+      public Builder addParameterType(
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder builderForValue) {
+        ensureParameterTypeIsMutable();
+        parameterType_.add(builderForValue.build());
+        
+        return this;
+      }
+      public Builder addParameterType(
+          int index, org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder builderForValue) {
+        ensureParameterTypeIsMutable();
+        parameterType_.add(index, builderForValue.build());
+        
+        return this;
+      }
+      public Builder addAllParameterType(
+          java.lang.Iterable<? extends org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType> values) {
+        ensureParameterTypeIsMutable();
+        super.addAll(values, parameterType_);
+        
+        return this;
+      }
+      public Builder clearParameterType() {
+        parameterType_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        
+        return this;
+      }
+      public Builder removeParameterType(int index) {
+        ensureParameterTypeIsMutable();
+        parameterType_.remove(index);
+        
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.JavaMethodSignature)
+    }
+    
+    static {
+      defaultInstance = new JavaMethodSignature(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.JavaMethodSignature)
+  }
+  
+  public interface JavaPropertySignatureOrBuilder
+      extends com.google.protobuf.MessageLiteOrBuilder {
+    
+    // required .org.jetbrains.jet.descriptors.serialization.JavaType type = 1;
+    boolean hasType();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getType();
+    
+    // optional int32 field_name = 2;
+    boolean hasFieldName();
+    int getFieldName();
+    
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature getter = 3;
+    boolean hasGetter();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getGetter();
+    
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature setter = 4;
+    boolean hasSetter();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSetter();
+  }
+  public static final class JavaPropertySignature extends
+      com.google.protobuf.GeneratedMessageLite
+      implements JavaPropertySignatureOrBuilder {
+    // Use JavaPropertySignature.newBuilder() to construct.
+    private JavaPropertySignature(Builder builder) {
+      super(builder);
+    }
+    private JavaPropertySignature(boolean noInit) {}
+    
+    private static final JavaPropertySignature defaultInstance;
+    public static JavaPropertySignature getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public JavaPropertySignature getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    private int bitField0_;
+    // required .org.jetbrains.jet.descriptors.serialization.JavaType type = 1;
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType type_;
+    public boolean hasType() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getType() {
+      return type_;
+    }
+    
+    // optional int32 field_name = 2;
+    public static final int FIELD_NAME_FIELD_NUMBER = 2;
+    private int fieldName_;
+    public boolean hasFieldName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public int getFieldName() {
+      return fieldName_;
+    }
+    
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature getter = 3;
+    public static final int GETTER_FIELD_NUMBER = 3;
+    private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getter_;
+    public boolean hasGetter() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getGetter() {
+      return getter_;
+    }
+    
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature setter = 4;
+    public static final int SETTER_FIELD_NUMBER = 4;
+    private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature setter_;
+    public boolean hasSetter() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSetter() {
+      return setter_;
+    }
+    
+    private void initFields() {
+      type_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+      fieldName_ = 0;
+      getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+      setter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasType()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (hasGetter()) {
+        if (!getGetter().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSetter()) {
+        if (!getSetter().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, type_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, fieldName_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, getter_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, setter_);
+      }
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, type_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, fieldName_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getter_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, setter_);
+      }
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature, Builder>
+        implements org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignatureOrBuilder {
+      // Construct using org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        type_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        fieldName_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        setter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature getDefaultInstanceForType() {
+        return org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature.getDefaultInstance();
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature build() {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature buildPartial() {
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature result = new org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.type_ = type_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.fieldName_ = fieldName_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.getter_ = getter_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.setter_ = setter_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+      
+      public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature other) {
+        if (other == org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature.getDefaultInstance()) return this;
+        if (other.hasType()) {
+          mergeType(other.getType());
+        }
+        if (other.hasFieldName()) {
+          setFieldName(other.getFieldName());
+        }
+        if (other.hasGetter()) {
+          mergeGetter(other.getGetter());
+        }
+        if (other.hasSetter()) {
+          mergeSetter(other.getSetter());
+        }
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasType()) {
+          
+          return false;
+        }
+        if (hasGetter()) {
+          if (!getGetter().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSetter()) {
+          if (!getSetter().isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              
+              return this;
+            default: {
+              if (!parseUnknownField(input, extensionRegistry, tag)) {
+                
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.newBuilder();
+              if (hasType()) {
+                subBuilder.mergeFrom(getType());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setType(subBuilder.buildPartial());
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              fieldName_ = input.readInt32();
+              break;
+            }
+            case 26: {
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder();
+              if (hasGetter()) {
+                subBuilder.mergeFrom(getGetter());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setGetter(subBuilder.buildPartial());
+              break;
+            }
+            case 34: {
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder();
+              if (hasSetter()) {
+                subBuilder.mergeFrom(getSetter());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setSetter(subBuilder.buildPartial());
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required .org.jetbrains.jet.descriptors.serialization.JavaType type = 1;
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType type_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getType() {
+        return type_;
+      }
+      public Builder setType(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        type_ = value;
+        
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      public Builder setType(
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.Builder builderForValue) {
+        type_ = builderForValue.build();
+        
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      public Builder mergeType(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            type_ != org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance()) {
+          type_ =
+            org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.newBuilder(type_).mergeFrom(value).buildPartial();
+        } else {
+          type_ = value;
+        }
+        
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      public Builder clearType() {
+        type_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+        
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+      
+      // optional int32 field_name = 2;
+      private int fieldName_ ;
+      public boolean hasFieldName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public int getFieldName() {
+        return fieldName_;
+      }
+      public Builder setFieldName(int value) {
+        bitField0_ |= 0x00000002;
+        fieldName_ = value;
+        
+        return this;
+      }
+      public Builder clearFieldName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        fieldName_ = 0;
+        
+        return this;
+      }
+      
+      // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature getter = 3;
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+      public boolean hasGetter() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getGetter() {
+        return getter_;
+      }
+      public Builder setGetter(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        getter_ = value;
+        
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      public Builder setGetter(
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder builderForValue) {
+        getter_ = builderForValue.build();
+        
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      public Builder mergeGetter(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            getter_ != org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance()) {
+          getter_ =
+            org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder(getter_).mergeFrom(value).buildPartial();
+        } else {
+          getter_ = value;
+        }
+        
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      public Builder clearGetter() {
+        getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+        
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      
+      // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature setter = 4;
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature setter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+      public boolean hasSetter() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSetter() {
+        return setter_;
+      }
+      public Builder setSetter(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        setter_ = value;
+        
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder setSetter(
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder builderForValue) {
+        setter_ = builderForValue.build();
+        
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder mergeSetter(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (((bitField0_ & 0x00000008) == 0x00000008) &&
+            setter_ != org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance()) {
+          setter_ =
+            org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder(setter_).mergeFrom(value).buildPartial();
+        } else {
+          setter_ = value;
+        }
+        
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder clearSetter() {
+        setter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+        
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.JavaPropertySignature)
+    }
+    
+    static {
+      defaultInstance = new JavaPropertySignature(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.JavaPropertySignature)
+  }
+  
+  public static final int METHOD_SIGNATURE_FIELD_NUMBER = 100;
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable,
-      java.lang.String> javaSignature = com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature> methodSignature = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        "",
-        null,
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance(),
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance(),
         null,
         100,
-        com.google.protobuf.WireFormat.FieldType.STRING);
+        com.google.protobuf.WireFormat.FieldType.MESSAGE);
+  public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable,
+      org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature> propertySignature = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance(),
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature.getDefaultInstance(),
+        org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaPropertySignature.getDefaultInstance(),
+        null,
+        101,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE);
   
   static {
   }

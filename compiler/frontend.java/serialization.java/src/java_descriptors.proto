@@ -21,6 +21,42 @@ import "compiler/frontend/serialization/src/descriptors.proto";
 option java_outer_classname = "JavaProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
+message JavaType {
+  enum PrimitiveType {
+    // These values correspond to ASM Type sorts
+    VOID = 0;
+    BOOLEAN = 1;
+    CHAR = 2;
+    BYTE = 3;
+    SHORT = 4;
+    INT = 5;
+    FLOAT = 6;
+    LONG = 7;
+    DOUBLE = 8;
+  }
+
+  // One of these should be present
+  optional PrimitiveType primitive_type = 1;
+  optional int32 class_fq_name = 2;
+
+  optional int32 array_dimension = 3 [default = 0];
+}
+
+message JavaMethodSignature {
+  required int32 name = 1;
+  required JavaType return_type = 2;
+  repeated JavaType parameter_type = 3;
+}
+
+message JavaPropertySignature {
+  required JavaType type = 1;
+  optional int32 field_name = 2;
+  optional JavaMethodSignature getter = 3;
+  optional JavaMethodSignature setter = 4;
+}
+
 extend Callable {
-  optional string java_signature = 100;
+  optional JavaMethodSignature method_signature = 100;
+
+  optional JavaPropertySignature property_signature = 101;
 }

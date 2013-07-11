@@ -76,7 +76,10 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @NotNull
         @Override
         public List<AnnotationDescriptor> loadCallableAnnotations(
-                @NotNull ClassOrNamespaceDescriptor container, @NotNull ProtoBuf.Callable callableProto
+                @NotNull ClassOrNamespaceDescriptor container,
+                @NotNull ProtoBuf.Callable proto,
+                @NotNull NameResolver nameResolver,
+                @NotNull AnnotatedCallableKind kind
         ) {
             throw new UnsupportedOperationException(); // TODO
         }

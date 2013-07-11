@@ -27,6 +27,10 @@ public abstract class SerializerExtension {
         return true;
     }
 
-    public void serializeCallable(@NotNull CallableMemberDescriptor callable, @NotNull ProtoBuf.Callable.Builder proto) {
+    public void serializeCallable(
+            @NotNull CallableMemberDescriptor callable,
+            @NotNull ProtoBuf.Callable.Builder proto,
+            @NotNull NameTable nameTable
+    ) {
     }
 }

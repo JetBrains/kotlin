@@ -19,21 +19,137 @@ package org.jetbrains.jet.descriptors.serialization;
 import com.google.protobuf.ExtensionRegistryLite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-import static org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.javaSignature;
+import java.util.Arrays;
+
+import static org.jetbrains.asm4.Type.*;
 
 public class JavaProtoBufUtil {
     private JavaProtoBufUtil() {
     }
 
     @Nullable
-    public static String loadJavaSignature(@NotNull ProtoBuf.Callable callable) {
-        return callable.hasExtension(javaSignature) ? callable.getExtension(javaSignature) : null;
+    public static String loadMethodSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+        if (!proto.hasExtension(JavaProtoBuf.methodSignature)) return null;
+        JavaProtoBuf.JavaMethodSignature signature = proto.getExtension(JavaProtoBuf.methodSignature);
+        return new Deserializer(nameResolver).methodSignature(signature).toString();
     }
 
-    public static void saveJavaSignature(@NotNull ProtoBuf.Callable.Builder callable, @NotNull String signature) {
-        callable.setExtension(javaSignature, signature);
+    public static void saveMethodSignature(
+            @NotNull ProtoBuf.Callable.Builder proto,
+            @NotNull Method method,
+            @NotNull NameTable nameTable
+    ) {
+        proto.setExtension(JavaProtoBuf.methodSignature, new Serializer(nameTable).methodSignature(method));
     }
+
+    private static class Serializer {
+        private final NameTable nameTable;
+
+        public Serializer(@NotNull NameTable nameTable) {
+            this.nameTable = nameTable;
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaMethodSignature methodSignature(@NotNull Method method) {
+            JavaProtoBuf.JavaMethodSignature.Builder signature = JavaProtoBuf.JavaMethodSignature.newBuilder();
+
+            signature.setName(nameTable.getSimpleNameIndex(Name.guess(method.getName())));
+
+            signature.setReturnType(type(method.getReturnType()));
+
+            for (Type type : method.getArgumentTypes()) {
+                signature.addParameterType(type(type));
+            }
+
+            return signature.build();
+        }
+
+        @NotNull
+        private JavaProtoBuf.JavaType type(@NotNull Type givenType) {
+            JavaProtoBuf.JavaType.Builder builder = JavaProtoBuf.JavaType.newBuilder();
+
+            int arrayDimension = 0;
+            Type type = givenType;
+            while (type.getSort() == Type.ARRAY) {
+                arrayDimension++;
+                type = type.getElementType();
+            }
+            if (arrayDimension != 0) {
+                builder.setArrayDimension(arrayDimension);
+            }
+
+            if (type.getSort() == Type.OBJECT) {
+                FqName fqName = internalNameToFqName(type.getInternalName());
+                builder.setClassFqName(nameTable.getFqNameIndex(fqName));
+            }
+            else {
+                builder.setPrimitiveType(JavaProtoBuf.JavaType.PrimitiveType.valueOf(type.getSort()));
+            }
+
+            return builder.build();
+        }
+
+        @NotNull
+        private static FqName internalNameToFqName(@NotNull String internalName) {
+            return FqName.fromSegments(Arrays.asList(internalName.split("/")));
+        }
+    }
+
+    private static class Deserializer {
+        // These types are ordered according to their sorts, this is significant for deserialization
+        private static final Type[] PRIMITIVE_TYPES = new Type[]
+                { VOID_TYPE, BOOLEAN_TYPE, CHAR_TYPE, BYTE_TYPE, SHORT_TYPE, INT_TYPE, FLOAT_TYPE, LONG_TYPE, DOUBLE_TYPE };
+
+        private final NameResolver nameResolver;
+
+        public Deserializer(@NotNull NameResolver nameResolver) {
+            this.nameResolver = nameResolver;
+        }
+
+        @NotNull
+        public Method methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+            String name = nameResolver.getName(signature.getName()).asString();
+
+            Type returnType = type(signature.getReturnType());
+
+            int parameters = signature.getParameterTypeCount();
+            Type[] parameterTypes = new Type[parameters];
+            for (int i = 0; i < parameters; i++) {
+                parameterTypes[i] = type(signature.getParameterType(i));
+            }
+
+            return new Method(name, returnType, parameterTypes);
+        }
+
+        @NotNull
+        private Type type(@NotNull JavaProtoBuf.JavaType type) {
+            Type result;
+            if (type.hasPrimitiveType()) {
+                result = PRIMITIVE_TYPES[type.getPrimitiveType().ordinal()];
+            }
+            else {
+                result = Type.getObjectType(fqNameToInternalName(nameResolver.getFqName(type.getClassFqName())));
+            }
+
+            StringBuilder brackets = new StringBuilder(type.getArrayDimension());
+            for (int i = 0; i < type.getArrayDimension(); i++) {
+                brackets.append('[');
+            }
+
+            return Type.getType(brackets + result.getDescriptor());
+        }
+
+        @NotNull
+        private static String fqNameToInternalName(@NotNull FqName fqName) {
+            return fqName.asString().replace('.', '/');
+        }
+    }
+
 
     @NotNull
     public static ExtensionRegistryLite getExtensionRegistry() {

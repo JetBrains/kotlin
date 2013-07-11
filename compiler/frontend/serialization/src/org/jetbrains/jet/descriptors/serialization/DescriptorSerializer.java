@@ -212,7 +212,7 @@ public class DescriptorSerializer {
 
         builder.setReturnType(local.type(getSerializableReturnType(descriptor.getReturnType())));
 
-        extension.serializeCallable(descriptor, builder);
+        extension.serializeCallable(descriptor, builder, nameTable);
 
         return builder;
     }
