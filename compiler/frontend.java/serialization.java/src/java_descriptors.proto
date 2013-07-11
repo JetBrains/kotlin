@@ -50,9 +50,13 @@ message JavaMethodSignature {
 
 message JavaPropertySignature {
   required JavaType type = 1;
+
+  // One of these should be present
   optional int32 field_name = 2;
-  optional JavaMethodSignature getter = 3;
-  optional JavaMethodSignature setter = 4;
+  optional int32 synthetic_method_name = 3; // Name of the synthetic method created to store property annotations
+
+  optional JavaMethodSignature getter = 4;
+  optional JavaMethodSignature setter = 5;
 }
 
 extend Callable {

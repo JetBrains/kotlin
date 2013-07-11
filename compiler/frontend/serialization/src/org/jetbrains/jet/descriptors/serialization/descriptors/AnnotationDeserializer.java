@@ -42,6 +42,7 @@ public interface AnnotationDeserializer {
 
     enum AnnotatedCallableKind {
         FUNCTION,
+        PROPERTY,
         PROPERTY_GETTER,
         PROPERTY_SETTER
     }

@@ -24,9 +24,8 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameTable;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
 public class JavaSerializerExtension extends SerializerExtension {
     private final JetTypeMapper typeMapper;
@@ -49,12 +48,24 @@ public class JavaSerializerExtension extends SerializerExtension {
         else if (callable instanceof PropertyDescriptor) {
             PropertyDescriptor property = (PropertyDescriptor) callable;
             Type type = typeMapper.mapType(property.getType());
-            Method getter =
-                    property.getGetter() == null ? null : typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
-            Method setter =
-                    property.getSetter() == null ? null : typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
+            PropertyGetterDescriptor getter = property.getGetter();
+            PropertySetterDescriptor setter = property.getSetter();
+            Method getterMethod = getter == null ? null : typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
+            Method setterMethod = setter == null ? null : typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
 
-            JavaProtoBufUtil.savePropertySignature(proto, type, null /* TODO */, getter, setter, nameTable);
+            // This is very wrong, see above todo
+            String fieldName;
+            String syntheticMethodName;
+            if ((getter == null || getter.isDefault()) && (setter == null || setter.isDefault())) {
+                fieldName = property.getName().asString();
+                syntheticMethodName = null;
+            }
+            else {
+                fieldName = null;
+                syntheticMethodName = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(property.getName());
+            }
+
+            JavaProtoBufUtil.savePropertySignature(proto, type, fieldName, syntheticMethodName, getterMethod, setterMethod, nameTable);
         }
     }
 }

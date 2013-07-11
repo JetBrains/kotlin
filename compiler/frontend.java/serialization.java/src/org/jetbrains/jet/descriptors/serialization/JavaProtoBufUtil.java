@@ -33,24 +33,72 @@ public class JavaProtoBufUtil {
     }
 
     @Nullable
-    public static String loadMethodSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+    public static Method loadMethodSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
         if (!proto.hasExtension(JavaProtoBuf.methodSignature)) return null;
         JavaProtoBuf.JavaMethodSignature signature = proto.getExtension(JavaProtoBuf.methodSignature);
-        return new Deserializer(nameResolver).methodSignature(signature).toString();
+        return new Deserializer(nameResolver).methodSignature(signature);
     }
 
     @Nullable
-    public static String loadPropertyGetterSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+    public static Method loadPropertyGetterSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
         if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return null;
         JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
-        return new Deserializer(nameResolver).methodSignature(propertySignature.getGetter()).toString();
+        return new Deserializer(nameResolver).methodSignature(propertySignature.getGetter());
     }
 
     @Nullable
-    public static String loadPropertySetterSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+    public static Method loadPropertySetterSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
         if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return null;
         JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
-        return new Deserializer(nameResolver).methodSignature(propertySignature.getSetter()).toString();
+        return new Deserializer(nameResolver).methodSignature(propertySignature.getSetter());
+    }
+
+    public static class PropertyData {
+        private final Type type;
+        private final String fieldName;
+        private final String syntheticMethodName;
+
+        public PropertyData(@NotNull Type type, @Nullable String fieldName, @Nullable String syntheticMethodName) {
+            this.type = type;
+            this.fieldName = fieldName;
+            this.syntheticMethodName = syntheticMethodName;
+        }
+
+        @NotNull
+        public Type getType() {
+            return type;
+        }
+
+        @Nullable
+        public String getFieldName() {
+            return fieldName;
+        }
+
+        @Nullable
+        public String getSyntheticMethodName() {
+            return syntheticMethodName;
+        }
+
+        @Override
+        public String toString() {
+            return (fieldName != null ? "Field " + fieldName : "Synthetic method " + syntheticMethodName) + " " + type;
+        }
+    }
+
+    @Nullable
+    public static PropertyData loadPropertyData(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+        if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return null;
+        JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+
+        Type type = new Deserializer(nameResolver).type(propertySignature.getType());
+        String fieldName = propertySignature.hasFieldName()
+                           ? nameResolver.getName(propertySignature.getFieldName()).asString()
+                           : null;
+        String syntheticMethodName = propertySignature.hasSyntheticMethodName()
+                                     ? nameResolver.getName(propertySignature.getSyntheticMethodName()).asString()
+                                     : null;
+
+        return new PropertyData(type, fieldName, syntheticMethodName);
     }
 
     public static void saveMethodSignature(@NotNull ProtoBuf.Callable.Builder proto, @NotNull Method method, @NotNull NameTable nameTable) {
@@ -61,11 +109,13 @@ public class JavaProtoBufUtil {
             @NotNull ProtoBuf.Callable.Builder proto,
             @NotNull Type type,
             @Nullable String fieldName,
+            @Nullable String syntheticMethodName,
             @Nullable Method getter,
             @Nullable Method setter,
             @NotNull NameTable nameTable
     ) {
-        proto.setExtension(JavaProtoBuf.propertySignature, new Serializer(nameTable).propertySignature(type, fieldName, getter, setter));
+        proto.setExtension(JavaProtoBuf.propertySignature,
+                           new Serializer(nameTable).propertySignature(type, fieldName, syntheticMethodName, getter, setter));
     }
 
     private static class Serializer {
@@ -94,6 +144,7 @@ public class JavaProtoBufUtil {
         public JavaProtoBuf.JavaPropertySignature propertySignature(
                 @NotNull Type type,
                 @Nullable String fieldName,
+                @Nullable String syntheticMethodName,
                 @Nullable Method getter,
                 @Nullable Method setter
         ) {
@@ -103,6 +154,10 @@ public class JavaProtoBufUtil {
 
             if (fieldName != null) {
                 signature.setFieldName(nameTable.getSimpleNameIndex(Name.guess(fieldName)));
+            }
+
+            if (syntheticMethodName != null) {
+                signature.setSyntheticMethodName(nameTable.getSimpleNameIndex(Name.guess(syntheticMethodName)));
             }
 
             if (getter != null) {
@@ -116,7 +171,7 @@ public class JavaProtoBufUtil {
         }
 
         @NotNull
-        private JavaProtoBuf.JavaType type(@NotNull Type givenType) {
+        public JavaProtoBuf.JavaType type(@NotNull Type givenType) {
             JavaProtoBuf.JavaType.Builder builder = JavaProtoBuf.JavaType.newBuilder();
 
             int arrayDimension = 0;

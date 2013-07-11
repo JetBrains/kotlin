@@ -21,6 +21,7 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -180,14 +182,14 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
     ) {
-        String signature = getCallableSignature(proto, nameResolver, kind);
+        MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
         if (signature == null) return Collections.emptyList();
 
         VirtualFile file = findVirtualFileByDescriptor(container);
 
         try {
             // TODO: calculate this only once for each container
-            Map<String, List<AnnotationDescriptor>> memberAnnotations = loadMemberAnnotationsFromFile(file);
+            Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations = loadMemberAnnotationsFromFile(file);
 
             List<AnnotationDescriptor> annotations = memberAnnotations.get(signature);
             return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
@@ -198,31 +200,35 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @Nullable
-    private static String getCallableSignature(
+    private static MemberSignature getCallableSignature(
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
     ) {
         switch (kind) {
             case FUNCTION:
-                return JavaProtoBufUtil.loadMethodSignature(proto, nameResolver);
+                return MemberSignature.fromMethod(JavaProtoBufUtil.loadMethodSignature(proto, nameResolver));
             case PROPERTY_GETTER:
-                return JavaProtoBufUtil.loadPropertyGetterSignature(proto, nameResolver);
+                return MemberSignature.fromMethod(JavaProtoBufUtil.loadPropertyGetterSignature(proto, nameResolver));
             case PROPERTY_SETTER:
-                return JavaProtoBufUtil.loadPropertySetterSignature(proto, nameResolver);
+                return MemberSignature.fromMethod(JavaProtoBufUtil.loadPropertySetterSignature(proto, nameResolver));
+            case PROPERTY:
+                JavaProtoBufUtil.PropertyData data = JavaProtoBufUtil.loadPropertyData(proto, nameResolver);
+                return data == null ? null :
+                       MemberSignature.fromPropertyData(data.getType(), data.getFieldName(), data.getSyntheticMethodName());
             default:
                 return null;
         }
     }
 
     @NotNull
-    private Map<String, List<AnnotationDescriptor>> loadMemberAnnotationsFromFile(@NotNull VirtualFile file) throws IOException {
-        final Map<String, List<AnnotationDescriptor>> memberAnnotations = new HashMap<String, List<AnnotationDescriptor>>();
+    private Map<MemberSignature, List<AnnotationDescriptor>> loadMemberAnnotationsFromFile(@NotNull VirtualFile file) throws IOException {
+        final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations = new HashMap<MemberSignature, List<AnnotationDescriptor>>();
 
         new ClassReader(file.getInputStream()).accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                final String methodSignature = name + desc;
+                final MemberSignature methodSignature = MemberSignature.fromMethodNameAndDesc(name, desc);
                 final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
 
                 return new MethodVisitor(Opcodes.ASM4) {
@@ -239,9 +245,84 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                     }
                 };
             }
+
+            @Override
+            public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+                final MemberSignature fieldSignature = MemberSignature.fromFieldNameAndDesc(name, desc);
+                final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
+
+                return new FieldVisitor(Opcodes.ASM4) {
+                    @Override
+                    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                        return resolveAnnotation(desc, result);
+                    }
+
+                    @Override
+                    public void visitEnd() {
+                        if (!result.isEmpty()) {
+                            memberAnnotations.put(fieldSignature, result);
+                        }
+                    }
+                };
+            }
         }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
 
         return memberAnnotations;
+    }
+
+    // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
+    // into a map indexed by these signatures
+    private static final class MemberSignature {
+        private final String signature;
+
+        private MemberSignature(@NotNull String signature) {
+            this.signature = signature;
+        }
+
+        @Nullable
+        public static MemberSignature fromPropertyData(
+                @NotNull Type type,
+                @Nullable String fieldName,
+                @Nullable String syntheticMethodName
+        ) {
+            if (fieldName != null) {
+                return fromFieldNameAndDesc(fieldName, type.getDescriptor());
+            }
+            else if (syntheticMethodName != null) {
+                return fromMethodNameAndDesc(syntheticMethodName, JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);
+            }
+            else return null;
+        }
+
+        @Nullable
+        public static MemberSignature fromMethod(@Nullable Method method) {
+            return method == null ? null : fromMethodNameAndDesc(method.getName(), method.getDescriptor());
+        }
+
+        @NotNull
+        public static MemberSignature fromMethodNameAndDesc(@NotNull String name, @NotNull String desc) {
+            return new MemberSignature(name + desc);
+        }
+
+        @NotNull
+        public static MemberSignature fromFieldNameAndDesc(@NotNull String name, @NotNull String desc) {
+            return new MemberSignature(name + "#" + desc);
+        }
+
+        @Override
+        public int hashCode() {
+            return signature.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof MemberSignature && signature.equals(((MemberSignature) o).signature);
+        }
+
+        @Override
+        public String toString() {
+            return signature;
+        }
     }
 
     @NotNull

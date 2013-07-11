@@ -193,7 +193,7 @@ public class DescriptorDeserializer {
     private PropertyDescriptorImpl createPropertyDescriptor(@NotNull Callable proto) {
         int flags = proto.getFlags();
         Name name = nameResolver.getName(proto.getName());
-        List<AnnotationDescriptor> annotations = Collections.emptyList(); // TODO: getAnnotations(proto, flags, PROPERTY);
+        List<AnnotationDescriptor> annotations = getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY);
         Visibility visibility = visibility(Flags.VISIBILITY.get(flags));
         Callable.CallableKind callableKind = Flags.CALLABLE_KIND.get(flags);
 
