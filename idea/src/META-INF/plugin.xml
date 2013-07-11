@@ -53,6 +53,7 @@
     <action id="ShowJetExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
             text="Show Expression Type">
       <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="control shift T"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
     <action id="CopyAsDiagnosticTest" class="org.jetbrains.jet.plugin.actions.CopyAsDiagnosticTestAction"
