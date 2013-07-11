@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.resolve;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
@@ -31,6 +33,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.io.File;
+import java.util.List;
 
 public class ResolveBaseTest extends LightCodeInsightTestCase {
     @Override
@@ -39,38 +42,47 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
-    public void testMultiResolve() throws Exception {
-        doMultiResolveTest();
+    public void testCtrlClickResolve() throws Exception {
+        doTest();
     }
 
     public void testResolveClass() throws Exception {
-        doSingleResolveTest();
+        doTest();
     }
 
     public void testResolvePackageInProperty() throws Exception {
-        doSingleResolveTest();
+        doTest();
     }
 
     public void testSamConstructor() throws Exception {
-        doSingleResolveTest();
+        doTest();
     }
 
     public void testSamConstructorTypeArguments() throws Exception {
-        doSingleResolveTest();
+        doTest();
     }
 
     public void testSamAdapter() throws Exception {
-        doSingleResolveTest();
+        doTest();
     }
 
     public void testSeveralOverrides() throws Exception {
-        doMultiResolveTest();
+        doTest();
     }
 
-    protected void doSingleResolveTest() throws Exception {
+    protected void doTest() {
         String testName = getTestName(false);
         configureByFile(testName + ".kt");
 
+        if (InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), "MULTIRESOLVE")) {
+            doMultiResolveTest();
+        }
+        else {
+            doSingleResolveTest();
+        }
+    }
+
+    protected static void doSingleResolveTest() {
         String referenceToString = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "REF:");
         Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString);
 
@@ -96,9 +108,8 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
         }
     }
 
-    protected void doMultiResolveTest() throws Exception {
-        String testName = getTestName(false);
-        configureByFile(testName + ".kt");
+    protected static void doMultiResolveTest() {
+        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(getFile().getText(), "REF:");
 
         PsiReference psiReference =
                 getFile().findReferenceAt(getEditor().getCaretModel().getOffset());
@@ -107,12 +118,17 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
 
         PsiPolyVariantReference variantReference = (PsiPolyVariantReference) psiReference;
 
-        PsiElement element = variantReference.resolve();
         ResolveResult[] results = variantReference.multiResolve(true);
+
+        List<String> actualResolvedTo = Lists.newArrayList();
         for (ResolveResult result : results) {
-            assertNotNull(result);
+            PsiElement resolvedToElement = result.getElement();
+            assertNotNull(resolvedToElement);
+
+            actualResolvedTo.add(ReferenceUtils.renderAsGotoImplementation(resolvedToElement));
         }
-        assertTrue("Nothing resolved by reference '" + psiReference.getElement().getText() + "'.", element != null || results.length > 0);
+
+        assertOrderedEquals(Ordering.natural().sortedCopy(actualResolvedTo), Ordering.natural().sortedCopy(expectedReferences));
     }
 
     @Override
