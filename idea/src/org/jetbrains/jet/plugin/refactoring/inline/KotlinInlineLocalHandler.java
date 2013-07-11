@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.refactoring.inline;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.lang.Language;
@@ -11,6 +12,7 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiElement;
@@ -21,12 +23,26 @@ import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.RefactoringMessageDialog;
+import com.intellij.util.Function;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 public class KotlinInlineLocalHandler extends InlineActionHandler {
     @Override
@@ -44,7 +60,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
     }
 
     @Override
-    public void inlineElement(final Project project, Editor editor, PsiElement element) {
+    public void inlineElement(Project project, Editor editor, PsiElement element) {
         final JetProperty val = (JetProperty) element;
         String name = val.getName();
 
@@ -82,6 +98,8 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
             }
         }
 
+        final String typeArgumentsForCall = getTypeArgumentsStringForCall(initializer);
+
         PsiReference[] referencesArray = references.toArray(references.toArray(new PsiReference[references.size()]));
 
         if (editor != null && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -107,7 +125,9 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
             }
         }
 
+        final List<JetExpression> inlinedExpressions = Lists.newArrayList();
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+            @Override
             public void run() {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
@@ -118,13 +138,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                                 continue;
                             }
 
-                            if (referenceElement.getParent() instanceof JetSimpleNameStringTemplateEntry &&
-                                !(initializer instanceof JetSimpleNameExpression)) {
-                                referenceElement.getParent().replace(JetPsiFactory.createBlockStringTemplateEntry(project, initializer));
-                            }
-                            else {
-                                referenceElement.replace(initializer.copy());
-                            }
+                            inlinedExpressions.add(replaceExpression(referenceElement, initializer));
                         }
 
                         for (PsiElement assignment : assignments) {
@@ -132,9 +146,110 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                         }
 
                         val.delete();
+
+                        if (typeArgumentsForCall != null) {
+                            addTypeArguments(typeArgumentsForCall, inlinedExpressions);
+                        }
                     }
                 });
             }
         }, RefactoringBundle.message("inline.command", name), null);
+    }
+
+    private static void addTypeArguments(@NotNull String typeArguments, @NotNull List<JetExpression> inlinedExpressions) {
+        JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
+        List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
+
+        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
+        for (JetExpression inlinedExpression : inlinedExpressions) {
+            JetCallExpression callExpression = getCallExpression(inlinedExpression);
+            assert callExpression != null : "can't find call expression for " + inlinedExpression.getText();
+
+            if (hasIncompleteTypeInferenceDiagnostic(callExpression, resolveSession) && callExpression.getTypeArgumentList() == null) {
+                callsToAddArguments.add(callExpression);
+            }
+        }
+
+        for (JetCallExpression call : callsToAddArguments) {
+            call.addAfter(JetPsiFactory.createTypeArguments(containingFile.getProject(), "<" + typeArguments + ">"),
+                          call.getCalleeExpression());
+            ReferenceToClassesShortening.compactReferenceToClasses(Arrays.asList(call.getTypeArgumentList()));
+        }
+    }
+
+    @Nullable
+    private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
+        JetCallExpression callExpression = getCallExpression(initializer);
+        if (callExpression == null) {
+            return null;
+        }
+
+        JetExpression callee = callExpression.getCalleeExpression();
+        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession((JetFile) initializer.getContainingFile());
+        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, initializer);
+        ResolvedCall<? extends CallableDescriptor> call = context.get(BindingContext.RESOLVED_CALL, callee);
+        if (call == null) {
+            return null;
+        }
+
+        List<JetType> typeArguments = Lists.newArrayList();
+        Map<TypeParameterDescriptor, JetType> typeArgumentMap = call.getTypeArguments();
+        for (TypeParameterDescriptor typeParameter : call.getCandidateDescriptor().getTypeParameters()) {
+            typeArguments.add(typeArgumentMap.get(typeParameter));
+        }
+
+        return StringUtil.join(typeArguments, new Function<JetType, String>() {
+            @Override
+            public String fun(JetType type) {
+                return DescriptorRenderer.TEXT.renderType(type);
+            }
+        }, ", ");
+    }
+
+    private static boolean hasIncompleteTypeInferenceDiagnostic(
+            @NotNull JetCallExpression callExpression,
+            @NotNull ResolveSession resolveSession
+    ) {
+        JetExpression callee = callExpression.getCalleeExpression();
+        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, callExpression);
+        for (Diagnostic diagnostic : context.getDiagnostics()) {
+            if (diagnostic.getFactory() == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER && diagnostic.getPsiElement() == callee) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NotNull
+    private static JetExpression replaceExpression(
+            @NotNull PsiElement referenceElement,
+            @NotNull JetExpression newExpression
+    ) {
+        if (referenceElement.getParent() instanceof JetSimpleNameStringTemplateEntry &&
+            !(newExpression instanceof JetSimpleNameExpression)) {
+            JetBlockStringTemplateEntry templateEntry =
+                    (JetBlockStringTemplateEntry) referenceElement.getParent().replace(
+                            JetPsiFactory.createBlockStringTemplateEntry(referenceElement.getProject(), newExpression));
+            JetExpression expression = templateEntry.getExpression();
+            assert expression != null;
+            return expression;
+        }
+        return (JetExpression) referenceElement.replace(newExpression.copy());
+    }
+
+    @Nullable
+    private static JetCallExpression getCallExpression(@NotNull JetExpression expression) {
+        if (expression instanceof JetParenthesizedExpression) {
+            JetExpression inner = ((JetParenthesizedExpression) expression).getExpression();
+            return inner == null ? null : getCallExpression(inner);
+        }
+        if (expression instanceof JetCallExpression) {
+            return (JetCallExpression) expression;
+        }
+        if (expression instanceof JetQualifiedExpression) {
+            JetExpression selector = ((JetQualifiedExpression) expression).getSelectorExpression();
+            return selector == null ? null : getCallExpression(selector);
+        }
+        return null;
     }
 }

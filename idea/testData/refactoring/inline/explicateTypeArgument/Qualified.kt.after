@@ -1,0 +1,5 @@
+fun <T> String.ext(): List<T> = listOf()
+
+fun f() {
+    val vv = ("".ext<Int>())
+}

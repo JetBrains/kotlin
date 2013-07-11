@@ -5,9 +5,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,5 +52,11 @@ public abstract class AbstractInlineTest extends LightCodeInsightFixtureTestCase
         else {
             assertFalse(afterFileExists);
         }
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 }

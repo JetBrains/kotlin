@@ -1,0 +1,5 @@
+import java.util.ArrayList
+
+fun f() {
+    val copy: List<Int> = ArrayList(listOf())
+}
