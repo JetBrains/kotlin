@@ -32,47 +32,17 @@ import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
-import java.io.File;
 import java.util.List;
 
-public class ResolveBaseTest extends LightCodeInsightTestCase {
+public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
-    public void testCtrlClickResolve() throws Exception {
-        doTest();
-    }
-
-    public void testResolveClass() throws Exception {
-        doTest();
-    }
-
-    public void testResolvePackageInProperty() throws Exception {
-        doTest();
-    }
-
-    public void testSamConstructor() throws Exception {
-        doTest();
-    }
-
-    public void testSamConstructorTypeArguments() throws Exception {
-        doTest();
-    }
-
-    public void testSamAdapter() throws Exception {
-        doTest();
-    }
-
-    public void testSeveralOverrides() throws Exception {
-        doTest();
-    }
-
-    protected void doTest() {
-        String testName = getTestName(false);
-        configureByFile(testName + ".kt");
+    protected void doTest(String path) {
+        configureByFile(path);
 
         if (InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), "MULTIRESOLVE")) {
             doMultiResolveTest();
@@ -139,6 +109,6 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
     @NotNull
     @Override
     protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/resolve/").getPath() + File.separator;
+        return "./";
     }
 }
