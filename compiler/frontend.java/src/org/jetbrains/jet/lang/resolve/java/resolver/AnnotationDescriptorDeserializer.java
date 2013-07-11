@@ -206,7 +206,10 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         switch (kind) {
             case FUNCTION:
                 return JavaProtoBufUtil.loadMethodSignature(proto, nameResolver);
-            // TODO: getters, setters
+            case PROPERTY_GETTER:
+                return JavaProtoBufUtil.loadPropertyGetterSignature(proto, nameResolver);
+            case PROPERTY_SETTER:
+                return JavaProtoBufUtil.loadPropertySetterSignature(proto, nameResolver);
             default:
                 return null;
         }

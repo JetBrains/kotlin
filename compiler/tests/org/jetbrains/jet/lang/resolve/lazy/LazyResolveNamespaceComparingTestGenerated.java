@@ -57,6 +57,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
                 }
                 
+                @TestMetadata("Getter.kt")
+                public void testGetter() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/Getter.kt");
+                }
+                
+                @TestMetadata("Setter.kt")
+                public void testSetter() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/Setter.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/loadKotlin/annotations/classes")
@@ -116,6 +126,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Function.kt");
+                }
+                
+                @TestMetadata("Getter.kt")
+                public void testGetter() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Getter.kt");
+                }
+                
+                @TestMetadata("Setter.kt")
+                public void testSetter() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Setter.kt");
                 }
                 
             }

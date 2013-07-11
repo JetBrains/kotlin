@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
@@ -47,7 +48,13 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
         else if (callable instanceof PropertyDescriptor) {
             PropertyDescriptor property = (PropertyDescriptor) callable;
-            // TODO
+            Type type = typeMapper.mapType(property.getType());
+            Method getter =
+                    property.getGetter() == null ? null : typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
+            Method setter =
+                    property.getSetter() == null ? null : typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
+
+            JavaProtoBufUtil.savePropertySignature(proto, type, null /* TODO */, getter, setter, nameTable);
         }
     }
 }

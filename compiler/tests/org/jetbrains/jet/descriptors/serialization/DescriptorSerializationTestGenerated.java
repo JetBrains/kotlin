@@ -55,6 +55,16 @@ public class DescriptorSerializationTestGenerated extends AbstractDescriptorSeri
                 doTest("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
             }
             
+            @TestMetadata("Getter.kt")
+            public void testGetter() throws Exception {
+                doTest("compiler/testData/loadKotlin/annotations/classMembers/Getter.kt");
+            }
+            
+            @TestMetadata("Setter.kt")
+            public void testSetter() throws Exception {
+                doTest("compiler/testData/loadKotlin/annotations/classMembers/Setter.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/loadKotlin/annotations/classes")
@@ -114,6 +124,16 @@ public class DescriptorSerializationTestGenerated extends AbstractDescriptorSeri
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
                 doTest("compiler/testData/loadKotlin/annotations/packageMembers/Function.kt");
+            }
+            
+            @TestMetadata("Getter.kt")
+            public void testGetter() throws Exception {
+                doTest("compiler/testData/loadKotlin/annotations/packageMembers/Getter.kt");
+            }
+            
+            @TestMetadata("Setter.kt")
+            public void testSetter() throws Exception {
+                doTest("compiler/testData/loadKotlin/annotations/packageMembers/Setter.kt");
             }
             
         }

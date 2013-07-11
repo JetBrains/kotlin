@@ -39,12 +39,33 @@ public class JavaProtoBufUtil {
         return new Deserializer(nameResolver).methodSignature(signature).toString();
     }
 
-    public static void saveMethodSignature(
+    @Nullable
+    public static String loadPropertyGetterSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+        if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return null;
+        JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+        return new Deserializer(nameResolver).methodSignature(propertySignature.getGetter()).toString();
+    }
+
+    @Nullable
+    public static String loadPropertySetterSignature(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+        if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return null;
+        JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+        return new Deserializer(nameResolver).methodSignature(propertySignature.getSetter()).toString();
+    }
+
+    public static void saveMethodSignature(@NotNull ProtoBuf.Callable.Builder proto, @NotNull Method method, @NotNull NameTable nameTable) {
+        proto.setExtension(JavaProtoBuf.methodSignature, new Serializer(nameTable).methodSignature(method));
+    }
+
+    public static void savePropertySignature(
             @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull Method method,
+            @NotNull Type type,
+            @Nullable String fieldName,
+            @Nullable Method getter,
+            @Nullable Method setter,
             @NotNull NameTable nameTable
     ) {
-        proto.setExtension(JavaProtoBuf.methodSignature, new Serializer(nameTable).methodSignature(method));
+        proto.setExtension(JavaProtoBuf.propertySignature, new Serializer(nameTable).propertySignature(type, fieldName, getter, setter));
     }
 
     private static class Serializer {
@@ -64,6 +85,31 @@ public class JavaProtoBufUtil {
 
             for (Type type : method.getArgumentTypes()) {
                 signature.addParameterType(type(type));
+            }
+
+            return signature.build();
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaPropertySignature propertySignature(
+                @NotNull Type type,
+                @Nullable String fieldName,
+                @Nullable Method getter,
+                @Nullable Method setter
+        ) {
+            JavaProtoBuf.JavaPropertySignature.Builder signature = JavaProtoBuf.JavaPropertySignature.newBuilder();
+
+            signature.setType(type(type));
+
+            if (fieldName != null) {
+                signature.setFieldName(nameTable.getSimpleNameIndex(Name.guess(fieldName)));
+            }
+
+            if (getter != null) {
+                signature.setGetter(methodSignature(getter));
+            }
+            if (setter != null) {
+                signature.setSetter(methodSignature(setter));
             }
 
             return signature.build();
