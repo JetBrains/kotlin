@@ -56,6 +56,11 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         doTest("idea/testData/resolve/references/AnnotationTypeParameter.kt");
     }
     
+    @TestMetadata("ClassInTypeConstraint.kt")
+    public void testClassInTypeConstraint() throws Exception {
+        doTest("idea/testData/resolve/references/ClassInTypeConstraint.kt");
+    }
+    
     @TestMetadata("ClassReferenceInImport.kt")
     public void testClassReferenceInImport() throws Exception {
         doTest("idea/testData/resolve/references/ClassReferenceInImport.kt");
@@ -69,6 +74,16 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
     @TestMetadata("PackageReferenceInImport.kt")
     public void testPackageReferenceInImport() throws Exception {
         doTest("idea/testData/resolve/references/PackageReferenceInImport.kt");
+    }
+    
+    @TestMetadata("ReferenceInClassWhereConstraint.kt")
+    public void testReferenceInClassWhereConstraint() throws Exception {
+        doTest("idea/testData/resolve/references/ReferenceInClassWhereConstraint.kt");
+    }
+    
+    @TestMetadata("ReferenceInFunWhereConstraint.kt")
+    public void testReferenceInFunWhereConstraint() throws Exception {
+        doTest("idea/testData/resolve/references/ReferenceInFunWhereConstraint.kt");
     }
     
     @TestMetadata("ResolveClass.kt")
