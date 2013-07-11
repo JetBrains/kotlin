@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.*;
@@ -144,6 +145,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
         assert resultingDescriptor != null : candidateDescriptor;
 
+        for (TypeParameterDescriptor typeParameter : candidateDescriptor.getTypeParameters()) {
+            TypeProjection typeArgumentProjection = substitutor.getSubstitution().get(typeParameter.getTypeConstructor());
+            if (typeArgumentProjection != null) {
+                typeArguments.put(typeParameter, typeArgumentProjection.getType());
+            }
+        }
+
         Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
         for (ValueParameterDescriptor valueParameterDescriptor : resultingDescriptor.getValueParameters()) {
             parameterMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
@@ -156,11 +164,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
             assert substitutedVersion != null : entry.getKey();
             valueArguments.put(substitutedVersion, entry.getValue());
         }
-    }
-
-    public void recordTypeArgument(@NotNull TypeParameterDescriptor typeParameter, @NotNull JetType typeArgument) {
-        assert !typeArguments.containsKey(typeParameter) : typeParameter + " -> " + typeArgument;
-        typeArguments.put(typeParameter, typeArgument);
     }
 
     public void setConstraintSystem(@NotNull ConstraintSystem constraintSystem) {

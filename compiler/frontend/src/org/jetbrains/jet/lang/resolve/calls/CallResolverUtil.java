@@ -73,9 +73,6 @@ public class CallResolverUtil {
         if (constraintSystem != null) {
             copy.setConstraintSystem(constraintSystem.copy());
         }
-        for (Map.Entry<TypeParameterDescriptor, JetType> entry : call.getTypeArguments().entrySet()) {
-            copy.recordTypeArgument(entry.getKey(), entry.getValue());
-        }
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
             copy.recordValueArgument(entry.getKey(), entry.getValue());
         }

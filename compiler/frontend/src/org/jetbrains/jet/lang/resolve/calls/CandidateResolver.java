@@ -159,11 +159,6 @@ public class CandidateResolver {
                 TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
                 candidateCall.setResultingSubstitutor(substitutor);
 
-                List<TypeParameterDescriptor> typeParameters = candidateCall.getCandidateDescriptor().getTypeParameters();
-                for (int i = 0; i < typeParameters.size(); i++) {
-                    TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
-                    candidateCall.recordTypeArgument(typeParameterDescriptor, typeArguments.get(i));
-                }
                 candidateCall.addStatus(checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS).status);
             }
             else {
