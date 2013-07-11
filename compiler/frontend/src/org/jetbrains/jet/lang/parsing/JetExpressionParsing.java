@@ -214,7 +214,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
     }
 
-    public static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(DOT, SAFE_ACCESS);
+    public static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(
+            DOT, SAFE_ACCESS,
+            COLON, AS_KEYWORD, AS_SAFE,
+            ELVIS,
+            // Can't allow `is` and `!is` because of when entry conditions: IS_KEYWORD, NOT_IS,
+            ANDAND,
+            OROR
+    );
 
     public static final TokenSet ALL_OPERATIONS;
 

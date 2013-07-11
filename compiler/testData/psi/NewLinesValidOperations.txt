@@ -38,5 +38,71 @@ JetFile: NewLinesValidOperations.jet
         PsiElement(SAFE_ACCESS)('?.')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('length')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_WITH_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('str')
+        PsiWhiteSpace('\n\n        ')
+        OPERATION_REFERENCE
+          PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_WITH_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('str')
+        PsiWhiteSpace('\n\n        ')
+        OPERATION_REFERENCE
+          PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_WITH_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('str')
+        PsiWhiteSpace('\n\n        ')
+        OPERATION_REFERENCE
+          PsiElement(AS_SAFE)('as?')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('str')
+        PsiWhiteSpace('\n\n        ')
+        OPERATION_REFERENCE
+          PsiElement(ELVIS)('?:')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')          ª
+        PsiWhiteSpace('\n\n        ')
+        OPERATION_REFERENCE
+          PsiElement(OROR)('||')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+      PsiWhiteSpace('\n\n\n    ')
+      BINARY_EXPRESSION
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+        PsiWhiteSpace('\n\n        ')
+        OPERATION_REFERENCE
+          PsiElement(ANDAND)('&&')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
