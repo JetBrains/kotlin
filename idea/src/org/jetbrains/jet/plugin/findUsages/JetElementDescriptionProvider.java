@@ -20,9 +20,10 @@ import com.intellij.psi.ElementDescriptionLocation;
 import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.refactoring.util.RefactoringDescriptionLocation;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.*;
 
 public class JetElementDescriptionProvider implements ElementDescriptionProvider {
     @Override
@@ -31,6 +32,21 @@ public class JetElementDescriptionProvider implements ElementDescriptionProvider
           if (element instanceof PsiNamedElement && element instanceof JetElement) {
             return ((PsiNamedElement)element).getName();
           }
+        }
+        else if (location instanceof RefactoringDescriptionLocation) {
+            if (element instanceof JetClass) {
+                JetClass jetClass = (JetClass) element;
+                return (jetClass.isTrait() ? "Trait " : "Class ") + jetClass.getName();
+            }
+            if (element instanceof JetObjectDeclaration || element instanceof JetObjectDeclarationName) {
+                return "Object " + ((PsiNamedElement)element).getName();
+            }
+            if (element instanceof JetNamedFunction) {
+                return "Function " + ((PsiNamedElement)element).getName();
+            }
+            if (element instanceof JetProperty) {
+                return "Property " + ((PsiNamedElement)element).getName();
+            }
         }
         return null;
     }
