@@ -40,8 +40,12 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getIntegerValue(@NotNull String text, @NotNull JetType expectedType) {
+        return getIntegerValue(parseLongValue(text), expectedType);
+    }
+
+    @NotNull
+    public CompileTimeConstant<?> getIntegerValue(@Nullable Long value, @NotNull JetType expectedType) {
         if (noExpectedType(expectedType)) {
-            Long value = parseLongValue(text);
             if (value == null) {
                 return OUT_OF_RANGE;
             }
@@ -80,16 +84,15 @@ public class CompileTimeConstantResolver {
             JetType intType = builtIns.getIntType();
             JetType longType = builtIns.getLongType();
             if (typeChecker.isSubtypeOf(intType, expectedType)) {
-                return getIntegerValue(text, intType);
+                return getIntegerValue(value, intType);
             }
             else if (typeChecker.isSubtypeOf(longType, expectedType)) {
-                return getIntegerValue(text, longType);
+                return getIntegerValue(value, longType);
             }
             else {
                 return new ErrorValue("An integer literal does not conform to the expected type " + expectedType);
             }
         }
-        Long value = parseLongValue(text);
 
         if (value != null && lowerBound <= value && value <= upperBound) {
             return create.apply(value);
@@ -98,7 +101,7 @@ public class CompileTimeConstantResolver {
     }
 
     @Nullable
-    private static Long parseLongValue(String text) {
+    public static Long parseLongValue(String text) {
         try {
             long value;
             if (text.startsWith("0x") || text.startsWith("0X")) {

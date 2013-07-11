@@ -38,43 +38,53 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 public class TypeUtils {
-    public static final JetType NO_EXPECTED_TYPE = new JetType() {
+    public static class SpecialType implements JetType {
+        private final String name;
+
+        public SpecialType(String name) {
+            this.name = name;
+        }
+
         @NotNull
         @Override
         public TypeConstructor getConstructor() {
-            throw new IllegalStateException();
+            throw new IllegalStateException(name);
         }
 
         @NotNull
         @Override
         public List<TypeProjection> getArguments() {
-            throw new IllegalStateException();
+            throw new IllegalStateException(name);
         }
 
         @Override
         public boolean isNullable() {
-            throw new IllegalStateException();
+            throw new IllegalStateException(name);
         }
 
         @NotNull
         @Override
         public JetScope getMemberScope() {
-            throw new IllegalStateException();
+            throw new IllegalStateException(name);
         }
 
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
-            throw new IllegalStateException();
+            throw new IllegalStateException(name);
         }
 
         @Override
         public String toString() {
-            return "NO_EXPECTED_TYPE";
+            return name;
         }
-    };
+    }
+
+    public static final JetType NO_EXPECTED_TYPE = new SpecialType("NO_EXPECTED_TYPE");
+    
+    public static final JetType UNKNOWN_EXPECTED_TYPE = new SpecialType("UNKNOWN_EXPECTED_TYPE");
 
     public static boolean noExpectedType(@NotNull JetType type) {
-        return type == NO_EXPECTED_TYPE;
+        return type == NO_EXPECTED_TYPE || type == UNKNOWN_EXPECTED_TYPE;
     }
 
     @NotNull

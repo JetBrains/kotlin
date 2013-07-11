@@ -67,6 +67,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.UNKNOWN_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
@@ -108,6 +109,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         String text = node.getText();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
+
+        if (context.expectedType == UNKNOWN_EXPECTED_TYPE) {
+            if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
+                Long longValue = CompileTimeConstantResolver.parseLongValue(text);
+                if (longValue != null) {
+                    JetTypeImpl numberValueType = new JetTypeImpl(
+                            Collections.<AnnotationDescriptor>emptyList(), new NumberValueTypeConstructor(longValue), false,
+                            Collections.<TypeProjection>emptyList(),
+                            ErrorUtils.createErrorScope("Scope for number value type (" + longValue + ")", true));
+                    return JetTypeInfo.create(numberValueType, context.dataFlowInfo);
+                }
+            }
+        }
 
         CompileTimeConstant<?> value;
         if (elementType == JetNodeTypes.INTEGER_CONSTANT) {

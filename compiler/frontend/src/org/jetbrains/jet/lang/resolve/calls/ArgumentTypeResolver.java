@@ -24,17 +24,15 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
@@ -50,7 +48,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordExpressionType;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
@@ -73,7 +70,10 @@ public class ArgumentTypeResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
-    public static boolean isSubtypeOfForArgumentType(@NotNull JetType subtype, @NotNull JetType supertype) {
+    public static boolean isSubtypeOfForArgumentType(
+            @NotNull JetType subtype,
+            @NotNull JetType supertype
+    ) {
         if (subtype == PLACEHOLDER_FUNCTION_TYPE) {
             return isFunctionOrErrorType(supertype) || KotlinBuiltIns.getInstance().isAny(supertype); //todo function type extends
         }
@@ -180,8 +180,9 @@ public class ArgumentTypeResolver {
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
-        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceResolveMode(ResolveMode.NESTED_CALL);
+        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.UNKNOWN_EXPECTED_TYPE).replaceResolveMode(ResolveMode.NESTED_CALL);
         JetTypeInfo result = expressionTypingServices.getTypeInfo(expression, newContext);
+
         if (traceToCommitForCall != null) {
             traceToCommitForCall.commit();
         }

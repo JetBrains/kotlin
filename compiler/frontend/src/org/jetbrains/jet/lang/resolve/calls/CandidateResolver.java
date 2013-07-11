@@ -630,7 +630,7 @@ public class CandidateResolver {
                         resultingType = type;
                     }
                     else {
-                        resultingType = autocastValueArgumentTypeIfPossible(expression, expectedType, type, trace, candidateCall.getDataFlowInfo());
+                        resultingType = autocastValueArgumentTypeIfPossible(expression, expectedType, type, newContext);
                         if (resultingType == null) {
                             resultingType = type;
                             resultStatus = OTHER_ERROR;
@@ -649,11 +649,10 @@ public class CandidateResolver {
             @NotNull JetExpression expression,
             @NotNull JetType expectedType,
             @NotNull JetType actualType,
-            @NotNull BindingTrace trace,
-            @NotNull DataFlowInfo dataFlowInfo
+            @NotNull ResolutionContext<?> context
     ) {
         ExpressionReceiver receiverToCast = new ExpressionReceiver(expression, actualType);
-        List<ReceiverValue> variants = AutoCastUtils.getAutoCastVariants(trace.getBindingContext(), dataFlowInfo, receiverToCast);
+        List<ReceiverValue> variants = AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (ReceiverValue receiverValue : variants) {
             JetType possibleType = receiverValue.getType();
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType)) {
