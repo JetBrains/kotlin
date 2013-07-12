@@ -227,7 +227,10 @@
     <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.jet.plugin.findUsages.JetUsageTypeProvider"/>
-    <refactoring.safeDeleteProcessor implementation="org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor" id="kotlinProcessor"/>
+    <refactoring.safeDeleteProcessor
+        id="kotlinProcessor"
+        implementation="org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor"
+        order="before javaProcessor"/>
     <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
     <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>

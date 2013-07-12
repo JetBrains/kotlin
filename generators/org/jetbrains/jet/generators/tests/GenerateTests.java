@@ -402,7 +402,10 @@ public class GenerateTests {
                 "JetSafeDeleteTestGenerated",
                 AbstractJetSafeDeleteTest.class,
                 testModel("idea/testData/safeDelete/deleteClass", "doClassTest"),
-                testModel("idea/testData/safeDelete/deleteObject", "doObjectTest")
+                testModel("idea/testData/safeDelete/deleteObject", "doObjectTest"),
+                testModel("idea/testData/safeDelete/deleteFunction", "doFunctionTest"),
+                testModel("idea/testData/safeDelete/deleteFunctionWithJavaUsages", "doFunctionTestWithJava"),
+                testModel("idea/testData/safeDelete/deleteJavaMethod", "doJavaMethodTest")
         );
     }
 

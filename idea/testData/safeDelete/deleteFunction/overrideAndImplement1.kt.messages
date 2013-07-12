@@ -1,0 +1,1 @@
+fun foo(): jet.Unit in final class B : A, Z implements fun foo(): jet.Unit in trait Z.

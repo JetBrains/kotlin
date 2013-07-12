@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor
 public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
     @Override
     public boolean isSafeDeleteAvailable(PsiElement element) {
-        return KotlinSafeDeleteProcessor.checkElement(element);
+        return KotlinSafeDeleteProcessor.canDeleteElement(element);
     }
 
     @Override

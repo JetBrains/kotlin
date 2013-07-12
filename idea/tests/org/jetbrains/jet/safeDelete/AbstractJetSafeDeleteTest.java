@@ -16,44 +16,99 @@
 
 package org.jetbrains.jet.safeDelete;
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.codeInsight.TargetElementUtilBase;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetObjectDeclarationName;
+import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightTestCase {
+public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureTestCase {
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetLightProjectDescriptor.INSTANCE;
+    }
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        String pathBase = PluginTestCaseBase.getTestDataPathBase();
+        myFixture.setTestDataPath(pathBase.substring(0, pathBase.lastIndexOf("/idea/testData")));
+    }
+
     public void doClassTest(@NotNull String path) throws Exception {
-        doTest(path, JetClass.class);
+        doTest(path, JetClass.class, false);
     }
 
     public void doObjectTest(@NotNull String path) throws Exception {
-        doTest(path, JetObjectDeclarationName.class);
+        doTest(path, JetObjectDeclarationName.class, false);
     }
 
-    private <T extends JetElement> void doTest(@NotNull String path, @NotNull Class<T> elementClass) throws Exception {
-        configureByFile(path);
+    public void doFunctionTest(@NotNull String path) throws Exception {
+        doTest(path, JetNamedFunction.class, false);
+    }
 
-        DataContext dataContext = getCurrentEditorDataContext();
-        PsiElement element = PsiTreeUtil.getParentOfType(LangDataKeys.PSI_ELEMENT.getData(dataContext), elementClass, false);
+    public void doFunctionTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetNamedFunction.class, true);
+    }
+
+    public void doJavaMethodTest(@NotNull String path) throws Exception {
+        doTest(path, PsiMethod.class, true);
+    }
+
+    private <T extends PsiElement> void doTest(
+            @NotNull String path, @NotNull Class<T> elementClass, boolean withJava) throws Exception {
+        String[] filePaths;
+        if (withJava) {
+            filePaths = new String[]{path, path.endsWith(".java") ? path.replace(".java", ".kt") : path.replace(".kt", ".java")};
+        }
+        else {
+            filePaths = new String[]{path};
+        }
+
+        Editor[] editors = new Editor[filePaths.length];
+        int i = 0;
+        for (String filePath : filePaths) {
+            myFixture.configureByFile(filePath);
+            editors[i++] = myFixture.getEditor();
+        }
+
+        PsiElement elementAtCaret = null;
+        for (Editor editor : editors) {
+            elementAtCaret = TargetElementUtilBase.findTargetElement(
+                    editor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtilBase.ELEMENT_NAME_ACCEPTED
+            );
+            if (elementAtCaret != null) break;
+        }
+
+        assertNotNull("Couldn't find element at caret position", elementAtCaret);
+
+        T element = PsiTreeUtil.getParentOfType(elementAtCaret, elementClass, false);
 
         try {
-            new SafeDeleteHandler().invoke(getProject(), new PsiElement[] {element}, dataContext);
-            checkResultByFile(path + ".after");
+            SafeDeleteHandler.invoke(getProject(), new PsiElement[] {element}, null, true, null);
+            for (int j = 0; j < filePaths.length; j++) {
+                String expectedText = FileUtil.loadFile(new File(filePaths[j] + ".after"));
+                assertEquals(StringUtil.convertLineSeparators(expectedText), editors[j].getDocument().getText());
+            }
         }
         catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
             List<String> messages = new ArrayList<String>(e.getMessages());
@@ -63,11 +118,5 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightTestCase
             String expectedMessage = FileUtil.loadFile(messageFile, CharsetToolkit.UTF8, true);
             assertEquals(expectedMessage, StringUtil.join(messages, "\n"));
         }
-    }
-
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
     }
 }
