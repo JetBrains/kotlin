@@ -20,12 +20,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
@@ -130,7 +128,7 @@ public class OverridingUtil {
         // TODO : Visibility
 
         if ((superDescriptor.getReceiverParameter() == null) != (subDescriptor.getReceiverParameter() == null)) {
-            return OverrideCompatibilityInfo.receiverPresenсeMismatch();
+            return OverrideCompatibilityInfo.receiverPresenceMismatch();
         }
 
         if (superDescriptor.getValueParameters().size() != subDescriptor.getValueParameters().size()) {
@@ -330,8 +328,8 @@ public class OverridingUtil {
         }
 
         @NotNull
-        public static OverrideCompatibilityInfo receiverPresenсeMismatch() {
-            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "receiverPresenсeMismatch"); // TODO
+        public static OverrideCompatibilityInfo receiverPresenceMismatch() {
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "receiverPresenceMismatch"); // TODO
         }
 
         @NotNull
