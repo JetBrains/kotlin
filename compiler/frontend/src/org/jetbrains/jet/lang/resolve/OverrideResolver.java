@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 public class OverrideResolver {
@@ -242,7 +243,8 @@ public class OverrideResolver {
         Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
         while (!fromSuperQueue.isEmpty()) {
             CallableMemberDescriptor notOverriddenFromSuper = VisibilityUtil.findMemberWithMaxVisibility(fromSuperQueue);
-            Collection<CallableMemberDescriptor> overridables = extractMembersOverridableBy(notOverriddenFromSuper, fromSuperQueue, sink);
+            Collection<CallableMemberDescriptor> overridables = extractMembersOverridableInBothWays(notOverriddenFromSuper, fromSuperQueue,
+                                                                                                    sink);
             createAndBindFakeOverride(overridables, current, sink);
         }
     }
@@ -326,7 +328,7 @@ public class OverrideResolver {
     }
 
     @NotNull
-    private static Collection<CallableMemberDescriptor> extractMembersOverridableBy(
+    private static Collection<CallableMemberDescriptor> extractMembersOverridableInBothWays(
             @NotNull CallableMemberDescriptor overrider,
             @NotNull Queue<CallableMemberDescriptor> extractFrom,
             @NotNull DescriptorSink sink
@@ -340,19 +342,17 @@ public class OverrideResolver {
                 continue;
             }
 
-            OverridingUtil.OverrideCompatibilityInfo.Result result =
+            OverridingUtil.OverrideCompatibilityInfo.Result result1 =
                     OverridingUtil.isOverridableBy(candidate, overrider).getResult();
-            switch (result) {
-                case OVERRIDABLE:
-                    overridable.add(candidate);
-                    iterator.remove();
-                    break;
-                case CONFLICT:
-                    sink.conflict(overrider, candidate);
-                    iterator.remove();
-                    break;
-                case INCOMPATIBLE:
-                    break;
+            OverridingUtil.OverrideCompatibilityInfo.Result result2 =
+                    OverridingUtil.isOverridableBy(overrider, candidate).getResult();
+            if (result1 == OVERRIDABLE && result2 == OVERRIDABLE) {
+                overridable.add(candidate);
+                iterator.remove();
+            }
+            else if (result1 == CONFLICT || result2 == CONFLICT) {
+                sink.conflict(overrider, candidate);
+                iterator.remove();
             }
         }
         return overridable;
