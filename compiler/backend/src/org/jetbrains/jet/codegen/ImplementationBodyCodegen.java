@@ -213,15 +213,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
 
-        if (isTopLevelOrInnerClass(descriptor)) {
-            writeKotlinInfo();
-        }
-
         writeClassSignatureIfNeeded(signature);
     }
 
-    private void writeKotlinInfo() {
-        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(typeMapper));
+    @Override
+    protected void generateKotlinAnnotation() {
+        if (!isTopLevelOrInnerClass(descriptor)) return;
+
+        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(v.getMemberMap()));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 

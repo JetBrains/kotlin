@@ -137,12 +137,14 @@ public class PropertyCodegen extends GenerationStateAware {
         else if (!propertyDescriptor.getAnnotations().isEmpty()) {
             // Annotations on properties without backing fields are stored in bytecode on an empty synthetic method. This way they're still
             // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
+            String methodName = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyDescriptor.getName());
             MethodVisitor mv = v.newMethod(null,
                                            ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC,
-                                           JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyDescriptor.getName()),
+                                           methodName,
                                            JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE,
                                            null,
                                            null);
+            v.getMemberMap().recordSyntheticMethodNameOfProperty(propertyDescriptor, methodName);
             AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(propertyDescriptor);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
@@ -187,6 +189,8 @@ public class PropertyCodegen extends GenerationStateAware {
         }
 
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
+
+        builder.getMemberMap().recordFieldOfProperty(propertyDescriptor, type, name);
 
         return builder.newField(element, modifiers, name, type.getDescriptor(),
                                 typeMapper.mapFieldSignature(jetType), defaultValue);

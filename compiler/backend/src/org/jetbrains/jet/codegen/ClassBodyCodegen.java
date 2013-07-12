@@ -73,9 +73,14 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         generateStaticInitializer();
 
         generateRemoveInIterator();
+
+        generateKotlinAnnotation();
     }
 
     protected abstract void generateDeclaration();
+
+    protected void generateKotlinAnnotation() {
+    }
 
     protected void generateSyntheticParts() {
     }

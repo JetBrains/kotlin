@@ -104,7 +104,6 @@ public class FunctionCodegen extends GenerationStateAware {
             @NotNull MethodContext methodContext,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-
         Method asmMethod = jvmSignature.getAsmMethod();
 
         MethodVisitor mv = v.newMethod(origin,
@@ -113,6 +112,7 @@ public class FunctionCodegen extends GenerationStateAware {
                                        asmMethod.getDescriptor(),
                                        jvmSignature.getGenericsSignature(),
                                        null);
+        v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;

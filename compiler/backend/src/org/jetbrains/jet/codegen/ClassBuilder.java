@@ -27,6 +27,8 @@ import org.jetbrains.asm4.MethodVisitor;
 public abstract class ClassBuilder {
     private String thisName;
 
+    private final MemberMap members = new MemberMap();
+
     public static class Concrete extends ClassBuilder {
         private final ClassVisitor v;
 
@@ -61,6 +63,11 @@ public abstract class ClassBuilder {
             @Nullable String[] exceptions
     ) {
         return getVisitor().visitMethod(access, name, desc, signature, exceptions);
+    }
+
+    @NotNull
+    public MemberMap getMemberMap() {
+        return members;
     }
 
     @NotNull

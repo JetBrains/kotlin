@@ -16,25 +16,23 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameTable;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
 public class JavaSerializerExtension extends SerializerExtension {
-    private final JetTypeMapper typeMapper;
+    private final MemberMap memberMap;
 
-    public JavaSerializerExtension(@NotNull JetTypeMapper typeMapper) {
-        this.typeMapper = typeMapper;
+    public JavaSerializerExtension(@NotNull MemberMap memberMap) {
+        this.memberMap = memberMap;
     }
 
-    // TODO: mapSignature should be done upon generation of the member instead, because we don't know enough at this point to map correctly
     @Override
     public void serializeCallable(
             @NotNull CallableMemberDescriptor callable,
@@ -42,30 +40,35 @@ public class JavaSerializerExtension extends SerializerExtension {
             @NotNull NameTable nameTable
     ) {
         if (callable instanceof FunctionDescriptor) {
-            Method method = typeMapper.mapSignature((FunctionDescriptor) callable).getAsmMethod();
-            JavaProtoBufUtil.saveMethodSignature(proto, method, nameTable);
+            Method method = memberMap.getMethodOfDescriptor(callable);
+            if (method != null) {
+                JavaProtoBufUtil.saveMethodSignature(proto, method, nameTable);
+            }
         }
         else if (callable instanceof PropertyDescriptor) {
             PropertyDescriptor property = (PropertyDescriptor) callable;
-            Type type = typeMapper.mapType(property.getType());
+
             PropertyGetterDescriptor getter = property.getGetter();
             PropertySetterDescriptor setter = property.getSetter();
-            Method getterMethod = getter == null ? null : typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
-            Method setterMethod = setter == null ? null : typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getAsmMethod();
+            Method getterMethod = getter == null ? null : memberMap.getMethodOfDescriptor(getter);
+            Method setterMethod = setter == null ? null : memberMap.getMethodOfDescriptor(setter);
 
-            // This is very wrong, see above todo
+            Pair<Type, String> field = memberMap.getFieldOfProperty(property);
+            Type fieldType;
             String fieldName;
             String syntheticMethodName;
-            if ((getter == null || getter.isDefault()) && (setter == null || setter.isDefault())) {
-                fieldName = property.getName().asString();
+            if (field != null) {
+                fieldType = field.first;
+                fieldName = field.second;
                 syntheticMethodName = null;
             }
             else {
+                fieldType = null;
                 fieldName = null;
-                syntheticMethodName = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(property.getName());
+                syntheticMethodName = memberMap.getSyntheticMethodNameOfProperty(property);
             }
 
-            JavaProtoBufUtil.savePropertySignature(proto, type, fieldName, syntheticMethodName, getterMethod, setterMethod, nameTable);
+            JavaProtoBufUtil.savePropertySignature(proto, fieldType, fieldName, syntheticMethodName, getterMethod, setterMethod, nameTable);
         }
     }
 }
