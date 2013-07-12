@@ -120,9 +120,6 @@ public class ResolveSessionUtils {
             @NotNull ResolveSession resolveSession,
             @NotNull JetElement jetElement
     ) {
-        // All additional resolve should be done to separate trace
-        DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement);
-
         @SuppressWarnings("unchecked")
         PsiElement resolveElement = JetPsiUtil.getTopmostParentOfTypes(jetElement,
                 JetNamedFunction.class, JetClassInitializer.class,
@@ -132,6 +129,9 @@ public class ResolveSessionUtils {
                 JetNamespaceHeader.class);
 
         if (resolveElement != null) {
+            // All additional resolve should be done to separate trace
+            DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement);
+
             JetFile file = (JetFile) jetElement.getContainingFile();
 
             if (resolveElement instanceof JetNamedFunction) {
@@ -176,7 +176,13 @@ public class ResolveSessionUtils {
             return trace.getBindingContext();
         }
 
-        return trace.getBindingContext();
+        JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetElement, JetDeclaration.class, false);
+        if (declaration != null) {
+            // Activate descriptor resolution
+            resolveSession.resolveToDescriptor(declaration);
+        }
+
+        return resolveSession.getBindingContext();
     }
 
     private static void namespaceRefAdditionalResolve(

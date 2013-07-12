@@ -102,7 +102,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     @Nullable
     protected PsiElement doResolve() {
-        BindingContext context = WholeProjectAnalyzerFacade.getContextForExpression(myExpression);
+        BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(myExpression);
 
         List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(context, myExpression);
         if (psiElements.size() == 1) {
@@ -115,6 +115,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (stdlibSymbols.size() == 1) {
             return stdlibSymbols.iterator().next();
         }
+        
         return null;
     }
 
