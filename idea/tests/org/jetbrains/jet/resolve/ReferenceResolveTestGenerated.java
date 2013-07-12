@@ -71,6 +71,11 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         doTest("idea/testData/resolve/references/CtrlClickResolve.kt");
     }
     
+    @TestMetadata("PackageReference.kt")
+    public void testPackageReference() throws Exception {
+        doTest("idea/testData/resolve/references/PackageReference.kt");
+    }
+    
     @TestMetadata("PackageReferenceInImport.kt")
     public void testPackageReferenceInImport() throws Exception {
         doTest("idea/testData/resolve/references/PackageReferenceInImport.kt");

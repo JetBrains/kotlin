@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.NameUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -127,7 +128,8 @@ public class ResolveSessionUtils {
                 JetNamedFunction.class, JetClassInitializer.class,
                 JetProperty.class, JetDelegationSpecifierList.class,
                 JetImportDirective.class, JetAnnotationEntry.class,
-                JetTypeParameter.class, JetTypeConstraint.class);
+                JetTypeParameter.class, JetTypeConstraint.class,
+                JetNamespaceHeader.class);
 
         if (resolveElement != null) {
             JetFile file = (JetFile) jetElement.getContainingFile();
@@ -164,6 +166,9 @@ public class ResolveSessionUtils {
                 typeConstraintAdditionalResolve(resolveSession, jetElement);
                 return resolveSession.getBindingContext();
             }
+            else if (resolveElement instanceof JetNamespaceHeader) {
+                namespaceRefAdditionalResolve(resolveSession, (JetNamespaceHeader) resolveElement, trace, jetElement);
+            }
             else {
                 assert false : "Invalid type of the topmost parent";
             }
@@ -171,18 +176,32 @@ public class ResolveSessionUtils {
             return trace.getBindingContext();
         }
 
-        if (jetElement instanceof JetExpression) {
-            JetExpression jetExpression = (JetExpression) jetElement;
-            // Setup resolution scope explicitly
-            if (trace.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, jetExpression) == null) {
-                JetScope scope = getExpressionMemberScope(resolveSession, jetExpression);
+        return trace.getBindingContext();
+    }
+
+    private static void namespaceRefAdditionalResolve(
+            ResolveSession resolveSession,
+            JetNamespaceHeader header, DelegatingBindingTrace trace, JetElement jetElement
+    ) {
+        if (jetElement instanceof JetSimpleNameExpression) {
+            JetSimpleNameExpression packageNameExpression = (JetSimpleNameExpression) jetElement;
+            if (trace.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, packageNameExpression) == null) {
+                JetScope scope = getExpressionMemberScope(resolveSession, packageNameExpression);
                 if (scope != null) {
-                    trace.record(BindingContext.RESOLUTION_SCOPE, jetExpression, scope);
+                    trace.record(BindingContext.RESOLUTION_SCOPE, packageNameExpression, scope);
+                }
+            }
+
+            Name name = packageNameExpression.getReferencedNameAsName();
+            if (NameUtils.isValidIdentified(name.asString())) {
+                if (trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, packageNameExpression) == null) {
+                    FqName fqName = header.getParentFqName(packageNameExpression).child(name);
+                    NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
+                    assert packageDescriptor != null: "Package descriptor should be present in session for " + fqName;
+                    trace.record(BindingContext.REFERENCE_TARGET, packageNameExpression, packageDescriptor);
                 }
             }
         }
-
-        return trace.getBindingContext();
     }
 
     private static void typeConstraintAdditionalResolve(KotlinCodeAnalyzer analyzer, JetElement jetElement) {
