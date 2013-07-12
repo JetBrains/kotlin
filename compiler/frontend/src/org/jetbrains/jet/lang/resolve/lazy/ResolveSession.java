@@ -278,9 +278,16 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 if (grandFather instanceof JetClass) {
                     JetClass jetClass = (JetClass) grandFather;
                     // This is a primary constructor parameter
+                    ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
                     if (parameter.getValOrVarNode() != null) {
-                        getClassDescriptor(jetClass).getDefaultType().getMemberScope().getProperties(safeNameForLazyResolve(parameter));
+                        classDescriptor.getDefaultType().getMemberScope().getProperties(safeNameForLazyResolve(parameter));
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+                    }
+                    else {
+                        ConstructorDescriptor constructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+                        assert constructor != null: "There are constructor parameters found, so a constructor should also exist";
+                        constructor.getValueParameters();
+                        return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
                     }
                 }
                 return super.visitParameter(parameter, data);
