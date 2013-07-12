@@ -1,0 +1,16 @@
+package test
+
+public trait Sub : test.Super1, test.Super2 {
+    public abstract override /*1*/ /*fake_override*/ fun bar(): jet.CharSequence
+    public abstract override /*1*/ /*fake_override*/ fun foo(): jet.CharSequence
+}
+
+public trait Super1 {
+    private abstract fun bar(): jet.String
+    public abstract fun foo(): jet.CharSequence
+}
+
+public trait Super2 {
+    public abstract fun bar(): jet.CharSequence
+    private abstract fun foo(): jet.String
+}

@@ -1,0 +1,20 @@
+package test
+
+public final class InheritMethodsDifferentReturnTypes : java.lang.Object {
+    public constructor InheritMethodsDifferentReturnTypes()
+    
+    public trait Sub : test.InheritMethodsDifferentReturnTypes.Super1, test.InheritMethodsDifferentReturnTypes.Super2 {
+        public abstract override /*2*/ /*fake_override*/ fun bar(): jet.String?
+        public abstract override /*2*/ /*fake_override*/ fun foo(): jet.String?
+    }
+    
+    public trait Super1 : java.lang.Object {
+        public abstract fun bar(): jet.String?
+        public abstract fun foo(): jet.CharSequence?
+    }
+    
+    public trait Super2 : java.lang.Object {
+        public abstract fun bar(): jet.CharSequence?
+        public abstract fun foo(): jet.String?
+    }
+}

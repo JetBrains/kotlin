@@ -1323,7 +1323,7 @@ public trait MutableList</*0*/ E> : jet.List<E>, jet.MutableCollection<E> {
     public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: jet.Any?): jet.Int
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun iterator(): jet.Iterator<E>
+    public abstract override /*2*/ /*fake_override*/ fun iterator(): jet.MutableIterator<E>
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
     public abstract override /*1*/ fun listIterator(): jet.MutableListIterator<E>
     public abstract override /*1*/ fun listIterator(/*0*/ index: jet.Int): jet.MutableListIterator<E>

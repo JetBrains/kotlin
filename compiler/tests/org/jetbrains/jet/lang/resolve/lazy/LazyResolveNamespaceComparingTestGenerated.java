@@ -446,6 +446,21 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
+            public void testInheritMethodsDifferentReturnTypesAndVisibilities() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
+            }
+            
+            @TestMetadata("InheritValAndVar.kt")
+            public void testInheritValAndVar() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/InheritValAndVar.kt");
+            }
+            
+            @TestMetadata("InheritValsDifferentTypes.kt")
+            public void testInheritValsDifferentTypes() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/InheritValsDifferentTypes.kt");
+            }
+            
             @TestMetadata("NoSamAdapter.kt")
             public void testNoSamAdapter() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/NoSamAdapter.kt");
@@ -1184,6 +1199,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("FinalFieldAsVal.kt")
         public void testFinalFieldAsVal() throws Exception {
             doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/compiledJavaCompareWithKotlin/FinalFieldAsVal.kt");
+        }
+        
+        @TestMetadata("InheritMethodsDifferentReturnTypes.kt")
+        public void testInheritMethodsDifferentReturnTypes() throws Exception {
+            doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/compiledJavaCompareWithKotlin/InheritMethodsDifferentReturnTypes.kt");
+        }
+        
+        @TestMetadata("InheritMethodsDifferentReturnTypesGeneric.kt")
+        public void testInheritMethodsDifferentReturnTypesGeneric() throws Exception {
+            doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/compiledJavaCompareWithKotlin/InheritMethodsDifferentReturnTypesGeneric.kt");
         }
         
         @TestMetadata("InnerClass.kt")

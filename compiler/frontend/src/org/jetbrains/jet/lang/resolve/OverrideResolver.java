@@ -243,12 +243,45 @@ public class OverrideResolver {
         while (!fromSuperQueue.isEmpty()) {
             CallableMemberDescriptor notOverriddenFromSuper = VisibilityUtil.findMemberWithMaxVisibility(fromSuperQueue);
             Collection<CallableMemberDescriptor> overridables = extractMembersOverridableBy(notOverriddenFromSuper, fromSuperQueue, sink);
-            createAndBindFakeOverride(notOverriddenFromSuper, overridables, current, sink);
+            createAndBindFakeOverride(overridables, current, sink);
         }
     }
 
+    private static boolean isMoreSpecific(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
+        if (a instanceof SimpleFunctionDescriptor) {
+            assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
+
+            JetType aReturnType = a.getReturnType();
+            assert aReturnType != null;
+            JetType bReturnType = b.getReturnType();
+            assert bReturnType != null;
+
+            return JetTypeChecker.INSTANCE.isSubtypeOf(aReturnType, bReturnType);
+        }
+        if (a instanceof PropertyDescriptor) {
+            assert b instanceof PropertyDescriptor : "b is " + b.getClass();
+
+            if (((PropertyDescriptor) a).isVar() || ((PropertyDescriptor) b).isVar()) {
+                return ((PropertyDescriptor) a).isVar();
+            }
+
+            // both vals
+            return JetTypeChecker.INSTANCE.isSubtypeOf(((PropertyDescriptor) a).getType(), ((PropertyDescriptor) b).getType());
+        }
+        throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
+    }
+
+    private static CallableMemberDescriptor selectMostSpecificMemberFromSuper(@NotNull Collection<CallableMemberDescriptor> overridables) {
+        CallableMemberDescriptor result = null;
+        for (CallableMemberDescriptor overridable : overridables) {
+            if (result == null || isMoreSpecific(overridable, result)) {
+                result = overridable;
+            }
+        }
+        return result;
+    }
+
     private static void createAndBindFakeOverride(
-            @NotNull CallableMemberDescriptor notOverriddenFromSuper,
             @NotNull Collection<CallableMemberDescriptor> overridables,
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink
@@ -258,8 +291,9 @@ public class OverrideResolver {
         boolean allInvisible = visibleOverridables.isEmpty();
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
         Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
+        CallableMemberDescriptor mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
         CallableMemberDescriptor fakeOverride =
-                notOverriddenFromSuper.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
+                mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
         for (CallableMemberDescriptor descriptor : effectiveOverridden) {
             OverridingUtil.bindOverride(fakeOverride, descriptor);
         }

@@ -94,6 +94,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/FinalFieldAsVal.java");
         }
         
+        @TestMetadata("InheritMethodsDifferentReturnTypes.java")
+        public void testInheritMethodsDifferentReturnTypes() throws Exception {
+            doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/InheritMethodsDifferentReturnTypes.java");
+        }
+        
+        @TestMetadata("InheritMethodsDifferentReturnTypesGeneric.java")
+        public void testInheritMethodsDifferentReturnTypesGeneric() throws Exception {
+            doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/InheritMethodsDifferentReturnTypesGeneric.java");
+        }
+        
         @TestMetadata("InnerClass.java")
         public void testInnerClass() throws Exception {
             doTest("compiler/testData/loadJava/compiledJavaCompareWithKotlin/InnerClass.java");
