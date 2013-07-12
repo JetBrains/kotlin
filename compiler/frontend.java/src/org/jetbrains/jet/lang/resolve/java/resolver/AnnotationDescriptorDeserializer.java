@@ -215,7 +215,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             case PROPERTY:
                 JavaProtoBufUtil.PropertyData data = JavaProtoBufUtil.loadPropertyData(proto, nameResolver);
                 return data == null ? null :
-                       MemberSignature.fromPropertyData(data.getType(), data.getFieldName(), data.getSyntheticMethodName());
+                       MemberSignature.fromPropertyData(data.getFieldType(), data.getFieldName(), data.getSyntheticMethodName());
             default:
                 return null;
         }
@@ -281,12 +281,12 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
         @Nullable
         public static MemberSignature fromPropertyData(
-                @NotNull Type type,
+                @Nullable Type fieldType,
                 @Nullable String fieldName,
                 @Nullable String syntheticMethodName
         ) {
-            if (fieldName != null) {
-                return fromFieldNameAndDesc(fieldName, type.getDescriptor());
+            if (fieldName != null && fieldType != null) {
+                return fromFieldNameAndDesc(fieldName, fieldType.getDescriptor());
             }
             else if (syntheticMethodName != null) {
                 return fromMethodNameAndDesc(syntheticMethodName, JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);

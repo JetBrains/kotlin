@@ -48,15 +48,21 @@ message JavaMethodSignature {
   repeated JavaType parameter_type = 3;
 }
 
+message JavaFieldSignature {
+  required int32 name = 1;
+  required JavaType type = 2;
+}
+
 message JavaPropertySignature {
-  required JavaType type = 1;
+  // A property itself is identified either by the field, or by the name of the synthetic method.
+  // If the property is annotated, then either field or synthetic_method_name should be present
+  optional JavaFieldSignature field = 1;
 
-  // One of these should be present
-  optional int32 field_name = 2;
-  optional int32 synthetic_method_name = 3; // Name of the synthetic method created to store property annotations
+  // Name of the synthetic method created to store property annotations. Signature is always "()V"
+  optional int32 synthetic_method_name = 2;
 
-  optional JavaMethodSignature getter = 4;
-  optional JavaMethodSignature setter = 5;
+  optional JavaMethodSignature getter = 3;
+  optional JavaMethodSignature setter = 4;
 }
 
 extend Callable {

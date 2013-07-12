@@ -54,19 +54,19 @@ public class JavaProtoBufUtil {
     }
 
     public static class PropertyData {
-        private final Type type;
+        private final Type fieldType;
         private final String fieldName;
         private final String syntheticMethodName;
 
-        public PropertyData(@NotNull Type type, @Nullable String fieldName, @Nullable String syntheticMethodName) {
-            this.type = type;
+        public PropertyData(@Nullable Type fieldType, @Nullable String fieldName, @Nullable String syntheticMethodName) {
+            this.fieldType = fieldType;
             this.fieldName = fieldName;
             this.syntheticMethodName = syntheticMethodName;
         }
 
-        @NotNull
-        public Type getType() {
-            return type;
+        @Nullable
+        public Type getFieldType() {
+            return fieldType;
         }
 
         @Nullable
@@ -81,7 +81,7 @@ public class JavaProtoBufUtil {
 
         @Override
         public String toString() {
-            return (fieldName != null ? "Field " + fieldName : "Synthetic method " + syntheticMethodName) + " " + type;
+            return fieldName != null ? "Field " + fieldName + " " + fieldType : "Synthetic method " + syntheticMethodName;
         }
     }
 
@@ -90,15 +90,19 @@ public class JavaProtoBufUtil {
         if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return null;
         JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
 
-        Type type = new Deserializer(nameResolver).type(propertySignature.getType());
-        String fieldName = propertySignature.hasFieldName()
-                           ? nameResolver.getName(propertySignature.getFieldName()).asString()
-                           : null;
-        String syntheticMethodName = propertySignature.hasSyntheticMethodName()
-                                     ? nameResolver.getName(propertySignature.getSyntheticMethodName()).asString()
-                                     : null;
-
-        return new PropertyData(type, fieldName, syntheticMethodName);
+        if (propertySignature.hasField()) {
+            JavaProtoBuf.JavaFieldSignature field = propertySignature.getField();
+            Type type = new Deserializer(nameResolver).type(field.getType());
+            Name name = nameResolver.getName(field.getName());
+            return new PropertyData(type, name.asString(), null);
+        }
+        else if (propertySignature.hasSyntheticMethodName()) {
+            Name name = nameResolver.getName(propertySignature.getSyntheticMethodName());
+            return new PropertyData(null, null, name.asString());
+        }
+        else {
+            return null;
+        }
     }
 
     public static void saveMethodSignature(@NotNull ProtoBuf.Callable.Builder proto, @NotNull Method method, @NotNull NameTable nameTable) {
@@ -107,7 +111,7 @@ public class JavaProtoBufUtil {
 
     public static void savePropertySignature(
             @NotNull ProtoBuf.Callable.Builder proto,
-            @NotNull Type type,
+            @Nullable Type fieldType,
             @Nullable String fieldName,
             @Nullable String syntheticMethodName,
             @Nullable Method getter,
@@ -115,7 +119,7 @@ public class JavaProtoBufUtil {
             @NotNull NameTable nameTable
     ) {
         proto.setExtension(JavaProtoBuf.propertySignature,
-                           new Serializer(nameTable).propertySignature(type, fieldName, syntheticMethodName, getter, setter));
+                           new Serializer(nameTable).propertySignature(fieldType, fieldName, syntheticMethodName, getter, setter));
     }
 
     private static class Serializer {
@@ -142,7 +146,7 @@ public class JavaProtoBufUtil {
 
         @NotNull
         public JavaProtoBuf.JavaPropertySignature propertySignature(
-                @NotNull Type type,
+                @Nullable Type fieldType,
                 @Nullable String fieldName,
                 @Nullable String syntheticMethodName,
                 @Nullable Method getter,
@@ -150,10 +154,9 @@ public class JavaProtoBufUtil {
         ) {
             JavaProtoBuf.JavaPropertySignature.Builder signature = JavaProtoBuf.JavaPropertySignature.newBuilder();
 
-            signature.setType(type(type));
-
-            if (fieldName != null) {
-                signature.setFieldName(nameTable.getSimpleNameIndex(Name.guess(fieldName)));
+            if (fieldType != null) {
+                assert fieldName != null : "Field name shouldn't be null when there's a field type: " + fieldType;
+                signature.setField(fieldSignature(fieldType, fieldName));
             }
 
             if (syntheticMethodName != null) {
@@ -167,6 +170,14 @@ public class JavaProtoBufUtil {
                 signature.setSetter(methodSignature(setter));
             }
 
+            return signature.build();
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaFieldSignature fieldSignature(@NotNull Type type, @NotNull String name) {
+            JavaProtoBuf.JavaFieldSignature.Builder signature = JavaProtoBuf.JavaFieldSignature.newBuilder();
+            signature.setName(nameTable.getSimpleNameIndex(Name.guess(name)));
+            signature.setType(type(type));
             return signature.build();
         }
 
