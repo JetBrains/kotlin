@@ -107,7 +107,9 @@ public class PropertyCodegen extends GenerationStateAware {
 
     public void generateConstructorPropertyAsMethodForAnnotationClass(JetParameter p, PropertyDescriptor descriptor) {
         Type type = state.getTypeMapper().mapType(descriptor);
-        MethodVisitor visitor = v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
+        String name = p.getName();
+        assert name != null : "Annotation parameter has no name: " + p.getText();
+        MethodVisitor visitor = v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, name, "()" + type.getDescriptor(), null, null);
         JetExpression defaultValue = p.getDefaultValue();
         if (defaultValue != null) {
             CompileTimeConstant<?> constant = state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, defaultValue);

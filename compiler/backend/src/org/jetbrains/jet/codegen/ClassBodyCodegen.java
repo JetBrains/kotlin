@@ -28,14 +28,13 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.AsmUtil.genMethodThrow;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
 public abstract class ClassBodyCodegen extends MemberCodegen {

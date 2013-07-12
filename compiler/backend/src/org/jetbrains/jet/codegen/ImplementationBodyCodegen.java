@@ -1542,6 +1542,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration) {
         if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
+            assert name != null : "Enum entry has no name: " + declaration.getText();
             String desc = "L" + classAsmType.getInternalName() + ";";
             v.newField(declaration, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
             myEnumConstants.add((JetEnumEntry) declaration);
