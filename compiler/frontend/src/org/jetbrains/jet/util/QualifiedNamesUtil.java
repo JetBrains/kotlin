@@ -172,13 +172,15 @@ public final class QualifiedNamesUtil {
                 if (!Character.isJavaIdentifierPart(c)) return false;
                 state = MIDDLE;
             }
-            else if (state == MIDDLE) {
-                if (c == '.') {
-                    state = AFTER_DOT;
-                }
-                else if (!Character.isJavaIdentifierPart(c)) {
-                    return false;
-                }
+
+            //noinspection ConstantConditions
+            assert state == MIDDLE;
+
+            if (c == '.') {
+                state = AFTER_DOT;
+            }
+            else if (!Character.isJavaIdentifierPart(c)) {
+                return false;
             }
         }
 
