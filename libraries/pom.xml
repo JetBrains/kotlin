@@ -65,18 +65,12 @@
 
     <distributionManagement>
         <repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin</id>
-            <name>jetbrains-kotlin</name>
-            <url>http://repository.jetbrains.com/kotlin</url>
-            <layout>default</layout>
+            <id>sonatype-nexus-snapshots</id>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin</id>
-            <name>jetbrains-kotlin</name>
-            <url>http://repository.jetbrains.com/kotlin</url>
-            <layout>default</layout>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
