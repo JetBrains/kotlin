@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
@@ -112,7 +113,15 @@ public class FunctionCodegen extends GenerationStateAware {
                                        asmMethod.getDescriptor(),
                                        jvmSignature.getGenericsSignature(),
                                        null);
-        v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);
+
+        OwnerKind contextKind = owner.getContextKind();
+        if (contextKind instanceof OwnerKind.StaticDelegateKind) {
+            FqName fqName = ((OwnerKind.StaticDelegateKind) contextKind).getOwnerClass().getFqName();
+            v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, fqName.shortName());
+        }
+        else {
+            v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);
+        }
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;

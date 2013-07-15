@@ -105,6 +105,12 @@ public class JavaProtoBufUtil {
         }
     }
 
+    @Nullable
+    public static Name loadSrcClassName(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+        if (!proto.hasExtension(JavaProtoBuf.srcClassName)) return null;
+        return nameResolver.getName(proto.getExtension(JavaProtoBuf.srcClassName));
+    }
+
     public static void saveMethodSignature(@NotNull ProtoBuf.Callable.Builder proto, @NotNull Method method, @NotNull NameTable nameTable) {
         proto.setExtension(JavaProtoBuf.methodSignature, new Serializer(nameTable).methodSignature(method));
     }
@@ -120,6 +126,14 @@ public class JavaProtoBufUtil {
     ) {
         proto.setExtension(JavaProtoBuf.propertySignature,
                            new Serializer(nameTable).propertySignature(fieldType, fieldName, syntheticMethodName, getter, setter));
+    }
+
+    public static void saveSrcClassName(
+            @NotNull ProtoBuf.Callable.Builder proto,
+            @NotNull Name name,
+            @NotNull NameTable nameTable
+    ) {
+        proto.setExtension(JavaProtoBuf.srcClassName, nameTable.getSimpleNameIndex(name));
     }
 
     private static class Serializer {

@@ -184,7 +184,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
         if (signature == null) return Collections.emptyList();
 
-        VirtualFile file = findVirtualFileByDescriptor(container);
+        VirtualFile file = getVirtualFileWithMemberAnnotations(container, proto, nameResolver);
 
         try {
             // TODO: calculate this only once for each container
@@ -196,6 +196,29 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         catch (IOException e) {
             throw ExceptionUtils.rethrow(e);
         }
+    }
+
+    @NotNull
+    private VirtualFile getVirtualFileWithMemberAnnotations(
+            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ProtoBuf.Callable proto,
+            @NotNull NameResolver nameResolver
+    ) {
+        if (container instanceof NamespaceDescriptor) {
+            Name name = JavaProtoBufUtil.loadSrcClassName(proto, nameResolver);
+            if (name != null) {
+                // To locate a package$src class, we first find the facade virtual file (*Package.class) and then look up the $src file in
+                // the same directory. This hack is needed because FileManager doesn't find classfiles for $src classes
+                VirtualFile facadeFile = findVirtualFileByPackage((NamespaceDescriptor) container);
+
+                VirtualFile srcFile = facadeFile.getParent().findChild(name + ".class");
+                if (srcFile != null) {
+                    return srcFile;
+                }
+            }
+        }
+
+        return findVirtualFileByDescriptor(container);
     }
 
     @Nullable

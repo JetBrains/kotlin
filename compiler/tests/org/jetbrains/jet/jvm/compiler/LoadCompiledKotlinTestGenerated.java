@@ -141,6 +141,16 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Getter.kt");
             }
             
+            @TestMetadata("PropertyField.kt")
+            public void testPropertyField() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/PropertyField.kt");
+            }
+            
+            @TestMetadata("PropertyNoField.kt")
+            public void testPropertyNoField() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/PropertyNoField.kt");
+            }
+            
             @TestMetadata("Setter.kt")
             public void testSetter() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Setter.kt");

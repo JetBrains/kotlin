@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -88,9 +89,14 @@ public class PropertyCodegen extends GenerationStateAware {
         assert kind instanceof OwnerKind.StaticDelegateKind || kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
 
-        if (kind != OwnerKind.TRAIT_IMPL && !(kind instanceof OwnerKind.StaticDelegateKind)) {
+        if (kind instanceof OwnerKind.StaticDelegateKind) {
+            FqName fqName = ((OwnerKind.StaticDelegateKind) kind).getOwnerClass().getFqName();
+            v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, fqName.shortName());
+        }
+        else if (kind != OwnerKind.TRAIT_IMPL) {
             generateBackingField(p, propertyDescriptor);
         }
+
         generateGetter(p, propertyDescriptor, p.getGetter());
         generateSetter(p, propertyDescriptor, p.getSetter());
 

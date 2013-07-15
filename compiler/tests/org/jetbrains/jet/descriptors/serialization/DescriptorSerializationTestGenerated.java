@@ -141,6 +141,16 @@ public class DescriptorSerializationTestGenerated extends AbstractDescriptorSeri
                 doTest("compiler/testData/loadKotlin/annotations/packageMembers/Getter.kt");
             }
             
+            @TestMetadata("PropertyField.kt")
+            public void testPropertyField() throws Exception {
+                doTest("compiler/testData/loadKotlin/annotations/packageMembers/PropertyField.kt");
+            }
+            
+            @TestMetadata("PropertyNoField.kt")
+            public void testPropertyNoField() throws Exception {
+                doTest("compiler/testData/loadKotlin/annotations/packageMembers/PropertyNoField.kt");
+            }
+            
             @TestMetadata("Setter.kt")
             public void testSetter() throws Exception {
                 doTest("compiler/testData/loadKotlin/annotations/packageMembers/Setter.kt");

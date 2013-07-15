@@ -69,4 +69,7 @@ extend Callable {
   optional JavaMethodSignature method_signature = 100;
 
   optional JavaPropertySignature property_signature = 101;
+
+  // For top-level callables, short name of "...Package$src$..." class with the callable's body and annotations
+  optional int32 src_class_name = 102;
 }

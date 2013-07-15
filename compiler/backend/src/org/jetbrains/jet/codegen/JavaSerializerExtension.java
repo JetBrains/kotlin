@@ -25,6 +25,7 @@ import org.jetbrains.jet.descriptors.serialization.NameTable;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class JavaSerializerExtension extends SerializerExtension {
     private final MemberMap memberMap;
@@ -39,8 +40,17 @@ public class JavaSerializerExtension extends SerializerExtension {
             @NotNull ProtoBuf.Callable.Builder proto,
             @NotNull NameTable nameTable
     ) {
+        saveSignature(callable, proto, nameTable);
+        saveSrcClassName(callable, proto, nameTable);
+    }
+
+    private void saveSignature(
+            @NotNull CallableMemberDescriptor callable,
+            @NotNull ProtoBuf.Callable.Builder proto,
+            @NotNull NameTable nameTable
+    ) {
         if (callable instanceof FunctionDescriptor) {
-            Method method = memberMap.getMethodOfDescriptor(callable);
+            Method method = memberMap.getMethodOfDescriptor((FunctionDescriptor) callable);
             if (method != null) {
                 JavaProtoBufUtil.saveMethodSignature(proto, method, nameTable);
             }
@@ -69,6 +79,17 @@ public class JavaSerializerExtension extends SerializerExtension {
             }
 
             JavaProtoBufUtil.savePropertySignature(proto, fieldType, fieldName, syntheticMethodName, getterMethod, setterMethod, nameTable);
+        }
+    }
+
+    private void saveSrcClassName(
+            @NotNull CallableMemberDescriptor callable,
+            @NotNull ProtoBuf.Callable.Builder proto,
+            @NotNull NameTable nameTable
+    ) {
+        Name name = memberMap.getSrcClassNameOfCallable(callable);
+        if (name != null) {
+            JavaProtoBufUtil.saveSrcClassName(proto, name, nameTable);
         }
     }
 }

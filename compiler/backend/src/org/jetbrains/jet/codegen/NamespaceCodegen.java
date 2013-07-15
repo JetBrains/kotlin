@@ -99,14 +99,17 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
+        List<MemberMap> namespaceMembers = new ArrayList<MemberMap>(files.size() + 1);
+
         if (shouldGenerateNSClass(files)) {
-            AnnotationVisitor packageClassAnnotation =
-                    v.getClassBuilder().newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
+            ClassBuilder cv = v.getClassBuilder();
+
+            AnnotationVisitor packageClassAnnotation = cv.newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
             packageClassAnnotation.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
             packageClassAnnotation.visitEnd();
-        }
 
-        List<MemberMap> namespaceMembers = new ArrayList<MemberMap>();
+            namespaceMembers.add(cv.getMemberMap());
+        }
 
         for (JetFile file : files) {
             try {

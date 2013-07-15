@@ -22,22 +22,25 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class MemberMap {
-    private final Map<CallableMemberDescriptor, Method> methodForFunction = new HashMap<CallableMemberDescriptor, Method>();
+    private final Map<FunctionDescriptor, Method> methodForFunction = new HashMap<FunctionDescriptor, Method>();
     private final Map<PropertyDescriptor, Pair<Type, String>> fieldForProperty = new HashMap<PropertyDescriptor, Pair<Type, String>>();
     private final Map<PropertyDescriptor, String> syntheticMethodNameForProperty = new HashMap<PropertyDescriptor, String>();
+    private final Map<CallableMemberDescriptor, Name> srcClassNameForCallable = new HashMap<CallableMemberDescriptor, Name>();
 
     @NotNull
     public static MemberMap union(@NotNull Collection<MemberMap> maps) {
         MemberMap result = new MemberMap();
         for (MemberMap map : maps) {
-            for (Map.Entry<CallableMemberDescriptor, Method> entry : map.methodForFunction.entrySet()) {
+            for (Map.Entry<FunctionDescriptor, Method> entry : map.methodForFunction.entrySet()) {
                 result.recordMethodOfDescriptor(entry.getKey(), entry.getValue());
             }
 
@@ -48,12 +51,16 @@ public final class MemberMap {
             for (Map.Entry<PropertyDescriptor, String> entry : map.syntheticMethodNameForProperty.entrySet()) {
                 result.recordSyntheticMethodNameOfProperty(entry.getKey(), entry.getValue());
             }
+
+            for (Map.Entry<CallableMemberDescriptor, Name> entry : map.srcClassNameForCallable.entrySet()) {
+                result.recordSrcClassNameForCallable(entry.getKey(), entry.getValue());
+            }
         }
 
         return result;
     }
 
-    public void recordMethodOfDescriptor(@NotNull CallableMemberDescriptor descriptor, @NotNull Method method) {
+    public void recordMethodOfDescriptor(@NotNull FunctionDescriptor descriptor, @NotNull Method method) {
         Method old = methodForFunction.put(descriptor, method);
         assert old == null : "Duplicate method for callable member: " + descriptor + "; " + old;
     }
@@ -68,8 +75,13 @@ public final class MemberMap {
         assert old == null : "Duplicate synthetic method for property: " + descriptor + "; " + old;
     }
 
+    public void recordSrcClassNameForCallable(@NotNull CallableMemberDescriptor descriptor, @NotNull Name name) {
+        Name old = srcClassNameForCallable.put(descriptor, name);
+        assert old == null : "Duplicate src class name for callable: " + descriptor + "; " + old;
+    }
+
     @Nullable
-    public Method getMethodOfDescriptor(@NotNull CallableMemberDescriptor descriptor) {
+    public Method getMethodOfDescriptor(@NotNull FunctionDescriptor descriptor) {
         return methodForFunction.get(descriptor);
     }
 
@@ -83,10 +95,16 @@ public final class MemberMap {
         return syntheticMethodNameForProperty.get(descriptor);
     }
 
+    @Nullable
+    public Name getSrcClassNameOfCallable(@NotNull CallableMemberDescriptor descriptor) {
+        return srcClassNameForCallable.get(descriptor);
+    }
+
     @Override
     public String toString() {
         return "Functions: " + methodForFunction.size() +
                ", fields: " + fieldForProperty.size() +
-               ", synthetic methods: " + syntheticMethodNameForProperty.size();
+               ", synthetic methods: " + syntheticMethodNameForProperty.size() +
+               ", src class names: " + srcClassNameForCallable.size();
     }
 }
