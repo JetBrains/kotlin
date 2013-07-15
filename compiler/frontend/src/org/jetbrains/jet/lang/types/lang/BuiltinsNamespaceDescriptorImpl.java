@@ -85,22 +85,25 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                 private final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
                     @Override
                     public Collection<Name> compute() {
-                        InputStream namesStream =
-                                getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
-                        List<Name> result = new ArrayList<Name>();
+                        InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
+
                         try {
-                            DataInputStream data = new DataInputStream(namesStream);
-                            while (true) {
-                                result.add(nameResolver.getName(data.readInt()));
+                            DataInputStream data = new DataInputStream(in);
+                            try {
+                                int size = data.readInt();
+                                List<Name> result = new ArrayList<Name>(size);
+                                for (int i = 0; i < size; i++) {
+                                    result.add(nameResolver.getName(data.readInt()));
+                                }
+                                return result;
                             }
-                        }
-                        catch (EOFException e) {
-                            // OK: finishing the loop
+                            finally {
+                                data.close();
+                            }
                         }
                         catch (IOException e) {
                             throw new IllegalStateException(e);
                         }
-                        return result;
                     }
                 });
 

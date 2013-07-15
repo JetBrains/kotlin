@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.DescriptorValidator;
@@ -21,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -58,7 +60,7 @@ public class BuiltInsSerializer {
             System.err.println("Could not make directories: " + destDir);
         }
 
-        final DescriptorSerializer serializer = new DescriptorSerializer(new SerializerExtension() {
+        DescriptorSerializer serializer = new DescriptorSerializer(new SerializerExtension() {
             private final ImmutableSet<String> set = ImmutableSet.of("Any", "Nothing");
 
             @Override
@@ -66,13 +68,11 @@ public class BuiltInsSerializer {
                 return !set.contains(classDescriptor.getName().asString());
             }
         });
-        ByteArrayOutputStream classNames = new ByteArrayOutputStream();
-        final DataOutputStream data = new DataOutputStream(classNames);
+
+        final List<Name> classNames = new ArrayList<Name>();
         ClassSerializationUtil.serializeClasses(allDescriptors, ClassSerializationUtil.constantSerializer(serializer), new ClassSerializationUtil.Sink() {
             @Override
-            public void writeClass(
-                    @NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto
-            ) {
+            public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
                 try {
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     classProto.writeTo(stream);
@@ -80,8 +80,7 @@ public class BuiltInsSerializer {
                     write(destDir, getFileName(classDescriptor), stream);
 
                     if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
-                        int index = serializer.getNameTable().getSimpleNameIndex(classDescriptor.getName());
-                        data.writeInt(index);
+                        classNames.add(classDescriptor.getName());
                     }
                 }
                 catch (IOException e) {
@@ -89,7 +88,19 @@ public class BuiltInsSerializer {
                 }
             }
         });
-        data.close();
+
+        ByteArrayOutputStream classNamesStream = new ByteArrayOutputStream();
+        DataOutputStream data = new DataOutputStream(classNamesStream);
+        try {
+            data.writeInt(classNames.size());
+            for (Name className : classNames) {
+                int index = serializer.getNameTable().getSimpleNameIndex(className);
+                data.writeInt(index);
+            }
+        }
+        finally {
+            data.close();
+        }
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         for (DeclarationDescriptor descriptor : allDescriptors) {
@@ -106,7 +117,7 @@ public class BuiltInsSerializer {
         NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable());
         write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(namespace), nameStream);
 
-        write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(namespace), classNames);
+        write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(namespace), classNamesStream);
 
         System.out.println("Total bytes written: " + totalSize + " to " + totalFiles + " files");
     }
