@@ -42,11 +42,9 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -86,9 +84,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     }
 
     @NotNull
-    public static KotlinJavaFileStubProvider createForDeclaredTopLevelClass(
-            @NotNull final JetClassOrObject classOrObject
-    ) {
+    public static KotlinJavaFileStubProvider createForDeclaredTopLevelClass(@NotNull final JetClassOrObject classOrObject) {
         return new KotlinJavaFileStubProvider(classOrObject.getProject(), new StubGenerationStrategy.WithDeclaredClasses() {
             private JetFile getFile() {
                 JetFile file = (JetFile) classOrObject.getContainingFile();
@@ -110,13 +106,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
 
             @Override
             public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                FqName packageFqName = getPackageFqName();
-                NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(packageFqName, files);
-                NamespaceDescriptor namespaceDescriptor =
-                        state.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, packageFqName);
-                assert namespaceDescriptor != null : "No package descriptor for " + packageFqName + " for class " + classOrObject.getText();
-                namespaceCodegen.generateClassOrObject(namespaceDescriptor, classOrObject);
-
+                NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(getPackageFqName(), files);
+                namespaceCodegen.generateClassOrObject(classOrObject);
                 state.getFactory().files();
             }
         });

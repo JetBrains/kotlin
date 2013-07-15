@@ -63,6 +63,7 @@ public class NamespaceCodegen extends MemberCodegen {
     private final ClassBuilderOnDemand v;
     @NotNull private final FqName name;
     private final Collection<JetFile> files;
+    private final NamespaceDescriptor descriptor;
 
     public NamespaceCodegen(
             @NotNull ClassBuilderOnDemand v,
@@ -76,6 +77,9 @@ public class NamespaceCodegen extends MemberCodegen {
         this.v = v;
         name = fqName;
         this.files = namespaceFiles;
+
+        descriptor = state.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, name);
+        assert descriptor != null : "No namespace found for FQ name " + name;
 
         final PsiFile sourceFile = namespaceFiles.size() == 1 ? namespaceFiles.iterator().next().getContainingFile() : null;
 
@@ -178,8 +182,6 @@ public class NamespaceCodegen extends MemberCodegen {
 
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file) {
-        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
-        assert descriptor != null : "No namespace found for file " + file + " declared package: " + file.getPackageName();
         boolean generateSrcClass = false;
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -187,7 +189,7 @@ public class NamespaceCodegen extends MemberCodegen {
             }
             else if (declaration instanceof JetClassOrObject) {
                 if (state.isGenerateDeclaredClasses()) {
-                    generateClassOrObject(descriptor, (JetClassOrObject) declaration);
+                    generateClassOrObject((JetClassOrObject) declaration);
                 }
             }
             else if (declaration instanceof JetScript) {
@@ -221,14 +223,14 @@ public class NamespaceCodegen extends MemberCodegen {
             }
         }
 
-        generateStaticInitializers(descriptor, builder, file, nameSpaceContext);
+        generateStaticInitializers(builder, file, nameSpaceContext);
 
         builder.done();
 
         return builder;
     }
 
-    public void generateClassOrObject(@NotNull NamespaceDescriptor descriptor, @NotNull JetClassOrObject classOrObject) {
+    public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
         genClassOrObject(context, classOrObject);
     }
@@ -268,12 +270,7 @@ public class NamespaceCodegen extends MemberCodegen {
         }
     }
 
-    private void generateStaticInitializers(
-            NamespaceDescriptor descriptor,
-            @NotNull ClassBuilder builder,
-            @NotNull JetFile file,
-            @NotNull FieldOwnerContext context
-    ) {
+    private void generateStaticInitializers(@NotNull ClassBuilder builder, @NotNull JetFile file, @NotNull FieldOwnerContext context) {
         List<JetProperty> properties = collectPropertiesToInitialize(file);
         if (properties.isEmpty()) return;
 
