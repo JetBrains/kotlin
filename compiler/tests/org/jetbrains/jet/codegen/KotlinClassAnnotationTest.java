@@ -97,9 +97,5 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
         public Collection<Name> getClassNames(@NotNull FqName packageName) {
             throw new UnsupportedOperationException();
         }
-
-        @Override
-        protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
-        }
     }
 }

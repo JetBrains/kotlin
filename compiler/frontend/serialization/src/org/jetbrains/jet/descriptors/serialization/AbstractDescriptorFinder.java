@@ -72,5 +72,6 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     @Nullable
     protected abstract ClassData getClassData(@NotNull ClassId classId);
 
-    protected abstract void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor);
+    protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
+    }
 }
