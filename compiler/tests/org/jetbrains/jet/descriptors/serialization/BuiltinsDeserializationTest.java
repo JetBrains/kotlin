@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -75,8 +76,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
         List<ProtoBuf.Callable> callableProtos = serializeCallables(serializer, allDescriptors);
 
-        final NamespaceDescriptorImpl actualNamespace = JetTestUtils
-                .createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.shortName());
+        final NamespaceDescriptorImpl actualNamespace = JetTestUtils.createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
@@ -86,6 +86,12 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
                 assert fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) : "Unsupported package: " + fqName;
                 return actualNamespace;
+            }
+
+            @NotNull
+            @Override
+            public Collection<Name> getClassNames(@NotNull FqName packageName) {
+                throw new UnsupportedOperationException();
             }
 
             @Nullable

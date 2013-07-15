@@ -150,19 +150,14 @@ public class NamespaceCodegen extends MemberCodegen {
                     ProtoBuf.Callable proto = serializer.callableProto((CallableMemberDescriptor) descriptor).build();
                     packageProto.addMember(proto);
                 }
-                else if (declaration instanceof JetClassOrObject) {
-                    DeclarationDescriptor descriptor = getNotNull(state.getBindingContext(), DECLARATION_TO_DESCRIPTOR, declaration);
-                    if (declaration instanceof JetObjectDeclaration) {
-                        writeAnnotation = true;
-                        JetObjectDeclarationName nameAsDeclaration = ((JetObjectDeclaration) declaration).getNameAsDeclaration();
-                        assert nameAsDeclaration != null : "Should be a named object";
-                        PropertyDescriptor propertyForObject = getNotNull(state.getBindingContext(), BindingContext.OBJECT_DECLARATION,
-                                                                          nameAsDeclaration);
-                        ProtoBuf.Callable proto = serializer.callableProto(propertyForObject).build();
-                        packageProto.addMember(proto);
-                    }
-                    int name = serializer.getNameTable().getSimpleNameIndex(descriptor.getName());
-                    packageProto.addClassName(name);
+                else if (declaration instanceof JetObjectDeclaration) {
+                    writeAnnotation = true;
+                    JetObjectDeclarationName nameAsDeclaration = ((JetObjectDeclaration) declaration).getNameAsDeclaration();
+                    assert nameAsDeclaration != null : "Should be a named object";
+                    PropertyDescriptor propertyForObject = getNotNull(state.getBindingContext(), BindingContext.OBJECT_DECLARATION,
+                                                                      nameAsDeclaration);
+                    ProtoBuf.Callable proto = serializer.callableProto(propertyForObject).build();
+                    packageProto.addMember(proto);
                 }
             }
         }

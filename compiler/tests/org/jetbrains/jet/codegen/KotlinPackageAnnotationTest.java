@@ -55,9 +55,6 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
 
         PackageData data = JavaProtoBufUtil.readPackageDataFrom(kotlinPackage.data());
 
-        Set<String> classNames = collectClassNames(data);
-        assertSameElements(Arrays.asList("A", "B", "C"), classNames);
-
         Set<String> callableNames = collectCallableNames(data);
         assertSameElements(Arrays.asList("foo", "bar", "C"), callableNames);
     }
@@ -70,14 +67,5 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
             callableNames.add(data.getNameResolver().getName(callable.getName()).asString());
         }
         return callableNames;
-    }
-
-    @NotNull
-    private static Set<String> collectClassNames(@NotNull PackageData data) {
-        Set<String> classNames = new HashSet<String>();
-        for (int name : data.getPackageProto().getClassNameList()) {
-            classNames.add(data.getNameResolver().getName(name).asString());
-        }
-        return classNames;
     }
 }

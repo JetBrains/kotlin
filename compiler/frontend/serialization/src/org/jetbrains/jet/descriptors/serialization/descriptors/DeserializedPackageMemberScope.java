@@ -20,31 +20,19 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
     @NotNull
     public static DeserializedPackageMemberScope createScopeFromPackageData(
             @NotNull NamespaceDescriptor packageDescriptor,
-            @NotNull final PackageData packageData,
+            @NotNull PackageData packageData,
             @NotNull DescriptorFinder descriptorFinder,
             @NotNull AnnotationDeserializer deserializer,
             @NotNull LockBasedStorageManager storageManager
     ) {
-        final NameResolver nameResolver = packageData.getNameResolver();
         DescriptorDeserializer descriptorDeserializer = DescriptorDeserializer
-                .create(storageManager, packageDescriptor, nameResolver, descriptorFinder, deserializer);
+                .create(storageManager, packageDescriptor, packageData.getNameResolver(), descriptorFinder, deserializer);
         List<ProtoBuf.Callable> memberList = packageData.getPackageProto().getMemberList();
         return new DeserializedPackageMemberScope(storageManager, packageDescriptor, descriptorDeserializer, memberList, descriptorFinder) {
             @Nullable
             @Override
             protected ReceiverParameterDescriptor getImplicitReceiver() {
                 return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-            }
-
-            @NotNull
-            @Override
-            protected Collection<Name> getClassNames() {
-                Collection<Integer> nameIds = packageData.getPackageProto().getClassNameList();
-                List<Name> result = new ArrayList<Name>(nameIds.size());
-                for (Integer nameId : nameIds) {
-                  result.add(nameResolver.getName(nameId));
-                }
-                return result;
             }
         };
     }
@@ -98,7 +86,7 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
     }
 
     private <T extends Collection<? super ClassDescriptor>> T findClassifiers(T result, boolean object) {
-        for (Name className : getClassNames()) {
+        for (Name className : descriptorFinder.getClassNames(packageFqName)) {
             ClassDescriptor classDescriptor = findClassDescriptor(className, object);
 
             if (classDescriptor != null) {
@@ -108,9 +96,6 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
         }
         return result;
     }
-
-    @NotNull
-    protected abstract Collection<Name> getClassNames();
 
     @Override
     protected void addNonDeclaredDescriptors(@NotNull Collection<DeclarationDescriptor> result) {

@@ -21,6 +21,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public interface DescriptorFinder {
     DescriptorFinder EMPTY = new DescriptorFinder() {
@@ -35,6 +39,12 @@ public interface DescriptorFinder {
         public NamespaceDescriptor findPackage(@NotNull FqName name) {
             return null;
         }
+
+        @NotNull
+        @Override
+        public Collection<Name> getClassNames(@NotNull FqName packageName) {
+            return Collections.emptyList();
+        }
     };
 
     @Nullable
@@ -42,4 +52,7 @@ public interface DescriptorFinder {
 
     @Nullable
     NamespaceDescriptor findPackage(@NotNull FqName name);
+
+    @NotNull
+    Collection<Name> getClassNames(@NotNull FqName packageName);
 }

@@ -32,8 +32,10 @@ import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class KotlinClassAnnotationTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
@@ -88,6 +90,12 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
         public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
             assert fqName.equals(NAMESPACE_NAME) : "Unsupported namespace: " + fqName;
             return namespace;
+        }
+
+        @NotNull
+        @Override
+        public Collection<Name> getClassNames(@NotNull FqName packageName) {
+            throw new UnsupportedOperationException();
         }
 
         @Override

@@ -4780,11 +4780,6 @@ public final class ProtoBuf {
         getMemberList();
     org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable getMember(int index);
     int getMemberCount();
-    
-    // repeated int32 class_name = 2;
-    java.util.List<java.lang.Integer> getClassNameList();
-    int getClassNameCount();
-    int getClassName(int index);
   }
   public static final class Package extends
       com.google.protobuf.GeneratedMessageLite
@@ -4825,23 +4820,8 @@ public final class ProtoBuf {
       return member_.get(index);
     }
     
-    // repeated int32 class_name = 2;
-    public static final int CLASS_NAME_FIELD_NUMBER = 2;
-    private java.util.List<java.lang.Integer> className_;
-    public java.util.List<java.lang.Integer>
-        getClassNameList() {
-      return className_;
-    }
-    public int getClassNameCount() {
-      return className_.size();
-    }
-    public int getClassName(int index) {
-      return className_.get(index);
-    }
-    
     private void initFields() {
       member_ = java.util.Collections.emptyList();
-      className_ = java.util.Collections.emptyList();;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -4864,9 +4844,6 @@ public final class ProtoBuf {
       for (int i = 0; i < member_.size(); i++) {
         output.writeMessage(1, member_.get(i));
       }
-      for (int i = 0; i < className_.size(); i++) {
-        output.writeInt32(2, className_.get(i));
-      }
     }
     
     private int memoizedSerializedSize = -1;
@@ -4878,15 +4855,6 @@ public final class ProtoBuf {
       for (int i = 0; i < member_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, member_.get(i));
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < className_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(className_.get(i));
-        }
-        size += dataSize;
-        size += 1 * getClassNameList().size();
       }
       memoizedSerializedSize = size;
       return size;
@@ -4992,8 +4960,6 @@ public final class ProtoBuf {
         super.clear();
         member_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
-        className_ = java.util.Collections.emptyList();;
-        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
       
@@ -5031,11 +4997,6 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.member_ = member_;
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = java.util.Collections.unmodifiableList(className_);
-          bitField0_ = (bitField0_ & ~0x00000002);
-        }
-        result.className_ = className_;
         return result;
       }
       
@@ -5048,16 +5009,6 @@ public final class ProtoBuf {
           } else {
             ensureMemberIsMutable();
             member_.addAll(other.member_);
-          }
-          
-        }
-        if (!other.className_.isEmpty()) {
-          if (className_.isEmpty()) {
-            className_ = other.className_;
-            bitField0_ = (bitField0_ & ~0x00000002);
-          } else {
-            ensureClassNameIsMutable();
-            className_.addAll(other.className_);
           }
           
         }
@@ -5095,20 +5046,6 @@ public final class ProtoBuf {
               org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addMember(subBuilder.buildPartial());
-              break;
-            }
-            case 16: {
-              ensureClassNameIsMutable();
-              className_.add(input.readInt32());
-              break;
-            }
-            case 18: {
-              int length = input.readRawVarint32();
-              int limit = input.pushLimit(length);
-              while (input.getBytesUntilLimit() > 0) {
-                addClassName(input.readInt32());
-              }
-              input.popLimit(limit);
               break;
             }
           }
@@ -5202,51 +5139,6 @@ public final class ProtoBuf {
       public Builder removeMember(int index) {
         ensureMemberIsMutable();
         member_.remove(index);
-        
-        return this;
-      }
-      
-      // repeated int32 class_name = 2;
-      private java.util.List<java.lang.Integer> className_ = java.util.Collections.emptyList();;
-      private void ensureClassNameIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          className_ = new java.util.ArrayList<java.lang.Integer>(className_);
-          bitField0_ |= 0x00000002;
-         }
-      }
-      public java.util.List<java.lang.Integer>
-          getClassNameList() {
-        return java.util.Collections.unmodifiableList(className_);
-      }
-      public int getClassNameCount() {
-        return className_.size();
-      }
-      public int getClassName(int index) {
-        return className_.get(index);
-      }
-      public Builder setClassName(
-          int index, int value) {
-        ensureClassNameIsMutable();
-        className_.set(index, value);
-        
-        return this;
-      }
-      public Builder addClassName(int value) {
-        ensureClassNameIsMutable();
-        className_.add(value);
-        
-        return this;
-      }
-      public Builder addAllClassName(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
-        ensureClassNameIsMutable();
-        super.addAll(values, className_);
-        
-        return this;
-      }
-      public Builder clearClassName() {
-        className_ = java.util.Collections.emptyList();;
-        bitField0_ = (bitField0_ & ~0x00000002);
         
         return this;
       }

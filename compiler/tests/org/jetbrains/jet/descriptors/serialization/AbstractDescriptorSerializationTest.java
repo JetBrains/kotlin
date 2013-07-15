@@ -295,6 +295,12 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         public NamespaceDescriptor findPackage(@NotNull FqName name) {
             return null;
         }
+
+        @NotNull
+        @Override
+        public Collection<Name> getClassNames(@NotNull FqName packageName) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private static class JavaDescriptorFinder implements DescriptorFinder {
@@ -339,6 +345,12 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @Override
         public NamespaceDescriptor findPackage(@NotNull FqName name) {
             return javaDescriptorResolver.resolveNamespace(name);
+        }
+
+        @NotNull
+        @Override
+        public Collection<Name> getClassNames(@NotNull FqName packageName) {
+            throw new UnsupportedOperationException();
         }
     }
 }

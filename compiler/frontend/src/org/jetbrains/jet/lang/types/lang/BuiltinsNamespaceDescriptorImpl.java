@@ -37,8 +37,33 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
         try {
             nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
 
-            DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(storageManager, AnnotationDeserializer.UNSUPPORTED) {
+            final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
+                @Override
+                @NotNull
+                public Collection<Name> compute() {
+                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
 
+                    try {
+                        DataInputStream data = new DataInputStream(in);
+                        try {
+                            int size = data.readInt();
+                            List<Name> result = new ArrayList<Name>(size);
+                            for (int i = 0; i < size; i++) {
+                                result.add(nameResolver.getName(data.readInt()));
+                            }
+                            return result;
+                        }
+                        finally {
+                            data.close();
+                        }
+                    }
+                    catch (IOException e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
+            });
+
+            DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(storageManager, AnnotationDeserializer.UNSUPPORTED) {
                 @Nullable
                 @Override
                 protected ClassData getClassData(@NotNull ClassId classId) {
@@ -71,48 +96,26 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                     return fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? BuiltinsNamespaceDescriptorImpl.this : null;
                 }
 
+                @NotNull
+                @Override
+                public Collection<Name> getClassNames(@NotNull FqName packageName) {
+                    return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+                           ? classNames.compute()
+                           : Collections.<Name>emptyList();
+                }
+
                 @Override
                 protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
                     // Do nothing
                 }
             };
+
             members = new DeserializedPackageMemberScope(
                     storageManager,
                     this,
                     DescriptorDeserializer.create(storageManager, this, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED),
                     loadCallables(), descriptorFinder
             ) {
-                private final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
-                    @Override
-                    public Collection<Name> compute() {
-                        InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
-
-                        try {
-                            DataInputStream data = new DataInputStream(in);
-                            try {
-                                int size = data.readInt();
-                                List<Name> result = new ArrayList<Name>(size);
-                                for (int i = 0; i < size; i++) {
-                                    result.add(nameResolver.getName(data.readInt()));
-                                }
-                                return result;
-                            }
-                            finally {
-                                data.close();
-                            }
-                        }
-                        catch (IOException e) {
-                            throw new IllegalStateException(e);
-                        }
-                    }
-                });
-
-                @NotNull
-                @Override
-                protected Collection<Name> getClassNames() {
-                    return classNames.compute();
-                }
-
                 @Nullable
                 @Override
                 protected ReceiverParameterDescriptor getImplicitReceiver() {

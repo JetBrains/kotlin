@@ -39,12 +39,11 @@ import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.INVALID_VERSION;
 
@@ -272,5 +271,21 @@ public final class JavaNamespaceResolver {
         }
 
         return false;
+    }
+
+    @NotNull
+    public Collection<Name> getClassNamesInPackage(@NotNull FqName packageName) {
+        PsiPackage psiPackage = psiClassFinder.findPsiPackage(packageName);
+        if (psiPackage == null) return Collections.emptyList();
+
+        PsiClass[] classes = psiPackage.getClasses();
+        List<Name> result = new ArrayList<Name>(classes.length);
+        for (PsiClass psiClass : classes) {
+            if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
+                result.add(Name.identifier(psiClass.getName()));
+            }
+        }
+
+        return result;
     }
 }

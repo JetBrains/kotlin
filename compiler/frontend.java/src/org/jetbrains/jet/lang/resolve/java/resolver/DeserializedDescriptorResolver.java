@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
@@ -42,6 +43,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.asm4.ClassReader.*;
@@ -74,6 +76,12 @@ public final class DeserializedDescriptorResolver {
         @Override
         public NamespaceDescriptor findPackage(@NotNull FqName name) {
             return javaNamespaceResolver.resolveNamespace(name);
+        }
+
+        @NotNull
+        @Override
+        public Collection<Name> getClassNames(@NotNull FqName packageName) {
+            return javaNamespaceResolver.getClassNamesInPackage(packageName);
         }
     };
 

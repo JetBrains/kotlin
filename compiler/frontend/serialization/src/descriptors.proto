@@ -130,8 +130,6 @@ message Class {
 
 message Package {
   repeated Callable member = 1;
-
-  repeated int32 class_name = 2;
 }
 
 message Callable {
