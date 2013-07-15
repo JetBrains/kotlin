@@ -55,8 +55,6 @@ import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 
 public class NamespaceCodegen extends MemberCodegen {
     @NotNull
@@ -142,33 +140,16 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull MemberMap members) {
-        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(members));
-        ProtoBuf.Package.Builder packageProto = ProtoBuf.Package.newBuilder();
-        boolean writeAnnotation = false;
-
         for (JetFile file : files) {
-            for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-                    writeAnnotation = true;
-                    DeclarationDescriptor descriptor = getNotNull(state.getBindingContext(), DECLARATION_TO_DESCRIPTOR, declaration);
-                    ProtoBuf.Callable proto = serializer.callableProto((CallableMemberDescriptor) descriptor).build();
-                    packageProto.addMember(proto);
-                }
-                else if (declaration instanceof JetObjectDeclaration) {
-                    writeAnnotation = true;
-                    JetObjectDeclarationName nameAsDeclaration = ((JetObjectDeclaration) declaration).getNameAsDeclaration();
-                    assert nameAsDeclaration != null : "Should be a named object";
-                    PropertyDescriptor propertyForObject = getNotNull(state.getBindingContext(), BindingContext.OBJECT_DECLARATION,
-                                                                      nameAsDeclaration);
-                    ProtoBuf.Callable proto = serializer.callableProto(propertyForObject).build();
-                    packageProto.addMember(proto);
-                }
-            }
+            if (file.isScript()) return;
         }
 
-        if (!writeAnnotation) return;
+        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(members));
+        ProtoBuf.Package packageProto = serializer.packageProto(descriptor).build();
 
-        PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto.build());
+        if (packageProto.getMemberCount() == 0) return;
+
+        PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto);
 
         AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_PACKAGE.getDescriptor(), true);
         av.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
