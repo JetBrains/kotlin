@@ -77,8 +77,7 @@ public class ScriptCodegen extends MemberCodegen {
         JvmClassName className = bindingContext.get(FQN, classDescriptorForScript);
         assert className != null;
 
-        ClassBuilder classBuilder = classFileFactory.newVisitor(className.getInternalName(), scriptDeclaration.getContainingFile()
-        );
+        ClassBuilder classBuilder = classFileFactory.newVisitor(className, scriptDeclaration.getContainingFile());
         classBuilder.defineClass(scriptDeclaration,
                                  V1_6,
                                  ACC_PUBLIC,

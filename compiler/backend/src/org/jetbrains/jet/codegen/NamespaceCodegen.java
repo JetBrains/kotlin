@@ -199,14 +199,12 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (!generateSrcClass) return null;
 
-        String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(
-                PackageClassUtils.getPackageClassFqName(name)).getInternalName();
-        String className = getMultiFileNamespaceInternalName(namespaceInternalName, file);
-        ClassBuilder builder = state.getFactory().forNamespacepart(className, file);
+        JvmClassName className = getMultiFileNamespaceInternalName(PackageClassUtils.getPackageClassFqName(name), file);
+        ClassBuilder builder = state.getFactory().forNamespacePart(className, file);
 
         builder.defineClass(file, V1_6,
                             ACC_PUBLIC | ACC_FINAL,
-                            className,
+                            className.getInternalName(),
                             null,
                             //"jet/lang/Namespace",
                             "java/lang/Object",
@@ -334,14 +332,19 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    private static String getMultiFileNamespaceInternalName(@NotNull String namespaceInternalName, @NotNull PsiFile file) {
+    private static JvmClassName getMultiFileNamespaceInternalName(@NotNull FqName facadeFqName, @NotNull PsiFile file) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // path hashCode to prevent same name / different path collision
-        return namespaceInternalName + "$src$" + replaceSpecialSymbols(fileName) + "$" + Integer.toHexString(
+        String srcName = facadeFqName.shortName().asString() + "$src$" + replaceSpecialSymbols(fileName) + "$" + Integer.toHexString(
                 CodegenUtil.getPathHashCode(file));
+
+        FqName srcFqName = facadeFqName.parent().child(Name.identifier(srcName));
+
+        return JvmClassName.byFqNameWithoutInnerClasses(srcFqName);
     }
 
+    @NotNull
     private static String replaceSpecialSymbols(@NotNull String str) {
         return str.replace('.', '_');
     }
@@ -349,8 +352,7 @@ public class NamespaceCodegen extends MemberCodegen {
     @NotNull
     public static String getNamespacePartInternalName(@NotNull JetFile file) {
         FqName fqName = JetPsiUtil.getFQName(file);
-        JvmClassName namespaceJvmClassName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName);
-        String namespaceInternalName = namespaceJvmClassName.getInternalName();
-        return NamespaceCodegen.getMultiFileNamespaceInternalName(namespaceInternalName, file);
+        JvmClassName namespaceJvmClassName = getJVMClassNameForKotlinNs(fqName);
+        return getMultiFileNamespaceInternalName(namespaceJvmClassName.getFqName(), file).getInternalName();
     }
 }

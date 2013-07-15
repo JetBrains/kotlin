@@ -106,14 +106,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      */
     private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
 
-    public CalculatedClosure generateObjectLiteral(
-            GenerationState state,
-            JetObjectLiteralExpression literal
-    ) {
+    public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
 
         JvmClassName className = classNameForAnonymousClass(bindingContext, objectDeclaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName(), literal.getContainingFile());
+        ClassBuilder classBuilder = state.getFactory().newVisitor(className, literal.getContainingFile());
 
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
         assert classDescriptor != null;
@@ -286,10 +283,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, declaration);
         assert descriptor != null;
 
-        JvmClassName className =
-                classNameForAnonymousClass(bindingContext, declaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName(), declaration.getContainingFile()
-        );
+        JvmClassName className = classNameForAnonymousClass(bindingContext, declaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(className, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
 

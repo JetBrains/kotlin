@@ -321,7 +321,7 @@ public class FunctionCodegen extends GenerationStateAware {
             iv.load(k, argType);
             k += argType.getSize();
         }
-        iv.invokestatic(dk.getOwnerClass(), asmMethod.getName(), asmMethod.getDescriptor());
+        iv.invokestatic(dk.getOwnerClass().getInternalName(), asmMethod.getName(), asmMethod.getDescriptor());
         iv.areturn(asmMethod.getReturnType());
     }
 

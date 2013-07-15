@@ -63,7 +63,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
         // e.g. compare(T, T)
         SimpleFunctionDescriptor interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
 
-        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), file);
+        ClassBuilder cv = state.getFactory().newVisitor(name, file);
         cv.defineClass(file,
                        V1_6,
                        ACC_FINAL,

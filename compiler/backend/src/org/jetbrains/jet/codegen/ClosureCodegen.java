@@ -92,7 +92,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
 
     public void gen() {
-        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), fun.getContainingFile());
+        ClassBuilder cv = state.getFactory().newVisitor(name, fun.getContainingFile());
 
         FunctionDescriptor interfaceFunction;
         String[] superInterfaces;
