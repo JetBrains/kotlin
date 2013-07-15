@@ -21,6 +21,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -30,6 +31,12 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import java.util.*;
 
 public class OverridingUtil {
+
+    private static final List<ExternalOverridabilityCondition> EXTERNAL_CONDITIONS =
+            ContainerUtil.collect(ServiceLoader.load(
+                    ExternalOverridabilityCondition.class,
+                    ExternalOverridabilityCondition.class.getClassLoader()).iterator()
+            );
 
     private OverridingUtil() {
     }
@@ -183,8 +190,7 @@ public class OverridingUtil {
                 }
             }
 
-            for (ExternalOverridabilityCondition externalCondition : ServiceLoader
-                    .load(ExternalOverridabilityCondition.class, ExternalOverridabilityCondition.class.getClassLoader())) {
+            for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
                 if (!externalCondition.isOverridable(superDescriptor, subDescriptor)) {
                     return OverrideCompatibilityInfo.externalConditionFailed(externalCondition.getClass());
                 }
