@@ -184,7 +184,7 @@ public class OverridingUtil {
             }
 
             for (ExternalOverridabilityCondition externalCondition : ServiceLoader
-                    .load(ExternalOverridabilityCondition.class)) {
+                    .load(ExternalOverridabilityCondition.class, ExternalOverridabilityCondition.class.getClassLoader())) {
                 if (!externalCondition.isOverridable(superDescriptor, subDescriptor)) {
                     return OverrideCompatibilityInfo.externalConditionFailed(externalCondition.getClass());
                 }
