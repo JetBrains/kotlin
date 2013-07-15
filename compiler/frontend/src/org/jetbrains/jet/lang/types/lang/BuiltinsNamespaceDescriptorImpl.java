@@ -115,20 +115,11 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                     this,
                     DescriptorDeserializer.create(storageManager, this, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED),
                     loadCallables(), descriptorFinder
-            ) {
-                @Nullable
-                @Override
-                protected ReceiverParameterDescriptor getImplicitReceiver() {
-                    return null;
-                }
-            };
-
+            );
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
-
-
     }
 
     private List<ProtoBuf.Callable> loadCallables() throws IOException {

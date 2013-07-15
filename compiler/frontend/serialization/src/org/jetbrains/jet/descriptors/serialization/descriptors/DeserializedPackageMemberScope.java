@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class DeserializedPackageMemberScope extends DeserializedMemberScope {
-
+public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     @NotNull
     public static DeserializedPackageMemberScope createScopeFromPackageData(
             @NotNull NamespaceDescriptor packageDescriptor,
@@ -28,13 +27,7 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
         DescriptorDeserializer descriptorDeserializer = DescriptorDeserializer
                 .create(storageManager, packageDescriptor, packageData.getNameResolver(), descriptorFinder, deserializer);
         List<ProtoBuf.Callable> memberList = packageData.getPackageProto().getMemberList();
-        return new DeserializedPackageMemberScope(storageManager, packageDescriptor, descriptorDeserializer, memberList, descriptorFinder) {
-            @Nullable
-            @Override
-            protected ReceiverParameterDescriptor getImplicitReceiver() {
-                return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-            }
-        };
+        return new DeserializedPackageMemberScope(storageManager, packageDescriptor, descriptorDeserializer, memberList, descriptorFinder);
     }
 
     private final DescriptorFinder descriptorFinder;
@@ -106,5 +99,11 @@ public abstract class DeserializedPackageMemberScope extends DeserializedMemberS
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return descriptorFinder.findPackage(packageFqName.child(name));
+    }
+
+    @Nullable
+    @Override
+    protected ReceiverParameterDescriptor getImplicitReceiver() {
+        return null;
     }
 }
