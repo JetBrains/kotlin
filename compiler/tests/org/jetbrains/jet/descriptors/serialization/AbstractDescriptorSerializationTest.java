@@ -53,7 +53,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
 import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.getClassId;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.*;
 import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
@@ -232,7 +231,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         final Map<ClassDescriptor, byte[]> serializedClasses = Maps.newHashMap();
         final DescriptorSerializer serializer = new DescriptorSerializer();
 
-        ClassSerializationUtil.serializeClasses(classes, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
+        ClassSerializationUtil.serializeClasses(classes, serializer, new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
                 serializedClasses.put(classDescriptor, new ClassData(createNameResolver(serializer.getNameTable()), classProto).toBytes());

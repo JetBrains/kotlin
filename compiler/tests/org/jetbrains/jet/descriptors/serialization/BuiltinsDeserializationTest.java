@@ -44,8 +44,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.constantSerializer;
-
 public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -139,7 +137,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             Collection<DeclarationDescriptor> allDescriptors
     ) {
         final Map<ClassId, ProtoBuf.Class> classProtos = Maps.newHashMap();
-        ClassSerializationUtil.serializeClasses(allDescriptors, constantSerializer(serializer), new ClassSerializationUtil.Sink() {
+        ClassSerializationUtil.serializeClasses(allDescriptors, serializer, new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(
                     @NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto

@@ -70,7 +70,7 @@ public class BuiltInsSerializer {
         });
 
         final List<Name> classNames = new ArrayList<Name>();
-        ClassSerializationUtil.serializeClasses(allDescriptors, ClassSerializationUtil.constantSerializer(serializer), new ClassSerializationUtil.Sink() {
+        ClassSerializationUtil.serializeClasses(allDescriptors, serializer, new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
                 try {
