@@ -80,15 +80,14 @@ var Kotlin = {};
         return true;
     };
 
-    Kotlin.createTrait = (function () {
-        return function () {
-            var result = arguments[0];
-            for (var i = 1, n = arguments.length; i < n; i++) {
-                copyProperties(result, arguments[i]);
-            }
-            return result;
+    Kotlin.createTrait = function () {
+        var n = arguments.length - 1;
+        var result = arguments[n] || {};
+        for (var i = 0; i < n; i++) {
+            copyProperties(result, arguments[i]);
         }
-    })();
+        return result;
+    };
 
     Kotlin.definePackage = function (members) {
         return members === null ? {} : members;
