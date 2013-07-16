@@ -354,6 +354,8 @@
 
                     -dontwarn com.intellij.util.ui.IsRetina*
                     -dontwarn com.intellij.util.RetinaImage*
+                    -dontwarn apple.awt.*
+                    -dontwarn dk.brics.automaton.*
                     -dontwarn org.fusesource.**
 
                     -libraryjars '${rtjar}'
