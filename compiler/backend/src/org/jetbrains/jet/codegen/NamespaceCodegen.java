@@ -42,8 +42,8 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -145,9 +145,9 @@ public class NamespaceCodegen extends MemberCodegen {
 
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto);
 
-        AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmStdlibNames.KOTLIN_PACKAGE.getDescriptor(), true);
-        av.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
-        AnnotationVisitor array = av.visitArray(JvmStdlibNames.KOTLIN_INFO_DATA_FIELD);
+        AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor(), true);
+        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
             array.visit(null, string);
         }

@@ -202,7 +202,8 @@ public final class JavaNamespaceResolver {
     }
 
     private static boolean isOldKotlinPackageClass(@NotNull PsiClass psiClass) {
-        return DescriptorResolverUtils.hasAnnotation(psiClass, JvmStdlibNames.JET_PACKAGE_CLASS.getFqName());
+        //noinspection deprecation
+        return DescriptorResolverUtils.hasAnnotation(psiClass, JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION.getFqName());
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JetScope packageScope) {

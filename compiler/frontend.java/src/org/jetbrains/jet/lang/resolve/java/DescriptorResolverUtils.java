@@ -51,14 +51,14 @@ public final class DescriptorResolverUtils {
         if (!PackageClassUtils.isPackageClassFqName(new FqName(psiClass.getQualifiedName()))) {
             return false;
         }
-        return hasAnnotation(psiClass, JvmStdlibNames.KOTLIN_PACKAGE.getFqName());
+        return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
     }
 
     public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
         if (!(psiClass instanceof ClsClassImpl)) {
             return false;
         }
-        return hasAnnotation(psiClass, JvmStdlibNames.KOTLIN_CLASS.getFqName());
+        return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
     }
 
     public static boolean hasAnnotation(@NotNull PsiClass psiClass, @NotNull FqName annotationFqName) {

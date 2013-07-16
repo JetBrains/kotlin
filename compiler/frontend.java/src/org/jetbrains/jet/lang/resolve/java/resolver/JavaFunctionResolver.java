@@ -415,7 +415,7 @@ public final class JavaFunctionResolver {
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
         if (JavaAnnotationResolver
-                    .findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
+                    .findAnnotationWithExternal(method.getPsiMethod(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
             null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }

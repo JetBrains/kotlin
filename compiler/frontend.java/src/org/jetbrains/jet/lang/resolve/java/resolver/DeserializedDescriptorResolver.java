@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -222,15 +222,15 @@ public final class DeserializedDescriptorResolver {
 
         @Override
         public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-            if (!desc.equals(JvmStdlibNames.KOTLIN_CLASS.getDescriptor()) &&
-                !desc.equals(JvmStdlibNames.KOTLIN_PACKAGE.getDescriptor())) {
+            if (!desc.equals(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor()) &&
+                !desc.equals(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor())) {
                 return null;
             }
 
             return new AnnotationVisitor(Opcodes.ASM4) {
                 @Override
                 public void visit(String name, Object value) {
-                    if (name.equals(JvmStdlibNames.ABI_VERSION_NAME)) {
+                    if (name.equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
                         version = (Integer) value;
                     }
                     else if (isAbiVersionCompatible(version)) {
@@ -240,7 +240,7 @@ public final class DeserializedDescriptorResolver {
 
                 @Override
                 public AnnotationVisitor visitArray(String name) {
-                    if (name.equals(JvmStdlibNames.KOTLIN_INFO_DATA_FIELD)) {
+                    if (name.equals(JvmAnnotationNames.DATA_FIELD_NAME)) {
                         return stringArrayVisitor();
                     }
                     else if (isAbiVersionCompatible(version)) {

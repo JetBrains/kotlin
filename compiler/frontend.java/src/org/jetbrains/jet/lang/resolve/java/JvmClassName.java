@@ -59,6 +59,11 @@ public class JvmClassName {
     }
 
     @NotNull
+    public static JvmClassName byClass(@NotNull Class<?> klass) {
+        return byFqNameWithoutInnerClasses(new FqName(klass.getCanonicalName()));
+    }
+
+    @NotNull
     public static JvmClassName bySignatureName(@NotNull String signatureName) {
         JvmClassName className = new JvmClassName(signatureNameToInternalName(signatureName));
         className.signatureName = signatureName;

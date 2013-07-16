@@ -70,8 +70,8 @@ public final class JavaValueParameterResolver {
         }
 
         JetType transformedType;
-        PsiAnnotation notNullAnnotation = findAnnotationWithExternal(parameter,
-                                                                     JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString());
+        PsiAnnotation notNullAnnotation =
+                findAnnotationWithExternal(parameter, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString());
         if (notNullAnnotation != null) {
             transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
         }

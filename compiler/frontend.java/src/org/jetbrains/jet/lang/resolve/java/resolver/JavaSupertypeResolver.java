@@ -120,7 +120,7 @@ public final class JavaSupertypeResolver {
             if (resolved != null) {
                 String qualifiedName = resolved.getQualifiedName();
                 assert qualifiedName != null;
-                if (JvmStdlibNames.JET_OBJECT.getFqName().equalsTo(qualifiedName)) {
+                if (JvmAbi.JET_OBJECT.getFqName().equalsTo(qualifiedName)) {
                     continue;
                 }
             }

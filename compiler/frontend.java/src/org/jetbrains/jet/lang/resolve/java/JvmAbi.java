@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JvmAbi {
+public final class JvmAbi {
     /**
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
@@ -44,13 +44,7 @@ public class JvmAbi {
     public static final String INSTANCE_FIELD = "instance$";
     public static final String CLASS_OBJECT_FIELD = "object$";
 
-    public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION =
-            JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.NotNull");
-
-    public static final JvmClassName JETBRAINS_MUTABLE_ANNOTATION =
-            JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.Mutable");
-    public static final JvmClassName JETBRAINS_READONLY_ANNOTATION =
-            JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.ReadOnly");
+    public static final JvmClassName JET_OBJECT = JvmClassName.byFqNameWithoutInnerClasses("jet.JetObject");
 
     public static boolean isClassObjectFqName(@NotNull FqName fqName) {
         return fqName.lastSegmentIs(Name.identifier(CLASS_OBJECT_CLASS_NAME));

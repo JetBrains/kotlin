@@ -55,8 +55,8 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -222,9 +222,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
-        AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmStdlibNames.KOTLIN_CLASS.getDescriptor(), true);
-        av.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
-        AnnotationVisitor array = av.visitArray(JvmStdlibNames.KOTLIN_INFO_DATA_FIELD);
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor(), true);
+        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
             array.visit(null, string);
         }
@@ -371,7 +371,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
 
         {   // superinterfaces
-            superInterfacesLinkedHashSet.add(JvmStdlibNames.JET_OBJECT.getInternalName());
+            superInterfacesLinkedHashSet.add(JvmAbi.JET_OBJECT.getInternalName());
 
             for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
