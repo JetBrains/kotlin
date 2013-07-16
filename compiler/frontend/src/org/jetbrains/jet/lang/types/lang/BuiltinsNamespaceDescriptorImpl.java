@@ -25,7 +25,6 @@ import java.util.List;
 import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
 
 class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
-
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
 
@@ -34,75 +33,8 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
         nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
 
-        final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
-            @Override
-            @NotNull
-            public Collection<Name> compute() {
-                InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
-
-                try {
-                    DataInputStream data = new DataInputStream(in);
-                    try {
-                        int size = data.readInt();
-                        List<Name> result = new ArrayList<Name>(size);
-                        for (int i = 0; i < size; i++) {
-                            result.add(nameResolver.getName(data.readInt()));
-                        }
-                        return result;
-                    }
-                    finally {
-                        data.close();
-                    }
-                }
-                catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        });
-
-        DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(storageManager, UNSUPPORTED) {
-            @Nullable
-            @Override
-            protected ClassData getClassData(@NotNull ClassId classId) {
-                InputStream stream = getStreamNullable(BuiltInsSerializationUtil.getClassMetadataPath(classId));
-                if (stream == null) {
-                    return null;
-                }
-
-                try {
-                    ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(stream);
-
-                    Name expectedShortName = classId.getRelativeClassName().shortName();
-                    Name actualShortName = nameResolver.getName(classProto.getName());
-                    if (!actualShortName.isSpecial() && !actualShortName.equals(expectedShortName)) {
-                        // Workaround for case-insensitive file systems,
-                        // otherwise we'd find "Collection" for "collection" etc
-                        return null;
-                    }
-
-                    return new ClassData(nameResolver, classProto);
-                }
-                catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-
-            @Nullable
-            @Override
-            public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
-                return fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? BuiltinsNamespaceDescriptorImpl.this : null;
-            }
-
-            @NotNull
-            @Override
-            public Collection<Name> getClassNames(@NotNull FqName packageName) {
-                return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-                       ? classNames.compute()
-                       : Collections.<Name>emptyList();
-            }
-        };
-
-        members = new DeserializedPackageMemberScope(storageManager, this, UNSUPPORTED, descriptorFinder, loadPackage(), nameResolver);
+        members = new DeserializedPackageMemberScope(storageManager, this, UNSUPPORTED, new BuiltInsDescriptorFinder(storageManager),
+                                                     loadPackage(), nameResolver);
     }
 
     @NotNull
@@ -141,5 +73,77 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
     @Nullable
     private static InputStream getStreamNullable(@NotNull String path) {
         return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
+    }
+
+    private class BuiltInsDescriptorFinder extends AbstractDescriptorFinder {
+        private final NotNullLazyValue<Collection<Name>> classNames;
+
+        public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
+            super(storageManager, UNSUPPORTED);
+
+            classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
+                @Override
+                @NotNull
+                public Collection<Name> compute() {
+                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
+
+                    try {
+                        DataInputStream data = new DataInputStream(in);
+                        try {
+                            int size = data.readInt();
+                            List<Name> result = new ArrayList<Name>(size);
+                            for (int i = 0; i < size; i++) {
+                                result.add(nameResolver.getName(data.readInt()));
+                            }
+                            return result;
+                        }
+                        finally {
+                            data.close();
+                        }
+                    }
+                    catch (IOException e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
+            });
+        }
+
+        @Nullable
+        @Override
+        protected ClassData getClassData(@NotNull ClassId classId) {
+            InputStream stream = getStreamNullable(BuiltInsSerializationUtil.getClassMetadataPath(classId));
+            if (stream == null) {
+                return null;
+            }
+
+            try {
+                ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(stream);
+
+                Name expectedShortName = classId.getRelativeClassName().shortName();
+                Name actualShortName = nameResolver.getName(classProto.getName());
+                if (!actualShortName.isSpecial() && !actualShortName.equals(expectedShortName)) {
+                    // Workaround for case-insensitive file systems,
+                    // otherwise we'd find "Collection" for "collection" etc
+                    return null;
+                }
+
+                return new ClassData(nameResolver, classProto);
+            }
+            catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        @Nullable
+        @Override
+        public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
+            return fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? BuiltinsNamespaceDescriptorImpl.this : null;
+        }
+
+        @NotNull
+        @Override
+        public Collection<Name> getClassNames(@NotNull FqName packageName) {
+            return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? classNames.compute() : Collections.<Name>emptyList();
+        }
     }
 }
