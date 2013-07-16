@@ -20,10 +20,7 @@ import gnu.trove.THashSet;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
@@ -58,19 +55,28 @@ public class OverloadingConflictResolver {
                         return object == null ? 0 : object.getResultingDescriptor().hashCode();
                     }
                 });
-        meLoop:
         for (ResolvedCallWithTrace<D> candidateCall : candidates) {
-            D me = candidateCall.getResultingDescriptor();
-            for (ResolvedCallWithTrace<D> otherCall : candidates) {
-                D other = otherCall.getResultingDescriptor();
-                if (other == me) continue;
-                if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) {
-                    continue meLoop;
-                }
+            if (isMaximallySpecific(candidateCall, candidates, discriminateGenericDescriptors)) {
+                maximallySpecific.add(candidateCall);
             }
-            maximallySpecific.add(candidateCall);
         }
         return maximallySpecific.size() == 1 ? maximallySpecific.iterator().next() : null;
+    }
+
+    private <D extends CallableDescriptor> boolean isMaximallySpecific(
+            @NotNull ResolvedCallWithTrace<D> candidateCall,
+            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
+            boolean discriminateGenericDescriptors
+    ) {
+        D me = candidateCall.getResultingDescriptor();
+        for (ResolvedCallWithTrace<D> otherCall : candidates) {
+            D other = otherCall.getResultingDescriptor();
+            if (other == me) continue;
+            if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
