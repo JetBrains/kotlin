@@ -115,7 +115,6 @@ public class InjectorForJavaDescriptorResolver {
 
         this.psiClassFinder.setProject(project);
 
-        javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);

@@ -293,7 +293,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaSemanticServices.setTrace(bindingTrace);
         javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
-        javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);

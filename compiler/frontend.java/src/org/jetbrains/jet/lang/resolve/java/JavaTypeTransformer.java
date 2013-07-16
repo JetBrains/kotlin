@@ -44,12 +44,7 @@ public class JavaTypeTransformer {
 
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
-    private JavaSemanticServices javaSemanticServices;
     private JavaDescriptorResolver resolver;
-    @Inject
-    public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
-        this.javaSemanticServices = javaSemanticServices;
-    }
 
     @Inject
     public void setResolver(JavaDescriptorResolver resolver) {
@@ -87,19 +82,6 @@ public class JavaTypeTransformer {
             }
         });
         return result;
-    }
-
-    @NotNull
-    public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
-        final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, KotlinBuiltIns.getInstance(), typeVariableResolver) {
-            @Override
-            protected void done(@NotNull JetType jetType) {
-                r[0] = jetType;
-            }
-        };
-        new JetSignatureReader(kotlinSignature).acceptType(reader);
-        return r[0];
     }
 
     @NotNull

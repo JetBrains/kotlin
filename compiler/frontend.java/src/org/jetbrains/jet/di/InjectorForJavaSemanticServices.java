@@ -115,7 +115,6 @@ public class InjectorForJavaSemanticServices {
 
         moduleDescriptor.setModuleConfiguration(javaBridgeConfiguration);
 
-        javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
