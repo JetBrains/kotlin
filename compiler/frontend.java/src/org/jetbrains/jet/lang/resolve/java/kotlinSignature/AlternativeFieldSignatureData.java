@@ -29,13 +29,11 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.HashMap;
 
 public class AlternativeFieldSignatureData extends ElementAlternativeSignatureData {
-    private final PsiFieldWrapper field;
 
     private JetType altReturnType;
 
     public AlternativeFieldSignatureData(@NotNull PsiFieldWrapper field, @NotNull JetType originalReturnType, boolean isVar) {
         String signature = field.getSignatureAnnotation().signature();
-        this.field = field;
 
         if (signature.isEmpty()) {
             setAnnotated(false);
