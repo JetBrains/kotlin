@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.getJvmInternalName;
 
-public class JetTypeToJavaTypeMapper implements DeclarationDescriptorVisitor<Type, JetType> {
+public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching implements DeclarationDescriptorVisitor<Type, JetType> {
     private final BothSignatureWriter signatureVisitor;
     private final JetTypeMapper self;
     private final BuiltinToJavaMapping builtin;
@@ -44,7 +44,9 @@ public class JetTypeToJavaTypeMapper implements DeclarationDescriptorVisitor<Typ
                             BuiltinToJavaMapping b,
                             Variance h,
                             JetTypeMapperMode kind,
-                            boolean mapBuiltinsToJava) {
+                            boolean mapBuiltinsToJava,
+                            DeclarationDescriptor descriptor) {
+        super(descriptor);
         signatureVisitor = sV;
         self = s;
         builtin = b;
@@ -120,60 +122,5 @@ public class JetTypeToJavaTypeMapper implements DeclarationDescriptorVisitor<Typ
             asmType = name.getAsmType();
         }
         return asmType;
-    }
-
-    @Override
-    public Type visitNamespaceDescriptor(NamespaceDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitVariableDescriptor(VariableDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitFunctionDescriptor(FunctionDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitModuleDeclaration(ModuleDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitScriptDescriptor(ScriptDescriptor scriptDescriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitPropertyDescriptor(PropertyDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitValueParameterDescriptor(ValueParameterDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
-    }
-
-    @Override
-    public Type visitReceiverParameterDescriptor(ReceiverParameterDescriptor descriptor, JetType jetType) {
-        throw new UnsupportedOperationException("Unknown type " + jetType);
     }
 }

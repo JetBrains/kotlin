@@ -31,16 +31,16 @@ public class BuiltinToJavaMapping {
     private final Variance howThisTypeIsUsed;
     private final JetTypeMapperMode mode;
 
-    public BuiltinToJavaMapping(BothSignatureWriter sV,
-                                JetTypeMapper s,
-                                JetType jT,
-                                Variance h,
+    public BuiltinToJavaMapping(BothSignatureWriter signatureWriter,
+                                JetTypeMapper typeMapper,
+                                JetType jetTypeToMap,
+                                Variance variance,
                                 JetTypeMapperMode kind) {
-        signatureVisitor = sV;
-        self = s;
-        jetType = jT;
+        signatureVisitor = signatureWriter;
+        self = typeMapper;
+        jetType = jetTypeToMap;
         known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(jetType);
-        howThisTypeIsUsed = h;
+        howThisTypeIsUsed = variance;
         mode = kind;
     }
 

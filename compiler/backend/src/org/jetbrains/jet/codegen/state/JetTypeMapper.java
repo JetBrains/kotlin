@@ -230,13 +230,12 @@ public class JetTypeMapper extends BindingTraceAware {
     ) {
         DeclarationDescriptor descriptor = descriptorForJetType(jetType);
 
-        TypeConstructor constructor = jetType.getConstructor();    //???
+        TypeConstructor constructor = jetType.getConstructor();
         if (constructor instanceof IntersectionTypeConstructor) {
             jetType = CommonSupertypes.commonSupertype(new ArrayList<JetType>(constructor.getSupertypes()));
         }
 
-        if (ErrorUtils.isError(descriptor))
-            return nonExistentClassType(signatureVisitor, descriptor);
+        if (ErrorUtils.isError(descriptor)) return nonExistentClassType(signatureVisitor, descriptor);
 
         return descriptor.accept(new JetTypeToJavaTypeMapper(signatureVisitor,
                                                              this,
@@ -247,7 +246,8 @@ public class JetTypeMapper extends BindingTraceAware {
                                                                                       kind),
                                                              howThisTypeIsUsed,
                                                              kind,
-                                                             mapBuiltinsToJava),
+                                                             mapBuiltinsToJava,
+                                                             descriptor),
                                  jetType);
     }
 
