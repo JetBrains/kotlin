@@ -20,6 +20,7 @@ import jet.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -55,16 +56,15 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
 
         PackageData data = JavaProtoBufUtil.readPackageDataFrom(kotlinPackage.data());
 
-        Set<String> callableNames = collectCallableNames(data);
+        Set<String> callableNames = collectCallableNames(data.getPackageProto().getMemberList(), data.getNameResolver());
         assertSameElements(Arrays.asList("foo", "bar", "C"), callableNames);
     }
 
     @NotNull
-    private static Set<String> collectCallableNames(@NotNull PackageData data) {
+    public static Set<String> collectCallableNames(@NotNull List<ProtoBuf.Callable> members, @NotNull NameResolver nameResolver) {
         Set<String> callableNames = new HashSet<String>();
-        List<ProtoBuf.Callable> list = data.getPackageProto().getMemberList();
-        for (ProtoBuf.Callable callable : list) {
-            callableNames.add(data.getNameResolver().getName(callable.getName()).asString());
+        for (ProtoBuf.Callable callable : members) {
+            callableNames.add(nameResolver.getName(callable.getName()).asString());
         }
         return callableNames;
     }

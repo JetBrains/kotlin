@@ -17,25 +17,16 @@
 package org.jetbrains.jet.codegen;
 
 import jet.KotlinClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorFinder;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.io.IOException;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Set;
+
+import static org.jetbrains.jet.codegen.KotlinPackageAnnotationTest.collectCallableNames;
 
 public class KotlinClassAnnotationTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
@@ -59,43 +50,9 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
         assertTrue(aClass.isAnnotationPresent(KotlinClass.class));
         KotlinClass kotlinClass = (KotlinClass) aClass.getAnnotation(KotlinClass.class);
 
-        AbstractDescriptorFinder descriptorFinder = new KotlinInfoBasedDescriptorFinder(kotlinClass);
+        ClassData data = JavaProtoBufUtil.readClassDataFrom(kotlinClass.data());
 
-        ClassDescriptor descriptor = descriptorFinder.findClass(new ClassId(NAMESPACE_NAME, CLASS_NAME));
-        assertNotNull(descriptor);
-        assertEquals(CLASS_NAME.asString(), descriptor.getName().asString());
-    }
-
-    private static class KotlinInfoBasedDescriptorFinder extends AbstractDescriptorFinder {
-        private final ClassData classData;
-        private final NamespaceDescriptorImpl namespace;
-
-        public KotlinInfoBasedDescriptorFinder(@NotNull KotlinClass kotlinClass) throws IOException {
-            super(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED);
-
-            this.classData = JavaProtoBufUtil.readClassDataFrom(kotlinClass.data());
-            this.namespace = JetTestUtils.createTestNamespace(NAMESPACE_NAME.shortName());
-        }
-
-        @Nullable
-        @Override
-        protected ClassData getClassData(@NotNull ClassId classId) {
-            assert classId.getPackageFqName().equals(NAMESPACE_NAME) &&
-                   classId.getRelativeClassName().equals(CLASS_NAME) : "Unsupported classId: " + classId;
-            return classData;
-        }
-
-        @NotNull
-        @Override
-        public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
-            assert fqName.equals(NAMESPACE_NAME) : "Unsupported namespace: " + fqName;
-            return namespace;
-        }
-
-        @NotNull
-        @Override
-        public Collection<Name> getClassNames(@NotNull FqName packageName) {
-            throw new UnsupportedOperationException();
-        }
+        Set<String> callableNames = collectCallableNames(data.getClassProto().getMemberList(), data.getNameResolver());
+        assertSameElements(Arrays.asList("foo", "bar"), callableNames);
     }
 }
