@@ -18,8 +18,10 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.compiled.ClsClassImpl;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiPackage;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -164,12 +166,12 @@ public final class JavaNamespaceResolver {
             trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
 
             if (psiClass != null) {
-                boolean hasKotlinPackageAnnotation = hasKotlinPackageAnnotation(psiClass);
-                if (isOldKotlinPackageClass(psiClass) && !hasKotlinPackageAnnotation) {
+                boolean isCompiledKotlinPackageClass = DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass);
+                if (isOldKotlinPackageClass(psiClass) && !isCompiledKotlinPackageClass) {
                     // If psiClass has old annotations (@JetPackage) but doesn't have @KotlinPackage, report ABI version error
                     AbiVersionUtil.checkAbiVersion(psiClass, INVALID_VERSION, trace);
                 }
-                if (hasKotlinPackageAnnotation) {
+                if (isCompiledKotlinPackageClass) {
                     // If psiClass has @KotlinPackage (regardless of whether it has @JetPackage or not), deserialize it to Kotlin descriptor.
                     // Note that @KotlinPackage may still have an old ABI version, in which case null is returned by createKotlinPackageScope
                     JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(psiClass, namespaceDescriptor);
@@ -186,7 +188,7 @@ public final class JavaNamespaceResolver {
         if (psiClass == null) {
             return null;
         }
-        if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
+        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
             return null;
         }
         if (!hasStaticMembers(psiClass)) {
@@ -200,25 +202,7 @@ public final class JavaNamespaceResolver {
     }
 
     private static boolean isOldKotlinPackageClass(@NotNull PsiClass psiClass) {
-        return hasAnnotation(psiClass, JvmStdlibNames.JET_PACKAGE_CLASS.getFqName());
-    }
-
-    private static boolean hasKotlinPackageAnnotation(@NotNull PsiClass psiClass) {
-        // TODO: merge this method with DescriptorResolverUtils#isKotlinClass
-        // NOTE: we need to check against ClsClassImpl because it can be a Java source, pretending to be a Kotlin class.
-        // In that case we can't really read the annotation from psiClass's virtual file
-        if (!(psiClass instanceof ClsClassImpl)) {
-            return false;
-        }
-        return hasAnnotation(psiClass, JvmStdlibNames.KOTLIN_PACKAGE.getFqName());
-    }
-
-    private static boolean hasAnnotation(@NotNull PsiClass psiClass, @NotNull FqName annotationFqName) {
-        PsiModifierList list = psiClass.getModifierList();
-        if (list != null) {
-            return list.findAnnotation(annotationFqName.asString()) != null;
-        }
-        return false;
+        return DescriptorResolverUtils.hasAnnotation(psiClass, JvmStdlibNames.JET_PACKAGE_CLASS.getFqName());
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JetScope packageScope) {
@@ -280,7 +264,7 @@ public final class JavaNamespaceResolver {
         PsiClass[] classes = psiPackage.getClasses();
         List<Name> result = new ArrayList<Name>(classes.length);
         for (PsiClass psiClass : classes) {
-            if (DescriptorResolverUtils.isKotlinClass(psiClass)) {
+            if (DescriptorResolverUtils.isCompiledKotlinClass(psiClass)) {
                 result.add(Name.identifier(psiClass.getName()));
             }
         }

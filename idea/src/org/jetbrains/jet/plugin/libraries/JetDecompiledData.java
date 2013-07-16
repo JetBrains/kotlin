@@ -78,7 +78,7 @@ public class JetDecompiledData {
     }
 
     public static boolean isKotlinFile(@NotNull ClsFileImpl clsFile) {
-        return DescriptorResolverUtils.isKotlinClass(clsFile.getClasses()[0]);
+        return DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(clsFile.getClasses()[0]);
     }
 
     @NotNull

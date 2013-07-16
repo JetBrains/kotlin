@@ -51,7 +51,7 @@ public final class ScopeUtils {
         }
 
         for (PsiClass psiClass : javaSemanticServices.getPsiClassFinder().findPsiClasses(psiPackage)) {
-            if (PackageClassUtils.isPackageClass(psiClass)) {
+            if (DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass)) {
                 continue;
             }
 

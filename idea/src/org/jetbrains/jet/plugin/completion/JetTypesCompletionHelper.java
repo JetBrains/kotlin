@@ -92,7 +92,7 @@ public class JetTypesCompletionHelper {
             return true;
         }
 
-        if (DescriptorResolverUtils.isKotlinClass(aClass)) {
+        if (DescriptorResolverUtils.isCompiledKotlinClass(aClass)) {
             if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
                 String qualifiedName = aClass.getQualifiedName();
                 if (qualifiedName != null) {

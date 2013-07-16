@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -283,7 +283,7 @@ public class JetImportOptimizer implements ImportOptimizer {
         if (memberName == null) {
             return null;
         }
-        if (PackageClassUtils.isPackageClass(containingClass)) {
+        if (DescriptorResolverUtils.isCompiledKotlinPackageClass(containingClass)) {
             return QualifiedNamesUtil.combine(classFQN.parent(), Name.identifier(memberName));
         }
         else {

@@ -24,13 +24,11 @@ import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import jet.KotlinClass;
 import jet.KotlinPackage;
-import com.intellij.psi.util.PsiTreeUtil;
-import jet.runtime.typeinfo.JetPackageClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -95,9 +93,6 @@ public class JetFromJavaDescriptorHelper {
 
     @Nullable
     public static ClassKind getCompiledClassKind(@NotNull PsiClass psiClass) {
-        if (PackageClassUtils.isPackageClass(psiClass)) {
-            return null;
-        }
         ClassData classData = getClassData(psiClass);
         if (classData == null) return null;
         return DescriptorDeserializer.classKind(Flags.CLASS_KIND.get(classData.getClassProto().getFlags()));
@@ -143,7 +138,7 @@ public class JetFromJavaDescriptorHelper {
 
             FqName classFQN = new FqName(qualifiedName);
 
-            if (PackageClassUtils.isPackageClass(containingClass)) {
+            if (DescriptorResolverUtils.isCompiledKotlinPackageClass(containingClass)) {
                 FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
                 return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
             }

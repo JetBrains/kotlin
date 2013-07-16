@@ -17,14 +17,16 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class PackageClassUtils {
+public final class PackageClassUtils {
 
     private static final String DEFAULT_PACKAGE = "_DefaultPackage";
+
+    private PackageClassUtils() {
+    }
 
     // ex. <root> -> _DefaultPackage, a -> APackage, a.b -> BPackage
     public static String getPackageClassName(@NotNull FqName packageFQN) {
@@ -38,15 +40,10 @@ public class PackageClassUtils {
         return packageFQN.child(Name.identifier(getPackageClassName(packageFQN)));
     }
 
-    public static boolean isPackageClass(@NotNull PsiClass psiClass) {
-        //TODO: read kotlin info
-        return psiClass.getName().endsWith("Package");
-    }
-
-    public static boolean isPackageClass(@NotNull FqName fqName) {
+    public static boolean isPackageClassFqName(@NotNull FqName fqName) {
         if (fqName.isRoot()) {
             return false;
         }
-        return PackageClassUtils.getPackageClassFqName(fqName.parent()).equals(fqName);
+        return getPackageClassFqName(fqName.parent()).equals(fqName);
     }
 }
