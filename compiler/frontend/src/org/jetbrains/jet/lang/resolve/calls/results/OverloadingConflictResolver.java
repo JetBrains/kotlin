@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -69,14 +70,36 @@ public class OverloadingConflictResolver {
             boolean discriminateGenericDescriptors
     ) {
         D me = candidateCall.getResultingDescriptor();
+
+        boolean isInvoke = candidateCall instanceof VariableAsFunctionResolvedCall;
+        VariableDescriptor variable;
+        if (isInvoke) {
+            variable = ((VariableAsFunctionResolvedCall) candidateCall).getVariableCall().getResultingDescriptor();
+        }
+        else {
+            variable = null;
+        }
+
         for (ResolvedCallWithTrace<D> otherCall : candidates) {
             D other = otherCall.getResultingDescriptor();
             if (other == me) continue;
-            if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) {
-                return false;
+
+            if (definitelyNotMaximallySpecific(me, other, discriminateGenericDescriptors)) {
+
+                if (!isInvoke) return false;
+
+                assert otherCall instanceof VariableAsFunctionResolvedCall : "'invoke' candidate goes with usual one: " + candidateCall + otherCall;
+                ResolvedCallWithTrace<VariableDescriptor> otherVariableCall = ((VariableAsFunctionResolvedCall) otherCall).getVariableCall();
+                if (definitelyNotMaximallySpecific(variable, otherVariableCall.getResultingDescriptor(), discriminateGenericDescriptors)) {
+                    return false;
+                }
             }
         }
         return true;
+    }
+
+    private <D extends CallableDescriptor> boolean definitelyNotMaximallySpecific(D me, D other, boolean discriminateGenericDescriptors) {
+        return !moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors);
     }
 
     /**

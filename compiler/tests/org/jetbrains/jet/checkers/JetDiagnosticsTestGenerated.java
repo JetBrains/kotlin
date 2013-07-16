@@ -4582,6 +4582,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsMemberExtensionToExplicitReceiver.kt");
                 }
                 
+                @TestMetadata("kt3772.kt")
+                public void testKt3772() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/kt3772.kt");
+                }
+                
             }
             
             public static Test innerSuite() {
