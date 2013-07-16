@@ -26,11 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -44,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.ByteArrayInputStream;
@@ -61,34 +58,6 @@ import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverU
 public abstract class AbstractDescriptorSerializationTest extends KotlinTestWithEnvironment {
 
     public static final Name TEST_PACKAGE_NAME = Name.identifier("test");
-
-    public static final AnnotationDeserializer DUMMY_ANNOTATION_DESERIALIZER = new AnnotationDeserializer() {
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
-            // TODO: not only data annotations are present in tests
-            AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
-            annotationDescriptor.setAnnotationType(KotlinBuiltIns.getInstance().getDataClassAnnotation().getDefaultType());
-            return Collections.singletonList(annotationDescriptor);
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadCallableAnnotations(
-                @NotNull ClassOrNamespaceDescriptor container,
-                @NotNull ProtoBuf.Callable proto,
-                @NotNull NameResolver nameResolver,
-                @NotNull AnnotatedCallableKind kind
-        ) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @NotNull
-        @Override
-        public List<AnnotationDescriptor> loadValueParameterAnnotations(@NotNull ProtoBuf.Callable.ValueParameter parameterProto) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-    };
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -280,7 +249,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             }
 
             return new DeserializedClassDescriptor(classId, new LockBasedStorageManager(), containingDeclaration,
-                    classData.getNameResolver(), DUMMY_ANNOTATION_DESERIALIZER, this, classData.getClassProto(), null);
+                    classData.getNameResolver(), UNSUPPORTED, this, classData.getClassProto(), null);
         }
 
         @Nullable

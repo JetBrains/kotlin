@@ -234,7 +234,14 @@ public class GenerateTests {
                 "compiler/tests/",
                 "DescriptorSerializationTestGenerated",
                 AbstractDescriptorSerializationTest.class,
-                testModel("compiler/testData/loadKotlin")
+                testModel("compiler/testData/loadKotlin/class"),
+                testModel("compiler/testData/loadKotlin/classFun"),
+                testModel("compiler/testData/loadKotlin/classObject"),
+                testModel("compiler/testData/loadKotlin/constructor"),
+                testModel("compiler/testData/loadKotlin/fun"),
+                testModel("compiler/testData/loadKotlin/prop"),
+                testModel("compiler/testData/loadKotlin/type"),
+                testModel("compiler/testData/loadKotlin/visibility")
         );
 
         generateTest(
