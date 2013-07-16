@@ -36,8 +36,8 @@ var kotlin = {set:function (receiver, key, value) {
 
 (function () {
     Kotlin.equals = function (obj1, obj2) {
-        if (obj1 === null || obj1 === undefined) {
-            return obj2 === null;
+        if (obj1 == null) {
+            return obj2 == null;
         }
 
         if (obj1 instanceof Array) {
