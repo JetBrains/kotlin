@@ -104,13 +104,7 @@ public class NamespaceCodegen extends MemberCodegen {
         List<MemberMap> namespaceMembers = new ArrayList<MemberMap>(files.size() + 1);
 
         if (shouldGenerateNSClass(files)) {
-            ClassBuilder cv = v.getClassBuilder();
-
-            AnnotationVisitor packageClassAnnotation = cv.newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
-            packageClassAnnotation.visit(JvmStdlibNames.ABI_VERSION_NAME, JvmAbi.VERSION);
-            packageClassAnnotation.visitEnd();
-
-            namespaceMembers.add(cv.getMemberMap());
+            namespaceMembers.add(v.getClassBuilder().getMemberMap());
         }
 
         for (JetFile file : files) {

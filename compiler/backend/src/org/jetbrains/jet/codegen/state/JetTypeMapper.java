@@ -25,7 +25,10 @@ import org.jetbrains.jet.codegen.binding.BindingTraceAware;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
-import org.jetbrains.jet.codegen.signature.*;
+import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -775,7 +778,7 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public JvmPropertyAccessorSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
+    public JvmMethodSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         // TODO: do not genClassOrObject generics if not needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
 
@@ -791,12 +794,12 @@ public class JetTypeMapper extends BindingTraceAware {
         signatureWriter.writeReturnTypeEnd();
 
         String name = getPropertyAccessorName(descriptor, true);
-        return signatureWriter.makeJvmPropertyAccessorSignature(name, true);
+        return signatureWriter.makeJvmMethodSignature(name);
     }
 
 
     @NotNull
-    public JvmPropertyAccessorSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
+    public JvmMethodSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         assert descriptor.isVar();
 
         // TODO: generics signature is not always needed
@@ -813,7 +816,7 @@ public class JetTypeMapper extends BindingTraceAware {
         signatureWriter.writeVoidReturn();
 
         String name = getPropertyAccessorName(descriptor, false);
-        return signatureWriter.makeJvmPropertyAccessorSignature(name, false);
+        return signatureWriter.makeJvmMethodSignature(name);
     }
 
     private void writeParameter(@NotNull BothSignatureWriter signatureWriter, @NotNull JetType outType) {

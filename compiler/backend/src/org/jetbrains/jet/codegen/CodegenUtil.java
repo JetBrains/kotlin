@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -104,23 +103,6 @@ public class CodegenUtil {
         return name;
     }
 
-
-    public static int getFlagsForVisibility(@NotNull Visibility visibility) {
-        if (visibility == Visibilities.INTERNAL) {
-            return JvmStdlibNames.FLAG_INTERNAL_BIT;
-        }
-        else if (visibility == Visibilities.PRIVATE) {
-            return JvmStdlibNames.FLAG_PRIVATE_BIT;
-        }
-        else if (visibility == Visibilities.PROTECTED) {
-            return JvmStdlibNames.FLAG_PROTECTED_BIT;
-        }
-        return 0;
-    }
-
-    public static int getFlagsForClassKind(@NotNull ClassDescriptor descriptor) {
-        return descriptor.getKind() == ClassKind.OBJECT ? JvmStdlibNames.FLAG_CLASS_KIND_OBJECT : JvmStdlibNames.FLAG_CLASS_KIND_DEFAULT;
-    }
 
     public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
 

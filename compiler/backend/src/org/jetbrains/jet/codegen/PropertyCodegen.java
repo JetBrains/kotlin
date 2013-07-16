@@ -27,8 +27,6 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
-import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
-import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -40,8 +38,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -51,7 +47,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityForSpecialPropertyBackingField;
-import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.getParentBodyCodegen;
+import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class PropertyCodegen extends GenerationStateAware {
@@ -231,7 +228,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
         //if (!defaultGetter || isExternallyAccessible(propertyDescriptor)) {
-        JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
+        JvmMethodSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorResolver.createDefaultGetter(propertyDescriptor);
 
@@ -250,7 +247,6 @@ public class PropertyCodegen extends GenerationStateAware {
             }
             functionCodegen.generateMethod(getter != null ? getter : p,
                                            signature,
-                                           true,
                                            getterDescriptor,
                                            strategy);
         }
@@ -262,7 +258,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
         if (/*!defaultSetter || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
-            JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
+            JvmMethodSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
             PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
             setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorResolver.createDefaultSetter(propertyDescriptor);
 
@@ -281,7 +277,6 @@ public class PropertyCodegen extends GenerationStateAware {
                 }
                 functionCodegen.generateMethod(setter != null ? setter : p,
                                                signature,
-                                               true,
                                                setterDescriptor,
                                                strategy);
             }
@@ -382,24 +377,6 @@ public class PropertyCodegen extends GenerationStateAware {
                 iv.areturn(Type.VOID_TYPE);
             }
         }
-    }
-
-    public static void generateJetPropertyAnnotation(
-            MethodVisitor mv, @NotNull JvmPropertyAccessorSignature propertyAccessorSignature,
-            @NotNull PropertyDescriptor propertyDescriptor, @NotNull Visibility visibility
-    ) {
-        JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-        Modality modality = propertyDescriptor.getModality();
-        int flags = getFlagsForVisibility(visibility) | JvmStdlibNames.FLAG_PROPERTY_BIT;
-        if (isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
-            flags |= modality == Modality.FINAL
-                      ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
-                      : JvmStdlibNames.FLAG_FORCE_OPEN_BIT;
-        }
-        aw.writeFlags(flags | DescriptorKindUtils.kindToFlags(propertyDescriptor.getKind()));
-        aw.writeTypeParameters(propertyAccessorSignature.getKotlinTypeParameter());
-        aw.writePropertyType(propertyAccessorSignature.getPropertyTypeKotlinSignature());
-        aw.visitEnd();
     }
 
     public static String getterName(Name propertyName) {
