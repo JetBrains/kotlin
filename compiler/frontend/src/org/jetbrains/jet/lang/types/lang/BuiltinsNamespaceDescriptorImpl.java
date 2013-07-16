@@ -4,7 +4,6 @@ import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -23,110 +22,99 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
+
 class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
 
-    public BuiltinsNamespaceDescriptorImpl(@NotNull final StorageManager storageManager, @NotNull NamespaceDescriptor containingDeclaration) {
+    public BuiltinsNamespaceDescriptorImpl(@NotNull StorageManager storageManager, @NotNull NamespaceDescriptor containingDeclaration) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
 
-        try {
-            nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
+        nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
 
-            final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
-                @Override
-                @NotNull
-                public Collection<Name> compute() {
-                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
+        final NotNullLazyValue<Collection<Name>> classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
+            @Override
+            @NotNull
+            public Collection<Name> compute() {
+                InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
 
+                try {
+                    DataInputStream data = new DataInputStream(in);
                     try {
-                        DataInputStream data = new DataInputStream(in);
-                        try {
-                            int size = data.readInt();
-                            List<Name> result = new ArrayList<Name>(size);
-                            for (int i = 0; i < size; i++) {
-                                result.add(nameResolver.getName(data.readInt()));
-                            }
-                            return result;
+                        int size = data.readInt();
+                        List<Name> result = new ArrayList<Name>(size);
+                        for (int i = 0; i < size; i++) {
+                            result.add(nameResolver.getName(data.readInt()));
                         }
-                        finally {
-                            data.close();
-                        }
+                        return result;
                     }
-                    catch (IOException e) {
-                        throw new IllegalStateException(e);
+                    finally {
+                        data.close();
                     }
                 }
-            });
+                catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        });
 
-            DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(storageManager, AnnotationDeserializer.UNSUPPORTED) {
-                @Nullable
-                @Override
-                protected ClassData getClassData(@NotNull ClassId classId) {
-                    InputStream stream = getStreamNullable(BuiltInsSerializationUtil.getClassMetadataPath(classId));
-                    if (stream == null) {
+        DescriptorFinder descriptorFinder = new AbstractDescriptorFinder(storageManager, UNSUPPORTED) {
+            @Nullable
+            @Override
+            protected ClassData getClassData(@NotNull ClassId classId) {
+                InputStream stream = getStreamNullable(BuiltInsSerializationUtil.getClassMetadataPath(classId));
+                if (stream == null) {
+                    return null;
+                }
+
+                try {
+                    ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(stream);
+
+                    Name expectedShortName = classId.getRelativeClassName().shortName();
+                    Name actualShortName = nameResolver.getName(classProto.getName());
+                    if (!actualShortName.isSpecial() && !actualShortName.equals(expectedShortName)) {
+                        // Workaround for case-insensitive file systems,
+                        // otherwise we'd find "Collection" for "collection" etc
                         return null;
                     }
 
-                    try {
-                        ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(stream);
-
-                        Name expectedShortName = classId.getRelativeClassName().shortName();
-                        Name actualShortName = nameResolver.getName(classProto.getName());
-                        if (!actualShortName.isSpecial() && !actualShortName.equals(expectedShortName)) {
-                            // Workaround for case-insensitive file systems,
-                            // otherwise we'd find "Collection" for "collection" etc
-                            return null;
-                        }
-
-                        return new ClassData(nameResolver, classProto);
-                    }
-                    catch (IOException e) {
-                        throw new IllegalStateException(e);
-                    }
+                    return new ClassData(nameResolver, classProto);
                 }
-
-                @Nullable
-                @Override
-                public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
-                    return fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? BuiltinsNamespaceDescriptorImpl.this : null;
+                catch (IOException e) {
+                    throw new IllegalStateException(e);
                 }
+            }
 
-                @NotNull
-                @Override
-                public Collection<Name> getClassNames(@NotNull FqName packageName) {
-                    return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-                           ? classNames.compute()
-                           : Collections.<Name>emptyList();
-                }
-            };
+            @Nullable
+            @Override
+            public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
+                return fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? BuiltinsNamespaceDescriptorImpl.this : null;
+            }
 
-            members = new DeserializedPackageMemberScope(
-                    storageManager,
-                    this,
-                    DescriptorDeserializer.create(storageManager, this, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED),
-                    loadCallables(), descriptorFinder
-            );
+            @NotNull
+            @Override
+            public Collection<Name> getClassNames(@NotNull FqName packageName) {
+                return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+                       ? classNames.compute()
+                       : Collections.<Name>emptyList();
+            }
+        };
+
+        members = new DeserializedPackageMemberScope(storageManager, this, UNSUPPORTED, descriptorFinder, loadPackage(), nameResolver);
+    }
+
+    @NotNull
+    private ProtoBuf.Package loadPackage() {
+        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(this);
+        InputStream stream = getStream(packageFilePath);
+        try {
+            return ProtoBuf.Package.parseFrom(stream);
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private List<ProtoBuf.Callable> loadCallables() throws IOException {
-        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(this);
-        InputStream stream = getStream(packageFilePath);
-
-        List<ProtoBuf.Callable> callables = new ArrayList<ProtoBuf.Callable>();
-        while (true) {
-            ProtoBuf.Callable callable = ProtoBuf.Callable.parseDelimitedFrom(stream);
-            if (callable == null) {
-                break;
-            }
-            callables.add(callable);
-        }
-        return callables;
     }
 
     @NotNull

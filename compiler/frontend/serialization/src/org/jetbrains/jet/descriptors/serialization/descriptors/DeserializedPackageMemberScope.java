@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -13,23 +12,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class DeserializedPackageMemberScope extends DeserializedMemberScope {
-    @NotNull
-    public static DeserializedPackageMemberScope createScopeFromPackageData(
-            @NotNull NamespaceDescriptor packageDescriptor,
-            @NotNull PackageData packageData,
-            @NotNull DescriptorFinder descriptorFinder,
-            @NotNull AnnotationDeserializer deserializer,
-            @NotNull LockBasedStorageManager storageManager
-    ) {
-        DescriptorDeserializer descriptorDeserializer = DescriptorDeserializer
-                .create(storageManager, packageDescriptor, packageData.getNameResolver(), descriptorFinder, deserializer);
-        List<ProtoBuf.Callable> memberList = packageData.getPackageProto().getMemberList();
-        return new DeserializedPackageMemberScope(storageManager, packageDescriptor, descriptorDeserializer, memberList, descriptorFinder);
-    }
-
     private final DescriptorFinder descriptorFinder;
 
     private final FqName packageFqName;
@@ -37,13 +21,27 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     public DeserializedPackageMemberScope(
             @NotNull StorageManager storageManager,
             @NotNull NamespaceDescriptor packageDescriptor,
-            @NotNull DescriptorDeserializer deserializer,
-            @NotNull List<ProtoBuf.Callable> membersList,
-            @NotNull DescriptorFinder descriptorFinder
+            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull DescriptorFinder descriptorFinder,
+            @NotNull ProtoBuf.Package proto,
+            @NotNull NameResolver nameResolver
     ) {
-        super(storageManager, packageDescriptor, deserializer, membersList);
+        super(storageManager, packageDescriptor,
+              DescriptorDeserializer.create(storageManager, packageDescriptor, nameResolver, descriptorFinder, annotationDeserializer),
+              proto.getMemberList());
         this.descriptorFinder = descriptorFinder;
         this.packageFqName = DescriptorUtils.getFQName(packageDescriptor).toSafe();
+    }
+
+    public DeserializedPackageMemberScope(
+            @NotNull StorageManager storageManager,
+            @NotNull NamespaceDescriptor packageDescriptor,
+            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull DescriptorFinder descriptorFinder,
+            @NotNull PackageData packageData
+    ) {
+        this(storageManager, packageDescriptor, annotationDeserializer, descriptorFinder, packageData.getPackageProto(),
+             packageData.getNameResolver());
     }
 
     @Nullable

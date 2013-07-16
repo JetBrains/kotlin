@@ -133,8 +133,8 @@ public final class DeserializedDescriptorResolver {
         if (packageData == null) {
             return null;
         }
-        return DeserializedPackageMemberScope.createScopeFromPackageData(packageDescriptor, packageData, javaDescriptorFinder,
-                                                                         annotationDeserializer, storageManager);
+        return new DeserializedPackageMemberScope(storageManager, packageDescriptor, annotationDeserializer, javaDescriptorFinder,
+                                                  packageData);
     }
 
     @Nullable
