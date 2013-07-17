@@ -7,4 +7,3 @@ fun f(): In<Out<X>> = throw Exception()
 // method: _DefaultPackage::f
 // jvm signature:     ()LIn;
 // generic signature: ()LIn<LOut<+LX;>;>;
-// kotlin signature:  ()LIn<LOut<LX;>;>;
