@@ -34,6 +34,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -50,6 +53,24 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     private PsiClassFinder psiClassFinder;
 
     private JavaClassResolver javaClassResolver;
+
+    // TODO: a single instance of StorageManager for all computations in resolve-java
+    private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
+
+    private final MemoizedFunctionToNotNull<VirtualFile, Map<MemberSignature, List<AnnotationDescriptor>>> memberAnnotations =
+            storageManager.createMemoizedFunction(
+                    new MemoizedFunctionToNotNull<VirtualFile, Map<MemberSignature, List<AnnotationDescriptor>>>() {
+                        @NotNull
+                        @Override
+                        public Map<MemberSignature, List<AnnotationDescriptor>> fun(@NotNull VirtualFile file) {
+                            try {
+                                return loadMemberAnnotationsFromFile(file);
+                            }
+                            catch (IOException e) {
+                                throw ExceptionUtils.rethrow(e);
+                            }
+                        }
+                    }, StorageManager.ReferenceKind.STRONG);
 
     @Inject
     public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
@@ -186,16 +207,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
         VirtualFile file = getVirtualFileWithMemberAnnotations(container, proto, nameResolver);
 
-        try {
-            // TODO: calculate this only once for each container
-            Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations = loadMemberAnnotationsFromFile(file);
-
-            List<AnnotationDescriptor> annotations = memberAnnotations.get(signature);
-            return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
-        }
-        catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
-        }
+        List<AnnotationDescriptor> annotations = memberAnnotations.fun(file).get(signature);
+        return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
     }
 
     @NotNull
