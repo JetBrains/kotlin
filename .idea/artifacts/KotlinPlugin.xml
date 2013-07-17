@@ -17,6 +17,8 @@
             <element id="module-output" name="cli-common" />
             <element id="module-output" name="ide-compiler-runner" />
             <element id="module-output" name="preloader" />
+            <element id="module-output" name="serialization" />
+            <element id="module-output" name="serialization.java" />
             <element id="directory" name="jet">
               <element id="dir-copy" path="$PROJECT_DIR$/idea/builtinsSrc/jet" />
             </element>

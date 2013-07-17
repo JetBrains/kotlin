@@ -37,6 +37,7 @@
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
     <orderEntry type="module" module-name="serialization" />
+    <orderEntry type="module" module-name="serialization.java" />
   </component>
 </module>
 
