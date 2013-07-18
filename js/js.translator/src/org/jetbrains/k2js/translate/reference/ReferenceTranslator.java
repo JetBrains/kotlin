@@ -17,11 +17,12 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -41,18 +42,23 @@ public final class ReferenceTranslator {
     @NotNull
     public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
             @NotNull TranslationContext context) {
-        JsExpression qualifier = context.getQualifierForDescriptor(referencedDescriptor);
-        if (qualifier == null) {
-            return translateAsLocalNameReference(referencedDescriptor, context);
+        JsExpression alias = context.getAliasForDescriptor(referencedDescriptor);
+        if (alias != null) {
+            return alias;
         }
-        JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
-        return new JsNameRef(referencedName, qualifier);
+
+        return new JsNameRef(context.getNameForDescriptor(referencedDescriptor), context.getQualifierForDescriptor(referencedDescriptor));
     }
 
     @NotNull
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
             @NotNull TranslationContext context) {
-        //Preconditions.checkNotNull(referencedDescriptor, "No referencedDescriptor available");
+        if (referencedDescriptor instanceof FunctionDescriptor || referencedDescriptor instanceof VariableDescriptor) {
+            JsExpression alias = context.aliasingContext().getAliasForDescriptor(referencedDescriptor);
+            if (alias != null) {
+                return alias;
+            }
+        }
         return context.getNameForDescriptor(referencedDescriptor).makeRef();
     }
 

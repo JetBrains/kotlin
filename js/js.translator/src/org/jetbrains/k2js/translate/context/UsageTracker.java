@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-var foo = Kotlin.definePackage({initialize: function () {
-}, box: function () {
-    return !false;
-}
-                                 });
+package org.jetbrains.k2js.translate.context;
 
-function test() {
-    return foo.box()
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+
+public class UsageTracker {
+    private final DeclarationDescriptor trackedDescriptor;
+    private boolean used;
+
+    public UsageTracker(DeclarationDescriptor trackedDescriptor) {
+        this.trackedDescriptor = trackedDescriptor;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void triggerUsed(DeclarationDescriptor descriptor) {
+        if (trackedDescriptor == descriptor) {
+            used = true;
+        }
+    }
 }

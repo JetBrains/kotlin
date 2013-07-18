@@ -97,10 +97,11 @@ var Kotlin = {};
         function subclass() {
         }
 
-        function create() {
-            var parent = null, properties = Kotlin.argumentsToArrayLike(arguments);
-            if (typeof (properties[0]) == "function") {
-                parent = properties.shift();
+        function create(parent, properties, staticProperties) {
+            var traits = null;
+            if (parent instanceof Array) {
+                traits = parent;
+                parent = parent[0];
             }
 
             function klass() {
@@ -111,13 +112,19 @@ var Kotlin = {};
             }
 
             klass.addMethods = addMethods;
-            klass.superclass = parent;
+            klass.superclass = parent || null;
             klass.subclasses = [];
 
             if (parent) {
-                subclass.prototype = parent.prototype;
-                klass.prototype = new subclass();
-                parent.subclasses.push(klass);
+                if (typeof (parent) == "function") {
+                    subclass.prototype = parent.prototype;
+                    klass.prototype = new subclass();
+                    parent.subclasses.push(klass);
+                }
+                else {
+                    // trait
+                    klass.addMethods(parent);
+                }
             }
 
             klass.addMethods({get_class: function () {
@@ -131,8 +138,13 @@ var Kotlin = {};
                 }});
             }
 
-            for (var i = 0, length = properties.length; i < length; i++) {
-                klass.addMethods(properties[i]);
+            if (traits !== null) {
+                for (var i = 1, n = traits.length; i < n; i++) {
+                    klass.addMethods(traits[i]);
+                }
+            }
+            if (properties !== null && properties !== undefined) {
+                klass.addMethods(properties);
             }
 
             if (!klass.prototype.initialize) {
@@ -140,6 +152,9 @@ var Kotlin = {};
             }
 
             klass.prototype.constructor = klass;
+            if (staticProperties !== null && staticProperties !== undefined) {
+                copyProperties(klass, staticProperties);
+            }
             return klass;
         }
 
@@ -151,7 +166,13 @@ var Kotlin = {};
         return create;
     })();
 
-    Kotlin.$createClass = Kotlin.createClass;
+    Kotlin.$createClass = function (parent, properties) {
+        if (parent !== null && typeof (parent) != "function") {
+            properties = parent;
+            parent = null;
+        }
+        return Kotlin.createClass(parent, properties, null);
+    };
 
     Kotlin.createObjectWithPrototype = function (prototype) {
         function C() {}

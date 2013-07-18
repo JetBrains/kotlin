@@ -29,7 +29,7 @@ public final class ClosureUtils {
     public static ClosureContext captureClosure(@NotNull BindingContext bindingContext, @NotNull JetElement element, @NotNull DeclarationDescriptor descriptor) {
         CaptureClosureVisitor captureClosureVisitor = new CaptureClosureVisitor(descriptor, bindingContext);
         ClosureContext closureContext = new ClosureContext();
-        element.accept(captureClosureVisitor, closureContext);
+        element.acceptChildren(captureClosureVisitor, closureContext);
         return closureContext;
     }
 }

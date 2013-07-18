@@ -36,22 +36,18 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescrip
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
 
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
-    protected final List<JsPropertyInitializer> result = new SmartList<JsPropertyInitializer>();
+    protected final List<JsPropertyInitializer> result;
 
     public DeclarationBodyVisitor() {
+        this(new SmartList<JsPropertyInitializer>());
+    }
+
+    public DeclarationBodyVisitor(List<JsPropertyInitializer> result) {
+        this.result = result;
     }
 
     @NotNull
     public List<JsPropertyInitializer> getResult() {
-        return result;
-    }
-
-    @NotNull
-    public List<JsPropertyInitializer> traverseClass(@NotNull JetClassOrObject jetClass,
-            @NotNull TranslationContext context) {
-        for (JetDeclaration declaration : jetClass.getDeclarations()) {
-            declaration.accept(this, context);
-        }
         return result;
     }
 

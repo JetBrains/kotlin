@@ -38,7 +38,6 @@ import java.util.*;
 
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
-import static org.jetbrains.k2js.translate.general.Translation.translateClassDeclaration;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 
 /**
@@ -86,11 +85,13 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     private static class OpenClassInfo {
+        private final ClassDescriptor descriptor;
         private final JetClass declaration;
         private final JsNameRef label;
         private final JsNameRef qualifiedLabel;
 
-        private OpenClassInfo(JetClass declaration, JsNameRef label, JsNameRef qualifiedLabel) {
+        private OpenClassInfo(JetClass declaration, ClassDescriptor descriptor, JsNameRef label, JsNameRef qualifiedLabel) {
+            this.descriptor = descriptor;
             this.declaration = declaration;
             this.label = label;
             this.qualifiedLabel = qualifiedLabel;
@@ -151,7 +152,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         Iterator<OpenClassInfo> it = sortedOpenClasses.descendingIterator();
         while (it.hasNext()) {
             OpenClassInfo item = it.next();
-            JsExpression translatedDeclaration = translateClassDeclaration(item.declaration, classDescriptorToLabel, context());
+            JsExpression translatedDeclaration =
+                    new ClassTranslator(item.declaration, item.descriptor, classDescriptorToLabel, context()).translate();
             generate(item, propertyInitializers, translatedDeclaration, vars);
         }
     }
@@ -166,7 +168,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         };
 
         for (Pair<JetClassOrObject, JsInvocation> item : finalList) {
-            new ClassTranslator(item.first, aliasingMap, context()).translateClassOrObjectCreation(item.second);
+            new ClassTranslator(item.first, aliasingMap, context()).translate(item.second);
         }
     }
 
@@ -199,8 +201,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         else {
             String label = localLabelGenerator.generate();
             JsNameRef labelRef = dummyFunction.getScope().declareName(label).makeRef();
-            OpenClassInfo
-                    item = new OpenClassInfo((JetClass) declaration, labelRef, new JsNameRef(labelRef.getIdent(), declarationsObjectRef));
+            OpenClassInfo item = new OpenClassInfo((JetClass) declaration, descriptor, labelRef,
+                                                   new JsNameRef(labelRef.getIdent(), declarationsObjectRef));
             openList.add(item);
             openClassDescriptorToItem.put(descriptor, item);
 
