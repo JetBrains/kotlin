@@ -358,6 +358,11 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
             return !getModality().isOverridable();
         }
 
+        @Override
+        public boolean isDenotable() {
+            return true;
+        }
+
         @Nullable
         @Override
         public ClassifierDescriptor getDeclarationDescriptor() {

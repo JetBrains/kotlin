@@ -169,6 +169,11 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
             }
 
             @Override
+            public boolean isDenotable() {
+                return true;
+            }
+
+            @Override
             public ClassifierDescriptor getDeclarationDescriptor() {
                 return AbstractLazyTypeParameterDescriptor.this;
             }
