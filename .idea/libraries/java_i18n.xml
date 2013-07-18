@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="java-i18n">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/java-i18n/lib/java-i18n.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
