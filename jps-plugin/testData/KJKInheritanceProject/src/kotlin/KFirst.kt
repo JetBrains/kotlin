@@ -1,4 +1,4 @@
-package kotlin
+package kt
 
 open class KFirst() {
     fun foo() {
