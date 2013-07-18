@@ -8,8 +8,8 @@
 
   <idea-version since-build="129.1" until-build="129.9999"/>
 
-  <depends optional="true">JUnit</depends>
-  <depends optional="true">TestNG-J</depends>
+  <depends optional="true" config-file="junit.xml">JUnit</depends>
+  <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
 
   <project-components>
@@ -210,8 +210,6 @@
     <configurationType implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSRunConfigurationType"/>
     <programRunner implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSBrowserProgramRunner"/>
     <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>
-    <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetJUnitConfigurationProducer"/>
-    <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetTestNgConfigurationProducer"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="JAVA"
                                     implementationClass="org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerProvider"/>
