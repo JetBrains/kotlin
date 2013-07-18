@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
@@ -25,7 +27,7 @@ import org.jetbrains.jet.lang.types.Variance;
 
 public class BuiltinToJavaMapping {
     private final BothSignatureWriter signatureVisitor;
-    private final JetTypeMapper self;
+    private final JetTypeMapper typeMapper;
     private final JetType jetType;
     private final Type known;
     private final Variance howThisTypeIsUsed;
@@ -37,7 +39,7 @@ public class BuiltinToJavaMapping {
                                 Variance variance,
                                 JetTypeMapperMode kind) {
         signatureVisitor = signatureWriter;
-        self = typeMapper;
+        this.typeMapper = typeMapper;
         jetType = jetTypeToMap;
         known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(jetType);
         howThisTypeIsUsed = variance;
@@ -49,15 +51,34 @@ public class BuiltinToJavaMapping {
     public Type builtinToJava() {
         switch (mode) {
             case VALUE:
-                return self.mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
+                return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             case TYPE_PARAMETER:
-                return self.mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed);
+                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed);
             case TRAIT_IMPL:
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
             case IMPL:
-                return self.mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
+                return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             default:
                 throw new IllegalStateException("unknown kind: " + mode);
         }
+    }
+
+    public Type mapKnownAsmType(
+            JetType jetType,
+            Type asmType,
+            @Nullable BothSignatureWriter signatureVisitor,
+            @NotNull Variance howThisTypeIsUsed
+    ) {
+        if (signatureVisitor != null) {
+            if (jetType.getArguments().isEmpty()) {
+                String kotlinTypeName = JetTypeToJavaTypeMapper.getKotlinTypeNameForSignature(jetType, asmType);
+                signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
+            }
+            else {
+                JetTypeToJavaTypeMapper.writeGenericType(typeMapper, signatureVisitor, asmType, jetType, false, howThisTypeIsUsed);
+            }
+        }
+        typeMapper.checkValidType(asmType);
+        return asmType;
     }
 }

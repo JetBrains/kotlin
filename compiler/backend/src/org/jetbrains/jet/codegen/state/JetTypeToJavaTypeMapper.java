@@ -16,24 +16,25 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+
+import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.getJvmInternalName;
 
 public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching implements DeclarationDescriptorVisitor<Type, JetType> {
     private final BothSignatureWriter signatureVisitor;
-    private final JetTypeMapper self;
+    private final JetTypeMapper typeMapper;
     private final BuiltinToJavaMapping builtin;
     private final Variance howThisTypeIsUsed;
     private final JetTypeMapperMode mode;
@@ -48,7 +49,7 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
                             DeclarationDescriptor descriptor) {
         super(descriptor);
         signatureVisitor = sV;
-        self = s;
+        typeMapper = s;
         builtin = b;
         howThisTypeIsUsed = h;
         mode = kind;
@@ -58,41 +59,104 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
     @Override
     public Type visitTypeParameterDescriptor(TypeParameterDescriptor typeParameterDescriptor,
                                              JetType jetType) {
-        Type type = self.mapType(typeParameterDescriptor.getUpperBoundsAsType(), mode);
+        Type type = typeMapper.mapType(typeParameterDescriptor.getUpperBoundsAsType(), mode);
         if (signatureVisitor != null) {
             signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), jetType.isNullable(), type);
         }
-        self.checkValidType(type);
+        typeMapper.checkValidType(type);
         return type;
     }
 
-    private Type builtinArrayToJava(JetType jetType) {
-        if (jetType.getArguments().size() != 1) {
+    private Type builtinArrayToJava(JetType arrayJetType) {
+        if (arrayJetType.getArguments().size() != 1) {
             throw new UnsupportedOperationException("arrays must have one type argument");
         }
-        TypeProjection memberProjection = jetType.getArguments().get(0);
+        TypeProjection memberProjection = arrayJetType.getArguments().get(0);
         JetType memberType = memberProjection.getType();
 
         if (signatureVisitor != null) {
-            signatureVisitor.writeArrayType(jetType.isNullable(), memberProjection.getProjectionKind());
-            self.mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+            signatureVisitor.writeArrayType(arrayJetType.isNullable(), memberProjection.getProjectionKind());
+            typeMapper.mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
             signatureVisitor.writeArrayEnd();
         }
 
         Type r;
-        if (!isGenericsArray(jetType)) {
-            r = Type.getType("[" + boxType(self.mapType(memberType, mode)).getDescriptor());
+        if (!isGenericsArray(arrayJetType)) {
+            r = Type.getType("[" + boxType(typeMapper.mapType(memberType, mode)).getDescriptor());
         }
         else {
             r = AsmTypeConstants.JAVA_ARRAY_GENERIC_TYPE;
         }
-        self.checkValidType(r);
+        typeMapper.checkValidType(r);
         return r;
     }
 
     private static boolean isGenericsArray(JetType type) {
         return KotlinBuiltIns.getInstance().isArray(type) &&
                type.getArguments().get(0).getType().getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
+    }
+
+    static public void writeGenericType(
+            JetTypeMapper typeMapper,
+            BothSignatureWriter signatureVisitor,
+            Type asmType,
+            JetType jetType,
+            boolean forceReal,
+            Variance howThisTypeIsUsed
+    ) {
+        if (signatureVisitor != null) {
+            String kotlinTypeName = getKotlinTypeNameForSignature(jetType, asmType);
+            signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable(), forceReal, kotlinTypeName);
+
+            List<TypeProjection> arguments = jetType.getArguments();
+            for (TypeParameterDescriptor parameter : jetType.getConstructor().getParameters()) {
+                TypeProjection argument = arguments.get(parameter.getIndex());
+
+                Variance projectionKindForKotlin = argument.getProjectionKind();
+                Variance projectionKindForJava = getEffectiveVariance(
+                        parameter.getVariance(),
+                        projectionKindForKotlin,
+                        howThisTypeIsUsed
+                );
+                signatureVisitor.writeTypeArgument(projectionKindForKotlin, projectionKindForJava);
+
+                typeMapper.mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                signatureVisitor.writeTypeArgumentEnd();
+            }
+            signatureVisitor.writeClassEnd();
+        }
+    }
+
+    private static Variance getEffectiveVariance(Variance parameterVariance, Variance projectionKind, Variance howThisTypeIsUsed) {
+        // Return type must not contain wildcards
+        if (howThisTypeIsUsed == Variance.OUT_VARIANCE) return projectionKind;
+
+        if (parameterVariance == Variance.INVARIANT) {
+            return projectionKind;
+        }
+        if (projectionKind == Variance.INVARIANT) {
+            return parameterVariance;
+        }
+        if (parameterVariance == projectionKind) {
+            return parameterVariance;
+        }
+
+        // In<out X> = In<*>
+        // Out<in X> = Out<*>
+        return Variance.OUT_VARIANCE;
+    }
+
+    @Nullable
+    public static String getKotlinTypeNameForSignature(@NotNull JetType jetType, @NotNull Type asmType) {
+        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null) return null;
+        if (asmType.getSort() != Type.OBJECT) return null;
+
+        JvmClassName jvmClassName = JvmClassName.byType(asmType);
+        if (JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() > 1) {
+            return JvmClassName.byClassDescriptor(descriptor).getSignatureName();
+        }
+        return null;
     }
 
     @Override
@@ -103,13 +167,13 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
             else if (KotlinBuiltIns.getInstance().isArray(jetType))
                 return builtinArrayToJava(jetType);
 
-        JvmClassName name = getJvmInternalName(self.getBindingTrace(), descriptor);
+        JvmClassName name = getJvmInternalName(typeMapper.getBindingTrace(), descriptor);
         Type asmType = asmTypeFor(name);
         boolean forceReal = KotlinToJavaTypesMap.getInstance().isForceReal(name);
 
-        self.writeGenericType(signatureVisitor, asmType, jetType, forceReal, howThisTypeIsUsed);
+        writeGenericType(typeMapper, signatureVisitor, asmType, jetType, forceReal, howThisTypeIsUsed);
 
-        self.checkValidType(asmType);
+        typeMapper.checkValidType(asmType);
         return asmType;
     }
 
