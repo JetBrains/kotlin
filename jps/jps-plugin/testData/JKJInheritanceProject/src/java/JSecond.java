@@ -1,6 +1,6 @@
 package java;
 
-public class JSecond extends kotlin.KFirst {
+public class JSecond extends kt.KFirst {
     public void bar() {
         foo();
     }
