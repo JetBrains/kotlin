@@ -127,9 +127,6 @@ public class TestGenerator {
         String testSourceFilePath = baseDir + "/" + suiteClassPackage.replace(".", "/") + "/" + suiteClassName + ".java";
         File testSourceFile = new File(testSourceFilePath);
         FileUtil.writeToFile(testSourceFile, out.toString());
-
-        //noinspection UseOfSystemOutOrSystemErr
-        System.out.println("Output written to file:\n" + testSourceFile.getAbsolutePath());
     }
 
     private void generateTestClass(Printer p, TestClassModel testClassModel, boolean isStatic) {

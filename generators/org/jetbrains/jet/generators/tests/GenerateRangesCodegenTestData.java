@@ -133,8 +133,6 @@ public class GenerateRangesCodegenTestData {
         out.println("    return \"OK\"");
         out.println("}");
         out.close();
-
-        System.out.println("Written to " + file);
     }
 
     public static void main(String[] args) {
