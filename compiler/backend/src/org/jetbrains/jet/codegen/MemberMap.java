@@ -26,15 +26,14 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class MemberMap {
     private final Map<FunctionDescriptor, Method> methodForFunction = new HashMap<FunctionDescriptor, Method>();
     private final Map<PropertyDescriptor, Pair<Type, String>> fieldForProperty = new HashMap<PropertyDescriptor, Pair<Type, String>>();
     private final Map<PropertyDescriptor, String> syntheticMethodNameForProperty = new HashMap<PropertyDescriptor, String>();
     private final Map<CallableMemberDescriptor, Name> srcClassNameForCallable = new HashMap<CallableMemberDescriptor, Name>();
+    private final Set<PropertyDescriptor> staticFieldInOuterClass = new HashSet<PropertyDescriptor>();
 
     @NotNull
     public static MemberMap union(@NotNull Collection<MemberMap> maps) {
@@ -54,6 +53,10 @@ public final class MemberMap {
 
             for (Map.Entry<CallableMemberDescriptor, Name> entry : map.srcClassNameForCallable.entrySet()) {
                 result.recordSrcClassNameForCallable(entry.getKey(), entry.getValue());
+            }
+
+            for (PropertyDescriptor property : map.staticFieldInOuterClass) {
+                result.recordStaticFieldInOuterClass(property);
             }
         }
 
@@ -80,6 +83,11 @@ public final class MemberMap {
         assert old == null : "Duplicate src class name for callable: " + descriptor + "; " + old;
     }
 
+    public void recordStaticFieldInOuterClass(@NotNull PropertyDescriptor property) {
+        boolean added = staticFieldInOuterClass.add(property);
+        assert added : "Duplicate static field in outer class: " + property;
+    }
+
     @Nullable
     public Method getMethodOfDescriptor(@NotNull FunctionDescriptor descriptor) {
         return methodForFunction.get(descriptor);
@@ -98,6 +106,10 @@ public final class MemberMap {
     @Nullable
     public Name getSrcClassNameOfCallable(@NotNull CallableMemberDescriptor descriptor) {
         return srcClassNameForCallable.get(descriptor);
+    }
+
+    public boolean isStaticFieldInOuterClass(@NotNull PropertyDescriptor property) {
+        return staticFieldInOuterClass.contains(property);
     }
 
     @Override

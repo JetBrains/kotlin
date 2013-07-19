@@ -50,6 +50,21 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("ClassObjectPropertyField.kt")
+            public void testClassObjectPropertyField() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
+            }
+            
+            @TestMetadata("ClassObjectPropertyNoField.kt")
+            public void testClassObjectPropertyNoField() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyNoField.kt");
+            }
+            
+            @TestMetadata("DelegatedProperty.kt")
+            public void testDelegatedProperty() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/DelegatedProperty.kt");
+            }
+            
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
@@ -129,6 +144,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         public static class PackageMembers extends AbstractLoadCompiledKotlinTest {
             public void testAllFilesPresentInPackageMembers() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("DelegatedProperty.kt")
+            public void testDelegatedProperty() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/DelegatedProperty.kt");
             }
             
             @TestMetadata("Function.kt")

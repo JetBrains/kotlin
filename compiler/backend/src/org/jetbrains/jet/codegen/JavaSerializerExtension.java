@@ -66,19 +66,23 @@ public class JavaSerializerExtension extends SerializerExtension {
             Pair<Type, String> field = memberMap.getFieldOfProperty(property);
             Type fieldType;
             String fieldName;
+            boolean isStaticInOuter;
             String syntheticMethodName;
             if (field != null) {
                 fieldType = field.first;
                 fieldName = field.second;
+                isStaticInOuter = memberMap.isStaticFieldInOuterClass(property);
                 syntheticMethodName = null;
             }
             else {
                 fieldType = null;
                 fieldName = null;
+                isStaticInOuter = false;
                 syntheticMethodName = memberMap.getSyntheticMethodNameOfProperty(property);
             }
 
-            JavaProtoBufUtil.savePropertySignature(proto, fieldType, fieldName, syntheticMethodName, getterMethod, setterMethod, nameTable);
+            JavaProtoBufUtil.savePropertySignature(proto, fieldType, fieldName, isStaticInOuter, syntheticMethodName, getterMethod,
+                                                   setterMethod, nameTable);
         }
     }
 

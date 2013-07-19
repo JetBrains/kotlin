@@ -180,6 +180,7 @@ public class PropertyCodegen extends GenerationStateAware {
             ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
             builder = codegen.v;
             backingFieldContext = codegen.context;
+            v.getMemberMap().recordStaticFieldInOuterClass(propertyDescriptor);
         } else {
             if (kind != OwnerKind.NAMESPACE || isDelegate) {
                 modifiers |= ACC_PRIVATE;
@@ -193,7 +194,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
 
-        builder.getMemberMap().recordFieldOfProperty(propertyDescriptor, type, name);
+        v.getMemberMap().recordFieldOfProperty(propertyDescriptor, type, name);
 
         return builder.newField(element, modifiers, name, type.getDescriptor(),
                                 typeMapper.mapFieldSignature(jetType), defaultValue);

@@ -26,10 +26,7 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -228,6 +225,12 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                 if (srcFile != null) {
                     return srcFile;
                 }
+            }
+        }
+        else if (container instanceof ClassDescriptor && ((ClassDescriptor) container).getKind() == ClassKind.CLASS_OBJECT) {
+            // Backing fields of properties of a class object are generated in the outer class
+            if (JavaProtoBufUtil.isStaticFieldInOuter(proto)) {
+                return findVirtualFileByDescriptor((ClassOrNamespaceDescriptor) container.getContainingDeclaration());
             }
         }
 

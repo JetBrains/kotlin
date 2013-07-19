@@ -1,0 +1,8 @@
+package test
+
+test.Anno() internal val x: jet.Int
+    internal fun <get-x>(): jet.Int
+
+internal final annotation class Anno : jet.Annotation {
+    /*primary*/ public constructor Anno()
+}

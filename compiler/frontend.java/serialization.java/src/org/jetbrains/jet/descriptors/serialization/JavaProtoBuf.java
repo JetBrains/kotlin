@@ -1016,6 +1016,10 @@ public final class JavaProtoBuf {
     // required .org.jetbrains.jet.descriptors.serialization.JavaType type = 2;
     boolean hasType();
     org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType getType();
+    
+    // optional bool is_static_in_outer = 3 [default = false];
+    boolean hasIsStaticInOuter();
+    boolean getIsStaticInOuter();
   }
   public static final class JavaFieldSignature extends
       com.google.protobuf.GeneratedMessageLite
@@ -1056,9 +1060,20 @@ public final class JavaProtoBuf {
       return type_;
     }
     
+    // optional bool is_static_in_outer = 3 [default = false];
+    public static final int IS_STATIC_IN_OUTER_FIELD_NUMBER = 3;
+    private boolean isStaticInOuter_;
+    public boolean hasIsStaticInOuter() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public boolean getIsStaticInOuter() {
+      return isStaticInOuter_;
+    }
+    
     private void initFields() {
       name_ = 0;
       type_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
+      isStaticInOuter_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1086,6 +1101,9 @@ public final class JavaProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, type_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBool(3, isStaticInOuter_);
+      }
     }
     
     private int memoizedSerializedSize = -1;
@@ -1101,6 +1119,10 @@ public final class JavaProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, type_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(3, isStaticInOuter_);
       }
       memoizedSerializedSize = size;
       return size;
@@ -1208,6 +1230,8 @@ public final class JavaProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         type_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
+        isStaticInOuter_ = false;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
       
@@ -1249,6 +1273,10 @@ public final class JavaProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.type_ = type_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.isStaticInOuter_ = isStaticInOuter_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -1260,6 +1288,9 @@ public final class JavaProtoBuf {
         }
         if (other.hasType()) {
           mergeType(other.getType());
+        }
+        if (other.hasIsStaticInOuter()) {
+          setIsStaticInOuter(other.getIsStaticInOuter());
         }
         return this;
       }
@@ -1305,6 +1336,11 @@ public final class JavaProtoBuf {
               }
               input.readMessage(subBuilder, extensionRegistry);
               setType(subBuilder.buildPartial());
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              isStaticInOuter_ = input.readBool();
               break;
             }
           }
@@ -1374,6 +1410,27 @@ public final class JavaProtoBuf {
         type_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaType.getDefaultInstance();
         
         bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      
+      // optional bool is_static_in_outer = 3 [default = false];
+      private boolean isStaticInOuter_ ;
+      public boolean hasIsStaticInOuter() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public boolean getIsStaticInOuter() {
+        return isStaticInOuter_;
+      }
+      public Builder setIsStaticInOuter(boolean value) {
+        bitField0_ |= 0x00000004;
+        isStaticInOuter_ = value;
+        
+        return this;
+      }
+      public Builder clearIsStaticInOuter() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        isStaticInOuter_ = false;
+        
         return this;
       }
       

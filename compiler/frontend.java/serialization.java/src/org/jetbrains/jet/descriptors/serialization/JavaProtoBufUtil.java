@@ -113,6 +113,12 @@ public class JavaProtoBufUtil {
         return nameResolver.getName(proto.getExtension(JavaProtoBuf.srcClassName));
     }
 
+    public static boolean isStaticFieldInOuter(@NotNull ProtoBuf.Callable proto) {
+        if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return false;
+        JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+        return propertySignature.hasField() && propertySignature.getField().getIsStaticInOuter();
+    }
+
     public static void saveMethodSignature(@NotNull ProtoBuf.Callable.Builder proto, @NotNull Method method, @NotNull NameTable nameTable) {
         proto.setExtension(JavaProtoBuf.methodSignature, new Serializer(nameTable).methodSignature(method));
     }
@@ -121,13 +127,14 @@ public class JavaProtoBufUtil {
             @NotNull ProtoBuf.Callable.Builder proto,
             @Nullable Type fieldType,
             @Nullable String fieldName,
+            boolean isStaticInOuter,
             @Nullable String syntheticMethodName,
             @Nullable Method getter,
             @Nullable Method setter,
             @NotNull NameTable nameTable
     ) {
         proto.setExtension(JavaProtoBuf.propertySignature,
-                           new Serializer(nameTable).propertySignature(fieldType, fieldName, syntheticMethodName, getter, setter));
+                new Serializer(nameTable).propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethodName, getter, setter));
     }
 
     public static void saveSrcClassName(
@@ -164,6 +171,7 @@ public class JavaProtoBufUtil {
         public JavaProtoBuf.JavaPropertySignature propertySignature(
                 @Nullable Type fieldType,
                 @Nullable String fieldName,
+                boolean isStaticInOuter,
                 @Nullable String syntheticMethodName,
                 @Nullable Method getter,
                 @Nullable Method setter
@@ -172,7 +180,7 @@ public class JavaProtoBufUtil {
 
             if (fieldType != null) {
                 assert fieldName != null : "Field name shouldn't be null when there's a field type: " + fieldType;
-                signature.setField(fieldSignature(fieldType, fieldName));
+                signature.setField(fieldSignature(fieldType, fieldName, isStaticInOuter));
             }
 
             if (syntheticMethodName != null) {
@@ -190,10 +198,13 @@ public class JavaProtoBufUtil {
         }
 
         @NotNull
-        public JavaProtoBuf.JavaFieldSignature fieldSignature(@NotNull Type type, @NotNull String name) {
+        public JavaProtoBuf.JavaFieldSignature fieldSignature(@NotNull Type type, @NotNull String name, boolean isStaticInOuter) {
             JavaProtoBuf.JavaFieldSignature.Builder signature = JavaProtoBuf.JavaFieldSignature.newBuilder();
             signature.setName(nameTable.getSimpleNameIndex(Name.guess(name)));
             signature.setType(type(type));
+            if (isStaticInOuter) {
+                signature.setIsStaticInOuter(true);
+            }
             return signature.build();
         }
 

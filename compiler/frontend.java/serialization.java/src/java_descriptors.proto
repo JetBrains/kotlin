@@ -51,6 +51,10 @@ message JavaMethodSignature {
 message JavaFieldSignature {
   required int32 name = 1;
   required JavaType type = 2;
+
+  // True iff this field is a backing field for a class object and is really present as a static
+  // field in the outer class, not as an instance field here
+  optional bool is_static_in_outer = 3 [default = false];
 }
 
 message JavaPropertySignature {

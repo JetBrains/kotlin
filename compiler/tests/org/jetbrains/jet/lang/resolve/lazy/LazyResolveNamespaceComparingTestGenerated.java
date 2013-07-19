@@ -52,6 +52,21 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("ClassObjectPropertyField.kt")
+                public void testClassObjectPropertyField() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
+                }
+                
+                @TestMetadata("ClassObjectPropertyNoField.kt")
+                public void testClassObjectPropertyNoField() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyNoField.kt");
+                }
+                
+                @TestMetadata("DelegatedProperty.kt")
+                public void testDelegatedProperty() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/DelegatedProperty.kt");
+                }
+                
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
@@ -131,6 +146,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             public static class PackageMembers extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInPackageMembers() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("DelegatedProperty.kt")
+                public void testDelegatedProperty() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/DelegatedProperty.kt");
                 }
                 
                 @TestMetadata("Function.kt")
