@@ -460,33 +460,13 @@ public final class JavaFunctionResolver {
     }
 
     private static boolean containsErrorType(@NotNull List<FunctionDescriptor> superFunctions, @NotNull FunctionDescriptor function) {
-        if (containsErrorType(function)) {
+        if (ErrorUtils.containsErrorType(function)) {
             return true;
         }
 
         for (FunctionDescriptor superFunction : superFunctions) {
-            if (containsErrorType(superFunction)) {
+            if (ErrorUtils.containsErrorType(superFunction)) {
                 return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean containsErrorType(@NotNull FunctionDescriptor function) {
-        if (ErrorUtils.containsErrorType(function.getReturnType())) {
-            return true;
-        }
-        for (ValueParameterDescriptor parameter : function.getValueParameters()) {
-            if (ErrorUtils.containsErrorType(parameter.getType())) {
-                return true;
-            }
-        }
-        for (TypeParameterDescriptor parameter : function.getTypeParameters()) {
-            for (JetType upperBound : parameter.getUpperBounds()) {
-                if (ErrorUtils.containsErrorType(upperBound)) {
-                    return true;
-                }
             }
         }
 

@@ -45,6 +45,26 @@ public class ErrorUtils {
         ERROR_MODULE = module;
     }
 
+    public static boolean containsErrorType(@NotNull FunctionDescriptor function) {
+        if (containsErrorType(function.getReturnType())) {
+            return true;
+        }
+        for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+            if (containsErrorType(parameter.getType())) {
+                return true;
+            }
+        }
+        for (TypeParameterDescriptor parameter : function.getTypeParameters()) {
+            for (JetType upperBound : parameter.getUpperBounds()) {
+                if (containsErrorType(upperBound)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     public static class ErrorScope implements JetScope {
 
