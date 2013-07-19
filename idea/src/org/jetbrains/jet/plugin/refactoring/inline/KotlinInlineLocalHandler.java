@@ -124,38 +124,42 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
         }
 
         final List<JetExpression> inlinedExpressions = Lists.newArrayList();
-        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-            @Override
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        CommandProcessor.getInstance().executeCommand(
+                project,
+                new Runnable() {
                     @Override
                     public void run() {
-                        for (PsiReference reference : references) {
-                            PsiElement referenceElement = reference.getElement();
-                            if (assignments.contains(referenceElement.getParent())) {
-                                continue;
+                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (PsiReference reference : references) {
+                                    PsiElement referenceElement = reference.getElement();
+                                    if (assignments.contains(referenceElement.getParent())) {
+                                        continue;
+                                    }
+
+                                    inlinedExpressions.add(replaceExpression(referenceElement, initializer));
+                                }
+
+                                for (PsiElement assignment : assignments) {
+                                    assignment.delete();
+                                }
+
+                                val.delete();
+
+                                if (typeArgumentsForCall != null) {
+                                    addTypeArguments(typeArgumentsForCall, inlinedExpressions);
+                                }
+
+                                if (parametersForFunctionLiteral != null) {
+                                    addFunctionLiteralParameterTypes(parametersForFunctionLiteral, inlinedExpressions);
+                                }
                             }
-
-                            inlinedExpressions.add(replaceExpression(referenceElement, initializer));
-                        }
-
-                        for (PsiElement assignment : assignments) {
-                            assignment.delete();
-                        }
-
-                        val.delete();
-
-                        if (typeArgumentsForCall != null) {
-                            addTypeArguments(typeArgumentsForCall, inlinedExpressions);
-                        }
-
-                        if (parametersForFunctionLiteral != null) {
-                            addFunctionLiteralParameterTypes(parametersForFunctionLiteral, inlinedExpressions);
-                        }
+                        });
                     }
-                });
-            }
-        }, RefactoringBundle.message("inline.command", name), null);
+                },
+                RefactoringBundle.message("inline.command", name),
+                null);
     }
 
     private static boolean showDialog(Project project, String name, Collection<PsiReference> references) {
