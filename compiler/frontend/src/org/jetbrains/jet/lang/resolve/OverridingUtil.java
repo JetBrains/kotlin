@@ -289,7 +289,7 @@ public class OverridingUtil {
         }
         else {
             if (descriptor.getOverriddenDescriptors().isEmpty()) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("No overridden descriptors found for (fake override) " + descriptor);
             }
             for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
                 getOverriddenDeclarations(overridden, r);
