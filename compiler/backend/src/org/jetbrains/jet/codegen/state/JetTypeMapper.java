@@ -219,7 +219,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public Type mapType(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode kind) {
-        return mapType(jetType, signatureVisitor, kind, Variance.INVARIANT);
+        return mapType(jetType, signatureVisitor, kind, Variance.INVARIANT, false);
     }
 
     @NotNull
@@ -227,7 +227,17 @@ public class JetTypeMapper extends BindingTraceAware {
             @NotNull JetType jetType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull JetTypeMapperMode kind,
-            @NotNull Variance howThisTypeIsUsed
+            @NotNull Variance howThisTypeIsUsed) {
+        return mapType(jetType, signatureVisitor, kind, howThisTypeIsUsed, false);
+    }
+
+    @NotNull
+    public Type mapType(
+            @NotNull JetType jetType,
+            @Nullable BothSignatureWriter signatureVisitor,
+            @NotNull JetTypeMapperMode kind,
+            @NotNull Variance howThisTypeIsUsed,
+            boolean arrayParameter
     ) {
         Type known = null;
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
@@ -243,7 +253,7 @@ public class JetTypeMapper extends BindingTraceAware {
                 return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             }
             else if (kind == JetTypeMapperMode.TYPE_PARAMETER) {
-                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed);
+                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, arrayParameter);
             }
             else if (kind == JetTypeMapperMode.TRAIT_IMPL) {
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
@@ -291,7 +301,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
             if (signatureVisitor != null) {
                 signatureVisitor.writeArrayType(jetType.isNullable(), memberProjection.getProjectionKind());
-                mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER, memberProjection.getProjectionKind(), true);
                 signatureVisitor.writeArrayEnd();
             }
 
@@ -409,9 +419,23 @@ public class JetTypeMapper extends BindingTraceAware {
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull Variance howThisTypeIsUsed
     ) {
+        return mapKnownAsmType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, false);
+    }
+
+    private Type mapKnownAsmType(
+            JetType jetType,
+            Type asmType,
+            @Nullable BothSignatureWriter signatureVisitor,
+            @NotNull Variance howThisTypeIsUsed,
+            boolean arrayParameter
+    ) {
         if (signatureVisitor != null) {
             if (jetType.getArguments().isEmpty()) {
-                String kotlinTypeName = getKotlinTypeNameForSignature(jetType, asmType);
+                if (arrayParameter
+                    && (howThisTypeIsUsed == Variance.IN_VARIANCE)) {
+                    asmType = AsmTypeConstants.OBJECT_TYPE;
+                }
+                String kotlinTypeName = getKotlinTypeNameForSignature(jetType, asmType, arrayParameter);
                 signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
             }
             else {
@@ -424,12 +448,18 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @Nullable
     private static String getKotlinTypeNameForSignature(@NotNull JetType jetType, @NotNull Type asmType) {
+        return getKotlinTypeNameForSignature(jetType, asmType, false);
+    }
+
+    @Nullable
+    private static String getKotlinTypeNameForSignature(@NotNull JetType jetType, @NotNull Type asmType, boolean arrayParameter) {
         ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (descriptor == null) return null;
         if (asmType.getSort() != Type.OBJECT) return null;
 
         JvmClassName jvmClassName = JvmClassName.byType(asmType);
-        if (JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() > 1) {
+        if ((arrayParameter && JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() >= 1)
+            || ((!arrayParameter) && JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() > 1)) {
             return JvmClassName.byClassDescriptor(descriptor).getSignatureName();
         }
         return null;
