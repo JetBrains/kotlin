@@ -114,17 +114,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
             EditorColorsManager editorColorsManager = EditorColorsManager.getInstance();
             TextAttributes attributes = editorColorsManager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
             HighlightManager.getInstance(project).addOccurrenceHighlights(editor, referencesArray, attributes, true, null);
-            RefactoringMessageDialog dialog = new RefactoringMessageDialog(
-                    RefactoringBundle.message("inline.variable.title"),
-                    RefactoringBundle.message("inline.local.variable.prompt", name) + " " +
-                                      RefactoringBundle.message("occurences.string", references.size()),
-                    HelpID.INLINE_VARIABLE,
-                    "OptionPane.questionIcon",
-                    true,
-                    project);
-
-            dialog.show();
-            if (!dialog.isOK()){
+            if (!showDialog(project, name, references)) {
                 StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
                 if (statusBar != null) {
                     statusBar.setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
@@ -166,6 +156,20 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                 });
             }
         }, RefactoringBundle.message("inline.command", name), null);
+    }
+
+    private static boolean showDialog(Project project, String name, Collection<PsiReference> references) {
+        RefactoringMessageDialog dialog = new RefactoringMessageDialog(
+                RefactoringBundle.message("inline.variable.title"),
+                RefactoringBundle.message("inline.local.variable.prompt", name) + " " +
+                                  RefactoringBundle.message("occurences.string", references.size()),
+                HelpID.INLINE_VARIABLE,
+                "OptionPane.questionIcon",
+                true,
+                project);
+
+        dialog.show();
+        return dialog.isOK();
     }
 
     @Nullable
