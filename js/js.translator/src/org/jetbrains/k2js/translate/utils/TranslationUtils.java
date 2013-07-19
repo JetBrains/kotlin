@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
@@ -75,7 +76,28 @@ public final class TranslationUtils {
         JsBinaryOperator operator = isNegated ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
         return new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL);
     }
-    
+
+    @NotNull
+    public static JsConditional notNullConditional(
+            @NotNull JsExpression expression,
+            @NotNull JsExpression elseExpression,
+            @NotNull TranslationContext context
+    ) {
+        JsExpression testExpression;
+        JsExpression thenExpression;
+        if (isCacheNeeded(expression)) {
+            TemporaryConstVariable tempVar = context.getOrDeclareTemporaryConstVariable(expression);
+            testExpression = isNotNullCheck(tempVar.value());
+            thenExpression = tempVar.value();
+        }
+        else {
+            testExpression = isNotNullCheck(expression);
+            thenExpression = expression;
+        }
+
+        return new JsConditional(testExpression, thenExpression, elseExpression);
+    }
+
     @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
             @NotNull List<? extends ValueArgument> jetArguments) {
@@ -188,5 +210,20 @@ public final class TranslationUtils {
         else {
             return Pair.create(null, expression);
         }
+    }
+
+    @NotNull
+    public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        JsInvocation throwNPE = new JsInvocation(context.namer().throwNPEFunctionRef());
+        JsConditional ensureNotNull = notNullConditional(expression, throwNPE, context);
+
+        JsExpression thenExpression = ensureNotNull.getThenExpression();
+        if (thenExpression instanceof JsNameRef) {
+            // associate (cache) ensureNotNull expression to new TemporaryConstVariable with same name.
+            context.associateExpressionToLazyValue(ensureNotNull,
+                                                   new TemporaryConstVariable(((JsNameRef) thenExpression).getName(), ensureNotNull));
+        }
+
+        return ensureNotNull;
     }
 }

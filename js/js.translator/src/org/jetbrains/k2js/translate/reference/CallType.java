@@ -24,10 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression;
-import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.isNotNullCheck;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullConditional;
 
 public enum CallType {
     SAFE {
@@ -36,9 +35,9 @@ public enum CallType {
         JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
                                    @NotNull TranslationContext context) {
             assert receiver != null;
-
-            TemporaryConstVariable tempVar = context.getOrDeclareTemporaryConstVariable(receiver);
-            return new JsConditional(isNotNullCheck(tempVar.value()), constructor.construct(tempVar.value()), JsLiteral.NULL);
+            JsConditional expression = notNullConditional(receiver, JsLiteral.NULL, context);
+            expression.setThenExpression(constructor.construct(expression.getThenExpression()));
+            return expression;
         }
     },
     //TODO: bang qualifier is not implemented in frontend for now
