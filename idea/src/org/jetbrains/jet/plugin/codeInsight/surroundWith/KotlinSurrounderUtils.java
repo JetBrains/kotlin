@@ -23,10 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
@@ -35,6 +32,9 @@ import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 public class KotlinSurrounderUtils {
     public static String SURROUND_WITH = JetBundle.message("surround.with");
     public static String SURROUND_WITH_ERROR = JetBundle.message("surround.with.cannot.perform.action");
+
+    private KotlinSurrounderUtils() {
+    }
 
     public static void addStatementsInBlock(
             @NotNull JetBlockExpression block,
@@ -46,12 +46,11 @@ public class KotlinSurrounderUtils {
 
     @Nullable
     public static JetType getExpressionType(JetExpression expression) {
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
-        BindingContext expressionBindingContext = ResolveSessionUtils.resolveToElement(resolveSession, expression);
+        BindingContext expressionBindingContext = WholeProjectAnalyzerFacade.getContextForElement(expression);
         return expressionBindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
     }
 
     public static void showErrorHint(@NotNull Project project, @NotNull Editor editor, @NotNull String message) {
-        CodeInsightUtils.showErrorHint(project, editor, message, KotlinSurrounderUtils.SURROUND_WITH, null);
+        CodeInsightUtils.showErrorHint(project, editor, message, SURROUND_WITH, null);
     }
 }

@@ -279,7 +279,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = (JetFile)elt.getContainingFile();
         assert file != null;
 
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(file).getBindingContext();
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement((JetElement) elt);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
         if (!(descriptor instanceof CallableMemberDescriptor)) {
             return;

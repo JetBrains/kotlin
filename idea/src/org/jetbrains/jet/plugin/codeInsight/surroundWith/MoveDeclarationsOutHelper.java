@@ -28,8 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
@@ -119,8 +117,7 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static JetType getPropertyType(@NotNull JetProperty property) {
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) property.getContainingFile());
-        BindingContext expressionBindingContext = ResolveSessionUtils.resolveToElement(resolveSession, property);
+        BindingContext expressionBindingContext = WholeProjectAnalyzerFacade.getContextForElement(property);
 
         VariableDescriptor propertyDescriptor = expressionBindingContext.get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null : "Couldn't resolve property to property descriptor " + property.getText();

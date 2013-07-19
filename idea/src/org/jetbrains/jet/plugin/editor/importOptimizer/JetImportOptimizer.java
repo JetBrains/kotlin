@@ -32,8 +32,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -178,8 +176,7 @@ public class JetImportOptimizer implements ImportOptimizer {
 
             @Override
             public void visitForExpression(JetForExpression expression) {
-                ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
-                BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, expression);
+                BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange());
                 addResolvedCallFqName(resolvedCall);
 
@@ -188,8 +185,7 @@ public class JetImportOptimizer implements ImportOptimizer {
 
             @Override
             public void visitMultiDeclaration(JetMultiDeclaration declaration) {
-                ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) declaration.getContainingFile());
-                BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, declaration);
+                BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(declaration);
                 List<JetMultiDeclarationEntry> entries = declaration.getEntries();
                 for (JetMultiDeclarationEntry entry : entries) {
                     ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
