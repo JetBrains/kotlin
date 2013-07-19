@@ -601,26 +601,32 @@ public class JetPsiUtil {
         return null;
     }
 
-    private static int getPrecedenceOfOperation(@NotNull JetExpression expression, @Nullable IElementType operation) {
-        if (expression instanceof JetPostfixExpression) return 0;
-        if (expression instanceof JetQualifiedExpression) return 0;
-        if (expression instanceof JetCallExpression) return 0;
-        if (expression instanceof JetArrayAccessExpression) return 0;
+    private static int getPriority(@NotNull JetExpression expression) {
+        int maxPriority = JetExpressionParsing.Precedence.values().length + 1;
 
-        if (expression instanceof JetPrefixExpression) return 1;
+        // same as postfix operations
+        if (expression instanceof JetPostfixExpression ||
+            expression instanceof JetQualifiedExpression ||
+            expression instanceof JetCallExpression ||
+            expression instanceof JetArrayAccessExpression) {
+            return maxPriority - 1;
+        }
 
-        if (expression instanceof JetDeclaration) return 100;
-        if (expression instanceof JetStatementExpression) return 100;
-        if (expression instanceof JetIfExpression) return 100;
+        if (expression instanceof JetPrefixExpression) return maxPriority - 2;
 
+        if (expression instanceof JetDeclaration || expression instanceof JetStatementExpression || expression instanceof JetIfExpression) {
+            return 0;
+        }
+
+        IElementType operation = getOperation(expression);
         for (JetExpressionParsing.Precedence precedence : JetExpressionParsing.Precedence.values()) {
             if (precedence != JetExpressionParsing.Precedence.PREFIX && precedence != JetExpressionParsing.Precedence.POSTFIX &&
                 precedence.getOperations().contains(operation)) {
-                return precedence.ordinal();
+                return maxPriority - precedence.ordinal() - 1;
             }
         }
 
-        return -1;
+        return maxPriority;
     }
 
     public static boolean areParenthesesUseless(@NotNull JetParenthesizedExpression expression) {
@@ -667,23 +673,25 @@ public class JetPsiUtil {
             return true;
         }
 
-        int innerPrecedence = getPrecedenceOfOperation(innerExpression, innerOperation);
-        int parentPrecedence = getPrecedenceOfOperation(parentExpression, parentOperation);
+        int innerPriority = getPriority(innerExpression);
+        int parentPriority = getPriority(parentExpression);
 
-        if (innerPrecedence == parentPrecedence) {
+        if (innerPriority == parentPriority) {
             if (parentExpression instanceof JetBinaryExpression) {
                 if (innerOperation == JetTokens.ANDAND || innerOperation == JetTokens.OROR) {
                     return false;
                 }
                 return ((JetBinaryExpression) parentExpression).getRight() == currentInner;
             }
-            if (parentExpression instanceof JetPrefixExpression || innerExpression instanceof JetPrefixExpression) {
+
+            //'-(-x)' case
+            if (parentExpression instanceof JetPrefixExpression && innerExpression instanceof JetPrefixExpression) {
                 return innerOperation == parentOperation && (innerOperation == JetTokens.PLUS || innerOperation == JetTokens.MINUS);
             }
             return false;
         }
 
-        return innerPrecedence >= parentPrecedence;
+        return innerPriority < parentPriority;
     }
 
     public static boolean isAssignment(@NotNull PsiElement element) {
