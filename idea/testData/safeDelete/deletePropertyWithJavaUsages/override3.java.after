@@ -1,0 +1,14 @@
+class B extends A {
+    void bar() {
+        setFoo("");
+        System.out.println(getFoo());
+    }
+
+    public String getFoo() {
+        return "foo";
+    }
+
+    public void setFoo(String value) {
+
+    }
+}

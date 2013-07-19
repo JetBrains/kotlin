@@ -910,4 +910,11 @@ public class JetPsiUtil {
 
         return (names.size() > partIndex) ? names.get(partIndex) : header.getLastPartExpression();
     }
+
+    public static PsiElement ascendIfPropertyAccessor(PsiElement element) {
+        if (element instanceof JetPropertyAccessor) {
+            return element.getParent();
+        }
+        return element;
+    }
 }

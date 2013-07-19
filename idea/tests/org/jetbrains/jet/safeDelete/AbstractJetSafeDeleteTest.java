@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetObjectDeclarationName;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -71,6 +72,18 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
     }
 
     public void doJavaMethodTest(@NotNull String path) throws Exception {
+        doTest(path, PsiMethod.class, true);
+    }
+
+    public void doPropertyTest(@NotNull String path) throws Exception {
+        doTest(path, JetProperty.class, false);
+    }
+
+    public void doPropertyTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetProperty.class, true);
+    }
+
+    public void doJavaPropertyTest(@NotNull String path) throws Exception {
         doTest(path, PsiMethod.class, true);
     }
 

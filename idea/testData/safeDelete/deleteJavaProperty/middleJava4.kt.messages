@@ -1,0 +1,1 @@
+method C.getFoo() implements method B.getFoo().

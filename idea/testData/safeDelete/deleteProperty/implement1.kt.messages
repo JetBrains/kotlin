@@ -1,0 +1,1 @@
+val foo: jet.String in final class B : A implements val foo: jet.String in trait A.

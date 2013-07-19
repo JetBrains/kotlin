@@ -26,7 +26,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.search.searches.SuperMethodsSearch;
 import com.intellij.psi.util.*;
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor;
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo;
@@ -39,9 +38,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -58,7 +55,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return element instanceof JetClassOrObject
                || element instanceof JetObjectDeclarationName
                || element instanceof JetNamedFunction
-               || element instanceof PsiMethod;
+               || element instanceof PsiMethod
+               || element instanceof JetProperty;
     }
 
     @Override
@@ -87,6 +85,14 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
         if (element instanceof PsiMethod) {
             return findPsiMethodUsages((PsiMethod) element, allElementsToDelete, result);
+        }
+        if (element instanceof JetProperty) {
+            JetProperty property = (JetProperty) element;
+
+            if (property.isLocal()) {
+                return findLocalPropertyUsages(property, allElementsToDelete, result);
+            }
+            return findNonLocalPropertyUsages(property, allElementsToDelete, result);
         }
         return getDefaultNonCodeUsageSearchInfo(element, allElementsToDelete);
     }
@@ -156,7 +162,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         for (UsageInfo usageInfo : javaUsages) {
             if (usageInfo instanceof SafeDeleteOverridingMethodUsageInfo) {
                 SafeDeleteOverridingMethodUsageInfo overrideUsageInfo = (SafeDeleteOverridingMethodUsageInfo) usageInfo;
-                usageInfo = new KotlinSafeDeleteOverridingMethodUsageInfo(
+                usageInfo = new KotlinSafeDeleteOverridingUsageInfo(
                         overrideUsageInfo.getSmartPointer().getElement(), overrideUsageInfo.getReferencedElement()
                 );
             }
@@ -221,6 +227,86 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         );
     }
 
+    protected static NonCodeUsageSearchInfo findNonLocalPropertyUsages(
+            JetProperty property,
+            final PsiElement[] allElementsToDelete,
+            List<UsageInfo> result
+    ) {
+        LightClassUtil.PropertyAccessorsPsiMethods propertyMethods = LightClassUtil.getLightClassPropertyMethods(property);
+        PsiMethod getter = propertyMethods.getGetter();
+        PsiMethod setter = propertyMethods.getSetter();
+
+        Collection<PsiReference> references = ReferencesSearch.search(property).findAll();
+
+        Collection<PsiMethod> getterOverriding =
+                (getter != null) ? OverridingMethodsSearch.search(getter, true).findAll() : Collections.<PsiMethod>emptyList();
+        Collection<PsiMethod> setterOverriding =
+                (setter != null) ? OverridingMethodsSearch.search(setter, true).findAll() : Collections.<PsiMethod>emptyList();
+
+        List<PsiMethod> overridingMethods = new ArrayList<PsiMethod>();
+        overridingMethods.addAll(getterOverriding);
+        overridingMethods.addAll(setterOverriding);
+        overridingMethods = difference(overridingMethods, allElementsToDelete);
+
+        for (PsiReference reference : references) {
+            PsiElement element = reference.getElement();
+            if (!isInside(element, allElementsToDelete) && !isInside(element, overridingMethods)) {
+                JetImportDirective importDirective = PsiTreeUtil.getParentOfType(element, JetImportDirective.class, false);
+                if (importDirective != null) {
+                    result.add(new SafeDeleteImportDirectiveUsageInfo(importDirective, property));
+                }
+                else {
+                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, property, false));
+                }
+            }
+        }
+
+        HashMap<PsiMethod, Collection<PsiReference>> methodToReferences = new HashMap<PsiMethod, Collection<PsiReference>>();
+        for (PsiMethod overridingMethod : overridingMethods) {
+            Collection<PsiReference> overridingReferences =
+                    ReferencesSearch.search(
+                            overridingMethod instanceof JetClsMethod ? ((JetClsMethod) overridingMethod).getOrigin() : overridingMethod
+                    ).findAll();
+            methodToReferences.put(overridingMethod, overridingReferences);
+        }
+        final Set<PsiMethod> safeGetterOverriding =
+                filterSafeOverridingMethods(getter, references, getterOverriding, methodToReferences, result, allElementsToDelete);
+        final Set<PsiMethod> safeSetterOverriding =
+                filterSafeOverridingMethods(setter, references, setterOverriding, methodToReferences, result, allElementsToDelete);
+
+        return new NonCodeUsageSearchInfo(
+                new Condition<PsiElement>() {
+                    @Override
+                    public boolean value(PsiElement usage) {
+                        if (usage instanceof JetFile) return false;
+                        return isInside(usage, allElementsToDelete)
+                               || isInside(usage, safeGetterOverriding)
+                               || isInside(usage, safeSetterOverriding) ;
+                    }
+                },
+                property
+        );
+    }
+
+    protected static NonCodeUsageSearchInfo findLocalPropertyUsages(
+            final JetProperty property,
+            final PsiElement[] allElementsToDelete,
+            final List<UsageInfo> result
+    ) {
+        ReferencesSearch.search(property, property.getUseScope()).forEach(new Processor<PsiReference>() {
+            @Override
+            public boolean process(PsiReference reference) {
+                PsiElement element = reference.getElement();
+                if (!isInside(element, allElementsToDelete)) {
+                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, property, false));
+                }
+                return true;
+            }
+        });
+
+        return getDefaultNonCodeUsageSearchInfo(property, allElementsToDelete);
+    }
+
     /*
      * Mostly copied from JavaSafeDeleteProcessor.validateOverridingMethods
      * Revision: d4fc033
@@ -270,7 +356,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
         for (PsiMethod method : validOverriding) {
             if (method != originalMethod) {
-                usages.add(new KotlinSafeDeleteOverridingMethodUsageInfo(method, originalMethod));
+                usages.add(new KotlinSafeDeleteOverridingUsageInfo(method, originalMethod));
             }
         }
 
@@ -282,13 +368,13 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         PsiMethod[] methods = method.findSuperMethods();
         for (PsiMethod superMethod: methods) {
             PsiElement relevantElement = superMethod instanceof JetClsMethod ? ((JetClsMethod) superMethod).getOrigin() : superMethod;
+            relevantElement = JetPsiUtil.ascendIfPropertyAccessor(relevantElement);
             if (ArrayUtilRt.find(ignore, relevantElement) < 0 && !MethodSignatureUtil.isSuperMethod(originalMethod, superMethod)) {
                 return true;
             }
         }
         return false;
     }
-
 
     private static String wrapOrSkip(String s, boolean inCode) {
         return inCode ? "<code>" + s + "</code>" : s;
@@ -339,6 +425,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     public static String formatPsiMethod(PsiMethod psiMethod, boolean showContainingClass, boolean inCode) {
         int options = PsiFormatUtilBase.SHOW_NAME | PsiFormatUtilBase.SHOW_PARAMETERS | PsiFormatUtilBase.SHOW_TYPE;
         if (showContainingClass) {
+            //noinspection ConstantConditions
             options |= PsiFormatUtilBase.SHOW_CONTAINING_CLASS;
         }
 
@@ -350,7 +437,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
     @Override
     public Collection<String> findConflicts(PsiElement element, PsiElement[] allElementsToDelete) {
-        if (element instanceof JetNamedFunction) {
+        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
             JetClass jetClass = PsiTreeUtil.getParentOfType(element, JetClass.class);
             if (jetClass == null || jetClass.getBody() != element.getParent()) return null;
 
@@ -361,16 +448,16 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                     AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
 
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-            if (!(declarationDescriptor instanceof FunctionDescriptor)) return null;
+            if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
 
             List<String> messages = new ArrayList<String>();
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
-            for (FunctionDescriptor overridenDescriptor : functionDescriptor.getOverriddenDescriptors()) {
+            CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) declarationDescriptor;
+            for (CallableMemberDescriptor overridenDescriptor : callableDescriptor.getOverriddenDescriptors()) {
                 if (overridenDescriptor.getModality() == Modality.ABSTRACT) {
                     String message = JetBundle.message(
                             "x.implements.y",
-                            formatFunction(functionDescriptor, bindingContext, true),
-                            formatClass(functionDescriptor.getContainingDeclaration(), bindingContext, true),
+                            formatFunction(callableDescriptor, bindingContext, true),
+                            formatClass(callableDescriptor.getContainingDeclaration(), bindingContext, true),
                             formatFunction(overridenDescriptor, bindingContext, true),
                             formatClass(overridenDescriptor.getContainingDeclaration(), bindingContext, true)
                     );
@@ -395,7 +482,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         ArrayList<UsageInfo> overridingMethodUsages = new ArrayList<UsageInfo>();
 
         for (UsageInfo usage : usages) {
-            if (usage instanceof KotlinSafeDeleteOverridingMethodUsageInfo) {
+            if (usage instanceof KotlinSafeDeleteOverridingUsageInfo) {
                 overridingMethodUsages.add(usage);
             }
             else {
@@ -419,8 +506,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     }
 
     private static void removeOverrideModifier(@NotNull PsiElement element) {
-        if (element instanceof JetNamedFunction) {
-            JetModifierList modifierList = ((JetNamedFunction) element).getModifierList();
+        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
+            JetModifierList modifierList = ((JetModifierListOwner) element).getModifierList();
             if (modifierList == null) return;
 
             PsiElement overrideModifier = modifierList.getModifier(JetTokens.OVERRIDE_KEYWORD);
@@ -458,21 +545,41 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
             cleanUpOverrides(lightMethod);
         }
+        else if (element instanceof JetProperty) {
+            LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
+                    LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
+            PsiMethod getter = propertyMethods.getGetter();
+            PsiMethod setter = propertyMethods.getSetter();
+
+            if (getter != null) {
+                cleanUpOverrides(getter);
+            }
+            if (setter != null) {
+                cleanUpOverrides(setter);
+            }
+        }
+    }
+
+    private static boolean checkPsiMethodEquality(PsiMethod method1, PsiMethod method2) {
+        if (method1 instanceof JetClsMethod && method2 instanceof JetClsMethod) {
+            return ((JetClsMethod) method1).getOrigin() == ((JetClsMethod) method2).getOrigin();
+        }
+        return method1 == method2;
     }
 
     private static void cleanUpOverrides(PsiMethod method) {
-        Collection<MethodSignatureBackedByPsiMethod> superMethods =
-                SuperMethodsSearch.search(method, null, true, false).findAll();
-        Collection<PsiMethod> overridingMethods = OverridingMethodsSearch.search(method, false).findAll();
+        Collection<PsiMethod> superMethods = Arrays.asList(method.findSuperMethods(true));
+        Collection<PsiMethod> overridingMethods = OverridingMethodsSearch.search(method, true).findAll();
         overrideLoop: for (PsiMethod overridingMethod : overridingMethods) {
             PsiElement overridingElement = overridingMethod instanceof JetClsMethod
                                            ? ((JetClsMethod) overridingMethod).getOrigin()
                                            : overridingMethod;
-            Collection<MethodSignatureBackedByPsiMethod> currentSuperMethods =
-                    SuperMethodsSearch.search(overridingMethod, null, true, false).findAll();
+
+            Collection<PsiMethod> currentSuperMethods = new ArrayList<PsiMethod>();
+            ContainerUtil.addAll(currentSuperMethods, overridingMethod.findSuperMethods(true));
             currentSuperMethods.addAll(superMethods);
-            for (MethodSignatureBackedByPsiMethod superMethod: currentSuperMethods) {
-                if (superMethod.getMethod() != method) continue overrideLoop;
+            for (PsiMethod superMethod: currentSuperMethods) {
+                if (!checkPsiMethodEquality(superMethod, method)) continue overrideLoop;
             }
 
             removeOverrideModifier(overridingElement);
@@ -481,22 +588,22 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
     @Nullable
     private static Collection<? extends PsiElement> checkSuperMethods(
-            @NotNull JetNamedFunction function, @Nullable Collection<PsiElement> ignore
+            @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore
     ) {
         final BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) function.getContainingFile()).getBindingContext();
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
 
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
-        if (!(declarationDescriptor instanceof FunctionDescriptor)) return null;
+        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
 
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
-        Set<? extends FunctionDescriptor> overridenDescriptors = functionDescriptor.getOverriddenDescriptors();
+        CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) declarationDescriptor;
+        Set<? extends CallableMemberDescriptor> overridenDescriptors = callableDescriptor.getOverriddenDescriptors();
 
         Collection<? extends PsiElement> superMethods = ContainerUtil.map(
                 overridenDescriptors,
-                new Function<FunctionDescriptor, PsiElement>() {
+                new Function<CallableMemberDescriptor, PsiElement>() {
                     @Override
-                    public PsiElement fun(FunctionDescriptor descriptor) {
+                    public PsiElement fun(CallableMemberDescriptor descriptor) {
                         return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
                     }
                 }
@@ -505,7 +612,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             superMethods.removeAll(ignore);
         }
 
-        if (superMethods.isEmpty()) return Collections.singletonList(function);
+        if (superMethods.isEmpty()) return Collections.singletonList(declaration);
 
         List<String> superClasses = ContainerUtil.map(
                 superMethods,
@@ -514,7 +621,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                     public String fun(PsiElement element) {
                         String description;
 
-                        if (element instanceof JetNamedFunction) {
+                        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
                             DeclarationDescriptor descriptor =
                                     bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                             assert descriptor != null;
@@ -541,19 +648,19 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         String superClassesStr = "\n" + StringUtil.join(superClasses, "");
         String message = JetBundle.message(
                 "x.overrides.y.in.class.list",
-                DescriptorRenderer.COMPACT.render(functionDescriptor),
-                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor.getContainingDeclaration()),
+                DescriptorRenderer.COMPACT.render(callableDescriptor),
+                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callableDescriptor.getContainingDeclaration()),
                 superClassesStr
         );
 
         int exitCode = Messages.showYesNoCancelDialog(
-                function.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
+                declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
         );
         switch (exitCode) {
             case Messages.YES:
                 return superMethods;
             case Messages.NO:
-                return Collections.singletonList(function);
+                return Collections.singletonList(declaration);
             default:
                 return Collections.emptyList();
         }
@@ -568,8 +675,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             return Collections.singletonList(element);
         }
 
-        if (element instanceof JetNamedFunction) {
-            return checkSuperMethods((JetNamedFunction) element, allElementsToDelete);
+        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
+            return checkSuperMethods((JetDeclaration) element, allElementsToDelete);
         }
         return super.getElementsToSearch(element, module, allElementsToDelete);
     }

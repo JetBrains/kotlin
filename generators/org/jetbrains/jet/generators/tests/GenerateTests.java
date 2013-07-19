@@ -410,20 +410,23 @@ public class GenerateTests {
                 "idea/tests/",
                 "JetSafeDeleteTestGenerated",
                 AbstractJetSafeDeleteTest.class,
-                testModel("idea/testData/safeDelete/deleteClass", "doClassTest"),
-                testModel("idea/testData/safeDelete/deleteObject", "doObjectTest"),
-                testModel("idea/testData/safeDelete/deleteFunction", "doFunctionTest"),
-                testModel("idea/testData/safeDelete/deleteFunctionWithJavaUsages", "doFunctionTestWithJava")
-                // TODO fix -- disabled because doesn't work in Idea 130.1335
-                // testModel("idea/testData/safeDelete/deleteJavaMethod", "doJavaMethodTest")
+                testModel("idea/testData/safeDelete/deleteClass/kotlinClass", "doClassTest"),
+                testModel("idea/testData/safeDelete/deleteObject/kotlinObject", "doObjectTest"),
+                testModel("idea/testData/safeDelete/deleteFunction/kotlinFunction", "doFunctionTest"),
+                testModel("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava", "doFunctionTestWithJava"),
+                testModel("idea/testData/safeDelete/deleteFunction/javaFunctionWithKotlin", "doJavaMethodTest"),
+                testModel("idea/testData/safeDelete/deleteProperty/kotlinProperty", "doPropertyTest"),
+                testModel("idea/testData/safeDelete/deleteProperty/kotlinPropertyWithJava", "doPropertyTestWithJava"),
+                testModel("idea/testData/safeDelete/deleteProperty/javaPropertyWithKotlin", "doJavaPropertyTest"),
+                testModel("idea/testData/safeDelete/deleteTypeParameter/kotlinTypeParameter", "doTypeParameterTest"),
+                testModel("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter", "doValueParameterTest")
         );
 
         generateTest(
                 "idea/tests/",
                 "ReferenceResolveTestGenerated",
                 AbstractResolveBaseTest.class,
-                testModel("idea/testData/resolve/references", "doTest")
-        );
+                testModel("idea/testData/resolve/references", "doTest")        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {

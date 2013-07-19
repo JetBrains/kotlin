@@ -17,32 +17,23 @@
 package org.jetbrains.jet.plugin.refactoring.safeDelete;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteCustomUsageInfo;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 
-public class KotlinSafeDeleteOverridingMethodUsageInfo extends SafeDeleteUsageInfo implements SafeDeleteCustomUsageInfo {
-    public KotlinSafeDeleteOverridingMethodUsageInfo(PsiElement overridingMethod, PsiElement method) {
-        super(toPsiMethod(overridingMethod), toPsiMethod(method));
+public class KotlinSafeDeleteOverridingUsageInfo extends SafeDeleteUsageInfo implements SafeDeleteCustomUsageInfo {
+    public KotlinSafeDeleteOverridingUsageInfo(PsiElement overridingElement, PsiElement superElement) {
+        super(overridingElement, superElement);
     }
 
-    protected static PsiMethod toPsiMethod(PsiElement element) {
-        if (element instanceof JetNamedFunction) {
-            element = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
-        }
-        return element instanceof PsiMethod ? (PsiMethod) element : null;
-    }
-
-    public PsiMethod getOverridingMethod() {
-        return toPsiMethod(getElement());
+    public PsiElement getOverridingElement() {
+        return getElement();
     }
 
     @Override
     public void performRefactoring() throws IncorrectOperationException {
-        PsiElement element = getElement();
+        PsiElement element = JetPsiUtil.ascendIfPropertyAccessor(getElement());
         if (element != null) {
             element.delete();
         }

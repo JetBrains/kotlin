@@ -22,22 +22,20 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.refactoring.HelpID;
-import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.table.JBTable;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.UsagePreviewPanel;
-import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -78,22 +76,21 @@ class KotlinOverridingMethodsDialog extends DialogWrapper {
 
         myMethodText = new String[myOverridingMethods.size()];
         for (int i = 0; i < myMethodText.length; i++) {
-            myMethodText[i] = formatMethod(((KotlinSafeDeleteOverridingMethodUsageInfo) myOverridingMethods.get(i)).getOverridingMethod());
+            myMethodText[i] = formatElement(((KotlinSafeDeleteOverridingUsageInfo) myOverridingMethods.get(i)).getOverridingElement());
         }
         myUsagePreviewPanel = new UsagePreviewPanel(project);
         setTitle(JetBundle.message("unused.overriding.methods.title"));
         init();
     }
 
-    private static String formatMethod(PsiMethod method) {
-        if (method instanceof JetClsMethod) {
-            JetNamedFunction function = (JetNamedFunction) ((JetClsMethod) method).getOrigin();
-
+    private static String formatElement(PsiElement element) {
+        element = JetPsiUtil.ascendIfPropertyAccessor(element);
+        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
             BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) function.getContainingFile()).getBindingContext();
+                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
 
-            DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
-            if (declarationDescriptor instanceof FunctionDescriptor) {
+            DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+            if (declarationDescriptor instanceof CallableMemberDescriptor) {
                 DeclarationDescriptor containingDescriptor = declarationDescriptor.getContainingDeclaration();
                 if (containingDescriptor instanceof ClassDescriptor) {
                     return JetBundle.message(
@@ -105,7 +102,8 @@ class KotlinOverridingMethodsDialog extends DialogWrapper {
             }
         }
 
-        return KotlinSafeDeleteProcessor.formatPsiMethod(method, true, false);
+        assert element instanceof PsiMethod;
+        return KotlinSafeDeleteProcessor.formatPsiMethod((PsiMethod) element, true, false);
     }
 
     @Override
@@ -138,8 +136,8 @@ class KotlinOverridingMethodsDialog extends DialogWrapper {
     protected JComponent createNorthPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel(RefactoringBundle.message("there.are.unused.methods.that.override.methods.you.delete")));
-        panel.add(new JLabel(RefactoringBundle.message("choose.the.ones.you.want.to.be.deleted")));
+        panel.add(new JLabel(JetBundle.message("there.are.unused.methods.that.override.methods.you.delete")));
+        panel.add(new JLabel(JetBundle.message("choose.the.ones.you.want.to.be.deleted")));
         return panel;
     }
 
@@ -245,7 +243,7 @@ class KotlinOverridingMethodsDialog extends DialogWrapper {
                 case CHECK_COLUMN:
                     return " ";
                 default:
-                    return RefactoringBundle.message("method.column");
+                    return JetBundle.message("method.column");
             }
         }
 
