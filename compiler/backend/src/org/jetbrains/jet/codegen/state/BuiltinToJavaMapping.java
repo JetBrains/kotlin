@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.types.Variance;
 
 public class BuiltinToJavaMapping {
     private final BothSignatureWriter signatureVisitor;
-    private final JetTypeMapper typeMapper;
+    protected final JetTypeMapper typeMapper;
     private final JetType jetType;
     private final Type known;
     private final Variance howThisTypeIsUsed;
@@ -53,7 +53,7 @@ public class BuiltinToJavaMapping {
             case VALUE:
                 return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             case TYPE_PARAMETER:
-                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed);
+                return mapKnownParameterAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed);
             case TRAIT_IMPL:
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
             case IMPL:
@@ -64,6 +64,25 @@ public class BuiltinToJavaMapping {
     }
 
     public Type mapKnownAsmType(
+            JetType jetType,
+            Type asmType,
+            @Nullable BothSignatureWriter signatureVisitor,
+            @NotNull Variance howThisTypeIsUsed
+    ) {
+        if (signatureVisitor != null) {
+            if (jetType.getArguments().isEmpty()) {
+                String kotlinTypeName = JetTypeToJavaTypeMapper.getKotlinTypeNameForSignature(jetType, asmType);
+                signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
+            }
+            else {
+                JetTypeToJavaTypeMapper.writeGenericType(typeMapper, signatureVisitor, asmType, jetType, false, howThisTypeIsUsed);
+            }
+        }
+        typeMapper.checkValidType(asmType);
+        return asmType;
+    }
+
+    public Type mapKnownParameterAsmType(
             JetType jetType,
             Type asmType,
             @Nullable BothSignatureWriter signatureVisitor,

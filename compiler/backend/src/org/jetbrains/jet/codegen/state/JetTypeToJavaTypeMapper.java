@@ -76,7 +76,7 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
 
         if (signatureVisitor != null) {
             signatureVisitor.writeArrayType(arrayJetType.isNullable(), memberProjection.getProjectionKind());
-            typeMapper.mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+            typeMapper.mapContainedType(memberType, arrayJetType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER, memberProjection.getProjectionKind());
             signatureVisitor.writeArrayEnd();
         }
 

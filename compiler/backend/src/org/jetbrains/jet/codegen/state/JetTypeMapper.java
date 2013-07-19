@@ -251,6 +251,39 @@ public class JetTypeMapper extends BindingTraceAware {
                                  jetType);
     }
 
+    @NotNull
+    public Type mapContainedType(
+            @NotNull  JetType             jetType,
+            @NotNull  JetType             containingType,
+            @Nullable BothSignatureWriter signatureVisitor,
+            @NotNull  JetTypeMapperMode   kind,
+            @NotNull  Variance            howThisTypeIsUsed
+    ) {
+        DeclarationDescriptor descriptor = descriptorForJetType(jetType);
+
+        TypeConstructor constructor = jetType.getConstructor();
+        if (constructor instanceof IntersectionTypeConstructor) {
+            jetType = CommonSupertypes.commonSupertype(new ArrayList<JetType>(constructor.getSupertypes()));
+        }
+
+        if (ErrorUtils.isError(descriptor)) return nonExistentClassType(signatureVisitor, descriptor);
+
+        ContainedBuiltinToJavaMapping builtin = new ContainedBuiltinToJavaMapping(signatureVisitor,
+                                                                                  this,
+                                                                                  jetType,
+                                                                                  howThisTypeIsUsed,
+                                                                                  kind);
+        builtin.containInType(containingType);
+        return descriptor.accept(new JetTypeToJavaTypeMapper(signatureVisitor,
+                                                             this,
+                                                             builtin,
+                                                             howThisTypeIsUsed,
+                                                             kind,
+                                                             mapBuiltinsToJava,
+                                                             descriptor),
+                                 jetType);
+    }
+
     private static DeclarationDescriptor descriptorForJetType(JetType jetType) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (descriptor == null)
