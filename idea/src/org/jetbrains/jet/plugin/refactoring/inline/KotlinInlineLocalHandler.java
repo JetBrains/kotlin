@@ -12,13 +12,16 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
@@ -27,7 +30,10 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -35,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -99,6 +106,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
         }
 
         final String typeArgumentsForCall = getTypeArgumentsStringForCall(initializer);
+        final String parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer);
 
         PsiReference[] referencesArray = references.toArray(references.toArray(new PsiReference[references.size()]));
 
@@ -150,10 +158,108 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                         if (typeArgumentsForCall != null) {
                             addTypeArguments(typeArgumentsForCall, inlinedExpressions);
                         }
+
+                        if (parametersForFunctionLiteral != null) {
+                            addFunctionLiteralParameterTypes(parametersForFunctionLiteral, inlinedExpressions);
+                        }
                     }
                 });
             }
         }, RefactoringBundle.message("inline.command", name), null);
+    }
+
+    @Nullable
+    private static String getParametersForFunctionLiteral(JetExpression initializer) {
+        JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(initializer);
+        if (functionLiteralExpression == null) {
+            return null;
+        }
+
+        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession((JetFile) initializer.getContainingFile());
+        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, initializer);
+        SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
+        if (fun == null || ErrorUtils.containsErrorType(fun)) {
+            return null;
+        }
+
+        return StringUtil.join(fun.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
+            @Override
+            public String fun(ValueParameterDescriptor descriptor) {
+                return descriptor.getName() + ": " + DescriptorRenderer.TEXT.renderType(descriptor.getType());
+            }
+        }, ", ");
+    }
+
+    @Nullable
+    private static JetFunctionLiteralExpression getFunctionLiteralExpression(@NotNull JetExpression expression) {
+        if (expression instanceof JetParenthesizedExpression) {
+            JetExpression inner = ((JetParenthesizedExpression) expression).getExpression();
+            return inner == null ? null : getFunctionLiteralExpression(inner);
+        }
+        if (expression instanceof JetFunctionLiteralExpression) {
+            return (JetFunctionLiteralExpression) expression;
+        }
+        return null;
+    }
+
+    private static void addFunctionLiteralParameterTypes(@NotNull String parameters, @NotNull List<JetExpression> inlinedExpressions) {
+        JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
+        List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
+
+        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
+        for (JetExpression inlinedExpression : inlinedExpressions) {
+            JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
+            assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
+
+            if (needToAddParameterTypes(functionLiteralExpression, resolveSession)) {
+                functionsToAddParameters.add(functionLiteralExpression);
+            }
+        }
+
+        for (JetFunctionLiteralExpression functionLiteralExpression : functionsToAddParameters) {
+            JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
+
+            JetParameterList currentParameterList = functionLiteral.getValueParameterList();
+            JetParameterList newParameterList = JetPsiFactory.createParameterList(containingFile.getProject(), "(" + parameters + ")");
+            if (currentParameterList != null) {
+                currentParameterList.replace(newParameterList);
+            }
+            else {
+                PsiElement openBraceElement = functionLiteral.getOpenBraceNode().getPsi();
+
+                PsiElement nextSibling = openBraceElement.getNextSibling();
+                PsiElement whitespaceToAdd = nextSibling instanceof PsiWhiteSpace && nextSibling.getText().contains("\n")
+                        ? nextSibling.copy() : null;
+
+                Pair<PsiElement, PsiElement> whitespaceAndArrow = JetPsiFactory.createWhitespaceAndArrow(containingFile.getProject());
+                functionLiteral.addRangeAfter(whitespaceAndArrow.first, whitespaceAndArrow.second, openBraceElement);
+
+                functionLiteral.addAfter(newParameterList, openBraceElement);
+                if (whitespaceToAdd != null) {
+                    functionLiteral.addAfter(whitespaceToAdd, openBraceElement);
+                }
+            }
+            ReferenceToClassesShortening.compactReferenceToClasses(functionLiteralExpression.getValueParameters());
+        }
+    }
+
+    private static boolean needToAddParameterTypes(
+            @NotNull JetFunctionLiteralExpression functionLiteralExpression,
+            @NotNull ResolveSession resolveSession
+    ) {
+        JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
+        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, functionLiteralExpression);
+        for (Diagnostic diagnostic : context.getDiagnostics()) {
+            AbstractDiagnosticFactory factory = diagnostic.getFactory();
+            PsiElement element = diagnostic.getPsiElement();
+            boolean hasCantInferParameter = factory == Errors.CANNOT_INFER_PARAMETER_TYPE && element.getParent().getParent() == functionLiteral;
+            boolean hasUnresolvedItOrThis = factory == Errors.UNRESOLVED_REFERENCE && element.getText().equals("it") &&
+                         PsiTreeUtil.getParentOfType(element, JetFunctionLiteral.class) == functionLiteral;
+            if (hasCantInferParameter || hasUnresolvedItOrThis) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void addTypeArguments(@NotNull String typeArguments, @NotNull List<JetExpression> inlinedExpressions) {

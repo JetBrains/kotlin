@@ -112,6 +112,14 @@ public class JetPsiFactory {
         return semicolon;
     }
 
+    //the pair contains the first and the last elements of a range
+    @NotNull
+    public static Pair<PsiElement, PsiElement> createWhitespaceAndArrow(Project project) {
+        JetFunctionType functionType = (JetFunctionType) createType(project, "() -> Int").getTypeElement();
+        assert functionType != null;
+        return Pair.create(functionType.findElementAt(2), functionType.findElementAt(3));
+    }
+
     public static PsiElement createWhiteSpace(Project project) {
         return createWhiteSpace(project, " ");
     }

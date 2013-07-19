@@ -49,6 +49,10 @@ public class ErrorUtils {
         if (containsErrorType(function.getReturnType())) {
             return true;
         }
+        ReceiverParameterDescriptor receiverParameter = function.getReceiverParameter();
+        if (receiverParameter != null && containsErrorType(receiverParameter.getType())) {
+            return true;
+        }
         for (ValueParameterDescriptor parameter : function.getValueParameters()) {
             if (containsErrorType(parameter.getType())) {
                 return true;
