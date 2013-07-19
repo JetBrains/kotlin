@@ -228,36 +228,21 @@ public class JetTypeMapper extends BindingTraceAware {
             @NotNull  JetTypeMapperMode   kind,
             @NotNull  Variance            howThisTypeIsUsed
     ) {
-        DeclarationDescriptor descriptor = descriptorForJetType(jetType);
-
-        TypeConstructor constructor = jetType.getConstructor();
-        if (constructor instanceof IntersectionTypeConstructor) {
-            jetType = CommonSupertypes.commonSupertype(new ArrayList<JetType>(constructor.getSupertypes()));
-        }
-
-        if (ErrorUtils.isError(descriptor)) return nonExistentClassType(signatureVisitor, descriptor);
-
-        return descriptor.accept(new JetTypeToJavaTypeMapper(signatureVisitor,
-                                                             this,
-                                                             new BuiltinToJavaMapping(signatureVisitor,
-                                                                                      this,
-                                                                                      jetType,
-                                                                                      howThisTypeIsUsed,
-                                                                                      kind),
-                                                             howThisTypeIsUsed,
-                                                             kind,
-                                                             mapBuiltinsToJava,
-                                                             descriptor),
-                                 jetType);
+        return mapTypeWithBuiltin(jetType, signatureVisitor, kind, howThisTypeIsUsed,
+                           new BuiltinToJavaMapping(signatureVisitor,
+                                                    this,
+                                                    jetType,
+                                                    howThisTypeIsUsed,
+                                                    kind));
     }
 
     @NotNull
-    public Type mapContainedType(
+    public Type mapTypeWithBuiltin(
             @NotNull  JetType             jetType,
-            @NotNull  JetType             containingType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull  JetTypeMapperMode   kind,
-            @NotNull  Variance            howThisTypeIsUsed
+            @NotNull  Variance            howThisTypeIsUsed,
+            @NotNull  BuiltinToJavaMapping builtin
     ) {
         DeclarationDescriptor descriptor = descriptorForJetType(jetType);
 
@@ -268,12 +253,6 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (ErrorUtils.isError(descriptor)) return nonExistentClassType(signatureVisitor, descriptor);
 
-        ContainedBuiltinToJavaMapping builtin = new ContainedBuiltinToJavaMapping(signatureVisitor,
-                                                                                  this,
-                                                                                  jetType,
-                                                                                  howThisTypeIsUsed,
-                                                                                  kind);
-        builtin.containInType(containingType);
         return descriptor.accept(new JetTypeToJavaTypeMapper(signatureVisitor,
                                                              this,
                                                              builtin,
@@ -282,16 +261,17 @@ public class JetTypeMapper extends BindingTraceAware {
                                                              mapBuiltinsToJava,
                                                              descriptor),
                                  jetType);
+
     }
 
-    private static DeclarationDescriptor descriptorForJetType(JetType jetType) {
+    public static DeclarationDescriptor descriptorForJetType(JetType jetType) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (descriptor == null)
             throw new UnsupportedOperationException("no descriptor for type constructor of " + jetType);
         return descriptor;
     }
 
-    private Type nonExistentClassType(BothSignatureWriter signatureVisitor, DeclarationDescriptor descriptor) {
+    public Type nonExistentClassType(BothSignatureWriter signatureVisitor, DeclarationDescriptor descriptor) {
         if (classBuilderMode != ClassBuilderMode.SIGNATURES) {
             throw new IllegalStateException(generateErrorMessageForErrorType(descriptor));
         }

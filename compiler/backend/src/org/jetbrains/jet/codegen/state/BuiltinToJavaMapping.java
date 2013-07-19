@@ -30,7 +30,7 @@ public class BuiltinToJavaMapping {
     protected final JetTypeMapper typeMapper;
     private final JetType jetType;
     private final Type known;
-    private final Variance howThisTypeIsUsed;
+    protected final Variance howThisTypeIsUsed;
     private final JetTypeMapperMode mode;
 
     public BuiltinToJavaMapping(BothSignatureWriter signatureWriter,
@@ -70,7 +70,7 @@ public class BuiltinToJavaMapping {
             @NotNull Variance howThisTypeIsUsed
     ) {
         if (signatureVisitor != null) {
-            if (jetType.getArguments().isEmpty()) {
+            if (notACompoundType(jetType)) {
                 String kotlinTypeName = JetTypeToJavaTypeMapper.getKotlinTypeNameForSignature(jetType, asmType);
                 signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
             }
@@ -89,9 +89,8 @@ public class BuiltinToJavaMapping {
             @NotNull Variance howThisTypeIsUsed
     ) {
         if (signatureVisitor != null) {
-            if (jetType.getArguments().isEmpty()) {
-                String kotlinTypeName = JetTypeToJavaTypeMapper.getKotlinTypeNameForSignature(jetType, asmType);
-                signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
+            if (notACompoundType(jetType)) {
+                writeAsmTypeOfNotACompoundParameterType(jetType, asmType, signatureVisitor);
             }
             else {
                 JetTypeToJavaTypeMapper.writeGenericType(typeMapper, signatureVisitor, asmType, jetType, false, howThisTypeIsUsed);
@@ -99,5 +98,14 @@ public class BuiltinToJavaMapping {
         }
         typeMapper.checkValidType(asmType);
         return asmType;
+    }
+
+    protected void writeAsmTypeOfNotACompoundParameterType(JetType jetType, Type asmType, BothSignatureWriter signatureVisitor) {
+        String kotlinTypeName = JetTypeToJavaTypeMapper.getKotlinTypeNameForSignature(jetType, asmType);
+        signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
+    }
+
+    public static boolean notACompoundType(JetType jetType) {
+        return jetType.getArguments().isEmpty();
     }
 }

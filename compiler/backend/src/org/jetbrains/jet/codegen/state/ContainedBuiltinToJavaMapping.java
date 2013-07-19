@@ -16,16 +16,20 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
+
+import java.util.Collection;
 
 public class ContainedBuiltinToJavaMapping extends BuiltinToJavaMapping {
     private JetType containingType = null;
@@ -45,37 +49,22 @@ public class ContainedBuiltinToJavaMapping extends BuiltinToJavaMapping {
     }
 
     @Override
-    public Type mapKnownParameterAsmType(
-            JetType jetType,
-            Type asmType,
-            @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull Variance howThisTypeIsUsed
-    ) {
-        if (signatureVisitor != null) {
-            if (jetType.getArguments().isEmpty()) {
-                if (howThisTypeIsUsed == Variance.IN_VARIANCE) {
-                    asmType = AsmTypeConstants.OBJECT_TYPE;
-                }
-                String kotlinTypeName = kotlinTypeNameForArray(jetType, asmType);
-                signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
-            }
-            else {
-                JetTypeToJavaTypeMapper.writeGenericType(typeMapper, signatureVisitor, asmType, jetType, false, howThisTypeIsUsed);
-            }
+    protected void writeAsmTypeOfNotACompoundParameterType(JetType jetType, Type asmType, BothSignatureWriter signatureVisitor) {
+        if (howThisTypeIsUsed == Variance.IN_VARIANCE) {
+            asmType = AsmTypeConstants.OBJECT_TYPE;
         }
-        typeMapper.checkValidType(asmType);
-        return asmType;
+        String kotlinTypeName = kotlinTypeNameForArrayParameter(jetType, asmType);
+        signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
     }
 
     @Nullable
-    private static String kotlinTypeNameForArray(@NotNull JetType jetType, @NotNull Type asmType) {
-        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if (descriptor == null) return null;
-        if (asmType.getSort() != Type.OBJECT) return null;
-
-        JvmClassName jvmClassName = JvmClassName.byType(asmType);
-        if (JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() >= 1) {
-            return JvmClassName.byClassDescriptor(descriptor).getSignatureName();
+    private static String kotlinTypeNameForArrayParameter(@NotNull JetType jetType, @NotNull Type asmType) {
+        Pair<ClassifierDescriptor, Collection<ClassDescriptor>> descriptorAndClassesFound = JetTypeToJavaTypeMapper.platformClassesFor(jetType, asmType);
+        if (descriptorAndClassesFound != null) {
+            Collection<ClassDescriptor> classesFound = descriptorAndClassesFound.getSecond();
+            if (classesFound.size() >= 1) {
+                return JvmClassName.byClassDescriptor(descriptorAndClassesFound.getFirst()).getSignatureName();
+            }
         }
         return null;
     }

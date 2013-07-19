@@ -16,17 +16,18 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
@@ -76,7 +77,8 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
 
         if (signatureVisitor != null) {
             signatureVisitor.writeArrayType(arrayJetType.isNullable(), memberProjection.getProjectionKind());
-            typeMapper.mapContainedType(memberType, arrayJetType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER, memberProjection.getProjectionKind());
+            mapContainedType(memberType, arrayJetType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER,
+                             memberProjection.getProjectionKind());
             signatureVisitor.writeArrayEnd();
         }
 
@@ -89,6 +91,21 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
         }
         typeMapper.checkValidType(r);
         return r;
+    }
+
+    @NotNull
+    private Type mapContainedType(
+            @NotNull  JetType             jetType,
+            @NotNull  JetType             containingType,
+            @Nullable BothSignatureWriter signatureVisitor,
+            @NotNull  JetTypeMapperMode   kind,
+            @NotNull  Variance            howThisTypeIsUsed
+    ) {
+        ContainedBuiltinToJavaMapping builtin = new ContainedBuiltinToJavaMapping(
+                signatureVisitor, typeMapper, jetType, howThisTypeIsUsed, kind);
+
+        builtin.containInType(containingType);
+        return typeMapper.mapTypeWithBuiltin(jetType, signatureVisitor, kind, howThisTypeIsUsed, builtin);
     }
 
     private static boolean isGenericsArray(JetType type) {
@@ -147,14 +164,24 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
     }
 
     @Nullable
-    public static String getKotlinTypeNameForSignature(@NotNull JetType jetType, @NotNull Type asmType) {
+    public static Pair<ClassifierDescriptor, Collection<ClassDescriptor>> platformClassesFor(@NotNull JetType jetType, @NotNull Type asmType) {
         ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (descriptor == null) return null;
         if (asmType.getSort() != Type.OBJECT) return null;
 
         JvmClassName jvmClassName = JvmClassName.byType(asmType);
-        if (JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() > 1) {
-            return JvmClassName.byClassDescriptor(descriptor).getSignatureName();
+        return Pair.create(descriptor,
+                           JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()));
+    }
+
+    @Nullable
+    public static String getKotlinTypeNameForSignature(@NotNull JetType jetType, @NotNull Type asmType) {
+        Pair<ClassifierDescriptor, Collection<ClassDescriptor>> descriptorAndClassesFound = platformClassesFor(jetType, asmType);
+        if (descriptorAndClassesFound != null) {
+            Collection<ClassDescriptor> classesFound = descriptorAndClassesFound.getSecond();
+            if (classesFound.size() > 1) {
+                return JvmClassName.byClassDescriptor(descriptorAndClassesFound.getFirst()).getSignatureName();
+            }
         }
         return null;
     }
