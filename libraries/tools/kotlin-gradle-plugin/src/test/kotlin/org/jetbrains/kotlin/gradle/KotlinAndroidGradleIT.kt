@@ -8,11 +8,13 @@ import java.util.Scanner
 import org.junit.Before
 import org.junit.After
 import org.junit.Test
+import org.junit.Ignore
 import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.fail
 import org.gradle.testfixtures.ProjectBuilder
 
+Ignore("Requires Android SDK")
 class KotlinAndroidGradleIT {
 
     var workingDir: File = File(".")
