@@ -31,7 +31,7 @@ public open class KotlinCompile(): AbstractCompile() {
     val compiler = K2JVMCompiler()
     val logger = Logging.getLogger(getClass())
 
-    public val kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
+    public var kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
 
     public var kotlinDestinationDir : File? = getDestinationDir()
 
@@ -67,7 +67,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
 
     override fun compile() {
-        val args = kotlinOptions
+        val args = K2JVMCompilerArguments()
 
         val javaSrcRoots = HashSet<File>()
         val sources = ArrayList<File>()
