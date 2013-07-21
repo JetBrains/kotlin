@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'file://' + pathToKotlinPlugin
+        }
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
+        classpath 'com.android.tools.build:gradle:0.4'
+    }
+}
+apply plugin: 'android'
+apply plugin: 'kotlin-android'
+
+dependencies {
+    compile files('libs/android-support-v4.jar')
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    kotlinOptions {
+        annotations = "kotlinAnnotations"
+    }
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 16
+    }
+
+    buildTypes {
+        jnidebug.initWith(buildTypes.debug)
+        jnidebug {
+            packageNameSuffix ".jnidebug"
+            jniDebugBuild true
+        }
+    }
+
+    productFlavors {
+        flavor1 {
+            packageName "com.example.flavor1"
+            versionCode 20
+        }
+
+        flavor2 {
+            packageName "com.example.flavor2"
+            minSdkVersion 14
+        }
+    }
+}
