@@ -39,13 +39,10 @@ public class ContainedBuiltinToJavaMapping extends BuiltinToJavaMapping {
             JetTypeMapper typeMapper,
             JetType jetTypeToMap,
             Variance variance,
-            JetTypeMapperMode kind
+            JetTypeMapperMode kind,
+            JetType containingType
     ) {
         super(signatureWriter, typeMapper, jetTypeToMap, variance, kind);
-    }
-
-    public void containInType(JetType containingTypeOfThis) {
-        containingType = containingTypeOfThis;
     }
 
     @Override

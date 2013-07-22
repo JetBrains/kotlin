@@ -238,11 +238,11 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public Type mapTypeWithBuiltin(
-            @NotNull  JetType             jetType,
+            @NotNull JetType jetType,
             @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull  JetTypeMapperMode   kind,
-            @NotNull  Variance            howThisTypeIsUsed,
-            @NotNull  BuiltinToJavaMapping builtin
+            @NotNull JetTypeMapperMode kind,
+            @NotNull Variance howThisTypeIsUsed,
+            @NotNull BuiltinToJavaMapping builtin
     ) {
         DeclarationDescriptor descriptor = descriptorForJetType(jetType);
 
@@ -253,14 +253,9 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (ErrorUtils.isError(descriptor)) return nonExistentClassType(signatureVisitor, descriptor);
 
-        return descriptor.accept(new JetTypeToJavaTypeMapper(signatureVisitor,
-                                                             this,
-                                                             builtin,
-                                                             howThisTypeIsUsed,
-                                                             kind,
-                                                             mapBuiltinsToJava,
-                                                             descriptor),
-                                 jetType);
+        return descriptor.accept(
+                new JetTypeToJavaTypeMapper(signatureVisitor, this, builtin, howThisTypeIsUsed, kind, mapBuiltinsToJava, descriptor),
+                jetType);
 
     }
 

@@ -102,9 +102,8 @@ public class JetTypeToJavaTypeMapper extends JetTypeToJavaTypeMapperNoMatching i
             @NotNull  Variance            howThisTypeIsUsed
     ) {
         ContainedBuiltinToJavaMapping builtin = new ContainedBuiltinToJavaMapping(
-                signatureVisitor, typeMapper, jetType, howThisTypeIsUsed, kind);
+                signatureVisitor, typeMapper, jetType, howThisTypeIsUsed, kind, containingType);
 
-        builtin.containInType(containingType);
         return typeMapper.mapTypeWithBuiltin(jetType, signatureVisitor, kind, howThisTypeIsUsed, builtin);
     }
 
