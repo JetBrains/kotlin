@@ -20,10 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.AnnotationVisitor;
-import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
@@ -31,39 +27,20 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.getVirtualFile;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
 public final class DeserializedDescriptorResolver {
-    @Nullable
-    public static ClassData readClassDataNoErrorReporting(@NotNull VirtualFile virtualFile) {
-        String[] data = visitClassFile(virtualFile).getData();
-        return data != null ? JavaProtoBufUtil.readClassDataFrom(data) : null;
-    }
-
-    @Nullable
-    public static PackageData readPackageDataNoErrorReporting(@NotNull VirtualFile virtualFile) {
-        String[] data = visitClassFile(virtualFile).getData();
-        return data != null ? JavaProtoBufUtil.readPackageDataFrom(data) : null;
-    }
 
     private AnnotationDescriptorDeserializer annotationDeserializer;
 
@@ -158,7 +135,8 @@ public final class DeserializedDescriptorResolver {
 
         DeclarationDescriptor owner = classId.isTopLevelClass()
                                       ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN)
-                                      : javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
+                                      : javaClassResolver
+                                              .resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
         assert owner != null : "No owner found for " + classId;
 
         return new DeserializedClassDescriptor(classId, storageManager, owner, classData.getNameResolver(),
@@ -179,106 +157,15 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     private String[] readData(@NotNull VirtualFile virtualFile, @NotNull PsiClass psiClass) {
-        GetKotlinInfoDataVisitor visitor = visitClassFile(virtualFile);
-        int version = visitor.getVersion();
-        String[] data = visitor.getData();
+        KotlinClassFileHeader headerData = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
+        int version = headerData.getVersion();
+        String[] annotationData = headerData.getAnnotationData();
         if (isAbiVersionCompatible(version)) {
-            return data;
+            return annotationData;
         }
-        if (data != null) {
+        if (annotationData != null) {
             errorReporter.reportIncompatibleAbiVersion(psiClass, version);
         }
         return null;
-    }
-
-    @NotNull
-    private static GetKotlinInfoDataVisitor visitClassFile(@NotNull VirtualFile virtualFile) {
-        try {
-            InputStream inputStream = virtualFile.getInputStream();
-            try {
-                ClassReader reader = new ClassReader(inputStream);
-                GetKotlinInfoDataVisitor visitor = new GetKotlinInfoDataVisitor();
-                reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-                return visitor;
-            }
-            finally {
-                inputStream.close();
-            }
-        }
-        catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
-        }
-    }
-
-    private static class GetKotlinInfoDataVisitor extends ClassVisitor {
-        public GetKotlinInfoDataVisitor() {
-            super(Opcodes.ASM4);
-        }
-
-        private int version = AbiVersionUtil.INVALID_VERSION;
-
-        @Nullable
-        private String[] data = null;
-
-        @Override
-        public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-            if (!desc.equals(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor()) &&
-                !desc.equals(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor())) {
-                return null;
-            }
-
-            return new AnnotationVisitor(Opcodes.ASM4) {
-                @Override
-                public void visit(String name, Object value) {
-                    if (name.equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
-                        version = (Integer) value;
-                    }
-                    else if (isAbiVersionCompatible(version)) {
-                        throw new IllegalStateException("Unexpected argument " + name + " for annotation " + desc);
-                    }
-                }
-
-                @Override
-                public AnnotationVisitor visitArray(String name) {
-                    if (name.equals(JvmAnnotationNames.DATA_FIELD_NAME)) {
-                        return stringArrayVisitor();
-                    }
-                    else if (isAbiVersionCompatible(version)) {
-                        throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + desc);
-                    }
-
-                    return super.visitArray(name);
-                }
-
-                @NotNull
-                private AnnotationVisitor stringArrayVisitor() {
-                    final List<String> strings = new ArrayList<String>(1);
-                    return new AnnotationVisitor(Opcodes.ASM4) {
-                        @Override
-                        public void visit(String name, Object value) {
-                            if (!(value instanceof String)) {
-                                throw new IllegalStateException("Unexpected argument value: " + value);
-                            }
-
-                            strings.add((String) value);
-                        }
-
-                        @Override
-                        public void visitEnd() {
-                            data = strings.toArray(new String[strings.size()]);
-                        }
-                    };
-                }
-            };
-        }
-
-        public int getVersion() {
-            return version;
-        }
-
-        @Nullable
-        public String[] getData() {
-            return data;
-        }
     }
 }

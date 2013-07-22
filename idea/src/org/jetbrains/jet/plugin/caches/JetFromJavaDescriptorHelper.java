@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -103,14 +103,14 @@ public class JetFromJavaDescriptorHelper {
     private static ClassData getClassData(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile == null) return null;
-        return DeserializedDescriptorResolver.readClassDataNoErrorReporting(virtualFile);
+        return KotlinClassFileHeader.readClassData(virtualFile);
     }
 
     @Nullable
     private static PackageData getPackageData(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile == null) return null;
-        return DeserializedDescriptorResolver.readPackageDataNoErrorReporting(virtualFile);
+        return KotlinClassFileHeader.readPackageData(virtualFile);
     }
 
     //TODO: common utility
