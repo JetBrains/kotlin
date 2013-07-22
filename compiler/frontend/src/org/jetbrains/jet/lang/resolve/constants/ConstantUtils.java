@@ -29,16 +29,11 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.ERROR_COMPILE_TIME_VALUE;
-import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.getDefaultType;
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
-import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.BYTE;
-import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.INT;
 
 public class ConstantUtils {
 
@@ -80,24 +75,12 @@ public class ConstantUtils {
             @NotNull JetExpression expression,
             @NotNull ResolutionContext<?> context
     ) {
-        CompileTimeConstantResolver compileTimeConstantResolver = new CompileTimeConstantResolver();
-        CompileTimeConstant<?> value = compileTimeConstantResolver.getIntegerValue(numberValueTypeConstructor.getValue(), expectedType);
         JetTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
         assert recordedTypeInfo != null : "Expression " + expression + " should have been analyzed";
         JetScope resolutionScope = context.trace.get(BindingContext.RESOLUTION_SCOPE, expression);
         assert resolutionScope != null : "Expression " + expression + " should have been analyzed";
 
-        JetType type;
-        if (value instanceof ErrorValue) {
-            ErrorValue errorValue = (ErrorValue) value;
-            type = getDefaultType(expression.getNode().getElementType());
-            if (!noExpectedType(context.expectedType) && JetTypeChecker.INSTANCE.isSubtypeOf(type, context.expectedType)) {
-                context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, errorValue.getMessage()));
-            }
-        }
-        else {
-            type = value.getType(KotlinBuiltIns.getInstance());
-        }
+        JetType type = TypeUtils.getPrimitiveNumberType(numberValueTypeConstructor, expectedType);
         BindingContextUtils.recordExpressionType(expression, context.trace, resolutionScope,
                                                  JetTypeInfo.create(type, recordedTypeInfo.getDataFlowInfo()));
         return type;

@@ -84,8 +84,7 @@ public class ConstraintsUtil {
         addToValuesIfDifferent(superTypeOfNumberLowerBounds, values);
 
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
-            JetType superTypeOfAllLowerBounds =
-                    commonSupertype(Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
+            JetType superTypeOfAllLowerBounds = commonSupertype(Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
             if (trySuggestion(superTypeOfAllLowerBounds, typeConstraints)) {
                 return Collections.singleton(superTypeOfAllLowerBounds);
             }
@@ -116,22 +115,7 @@ public class ConstraintsUtil {
     @Nullable
     private static JetType commonSupertypeForNumberTypes(@NotNull Collection<JetType> numberLowerBounds) {
         if (numberLowerBounds.isEmpty()) return null;
-        Set<Long> numbers = Sets.newHashSet();
-        for (JetType numberLowerBound : numberLowerBounds) {
-            assert numberLowerBound.getConstructor() instanceof NumberValueTypeConstructor;
-            numbers.add(((NumberValueTypeConstructor) numberLowerBound.getConstructor()).getValue());
-        }
-        assert !numbers.isEmpty();
-        return getDefaultNumberType(numbers);
-    }
-
-    private static JetType getDefaultNumberType(Collection<Long> values) {
-        for (Long value : values) {
-            if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
-                return KotlinBuiltIns.getInstance().getLongType();
-            }
-        }
-        return KotlinBuiltIns.getInstance().getIntType();
+        return TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds);
     }
 
     private static boolean trySuggestion(

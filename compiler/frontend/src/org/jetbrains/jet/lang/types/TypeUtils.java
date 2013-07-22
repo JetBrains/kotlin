@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListen
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemWithPriorities;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -550,5 +551,69 @@ public class TypeUtils {
         builder.append(">");
 
         return builder.toString();
+    }
+
+    @NotNull
+    public static JetType commonSupertypeForNumberTypes(@NotNull Collection<JetType> numberLowerBounds) {
+        assert !numberLowerBounds.isEmpty();
+        Set<JetType> intersectionOfSupertypes = getIntersectionOfSupertypes(numberLowerBounds);
+        JetType primitiveNumberType = getDefaultPrimitiveNumberType(intersectionOfSupertypes);
+        if (primitiveNumberType != null) {
+            return primitiveNumberType;
+        }
+        return CommonSupertypes.commonSupertype(numberLowerBounds);
+    }
+
+    @NotNull
+    private static Set<JetType> getIntersectionOfSupertypes(@NotNull Collection<JetType> types) {
+        Set<JetType> upperBounds = Sets.newHashSet();
+        for (JetType type : types) {
+            Set<JetType> supertypes = Sets.newHashSet(type.getConstructor().getSupertypes());
+            if (upperBounds.isEmpty()) {
+                upperBounds.addAll(supertypes);
+            }
+            else {
+                upperBounds = Sets.intersection(upperBounds, supertypes);
+            }
+        }
+        return upperBounds;
+    }
+
+    @Nullable
+    public static JetType getDefaultPrimitiveNumberType(@NotNull NumberValueTypeConstructor numberValueTypeConstructor) {
+        return getDefaultPrimitiveNumberType(numberValueTypeConstructor.getSupertypes());
+    }
+
+    @Nullable
+    private static JetType getDefaultPrimitiveNumberType(@NotNull Collection<JetType> supertypes) {
+        JetType doubleType = KotlinBuiltIns.getInstance().getDoubleType();
+        if (supertypes.contains(doubleType)) {
+            return doubleType;
+        }
+        JetType intType = KotlinBuiltIns.getInstance().getIntType();
+        if (supertypes.contains(intType)) {
+            return intType;
+        }
+        JetType longType = KotlinBuiltIns.getInstance().getLongType();
+        if (supertypes.contains(longType)) {
+            return longType;
+        }
+        return null;
+    }
+
+    @Nullable
+    public static JetType getPrimitiveNumberType(
+            @NotNull NumberValueTypeConstructor numberValueTypeConstructor,
+            @NotNull JetType expectedType
+    ) {
+        if (noExpectedType(expectedType) || ErrorUtils.isErrorType(expectedType)) {
+            return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
+        }
+        for (JetType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(primitiveNumberType, expectedType)) {
+                return primitiveNumberType;
+            }
+        }
+        return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
     }
 }
