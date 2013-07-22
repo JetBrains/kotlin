@@ -245,7 +245,9 @@ public final class JavaClassResolver {
 
         assert (!unresolvedCache.contains(fqName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
-        ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(fqName, psiClass, containingDeclaration);
+        ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(fqName, psiClass, containingDeclaration,
+                DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
+
         if (deserializedDescriptor != null) {
             //TODO: class object and psi class
             cache(javaClassToKotlinFqName(fqName), deserializedDescriptor);

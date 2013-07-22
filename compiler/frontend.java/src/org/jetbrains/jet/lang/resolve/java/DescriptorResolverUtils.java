@@ -23,7 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -171,5 +173,15 @@ public final class DescriptorResolverUtils {
             @NotNull PsiMember member
     ) {
         return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member);
+    }
+
+    @NotNull
+    public static ErrorReporter createPsiBasedErrorReporter(@NotNull final PsiClass psiClass, @NotNull final BindingTrace trace) {
+        return new ErrorReporter() {
+            @Override
+            public void reportIncompatibleAbiVersion(int actualVersion) {
+                AbiVersionUtil.reportIncompatibleAbiVersion(psiClass, actualVersion, trace);
+            }
+        };
     }
 }

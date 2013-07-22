@@ -169,12 +169,13 @@ public final class JavaNamespaceResolver {
                 boolean isCompiledKotlinPackageClass = DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass);
                 if (isOldKotlinPackageClass(psiClass) && !isCompiledKotlinPackageClass) {
                     // If psiClass has old annotations (@JetPackage) but doesn't have @KotlinPackage, report ABI version error
-                    AbiVersionUtil.checkAbiVersion(psiClass, INVALID_VERSION, trace);
+                    AbiVersionUtil.reportIncompatibleAbiVersion(psiClass, INVALID_VERSION, trace);
                 }
                 if (isCompiledKotlinPackageClass) {
                     // If psiClass has @KotlinPackage (regardless of whether it has @JetPackage or not), deserialize it to Kotlin descriptor.
                     // Note that @KotlinPackage may still have an old ABI version, in which case null is returned by createKotlinPackageScope
-                    JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(psiClass, namespaceDescriptor);
+                    JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(psiClass, namespaceDescriptor,
+                            DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
                     if (kotlinPackageScope != null) return kotlinPackageScope;
                 }
             }

@@ -16,22 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.psi.PsiClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-
-import javax.inject.Inject;
-
-public class ErrorReporter {
-    private BindingTrace trace;
-
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    public void reportIncompatibleAbiVersion(@NotNull PsiClass psiClass, int version) {
-        AbiVersionUtil.reportIncompatibleAbiVersion(psiClass, version, trace);
-    }
+public interface ErrorReporter {
+    void reportIncompatibleAbiVersion(int actualVersion);
 }

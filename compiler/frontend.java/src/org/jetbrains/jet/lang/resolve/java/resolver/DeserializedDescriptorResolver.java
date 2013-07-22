@@ -50,8 +50,6 @@ public final class DeserializedDescriptorResolver {
 
     private JavaClassResolver javaClassResolver;
 
-    private ErrorReporter errorReporter;
-
     @NotNull
     private final DescriptorFinder javaDescriptorFinder = new DescriptorFinder() {
         @Nullable
@@ -88,23 +86,19 @@ public final class DeserializedDescriptorResolver {
         this.javaClassResolver = javaClassResolver;
     }
 
-    @Inject
-    public void setErrorReporter(ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
-    }
-
     @Nullable
     public ClassDescriptor resolveClass(
             @NotNull FqName fqName,
             @NotNull PsiClass psiClass,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration
+            @NotNull ClassOrNamespaceDescriptor containingDeclaration,
+            @NotNull ErrorReporter reporter
     ) {
         VirtualFile virtualFile = getVirtualFile(psiClass, fqName, containingDeclaration);
         if (virtualFile == null) {
             // TODO: use ErrorReporter here
             return null;
         }
-        ClassData classData = readClassDataFromClassFile(virtualFile, psiClass);
+        ClassData classData = readClassDataFromClassFile(virtualFile, reporter);
         if (classData == null) {
             return null;
         }
@@ -112,12 +106,16 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public JetScope createKotlinPackageScope(@NotNull PsiClass kotlinPackagePsiClass, @NotNull NamespaceDescriptor packageDescriptor) {
+    public JetScope createKotlinPackageScope(
+            @NotNull PsiClass kotlinPackagePsiClass,
+            @NotNull NamespaceDescriptor packageDescriptor,
+            @NotNull ErrorReporter reporter
+    ) {
         VirtualFile virtualFile = kotlinPackagePsiClass.getContainingFile().getVirtualFile();
         if (virtualFile == null) {
             return null;
         }
-        PackageData packageData = readPackageDataFromClassFile(virtualFile, kotlinPackagePsiClass);
+        PackageData packageData = readPackageDataFromClassFile(virtualFile, reporter);
         if (packageData == null) {
             return null;
         }
@@ -144,19 +142,19 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    private ClassData readClassDataFromClassFile(@NotNull VirtualFile virtualFile, @NotNull PsiClass psiClass) {
-        String[] data = readData(virtualFile, psiClass);
+    private static ClassData readClassDataFromClassFile(@NotNull VirtualFile file, @NotNull ErrorReporter reporter) {
+        String[] data = readData(file, reporter);
         return data == null ? null : JavaProtoBufUtil.readClassDataFrom(data);
     }
 
     @Nullable
-    private PackageData readPackageDataFromClassFile(@NotNull VirtualFile virtualFile, @NotNull PsiClass psiClass) {
-        String[] data = readData(virtualFile, psiClass);
+    private static PackageData readPackageDataFromClassFile(@NotNull VirtualFile file, @NotNull ErrorReporter reporter) {
+        String[] data = readData(file, reporter);
         return data == null ? null : JavaProtoBufUtil.readPackageDataFrom(data);
     }
 
     @Nullable
-    private String[] readData(@NotNull VirtualFile virtualFile, @NotNull PsiClass psiClass) {
+    private static String[] readData(@NotNull VirtualFile virtualFile, @NotNull ErrorReporter reporter) {
         KotlinClassFileHeader headerData = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
         int version = headerData.getVersion();
         String[] annotationData = headerData.getAnnotationData();
@@ -164,7 +162,7 @@ public final class DeserializedDescriptorResolver {
             return annotationData;
         }
         if (annotationData != null) {
-            errorReporter.reportIncompatibleAbiVersion(psiClass, version);
+            reporter.reportIncompatibleAbiVersion(version);
         }
         return null;
     }

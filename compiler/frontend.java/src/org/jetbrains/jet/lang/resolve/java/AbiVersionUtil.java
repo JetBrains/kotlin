@@ -35,12 +35,6 @@ public class AbiVersionUtil {
         return abiVersion == JvmAbi.VERSION;
     }
 
-    public static void checkAbiVersion(@NotNull PsiClass psiClass, int version, @NotNull BindingTrace trace) {
-        if (!isAbiVersionCompatible(version)) {
-            reportIncompatibleAbiVersion(psiClass, version, trace);
-        }
-    }
-
     public static void reportIncompatibleAbiVersion(@NotNull PsiClass psiClass, int version, @NotNull BindingTrace trace) {
         trace.record(ABI_VERSION_ERRORS, psiClass, version);
     }
