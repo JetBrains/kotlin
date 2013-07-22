@@ -12,6 +12,7 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.IOException;
@@ -53,10 +54,26 @@ public final class KotlinClassFileHeader {
         }
     }
 
+    public enum HeaderType {
+        CLASS(JvmAnnotationNames.KOTLIN_CLASS),
+        PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
+        NONE(null);
+
+        @Nullable
+        private final JvmClassName correspondingAnnotation;
+
+        HeaderType(@Nullable JvmClassName annotation) {
+            correspondingAnnotation = annotation;
+        }
+    }
+
     private int version = AbiVersionUtil.INVALID_VERSION;
 
     @Nullable
     private String[] annotationData = null;
+
+    @NotNull
+    HeaderType type = HeaderType.NONE;
 
     public int getVersion() {
         return version;
@@ -64,6 +81,9 @@ public final class KotlinClassFileHeader {
 
     @Nullable
     public String[] getAnnotationData() {
+        if (annotationData == null && type != HeaderType.NONE) {
+            throw new IllegalStateException("Data for annotations " + type.correspondingAnnotation + " was not read.");
+        }
         return annotationData;
     }
 
@@ -75,11 +95,22 @@ public final class KotlinClassFileHeader {
 
         @Override
         public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-            if (!desc.equals(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor()) &&
-                !desc.equals(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor())) {
+            for (HeaderType headerType : HeaderType.values()) {
+                JvmClassName annotation = headerType.correspondingAnnotation;
+                if (annotation == null) {
+                    continue;
+                }
+                if (desc.equals(annotation.getDescriptor())) {
+                    if (type != HeaderType.NONE) {
+                        throw new IllegalStateException(
+                                "Both " + type.correspondingAnnotation + " and " + headerType.correspondingAnnotation + " present!");
+                    }
+                    type = headerType;
+                }
+            }
+            if (type == HeaderType.NONE) {
                 return null;
             }
-
             return new AnnotationVisitor(Opcodes.ASM4) {
                 @Override
                 public void visit(String name, Object value) {
