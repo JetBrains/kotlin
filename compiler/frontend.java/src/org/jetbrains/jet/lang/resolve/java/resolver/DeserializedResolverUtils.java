@@ -17,12 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -54,26 +52,17 @@ public class DeserializedResolverUtils {
     }
 
     @Nullable
-    public static VirtualFile getVirtualFile(
-            @NotNull PsiClass psiClass,
-            @NotNull FqName classFqName,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration
-    ) {
-        VirtualFile mostOuterClassVirtualFile = psiClass.getContainingFile().getVirtualFile();
-        if (mostOuterClassVirtualFile == null) {
-            throw new IllegalStateException("Could not find virtual file for " + classFqName.asString());
-        }
-        String fileExtension = mostOuterClassVirtualFile.getExtension();
-        if (fileExtension == null || !fileExtension.equals("class")) {
+    public static VirtualFile getVirtualFile(@NotNull ClassId id, @NotNull VirtualFile outerClassFile) {
+        String fileExtension = outerClassFile.getExtension();
+        if (!"class".equals(fileExtension)) {
             return null;
         }
-        ClassId id = ClassId.fromFqNameAndContainingDeclaration(classFqName, containingDeclaration);
         FqNameUnsafe relativeClassName = id.getRelativeClassName();
         assert relativeClassName.isSafe() : "Relative class name " + relativeClassName.asString() + " should be safe at this point";
         String classNameWithBucks = relativeClassName.asString().replace(".", "$") + ".class";
-        VirtualFile virtualFile = mostOuterClassVirtualFile.getParent().findChild(classNameWithBucks);
+        VirtualFile virtualFile = outerClassFile.getParent().findChild(classNameWithBucks);
         if (virtualFile == null) {
-            throw new IllegalStateException("No virtual file for " + classFqName.asString());
+            throw new IllegalStateException("No virtual file for " + id.asSingleFqName().asString());
         }
         return virtualFile;
     }

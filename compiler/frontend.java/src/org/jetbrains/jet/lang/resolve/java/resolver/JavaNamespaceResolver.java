@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiModifier;
@@ -174,9 +175,14 @@ public final class JavaNamespaceResolver {
                 if (isCompiledKotlinPackageClass) {
                     // If psiClass has @KotlinPackage (regardless of whether it has @JetPackage or not), deserialize it to Kotlin descriptor.
                     // Note that @KotlinPackage may still have an old ABI version, in which case null is returned by createKotlinPackageScope
-                    JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(psiClass, namespaceDescriptor,
-                            DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
-                    if (kotlinPackageScope != null) return kotlinPackageScope;
+                    VirtualFile file = psiClass.getContainingFile().getVirtualFile();
+                    if (file != null) {
+                        JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(namespaceDescriptor,
+                                file, DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
+                        if (kotlinPackageScope != null) {
+                            return kotlinPackageScope;
+                        }
+                    }
                 }
             }
 

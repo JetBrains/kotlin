@@ -17,14 +17,12 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
@@ -37,7 +35,6 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN;
-import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.getVirtualFile;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
 public final class DeserializedDescriptorResolver {
@@ -87,50 +84,29 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(
-            @NotNull FqName fqName,
-            @NotNull PsiClass psiClass,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration,
-            @NotNull ErrorReporter reporter
-    ) {
-        VirtualFile virtualFile = getVirtualFile(psiClass, fqName, containingDeclaration);
-        if (virtualFile == null) {
-            // TODO: use ErrorReporter here
-            return null;
-        }
-        ClassData classData = readClassDataFromClassFile(virtualFile, reporter);
+    public ClassDescriptor resolveClass(@NotNull ClassId id, @NotNull VirtualFile file, @NotNull ErrorReporter reporter) {
+        ClassData classData = readClassDataFromClassFile(file, reporter);
         if (classData == null) {
             return null;
         }
-        return deserializeClass(classData, fqName, containingDeclaration);
+        return createDeserializedClass(classData, id);
     }
 
     @Nullable
     public JetScope createKotlinPackageScope(
-            @NotNull PsiClass kotlinPackagePsiClass,
-            @NotNull NamespaceDescriptor packageDescriptor,
+            @NotNull NamespaceDescriptor descriptor,
+            @NotNull VirtualFile file,
             @NotNull ErrorReporter reporter
     ) {
-        VirtualFile virtualFile = kotlinPackagePsiClass.getContainingFile().getVirtualFile();
-        if (virtualFile == null) {
-            return null;
-        }
-        PackageData packageData = readPackageDataFromClassFile(virtualFile, reporter);
+        PackageData packageData = readPackageDataFromClassFile(file, reporter);
         if (packageData == null) {
             return null;
         }
-        return new DeserializedPackageMemberScope(storageManager, packageDescriptor, annotationDeserializer, javaDescriptorFinder,
-                                                  packageData);
+        return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder, packageData);
     }
 
     @Nullable
-    private ClassDescriptor deserializeClass(
-            @NotNull ClassData classData,
-            @NotNull FqName fqName,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration
-    ) {
-        ClassId classId = ClassId.fromFqNameAndContainingDeclaration(fqName, containingDeclaration);
-
+    private ClassDescriptor createDeserializedClass(@NotNull ClassData classData, @NotNull ClassId classId) {
         DeclarationDescriptor owner = classId.isTopLevelClass()
                                       ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN)
                                       : javaClassResolver

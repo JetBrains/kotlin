@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
@@ -26,6 +27,7 @@ import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -56,6 +58,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.getVirtualFile;
 
 public final class JavaClassResolver {
 
@@ -245,13 +248,20 @@ public final class JavaClassResolver {
 
         assert (!unresolvedCache.contains(fqName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
-        ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(fqName, psiClass, containingDeclaration,
-                DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
+        VirtualFile outerClassFile = psiClass.getContainingFile().getVirtualFile();
+        if (outerClassFile != null) {
+            ClassId id = ClassId.fromFqNameAndContainingDeclaration(fqName, containingDeclaration);
+            VirtualFile file = getVirtualFile(id, outerClassFile);
+            if (file != null) {
+                ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(id, file,
+                        DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
 
-        if (deserializedDescriptor != null) {
-            //TODO: class object and psi class
-            cache(javaClassToKotlinFqName(fqName), deserializedDescriptor);
-            return deserializedDescriptor;
+                if (deserializedDescriptor != null) {
+                    //TODO: class object and psi class
+                    cache(javaClassToKotlinFqName(fqName), deserializedDescriptor);
+                    return deserializedDescriptor;
+                }
+            }
         }
 
         return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);

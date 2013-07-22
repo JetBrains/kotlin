@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
@@ -111,7 +112,12 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (psiClass == null) {
             throw new IllegalStateException("Psi class is not found for class: " + descriptor);
         }
-        VirtualFile virtualFile = getVirtualFile(psiClass, fqName, (ClassOrNamespaceDescriptor) descriptor.getContainingDeclaration());
+        VirtualFile outerClassFile = psiClass.getContainingFile().getVirtualFile();
+        if (outerClassFile == null) {
+            throw new IllegalStateException("Outer class file is not found for class: " + descriptor);
+        }
+        ClassId id = ClassId.fromFqNameAndContainingDeclaration(fqName, (ClassOrNamespaceDescriptor) descriptor.getContainingDeclaration());
+        VirtualFile virtualFile = getVirtualFile(id, outerClassFile);
         if (virtualFile == null) {
             throw new IllegalStateException("Virtual file is not found for class: " + descriptor);
         }
