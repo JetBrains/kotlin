@@ -16,16 +16,17 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -34,54 +35,124 @@ public class ConstraintsUtil {
     @NotNull
     public static Set<JetType> getValues(@Nullable TypeConstraints typeConstraints) {
         Set<JetType> values = Sets.newLinkedHashSet();
-        if (typeConstraints != null && !typeConstraints.isEmpty()) {
-            if (typeConstraints.getExactBounds().size() == 1) {
-                if (verifyOneExactBound(typeConstraints)) {
-                    JetType exactBound = typeConstraints.getExactBounds().iterator().next();
-                    return Collections.singleton(exactBound);
+        if (typeConstraints == null || typeConstraints.isEmpty()) {
+            return values;
+        }
+        TypeConstraints typeConstraintsWithoutErrorTypes = filterNotContainingErrorType(typeConstraints, values);
+        Collection<JetType> exactBounds = typeConstraintsWithoutErrorTypes.getExactBounds();
+        if (exactBounds.size() == 1) {
+            JetType exactBound = exactBounds.iterator().next();
+            if (trySuggestion(exactBound, typeConstraints)) {
+                return Collections.singleton(exactBound);
+            }
+        }
+        values.addAll(exactBounds);
+
+        Collection<JetType> lowerBounds = Sets.newHashSet();
+        Collection<JetType> numberLowerBounds = Sets.newHashSet();
+        for (JetType lowerBound : typeConstraintsWithoutErrorTypes.getLowerBounds()) {
+            if (lowerBound.getConstructor() instanceof NumberValueTypeConstructor) {
+                numberLowerBounds.add(lowerBound);
+            }
+            else {
+                lowerBounds.add(lowerBound);
+            }
+        }
+        JetType superTypeOfLowerBounds = commonSupertype(lowerBounds);
+        if (trySuggestion(superTypeOfLowerBounds, typeConstraints)) {
+            return Collections.singleton(superTypeOfLowerBounds);
+        }
+        addToValuesIfDifferent(superTypeOfLowerBounds, values);
+
+        if (values.isEmpty()) {
+            Collection<JetType> upperBounds = typeConstraintsWithoutErrorTypes.getUpperBounds();
+            for (JetType upperBound : upperBounds) {
+                if (trySuggestion(upperBound, typeConstraints)) {
+                    return Collections.singleton(upperBound);
                 }
             }
-            values.addAll(typeConstraints.getExactBounds());
-            Collection<JetType> lowerBounds = filterNotContainingErrorType(typeConstraints.getLowerBounds());
-            if (!lowerBounds.isEmpty()) {
-                JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(lowerBounds);
-                for (JetType value : values) {
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(superTypeOfLowerBounds, value)) {
-                        values.add(superTypeOfLowerBounds);
-                        break;
-                    }
-                }
-                if (values.isEmpty()) {
-                    values.add(superTypeOfLowerBounds);
-                }
-            }
-            Collection<JetType> upperBounds = filterNotContainingErrorType(typeConstraints.getUpperBounds());
-            if (!upperBounds.isEmpty()) {
-                //todo subTypeOfUpperBounds
-                JetType subTypeOfUpperBounds = upperBounds.iterator().next(); //todo
-                for (JetType value : values) {
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(value, subTypeOfUpperBounds)) {
-                        values.add(subTypeOfUpperBounds);
-                        break;
-                    }
-                }
-                if (values.isEmpty()) {
-                    values.add(subTypeOfUpperBounds);
-                }
+        }
+
+        for (JetType upperBound : typeConstraintsWithoutErrorTypes.getUpperBounds()) {
+            addToValuesIfDifferent(upperBound, values);
+        }
+
+        JetType superTypeOfNumberLowerBounds = commonSupertypeForNumberTypes(numberLowerBounds);
+        if (trySuggestion(superTypeOfNumberLowerBounds, typeConstraints)) {
+            return Collections.singleton(superTypeOfNumberLowerBounds);
+        }
+        addToValuesIfDifferent(superTypeOfNumberLowerBounds, values);
+
+        if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
+            JetType superTypeOfAllLowerBounds =
+                    commonSupertype(Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
+            if (trySuggestion(superTypeOfAllLowerBounds, typeConstraints)) {
+                return Collections.singleton(superTypeOfAllLowerBounds);
             }
         }
         return values;
     }
 
-    private static boolean verifyOneExactBound(@NotNull TypeConstraints typeConstraints) {
-        JetType exactBound = typeConstraints.getExactBounds().iterator().next();
+    private static void addToValuesIfDifferent(@Nullable JetType type, @NotNull Set<JetType> values) {
+        if (type == null) return;
+        if (values.isEmpty()) {
+            values.add(type);
+            return;
+        }
+        for (JetType value : values) {
+            if (!JetTypeChecker.INSTANCE.equalTypes(type, value)) {
+                values.add(type);
+                return;
+            }
+        }
+    }
+
+    @Nullable
+    private static JetType commonSupertype(@NotNull Collection<JetType> lowerBounds) {
+        if (lowerBounds.isEmpty()) return null;
+        return CommonSupertypes.commonSupertype(lowerBounds);
+    }
+
+    @Nullable
+    private static JetType commonSupertypeForNumberTypes(@NotNull Collection<JetType> numberLowerBounds) {
+        if (numberLowerBounds.isEmpty()) return null;
+        Set<Long> numbers = Sets.newHashSet();
+        for (JetType numberLowerBound : numberLowerBounds) {
+            assert numberLowerBound.getConstructor() instanceof NumberValueTypeConstructor;
+            numbers.add(((NumberValueTypeConstructor) numberLowerBound.getConstructor()).getValue());
+        }
+        assert !numbers.isEmpty();
+        return getDefaultNumberType(numbers);
+    }
+
+    private static JetType getDefaultNumberType(Collection<Long> values) {
+        for (Long value : values) {
+            if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+                return KotlinBuiltIns.getInstance().getLongType();
+            }
+        }
+        return KotlinBuiltIns.getInstance().getIntType();
+    }
+
+    private static boolean trySuggestion(
+            @Nullable JetType suggestion,
+            @NotNull TypeConstraints typeConstraints
+    ) {
+        if (suggestion == null) return false;
+        if (typeConstraints.getExactBounds().size() > 1) return false;
+
+        for (JetType exactBound : typeConstraints.getExactBounds()) {
+            if (!JetTypeChecker.INSTANCE.equalTypes(exactBound, suggestion)) {
+                return false;
+            }
+        }
         for (JetType lowerBound : typeConstraints.getLowerBounds()) {
-            if (!JetTypeChecker.INSTANCE.isSubtypeOf(lowerBound, exactBound)) {
+            if (!JetTypeChecker.INSTANCE.isSubtypeOf(lowerBound, suggestion)) {
                 return false;
             }
         }
         for (JetType upperBound : typeConstraints.getUpperBounds()) {
-            if (!JetTypeChecker.INSTANCE.isSubtypeOf(exactBound, upperBound)) {
+            if (!JetTypeChecker.INSTANCE.isSubtypeOf(suggestion, upperBound)) {
                 return false;
             }
         }
@@ -89,14 +160,23 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    private static Collection<JetType> filterNotContainingErrorType(@NotNull Collection<JetType> types) {
-        return Collections2.filter(types, new Predicate<JetType>() {
-            @Override
-            public boolean apply(@Nullable JetType type) {
-                if (ErrorUtils.containsErrorType(type)) return false;
-                return true;
+    private static TypeConstraints filterNotContainingErrorType(
+            @NotNull TypeConstraints typeConstraints,
+            @NotNull Collection<JetType> values
+    ) {
+        TypeConstraintsImpl typeConstraintsWithoutErrorType = new TypeConstraintsImpl(typeConstraints.getVarianceOfPosition());
+        Collection<Pair<TypeConstraintsImpl.BoundKind, JetType>> allBounds = ((TypeConstraintsImpl) typeConstraints).getAllBounds();
+        for (Pair<TypeConstraintsImpl.BoundKind, JetType> pair : allBounds) {
+            TypeConstraintsImpl.BoundKind boundKind = pair.getFirst();
+            JetType type = pair.getSecond();
+            if (ErrorUtils.containsErrorType(type)) {
+                values.add(type);
             }
-        });
+            else {
+                typeConstraintsWithoutErrorType.addBound(boundKind, type);
+            }
+        }
+        return typeConstraintsWithoutErrorType;
     }
 
     @Nullable

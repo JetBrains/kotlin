@@ -39,6 +39,8 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
+import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -356,6 +358,12 @@ public class CandidateResolver {
                     if (dataFlowInfoForValueArgument != null) {
                         newContext = newContext.replaceDataFlowInfo(dataFlowInfoForValueArgument);
                     }
+                    if (type != null && !type.getConstructor().isDenotable()) {
+                        if (type.getConstructor() instanceof NumberValueTypeConstructor) {
+                            NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
+                            type = ConstantUtils.updateConstantValueType(constructor, expectedType, expression, context);
+                        }
+                    }
                     DataFlowUtils.checkType(type, expression, newContext);
                     continue;
                 }
@@ -655,7 +663,7 @@ public class CandidateResolver {
         List<ReceiverValue> variants = AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (ReceiverValue receiverValue : variants) {
             JetType possibleType = receiverValue.getType();
-            if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType)) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
                 return possibleType;
             }
         }

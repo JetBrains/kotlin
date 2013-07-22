@@ -16,25 +16,37 @@
 
 package org.jetbrains.jet.lang.resolve.constants;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class NumberValueTypeConstructor implements TypeConstructor {
-    private final Long value;
+    private final long value;
+    private final Collection<JetType> supertypes = Lists.newArrayList();
 
-    public NumberValueTypeConstructor(Long value) {
+    public NumberValueTypeConstructor(long value) {
         this.value = value;
+
+        checkBoundsAndSuperType((long)Byte.MIN_VALUE, (long)Byte.MAX_VALUE, KotlinBuiltIns.getInstance().getByteType());
+        checkBoundsAndSuperType((long)Short.MIN_VALUE, (long)Short.MAX_VALUE, KotlinBuiltIns.getInstance().getShortType());
+        checkBoundsAndSuperType((long)Integer.MIN_VALUE, (long)Integer.MAX_VALUE, KotlinBuiltIns.getInstance().getIntType());
+        supertypes.add(KotlinBuiltIns.getInstance().getLongType());
+    }
+
+    private void checkBoundsAndSuperType(long minValue, long maxValue, JetType kotlinType) {
+        if (value > minValue && value < maxValue) {
+            supertypes.add(kotlinType);
+        }
     }
 
     public Long getValue() {
@@ -44,18 +56,18 @@ public class NumberValueTypeConstructor implements TypeConstructor {
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getParameters() {
-        throw new IllegalStateException();
+        return Collections.emptyList();
     }
 
     @NotNull
     @Override
     public Collection<JetType> getSupertypes() {
-        throw new IllegalStateException();
+        return supertypes;
     }
 
     @Override
     public boolean isSealed() {
-        throw new IllegalStateException();
+        return false;
     }
 
     @Override
@@ -66,12 +78,12 @@ public class NumberValueTypeConstructor implements TypeConstructor {
     @Nullable
     @Override
     public ClassifierDescriptor getDeclarationDescriptor() {
-        throw new IllegalStateException();
+        return null;
     }
 
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
-        throw new IllegalStateException();
+        return Collections.emptyList();
     }
 
     @Override
@@ -79,15 +91,20 @@ public class NumberValueTypeConstructor implements TypeConstructor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NumberValueTypeConstructor type = (NumberValueTypeConstructor) o;
+        NumberValueTypeConstructor that = (NumberValueTypeConstructor) o;
 
-        if (!value.equals(type.value)) return false;
+        if (value != that.value) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return (int) (value ^ (value >>> 32));
+    }
+
+    @Override
+    public String toString() {
+        return "NumberValueTypeConstructor(" + value + ')';
     }
 }

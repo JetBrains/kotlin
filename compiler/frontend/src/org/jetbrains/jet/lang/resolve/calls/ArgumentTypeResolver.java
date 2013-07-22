@@ -29,14 +29,12 @@ import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -71,16 +69,13 @@ public class ArgumentTypeResolver {
     }
 
     public static boolean isSubtypeOfForArgumentType(
-            @NotNull JetType subtype,
-            @NotNull JetType supertype
+            @NotNull JetType actualType,
+            @NotNull JetType expectedType
     ) {
-        if (subtype == PLACEHOLDER_FUNCTION_TYPE) {
-            return isFunctionOrErrorType(supertype) || KotlinBuiltIns.getInstance().isAny(supertype); //todo function type extends
+        if (actualType == PLACEHOLDER_FUNCTION_TYPE) {
+            return isFunctionOrErrorType(expectedType) || KotlinBuiltIns.getInstance().isAny(expectedType); //todo function type extends
         }
-        if (supertype == PLACEHOLDER_FUNCTION_TYPE) {
-            return isFunctionOrErrorType(subtype); //todo extends function type
-        }
-        return JetTypeChecker.INSTANCE.isSubtypeOf(subtype, supertype);
+        return JetTypeChecker.INSTANCE.isSubtypeOf(actualType, expectedType);
     }
 
     private static boolean isFunctionOrErrorType(@NotNull JetType supertype) {
