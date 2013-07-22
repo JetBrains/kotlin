@@ -45,6 +45,11 @@ public final class NumberTest extends SingleFileTranslationTest {
         fooBoxIsValue("SUCCESS");
     }
 
+    // KT-2342 Type mismatch on Int division (JavaScript back-end)
+    public void testKt2342() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testHexademicalConstant() throws Exception {
         try {
             fooBoxTest();

@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
@@ -38,7 +37,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.factories.NumberConversionFIF.INTEGER_NUMBER_TYPES;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setArguments;
 
 public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     INSTANCE;
@@ -69,13 +68,10 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
                 @NotNull List<JsExpression> arguments,
                 @NotNull TranslationContext context) {
             assert receiver != null;
-            TemporaryVariable left = context.declareTemporary(receiver);
             assert arguments.size() == 1;
-            TemporaryVariable right = context.declareTemporary(arguments.get(0));
-            JsBinaryOperation divRes = new JsBinaryOperation(JsBinaryOperator.DIV, left.reference(), right.reference());
-            JsBinaryOperation modRes = new JsBinaryOperation(JsBinaryOperator.MOD, left.reference(), right.reference());
-            JsBinaryOperation fractionalPart = new JsBinaryOperation(JsBinaryOperator.DIV, modRes, right.reference());
-            return AstUtil.newSequence(left.assignmentExpression(), right.assignmentExpression(), subtract(divRes, fractionalPart));
+            JsBinaryOperation div = new JsBinaryOperation(JsBinaryOperator.DIV, receiver, arguments.get(0));
+            JsBinaryOperation toInt32 = new JsBinaryOperation(JsBinaryOperator.BIT_OR, div, context.program().getNumberLiteral(0));
+            return toInt32;
         }
     };
 
