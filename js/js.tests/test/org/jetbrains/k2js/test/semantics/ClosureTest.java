@@ -36,11 +36,11 @@ public final class ClosureTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testLocalParameterInLocalNamedFunction() throws Exception {
-        fooBoxTest();
+    public void testClosureInNestedFunctions() throws Exception {
+        checkFooBoxIsOk();
     }
 
-    public void testObjectAsConstructorParameter() throws Exception {
+    public void testClosureInNestedFunctionsWhichMixedWithObject() throws Exception {
         fooBoxTest();
     }
 }
