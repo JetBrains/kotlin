@@ -102,6 +102,18 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
     }
 
+    private static JetTypeInfo createNumberValueTypeInfo(
+            @NotNull NumberValueTypeConstructor numberValueTypeConstructor,
+            @NotNull Number value,
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        return JetTypeInfo.create(new JetTypeImpl(
+                Collections.<AnnotationDescriptor>emptyList(), numberValueTypeConstructor,
+                false, Collections.<TypeProjection>emptyList(),
+                ErrorUtils.createErrorScope("Scope for number value type (" + value + ")", true)),
+                dataFlowInfo);
+    }
+
     @Override
     public JetTypeInfo visitConstantExpression(JetConstantExpression expression, ExpressionTypingContext context) {
         ASTNode node = expression.getNode();
@@ -114,11 +126,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
                 Long longValue = CompileTimeConstantResolver.parseLongValue(text);
                 if (longValue != null) {
-                    JetTypeImpl numberValueType = new JetTypeImpl(
-                            Collections.<AnnotationDescriptor>emptyList(), new NumberValueTypeConstructor(longValue), false,
-                            Collections.<TypeProjection>emptyList(),
-                            ErrorUtils.createErrorScope("Scope for number value type (" + longValue + ")", true));
-                    return JetTypeInfo.create(numberValueType, context.dataFlowInfo);
+                    return createNumberValueTypeInfo(IntegerValueTypeConstructor.create(longValue), longValue, context.dataFlowInfo);
+                }
+            }
+            else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
+                Double doubleValue = CompileTimeConstantResolver.parseDoubleValue(text);
+                if (doubleValue != null) {
+                    return createNumberValueTypeInfo(DoubleValueTypeConstructor.create(doubleValue), doubleValue, context.dataFlowInfo);
                 }
             }
         }

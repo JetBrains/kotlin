@@ -122,6 +122,16 @@ public class CompileTimeConstantResolver {
         }
     }
 
+    @Nullable
+    public static Double parseDoubleValue(String text) {
+        try {
+            return Double.parseDouble(text);
+        }
+        catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     @NotNull
     public CompileTimeConstant<?> getFloatValue(@NotNull String text, @NotNull JetType expectedType) {
         if (noExpectedType(expectedType)
