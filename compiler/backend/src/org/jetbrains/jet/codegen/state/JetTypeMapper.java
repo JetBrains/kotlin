@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionTraitClassName;
@@ -224,116 +223,51 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public Type mapType(
-            @NotNull JetType jetType,
+            @NotNull  JetType             jetType,
             @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull JetTypeMapperMode kind,
-            @NotNull Variance howThisTypeIsUsed
+            @NotNull  JetTypeMapperMode   kind,
+            @NotNull  Variance            howThisTypeIsUsed
     ) {
-        Type known = null;
-        DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-
-        if (mapBuiltinsToJava) {
-            if (descriptor instanceof ClassDescriptor) {
-                known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(jetType);
-            }
-        }
-
-        if (known != null) {
-            if (kind == JetTypeMapperMode.VALUE) {
-                return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
-            }
-            else if (kind == JetTypeMapperMode.TYPE_PARAMETER) {
-                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed);
-            }
-            else if (kind == JetTypeMapperMode.TRAIT_IMPL) {
-                throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
-            }
-            else if (kind == JetTypeMapperMode.IMPL) {
-                //noinspection ConstantConditions
-                if (mapBuiltinsToJava) {
-                    // TODO: enable and fix tests
-                    //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
-                }
-                return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
-            }
-            else {
-                throw new IllegalStateException("unknown kind: " + kind);
-            }
-        }
+        DeclarationDescriptor descriptor = descriptorForJetType(jetType);
 
         TypeConstructor constructor = jetType.getConstructor();
         if (constructor instanceof IntersectionTypeConstructor) {
             jetType = CommonSupertypes.commonSupertype(new ArrayList<JetType>(constructor.getSupertypes()));
         }
 
-        if (descriptor == null) {
+        if (ErrorUtils.isError(descriptor)) return nonExistentClassType(signatureVisitor, descriptor);
+
+        return descriptor.accept(new JetTypeToJavaTypeMapper(signatureVisitor,
+                                                             this,
+                                                             new BuiltinToJavaMapping(signatureVisitor,
+                                                                                      this,
+                                                                                      jetType,
+                                                                                      howThisTypeIsUsed,
+                                                                                      kind),
+                                                             howThisTypeIsUsed,
+                                                             kind,
+                                                             mapBuiltinsToJava,
+                                                             descriptor),
+                                 jetType);
+    }
+
+    private static DeclarationDescriptor descriptorForJetType(JetType jetType) {
+        DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null)
             throw new UnsupportedOperationException("no descriptor for type constructor of " + jetType);
+        return descriptor;
+    }
+
+    private Type nonExistentClassType(BothSignatureWriter signatureVisitor, DeclarationDescriptor descriptor) {
+        if (classBuilderMode != ClassBuilderMode.SIGNATURES) {
+            throw new IllegalStateException(generateErrorMessageForErrorType(descriptor));
         }
-
-        if (ErrorUtils.isError(descriptor)) {
-            if (classBuilderMode != ClassBuilderMode.SIGNATURES) {
-                throw new IllegalStateException(generateErrorMessageForErrorType(descriptor));
-            }
-            Type asmType = Type.getObjectType("error/NonExistentClass");
-            if (signatureVisitor != null) {
-                signatureVisitor.writeAsmType(asmType, true);
-            }
-            checkValidType(asmType);
-            return asmType;
+        Type asmType = Type.getObjectType("error/NonExistentClass");
+        if (signatureVisitor != null) {
+            signatureVisitor.writeAsmType(asmType, true);
         }
-
-        if (mapBuiltinsToJava && descriptor instanceof ClassDescriptor && KotlinBuiltIns.getInstance().isArray(jetType)) {
-            if (jetType.getArguments().size() != 1) {
-                throw new UnsupportedOperationException("arrays must have one type argument");
-            }
-            TypeProjection memberProjection = jetType.getArguments().get(0);
-            JetType memberType = memberProjection.getType();
-
-            if (signatureVisitor != null) {
-                signatureVisitor.writeArrayType(jetType.isNullable(), memberProjection.getProjectionKind());
-                mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
-                signatureVisitor.writeArrayEnd();
-            }
-
-            Type r;
-            if (!isGenericsArray(jetType)) {
-                r = Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
-            }
-            else {
-                r = AsmTypeConstants.JAVA_ARRAY_GENERIC_TYPE;
-            }
-            checkValidType(r);
-            return r;
-        }
-
-        if (descriptor instanceof ClassDescriptor) {
-            JvmClassName name = getJvmInternalName(bindingTrace, descriptor);
-            Type asmType;
-            if (kind == JetTypeMapperMode.TRAIT_IMPL) {
-                asmType = Type.getObjectType(name.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
-            }
-            else {
-                asmType = name.getAsmType();
-            }
-            boolean forceReal = KotlinToJavaTypesMap.getInstance().isForceReal(name);
-
-            writeGenericType(signatureVisitor, asmType, jetType, forceReal, howThisTypeIsUsed);
-
-            checkValidType(asmType);
-            return asmType;
-        }
-
-        if (descriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            Type type = mapType(typeParameterDescriptor.getUpperBoundsAsType(), kind);
-            if (signatureVisitor != null) {
-                signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), jetType.isNullable(), type);
-            }
-            checkValidType(type);
-            return type;
-        }
-
-        throw new UnsupportedOperationException("Unknown type " + jetType);
+        checkValidType(asmType);
+        return asmType;
     }
 
     private String generateErrorMessageForErrorType(@NotNull DeclarationDescriptor descriptor) {
@@ -354,88 +288,7 @@ public class JetTypeMapper extends BindingTraceAware {
                       parentDeclarationElement != null ? parentDeclarationElement.getText() : "null");
     }
 
-    private void writeGenericType(
-            BothSignatureWriter signatureVisitor,
-            Type asmType,
-            JetType jetType,
-            boolean forceReal,
-            Variance howThisTypeIsUsed
-    ) {
-        if (signatureVisitor != null) {
-            String kotlinTypeName = getKotlinTypeNameForSignature(jetType, asmType);
-            signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable(), forceReal, kotlinTypeName);
-
-            List<TypeProjection> arguments = jetType.getArguments();
-            for (TypeParameterDescriptor parameter : jetType.getConstructor().getParameters()) {
-                TypeProjection argument = arguments.get(parameter.getIndex());
-
-                Variance projectionKindForKotlin = argument.getProjectionKind();
-                Variance projectionKindForJava = getEffectiveVariance(
-                        parameter.getVariance(),
-                        projectionKindForKotlin,
-                        howThisTypeIsUsed
-                );
-                signatureVisitor.writeTypeArgument(projectionKindForKotlin, projectionKindForJava);
-
-                mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
-                signatureVisitor.writeTypeArgumentEnd();
-            }
-            signatureVisitor.writeClassEnd();
-        }
-    }
-
-    private static Variance getEffectiveVariance(Variance parameterVariance, Variance projectionKind, Variance howThisTypeIsUsed) {
-        // Return type must not contain wildcards
-        if (howThisTypeIsUsed == Variance.OUT_VARIANCE) return projectionKind;
-
-        if (parameterVariance == Variance.INVARIANT) {
-            return projectionKind;
-        }
-        if (projectionKind == Variance.INVARIANT) {
-            return parameterVariance;
-        }
-        if (parameterVariance == projectionKind) {
-            return parameterVariance;
-        }
-
-        // In<out X> = In<*>
-        // Out<in X> = Out<*>
-        return Variance.OUT_VARIANCE;
-    }
-
-    private Type mapKnownAsmType(
-            JetType jetType,
-            Type asmType,
-            @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull Variance howThisTypeIsUsed
-    ) {
-        if (signatureVisitor != null) {
-            if (jetType.getArguments().isEmpty()) {
-                String kotlinTypeName = getKotlinTypeNameForSignature(jetType, asmType);
-                signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
-            }
-            else {
-                writeGenericType(signatureVisitor, asmType, jetType, false, howThisTypeIsUsed);
-            }
-        }
-        checkValidType(asmType);
-        return asmType;
-    }
-
-    @Nullable
-    private static String getKotlinTypeNameForSignature(@NotNull JetType jetType, @NotNull Type asmType) {
-        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if (descriptor == null) return null;
-        if (asmType.getSort() != Type.OBJECT) return null;
-
-        JvmClassName jvmClassName = JvmClassName.byType(asmType);
-        if (JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() > 1) {
-            return JvmClassName.byClassDescriptor(descriptor).getSignatureName();
-        }
-        return null;
-    }
-
-    private void checkValidType(@NotNull Type type) {
+    public void checkValidType(@NotNull Type type) {
         if (!mapBuiltinsToJava) {
             String descriptor = type.getDescriptor();
             if (!descriptor.equals("Ljava/lang/Object;")) {
@@ -930,12 +783,6 @@ public class JetTypeMapper extends BindingTraceAware {
         }
         JvmClassName owner = JvmClassName.byType(mapped);
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
-    }
-
-
-    private static boolean isGenericsArray(JetType type) {
-        return KotlinBuiltIns.getInstance().isArray(type) &&
-               type.getArguments().get(0).getType().getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
     }
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {
