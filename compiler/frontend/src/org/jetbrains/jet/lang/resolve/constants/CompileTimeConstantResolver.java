@@ -17,13 +17,15 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import com.google.common.base.Function;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetEscapeStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetLiteralStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -37,6 +39,37 @@ public class CompileTimeConstantResolver {
     public CompileTimeConstantResolver() {
         this.builtIns = KotlinBuiltIns.getInstance();
     }
+
+    @NotNull
+    public CompileTimeConstant<?> getCompileTimeConstant(
+            @NotNull JetConstantExpression expression,
+            @NotNull JetType expectedType
+    ) {
+        IElementType elementType = expression.getNode().getElementType();
+        String text = expression.getNode().getText();
+
+        CompileTimeConstant<?> value;
+        if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
+            value = getIntegerValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
+            value = getFloatValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
+            value = getBooleanValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
+            value = getCharValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.NULL) {
+            value = getNullValue(expectedType);
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported constant: " + expression);
+        }
+        return value;
+    }
+
 
     @NotNull
     public CompileTimeConstant<?> getIntegerValue(@NotNull String text, @NotNull JetType expectedType) {

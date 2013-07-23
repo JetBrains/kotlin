@@ -39,8 +39,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -55,8 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
@@ -364,7 +362,16 @@ public class CandidateResolver {
                             type = ConstantUtils.updateConstantValueType(constructor, expectedType, expression, context);
                         }
                     }
-                    DataFlowUtils.checkType(type, expression, newContext);
+                    if (expression instanceof JetConstantExpression && !KotlinBuiltIns.getInstance().isUnit(expectedType)) {
+                        CompileTimeConstant<?> value =
+                                new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, expectedType);
+                        if (value instanceof ErrorValue) {
+                            context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
+                        }
+                    }
+                    else {
+                        DataFlowUtils.checkType(type, expression, newContext);
+                    }
                     continue;
                 }
 

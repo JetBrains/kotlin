@@ -116,9 +116,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitConstantExpression(JetConstantExpression expression, ExpressionTypingContext context) {
-        ASTNode node = expression.getNode();
-        IElementType elementType = node.getElementType();
-        String text = node.getText();
+        IElementType elementType = expression.getNode().getElementType();
+        String text = expression.getNode().getText();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
 
@@ -137,34 +136,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
-        CompileTimeConstant<?> value;
-        if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-            value = compileTimeConstantResolver.getIntegerValue(text, context.expectedType);
-        }
-        else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
-            value = compileTimeConstantResolver.getFloatValue(text, context.expectedType);
-        }
-        else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
-            value = compileTimeConstantResolver.getBooleanValue(text, context.expectedType);
-        }
-        else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
-            value = compileTimeConstantResolver.getCharValue(text, context.expectedType);
-        }
-        else if (elementType == JetNodeTypes.NULL) {
-            value = compileTimeConstantResolver.getNullValue(context.expectedType);
-        }
-        else {
-            throw new IllegalArgumentException("Unsupported constant: " + expression);
-        }
+        CompileTimeConstant<?> value = compileTimeConstantResolver.getCompileTimeConstant(expression, context.expectedType);
         if (value instanceof ErrorValue) {
-            ErrorValue errorValue = (ErrorValue) value;
-            context.trace.report(ERROR_COMPILE_TIME_VALUE.on(node.getPsi(), errorValue.getMessage()));
+            if (context.expectedType != UNKNOWN_EXPECTED_TYPE) {
+                context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
+            }
             return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
         }
-        else {
-            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, value);
-            return DataFlowUtils.checkType(value.getType(builtIns), expression, context, context.dataFlowInfo);
-        }
+        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, value);
+        return DataFlowUtils.checkType(value.getType(builtIns), expression, context, context.dataFlowInfo);
     }
 
     @Override
