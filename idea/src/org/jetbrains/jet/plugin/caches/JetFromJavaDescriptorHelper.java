@@ -103,14 +103,14 @@ public class JetFromJavaDescriptorHelper {
     private static ClassData getClassData(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile == null) return null;
-        return KotlinClassFileHeader.readClassData(virtualFile);
+        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile).readClassData();
     }
 
     @Nullable
     private static PackageData getPackageData(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile == null) return null;
-        return KotlinClassFileHeader.readPackageData(virtualFile);
+        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile).readPackageData();
     }
 
     //TODO: common utility
