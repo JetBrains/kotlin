@@ -31,9 +31,11 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
-import java.util.List;
 
 public class DebuggerUtils {
+    private DebuggerUtils() {
+    }
+
     @Nullable
     public static JetFile findSourceFileForClass(
             @NotNull GlobalSearchScope searchScope,
@@ -62,7 +64,7 @@ public class DebuggerUtils {
             return anyFile;
         }
 
-        List<JetFile> allNamespaceFiles = filesProvider.allNamespaceFiles().fun(anyFile);
+        Collection<JetFile> allNamespaceFiles = filesProvider.allNamespaceFiles().fun(anyFile);
         JetFile file = PsiCodegenPredictor.getFileForNamespacePartName(allNamespaceFiles, className);
         if (file != null) {
             return file;

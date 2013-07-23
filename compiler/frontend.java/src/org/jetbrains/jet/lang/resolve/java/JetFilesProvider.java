@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -28,19 +29,17 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class JetFilesProvider {
     public static JetFilesProvider getInstance(Project project) {
         return ServiceManager.getService(project, JetFilesProvider.class);
     }
 
-    public final Function<JetFile, List<JetFile>> allNamespaceFiles() {
-        return new Function<JetFile, List<JetFile>>() {
+    public final Function<JetFile, Collection<JetFile>> allNamespaceFiles() {
+        return new Function<JetFile, Collection<JetFile>>() {
             @Override
-            public List<JetFile> fun(JetFile file) {
-                return new SameJetFilePredicate(file).filter(sampleToAllFilesInModule().fun(file));
+            public Collection<JetFile> fun(JetFile file) {
+                return Collections2.filter(sampleToAllFilesInModule().fun(file), new SameJetFilePredicate(file));
             }
         };
     }
@@ -59,15 +58,6 @@ public abstract class JetFilesProvider {
         @Override
         public boolean apply(PsiFile psiFile) {
             return JetPsiUtil.getFQName((JetFile) psiFile).equals(name);
-        }
-
-        public List<JetFile> filter(Collection<JetFile> allFiles) {
-            LinkedList<JetFile> files = new LinkedList<JetFile>();
-            for (JetFile aFile : allFiles) {
-                if(apply(aFile))
-                    files.add(aFile);
-            }
-            return files;
         }
     }
 }

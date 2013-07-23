@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.List;
+import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
@@ -193,7 +193,7 @@ public final class PsiCodegenPredictor {
     }
 
     @Nullable
-    public static JetFile getFileForNamespacePartName(@NotNull List<JetFile> allNamespaceFiles, @NotNull JvmClassName className) {
+    public static JetFile getFileForNamespacePartName(@NotNull Collection<JetFile> allNamespaceFiles, @NotNull JvmClassName className) {
         for (JetFile file : allNamespaceFiles) {
             String internalName = NamespaceCodegen.getNamespacePartInternalName(file);
             JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
@@ -207,7 +207,7 @@ public final class PsiCodegenPredictor {
     @Nullable
     public static JetFile getFileForCodegenNamedClass(
             @NotNull BindingContext context,
-            @NotNull List<JetFile> allNamespaceFiles,
+            @NotNull Collection<JetFile> allNamespaceFiles,
             @NotNull final JvmClassName className
     ) {
         final Ref<DeclarationDescriptor> resultingDescriptor = Ref.create();
