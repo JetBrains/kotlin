@@ -265,6 +265,7 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelShortObjectNameIndex"/>
 
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex"/>
+    <fileBasedIndex implementation="org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex"/>
 
     <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor"/>
     <psi.clsCustomNavigationPolicy implementation="org.jetbrains.jet.plugin.libraries.JetClsNavigationPolicy"/>
