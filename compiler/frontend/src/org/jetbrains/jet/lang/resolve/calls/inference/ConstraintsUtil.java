@@ -72,6 +72,9 @@ public class ConstraintsUtil {
                 }
             }
         }
+        //todo
+        //fun <T> foo(t: T, consumer: Consumer<T>): T
+        //foo(1, c: Consumer<Any>) - infer Int, not Any here
 
         for (JetType upperBound : typeConstraintsWithoutErrorTypes.getUpperBounds()) {
             addToValuesIfDifferent(upperBound, values);
