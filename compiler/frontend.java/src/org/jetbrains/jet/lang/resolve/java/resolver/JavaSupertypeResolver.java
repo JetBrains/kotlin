@@ -67,8 +67,7 @@ public final class JavaSupertypeResolver {
 
         String context = "class " + psiClass.getQualifiedName();
 
-        TypeVariableResolver typeVariableResolverForSupertypes =
-                TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
+        TypeVariableResolver typeVariableResolverForSupertypes = new TypeVariableResolver(typeParameters, classDescriptor, context);
         transformSupertypeList(result, psiClass.getExtendsListTypes(), typeVariableResolverForSupertypes);
         transformSupertypeList(result, psiClass.getImplementsListTypes(), typeVariableResolverForSupertypes);
 

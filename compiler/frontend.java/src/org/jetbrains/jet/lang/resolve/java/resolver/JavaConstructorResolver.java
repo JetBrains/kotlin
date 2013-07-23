@@ -75,10 +75,10 @@ public final class JavaConstructorResolver {
 
         PsiClass psiClass = classData.getPsiClass();
 
-        TypeVariableResolver resolverForTypeParameters = TypeVariableResolvers.classTypeVariableResolver(
-                containingClass, "class " + psiClass.getQualifiedName());
-
         List<TypeParameterDescriptor> typeParameters = containingClass.getTypeConstructor().getParameters();
+
+        TypeVariableResolver typeVariableResolver =
+                new TypeVariableResolver(typeParameters, containingClass, "class " + psiClass.getQualifiedName());
 
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
@@ -128,7 +128,7 @@ public final class JavaConstructorResolver {
                             JetType varargElementType = null;
                             if (i == methods.length - 1 && (returnType instanceof PsiArrayType)) {
                                 varargElementType = typeTransformer
-                                        .transformToType(((PsiArrayType) returnType).getComponentType(), resolverForTypeParameters);
+                                        .transformToType(((PsiArrayType) returnType).getComponentType(), typeVariableResolver);
                             }
 
                             assert returnType != null;
@@ -137,7 +137,7 @@ public final class JavaConstructorResolver {
                                     i,
                                     Collections.<AnnotationDescriptor>emptyList(),
                                     Name.identifier(method.getName()),
-                                    typeTransformer.transformToType(returnType, resolverForTypeParameters),
+                                    typeTransformer.transformToType(returnType, typeVariableResolver),
                                     annotationMethod.getDefaultValue() != null,
                                     varargElementType));
                         }
@@ -184,10 +184,12 @@ public final class JavaConstructorResolver {
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false);
 
-        String context = "constructor of class " + psiClass.getQualifiedName();
+        List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
+
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
                 constructorDescriptor, constructor.getParameters(),
-                TypeVariableResolvers.classTypeVariableResolver(classDescriptor, context));
+                new TypeVariableResolver(typeParameters, classDescriptor, "constructor of class " + psiClass.getQualifiedName())
+        );
 
         if (valueParameterDescriptors.getReceiverType() != null) {
             throw new IllegalStateException();
@@ -204,7 +206,7 @@ public final class JavaConstructorResolver {
                          Collections.singletonList(alternativeMethodSignatureData.getError()));
         }
 
-        constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(),
+        constructorDescriptor.initialize(typeParameters,
                                          valueParameterDescriptors.getDescriptors(),
                                          DescriptorResolverUtils.resolveVisibility(psiConstructor),
                                          aStatic);

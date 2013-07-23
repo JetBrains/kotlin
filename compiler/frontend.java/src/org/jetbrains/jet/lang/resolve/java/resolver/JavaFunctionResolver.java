@@ -128,15 +128,10 @@ public final class JavaFunctionResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
 
-        String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
+        List<TypeParameterDescriptor> methodTypeParameters = signatureResolver.resolveMethodTypeParameters(method, functionDescriptorImpl);
 
-        List<TypeParameterDescriptor> methodTypeParameters =
-                signatureResolver.resolveMethodTypeParameters(method,
-                                                              functionDescriptorImpl);
-
-        TypeVariableResolver methodTypeVariableResolver = TypeVariableResolvers.typeVariableResolverFromTypeParameters(methodTypeParameters,
-                                                                                                                       functionDescriptorImpl,
-                                                                                                                       context);
+        TypeVariableResolver methodTypeVariableResolver = new TypeVariableResolver(
+                methodTypeParameters, functionDescriptorImpl, "method " + method.getName() + " in class " + psiClass.getQualifiedName());
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);

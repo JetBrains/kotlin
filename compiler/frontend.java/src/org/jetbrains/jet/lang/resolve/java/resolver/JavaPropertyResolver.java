@@ -158,8 +158,9 @@ public final class JavaPropertyResolver {
 
         propertyDescriptor.initialize(null, null);
 
-        TypeVariableResolver typeVariableResolverForPropertyInternals = TypeVariableResolvers.typeVariableResolverFromTypeParameters(
-                Collections.<TypeParameterDescriptor>emptyList(), propertyDescriptor, "property " + propertyName + " in " + context);
+        TypeVariableResolver typeVariableResolverForPropertyInternals =
+                new TypeVariableResolver(Collections.<TypeParameterDescriptor>emptyList(), propertyDescriptor,
+                                         "property " + propertyName + " in " + context);
 
         JetType propertyType = getPropertyType(field, typeVariableResolverForPropertyInternals);
 

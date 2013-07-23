@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolvers;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
@@ -137,9 +136,8 @@ public final class JavaSignatureResolver {
 
         for (TypeParameterDescriptorInitialization psiTypeParameter : typeParametersInitialization) {
             prevTypeParameters.add(psiTypeParameter.descriptor);
-            initializeTypeParameter(psiTypeParameter,
-                                    TypeVariableResolvers
-                                            .typeVariableResolverFromTypeParameters(typeParameters, typeParametersOwner, context));
+
+            initializeTypeParameter(psiTypeParameter, new TypeVariableResolver(typeParameters, typeParametersOwner, context));
         }
     }
 
