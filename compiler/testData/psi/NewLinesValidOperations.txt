@@ -87,7 +87,7 @@ JetFile: NewLinesValidOperations.jet
       PsiWhiteSpace('\n\n    ')
       BINARY_EXPRESSION
         BOOLEAN_CONSTANT
-          PsiElement(true)('true')          ª
+          PsiElement(true)('true')
         PsiWhiteSpace('\n\n        ')
         OPERATION_REFERENCE
           PsiElement(OROR)('||')
