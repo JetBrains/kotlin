@@ -16,23 +16,24 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.google.common.collect.Sets;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllPackageDeclarations;
-
 public abstract class JavaPackageScope extends JavaBaseScope {
-
     @NotNull
     private final FqName packageFQN;
 
@@ -75,7 +76,48 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     @Override
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
-        result.addAll(computeAllPackageDeclarations(((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage(), semanticServices));
+        result.addAll(computeAllPackageDeclarations());
+        return result;
+    }
+
+    @NotNull
+    private Collection<DeclarationDescriptor> computeAllPackageDeclarations() {
+        Collection<DeclarationDescriptor> result = Sets.newHashSet();
+
+        PsiPackage psiPackage = ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
+
+        for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
+            FqName fqName = new FqName(psiSubPackage.getQualifiedName());
+            NamespaceDescriptor childNs = getResolver().resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            if (childNs != null) {
+                result.add(childNs);
+            }
+        }
+
+        for (PsiClass psiClass : semanticServices.getPsiClassFinder().findPsiClasses(psiPackage)) {
+            if (DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass)) continue;
+
+            if (psiClass instanceof JetJavaMirrorMarker) continue;
+
+            if (!psiClass.hasModifierProperty(PsiModifier.PUBLIC)) continue;
+
+            ProgressIndicatorProvider.checkCanceled();
+
+            String qualifiedName = psiClass.getQualifiedName();
+            if (qualifiedName == null) continue;
+            FqName fqName = new FqName(qualifiedName);
+
+            ClassDescriptor classDescriptor = getResolver().resolveClass(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            if (classDescriptor != null) {
+                result.add(classDescriptor);
+            }
+
+            NamespaceDescriptor namespace = getResolver().resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            if (namespace != null) {
+                result.add(namespace);
+            }
+        }
+
         return result;
     }
 }
