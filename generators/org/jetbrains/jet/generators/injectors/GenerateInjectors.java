@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
@@ -103,6 +104,9 @@ public class GenerateInjectors {
         generator.addField(JavaDescriptorResolver.class);
         generator.addField(PsiClassFinderImpl.class);
         generator.addPublicField(NamespaceFactoryImpl.class);
+        generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
+                           new GivenExpression(
+                                   "com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm",
                            GenerateInjectors.class);
     }
@@ -117,6 +121,8 @@ public class GenerateInjectors {
         // Fields
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
+        generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
+                           new GivenExpression("com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));
 
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaDescriptorResolver",
                            GenerateInjectors.class);

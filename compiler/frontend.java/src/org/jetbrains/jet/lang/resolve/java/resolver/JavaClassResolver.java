@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
@@ -56,7 +57,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
-import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.getVirtualFile;
 
 public final class JavaClassResolver {
 
@@ -91,8 +91,14 @@ public final class JavaClassResolver {
     private JavaSupertypeResolver supertypesResolver;
     private JavaFunctionResolver functionResolver;
     private DeserializedDescriptorResolver kotlinDescriptorResolver;
+    private VirtualFileFinder virtualFileFinder;
 
     public JavaClassResolver() {
+    }
+
+    @Inject
+    public void setVirtualFileFinder(VirtualFileFinder virtualFileFinder) {
+        this.virtualFileFinder = virtualFileFinder;
     }
 
     @Inject
@@ -202,6 +208,30 @@ public final class JavaClassResolver {
     }
 
     private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
+        //TODO: correct scope
+        VirtualFile file = virtualFileFinder.find(qualifiedName);
+        if (file != null) {
+            //TODO: code duplication
+            //TODO: it is a hackish way to determine whether it is inner class or not
+            boolean isInnerClass = file.getName().contains("$");
+            ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, isInnerClass);
+            // class may be resolved during resolution of parent
+            ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
+            if (cachedDescriptor != null) {
+                return cachedDescriptor;
+            }
+            assert (!unresolvedCache.contains(qualifiedName))
+                    : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
+
+            ClassId id = ClassId.fromFqNameAndContainingDeclaration(qualifiedName, containingDeclaration);
+            ErrorReporter errorReporter = AbiVersionUtil.abiVersionErrorReporter(file, qualifiedName, trace);
+            ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(id, file, errorReporter);
+            if (deserializedDescriptor != null) {
+                cache(javaClassToKotlinFqName(qualifiedName), deserializedDescriptor);
+                return deserializedDescriptor;
+            }
+        }
+
         PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.REPORT_ERROR);
         if (psiClass == null) {
             cacheNegativeValue(javaClassToKotlinFqName(qualifiedName));
@@ -213,8 +243,21 @@ public final class JavaClassResolver {
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
+        //TODO: code duplication
+        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, isContainedInClass(psiClass));
+        // class may be resolved during resolution of parent
+        ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
+        if (cachedDescriptor != null) {
+            return cachedDescriptor;
+        }
+        assert (!unresolvedCache
+                .contains(qualifiedName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
-        return createJavaClassDescriptor(qualifiedName, psiClass, tasks);
+        checkFqNamesAreConsistent(psiClass, qualifiedName);
+        checkPsiClassIsNotJet(psiClass);
+
+
+        return doCreateClassDescriptor(qualifiedName, psiClass, tasks, containingDeclaration);
     }
 
     private void cacheNegativeValue(@NotNull FqNameBase qualifiedName) {
@@ -227,42 +270,6 @@ public final class JavaClassResolver {
     private static boolean isTraitImplementation(@NotNull FqName qualifiedName) {
         // TODO: only if -$$TImpl class is created by Kotlin
         return qualifiedName.asString().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX);
-    }
-
-    @NotNull
-    private ClassDescriptor createJavaClassDescriptor(
-            @NotNull FqName fqName, @NotNull PsiClass psiClass,
-            @NotNull PostponedTasks taskList
-    ) {
-        checkFqNamesAreConsistent(psiClass, fqName);
-        checkPsiClassIsNotJet(psiClass);
-
-        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
-        // class may be resolved during resolution of parent
-        ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(fqName));
-        if (cachedDescriptor != null) {
-            return cachedDescriptor;
-        }
-
-        assert (!unresolvedCache.contains(fqName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
-
-        VirtualFile outerClassFile = psiClass.getContainingFile().getVirtualFile();
-        if (outerClassFile != null) {
-            ClassId id = ClassId.fromFqNameAndContainingDeclaration(fqName, containingDeclaration);
-            VirtualFile file = getVirtualFile(id, outerClassFile);
-            if (file != null) {
-                ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(id, file,
-                        DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
-
-                if (deserializedDescriptor != null) {
-                    //TODO: class object and psi class
-                    cache(javaClassToKotlinFqName(fqName), deserializedDescriptor);
-                    return deserializedDescriptor;
-                }
-            }
-        }
-
-        return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);
     }
 
     @NotNull
@@ -418,20 +425,23 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
-        if (isContainedInClass(psiClass)) {
-            return resolveParentClass(psiClass);
+    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull FqName childClassFQName, boolean isInnerClass) {
+        FqName parentFqName = childClassFQName.parent();
+        if (isInnerClass) {
+            ClassDescriptor parentClass = resolveClass(parentFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+            if (parentClass == null) {
+                throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
+            }
+            return parentClass;
         }
         else {
-            return resolveParentNamespace(psiClass);
+            //TODO: why do we include kotlin here? what this flags means anyway?
+            NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(parentFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+            if (parentNamespace == null) {
+                throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
+            }
+            return parentNamespace;
         }
-    }
-
-    @NotNull
-    private static FqName getFqName(@NotNull PsiClass psiClass) {
-        String qualifiedName = psiClass.getQualifiedName();
-        assert qualifiedName != null;
-        return new FqName(qualifiedName);
     }
 
     // This method replaces "object" segments of FQ name to "<class-object-for-...>"
@@ -457,30 +467,6 @@ public final class JavaClassResolver {
 
     private static boolean isInnerClass(@NotNull PsiClass psiClass) {
         return isContainedInClass(psiClass) && !psiClass.hasModifierProperty(PsiModifier.STATIC);
-    }
-
-    @NotNull
-    private ClassOrNamespaceDescriptor resolveParentClass(@NotNull PsiClass psiClass) {
-        PsiClass containingClass = psiClass.getContainingClass();
-        assert containingClass != null;
-        FqName containerFqName = getFqName(containingClass);
-        ClassDescriptor parentClass = resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
-        if (parentClass == null) {
-            throw new IllegalStateException(
-                    "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + getFqName(psiClass));
-        }
-        return parentClass;
-    }
-
-    @NotNull
-    private ClassOrNamespaceDescriptor resolveParentNamespace(@NotNull PsiClass psiClass) {
-        FqName namespaceFqName = getFqName(psiClass).parent();
-        NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(namespaceFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
-        if (parentNamespace == null) {
-            throw new IllegalStateException("cannot resolve namespace " + namespaceFqName +
-                                            ", required to be container for " + getFqName(psiClass));
-        }
-        return parentNamespace;
     }
 
     @NotNull

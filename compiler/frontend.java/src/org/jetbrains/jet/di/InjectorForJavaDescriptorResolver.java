@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
@@ -43,6 +44,7 @@ public class InjectorForJavaDescriptorResolver {
     private final BindingTrace bindingTrace;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final PsiClassFinderImpl psiClassFinder;
+    private final VirtualFileFinder virtualFileFinder;
     private final JavaClassResolver javaClassResolver;
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaCompileTimeConstResolver javaCompileTimeConstResolver;
@@ -65,6 +67,7 @@ public class InjectorForJavaDescriptorResolver {
         this.bindingTrace = bindingTrace;
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
+        this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
@@ -96,6 +99,7 @@ public class InjectorForJavaDescriptorResolver {
         javaClassResolver.setSignatureResolver(javaSignatureResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTrace(bindingTrace);
+        javaClassResolver.setVirtualFileFinder(virtualFileFinder);
 
         javaAnnotationResolver.setClassResolver(javaClassResolver);
         javaAnnotationResolver.setCompileTimeConstResolver(javaCompileTimeConstResolver);
