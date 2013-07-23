@@ -19,6 +19,7 @@ package org.jetbrains.jet.asJava.wrappers;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.ClsMethodImpl;
 import com.intellij.psi.impl.java.stubs.PsiMethodStub;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
@@ -46,5 +47,10 @@ public class JetClsMethodImpl extends ClsMethodImpl implements JetClsMethod {
     @Override
     public JetDeclaration getOrigin() {
         return (JetDeclaration) origin;
+    }
+
+    @Override
+    public void delete() throws IncorrectOperationException {
+        origin.delete();
     }
 }
