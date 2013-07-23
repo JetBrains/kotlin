@@ -78,11 +78,10 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getIntegerValue(@Nullable Long value, @NotNull JetType expectedType) {
+        if (value == null) {
+            return OUT_OF_RANGE;
+        }
         if (noExpectedType(expectedType)) {
-            if (value == null) {
-                return OUT_OF_RANGE;
-            }
-
             if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
                 return new IntValue(value.intValue());
             }

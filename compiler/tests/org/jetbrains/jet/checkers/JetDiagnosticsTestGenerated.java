@@ -3789,6 +3789,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/numbers/doublesInSimpleConstraints.kt");
             }
             
+            @TestMetadata("intValuesOutOfRange.kt")
+            public void testIntValuesOutOfRange() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/numbers/intValuesOutOfRange.kt");
+            }
+            
             @TestMetadata("numbersInSimpleConstraints.kt")
             public void testNumbersInSimpleConstraints() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/numbers/numbersInSimpleConstraints.kt");
