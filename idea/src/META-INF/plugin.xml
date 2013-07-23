@@ -88,6 +88,9 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder"
+                    serviceImplementation="org.jetbrains.jet.plugin.vfilefinder.IDEVirtualFileFinder"/>
+
     <projectService serviceInterface="org.jetbrains.jet.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport"/>
 
