@@ -133,7 +133,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("indexOf(java.lang.Object)", "fun indexOf(o: jet.Any?): jet.Int"),            
             pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
-            pair("iterator()", "fun iterator(): jet.Iterator<E>"),            
+            pair("iterator()", "fun iterator(): jet.MutableIterator<E>"),            
             pair("lastIndexOf(java.lang.Object)", "fun lastIndexOf(o: jet.Any?): jet.Int"),            
             pair("listIterator()", "fun listIterator(): jet.MutableListIterator<E>"),            
             pair("listIterator(int)", "fun listIterator(index: jet.Int): jet.MutableListIterator<E>"),            
