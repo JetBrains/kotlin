@@ -22,11 +22,15 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
  * Encapuslates different types of constants and naming conventions.
  */
 public final class Namer {
+    public static final String KOTLIN_NAME = JetLanguage.NAME;
+    public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
+
     public static final String CALLEE_NAME = "$fun";
 
     private static final String INITIALIZE_METHOD_NAME = "initialize";
@@ -37,7 +41,6 @@ public final class Namer {
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
     private static final String SUPER_METHOD_NAME = "super_init";
-    private static final String KOTLIN_OBJECT_NAME = "Kotlin";
     private static final String ROOT_NAMESPACE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
@@ -123,7 +126,7 @@ public final class Namer {
     private final JsName isTypeName;
 
     private Namer(@NotNull JsScope rootScope) {
-        kotlinName = rootScope.declareName(KOTLIN_OBJECT_NAME);
+        kotlinName = rootScope.declareName(KOTLIN_NAME);
         kotlinScope = new JsScope(rootScope, "Kotlin standard object");
         traitName = kotlinScope.declareName(TRAIT_OBJECT_NAME);
 

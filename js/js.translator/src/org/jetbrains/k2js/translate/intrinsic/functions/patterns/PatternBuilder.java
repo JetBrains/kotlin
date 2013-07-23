@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.k2js.translate.context.Namer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,9 @@ public final class PatternBuilder {
 
     @NotNull
     private static final NamePredicate JET = new NamePredicate("jet");
+
+    @NotNull
+    private static final Name KOTLIN_NAME = Name.identifier(Namer.KOTLIN_LOWER_NAME);
 
     private PatternBuilder() {
     }
@@ -69,8 +73,16 @@ public final class PatternBuilder {
 
     @NotNull
     private static DescriptorPredicate pattern(@NotNull List<NamePredicate> checkers) {
-        final List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList(JET);
+        assert !checkers.isEmpty();
+        final List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList();
+        if (!checkers.get(0).apply(KOTLIN_NAME)) {
+            checkersWithPrefixChecker.add(JET);
+        }
+
         checkersWithPrefixChecker.addAll(checkers);
+
+        assert checkersWithPrefixChecker.size() > 1;
+
         return new DescriptorPredicate() {
             @Override
             public boolean apply(@Nullable FunctionDescriptor descriptor) {
@@ -89,8 +101,7 @@ public final class PatternBuilder {
                 if (nameParts.size() != checkersWithPrefixChecker.size()) {
                     return false;
                 }
-                if (!allNamePartsValid(nameParts)) return false;
-                return true;
+                return allNamePartsValid(nameParts);
             }
 
             private boolean allNamePartsValid(@NotNull List<Name> nameParts) {
