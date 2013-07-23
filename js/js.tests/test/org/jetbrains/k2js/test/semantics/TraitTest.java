@@ -62,4 +62,8 @@ public final class TraitTest extends SingleFileTranslationTest {
     public void testDefinitionOrder() throws Exception {
         fooBoxTest();
     }
+
+    public void testCheckImplementationCharacteristics() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

@@ -10,7 +10,10 @@ buildscript {
   }
 }
 
-apply plugin: org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
+
+apply plugin: KotlinPlugin
+apply plugin: 'java'
 
 sourceSets {
  deploy

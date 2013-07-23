@@ -1,0 +1,31 @@
+package test
+
+public trait InheritedSameAdaptersWithSubstitution : java.lang.Object {
+    
+    public trait Sub : test.InheritedSameAdaptersWithSubstitution.Super1, test.InheritedSameAdaptersWithSubstitution.Super2Substituted {
+        public final override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: ((jet.String, jet.String) -> jet.Int)?): jet.Unit
+        public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: java.util.Comparator<jet.String>?): jet.Unit
+    }
+    
+    public trait Super1 : java.lang.Object {
+        public final /*synthesized*/ fun foo(/*0*/ p0: ((jet.String, jet.String) -> jet.Int)?): jet.Unit
+        public abstract fun foo(/*0*/ p0: java.util.Comparator<jet.String>?): jet.Unit
+    }
+    
+    public trait Super2</*0*/ T> : java.lang.Object {
+        public final /*synthesized*/ fun foo(/*0*/ p0: ((T, T) -> jet.Int)?): jet.Unit
+        public abstract fun foo(/*0*/ p0: java.util.Comparator<T>?): jet.Unit
+    }
+    
+    public trait Super2Substituted : test.InheritedSameAdaptersWithSubstitution.Super2<jet.String> {
+        public final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: ((jet.String, jet.String) -> jet.Int)?): jet.Unit
+        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.util.Comparator<jet.String>?): jet.Unit
+    }
+}
+
+package InheritedSameAdaptersWithSubstitution {
+    public /*synthesized*/ fun Sub(/*0*/ function: (java.util.Comparator<jet.String>?) -> jet.Unit): test.InheritedSameAdaptersWithSubstitution.Sub
+    public /*synthesized*/ fun Super1(/*0*/ function: (java.util.Comparator<jet.String>?) -> jet.Unit): test.InheritedSameAdaptersWithSubstitution.Super1
+    public /*synthesized*/ fun </*0*/ T> Super2(/*0*/ function: (java.util.Comparator<T>?) -> jet.Unit): test.InheritedSameAdaptersWithSubstitution.Super2<T>
+    public /*synthesized*/ fun Super2Substituted(/*0*/ function: (java.util.Comparator<jet.String>?) -> jet.Unit): test.InheritedSameAdaptersWithSubstitution.Super2Substituted
+}

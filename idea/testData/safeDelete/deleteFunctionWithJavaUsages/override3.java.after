@@ -1,0 +1,9 @@
+class B extends A {
+    void bar() {
+        foo();
+    }
+
+    public void foo() {
+
+    }
+}

@@ -444,6 +444,21 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
+        public void testInheritMethodsDifferentReturnTypesAndVisibilities() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
+        }
+        
+        @TestMetadata("InheritValAndVar.kt")
+        public void testInheritValAndVar() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/InheritValAndVar.kt");
+        }
+        
+        @TestMetadata("InheritValsDifferentTypes.kt")
+        public void testInheritValsDifferentTypes() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/InheritValsDifferentTypes.kt");
+        }
+        
         @TestMetadata("NoSamAdapter.kt")
         public void testNoSamAdapter() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/fun/NoSamAdapter.kt");

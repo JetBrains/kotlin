@@ -1,0 +1,6 @@
+class A {
+}
+
+trait Z {
+    fun foo()
+}

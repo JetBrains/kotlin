@@ -45,9 +45,7 @@ public class SingleAbstractMethodUtils {
     public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
         List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
         for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
-            if (member instanceof CallableMemberDescriptor &&
-                    ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT &&
-                    !CallResolverUtil.isOrOverridesSynthesized((CallableMemberDescriptor) member)) {
+            if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
                 abstractMembers.add((CallableMemberDescriptor) member);
             }
         }
@@ -190,7 +188,8 @@ public class SingleAbstractMethodUtils {
                 original.getContainingDeclaration(),
                 original.getAnnotations(),
                 original.getName(),
-                CallableMemberDescriptor.Kind.SYNTHESIZED
+                CallableMemberDescriptor.Kind.SYNTHESIZED,
+                original
         );
         FunctionInitializer initializer = new FunctionInitializer() {
             @Override
@@ -205,7 +204,7 @@ public class SingleAbstractMethodUtils {
                         typeParameters,
                         valueParameters,
                         returnType,
-                        original.getModality(),
+                        Modality.FINAL,
                         original.getVisibility(),
                         false
                 );

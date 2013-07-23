@@ -20,13 +20,11 @@ import gnu.trove.THashSet;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -58,19 +56,50 @@ public class OverloadingConflictResolver {
                         return object == null ? 0 : object.getResultingDescriptor().hashCode();
                     }
                 });
-        meLoop:
         for (ResolvedCallWithTrace<D> candidateCall : candidates) {
-            D me = candidateCall.getResultingDescriptor();
-            for (ResolvedCallWithTrace<D> otherCall : candidates) {
-                D other = otherCall.getResultingDescriptor();
-                if (other == me) continue;
-                if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) {
-                    continue meLoop;
-                }
+            if (isMaximallySpecific(candidateCall, candidates, discriminateGenericDescriptors)) {
+                maximallySpecific.add(candidateCall);
             }
-            maximallySpecific.add(candidateCall);
         }
         return maximallySpecific.size() == 1 ? maximallySpecific.iterator().next() : null;
+    }
+
+    private <D extends CallableDescriptor> boolean isMaximallySpecific(
+            @NotNull ResolvedCallWithTrace<D> candidateCall,
+            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
+            boolean discriminateGenericDescriptors
+    ) {
+        D me = candidateCall.getResultingDescriptor();
+
+        boolean isInvoke = candidateCall instanceof VariableAsFunctionResolvedCall;
+        VariableDescriptor variable;
+        if (isInvoke) {
+            variable = ((VariableAsFunctionResolvedCall) candidateCall).getVariableCall().getResultingDescriptor();
+        }
+        else {
+            variable = null;
+        }
+
+        for (ResolvedCallWithTrace<D> otherCall : candidates) {
+            D other = otherCall.getResultingDescriptor();
+            if (other == me) continue;
+
+            if (definitelyNotMaximallySpecific(me, other, discriminateGenericDescriptors)) {
+
+                if (!isInvoke) return false;
+
+                assert otherCall instanceof VariableAsFunctionResolvedCall : "'invoke' candidate goes with usual one: " + candidateCall + otherCall;
+                ResolvedCallWithTrace<VariableDescriptor> otherVariableCall = ((VariableAsFunctionResolvedCall) otherCall).getVariableCall();
+                if (definitelyNotMaximallySpecific(variable, otherVariableCall.getResultingDescriptor(), discriminateGenericDescriptors)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private <D extends CallableDescriptor> boolean definitelyNotMaximallySpecific(D me, D other, boolean discriminateGenericDescriptors) {
+        return !moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors);
     }
 
     /**

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -63,6 +64,11 @@ public class JetModifierList extends JetElementImpl {
     }
 
     @Nullable
+    public PsiElement getModifier(JetToken token) {
+        return findChildByType(token);
+    }
+
+    @Nullable
     public ASTNode getModifierNode(JetToken token) {
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
@@ -71,4 +77,6 @@ public class JetModifierList extends JetElementImpl {
         }
         return null;
     }
+
+
 }

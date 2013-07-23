@@ -1,0 +1,5 @@
+<root>
+    <item name='android.app.Activity android.view.MenuInflater getMenuInflater()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

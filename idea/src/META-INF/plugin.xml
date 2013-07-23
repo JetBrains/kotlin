@@ -8,7 +8,8 @@
 
   <idea-version since-build="130.555" until-build="131.0"/>
 
-  <depends optional="true">JUnit</depends>
+  <depends optional="true" config-file="junit.xml">JUnit</depends>
+  <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
 
   <project-components>
@@ -52,6 +53,7 @@
     <action id="ShowJetExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
             text="Show Expression Type">
       <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="control shift T"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
     <action id="CopyAsDiagnosticTest" class="org.jetbrains.jet.plugin.actions.CopyAsDiagnosticTestAction"
@@ -209,7 +211,6 @@
     <configurationType implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSRunConfigurationType"/>
     <programRunner implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSBrowserProgramRunner"/>
     <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>
-    <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetJUnitConfigurationProducer"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="JAVA"
                                     implementationClass="org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerProvider"/>
@@ -226,6 +227,11 @@
                                 order="first"/>
     <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory"/>
+    <usageTypeProvider implementation="org.jetbrains.jet.plugin.findUsages.JetUsageTypeProvider"/>
+    <refactoring.safeDeleteProcessor
+        id="kotlinProcessor"
+        implementation="org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor"
+        order="before javaProcessor"/>
     <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
     <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>

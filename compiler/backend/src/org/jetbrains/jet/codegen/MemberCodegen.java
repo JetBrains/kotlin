@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.ClassContext;
@@ -54,6 +55,9 @@ public class MemberCodegen extends GenerationStateAware {
             try {
                 functionCodegen.gen((JetNamedFunction) functionOrProperty);
             }
+            catch (ProcessCanceledException e) {
+                throw e;
+            }
             catch (CompilationException e) {
                 throw e;
             }
@@ -64,6 +68,9 @@ public class MemberCodegen extends GenerationStateAware {
         else if (functionOrProperty instanceof JetProperty) {
             try {
                 new PropertyCodegen(context, classBuilder, functionCodegen, this).gen((JetProperty) functionOrProperty);
+            }
+            catch (ProcessCanceledException e) {
+                throw e;
             }
             catch (CompilationException e) {
                 throw e;

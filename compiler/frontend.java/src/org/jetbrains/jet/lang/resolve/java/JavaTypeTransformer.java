@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
+import static org.jetbrains.jet.lang.types.Variance.*;
 
 public class JavaTypeTransformer {
 
@@ -73,7 +74,7 @@ public class JavaTypeTransformer {
                 if (!wildcardType.isBounded()) {
                     return SubstitutionUtils.makeStarProjection(typeParameterDescriptor);
                 }
-                Variance variance = wildcardType.isExtends() ? Variance.OUT_VARIANCE : Variance.IN_VARIANCE;
+                Variance variance = wildcardType.isExtends() ? OUT_VARIANCE : IN_VARIANCE;
 
                 PsiType bound = wildcardType.getBound();
                 assert bound != null;
@@ -165,14 +166,18 @@ public class JavaTypeTransformer {
                     List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
                     if (isRaw(classType, !parameters.isEmpty())) {
                         for (TypeParameterDescriptor parameter : parameters) {
-                            TypeProjection starProjection = SubstitutionUtils.makeStarProjection(parameter);
-                            if (howThisTypeIsUsed == SUPERTYPE) {
-                                // projections are not allowed in immediate arguments of supertypes
-                                arguments.add(new TypeProjection(starProjection.getType()));
-                            }
-                            else {
-                                arguments.add(starProjection);
-                            }
+                            // not making a star projection because of this case:
+                            // Java:
+                            // class C<T extends C> {}
+                            // The upper bound is raw here, and we can't compute the projection: it would be infinite:
+                            // C<*> = C<out C<out C<...>>>
+                            // this way we loose some type information, even when the case is not so bad, but it doesn't seem to matter
+
+                            // projections are not allowed in immediate arguments of supertypes
+                            Variance projectionKind = parameter.getVariance() == OUT_VARIANCE || howThisTypeIsUsed == SUPERTYPE
+                                                      ? INVARIANT
+                                                      : OUT_VARIANCE;
+                            arguments.add(new TypeProjection(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType()));
                         }
                     }
                     else {
@@ -198,7 +203,7 @@ public class JavaTypeTransformer {
 
                                 if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
                                     // remove redundant 'out' and 'in'
-                                    arguments.add(new TypeProjection(Variance.INVARIANT, typeProjection.getType()));
+                                    arguments.add(new TypeProjection(INVARIANT, typeProjection.getType()));
                                 }
                                 else {
                                     arguments.add(typeProjection);
@@ -245,10 +250,10 @@ public class JavaTypeTransformer {
             private Variance arrayElementTypeProjectionKind(boolean vararg) {
                 Variance variance;
                 if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !vararg) {
-                    variance = Variance.OUT_VARIANCE;
+                    variance = OUT_VARIANCE;
                 }
                 else {
-                    variance = Variance.INVARIANT;
+                    variance = INVARIANT;
                 }
                 return variance;
             }

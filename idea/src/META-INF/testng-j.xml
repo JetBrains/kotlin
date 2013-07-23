@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetTestNgConfigurationProducer"/>
+  </extensions>
+</idea-plugin>

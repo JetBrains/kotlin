@@ -3,7 +3,7 @@ package test
 public trait SamSubinterfaceOfTwo : java.lang.Object {
     
     public trait Sub : test.SamSubinterfaceOfTwo.Super1, test.SamSubinterfaceOfTwo.Super2<jet.String> {
-        public abstract override /*2*/ /*fake_override*/ fun f(): jet.CharSequence?
+        public abstract override /*2*/ /*fake_override*/ fun f(): jet.String?
     }
     
     public trait Super1 : java.lang.Object {

@@ -114,7 +114,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
     }
 
     @Nullable
-    private static JetClass getClassDeclarationInFile(JetFile jetFile) {
+    static JetClass getClassDeclarationInFile(JetFile jetFile) {
         JetClass tempSingleDeclaration = null;
 
         for (JetDeclaration jetDeclaration : jetFile.getDeclarations()) {

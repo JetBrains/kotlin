@@ -16,7 +16,7 @@
 
 {
     var items = function () {
-        var A = Kotlin.createClass({initialize: function () {
+        var A = Kotlin.createClass(null, {initialize: function () {
             this.$order = '';
             {
                 this.set_order(this.get_order() + 'A');

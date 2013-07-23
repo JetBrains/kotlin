@@ -1,0 +1,17 @@
+package test
+
+public final class Sub : test.Super {
+    public constructor Sub()
+    internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ r: (() -> jet.Unit)?): jet.Unit
+    internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ r: (() -> jet.Unit)?): jet.Unit
+    internal open override /*1*/ /*fake_override*/ fun foo(/*0*/ r: java.io.Closeable?): jet.Unit
+    internal open override /*1*/ /*fake_override*/ fun foo(/*0*/ r: java.lang.Runnable?): jet.Unit
+}
+
+public open class Super : java.lang.Object {
+    public constructor Super()
+    public/*package*/ final /*synthesized*/ fun foo(/*0*/ r: (() -> jet.Unit)?): jet.Unit
+    public/*package*/ final /*synthesized*/ fun foo(/*0*/ r: (() -> jet.Unit)?): jet.Unit
+    public/*package*/ open fun foo(/*0*/ r: java.io.Closeable?): jet.Unit
+    public/*package*/ open fun foo(/*0*/ r: java.lang.Runnable?): jet.Unit
+}

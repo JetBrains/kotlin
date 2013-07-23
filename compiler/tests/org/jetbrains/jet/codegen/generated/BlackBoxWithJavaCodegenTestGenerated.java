@@ -178,11 +178,6 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
                 doTestWithJava("compiler/testData/codegen/boxWithJava/sam/adapters/inheritedOverriddenAdapter.kt");
             }
             
-            @TestMetadata("inheritedOverriddenAdapterInKotlin.kt")
-            public void testInheritedOverriddenAdapterInKotlin() throws Exception {
-                doTestWithJava("compiler/testData/codegen/boxWithJava/sam/adapters/inheritedOverriddenAdapterInKotlin.kt");
-            }
-            
             @TestMetadata("inheritedSimple.kt")
             public void testInheritedSimple() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/sam/adapters/inheritedSimple.kt");

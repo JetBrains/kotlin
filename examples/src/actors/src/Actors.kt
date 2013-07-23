@@ -39,9 +39,9 @@ abstract class Actor(protected val executor: Executor, val fair: Boolean = false
                 }
                 else {
                     val removed = q.removeFirst()
-                    val newQueue = if(removed._2.empty) busyEmptyQueue else removed._2
+                    val newQueue = if(removed.second.empty) busyEmptyQueue else removed.second
                     if(compareAndSet(q, newQueue)) {
-                        doProcess(removed._1)
+                        doProcess(removed.first)
                         executor.execute(this)
                         break
                     }

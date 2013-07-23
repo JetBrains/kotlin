@@ -19,35 +19,25 @@ package org.jetbrains.k2js.translate.utils.closure;
 import com.intellij.util.containers.OrderedSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 
 import java.util.Collection;
 import java.util.Set;
 
 public final class ClosureContext {
     @NotNull
-    private final Set<VariableDescriptor> descriptors = new OrderedSet<VariableDescriptor>();
-
-    private boolean hasLocalVariables;
+    private final Set<CallableDescriptor> descriptors = new OrderedSet<CallableDescriptor>();
 
     @Nullable
     public ClassDescriptor outerClassDescriptor;
 
-    public boolean isLocalVariablesAffected() {
-        return hasLocalVariables;
-    }
-
-    void setHasLocalVariables() {
-        hasLocalVariables = true;
-    }
-
-    /*package*/ void put(@NotNull VariableDescriptor descriptor) {
+    /*package*/ void put(@NotNull CallableDescriptor descriptor) {
         descriptors.add(descriptor);
     }
 
     @NotNull
-    public Collection<VariableDescriptor> getDescriptors() {
+    public Collection<CallableDescriptor> getDescriptors() {
         return descriptors;
     }
 }

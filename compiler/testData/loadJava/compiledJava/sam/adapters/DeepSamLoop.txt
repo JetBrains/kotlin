@@ -3,12 +3,12 @@ package test
 public trait DeepSamLoop : java.lang.Object {
     
     public trait Bar : java.lang.Object {
-        public abstract /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Bar?) -> jet.Unit)?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Bar?) -> jet.Unit)?): jet.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Foo?): jet.Unit
     }
     
     public trait Foo : java.lang.Object {
-        public abstract /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Foo?) -> jet.Unit)?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Foo?) -> jet.Unit)?): jet.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Bar?): jet.Unit
     }
 }

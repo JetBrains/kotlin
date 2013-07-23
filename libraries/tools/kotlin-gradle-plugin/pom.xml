@@ -89,6 +89,9 @@
                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                     <localRepositoryPath>local-repo</localRepositoryPath>
                     <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
+                    <extraArtifacts>
+                        <extraArtifact>org.jetbrains.kotlin:kotlin-gradle-plugin-core:${project.version}</extraArtifact>
+                    </extraArtifacts>
                 </configuration>
                 <executions>
                     <execution>

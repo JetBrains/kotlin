@@ -3,6 +3,6 @@ package test
 public /*synthesized*/ fun SelfAsParameter(/*0*/ function: (test.SelfAsParameter?) -> jet.Unit): test.SelfAsParameter
 
 public trait SelfAsParameter : java.lang.Object {
-    public abstract /*synthesized*/ fun foo(/*0*/ p0: ((test.SelfAsParameter?) -> jet.Unit)?): jet.Unit
+    public final /*synthesized*/ fun foo(/*0*/ p0: ((test.SelfAsParameter?) -> jet.Unit)?): jet.Unit
     public abstract fun foo(/*0*/ p0: test.SelfAsParameter?): jet.Unit
 }

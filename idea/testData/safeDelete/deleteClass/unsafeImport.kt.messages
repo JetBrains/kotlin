@@ -1,0 +1,2 @@
+Class A has 1 usage that is not safe to delete.
+Of those 0 usages are in strings, comments, or non-code files.

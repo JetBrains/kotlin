@@ -1,0 +1,26 @@
+package test
+
+public trait Sub : test.Super1, test.Super2 {
+    internal abstract override /*2*/ /*fake_override*/ var x: jet.String
+        internal abstract override /*2*/ /*fake_override*/ fun <get-x>(): jet.String
+        internal abstract override /*1*/ /*fake_override*/ fun <set-x>(/*0*/ <set-?>: jet.String): jet.Unit
+    internal abstract override /*2*/ /*fake_override*/ var y: jet.String
+        internal abstract override /*2*/ /*fake_override*/ fun <get-y>(): jet.String
+        internal abstract override /*1*/ /*fake_override*/ fun <set-y>(/*0*/ <set-?>: jet.String): jet.Unit
+}
+
+public trait Super1 {
+    internal abstract val x: jet.String
+        internal abstract fun <get-x>(): jet.String
+    internal abstract var y: jet.String
+        internal abstract fun <get-y>(): jet.String
+        internal abstract fun <set-y>(/*0*/ <set-?>: jet.String): jet.Unit
+}
+
+public trait Super2 {
+    internal abstract var x: jet.String
+        internal abstract fun <get-x>(): jet.String
+        internal abstract fun <set-x>(/*0*/ <set-?>: jet.String): jet.Unit
+    internal abstract val y: jet.String
+        internal abstract fun <get-y>(): jet.String
+}
