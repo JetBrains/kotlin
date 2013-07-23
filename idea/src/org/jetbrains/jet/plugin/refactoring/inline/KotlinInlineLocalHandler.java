@@ -67,7 +67,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
     }
 
     @Override
-    public void inlineElement(Project project, Editor editor, PsiElement element) {
+    public void inlineElement(Project project, final Editor editor, PsiElement element) {
         final JetProperty val = (JetProperty) element;
         String name = val.getName();
 
@@ -110,10 +110,12 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
 
         PsiReference[] referencesArray = references.toArray(references.toArray(new PsiReference[references.size()]));
 
+        EditorColorsManager editorColorsManager = EditorColorsManager.getInstance();
+        final TextAttributes searchResultsAttributes = editorColorsManager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
+        final HighlightManager highlightManager = HighlightManager.getInstance(project);
+
         if (editor != null && !ApplicationManager.getApplication().isUnitTestMode()) {
-            EditorColorsManager editorColorsManager = EditorColorsManager.getInstance();
-            TextAttributes attributes = editorColorsManager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
-            HighlightManager.getInstance(project).addOccurrenceHighlights(editor, referencesArray, attributes, true, null);
+            highlightManager.addOccurrenceHighlights(editor, referencesArray, searchResultsAttributes, true, null);
             if (!showDialog(project, name, references)) {
                 StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
                 if (statusBar != null) {
@@ -153,6 +155,11 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
 
                                 if (parametersForFunctionLiteral != null) {
                                     addFunctionLiteralParameterTypes(parametersForFunctionLiteral, inlinedExpressions);
+                                }
+
+                                if (editor != null && !ApplicationManager.getApplication().isUnitTestMode()) {
+                                    highlightManager.addOccurrenceHighlights(
+                                            editor, inlinedExpressions.toArray(new PsiElement[inlinedExpressions.size()]), searchResultsAttributes, true, null);
                                 }
                             }
                         });
