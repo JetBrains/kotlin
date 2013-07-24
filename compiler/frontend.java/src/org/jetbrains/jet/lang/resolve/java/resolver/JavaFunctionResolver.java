@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -244,10 +243,12 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    private Set<FunctionDescriptor> resolveNamedGroupFunctions(
-            @NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass,
-            NamedMembers namedMembers, Name methodName
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(
+            @NotNull NamedMembers namedMembers,
+            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull PsiClass psiClass
     ) {
+        Name methodName = namedMembers.getName();
 
         Set<SimpleFunctionDescriptor> functionsFromSupertypes = null;
         if (owner instanceof ClassDescriptor) {
@@ -368,31 +369,10 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForClass(
-            @NotNull Name methodName,
-            @NotNull PsiDeclarationProvider provider,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
-            @NotNull PsiClass psiClass
-    ) {
-        NamedMembers namedMembers = provider.getMembersCache().get(methodName);
-        if (namedMembers == null) {
-            return Collections.emptySet();
-        }
-        return resolveNamedGroupFunctions(ownerDescriptor, psiClass, namedMembers, methodName);
-    }
-
-    @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(
-            @NotNull Name functionName,
-            @NotNull PsiDeclarationProvider provider,
-            @NotNull NamespaceDescriptor ownerDescriptor
-    ) {
-        NamedMembers namedMembers = provider.getMembersCache().get(functionName);
-        if (namedMembers != null) {
-            SimpleFunctionDescriptor samConstructor = resolveSamConstructor(ownerDescriptor, namedMembers);
-            if (samConstructor != null) {
-                return Collections.<FunctionDescriptor>singleton(samConstructor);
-            }
+    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
+        SimpleFunctionDescriptor samConstructor = resolveSamConstructor(owner, members);
+        if (samConstructor != null) {
+            return Collections.<FunctionDescriptor>singleton(samConstructor);
         }
         return Collections.emptySet();
     }

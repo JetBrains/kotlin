@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -45,7 +44,7 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
             @NotNull PsiClassFinder psiClassFinder,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, psiClass, new ClassPsiDeclarationProvider(psiClass, true, psiClassFinder), javaDescriptorResolver);
+        super(descriptor, psiClass, MembersProvider.forClass(psiClassFinder, psiClass, true), javaDescriptorResolver);
         this.packageFQN = packageFQN;
         this.psiClass = psiClass;
     }

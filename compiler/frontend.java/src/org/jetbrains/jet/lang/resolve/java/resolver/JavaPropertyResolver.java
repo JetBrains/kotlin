@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -68,35 +67,18 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroupByName(
-            @NotNull Name fieldName,
-            @NotNull PsiDeclarationProvider provider,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
-    ) {
-        NamedMembers namedMembers = provider.getMembersCache().get(fieldName);
-        if (namedMembers == null) {
-            return Collections.emptySet();
-        }
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
+        Name propertyName = members.getName();
 
-        return resolveNamedGroupProperties(ownerDescriptor, namedMembers, fieldName,
-                                           "class or namespace " + DescriptorUtils.getFQName(ownerDescriptor));
-    }
-
-    @NotNull
-    private Set<VariableDescriptor> resolveNamedGroupProperties(
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
-            @NotNull NamedMembers namedMembers,
-            @NotNull Name propertyName,
-            @NotNull String context
-    ) {
-        List<PsiFieldWrapper> fields = namedMembers.getFields();
+        List<PsiFieldWrapper> fields = members.getFields();
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
         assert fields.size() <= 1;
         if (fields.size() == 1) {
             PsiFieldWrapper field = fields.iterator().next();
             if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, field.getPsiField())) {
-                propertiesFromCurrent.add(resolveProperty(ownerDescriptor, propertyName, context, field));
+                propertiesFromCurrent.add(resolveProperty(ownerDescriptor, propertyName,
+                                                          "class or namespace " + DescriptorUtils.getFQName(ownerDescriptor), field));
             }
         }
 

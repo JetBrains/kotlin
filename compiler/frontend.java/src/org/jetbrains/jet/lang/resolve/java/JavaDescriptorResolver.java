@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -210,12 +210,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroupByName(
-            @NotNull Name name,
-            @NotNull PsiDeclarationProvider provider,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
-    ) {
-        return propertiesResolver.resolveFieldGroupByName(name, provider, ownerDescriptor);
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
+        return propertiesResolver.resolveFieldGroup(members, ownerDescriptor);
     }
 
     @Nullable
@@ -245,21 +241,16 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroupForClass(
-            @NotNull Name methodName,
-            @NotNull PsiDeclarationProvider provider,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull NamedMembers members,
+            @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull PsiClass psiClass
     ) {
-        return functionResolver.resolveFunctionGroupForClass(methodName, provider, ownerDescriptor, psiClass);
+        return functionResolver.resolveFunctionGroupForClass(members, owner, psiClass);
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(
-            @NotNull Name methodName,
-            @NotNull PsiDeclarationProvider provider,
-            @NotNull NamespaceDescriptor ownerDescriptor
-    ) {
-        return functionResolver.resolveFunctionGroupForPackage(methodName, provider, ownerDescriptor);
+    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
+        return functionResolver.resolveFunctionGroupForPackage(members, owner);
     }
 
     @NotNull

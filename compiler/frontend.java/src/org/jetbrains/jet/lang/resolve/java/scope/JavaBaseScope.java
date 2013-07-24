@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
@@ -38,7 +37,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     protected final JavaDescriptorResolver javaDescriptorResolver;
     @NotNull
-    protected final PsiDeclarationProvider declarationProvider;
+    protected final MembersProvider membersProvider;
     @NotNull
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
     @NotNull
@@ -56,10 +55,10 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     protected JavaBaseScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
-            @NotNull PsiDeclarationProvider declarationProvider
+            @NotNull MembersProvider membersProvider
     ) {
         this.javaDescriptorResolver = javaDescriptorResolver;
-        this.declarationProvider = declarationProvider;
+        this.membersProvider = membersProvider;
         this.descriptor = descriptor;
     }
 
@@ -86,7 +85,11 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<VariableDescriptor> computePropertyDescriptors(@NotNull Name name) {
-        return javaDescriptorResolver.resolveFieldGroupByName(name, declarationProvider, descriptor);
+        NamedMembers members = membersProvider.get(name);
+        if (members == null) {
+            return Collections.emptySet();
+        }
+        return javaDescriptorResolver.resolveFieldGroup(members, descriptor);
     }
 
     @NotNull
@@ -146,7 +149,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     private Collection<DeclarationDescriptor> computeFieldAndFunctionDescriptors() {
         Collection<DeclarationDescriptor> result = Lists.newArrayList();
-        for (NamedMembers members : declarationProvider.getMembersCache().allMembers()) {
+        for (NamedMembers members : membersProvider.allMembers()) {
             Name name = members.getName();
             ProgressIndicatorProvider.checkCanceled();
             result.addAll(getFunctions(name));

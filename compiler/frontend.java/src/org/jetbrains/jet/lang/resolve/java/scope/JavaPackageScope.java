@@ -24,7 +24,7 @@ import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -47,7 +47,7 @@ public final class JavaPackageScope extends JavaBaseScope {
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
             @NotNull PsiClassFinder psiClassFinder
     ) {
-        super(descriptor, javaDescriptorResolver, new PackagePsiDeclarationProvider(psiPackage, psiClassFinder));
+        super(descriptor, javaDescriptorResolver, MembersProvider.forPackage(psiClassFinder, psiPackage));
         this.psiPackage = psiPackage;
         this.packageFQN = packageFQN;
         this.psiClassFinder = psiClassFinder;
@@ -134,7 +134,11 @@ public final class JavaPackageScope extends JavaBaseScope {
     @Override
     @NotNull
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return javaDescriptorResolver.resolveFunctionGroupForPackage(name, declarationProvider, (NamespaceDescriptor) descriptor);
+        NamedMembers members = membersProvider.get(name);
+        if (members == null) {
+            return Collections.emptySet();
+        }
+        return javaDescriptorResolver.resolveFunctionGroupForPackage(members, (NamespaceDescriptor) descriptor);
     }
 
     @NotNull

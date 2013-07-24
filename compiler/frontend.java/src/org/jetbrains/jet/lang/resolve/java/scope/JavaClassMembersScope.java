@@ -20,18 +20,13 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class JavaClassMembersScope extends JavaBaseScope {
-    @NotNull
-    protected final ClassPsiDeclarationProvider declarationProvider;
     @NotNull
     protected final PsiClass psiClass;
 
@@ -40,11 +35,10 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull PsiClass psiClass,
-            @NotNull ClassPsiDeclarationProvider declarationProvider,
+            @NotNull MembersProvider membersProvider,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, javaDescriptorResolver, declarationProvider);
-        this.declarationProvider = declarationProvider;
+        super(descriptor, javaDescriptorResolver, membersProvider);
         this.psiClass = psiClass;
     }
 
@@ -64,7 +58,11 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return javaDescriptorResolver.resolveFunctionGroupForClass(name, declarationProvider, descriptor, psiClass);
+        NamedMembers members = membersProvider.get(name);
+        if (members == null) {
+            return Collections.emptySet();
+        }
+        return javaDescriptorResolver.resolveFunctionGroupForClass(members, descriptor, psiClass);
     }
 
     @NotNull
