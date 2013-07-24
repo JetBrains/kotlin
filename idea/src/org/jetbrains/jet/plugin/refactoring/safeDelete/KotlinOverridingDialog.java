@@ -57,7 +57,7 @@ import java.util.List;
 *  Revision: 14aa2e2
 *  (replace PsiMethod formatting)
 */
-class KotlinOverridingMethodsDialog extends DialogWrapper {
+class KotlinOverridingDialog extends DialogWrapper {
     private final List<UsageInfo> myOverridingMethods;
     private final String[] myMethodText;
     private final boolean[] myChecked;
@@ -66,7 +66,7 @@ class KotlinOverridingMethodsDialog extends DialogWrapper {
     private JBTable myTable;
     private final UsagePreviewPanel myUsagePreviewPanel;
 
-    public KotlinOverridingMethodsDialog(Project project, List<UsageInfo> overridingMethods) {
+    public KotlinOverridingDialog(Project project, List<UsageInfo> overridingMethods) {
         super(project, true);
         myOverridingMethods = overridingMethods;
         myChecked = new boolean[myOverridingMethods.size()];
@@ -102,13 +102,14 @@ class KotlinOverridingMethodsDialog extends DialogWrapper {
             }
         }
 
-        assert element instanceof PsiMethod;
+        assert element instanceof PsiMethod
+                : "Method accepts only kotlin functions/properties and java methods, but '" + element.getText() + "' was found";
         return KotlinSafeDeleteProcessor.formatPsiMethod((PsiMethod) element, true, false);
     }
 
     @Override
     protected String getDimensionServiceKey() {
-        return "#org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinOverridingMethodsDialog";
+        return "#org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinOverridingDialog";
     }
 
     public ArrayList<UsageInfo> getSelected() {

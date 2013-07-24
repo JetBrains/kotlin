@@ -47,8 +47,6 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         }
     }
 
-
-
     @Override
     public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
         PsiElement element = queryParameters.getElementToSearch();
