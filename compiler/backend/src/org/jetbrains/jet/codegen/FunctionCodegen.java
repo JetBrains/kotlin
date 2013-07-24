@@ -118,6 +118,8 @@ public class FunctionCodegen extends GenerationStateAware {
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;
 
+        generateParameterAnnotations(functionDescriptor, mv);
+
         if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
@@ -132,6 +134,12 @@ public class FunctionCodegen extends GenerationStateAware {
         generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
 
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, typeMapper);
+    }
+
+    private void generateParameterAnnotations(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodVisitor mv) {
+        for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
+            AnnotationCodegen.forParameter(parameter.getIndex(), mv, typeMapper).genAnnotations(parameter);
+        }
     }
 
     @Nullable
