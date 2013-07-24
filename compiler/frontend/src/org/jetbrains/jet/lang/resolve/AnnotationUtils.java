@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
+import static org.jetbrains.jet.lang.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VALUE_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnnotationClass;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
@@ -42,9 +43,12 @@ public class AnnotationUtils {
             VariableDescriptor parameterDescriptor = trace.getBindingContext().get(VALUE_PARAMETER, parameter);
             if (parameterDescriptor == null) continue;
             JetType parameterType = parameterDescriptor.getType();
-            if (!isAcceptableTypeForAnnotationParameter(parameterType)) {
-                JetTypeReference typeReference = parameter.getTypeReference();
-                if (typeReference != null) {
+            JetTypeReference typeReference = parameter.getTypeReference();
+            if (typeReference != null) {
+                if (parameterType.isNullable()) {
+                    trace.report(NULLABLE_TYPE_OF_ANNOTATION_MEMBER.on(typeReference));
+                }
+                else if (!isAcceptableTypeForAnnotationParameter(parameterType)) {
                     trace.report(INVALID_TYPE_OF_ANNOTATION_MEMBER.on(typeReference));
                 }
             }
@@ -52,9 +56,6 @@ public class AnnotationUtils {
     }
 
     private static boolean isAcceptableTypeForAnnotationParameter(@NotNull JetType parameterType) {
-        if (parameterType.isNullable()) {
-            return false;
-        }
         ClassDescriptor typeDescriptor = TypeUtils.getClassDescriptor(parameterType);
         if (typeDescriptor == null) {
             return false;

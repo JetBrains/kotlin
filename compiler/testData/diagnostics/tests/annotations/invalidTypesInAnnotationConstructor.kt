@@ -40,19 +40,19 @@ annotation class Ann9(vararg val p1: String,
                       vararg val p5: Int)
 
 // INCORRECT
-annotation class InAnn1(val p1: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Int?<!>,
-                        val p3: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Short?<!>,
-                        val p4: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Long?<!>,
-                        val p5: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Double?<!>,
-                        val p6: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Float?<!>,
-                        val p7: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Char?<!>,
-                        val p8: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Boolean?<!>)
+annotation class InAnn1(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Int?<!>,
+                        val p3: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Short?<!>,
+                        val p4: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Long?<!>,
+                        val p5: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Double?<!>,
+                        val p6: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Float?<!>,
+                        val p7: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Char?<!>,
+                        val p8: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Boolean?<!>)
 
 annotation class InAnn4(val p1: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Int><!>,
-                        val p2: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Int>?<!>)
+                        val p2: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Array<Int>?<!>)
 
-annotation class InAnn6(val p:  <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Class<*>?<!>)
-annotation class InAnn7(val p:  <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>RetentionPolicy?<!>)
+annotation class InAnn6(val p:  <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Class<*>?<!>)
+annotation class InAnn7(val p:  <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>RetentionPolicy?<!>)
 annotation class InAnn8(val p1: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Int><!>,
                         val p2: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Int?><!>,
                         val p3: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<MyClass><!>,
@@ -60,9 +60,9 @@ annotation class InAnn8(val p1: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Int><
 
 annotation class InAnn9(val p: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>MyClass<!>)
 
-annotation class InAnn10(val p1: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>String?<!>)
-annotation class InAnn11(val p1: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Ann1?<!>)
-annotation class InAnn12(val p1: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>MyEnum?<!>)
+annotation class InAnn10(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>String?<!>)
+annotation class InAnn11(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Ann1?<!>)
+annotation class InAnn12(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>MyEnum?<!>)
 
 
 enum class MyEnum {
