@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserial
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -56,7 +55,6 @@ public class InjectorForJavaDescriptorResolver {
     private final JavaNamespaceResolver javaNamespaceResolver;
     private final JavaSupertypeResolver javaSupertypeResolver;
     private final JavaConstructorResolver javaConstructorResolver;
-    private final JavaInnerClassResolver javaInnerClassResolver;
     private final JavaPropertyResolver javaPropertyResolver;
     
     public InjectorForJavaDescriptorResolver(
@@ -79,13 +77,11 @@ public class InjectorForJavaDescriptorResolver {
         this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaSupertypeResolver = new JavaSupertypeResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
-        this.javaInnerClassResolver = new JavaInnerClassResolver();
         this.javaPropertyResolver = new JavaPropertyResolver();
 
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
         this.javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
-        this.javaDescriptorResolver.setInnerClassResolver(javaInnerClassResolver);
         this.javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
         this.javaDescriptorResolver.setPropertiesResolver(javaPropertyResolver);
 
@@ -138,8 +134,6 @@ public class InjectorForJavaDescriptorResolver {
         javaConstructorResolver.setTrace(bindingTrace);
         javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
         javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
-
-        javaInnerClassResolver.setClassResolver(javaClassResolver);
 
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
         javaPropertyResolver.setTrace(bindingTrace);

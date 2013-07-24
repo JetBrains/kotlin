@@ -59,7 +59,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserial
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -110,7 +109,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final JavaNamespaceResolver javaNamespaceResolver;
     private final JavaSupertypeResolver javaSupertypeResolver;
     private final JavaConstructorResolver javaConstructorResolver;
-    private final JavaInnerClassResolver javaInnerClassResolver;
     private final JavaPropertyResolver javaPropertyResolver;
     
     public InjectorForTopDownAnalyzerForJvm(
@@ -162,7 +160,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaSupertypeResolver = new JavaSupertypeResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
-        this.javaInnerClassResolver = new JavaInnerClassResolver();
         this.javaPropertyResolver = new JavaPropertyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
@@ -203,7 +200,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaDescriptorResolver.setClassResolver(javaClassResolver);
         javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
         javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
-        javaDescriptorResolver.setInnerClassResolver(javaInnerClassResolver);
         javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
         javaDescriptorResolver.setPropertiesResolver(javaPropertyResolver);
 
@@ -325,8 +321,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaConstructorResolver.setTrace(bindingTrace);
         javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
         javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
-
-        javaInnerClassResolver.setClassResolver(javaClassResolver);
 
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
         javaPropertyResolver.setTrace(bindingTrace);

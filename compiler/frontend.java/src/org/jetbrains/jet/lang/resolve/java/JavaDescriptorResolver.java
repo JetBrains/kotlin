@@ -147,7 +147,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private JavaConstructorResolver constructorResolver;
     private JavaFunctionResolver functionResolver;
     private JavaNamespaceResolver namespaceResolver;
-    private JavaInnerClassResolver innerClassResolver;
 
     @Inject
     public void setFunctionResolver(JavaFunctionResolver functionResolver) {
@@ -172,11 +171,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Inject
     public void setConstructorResolver(JavaConstructorResolver constructorResolver) {
         this.constructorResolver = constructorResolver;
-    }
-
-    @Inject
-    public void setInnerClassResolver(JavaInnerClassResolver innerClassResolver) {
-        this.innerClassResolver = innerClassResolver;
     }
 
     @Nullable
@@ -214,11 +208,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return propertiesResolver.resolveFieldGroup(members, ownerDescriptor);
     }
 
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull FqName name, @NotNull DescriptorSearchRule searchRule, @NotNull PostponedTasks tasks) {
-        return classResolver.resolveClass(name, searchRule, tasks);
-    }
-
     public static class ValueParameterDescriptors {
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> descriptors;
@@ -251,10 +240,5 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
         return functionResolver.resolveFunctionGroupForPackage(members, owner);
-    }
-
-    @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(@NotNull PsiClass psiClass) {
-        return innerClassResolver.resolveInnerClasses(psiClass);
     }
 }
