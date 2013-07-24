@@ -298,11 +298,9 @@ public class ClosureCodegen extends GenerationStateAware {
 
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS, true);
         typeMapper.writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), sw);
-        sw.writeSupersStart();
         sw.writeSuperclass();
         typeMapper.mapType(supertype, sw, JetTypeMapperMode.TYPE_PARAMETER);
         sw.writeSuperclassEnd();
-        sw.writeSupersEnd();
 
         String signature = sw.makeJavaGenericSignature();
         assert signature != null : "Closure superclass must have a generic signature: " + funDescriptor;

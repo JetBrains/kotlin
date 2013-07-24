@@ -355,12 +355,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             typeMapper.writeFormalTypeParameters(typeParameters, signatureVisitor);
         }
 
-        signatureVisitor.writeSupersStart();
-
         {   // superclass
             signatureVisitor.writeSuperclass();
             if (superClassType == null) {
-                signatureVisitor.writeClassBegin(superClassAsmType.getInternalName(), false, false);
+                signatureVisitor.writeClassBegin(superClassAsmType);
                 signatureVisitor.writeClassEnd();
             }
             else {
@@ -388,16 +386,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             superInterfaces = new ArrayList<String>(superInterfacesLinkedHashSet);
         }
 
-        signatureVisitor.writeSupersEnd();
-
-        return new JvmClassSignature(jvmName(), superClassAsmType.getInternalName(), superInterfaces, signatureVisitor.makeJavaGenericSignature());
-    }
-
-    private String jvmName() {
-        if (kind != OwnerKind.IMPLEMENTATION) {
-            throw new IllegalStateException("must not call this method with kind " + kind);
-        }
-        return classAsmType.getInternalName();
+        return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(), superInterfaces,
+                                     signatureVisitor.makeJavaGenericSignature());
     }
 
     protected void getSuperClass() {

@@ -124,6 +124,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
     }
 
     @Override
+    @NotNull
     public Variance getVariance() {
         return variance;
     }

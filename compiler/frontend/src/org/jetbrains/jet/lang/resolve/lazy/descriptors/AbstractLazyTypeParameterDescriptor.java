@@ -97,6 +97,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
         return reified;
     }
 
+    @NotNull
     @Override
     public Variance getVariance() {
         return variance;
