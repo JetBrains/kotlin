@@ -22,16 +22,9 @@ import javax.inject.Inject;
 
 public class JavaSemanticServices {
     @NotNull
-    private JavaTypeTransformer typeTransformer;
-    @NotNull
     private JavaDescriptorResolver descriptorResolver;
     @NotNull
     private PsiClassFinder psiClassFinder;
-
-    @Inject
-    public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
-        this.typeTransformer = typeTransformer;
-    }
 
     @Inject
     public void setDescriptorResolver(@NotNull JavaDescriptorResolver descriptorResolver) {
@@ -41,11 +34,6 @@ public class JavaSemanticServices {
     @Inject
     public void setPsiClassFinder(@NotNull PsiClassFinder psiClassFinder) {
         this.psiClassFinder = psiClassFinder;
-    }
-
-    @NotNull
-    public JavaTypeTransformer getTypeTransformer() {
-        return typeTransformer;
     }
 
     @NotNull

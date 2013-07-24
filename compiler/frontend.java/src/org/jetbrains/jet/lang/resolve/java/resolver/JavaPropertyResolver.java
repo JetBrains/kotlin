@@ -45,8 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 public final class JavaPropertyResolver {
-
-    private JavaSemanticServices semanticServices;
+    private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
     private JavaAnnotationResolver annotationResolver;
 
@@ -54,8 +53,8 @@ public final class JavaPropertyResolver {
     }
 
     @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
+    public void setTypeTransformer(@NotNull JavaTypeTransformer javaTypeTransformer) {
+        this.typeTransformer = javaTypeTransformer;
     }
 
     @Inject
@@ -247,12 +246,8 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private JetType getPropertyType(
-            PsiFieldWrapper field,
-            TypeVariableResolver typeVariableResolverForPropertyInternals
-    ) {
-        JetType propertyType = semanticServices.getTypeTransformer().transformToType(
-                field.getType(), typeVariableResolverForPropertyInternals);
+    private JetType getPropertyType(@NotNull PsiFieldWrapper field, @NotNull TypeVariableResolver typeVariableResolver) {
+        JetType propertyType = typeTransformer.transformToType(field.getType(), typeVariableResolver);
 
         boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
                 field.getPsiField(),

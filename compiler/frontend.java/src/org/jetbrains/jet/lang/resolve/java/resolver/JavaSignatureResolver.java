@@ -27,11 +27,12 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -40,13 +41,12 @@ import java.util.Collections;
 import java.util.List;
 
 public final class JavaSignatureResolver {
-
     @NotNull
-    private JavaSemanticServices semanticServices;
+    private JavaTypeTransformer typeTransformer;
 
     @Inject
-    public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
-        this.semanticServices = javaSemanticServices;
+    public void setTypeTransformer(@NotNull JavaTypeTransformer javaTypeTransformer) {
+        this.typeTransformer = javaTypeTransformer;
     }
 
     public static class TypeParameterDescriptorInitialization {
@@ -107,16 +107,10 @@ public final class JavaSignatureResolver {
         if (referencedTypes.length == 0) {
             typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
         }
-        else if (referencedTypes.length == 1) {
-            typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer()
-                                                          .transformToType(referencedTypes[0], TypeUsage.UPPER_BOUND,
-                                                                           typeVariableByPsiResolver));
-        }
         else {
             for (PsiClassType referencedType : referencedTypes) {
-                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer()
-                                                              .transformToType(referencedType, TypeUsage.UPPER_BOUND,
-                                                                               typeVariableByPsiResolver));
+                JetType transformedType = typeTransformer.transformToType(referencedType, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver);
+                typeParameterDescriptor.addUpperBound(transformedType);
             }
         }
         typeParameterDescriptor.setInitialized();
