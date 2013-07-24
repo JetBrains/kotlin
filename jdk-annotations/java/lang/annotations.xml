@@ -1187,6 +1187,9 @@
   <item name="java.lang.String java.lang.String[] split(java.lang.String, int) 0">
     <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name="java.lang.String void getBytes(int, int, byte[], int) 2">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
   <item name="java.lang.String void getChars(int, int, char[], int) 2">
     <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>

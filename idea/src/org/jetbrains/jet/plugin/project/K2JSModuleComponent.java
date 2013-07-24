@@ -21,17 +21,14 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.roots.impl.storage.ClasspathStorage;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.intellij.openapi.roots.impl.storage.ClassPathStorageUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.config.EcmaVersion;
 
 @Deprecated
 @State(
         name = "K2JSModule",
         storages = @Storage(
-          id = ClasspathStorage.DEFAULT_STORAGE,
+          id = ClassPathStorageUtil.DEFAULT_STORAGE,
           file = "$MODULE_FILE$"
         )
 )

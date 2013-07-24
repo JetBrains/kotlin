@@ -21,6 +21,9 @@
     <item name="java.nio.Buffer java.nio.Buffer rewind()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.nio.ByteBuffer byte[] array()">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
     <item name="java.nio.ByteBuffer int compareTo(java.lang.Object) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -58,6 +61,9 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.nio.ByteBuffer java.nio.ByteBuffer order(java.nio.ByteOrder)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.nio.ByteBuffer java.nio.ByteBuffer order(java.nio.ByteOrder) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.nio.ByteBuffer java.nio.ByteBuffer put(byte)">
