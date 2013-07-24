@@ -86,6 +86,16 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         doTest("idea/testData/resolve/references/InFunctionParameterType.kt");
     }
     
+    @TestMetadata("InObjectClassObject.kt")
+    public void testInObjectClassObject() throws Exception {
+        doTest("idea/testData/resolve/references/InObjectClassObject.kt");
+    }
+    
+    @TestMetadata("InSecondClassObject.kt")
+    public void testInSecondClassObject() throws Exception {
+        doTest("idea/testData/resolve/references/InSecondClassObject.kt");
+    }
+    
     @TestMetadata("PackageReference.kt")
     public void testPackageReference() throws Exception {
         doTest("idea/testData/resolve/references/PackageReference.kt");
