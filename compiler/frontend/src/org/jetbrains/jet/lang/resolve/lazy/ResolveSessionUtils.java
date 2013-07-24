@@ -130,7 +130,7 @@ public class ResolveSessionUtils {
 
         if (resolveElement != null) {
             // All additional resolve should be done to separate trace
-            DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement);
+            BindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement);
 
             JetFile file = (JetFile) jetElement.getContainingFile();
 
@@ -187,7 +187,7 @@ public class ResolveSessionUtils {
 
     private static void namespaceRefAdditionalResolve(
             ResolveSession resolveSession,
-            JetNamespaceHeader header, DelegatingBindingTrace trace, JetElement jetElement
+            JetNamespaceHeader header, BindingTrace trace, JetElement jetElement
     ) {
         if (jetElement instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression packageNameExpression = (JetSimpleNameExpression) jetElement;
@@ -243,7 +243,7 @@ public class ResolveSessionUtils {
 
     private static void delegationSpecifierAdditionalResolve(
             KotlinCodeAnalyzer analyzer,
-            JetDelegationSpecifierList specifier, DelegatingBindingTrace trace, JetFile file) {
+            JetDelegationSpecifierList specifier, BindingTrace trace, JetFile file) {
         BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getRootModuleDescriptor());
 
         JetClassOrObject classOrObject = (JetClassOrObject) specifier.getParent();
@@ -258,7 +258,7 @@ public class ResolveSessionUtils {
                                                     descriptor.getScopeForMemberDeclarationResolution());
     }
 
-    private static void propertyAdditionalResolve(ResolveSession resolveSession, final JetProperty jetProperty, DelegatingBindingTrace trace, JetFile file) {
+    private static void propertyAdditionalResolve(ResolveSession resolveSession, final JetProperty jetProperty, BindingTrace trace, JetFile file) {
         final JetScope propertyResolutionScope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(
                 jetProperty);
 
@@ -288,7 +288,7 @@ public class ResolveSessionUtils {
     private static void functionAdditionalResolve(
             ResolveSession resolveSession,
             JetNamedFunction namedFunction,
-            DelegatingBindingTrace trace,
+            BindingTrace trace,
             JetFile file
     ) {
         BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getRootModuleDescriptor());
@@ -300,7 +300,7 @@ public class ResolveSessionUtils {
     private static boolean initializerAdditionalResolve(
             KotlinCodeAnalyzer analyzer,
             JetClassInitializer classInitializer,
-            DelegatingBindingTrace trace,
+            BindingTrace trace,
             JetFile file
     ) {
         BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getRootModuleDescriptor());
@@ -312,7 +312,7 @@ public class ResolveSessionUtils {
         return true;
     }
 
-    private static BodyResolver createBodyResolver(DelegatingBindingTrace trace, JetFile file, BodyResolveContextForLazy bodyResolveContext,
+    private static BodyResolver createBodyResolver(BindingTrace trace, JetFile file, BodyResolveContextForLazy bodyResolveContext,
             ModuleDescriptor module) {
         TopDownAnalysisParameters parameters = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, true, Collections.<AnalyzerScriptParameter>emptyList());
@@ -321,7 +321,7 @@ public class ResolveSessionUtils {
     }
 
     private static BodyResolver createBodyResolverWithEmptyContext(
-            DelegatingBindingTrace trace,
+            BindingTrace trace,
             JetFile file,
             ModuleDescriptor module
     ) {
@@ -338,7 +338,7 @@ public class ResolveSessionUtils {
     }
 
     public static JetScope getExpressionMemberScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
-        DelegatingBindingTrace trace = new DelegatingBindingTrace(
+        BindingTrace trace = new DelegatingBindingTrace(
                 resolveSession.getBindingContext(), "trace to resolve a member scope of expression", expression);
 
         if (BindingContextUtils.isExpressionWithValidReference(expression, resolveSession.getBindingContext())) {
