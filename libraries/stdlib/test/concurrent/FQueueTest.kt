@@ -76,4 +76,17 @@ class FQueueTest() {
             queue.removeFirst()
         }
     }
+
+        test fun testIterator() {
+            var functionalQueue = FunctionalQueue<Int>()
+            var queue = LinkedList<Int>()
+            for (i in 1..100) {
+                functionalQueue = functionalQueue.add(i)
+                queue.addFirst(i)
+            }
+            for (i in functionalQueue) {
+                val j : Int = queue.removeLast()
+                assertEquals(i, j)
+            }
+        }
 }

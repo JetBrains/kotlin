@@ -17,7 +17,7 @@ class FunctionalQueue<T>(
     val empty : Boolean
         get() = head == null && tail == null && (middle == null || middle.empty)
 
-    fun add(e : T) : FunctionalQueue<T> {
+    public fun add(e : T) : FunctionalQueue<T> {
         if (head == null) {
             return FunctionalQueue(e, middle, tail)
         } else {
@@ -28,7 +28,8 @@ class FunctionalQueue<T>(
             }
         }
     }
-    fun removeFirst() : Pair<T, FunctionalQueue<T>> {
+
+    public fun removeFirst() : Pair<T, FunctionalQueue<T>> {
         if (tail != null) {
             return Pair(tail as T, FunctionalQueue(head, middle, null))
         } else {
@@ -47,5 +48,19 @@ class FunctionalQueue<T>(
                 }
             }
         }
+    }
+
+    public fun iterator() : Iterator<T> = object: Iterator<T> {
+        var cur = this@FunctionalQueue
+
+        public override fun next(): T {
+            if (cur.empty)
+                java.util.NoSuchElementException()
+            val temp = cur.removeFirst()
+            cur = temp.second
+            return temp.first
+        }
+
+        override fun hasNext(): Boolean = !cur.empty
     }
 }
