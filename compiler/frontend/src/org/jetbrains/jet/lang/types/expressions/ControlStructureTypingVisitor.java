@@ -104,28 +104,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (elseBranch == null) {
             if (thenBranch != null) {
-                JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(thenInfo), context.trace);
-                JetType type = typeInfo.getType();
-                DataFlowInfo dataFlowInfo;
-                if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                    dataFlowInfo = elseInfo;
-                } else {
-                    dataFlowInfo = typeInfo.getDataFlowInfo().or(elseInfo);
-                }
-                return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement, dataFlowInfo);
+                return getTypeInfoWhenOnlyOneBranchIsPresent(
+                        thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, expression, isStatement);
             }
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
         if (thenBranch == null) {
-            JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(elseInfo), context.trace);
-            JetType type = typeInfo.getType();
-            DataFlowInfo dataFlowInfo;
-            if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                dataFlowInfo = thenInfo;
-            } else {
-                dataFlowInfo = typeInfo.getDataFlowInfo().or(thenInfo);
-            }
-            return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement, dataFlowInfo);
+            return getTypeInfoWhenOnlyOneBranchIsPresent(
+                    elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, expression, isStatement);
         }
         CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
         JetTypeInfo thenTypeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo), context.trace);
@@ -153,7 +139,30 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         return DataFlowUtils.checkImplicitCast(result.getType(), expression, contextWithExpectedType, isStatement, result.getDataFlowInfo());
-     }
+    }
+
+    @NotNull
+    private static JetTypeInfo getTypeInfoWhenOnlyOneBranchIsPresent(
+            @NotNull JetExpression presentBranch,
+            @NotNull WritableScopeImpl presentScope,
+            @NotNull DataFlowInfo presentInfo,
+            @NotNull DataFlowInfo otherInfo,
+            @NotNull ExpressionTypingContext context,
+            @NotNull JetIfExpression ifExpression,
+            boolean isStatement
+    ) {
+        JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(presentScope, Collections
+                .singletonList(presentBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(presentInfo), context.trace);
+        JetType type = typeInfo.getType();
+        DataFlowInfo dataFlowInfo;
+        if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
+            dataFlowInfo = otherInfo;
+        } else {
+            dataFlowInfo = typeInfo.getDataFlowInfo().or(otherInfo);
+        }
+        JetType typeForIfExpression = DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), ifExpression, context);
+        return DataFlowUtils.checkImplicitCast(typeForIfExpression, ifExpression, context, isStatement, dataFlowInfo);
+    }
 
     @Override
     public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext context) {
