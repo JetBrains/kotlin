@@ -36,10 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProviderImpl;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProviderImpl;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
@@ -190,8 +187,7 @@ public final class JavaNamespaceResolver {
             }
 
             // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
-            PackagePsiDeclarationProvider provider = new PackagePsiDeclarationProviderImpl(psiPackage, psiClassFinder);
-            return new JavaPackageScope(namespaceDescriptor, provider, fqName, javaDescriptorResolver, psiClassFinder);
+            return new JavaPackageScope(namespaceDescriptor, psiPackage, fqName, javaDescriptorResolver, psiClassFinder);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -205,10 +201,7 @@ public final class JavaNamespaceResolver {
             return null;
         }
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
-        return new JavaClassStaticMembersScope(
-                namespaceDescriptor,
-                new ClassPsiDeclarationProviderImpl(psiClass, true, psiClassFinder),
-                fqName, javaDescriptorResolver);
+        return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, psiClass, psiClassFinder, javaDescriptorResolver);
     }
 
     private static boolean isOldKotlinPackageClass(@NotNull PsiClass psiClass) {

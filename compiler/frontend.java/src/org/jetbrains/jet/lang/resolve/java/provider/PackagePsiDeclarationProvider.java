@@ -18,9 +18,20 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
-public interface PackagePsiDeclarationProvider extends PsiDeclarationProvider {
+public final class PackagePsiDeclarationProvider extends PsiDeclarationProvider {
+    @NotNull
+    private final PsiPackage psiPackage;
+
+    public PackagePsiDeclarationProvider(@NotNull PsiPackage psiPackage, @NotNull PsiClassFinder psiClassFinder) {
+        super(psiClassFinder);
+        this.psiPackage = psiPackage;
+    }
 
     @NotNull
-    PsiPackage getPsiPackage();
+    @Override
+    protected MembersCache buildMembersCache() {
+        return MembersCache.buildMembersByNameCache(psiClassFinder, null, psiPackage, true);
+    }
 }

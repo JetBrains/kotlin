@@ -34,9 +34,8 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -369,27 +368,26 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(
             @NotNull Name methodName,
-            @NotNull ClassPsiDeclarationProvider scopeData,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull PsiDeclarationProvider provider,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull PsiClass psiClass
     ) {
-
-        NamedMembers namedMembers = scopeData.getMembersCache().get(methodName);
+        NamedMembers namedMembers = provider.getMembersCache().get(methodName);
         if (namedMembers == null) {
             return Collections.emptySet();
         }
-        PsiClass psiClass = scopeData.getPsiClass();
         return resolveNamedGroupFunctions(ownerDescriptor, psiClass, namedMembers, methodName);
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(
+    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(
             @NotNull Name functionName,
-            @NotNull PackagePsiDeclarationProvider scopeData,
+            @NotNull PsiDeclarationProvider provider,
             @NotNull NamespaceDescriptor ownerDescriptor
     ) {
-        NamedMembers namedMembers = scopeData.getMembersCache().get(functionName);
+        NamedMembers namedMembers = provider.getMembersCache().get(functionName);
         if (namedMembers != null) {
             SimpleFunctionDescriptor samConstructor = resolveSamConstructor(ownerDescriptor, namedMembers);
             if (samConstructor != null) {

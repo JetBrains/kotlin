@@ -70,10 +70,10 @@ public final class JavaPropertyResolver {
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name fieldName,
-            @NotNull PsiDeclarationProvider scopeData,
+            @NotNull PsiDeclarationProvider provider,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
-        NamedMembers namedMembers = scopeData.getMembersCache().get(fieldName);
+        NamedMembers namedMembers = provider.getMembersCache().get(fieldName);
         if (namedMembers == null) {
             return Collections.emptySet();
         }

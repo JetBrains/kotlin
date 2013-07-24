@@ -99,12 +99,13 @@ public final class MembersCache {
 
     @NotNull
     public static MembersCache buildMembersByNameCache(
-            @NotNull MembersCache membersCache,
             @NotNull PsiClassFinder finder,
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
             boolean staticMembers
     ) {
+        MembersCache membersCache = new MembersCache();
+
         if (psiClass != null) {
             membersCache.new ClassMemberProcessor(psiClass, staticMembers).process();
         }
@@ -112,6 +113,7 @@ public final class MembersCache {
         //TODO:
         List<PsiClass> classes = psiPackage != null ? finder.findPsiClasses(psiPackage) : finder.findInnerPsiClasses(psiClass);
         membersCache.new ExtraPackageMembersProcessor(classes).process();
+
         return membersCache;
     }
 

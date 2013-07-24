@@ -34,8 +34,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProviderImpl;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
@@ -275,12 +273,11 @@ public final class JavaClassResolver {
             @NotNull PostponedTasks taskList,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
-        ClassKind kind = getClassKind(psiClass);
-        ClassPsiDeclarationProvider classData = new ClassPsiDeclarationProviderImpl(psiClass, false, psiClassFinder);
-        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(
-                containingDeclaration, kind, isInnerClass(psiClass));
+        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, getClassKind(psiClass),
+                                                                                            isInnerClass(psiClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
+
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
@@ -292,7 +289,9 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, classData, javaDescriptorResolver);
+
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, psiClass, false, psiClassFinder,
+                                                                                  javaDescriptorResolver);
         classDescriptor.setScopeForMemberLookup(scope);
         classDescriptor.setScopeForConstructorResolve(scope);
 
@@ -505,27 +504,21 @@ public final class JavaClassResolver {
     private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
                 new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
-        ClassPsiDeclarationProvider provider = new ClassPsiDeclarationProviderImpl(psiClass, true, psiClassFinder);
-        setUpClassObjectDescriptor(classObjectDescriptor, containing, provider, getClassObjectName(containing.getName().asString()));
-        return classObjectDescriptor;
-    }
 
-    private void setUpClassObjectDescriptor(
-            @NotNull ClassDescriptorFromJvmBytecode classObjectDescriptor,
-            @NotNull ClassDescriptor containing,
-            @NotNull ClassPsiDeclarationProvider data,
-            @NotNull Name classObjectName
-    ) {
-        classObjectDescriptor.setName(classObjectName);
+        classObjectDescriptor.setName(getClassObjectName(containing.getName()));
         classObjectDescriptor.setModality(Modality.FINAL);
         classObjectDescriptor.setVisibility(containing.getVisibility());
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, data, javaDescriptorResolver);
+
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, psiClass, true, psiClassFinder,
+                                                                                  javaDescriptorResolver);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(scope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classObjectDescriptor.setScopeForMemberLookup(writableScope);
         classObjectDescriptor.setScopeForConstructorResolve(scope);
+
+        return classObjectDescriptor;
     }
 }

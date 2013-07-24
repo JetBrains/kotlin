@@ -20,12 +20,10 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class JavaInnerClassResolver {
@@ -41,16 +39,7 @@ public final class JavaInnerClassResolver {
     }
 
     @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(@NotNull ClassPsiDeclarationProvider declarationProvider) {
-        if (declarationProvider.isStaticMembers()) {
-            return Collections.emptyList();
-        }
-
-        return resolveInnerClasses(declarationProvider.getPsiClass());
-    }
-
-    @NotNull
-    private List<ClassDescriptor> resolveInnerClasses(@NotNull PsiClass psiClass) {
+    public List<ClassDescriptor> resolveInnerClasses(@NotNull PsiClass psiClass) {
         PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
         for (PsiClass innerPsiClass : innerPsiClasses) {

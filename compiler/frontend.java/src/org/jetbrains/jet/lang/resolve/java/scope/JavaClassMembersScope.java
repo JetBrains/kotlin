@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -31,16 +32,26 @@ import java.util.Set;
 public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     protected final ClassPsiDeclarationProvider declarationProvider;
+    @NotNull
+    protected final PsiClass psiClass;
 
     private Map<Name, ClassDescriptor> innerClassesMap = null;
 
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
+            @NotNull PsiClass psiClass,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
         super(descriptor, javaDescriptorResolver, declarationProvider);
         this.declarationProvider = declarationProvider;
+        this.psiClass = psiClass;
+    }
+
+    @NotNull
+    @Override
+    public PsiClass getPsiElement() {
+        return psiClass;
     }
 
     @NotNull
@@ -53,7 +64,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return javaDescriptorResolver.resolveFunctionGroup(name, declarationProvider, descriptor);
+        return javaDescriptorResolver.resolveFunctionGroupForClass(name, declarationProvider, descriptor, psiClass);
     }
 
     @NotNull
@@ -66,12 +77,6 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
             }
         }
         return innerClassesMap;
-    }
-
-    @NotNull
-    @Override
-    protected Collection<ClassDescriptor> computeInnerClasses() {
-        return javaDescriptorResolver.resolveInnerClasses(declarationProvider);
     }
 
     @Override

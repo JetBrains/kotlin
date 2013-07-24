@@ -18,12 +18,23 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
-public interface ClassPsiDeclarationProvider extends PsiDeclarationProvider {
-
+public final class ClassPsiDeclarationProvider extends PsiDeclarationProvider {
     @NotNull
-    PsiClass getPsiClass();
+    private final PsiClass psiClass;
 
-    //TODO: remove this method
-    boolean isStaticMembers();
+    private final boolean staticMembers;
+
+    public ClassPsiDeclarationProvider(@NotNull PsiClass psiClass, boolean staticMembers, @NotNull PsiClassFinder psiClassFinder) {
+        super(psiClassFinder);
+        this.staticMembers = staticMembers;
+        this.psiClass = psiClass;
+    }
+
+    @Override
+    @NotNull
+    protected MembersCache buildMembersCache() {
+        return MembersCache.buildMembersByNameCache(psiClassFinder, psiClass, null, staticMembers);
+    }
 }

@@ -34,20 +34,29 @@ import java.util.Set;
 
 public final class JavaPackageScope extends JavaBaseScope {
     @NotNull
+    private final PsiPackage psiPackage;
+    @NotNull
     private final FqName packageFQN;
     @NotNull
     private final PsiClassFinder psiClassFinder;
 
     public JavaPackageScope(
             @NotNull NamespaceDescriptor descriptor,
-            @NotNull PackagePsiDeclarationProvider declarationProvider,
+            @NotNull PsiPackage psiPackage,
             @NotNull FqName packageFQN,
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
             @NotNull PsiClassFinder psiClassFinder
     ) {
-        super(descriptor, javaDescriptorResolver, declarationProvider);
+        super(descriptor, javaDescriptorResolver, new PackagePsiDeclarationProvider(psiPackage, psiClassFinder));
+        this.psiPackage = psiPackage;
         this.packageFQN = packageFQN;
         this.psiClassFinder = psiClassFinder;
+    }
+
+    @Override
+    @NotNull
+    public PsiPackage getPsiElement() {
+        return psiPackage;
     }
 
     @Override
@@ -87,8 +96,6 @@ public final class JavaPackageScope extends JavaBaseScope {
     private Collection<DeclarationDescriptor> computeAllPackageDeclarations() {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
 
-        PsiPackage psiPackage = ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
-
         for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
             FqName fqName = new FqName(psiSubPackage.getQualifiedName());
             NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
@@ -127,8 +134,7 @@ public final class JavaPackageScope extends JavaBaseScope {
     @Override
     @NotNull
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return javaDescriptorResolver.resolveFunctionGroup(name, (PackagePsiDeclarationProvider) declarationProvider,
-                                                           (NamespaceDescriptor) descriptor);
+        return javaDescriptorResolver.resolveFunctionGroupForPackage(name, declarationProvider, (NamespaceDescriptor) descriptor);
     }
 
     @NotNull

@@ -17,9 +17,26 @@
 package org.jetbrains.jet.lang.resolve.java.provider;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
-public interface PsiDeclarationProvider {
+public abstract class PsiDeclarationProvider {
+    @NotNull
+    protected final PsiClassFinder psiClassFinder;
+
+    private MembersCache membersCache;
+
+    protected PsiDeclarationProvider(@NotNull PsiClassFinder psiClassFinder) {
+        this.psiClassFinder = psiClassFinder;
+    }
 
     @NotNull
-    MembersCache getMembersCache();
+    public MembersCache getMembersCache() {
+        if (membersCache == null) {
+            membersCache = buildMembersCache();
+        }
+        return membersCache;
+    }
+
+    @NotNull
+    protected abstract MembersCache buildMembersCache();
 }

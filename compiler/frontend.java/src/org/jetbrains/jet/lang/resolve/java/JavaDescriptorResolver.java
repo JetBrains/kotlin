@@ -16,12 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -191,10 +190,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(
-            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptor classDescriptor
-    ) {
-        return constructorResolver.resolveConstructors(classData, classDescriptor);
+    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
+        return constructorResolver.resolveConstructors(psiClass, classDescriptor);
     }
 
     @Nullable
@@ -215,10 +212,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name name,
-            @NotNull PsiDeclarationProvider data,
+            @NotNull PsiDeclarationProvider provider,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
-        return propertiesResolver.resolveFieldGroupByName(name, data, ownerDescriptor);
+        return propertiesResolver.resolveFieldGroupByName(name, provider, ownerDescriptor);
     }
 
     @Nullable
@@ -247,25 +244,26 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(
             @NotNull Name methodName,
-            @NotNull ClassPsiDeclarationProvider scopeData,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull PsiDeclarationProvider provider,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull PsiClass psiClass
     ) {
-        return functionResolver.resolveFunctionGroup(methodName, scopeData, ownerDescriptor);
+        return functionResolver.resolveFunctionGroupForClass(methodName, provider, ownerDescriptor, psiClass);
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(
+    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(
             @NotNull Name methodName,
-            @NotNull PackagePsiDeclarationProvider scopeData,
+            @NotNull PsiDeclarationProvider provider,
             @NotNull NamespaceDescriptor ownerDescriptor
     ) {
-        return functionResolver.resolveFunctionGroup(methodName, scopeData, ownerDescriptor);
+        return functionResolver.resolveFunctionGroupForPackage(methodName, provider, ownerDescriptor);
     }
 
     @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(@NotNull ClassPsiDeclarationProvider declarationProvider) {
-        return innerClassResolver.resolveInnerClasses(declarationProvider);
+    public List<ClassDescriptor> resolveInnerClasses(@NotNull PsiClass psiClass) {
+        return innerClassResolver.resolveInnerClasses(psiClass);
     }
 }

@@ -16,14 +16,17 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
 
@@ -31,14 +34,24 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     private ConstructorDescriptor primaryConstructor = null;
     @NotNull
     private final ClassDescriptor descriptor;
+    @NotNull
+    private final PsiClass psiClass;
+    private final boolean staticMembersOfPsiClass;
 
     public JavaClassNonStaticMembersScope(
             @NotNull ClassDescriptor descriptor,
-            @NotNull ClassPsiDeclarationProvider psiDeclarationProvider,
+            @NotNull PsiClass psiClass,
+            boolean staticMembersOfPsiClass,
+            @NotNull PsiClassFinder psiClassFinder,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, psiDeclarationProvider, javaDescriptorResolver);
+        super(descriptor,
+              psiClass,
+              new ClassPsiDeclarationProvider(psiClass, staticMembersOfPsiClass, psiClassFinder),
+              javaDescriptorResolver);
         this.descriptor = descriptor;
+        this.psiClass = psiClass;
+        this.staticMembersOfPsiClass = staticMembersOfPsiClass;
     }
 
 
@@ -56,7 +69,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
 
     private void initConstructorsIfNeeded() {
         if (constructors == null) {
-            constructors = javaDescriptorResolver.resolveConstructors(declarationProvider, descriptor);
+            constructors = javaDescriptorResolver.resolveConstructors(psiClass, descriptor);
 
             for (ConstructorDescriptor constructor : constructors) {
                 if (constructor.isPrimary()) {
@@ -68,5 +81,14 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
                 }
             }
         }
+    }
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        if (staticMembersOfPsiClass) {
+            return Collections.emptyList();
+        }
+        return javaDescriptorResolver.resolveInnerClasses(psiClass);
     }
 }

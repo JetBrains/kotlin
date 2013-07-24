@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -68,12 +67,8 @@ public final class JavaConstructorResolver {
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(
-            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptor containingClass
-    ) {
+    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull PsiClass psiClass, @NotNull ClassDescriptor containingClass) {
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
-
-        PsiClass psiClass = classData.getPsiClass();
 
         List<TypeParameterDescriptor> typeParameters = containingClass.getTypeConstructor().getParameters();
 
