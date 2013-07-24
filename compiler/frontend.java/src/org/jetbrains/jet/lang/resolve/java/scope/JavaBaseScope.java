@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
@@ -38,9 +37,8 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 import java.util.*;
 
 public abstract class JavaBaseScope extends JetScopeImpl {
-
     @NotNull
-    protected final JavaSemanticServices semanticServices;
+    protected final JavaDescriptorResolver javaDescriptorResolver;
     @NotNull
     protected final PsiDeclarationProvider declarationProvider;
     @NotNull
@@ -59,10 +57,10 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     protected JavaBaseScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull JavaSemanticServices semanticServices,
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
             @NotNull PsiDeclarationProvider declarationProvider
     ) {
-        this.semanticServices = semanticServices;
+        this.javaDescriptorResolver = javaDescriptorResolver;
         this.declarationProvider = declarationProvider;
         this.descriptor = descriptor;
     }
@@ -90,7 +88,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<VariableDescriptor> computePropertyDescriptors(@NotNull Name name) {
-        return getResolver().resolveFieldGroupByName(name, declarationProvider, descriptor);
+        return javaDescriptorResolver.resolveFieldGroupByName(name, declarationProvider, descriptor);
     }
 
     @NotNull
@@ -158,11 +156,6 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             result.addAll(getProperties(name));
         }
         return result;
-    }
-
-    @NotNull
-    protected JavaDescriptorResolver getResolver() {
-        return semanticServices.getDescriptorResolver();
     }
 
     //TODO: remove this method

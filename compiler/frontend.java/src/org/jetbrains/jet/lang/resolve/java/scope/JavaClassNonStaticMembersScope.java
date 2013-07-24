@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 
 import java.util.Collection;
@@ -35,9 +35,9 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     public JavaClassNonStaticMembersScope(
             @NotNull ClassDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider psiDeclarationProvider,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, psiDeclarationProvider, semanticServices);
+        super(descriptor, psiDeclarationProvider, javaDescriptorResolver);
         this.descriptor = descriptor;
     }
 
@@ -56,7 +56,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
 
     private void initConstructorsIfNeeded() {
         if (constructors == null) {
-            constructors = getResolver().resolveConstructors(declarationProvider, descriptor);
+            constructors = javaDescriptorResolver.resolveConstructors(declarationProvider, descriptor);
 
             for (ConstructorDescriptor constructor : constructors) {
                 if (constructor.isPrimary()) {

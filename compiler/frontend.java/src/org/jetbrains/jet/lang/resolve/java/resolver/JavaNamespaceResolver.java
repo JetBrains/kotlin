@@ -36,10 +36,13 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.provider.*;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProviderImpl;
+import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
+import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProviderImpl;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -62,7 +65,7 @@ public final class JavaNamespaceResolver {
 
     private PsiClassFinder psiClassFinder;
     private BindingTrace trace;
-    private JavaSemanticServices javaSemanticServices;
+    private JavaDescriptorResolver javaDescriptorResolver;
 
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
 
@@ -80,8 +83,8 @@ public final class JavaNamespaceResolver {
     }
 
     @Inject
-    public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
-        this.javaSemanticServices = javaSemanticServices;
+    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @Inject
@@ -188,7 +191,7 @@ public final class JavaNamespaceResolver {
 
             // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
             PackagePsiDeclarationProvider provider = new PackagePsiDeclarationProviderImpl(psiPackage, psiClassFinder);
-            return new JavaPackageScopeWithoutMembers(namespaceDescriptor, provider, fqName, javaSemanticServices);
+            return new JavaPackageScope(namespaceDescriptor, provider, fqName, javaDescriptorResolver, psiClassFinder);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -205,7 +208,7 @@ public final class JavaNamespaceResolver {
         return new JavaClassStaticMembersScope(
                 namespaceDescriptor,
                 new ClassPsiDeclarationProviderImpl(psiClass, true, psiClassFinder),
-                fqName, javaSemanticServices);
+                fqName, javaDescriptorResolver);
     }
 
     private static boolean isOldKotlinPackageClass(@NotNull PsiClass psiClass) {

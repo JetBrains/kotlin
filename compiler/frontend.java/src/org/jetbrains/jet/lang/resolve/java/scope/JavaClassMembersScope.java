@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -37,9 +37,9 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, semanticServices, declarationProvider);
+        super(descriptor, javaDescriptorResolver, declarationProvider);
         this.declarationProvider = declarationProvider;
     }
 
@@ -53,7 +53,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
+        return javaDescriptorResolver.resolveFunctionGroup(name, declarationProvider, descriptor);
     }
 
     @NotNull
@@ -71,7 +71,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Collection<ClassDescriptor> computeInnerClasses() {
-        return getResolver().resolveInnerClasses(declarationProvider);
+        return javaDescriptorResolver.resolveInnerClasses(declarationProvider);
     }
 
     @Override

@@ -37,16 +37,20 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
             .addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS)
             .build();
 
-    private JavaSemanticServices javaSemanticServices;
+    private JavaDescriptorResolver javaDescriptorResolver;
 
     @Inject
-    public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
-        this.javaSemanticServices = javaSemanticServices;
+    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @Override
-    public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        JetScope javaPackageScope = javaSemanticServices.getDescriptorResolver().getJavaPackageScope(namespaceDescriptor);
+    public void extendNamespaceScope(
+            @NotNull BindingTrace trace,
+            @NotNull NamespaceDescriptor namespaceDescriptor,
+            @NotNull WritableScope namespaceMemberScope
+    ) {
+        JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
         if (javaPackageScope != null) {
             namespaceMemberScope.importScope(javaPackageScope);
         }

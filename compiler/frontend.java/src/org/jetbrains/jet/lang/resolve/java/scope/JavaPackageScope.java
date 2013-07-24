@@ -22,35 +22,38 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
-public abstract class JavaPackageScope extends JavaBaseScope {
+public final class JavaPackageScope extends JavaBaseScope {
     @NotNull
     private final FqName packageFQN;
+    @NotNull
+    private final PsiClassFinder psiClassFinder;
 
-    protected JavaPackageScope(
+    public JavaPackageScope(
             @NotNull NamespaceDescriptor descriptor,
             @NotNull PackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull PsiClassFinder psiClassFinder
     ) {
-        super(descriptor, semanticServices, declarationProvider);
+        super(descriptor, javaDescriptorResolver, declarationProvider);
         this.packageFQN = packageFQN;
+        this.psiClassFinder = psiClassFinder;
     }
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassDescriptor classDescriptor =
-                getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                javaDescriptorResolver.resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor == null || classDescriptor.getKind().isObject()) {
             return null;
         }
@@ -60,7 +63,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         ClassDescriptor classDescriptor =
-                getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                javaDescriptorResolver.resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor != null && classDescriptor.getKind().isObject()) {
             return classDescriptor;
         }
@@ -69,7 +72,7 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 
     @NotNull
@@ -88,13 +91,13 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
         for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
             FqName fqName = new FqName(psiSubPackage.getQualifiedName());
-            NamespaceDescriptor childNs = getResolver().resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
             if (childNs != null) {
                 result.add(childNs);
             }
         }
 
-        for (PsiClass psiClass : semanticServices.getPsiClassFinder().findPsiClasses(psiPackage)) {
+        for (PsiClass psiClass : psiClassFinder.findPsiClasses(psiPackage)) {
             if (DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass)) continue;
 
             if (psiClass instanceof JetJavaMirrorMarker) continue;
@@ -107,17 +110,30 @@ public abstract class JavaPackageScope extends JavaBaseScope {
             if (qualifiedName == null) continue;
             FqName fqName = new FqName(qualifiedName);
 
-            ClassDescriptor classDescriptor = getResolver().resolveClass(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
             if (classDescriptor != null) {
                 result.add(classDescriptor);
             }
 
-            NamespaceDescriptor namespace = getResolver().resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            NamespaceDescriptor namespace = javaDescriptorResolver.resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
             if (namespace != null) {
                 result.add(namespace);
             }
         }
 
         return result;
+    }
+
+    @Override
+    @NotNull
+    protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
+        return javaDescriptorResolver.resolveFunctionGroup(name, (PackagePsiDeclarationProvider) declarationProvider,
+                                                           (NamespaceDescriptor) descriptor);
+    }
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        return Collections.emptyList();
     }
 }

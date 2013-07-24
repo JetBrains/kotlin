@@ -87,7 +87,7 @@ public final class JavaClassResolver {
 
     private BindingTrace trace;
     private JavaSignatureResolver signatureResolver;
-    private JavaSemanticServices semanticServices;
+    private JavaDescriptorResolver javaDescriptorResolver;
     private JavaAnnotationResolver annotationResolver;
     private PsiClassFinder psiClassFinder;
     private JavaNamespaceResolver namespaceResolver;
@@ -114,8 +114,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
+    public void setJavaDescriptorResolver(JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @Inject
@@ -292,9 +292,9 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, semanticServices);
-        classDescriptor.setScopeForMemberLookup(membersScope);
-        classDescriptor.setScopeForConstructorResolve(membersScope);
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, classData, javaDescriptorResolver);
+        classDescriptor.setScopeForMemberLookup(scope);
+        classDescriptor.setScopeForConstructorResolve(scope);
 
         String context = "class " + psiClass.getQualifiedName();
         signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);
@@ -521,13 +521,11 @@ public final class JavaClassResolver {
         classObjectDescriptor.setVisibility(containing.getVisibility());
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope classMembersScope =
-                new JavaClassNonStaticMembersScope(classObjectDescriptor, data, semanticServices);
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, data, javaDescriptorResolver);
         WritableScopeImpl writableScope =
-                new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION,
-                                      "Member lookup scope");
+                new WritableScopeImpl(scope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classObjectDescriptor.setScopeForMemberLookup(writableScope);
-        classObjectDescriptor.setScopeForConstructorResolve(classMembersScope);
+        classObjectDescriptor.setScopeForConstructorResolve(scope);
     }
 }
