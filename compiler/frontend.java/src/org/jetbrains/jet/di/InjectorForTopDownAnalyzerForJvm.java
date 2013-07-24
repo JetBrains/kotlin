@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
@@ -101,7 +100,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final TypeHierarchyResolver typeHierarchyResolver;
     private final ScriptBodyResolver scriptBodyResolver;
     private final JavaSemanticServices javaSemanticServices;
-    private final PsiDeclarationProviderFactory psiDeclarationProviderFactory;
     private final JavaTypeTransformer javaTypeTransformer;
     private final JavaClassResolver javaClassResolver;
     private final JavaAnnotationResolver javaAnnotationResolver;
@@ -155,7 +153,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaSemanticServices = new JavaSemanticServices();
-        this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(psiClassFinder);
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
@@ -286,7 +283,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         javaSemanticServices.setPsiClassFinder(psiClassFinder);
-        javaSemanticServices.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
         javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
         javaTypeTransformer.setResolver(javaDescriptorResolver);

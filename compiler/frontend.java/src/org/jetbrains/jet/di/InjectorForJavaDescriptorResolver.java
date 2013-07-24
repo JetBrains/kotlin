@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
@@ -54,7 +53,6 @@ public class InjectorForJavaDescriptorResolver {
     private final JavaTypeTransformer javaTypeTransformer;
     private final JavaSignatureResolver javaSignatureResolver;
     private final JavaSemanticServices javaSemanticServices;
-    private final PsiDeclarationProviderFactory psiDeclarationProviderFactory;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final JavaNamespaceResolver javaNamespaceResolver;
@@ -79,7 +77,6 @@ public class InjectorForJavaDescriptorResolver {
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaSignatureResolver = new JavaSignatureResolver();
         this.javaSemanticServices = new JavaSemanticServices();
-        this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
@@ -127,7 +124,6 @@ public class InjectorForJavaDescriptorResolver {
 
         javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         javaSemanticServices.setPsiClassFinder(psiClassFinder);
-        javaSemanticServices.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
         javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);

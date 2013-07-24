@@ -17,13 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
 
@@ -34,8 +27,6 @@ public class JavaSemanticServices {
     private JavaDescriptorResolver descriptorResolver;
     @NotNull
     private PsiClassFinder psiClassFinder;
-    @NotNull
-    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
 
     @Inject
     public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
@@ -52,11 +43,6 @@ public class JavaSemanticServices {
         this.psiClassFinder = psiClassFinder;
     }
 
-    @Inject
-    public void setPsiDeclarationProviderFactory(@NotNull PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
-        this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
-    }
-
     @NotNull
     public JavaTypeTransformer getTypeTransformer() {
         return typeTransformer;
@@ -70,10 +56,5 @@ public class JavaSemanticServices {
     @NotNull
     public PsiClassFinder getPsiClassFinder() {
         return psiClassFinder;
-    }
-
-    @NotNull
-    public PsiDeclarationProviderFactory getPsiDeclarationProviderFactory() {
-        return psiDeclarationProviderFactory;
     }
 }

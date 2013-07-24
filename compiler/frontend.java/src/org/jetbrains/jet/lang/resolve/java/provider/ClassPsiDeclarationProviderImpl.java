@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
 public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase implements ClassPsiDeclarationProvider {
-
     @NotNull
     protected final PsiClassFinder psiClassFinder;
 
@@ -30,7 +29,7 @@ public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase 
 
     private final boolean staticMembers;
 
-    protected ClassPsiDeclarationProviderImpl(@NotNull PsiClass psiClass, boolean staticMembers, @NotNull PsiClassFinder psiClassFinder) {
+    public ClassPsiDeclarationProviderImpl(@NotNull PsiClass psiClass, boolean staticMembers, @NotNull PsiClassFinder psiClassFinder) {
         this.staticMembers = staticMembers;
         this.psiClass = psiClass;
         this.psiClassFinder = psiClassFinder;

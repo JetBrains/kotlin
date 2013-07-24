@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProviderImpl;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
@@ -275,7 +276,7 @@ public final class JavaClassResolver {
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         ClassKind kind = getClassKind(psiClass);
-        ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
+        ClassPsiDeclarationProvider classData = new ClassPsiDeclarationProviderImpl(psiClass, false, psiClassFinder);
         ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(
                 containingDeclaration, kind, isInnerClass(psiClass));
 
@@ -501,15 +502,11 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassDescriptorFromJvmBytecode createSyntheticClassObject(
-            @NotNull ClassDescriptor containing,
-            @NotNull PsiClass psiClass
-    ) {
+    private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
                 new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
-        ClassPsiDeclarationProvider data =
-                semanticServices.getPsiDeclarationProviderFactory().createSyntheticClassObjectClassData(psiClass);
-        setUpClassObjectDescriptor(classObjectDescriptor, containing, data, getClassObjectName(containing.getName().asString()));
+        ClassPsiDeclarationProvider provider = new ClassPsiDeclarationProviderImpl(psiClass, true, psiClassFinder);
+        setUpClassObjectDescriptor(classObjectDescriptor, containing, provider, getClassObjectName(containing.getName().asString()));
         return classObjectDescriptor;
     }
 

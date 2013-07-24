@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
+import org.jetbrains.jet.lang.resolve.java.provider.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
@@ -187,8 +187,8 @@ public final class JavaNamespaceResolver {
             }
 
             // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
-            return new JavaPackageScopeWithoutMembers(namespaceDescriptor, javaSemanticServices.getPsiDeclarationProviderFactory()
-                    .createDeclarationProviderForNamespaceWithoutMembers(psiPackage), fqName, javaSemanticServices);
+            PackagePsiDeclarationProvider provider = new PackagePsiDeclarationProviderImpl(psiPackage, psiClassFinder);
+            return new JavaPackageScopeWithoutMembers(namespaceDescriptor, provider, fqName, javaSemanticServices);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -204,7 +204,7 @@ public final class JavaNamespaceResolver {
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
         return new JavaClassStaticMembersScope(
                 namespaceDescriptor,
-                javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
+                new ClassPsiDeclarationProviderImpl(psiClass, true, psiClassFinder),
                 fqName, javaSemanticServices);
     }
 

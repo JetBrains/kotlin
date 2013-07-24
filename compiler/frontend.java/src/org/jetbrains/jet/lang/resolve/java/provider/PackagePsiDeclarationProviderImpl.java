@@ -21,17 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
 public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProviderBase implements PackagePsiDeclarationProvider {
-
     @NotNull
     private final PsiPackage psiPackage;
 
     @NotNull
     private final PsiClassFinder psiClassFinder;
 
-    /*package private*/ PackagePsiDeclarationProviderImpl(
-            @NotNull PsiPackage psiPackage,
-            @NotNull PsiClassFinder psiClassFinder
-    ) {
+    public PackagePsiDeclarationProviderImpl(@NotNull PsiPackage psiPackage, @NotNull PsiClassFinder psiClassFinder) {
         this.psiPackage = psiPackage;
         this.psiClassFinder = psiClassFinder;
     }
