@@ -166,7 +166,7 @@ public final class JavaClassResolver {
         }
 
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
-        ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
+        ClassDescriptor kotlinClassDescriptor = trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
         if (kotlinClassDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinClassDescriptor);
         }

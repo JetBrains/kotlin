@@ -26,12 +26,17 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.*;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.TimeUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -151,8 +156,9 @@ public class ResolveDescriptorsFromExternalLibraries {
             }
         }
 
-
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
+                jetCoreEnvironment.getProject(), new BindingTraceContext());
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         boolean hasErrors;
         try {
@@ -184,7 +190,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
 
                 try {
-                    ClassDescriptor clazz = injector.getJavaDescriptorResolver().resolveClass(new FqName(className), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+                    ClassDescriptor clazz = javaDescriptorResolver.resolveClass(new FqName(className), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }

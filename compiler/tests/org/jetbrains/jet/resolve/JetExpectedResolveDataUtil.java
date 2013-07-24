@@ -21,7 +21,7 @@ import com.intellij.psi.*;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -114,7 +114,7 @@ public class JetExpectedResolveDataUtil {
 
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, new BindingTraceContext());
         PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.REPORT_ERROR);
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, psiClass);
         return psiClass;

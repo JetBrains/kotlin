@@ -57,8 +57,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -625,8 +623,7 @@ public class JetTestUtils {
 
     @NotNull
     public static NamespaceDescriptorImpl createTestNamespace(@NotNull Name testPackageName) {
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<test module>"), JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
-                                                               JavaToKotlinClassMap.getInstance());
+        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<test module>");
         NamespaceDescriptorImpl rootNamespace =
                 new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
         module.setRootNamespace(rootNamespace);

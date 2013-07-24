@@ -36,10 +36,12 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -91,9 +93,10 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
             try {
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
-                InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(commonEnvironment.getProject());
+                BindingTrace trace = new BindingTraceContext();
+                InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(commonEnvironment.getProject(), trace);
 
-                BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
+                BindingContext bindingContext = trace.getBindingContext();
                 JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
                 AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);

@@ -34,11 +34,12 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
@@ -83,10 +84,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        InjectorForJavaDescriptorResolver injector = createInjector(project);
+        BindingTrace trace = createDelegatingTrace(project);
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, trace);
 
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        BindingTrace trace = injector.getBindingTrace();
 
         for (PsiElement element : elements) {
             if (!(element instanceof PsiMember)) {
@@ -111,15 +112,11 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
     }
 
-    static InjectorForJavaDescriptorResolver createInjector(Project project) {
+    @NotNull
+    static BindingTrace createDelegatingTrace(@NotNull Project project) {
         KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(TargetPlatform.JVM);
         BindingContext bindingContext = declarationsCache.getBindingContext();
-        DelegatingBindingTrace delegatingTrace = new DelegatingBindingTrace(bindingContext, "wrapped context of declarations cache");
-
-        ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<fake>");
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, delegatingTrace, moduleDescriptor);
-        moduleDescriptor.setModuleConfiguration(injector.getJavaBridgeConfiguration());
-        return injector;
+        return new DelegatingBindingTrace(bindingContext, "wrapped context of declarations cache");
     }
 
     @Nullable

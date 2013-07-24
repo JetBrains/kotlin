@@ -63,8 +63,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         NamespaceDescriptor testNamespace = moduleDescriptor.getNamespace(FqName.topLevel(TEST_PACKAGE_NAME));
         assert testNamespace != null;
 
-        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaDescriptorResolver(
-                getProject(), new BindingTraceContext(), moduleDescriptor).getJavaDescriptorResolver();
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(getProject(), new BindingTraceContext());
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         NamespaceDescriptor deserialized = serializeAndDeserialize(javaDescriptorResolver, testNamespace);
 

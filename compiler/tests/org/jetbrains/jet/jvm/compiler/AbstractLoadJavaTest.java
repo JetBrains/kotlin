@@ -142,15 +142,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("compiler/tests")); // for @ExpectLoadError annotation
         JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
-        ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<test module>");
-
         // we need the same binding trace for resolve from Java and Kotlin
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
 
-        InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(),
-                                                                                                  trace,
-                                                                                                  moduleDescriptor);
+        InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(), trace);
 
+        ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<test module>");
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),
                 new TopDownAnalysisParameters(

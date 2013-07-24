@@ -25,7 +25,7 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
@@ -57,7 +57,6 @@ import java.util.*;
 public class JetTypeCheckerTest extends JetLiteFixture {
 
     private KotlinBuiltIns builtIns;
-    private DescriptorResolver descriptorResolver;
     private JetScope scopeWithImports;
     private TypeResolver typeResolver;
     private ExpressionTypingServices expressionTypingServices;
@@ -79,7 +78,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         builtIns = KotlinBuiltIns.getInstance();
 
         InjectorForTests injector = new InjectorForTests(getProject(), JetTestUtils.createEmptyModule());
-        descriptorResolver = injector.getDescriptorResolver();
         typeResolver = injector.getTypeResolver();
         expressionTypingServices = injector.getExpressionTypingServices();
 
@@ -92,7 +90,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         expressionTypingServices = null;
         typeResolver = null;
-        descriptorResolver = null;
 
         builtIns = null;
 
@@ -586,7 +583,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject());
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());

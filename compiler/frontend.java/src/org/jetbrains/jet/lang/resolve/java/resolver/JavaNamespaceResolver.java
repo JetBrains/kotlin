@@ -92,7 +92,7 @@ public final class JavaNamespaceResolver {
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         // First, let's check that there is no Kotlin package:
-        NamespaceDescriptor kotlinNamespaceDescriptor = javaSemanticServices.getKotlinNamespaceDescriptor(qualifiedName);
+        NamespaceDescriptor kotlinNamespaceDescriptor = trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
         if (kotlinNamespaceDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
         }

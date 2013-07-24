@@ -35,8 +35,6 @@ public class JavaSemanticServices {
     @NotNull
     private PsiClassFinder psiClassFinder;
     @NotNull
-    private BindingTrace trace;
-    @NotNull
     private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
 
     @Inject
@@ -55,8 +53,8 @@ public class JavaSemanticServices {
     }
 
     @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
+    public void setPsiDeclarationProviderFactory(@NotNull PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
+        this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
     }
 
     @NotNull
@@ -64,19 +62,9 @@ public class JavaSemanticServices {
         return typeTransformer;
     }
 
-    @Inject
-    public void setPsiDeclarationProviderFactory(PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
-        this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
-    }
-
     @NotNull
     public JavaDescriptorResolver getDescriptorResolver() {
         return descriptorResolver;
-    }
-
-    @Nullable
-    public ClassDescriptor getKotlinClassDescriptor(@NotNull FqName qualifiedName) {
-        return trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
     }
 
     @NotNull
@@ -87,10 +75,5 @@ public class JavaSemanticServices {
     @NotNull
     public PsiDeclarationProviderFactory getPsiDeclarationProviderFactory() {
         return psiDeclarationProviderFactory;
-    }
-
-    @Nullable
-    public NamespaceDescriptor getKotlinNamespaceDescriptor(@NotNull FqName qualifiedName) {
-        return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
     }
 }

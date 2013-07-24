@@ -78,10 +78,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        ModuleDescriptorImpl javaModule = createJavaModule("<java module>");
-
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace);
 
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
 
@@ -115,7 +113,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 }
             }
         };
-        javaModule.setModuleConfiguration(moduleConfiguration);
 
         ModuleDescriptorImpl lazyModule = createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(moduleConfiguration);

@@ -90,15 +90,11 @@ public class LazyResolveTestUtil {
     public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment, final boolean addBuiltIns) {
         JetTestUtils.newTrace(environment);
 
-        ModuleDescriptorImpl javaModule = AnalyzerFacadeForJVM.createJavaModule("<java module>");
-
         Project project = environment.getProject();
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-        InjectorForJavaDescriptorResolver injector =
-                new InjectorForJavaDescriptorResolver(project, sharedTrace, javaModule);
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, sharedTrace);
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
         final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-
 
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
@@ -127,7 +123,6 @@ public class LazyResolveTestUtil {
                 }
             }
         };
-        javaModule.setModuleConfiguration(moduleConfiguration);
 
         ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(moduleConfiguration);
