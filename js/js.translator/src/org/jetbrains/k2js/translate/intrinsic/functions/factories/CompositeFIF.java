@@ -17,20 +17,19 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class CompositeFIF implements FunctionIntrinsicFactory {
-
-    @NotNull final Map<DescriptorPredicate, FunctionIntrinsic> patternToIntrinsic = Maps.newHashMap();
+    @NotNull
+    private final List<Pair<DescriptorPredicate, FunctionIntrinsic>> patternsAndIntrinsics = new ArrayList<Pair<DescriptorPredicate, FunctionIntrinsic>>();
 
     protected CompositeFIF() {
     }
@@ -38,28 +37,33 @@ public abstract class CompositeFIF implements FunctionIntrinsicFactory {
     @NotNull
     @Override
     public Predicate<FunctionDescriptor> getPredicate() {
-        Collection<DescriptorPredicate> patterns = patternToIntrinsic.keySet();
-        final DescriptorPredicate[] patterns1 = patterns.toArray(new DescriptorPredicate[patterns.size()]);
         return new DescriptorPredicate() {
             @Override
             public boolean apply(@Nullable FunctionDescriptor descriptor) {
-                return Predicates.or(patterns1).apply(descriptor);
+                return descriptor != null && findIntrinsic(descriptor) != null;
             }
         };
+    }
+
+    @Nullable
+    public FunctionIntrinsic findIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        for (Pair<DescriptorPredicate, FunctionIntrinsic> entry : patternsAndIntrinsics) {
+            if (entry.first.apply(descriptor)) {
+                return entry.second;
+            }
+        }
+        return null;
     }
 
     @NotNull
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        for (DescriptorPredicate pattern : patternToIntrinsic.keySet()) {
-            if (pattern.apply(descriptor)) {
-                return patternToIntrinsic.get(pattern);
-            }
-        }
-        throw new IllegalStateException("Must have intrinsic for pattern.");
+        FunctionIntrinsic intrinsic = findIntrinsic(descriptor);
+        assert intrinsic != null;
+        return intrinsic;
     }
 
     protected void add(@NotNull DescriptorPredicate pattern, @NotNull FunctionIntrinsic intrinsic) {
-        patternToIntrinsic.put(pattern, intrinsic);
+        patternsAndIntrinsics.add(Pair.create(pattern, intrinsic));
     }
 }
