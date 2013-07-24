@@ -313,84 +313,117 @@ public class CandidateResolver {
             @NotNull CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
-        ConstraintSystem constraintSystem = context.candidateCall.getConstraintSystem();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
 
             for (ValueArgument argument : resolvedArgument.getArguments()) {
-                JetExpression expression = argument.getArgumentExpression();
-                if (expression == null) continue;
-
-                JetType effectiveExpectedType = getEffectiveExpectedType(parameterDescriptor, argument);
-                JetType expectedType = constraintSystem != null
-                                       ? constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
-                                       : effectiveExpectedType;
-
-                JetVisitor<JetExpression, Void> selectorExpressionFinder = new JetVisitor<JetExpression, Void>() {
-                    @Override
-                    public JetExpression visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
-                        JetExpression selector = expression.getSelectorExpression();
-                        return selector != null ? selector.accept(this, null) : null;
-                    }
-
-                    @Override
-                    public JetExpression visitExpression(JetExpression expression, Void data) {
-                        return expression;
-                    }
-                };
-                JetExpression selectorExpression = expression.accept(selectorExpressionFinder, null);
-
-                CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
-                        context.resolutionResultsCache.getDeferredComputation(CallKey.create(Call.CallType.DEFAULT, selectorExpression));
-                //todo assert storedContextForArgument != null
-                if (storedContextForArgument == null) {
-                    PsiElement parent = expression.getParent();
-                    if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
-                        || (expression instanceof JetFunctionLiteralExpression)) {
-                        continue;
-                    }
-                    JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
-                    DataFlowInfo dataFlowInfoForValueArgument = resolvedCall.getDataFlowInfoForValueArgument(argument);
-                    ResolutionContext<?> newContext = context.replaceExpectedType(expectedType);
-                    if (dataFlowInfoForValueArgument != null) {
-                        newContext = newContext.replaceDataFlowInfo(dataFlowInfoForValueArgument);
-                    }
-                    if (type != null && !type.getConstructor().isDenotable()) {
-                        if (type.getConstructor() instanceof NumberValueTypeConstructor) {
-                            NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
-                            type = ConstantUtils.updateConstantValueType(constructor, expectedType, expression, context);
-                        }
-                    }
-                    if (expression instanceof JetConstantExpression && !KotlinBuiltIns.getInstance().isUnit(expectedType)) {
-                        CompileTimeConstant<?> value =
-                                new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, expectedType);
-                        if (value instanceof ErrorValue) {
-                            context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
-                        }
-                    }
-                    else {
-                        DataFlowUtils.checkType(type, expression, newContext);
-                    }
-                    continue;
-                }
-
-                CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
-                        storedContextForArgument.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
-                JetType type;
-                if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
-                    type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
-                }
-                else {
-                    type = completeNestedCallsInference(contextForArgument);
-                    checkValueArgumentTypes(contextForArgument);
-                }
-
-                DataFlowUtils.checkType(type, expression, contextForArgument);
+                completeInferenceForArgument(argument, parameterDescriptor, context);
             }
         }
         recordReferenceForInvokeFunction(context);
         return resolvedCall.getResultingDescriptor().getReturnType();
+    }
+
+    private <D extends CallableDescriptor> void completeInferenceForArgument(
+            @NotNull ValueArgument argument,
+            @NotNull ValueParameterDescriptor parameterDescriptor,
+            @NotNull CallCandidateResolutionContext<D> context
+    ) {
+        ConstraintSystem constraintSystem = context.candidateCall.getConstraintSystem();
+
+        JetExpression expression = argument.getArgumentExpression();
+        if (expression == null) return;
+
+        JetType effectiveExpectedType = getEffectiveExpectedType(parameterDescriptor, argument);
+        JetType expectedType = constraintSystem != null
+                               ? constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
+                               : effectiveExpectedType;
+        context = context.replaceExpectedType(expectedType);
+
+        JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
+        CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
+                context.resolutionResultsCache.getDeferredComputation(CallKey.create(Call.CallType.DEFAULT, keyExpression));
+
+        if (storedContextForArgument == null) {
+            PsiElement parent = expression.getParent();
+            if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
+                || (expression instanceof JetFunctionLiteralExpression)) {
+                return;
+            }
+            JetType type = updateResultTypeIfNotDenotable(context, expression);
+            checkResultType(type, argument, context);
+            return;
+        }
+
+        CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = storedContextForArgument
+                .replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
+        JetType type;
+        if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
+            type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
+        }
+        else {
+            type = completeNestedCallsInference(contextForArgument);
+            checkValueArgumentTypes(contextForArgument);
+        }
+
+        DataFlowUtils.checkType(type, expression, contextForArgument);
+    }
+
+    @NotNull
+    private JetExpression getDeferredComputationKeyExpression(@NotNull JetExpression expression) {
+        JetVisitor<JetExpression, Void> selectorExpressionFinder = new JetVisitor<JetExpression, Void>() {
+            @Override
+            public JetExpression visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
+                JetExpression selector = expression.getSelectorExpression();
+                return selector != null ? selector.accept(this, null) : null;
+            }
+
+            @Override
+            public JetExpression visitExpression(JetExpression expression, Void data) {
+                return expression;
+            }
+        };
+        return expression.accept(selectorExpressionFinder, null);
+    }
+
+    @Nullable
+    private <D extends CallableDescriptor> JetType updateResultTypeIfNotDenotable(
+            @NotNull CallCandidateResolutionContext<D> context,
+            @NotNull JetExpression expression
+    ) {
+        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+        if (type != null && !type.getConstructor().isDenotable()) {
+            if (type.getConstructor() instanceof NumberValueTypeConstructor) {
+                NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
+                type = ConstantUtils.updateConstantValueType(constructor, context.expectedType, expression, context);
+            }
+        }
+        return type;
+    }
+
+    private <D extends CallableDescriptor> void checkResultType(
+            @Nullable JetType type,
+            @NotNull ValueArgument argument,
+            @NotNull CallCandidateResolutionContext<D> context
+    ) {
+        JetExpression expression = argument.getArgumentExpression();
+        if (expression == null) return;
+
+        if (expression instanceof JetConstantExpression && !KotlinBuiltIns.getInstance().isUnit(context.expectedType)) {
+            CompileTimeConstant<?> value =
+                    new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, context.expectedType);
+            if (value instanceof ErrorValue) {
+                context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
+            }
+            return;
+        }
+        DataFlowInfo dataFlowInfoForValueArgument = context.candidateCall.getDataFlowInfoForValueArgument(argument);
+        ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType);
+        if (dataFlowInfoForValueArgument != null) {
+            newContext = newContext.replaceDataFlowInfo(dataFlowInfoForValueArgument);
+        }
+        DataFlowUtils.checkType(type, expression, newContext);
     }
 
     private static <D extends CallableDescriptor> void recordReferenceForInvokeFunction(CallCandidateResolutionContext<D> context) {
