@@ -51,7 +51,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-public class KotlinInlineLocalHandler extends InlineActionHandler {
+public class KotlinInlineValHandler extends InlineActionHandler {
     @Override
     public boolean isEnabledForLanguage(Language l) {
         return l.equals(JetLanguage.INSTANCE);
@@ -63,25 +63,24 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
             return false;
         }
         JetProperty property = (JetProperty) element;
-        return !property.isVar();
+        return !property.isVar() && property.getGetter() == null && property.getReceiverTypeRef() == null;
     }
 
     @Override
-    public void inlineElement(Project project, final Editor editor, PsiElement element) {
+    public void inlineElement(final Project project, final Editor editor, PsiElement element) {
         final JetProperty val = (JetProperty) element;
         String name = val.getName();
 
         JetExpression initializerInDeclaration = val.getInitializer();
 
-        final Collection<PsiReference> references = ReferencesSearch.search(val, GlobalSearchScope.allScope(project), false).findAll();
+        final List<JetExpression> referenceExpressions = findReferenceExpressions(val);
 
         final Set<PsiElement> assignments = Sets.newHashSet();
-        for (PsiReference ref : references) {
-            PsiElement refElement = ref.getElement();
-            PsiElement parent = refElement.getParent();
+        for (JetExpression expression : referenceExpressions) {
+            PsiElement parent = expression.getParent();
             if (parent instanceof JetBinaryExpression &&
                 ((JetBinaryExpression) parent).getOperationToken() == JetTokens.EQ &&
-                ((JetBinaryExpression) parent).getLeft() == refElement) {
+                ((JetBinaryExpression) parent).getLeft() == expression) {
                 assignments.add(parent);
             }
         }
@@ -108,21 +107,13 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
         final String typeArgumentsForCall = getTypeArgumentsStringForCall(initializer);
         final String parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer);
 
-        PsiReference[] referencesArray = references.toArray(references.toArray(new PsiReference[references.size()]));
-
-        EditorColorsManager editorColorsManager = EditorColorsManager.getInstance();
-        final TextAttributes searchResultsAttributes = editorColorsManager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
-        final HighlightManager highlightManager = HighlightManager.getInstance(project);
-
-        if (editor != null && !ApplicationManager.getApplication().isUnitTestMode()) {
-            highlightManager.addOccurrenceHighlights(editor, referencesArray, searchResultsAttributes, true, null);
-            if (!showDialog(project, name, references)) {
-                StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-                if (statusBar != null) {
-                    statusBar.setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
-                }
-                return;
+        highlightExpressions(project, editor, referenceExpressions);
+        if (!showDialog(project, name, referenceExpressions)) {
+            StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+            if (statusBar != null) {
+                statusBar.setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
             }
+            return;
         }
 
         final List<JetExpression> inlinedExpressions = Lists.newArrayList();
@@ -134,13 +125,12 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                         ApplicationManager.getApplication().runWriteAction(new Runnable() {
                             @Override
                             public void run() {
-                                for (PsiReference reference : references) {
-                                    PsiElement referenceElement = reference.getElement();
-                                    if (assignments.contains(referenceElement.getParent())) {
+                                for (JetExpression referenceExpression : referenceExpressions) {
+                                    if (assignments.contains(referenceExpression.getParent())) {
                                         continue;
                                     }
 
-                                    inlinedExpressions.add(replaceExpression(referenceElement, initializer));
+                                    inlinedExpressions.add(replaceExpression(referenceExpression, initializer));
                                 }
 
                                 for (PsiElement assignment : assignments) {
@@ -157,10 +147,7 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                                     addFunctionLiteralParameterTypes(parametersForFunctionLiteral, inlinedExpressions);
                                 }
 
-                                if (editor != null && !ApplicationManager.getApplication().isUnitTestMode()) {
-                                    highlightManager.addOccurrenceHighlights(
-                                            editor, inlinedExpressions.toArray(new PsiElement[inlinedExpressions.size()]), searchResultsAttributes, true, null);
-                                }
+                                highlightExpressions(project, editor, inlinedExpressions);
                             }
                         });
                     }
@@ -169,11 +156,45 @@ public class KotlinInlineLocalHandler extends InlineActionHandler {
                 null);
     }
 
-    private static boolean showDialog(Project project, String name, Collection<PsiReference> references) {
+    private static void highlightExpressions(Project project, Editor editor, List<? extends PsiElement> elements) {
+        if (editor == null || ApplicationManager.getApplication().isUnitTestMode()) {
+            return;
+        }
+        EditorColorsManager editorColorsManager = EditorColorsManager.getInstance();
+        TextAttributes searchResultsAttributes = editorColorsManager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
+        HighlightManager highlightManager = HighlightManager.getInstance(project);
+
+        PsiElement[] elementsArray = elements.toArray(new PsiElement[elements.size()]);
+
+        highlightManager.addOccurrenceHighlights(editor, elementsArray, searchResultsAttributes, true, null);
+    }
+
+    private static List<JetExpression> findReferenceExpressions(JetProperty val) {
+        List<JetExpression> result = Lists.newArrayList();
+
+        for (PsiReference reference : ReferencesSearch.search(val, GlobalSearchScope.allScope(val.getProject()), false).findAll()) {
+            JetExpression expression = (JetExpression) reference.getElement();
+            PsiElement parent = expression.getParent();
+            if (parent instanceof JetQualifiedExpression && ((JetQualifiedExpression) parent).getSelectorExpression() == expression) {
+                result.add((JetQualifiedExpression) parent);
+            }
+            else {
+                result.add(expression);
+            }
+        }
+
+        return result;
+    }
+
+    private static boolean showDialog(Project project, String name, List<JetExpression> referenceExpressions) {
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            return true;
+        }
+
         RefactoringMessageDialog dialog = new RefactoringMessageDialog(
                 RefactoringBundle.message("inline.variable.title"),
                 RefactoringBundle.message("inline.local.variable.prompt", name) + " " +
-                                  RefactoringBundle.message("occurences.string", references.size()),
+                                  RefactoringBundle.message("occurences.string", referenceExpressions.size()),
                 HelpID.INLINE_VARIABLE,
                 "OptionPane.questionIcon",
                 true,
