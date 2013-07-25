@@ -351,8 +351,8 @@ public class CandidateResolver {
                 || (expression instanceof JetFunctionLiteralExpression)) {
                 return;
             }
-            JetType type = updateResultTypeIfNotDenotable(context, expression);
-            checkResultType(type, argument, context);
+            JetType type = updateResultArgumentTypeIfNotDenotable(context, expression);
+            checkResultArgumentType(type, argument, context);
             return;
         }
 
@@ -388,7 +388,7 @@ public class CandidateResolver {
     }
 
     @Nullable
-    private <D extends CallableDescriptor> JetType updateResultTypeIfNotDenotable(
+    private <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull JetExpression expression
     ) {
@@ -402,7 +402,7 @@ public class CandidateResolver {
         return type;
     }
 
-    private <D extends CallableDescriptor> void checkResultType(
+    private <D extends CallableDescriptor> void checkResultArgumentType(
             @Nullable JetType type,
             @NotNull ValueArgument argument,
             @NotNull CallCandidateResolutionContext<D> context

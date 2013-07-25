@@ -21,6 +21,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -33,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
@@ -223,14 +223,7 @@ public class TracingStrategyImpl implements TracingStrategy {
             return;
         }
         if (constraintSystem.hasOnlyExpectedTypeMismatch()) {
-            JetType declaredReturnType = data.descriptor.getReturnType();
-            if (declaredReturnType == null) return;
-
-            JetType substitutedReturnType = constraintSystem.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
-            assert substitutedReturnType != null; //todo
-
-            assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
-            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, substitutedReturnType, data.expectedType));
+            reportTypeInferenceExpectedTypeMismatch(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, reference, data, trace);
         }
         else if (constraintSystem.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
@@ -242,6 +235,20 @@ public class TracingStrategyImpl implements TracingStrategy {
             assert constraintSystem.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
         }
+    }
+
+    public static void reportTypeInferenceExpectedTypeMismatch(
+            @NotNull DiagnosticFactory2<JetExpression, JetType, JetType> diagnosticFactory,
+            @NotNull JetExpression reportOn, @NotNull InferenceErrorData.ExtendedInferenceErrorData data, @NotNull BindingTrace trace
+    ) {
+        JetType declaredReturnType = data.descriptor.getReturnType();
+        if (declaredReturnType == null) return;
+
+        JetType substitutedReturnType = data.constraintSystem.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
+        assert substitutedReturnType != null; //todo
+
+        assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
+        trace.report(diagnosticFactory.on(reportOn, data.expectedType, substitutedReturnType));
     }
 
     @Override
