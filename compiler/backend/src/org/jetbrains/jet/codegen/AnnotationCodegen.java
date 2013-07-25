@@ -89,6 +89,12 @@ public abstract class AnnotationCodegen {
         }
     }
 
+    public void generateAnnotationDefaultValue(CompileTimeConstant value) {
+        AnnotationVisitor visitor = visitAnnotation(null, false);  // Parameters are unimportant
+        genAnnotationArgument(null, value, visitor);
+        visitor.visitEnd();
+    }
+
     private void genAnnotation(AnnotationDescriptor annotationDescriptor) {
         ClassifierDescriptor classifierDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
         RetentionPolicy rp = getRetentionPolicy(classifierDescriptor, typeMapper);
@@ -267,6 +273,15 @@ public abstract class AnnotationCodegen {
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
                 return mv.visitParameterAnnotation(parameter, descr, visible);
+            }
+        };
+    }
+
+    public static AnnotationCodegen forAnnotationDefaultValue(final MethodVisitor mv, JetTypeMapper mapper) {
+        return new AnnotationCodegen(mapper) {
+            @Override
+            AnnotationVisitor visitAnnotation(String descr, boolean visible) {
+                return mv.visitAnnotationDefault();
             }
         };
     }

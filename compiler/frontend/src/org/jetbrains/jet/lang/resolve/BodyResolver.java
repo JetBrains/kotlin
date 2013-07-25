@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -696,6 +697,13 @@ public class BodyResolver {
             JetExpression defaultValue = jetParameter.getDefaultValue();
             if (defaultValue != null) {
                 expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), DataFlowInfo.EMPTY, trace);
+                if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
+                    CompileTimeConstant<?> constant =
+                            annotationResolver.resolveAnnotationArgument(defaultValue, valueParameterDescriptor.getType(), trace);
+                    if (constant != null) {
+                        trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
+                    }
+                }
             }
         }
     }

@@ -223,7 +223,7 @@ public class AnnotationResolver {
     }
 
     @Nullable
-    private CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull final JetType expectedType, final BindingTrace trace) {
+    public CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull final JetType expectedType, final BindingTrace trace) {
         JetVisitor<CompileTimeConstant<?>, Void> visitor = new JetVisitor<CompileTimeConstant<?>, Void>() {
             @Override
             public CompileTimeConstant<?> visitConstantExpression(JetConstantExpression expression, Void nothing) {

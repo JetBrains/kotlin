@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
@@ -135,7 +136,16 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
                     }
                     else {
                         Type type = state.getTypeMapper().mapType(propertyDescriptor);
-                        v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
+                        MethodVisitor visitor =
+                                v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
+                        JetExpression defaultValue = p.getDefaultValue();
+                        if (defaultValue != null) {
+                            CompileTimeConstant<?> constant =
+                                    state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, defaultValue);
+                            assert constant != null : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
+                            AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(visitor, typeMapper);
+                            annotationCodegen.generateAnnotationDefaultValue(constant);
+                        }
                     }
                 }
             }
