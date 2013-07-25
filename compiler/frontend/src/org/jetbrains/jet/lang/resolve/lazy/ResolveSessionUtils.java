@@ -154,15 +154,12 @@ public class ResolveSessionUtils {
             }
             else if (resolveElement instanceof JetAnnotationEntry) {
                 annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
-                return resolveSession.getBindingContext();
             }
             else if (resolveElement instanceof JetTypeParameter) {
                 typeParameterAdditionalResolve(resolveSession, (JetTypeParameter) resolveElement);
-                return resolveSession.getBindingContext();
             }
             else if (resolveElement instanceof JetTypeConstraint) {
                 typeConstraintAdditionalResolve(resolveSession, jetElement);
-                return resolveSession.getBindingContext();
             }
             else if (resolveElement instanceof JetNamespaceHeader) {
                 namespaceRefAdditionalResolve(resolveSession, (JetNamespaceHeader) resolveElement, trace, jetElement);
