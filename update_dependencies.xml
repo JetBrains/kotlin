@@ -1,6 +1,6 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="1973992"/>
-    <property name="public.buildserver.build.id" value="86185"/>
+    <property name="jb.buildserver.build.id" value="1991596"/>
+    <property name="public.buildserver.build.id" value="86986"/>
     <property name="idea.archive.name" value="ideaIC-130.SNAPSHOT.win.zip"/>
 
     <property name="idea.sdk.fetch.needed" value="true"/>
@@ -181,6 +181,7 @@
                     <get src="@{base.url}/core/guava-14.0.1.jar" dest="${core}/guava-14.0.1.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
+                    <!--<get src="@{base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
 
                     <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="${jps}"/>
                     <get src="@{base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/groovy-jps-plugin.jar" usetimestamp="true"/>

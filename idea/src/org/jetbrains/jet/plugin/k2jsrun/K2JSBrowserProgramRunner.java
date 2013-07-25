@@ -41,8 +41,8 @@ public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
             return null;
         }
         try {
-            copyJSFileFromOutputToDestination(project, K2JSRunnerUtils.getSettings(state));
-            openBrowser(K2JSRunnerUtils.getSettings(state));
+            copyJSFileFromOutputToDestination(project, K2JSRunnerUtils.getSettings(env));
+            openBrowser(K2JSRunnerUtils.getSettings(env));
         }
         catch (Throwable e) {
             throw new ExecutionException(e);

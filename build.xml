@@ -357,6 +357,9 @@
                     -dontwarn apple.awt.*
                     -dontwarn dk.brics.automaton.*
                     -dontwarn org.fusesource.**
+                    -dontwarn org.xerial.snappy.SnappyBundleActivator
+                    -dontwarn com.intellij.util.CompressionUtil
+                    -dontwarn com.intellij.util.SnappyInitializer
 
                     -libraryjars '${rtjar}'
 
