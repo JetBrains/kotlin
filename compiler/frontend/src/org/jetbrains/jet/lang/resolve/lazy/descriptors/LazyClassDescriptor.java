@@ -352,7 +352,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         if (modifierList != null) {
             AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
             JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
-            return annotationResolver.resolveAnnotations(scopeForDeclaration, modifierList, resolveSession.getTrace());
+            return annotationResolver.resolveAnnotationsWithArguments(scopeForDeclaration, modifierList, resolveSession.getTrace());
         }
         else {
             return Collections.emptyList();

@@ -36,6 +36,26 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/resolve/references"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("AnnotationForClass.kt")
+    public void testAnnotationForClass() throws Exception {
+        doTest("idea/testData/resolve/references/AnnotationForClass.kt");
+    }
+    
+    @TestMetadata("AnnotationInsideFunction.kt")
+    public void testAnnotationInsideFunction() throws Exception {
+        doTest("idea/testData/resolve/references/AnnotationInsideFunction.kt");
+    }
+    
+    @TestMetadata("AnnotationParameter.kt")
+    public void testAnnotationParameter() throws Exception {
+        doTest("idea/testData/resolve/references/AnnotationParameter.kt");
+    }
+    
+    @TestMetadata("AnnotationTypeParameter.kt")
+    public void testAnnotationTypeParameter() throws Exception {
+        doTest("idea/testData/resolve/references/AnnotationTypeParameter.kt");
+    }
+    
     @TestMetadata("ClassReferenceInImport.kt")
     public void testClassReferenceInImport() throws Exception {
         doTest("idea/testData/resolve/references/ClassReferenceInImport.kt");
