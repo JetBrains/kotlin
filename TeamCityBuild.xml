@@ -10,7 +10,7 @@
     <property name="plugin.xml.bk" value="${plugin.xml}.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned" />
 
-    <property name="compiler.version.java" value="compiler/cli/src/org/jetbrains/jet/cli/common/CompilerVersion.java"/>
+    <property name="compiler.version.java" value="compiler/cli/cli-common/src/org/jetbrains/jet/cli/common/KotlinVersion.java"/>
     <property name="compiler.version.java.bk" value="${compiler.version.java}.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
 

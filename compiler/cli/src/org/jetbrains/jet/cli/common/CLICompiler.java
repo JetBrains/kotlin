@@ -157,7 +157,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             @NotNull MessageRenderer messageRenderer) {
         if (arguments.isVersion()) {
             String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
-                                                           "Kotlin Compiler version " + CompilerVersion.VERSION,
+                                                           "Kotlin Compiler version " + KotlinVersion.VERSION,
                                                            CompilerMessageLocation.NO_LOCATION);
             errStream.println(versionMessage);
         }
