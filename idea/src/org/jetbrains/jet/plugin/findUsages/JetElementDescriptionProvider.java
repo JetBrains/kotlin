@@ -47,6 +47,9 @@ public class JetElementDescriptionProvider implements ElementDescriptionProvider
             if (element instanceof JetProperty) {
                 return "Property " + ((PsiNamedElement)element).getName();
             }
+            if (element instanceof JetTypeParameter) {
+                return "Type parameter " + ((PsiNamedElement)element).getName();
+            }
         }
         return null;
     }
