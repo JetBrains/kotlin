@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -39,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
@@ -69,8 +71,9 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
             OutputConsumer outputConsumer
     ) throws ProjectBuildException, IOException {
-
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
+
+        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION);
 
         if (chunk.getModules().size() > 1) {
             // We do not support circular dependencies, but if they are present, we should not break the build,
