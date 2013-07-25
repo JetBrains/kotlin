@@ -611,7 +611,40 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
         if (superMethods.isEmpty()) return Collections.singletonList(declaration);
 
-        List<String> superClasses = ContainerUtil.map(
+        List<String> superClasses = getClassDescriptions(bindingContext, superMethods);
+
+        return askUserForMethodsToSearch(declaration, callableDescriptor, superMethods, superClasses);
+    }
+
+    private static Collection<? extends PsiElement> askUserForMethodsToSearch(
+            JetDeclaration declaration,
+            CallableMemberDescriptor callableDescriptor,
+            Collection<? extends PsiElement> superMethods,
+            List<String> superClasses
+    ) {
+        String superClassesStr = "\n" + StringUtil.join(superClasses, "");
+        String message = JetBundle.message(
+                "x.overrides.y.in.class.list",
+                DescriptorRenderer.COMPACT.render(callableDescriptor),
+                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callableDescriptor.getContainingDeclaration()),
+                superClassesStr
+        );
+
+        int exitCode = Messages.showYesNoCancelDialog(
+                declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
+        );
+        switch (exitCode) {
+            case Messages.YES:
+                return superMethods;
+            case Messages.NO:
+                return Collections.singletonList(declaration);
+            default:
+                return Collections.emptyList();
+        }
+    }
+
+    private static List<String> getClassDescriptions(final BindingContext bindingContext, Collection<? extends PsiElement> superMethods) {
+        return ContainerUtil.map(
                 superMethods,
                 new Function<PsiElement, String>() {
                     @Override
@@ -641,26 +674,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                     }
                 }
         );
-
-        String superClassesStr = "\n" + StringUtil.join(superClasses, "");
-        String message = JetBundle.message(
-                "x.overrides.y.in.class.list",
-                DescriptorRenderer.COMPACT.render(callableDescriptor),
-                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callableDescriptor.getContainingDeclaration()),
-                superClassesStr
-        );
-
-        int exitCode = Messages.showYesNoCancelDialog(
-                declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
-        );
-        switch (exitCode) {
-            case Messages.YES:
-                return superMethods;
-            case Messages.NO:
-                return Collections.singletonList(declaration);
-            default:
-                return Collections.emptyList();
-        }
     }
 
     @Nullable
