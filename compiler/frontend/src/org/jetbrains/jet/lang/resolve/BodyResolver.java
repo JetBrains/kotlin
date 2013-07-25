@@ -699,7 +699,7 @@ public class BodyResolver {
                 expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), DataFlowInfo.EMPTY, trace);
                 if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
                     CompileTimeConstant<?> constant =
-                            annotationResolver.resolveAnnotationArgument(defaultValue, valueParameterDescriptor.getType(), trace);
+                            annotationResolver.resolveExpressionToCompileTimeValue(defaultValue, valueParameterDescriptor.getType(), trace);
                     if (constant != null) {
                         trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
                     }

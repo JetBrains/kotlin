@@ -91,7 +91,7 @@ public abstract class AnnotationCodegen {
 
     public void generateAnnotationDefaultValue(CompileTimeConstant value) {
         AnnotationVisitor visitor = visitAnnotation(null, false);  // Parameters are unimportant
-        genAnnotationArgument(null, value, visitor);
+        genCompileTimeValue(null, value, visitor);
         visitor.visitEnd();
     }
 
@@ -113,11 +113,11 @@ public abstract class AnnotationCodegen {
         for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
             ValueParameterDescriptor descriptor = entry.getKey();
             String name = descriptor.getName().asString();
-            genAnnotationArgument(name, entry.getValue(), annotationVisitor);
+            genCompileTimeValue(name, entry.getValue(), annotationVisitor);
         }
     }
 
-    private void genAnnotationArgument(
+    private void genCompileTimeValue(
             @Nullable final String name,
             @NotNull CompileTimeConstant<?> value,
             @NotNull final AnnotationVisitor annotationVisitor
@@ -179,7 +179,7 @@ public abstract class AnnotationCodegen {
             public Void visitArrayValue(ArrayValue value, Void data) {
                 AnnotationVisitor visitor = annotationVisitor.visitArray(name);
                 for (CompileTimeConstant<?> argument : value.getValue()) {
-                    genAnnotationArgument(null, argument, visitor);
+                    genCompileTimeValue(null, argument, visitor);
                 }
                 visitor.visitEnd();
                 return null;

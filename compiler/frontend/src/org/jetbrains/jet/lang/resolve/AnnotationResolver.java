@@ -213,7 +213,7 @@ public class AnnotationResolver {
         for (ValueArgument argument : resolvedValueArgument.getArguments()) {
             JetExpression argumentExpression = argument.getArgumentExpression();
             if (argumentExpression != null) {
-                CompileTimeConstant<?> constant = resolveAnnotationArgument(argumentExpression, expectedType, trace);
+                CompileTimeConstant<?> constant = resolveExpressionToCompileTimeValue(argumentExpression, expectedType, trace);
                 if (constant != null) {
                     constants.add(constant);
                 }
@@ -223,7 +223,11 @@ public class AnnotationResolver {
     }
 
     @Nullable
-    public CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull final JetType expectedType, final BindingTrace trace) {
+    public CompileTimeConstant<?> resolveExpressionToCompileTimeValue(
+            @NotNull JetExpression expression,
+            @NotNull final JetType expectedType,
+            @NotNull final BindingTrace trace
+    ) {
         JetVisitor<CompileTimeConstant<?>, Void> visitor = new JetVisitor<CompileTimeConstant<?>, Void>() {
             @Override
             public CompileTimeConstant<?> visitConstantExpression(JetConstantExpression expression, Void nothing) {
