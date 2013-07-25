@@ -206,7 +206,7 @@ public class CallResolver {
                     }
                     Collection<ResolutionCandidate<CallableDescriptor>> candidates = TaskPrioritizer.<CallableDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverValue>singletonList(NO_RECEIVER), constructors);
                     prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
-                            context, functionReference, candidates);
+                            context, functionReference, candidates, null);
                 }
                 else {
                     context.trace.report(NOT_A_CLASS.on(calleeExpression));

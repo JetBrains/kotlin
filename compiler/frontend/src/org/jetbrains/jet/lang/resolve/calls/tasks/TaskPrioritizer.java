@@ -92,7 +92,7 @@ public class TaskPrioritizer {
             scope = context.scope;
         }
 
-        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context));
+        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context), null);
         TaskPrioritizerContext<D, F> c = new TaskPrioritizerContext<D, F>(name, result, context, scope, callableDescriptorCollectors);
         doComputeTasks(explicitReceiver, c);
         return result.getTasks();
@@ -337,9 +337,11 @@ public class TaskPrioritizer {
     public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasksFromCandidates(
             @NotNull BasicCallResolutionContext context,
             @NotNull JetReferenceExpression functionReference,
-            @NotNull Collection<ResolutionCandidate<D>> candidates
+            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @Nullable TracingStrategy tracing
     ) {
-        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context));
+        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(
+                functionReference, context, new MyPriorityProvider<D>(context), tracing);
         result.addCandidates(candidates);
         return result.getTasks();
     }

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -53,10 +54,24 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         this.tracing = tracing;
     }
 
-    public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicCallResolutionContext context) {
-        this(candidates, reference, TracingStrategyImpl.create(reference, context.call), context.trace, context.scope, context.call,
+    public ResolutionTask(
+            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull JetReferenceExpression reference,
+            @NotNull BasicCallResolutionContext context,
+            @Nullable TracingStrategy tracing
+    ) {
+        this(candidates, reference, tracing != null ? tracing : TracingStrategyImpl.create(reference, context.call),
+             context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.resolveMode, context.checkArguments,
              context.expressionPosition, context.resolutionResultsCache);
+    }
+
+    public ResolutionTask(
+            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull JetReferenceExpression reference,
+            @NotNull BasicCallResolutionContext context
+    ) {
+        this(candidates, reference, context, null);
     }
 
     @NotNull
