@@ -59,6 +59,8 @@ public interface StorageManager {
     @NotNull
     BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);
 
+    <T> T compute(@NotNull Computable<T> computable);
+
     enum ReferenceKind {
         STRONG,
         WEAK

@@ -17,8 +17,9 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Computable;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,16 +27,28 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.Importer;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public class LazyImportScope implements JetScope {
+    private final ResolveSession resolveSession;
+    private final NamespaceDescriptor packageDescriptor;
+    private final ImportsProvider importsProvider;
+    private final JetScope rootScope;
+    private final BindingTrace traceForImportResolve;
+    private final String debugName;
+
     private static class ImportResolveStatus {
         private final LookupMode lookupMode;
         private final JetScope scope;
@@ -46,14 +59,62 @@ public class LazyImportScope implements JetScope {
         }
     }
 
-    private final ResolveSession resolveSession;
-    private final NamespaceDescriptor packageDescriptor;
-    private final ImportsProvider importsProvider;
-    private final JetScope rootScope;
-    private final BindingTrace traceForImportResolve;
-    private final String debugName;
+    private class ImportDirectiveResolveCache {
+        private final JetImportDirective directive;
 
-    private final Map<JetImportDirective, ImportResolveStatus> importedScopes = Maps.newHashMap();
+        @Nullable
+        private volatile ImportResolveStatus importResolveStatus;
+
+        private ImportDirectiveResolveCache(JetImportDirective directive) {
+            this.directive = directive;
+        }
+
+        private JetScope scopeForMode(final LookupMode mode) {
+            ImportResolveStatus status = importResolveStatus;
+            if (status != null && (status.lookupMode == mode || status.lookupMode == LookupMode.EVERYTHING)) {
+                return status.scope;
+            }
+
+            return resolveSession.getStorageManager().compute(new Computable<JetScope>() {
+                @Override
+                public JetScope compute() {
+                    ImportResolveStatus cachedStatus = importResolveStatus;
+                    if (cachedStatus != null && (cachedStatus.lookupMode == mode || cachedStatus.lookupMode == LookupMode.EVERYTHING)) {
+                        return cachedStatus.scope;
+                    }
+
+                    WritableScope directiveImportScope = new WritableScopeImpl(
+                            JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING,
+                            "Scope for import '" + directive.getText() + "' resolve in " + toString());
+                    directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+
+                    Importer.StandardImporter importer = new Importer.StandardImporter(directiveImportScope);
+                    directiveUnderResolve = directive;
+
+                    try {
+                        resolveSession.getInjector().getQualifiedExpressionResolver().processImportReference(
+                                directive,
+                                rootScope,
+                                packageDescriptor.getMemberScope(),
+                                importer,
+                                traceForImportResolve,
+                                resolveSession.getRootModuleDescriptor(),
+                                mode);
+                    }
+                    finally {
+                        directiveUnderResolve = null;
+                        directiveImportScope.changeLockLevel(WritableScope.LockLevel.READING);
+                    }
+
+                    importResolveStatus = new ImportResolveStatus(mode, directiveImportScope);
+                    return directiveImportScope;
+                }
+            });
+        }
+    }
+
+    private final MemoizedFunctionToNotNull<JetImportDirective, ImportDirectiveResolveCache> importedScopesProvider;
+
     private JetImportDirective directiveUnderResolve = null;
 
     public LazyImportScope(
@@ -68,6 +129,13 @@ public class LazyImportScope implements JetScope {
         this.importsProvider = new ImportsProvider(imports);
         this.traceForImportResolve = traceForImportResolve;
         this.debugName = debugName;
+
+        this.importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction(new Function<JetImportDirective, ImportDirectiveResolveCache>() {
+            @Override
+            public ImportDirectiveResolveCache fun(JetImportDirective directive) {
+                return new ImportDirectiveResolveCache(directive);
+            }
+        }, STRONG);
 
         NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
         if (rootPackageDescriptor == null) {
@@ -93,94 +161,80 @@ public class LazyImportScope implements JetScope {
 
     @Nullable
     private <D extends DeclarationDescriptor> D selectFirstFromImports(
-            Name name,
-            LookupMode lookupMode,
-            JetScopeSelectorUtil.ScopeByNameSelector<D> descriptorSelector
+            final Name name,
+            final LookupMode lookupMode,
+            final JetScopeSelectorUtil.ScopeByNameSelector<D> descriptorSelector
     ) {
-        for (JetImportDirective directive : importsProvider.getImports(name)) {
-            if (directive == directiveUnderResolve) {
-                // This is the recursion in imports analysis
+        return resolveSession.getStorageManager().compute(new Computable<D>() {
+            @Override
+            public D compute() {
+                for (JetImportDirective directive : importsProvider.getImports(name)) {
+                    if (directive == directiveUnderResolve) {
+                        // This is the recursion in imports analysis
+                        return null;
+                    }
+
+                    D foundDescriptor = descriptorSelector.get(getImportScope(directive, lookupMode), name);
+                    if (foundDescriptor != null) {
+                        return foundDescriptor;
+                    }
+                }
+
                 return null;
             }
-
-            D foundDescriptor = descriptorSelector.get(getImportScope(directive, lookupMode), name);
-            if (foundDescriptor != null) {
-                return foundDescriptor;
-            }
-        }
-
-        return null;
+        });
     }
 
     @NotNull
     private <D extends DeclarationDescriptor> Collection<D> collectFromImports(
-            Name name,
-            LookupMode lookupMode,
-            JetScopeSelectorUtil.ScopeByNameMultiSelector<D> descriptorsSelector
+            final Name name,
+            final LookupMode lookupMode,
+            final JetScopeSelectorUtil.ScopeByNameMultiSelector<D> descriptorsSelector
     ) {
-        Set<D> descriptors = Sets.newHashSet();
-        for (JetImportDirective directive : importsProvider.getImports(name)) {
-            if (directive == directiveUnderResolve) {
-                // This is the recursion in imports analysis
-                throw new IllegalStateException("Recursion while resolving many imports: " + directive.getText());
+        return resolveSession.getStorageManager().compute(new Computable<Collection<D>>() {
+            @Override
+            public Collection<D> compute() {
+                Set<D> descriptors = Sets.newHashSet();
+                for (JetImportDirective directive : importsProvider.getImports(name)) {
+                    if (directive == directiveUnderResolve) {
+                        // This is the recursion in imports analysis
+                        throw new IllegalStateException("Recursion while resolving many imports: " + directive.getText());
+                    }
+
+                    descriptors.addAll(descriptorsSelector.get(getImportScope(directive, lookupMode), name));
+                }
+
+                return descriptors;
             }
-
-            descriptors.addAll(descriptorsSelector.get(getImportScope(directive, lookupMode), name));
-        }
-
-        return descriptors;
+        });
     }
 
     @NotNull
     private <D extends DeclarationDescriptor> Collection<D> collectFromImports(
-            LookupMode lookupMode,
-            JetScopeSelectorUtil.ScopeDescriptorSelector<D> descriptorsSelector
+            final LookupMode lookupMode,
+            final JetScopeSelectorUtil.ScopeDescriptorSelector<D> descriptorsSelector
     ) {
-        Set<D> descriptors = Sets.newHashSet();
-        for (JetImportDirective directive : importsProvider.getAllImports()) {
-            if (directive == directiveUnderResolve) {
-                // This is the recursion in imports analysis
-                throw new IllegalStateException("Recursion while resolving many imports: " + directive.getText());
+        return resolveSession.getStorageManager().compute(new Computable<Collection<D>>() {
+            @Override
+            public Collection<D> compute() {
+                Set<D> descriptors = Sets.newHashSet();
+                for (JetImportDirective directive : importsProvider.getAllImports()) {
+                    if (directive == directiveUnderResolve) {
+                        // This is the recursion in imports analysis
+                        throw new IllegalStateException("Recursion while resolving many imports: " + directive.getText());
+                    }
+
+                    descriptors.addAll(descriptorsSelector.get(getImportScope(directive, lookupMode)));
+                }
+
+                return descriptors;
             }
-
-            descriptors.addAll(descriptorsSelector.get(getImportScope(directive, lookupMode)));
-        }
-
-        return descriptors;
+        });
     }
 
     @NotNull
     private JetScope getImportScope(JetImportDirective directive, LookupMode lookupMode) {
-        ImportResolveStatus status = importedScopes.get(directive);
-        if (status != null && (lookupMode == status.lookupMode || status.lookupMode == LookupMode.EVERYTHING)) {
-            return status.scope;
-        }
-
-        WritableScope directiveImportScope = new WritableScopeImpl(
-                    JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING,
-                    "Scope for import '" + directive.getText() + "' resolve in " + toString());
-        directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-        Importer.StandardImporter importer = new Importer.StandardImporter(directiveImportScope);
-        directiveUnderResolve = directive;
-
-        try {
-            resolveSession.getInjector().getQualifiedExpressionResolver().processImportReference(
-                    directive,
-                    rootScope,
-                    packageDescriptor.getMemberScope(),
-                    importer,
-                    traceForImportResolve,
-                    resolveSession.getRootModuleDescriptor(),
-                    lookupMode);
-        }
-        finally {
-            directiveUnderResolve = null;
-            directiveImportScope.changeLockLevel(WritableScope.LockLevel.READING);
-            importedScopes.put(directive, new ImportResolveStatus(lookupMode, directiveImportScope));
-        }
-
-        return directiveImportScope;
+        return importedScopesProvider.fun(directive).scopeForMode(lookupMode);
     }
 
     @Nullable
