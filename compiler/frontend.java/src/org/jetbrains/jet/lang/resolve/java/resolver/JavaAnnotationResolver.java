@@ -25,7 +25,10 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 

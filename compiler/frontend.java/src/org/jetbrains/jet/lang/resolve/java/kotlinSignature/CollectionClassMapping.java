@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.ImmutableBiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMapBuilder;
 
-public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
+/* package */ class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
     private static CollectionClassMapping instance = null;
 
     @NotNull

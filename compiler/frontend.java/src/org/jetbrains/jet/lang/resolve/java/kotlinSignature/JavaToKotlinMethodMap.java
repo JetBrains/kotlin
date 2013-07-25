@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.*;
 import com.intellij.openapi.util.Pair;

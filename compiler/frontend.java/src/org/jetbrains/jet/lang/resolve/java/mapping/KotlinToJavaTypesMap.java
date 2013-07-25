@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.mapping;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.Map;
-import java.util.Set;
 
 public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     private static KotlinToJavaTypesMap instance = null;
@@ -45,7 +45,6 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
 
     private final Map<FqName, Type> asmTypes = Maps.newHashMap();
     private final Map<FqName, Type> asmNullableTypes = Maps.newHashMap();
-    private final Set<String> mappedTypeNames = Sets.newHashSet();
 
     private KotlinToJavaTypesMap() {
         init();
@@ -82,11 +81,7 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     }
 
     @Override
-    protected void register(
-            @NotNull Class<?> javaClass,
-            @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull Direction direction
-    ) {
+    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
             register(kotlinDescriptor, AsmTypeConstants.getType(javaClass));
         }
@@ -112,16 +107,10 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     }
 
     private void register(@NotNull FqName fqName, @NotNull Type type) {
-        mappedTypeNames.add(type.getClassName());
         asmTypes.put(fqName, type);
     }
 
     private void registerNullable(@NotNull FqName fqName, @NotNull Type nullableType) {
         asmNullableTypes.put(fqName, nullableType);
-    }
-
-    public boolean isForceReal(@NotNull JvmClassName className) {
-        return JvmPrimitiveType.getByWrapperClass(className) != null
-               || mappedTypeNames.contains(className.getFqName().asString());
     }
 }
