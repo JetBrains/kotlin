@@ -19,13 +19,13 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 public final class JavaSupertypeResolver {
+    private static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
     private BindingTrace trace;
     private JavaTypeTransformer typeTransformer;
@@ -79,17 +80,12 @@ public final class JavaSupertypeResolver {
         return result;
     }
 
-    private void addBaseClass(
-            @NotNull PsiClass psiClass,
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull List<JetType> result
-    ) {
-        if (DescriptorResolverUtils.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
-            || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+    private void addBaseClass(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor, @NotNull List<JetType> result) {
+        if (OBJECT_FQ_NAME.asString().equals(psiClass.getQualifiedName()) || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             result.add(KotlinBuiltIns.getInstance().getAnyType());
         }
         else {
-            ClassDescriptor object = resolveJavaLangObject();
+            ClassDescriptor object = classResolver.resolveClass(OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
             if (object != null) {
                 result.add(object.getDefaultType());
             }
@@ -132,16 +128,5 @@ public final class JavaSupertypeResolver {
 
             result.add(TypeUtils.makeNotNullable(transform));
         }
-    }
-
-
-    @Nullable
-    private ClassDescriptor resolveJavaLangObject() {
-        ClassDescriptor clazz = classResolver.resolveClass(DescriptorResolverUtils.OBJECT_FQ_NAME,
-                                                           DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-        if (clazz == null) {
-            // TODO: warning
-        }
-        return clazz;
     }
 }

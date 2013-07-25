@@ -22,12 +22,9 @@ import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -36,31 +33,27 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.psi.util.PsiFormatUtilBase.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
-
-    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
-
     private DescriptorResolverUtils() {
     }
 
     public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
-        if (!(psiClass instanceof ClsClassImpl)) {
-            return false;
+        if (psiClass instanceof ClsClassImpl) {
+            String qualifiedName = psiClass.getQualifiedName();
+            if (qualifiedName != null && PackageClassUtils.isPackageClassFqName(new FqName(qualifiedName))) {
+                return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
+            }
         }
-        if (!PackageClassUtils.isPackageClassFqName(new FqName(psiClass.getQualifiedName()))) {
-            return false;
-        }
-        return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
+        return false;
     }
 
     public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
-        if (!(psiClass instanceof ClsClassImpl)) {
-            return false;
+        if (psiClass instanceof ClsClassImpl) {
+            return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
         }
-        return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
+        return false;
     }
 
     public static boolean hasAnnotation(@NotNull PsiClass psiClass, @NotNull FqName annotationFqName) {
@@ -83,9 +76,7 @@ public final class DescriptorResolverUtils {
         return Collections.emptyList();
     }
 
-    public static Visibility resolveVisibility(
-            @NotNull PsiModifierListOwner modifierListOwner
-    ) {
+    public static Visibility resolveVisibility(@NotNull PsiModifierListOwner modifierListOwner) {
         if (modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC)) {
             return Visibilities.PUBLIC;
         }
@@ -117,29 +108,6 @@ public final class DescriptorResolverUtils {
             }
         }
         return null;
-    }
-
-    public static void checkPsiClassIsNotJet(@Nullable PsiClass psiClass) {
-        if (psiClass instanceof JetJavaMirrorMarker) {
-            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
-        }
-    }
-
-    @NotNull
-    public static FqNameUnsafe getFqNameForClassObject(@NotNull PsiClass psiClass) {
-        String psiClassQualifiedName = psiClass.getQualifiedName();
-        assert psiClassQualifiedName != null : "Reading java class with no qualified name";
-        return new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).asString());
-    }
-
-    @NotNull
-    public static AnnotationDescriptor getAnnotationDescriptorForJavaLangDeprecated(ClassDescriptor classDescriptor) {
-        AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
-        annotationDescriptor.setAnnotationType(classDescriptor.getDefaultType());
-        ValueParameterDescriptor value = getValueParameterDescriptorForAnnotationParameter(Name.identifier("value"), classDescriptor);
-        assert value != null : "jet.deprecated must have one parameter called value";
-        annotationDescriptor.setValueArgument(value, new StringValue("Deprecated in Java"));
-        return annotationDescriptor;
     }
 
     /**

@@ -236,7 +236,7 @@ public final class JavaClassResolver {
             @NotNull PostponedTasks taskList
     ) {
         checkFqNamesAreConsistent(psiClass, fqName);
-        DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
+        checkPsiClassIsNotJet(psiClass);
 
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         // class may be resolved during resolution of parent
@@ -304,7 +304,7 @@ public final class JavaClassResolver {
 
         if (psiClass.isEnum()) {
             ClassDescriptorFromJvmBytecode classObjectDescriptor = createClassObjectDescriptorForEnum(classDescriptor, psiClass);
-            cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);
+            cache(getFqNameForClassObject(psiClass), classObjectDescriptor);
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
 
@@ -319,6 +319,13 @@ public final class JavaClassResolver {
         }
 
         return classDescriptor;
+    }
+
+    @NotNull
+    private static FqNameUnsafe getFqNameForClassObject(@NotNull PsiClass psiClass) {
+        String qualifiedName = psiClass.getQualifiedName();
+        assert qualifiedName != null : "Reading java class with no qualified name";
+        return new FqNameUnsafe(qualifiedName + "." + getClassObjectName(psiClass.getName()).asString());
     }
 
     @NotNull
@@ -393,7 +400,7 @@ public final class JavaClassResolver {
                 !psiClass.hasModifierProperty(PsiModifier.FINAL));
     }
 
-    void checkFqNamesAreConsistent(@NotNull PsiClass psiClass, @NotNull FqName desiredFqName) {
+    private void checkFqNamesAreConsistent(@NotNull PsiClass psiClass, @NotNull FqName desiredFqName) {
         String qualifiedName = psiClass.getQualifiedName();
         assert qualifiedName != null;
 
@@ -402,6 +409,12 @@ public final class JavaClassResolver {
         FqNameUnsafe correctedName = javaClassToKotlinFqName(fqName);
         if (classDescriptorCache.containsKey(correctedName) || unresolvedCache.contains(correctedName)) {
             throw new IllegalStateException(qualifiedName);
+        }
+    }
+
+    private static void checkPsiClassIsNotJet(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof JetJavaMirrorMarker) {
+            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
         }
     }
 
